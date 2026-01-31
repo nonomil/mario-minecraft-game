@@ -47,7 +47,62 @@ let cameraX = 0;
 let gameFrame = 0;
 let currentLevelIdx = 0;
 
-let inventory = { diamond: 0, pumpkin: 0, iron: 0, stick: 0 };
+const INVENTORY_TEMPLATE = {
+    diamond: 0,
+    pumpkin: 0,
+    iron: 0,
+    stick: 0,
+    wooden_axe: 0,
+    stone_sword: 0,
+    iron_pickaxe: 0,
+    arrow: 0,
+    bone: 0,
+    gunpowder: 0,
+    rotten_flesh: 0,
+    string: 0,
+    ender_pearl: 0,
+    dragon_egg: 0
+};
+let inventory = { ...INVENTORY_TEMPLATE };
+let selectedSlot = 0;
+const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "wooden_axe", "stone_sword", "iron_pickaxe", "arrow", "bone"];
+const ITEM_LABELS = {
+    diamond: "钻石",
+    pumpkin: "南瓜",
+    iron: "铁块",
+    stick: "木棍",
+    wooden_axe: "木斧",
+    stone_sword: "石剑",
+    iron_pickaxe: "铁镐",
+    arrow: "箭矢",
+    bone: "骨头",
+    gunpowder: "火药",
+    rotten_flesh: "腐肉",
+    string: "蜘蛛丝",
+    ender_pearl: "末影珍珠",
+    dragon_egg: "龙蛋"
+};
+const ITEM_ICONS = {
+    diamond: "💎",
+    pumpkin: "🎃",
+    iron: "🧱",
+    stick: "🥢",
+    wooden_axe: "🪓",
+    stone_sword: "⚔️",
+    iron_pickaxe: "⛏️",
+    arrow: "🏹",
+    bone: "🦴",
+    gunpowder: "💥",
+    rotten_flesh: "🥩",
+    string: "🕸️",
+    ender_pearl: "🟣",
+    dragon_egg: "🐉"
+};
+const TOOL_STATS = {
+    wooden_axe: { damage: 5 },
+    stone_sword: { damage: 8 },
+    iron_pickaxe: { damage: 6 }
+};
 const keys = { right: false, left: false };
 
 let jumpBuffer = 0;
@@ -67,6 +122,47 @@ let trees = [];
 let chests = [];
 let items = [];
 let enemies = [];
+let golems = [];
+const MAX_GOLEMS = 3;
+let playerPositionHistory = [];
+let projectiles = [];
+let bossSpawned = false;
+let playerInvincibleTimer = 0;
+const projectilePool = {
+    arrows: [],
+    snowballs: [],
+    fireballs: [],
+    getArrow(x, y, tx, ty) {
+        let arrow = this.arrows.find(p => p.remove);
+        if (arrow) {
+            arrow.reset(x, y, tx, ty, 4);
+        } else {
+            arrow = new Arrow(x, y, tx, ty);
+            this.arrows.push(arrow);
+        }
+        return arrow;
+    },
+    getSnowball(x, y, tx, ty) {
+        let snowball = this.snowballs.find(p => p.remove);
+        if (snowball) {
+            snowball.reset(x, y, tx, ty, 3);
+        } else {
+            snowball = new Snowball(x, y, tx, ty);
+            this.snowballs.push(snowball);
+        }
+        return snowball;
+    },
+    getFireball(x, y, tx, ty) {
+        let fireball = this.fireballs.find(p => p.remove);
+        if (fireball) {
+            fireball.reset(x, y, tx, ty, 2);
+        } else {
+            fireball = new DragonFireball(x, y, tx, ty);
+            this.fireballs.push(fireball);
+        }
+        return fireball;
+    }
+};
 let floatingTexts = [];
 let lastGenX = 0;
 
@@ -83,6 +179,36 @@ function mergeDeep(target, source) {
         });
     }
     return output;
+}
+
+function resetInventory() {
+    inventory = { ...INVENTORY_TEMPLATE };
+}
+
+function resetProjectiles() {
+    projectiles = [];
+    projectilePool.arrows.forEach(p => { p.remove = true; });
+    projectilePool.snowballs.forEach(p => { p.remove = true; });
+    projectilePool.fireballs.forEach(p => { p.remove = true; });
+}
+
+function getEnemyConfig() {
+    const base = {
+        maxOnScreen: 8,
+        spawnChance: 0.3,
+        difficultyThresholds: [500, 1000, 2000, 3000],
+        bossSpawnScore: 5000
+    };
+    return mergeDeep(base, gameConfig.enemies || {});
+}
+
+function getGolemConfig() {
+    const base = {
+        maxCount: MAX_GOLEMS,
+        ironGolem: { hp: 100, damage: 20, speed: 1.5 },
+        snowGolem: { hp: 50, damage: 10, speed: 2.0 }
+    };
+    return mergeDeep(base, gameConfig.golems || {});
 }
 
 function applyConfig() {
@@ -455,9 +581,10 @@ function initGame() {
     score = 0;
     levelScore = 0;
     currentLevelIdx = 0;
-    inventory = { diamond: 0, pumpkin: 0, iron: 0, stick: 0 };
+    resetInventory();
     updateInventoryUI();
     player = createPlayer();
+    bossSpawned = false;
     startLevel(0);
 }
 
@@ -471,6 +598,9 @@ function startLevel(idx) {
     chests = [];
     items = [];
     enemies = [];
+    golems = [];
+    resetProjectiles();
+    playerPositionHistory = [];
     lastGenX = 0;
     cameraX = 0;
     player.x = 100;
@@ -613,6 +743,12 @@ function generatePlatform(startX, length, groundYValue) {
         const objectX = startX + 100 + Math.random() * (length * blockSize - 150);
         const rand = Math.random();
         const rates = getSpawnRates();
+        const enemyConfig = getEnemyConfig();
+        let enemyChance = enemyConfig.spawnChance ?? rates.enemyChance;
+        if (enemyConfig.spawnChance != null && settings.learningMode) {
+            enemyChance *= 0.25;
+        }
+        enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance));
         if (rand < rates.treeChance) {
             trees.push(new Tree(objectX, groundYValue, level.treeType));
         } else if (rand < rates.chestChance) {
@@ -620,12 +756,28 @@ function generatePlatform(startX, length, groundYValue) {
         } else if (rand < rates.itemChance) {
             const word = pickWordForSpawn();
             items.push(new Item(objectX, groundYValue - 60, word));
-        } else if (rand < rates.enemyChance) {
-            enemies.push(new Enemy(objectX, groundYValue - 32, 120));
+        } else if (rand < enemyChance) {
+            spawnEnemyByDifficulty(objectX, groundYValue - 32);
         }
     }
 
     lastGenX = startX + length * blockSize;
+}
+
+function spawnEnemyByDifficulty(x, y) {
+    const enemyConfig = getEnemyConfig();
+    const thresholds = enemyConfig.difficultyThresholds || [500, 1000, 2000, 3000];
+    let pool = ["zombie"];
+    if (score >= thresholds[0]) pool = ["zombie", "spider"];
+    if (score >= thresholds[1]) pool = ["zombie", "spider", "creeper"];
+    if (score >= thresholds[2]) pool = ["zombie", "spider", "creeper", "skeleton"];
+    if (score >= thresholds[3]) pool = ["zombie", "spider", "creeper", "skeleton", "enderman"];
+
+    const aliveEnemies = enemies.filter(e => !e.remove && e.y < 900).length;
+    if (aliveEnemies >= (enemyConfig.maxOnScreen || 8)) return;
+
+    const type = pool[Math.floor(Math.random() * pool.length)];
+    enemies.push(new Enemy(x, y, type));
 }
 
 function updateMapGeneration() {
@@ -640,13 +792,14 @@ function updateMapGeneration() {
     trees = trees.filter(t => t.x + t.width > cameraX - removeThreshold && !t.remove);
     chests = chests.filter(c => c.x + 40 > cameraX - removeThreshold);
     items = items.filter(i => i.x + 30 > cameraX - removeThreshold && !i.collected);
-    enemies = enemies.filter(e => e.x + 32 > cameraX - removeThreshold && e.y < 1000);
+    enemies = enemies.filter(e => e.x + e.width > cameraX - removeThreshold && !e.remove && e.y < 1000);
 }
 
 function dropItem(type, x, y) {
+    if (!inventory[type] && inventory[type] !== 0) inventory[type] = 0;
     inventory[type]++;
     updateInventoryUI();
-    const icon = type === "diamond" ? "💎" : type === "pumpkin" ? "🎃" : type === "iron" ? "🧱" : "🥢";
+    const icon = ITEM_ICONS[type] || "✨";
     showFloatingText(`${icon} +1`, x, y);
 }
 
@@ -725,6 +878,26 @@ function speakWord(wordObj) {
         window.speechSynthesis.speak(uEn);
         window.speechSynthesis.speak(uZh);
     } catch {
+    }
+}
+
+function optimizedUpdate(entity, updateFn) {
+    const onScreen = entity.x > cameraX - 100 && entity.x < cameraX + 900;
+    if (onScreen) {
+        updateFn();
+    } else if (gameFrame % 3 === 0) {
+        updateFn();
+    }
+}
+
+function checkBossSpawn() {
+    if (bossSpawned) return;
+    const enemyConfig = getEnemyConfig();
+    if (score >= (enemyConfig.bossSpawnScore || 5000)) {
+        bossSpawned = true;
+        const dragon = new Enemy(player.x + 300, 100, "ender_dragon");
+        enemies.push(dragon);
+        showToast("⚠️ 末影龙降临！");
     }
 }
 
@@ -812,18 +985,36 @@ function update() {
 
     updateMapGeneration();
 
+    checkBossSpawn();
+
+    playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
+    if (playerPositionHistory.length > 150) playerPositionHistory.shift();
+
+    golems.forEach(g => optimizedUpdate(g, () => g.update(player, playerPositionHistory, enemies, platforms)));
+    golems = golems.filter(g => !g.remove && g.x > cameraX - 260);
+
     enemies.forEach(e => {
-        e.update();
+        optimizedUpdate(e, () => e.update(player));
+        if (e.remove || e.y > 900) return;
         if (colCheck(player, e)) {
             if (player.velY > 0 && player.y + player.height < e.y + e.height * 0.8) {
-                e.y = 1000;
+                e.takeDamage(999);
                 player.velY = -4;
             } else {
-                player.x -= 100;
-                player.y -= 50;
+                damagePlayer(Number(e.damage) || 10, e.x);
             }
         }
     });
+    enemies = enemies.filter(e => !e.remove && e.y < 950);
+
+    if (projectiles.length) {
+        projectiles.forEach(p => optimizedUpdate(p, () => p.update(player, golems, enemies)));
+        projectiles = projectiles.filter(p => {
+            const inRange = p.x > cameraX - 300 && p.x < cameraX + 1200;
+            if (!inRange) p.remove = true;
+            return !p.remove && inRange;
+        });
+    }
 
     items.forEach(item => {
         item.floatY = Math.sin(gameFrame / 20) * 5;
@@ -847,6 +1038,8 @@ function update() {
         t.life--;
     });
 
+    if (playerInvincibleTimer > 0) playerInvincibleTimer--;
+
     if (levelScore >= gameConfig.scoring.levelUp) nextLevel();
     gameFrame++;
 }
@@ -855,6 +1048,15 @@ function addScore(points) {
     score += points;
     levelScore += points;
     document.getElementById("score").innerText = score;
+}
+
+function damagePlayer(amount, sourceX, knockback = 90) {
+    if (playerInvincibleTimer > 0) return;
+    playerInvincibleTimer = 30;
+    const dir = sourceX != null ? (player.x > sourceX ? 1 : -1) : -1;
+    player.x += dir * knockback;
+    player.y -= 40;
+    showFloatingText(`-${amount}`, player.x, player.y);
 }
 
 function nextLevel() {
@@ -877,10 +1079,61 @@ function showFloatingText(text, x, y) {
 }
 
 function updateInventoryUI() {
-    document.getElementById("count-diamond").innerText = inventory.diamond;
-    document.getElementById("count-pumpkin").innerText = inventory.pumpkin;
-    document.getElementById("count-iron").innerText = inventory.iron;
-    document.getElementById("count-stick").innerText = inventory.stick;
+    const ids = {
+        diamond: "count-diamond",
+        pumpkin: "count-pumpkin",
+        iron: "count-iron",
+        stick: "count-stick",
+        wooden_axe: "count-wooden_axe",
+        stone_sword: "count-stone_sword",
+        iron_pickaxe: "count-iron_pickaxe",
+        arrow: "count-arrow",
+        bone: "count-bone"
+    };
+    Object.keys(ids).forEach(key => {
+        const el = document.getElementById(ids[key]);
+        if (el) el.innerText = inventory[key] ?? 0;
+    });
+    const slots = Array.from(document.querySelectorAll(".inventory-bar .inv-slot"));
+    slots.forEach((s, idx) => {
+        s.classList.toggle("selected", idx === selectedSlot);
+    });
+}
+
+const RECIPES = {
+    iron_golem: { iron: 10 },
+    snow_golem: { pumpkin: 10 }
+};
+
+function tryCraft(recipeKey) {
+    const recipe = RECIPES[recipeKey];
+    if (!recipe) return false;
+    for (const [item, count] of Object.entries(recipe)) {
+        if ((inventory[item] || 0) < count) {
+            showToast(`材料不足: 需要 ${ITEM_LABELS[item] || item} x${count}`);
+            return false;
+        }
+    }
+    for (const [item, count] of Object.entries(recipe)) {
+        inventory[item] -= count;
+    }
+    spawnGolem(recipeKey === "iron_golem" ? "iron" : "snow");
+    updateInventoryUI();
+    return true;
+}
+
+function spawnGolem(type) {
+    const config = getGolemConfig();
+    const maxCount = Number(config.maxCount) || MAX_GOLEMS;
+    if (golems.length >= maxCount) {
+        showToast(`最多同时存在 ${maxCount} 个傀儡！`);
+        return;
+    }
+    const newGolem = new Golem(player.x + 50, player.y, type);
+    golems.push(newGolem);
+    const name = type === "iron" ? "铁傀儡" : "雪傀儡";
+    showToast(`✅ 成功召唤 ${name}！`);
+    showFloatingText(`⚒️ ${name}`, player.x, player.y - 40);
 }
 
 function handleInteraction() {
@@ -905,6 +1158,9 @@ function handleAttack() {
     const range = 50;
     const ax = player.facingRight ? player.x + player.width : player.x - range;
     const ay = player.y;
+    const itemKey = HOTBAR_ITEMS[selectedSlot];
+    const tool = TOOL_STATS[itemKey];
+    const dmg = tool ? tool.damage : 10;
 
     trees.forEach(t => {
         if (rectIntersect(ax, ay, range, player.height, t.x, t.y, t.width, t.height)) {
@@ -914,8 +1170,9 @@ function handleAttack() {
 
     enemies.forEach(e => {
         if (rectIntersect(ax, ay, range, player.height, e.x, e.y, e.width, e.height)) {
-            e.y = 1000;
-            addScore(gameConfig.scoring.enemy);
+            if (e.takeDamage) e.takeDamage(dmg);
+            else e.hp -= dmg;
+            showFloatingText(`-${dmg}`, e.x, e.y);
         }
     });
 }
@@ -939,9 +1196,13 @@ function draw() {
         if (!i.collected) drawItem(i.x, i.y + i.floatY, i.wordObj.en);
     });
 
-    enemies.forEach(e => {
-        if (e.y < 900) drawCreeper(e.x, e.y);
-    });
+    enemies.forEach(e => drawEnemy(e));
+
+    golems.forEach(g => drawGolem(g));
+
+    if (projectiles.length) {
+        projectiles.forEach(p => drawProjectile(p));
+    }
 
     drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
 
@@ -967,6 +1228,27 @@ function draw() {
     });
 
     ctx.restore();
+
+    const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
+    if (boss) {
+        const barW = 360;
+        const barH = 14;
+        const bx = (canvas.width - barW) / 2;
+        const by = 20;
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(bx - 4, by - 4, barW + 8, barH + 8);
+        ctx.fillStyle = "#111";
+        ctx.fillRect(bx, by, barW, barH);
+        const pct = Math.max(0, boss.hp / boss.maxHp);
+        ctx.fillStyle = "#8E24AA";
+        ctx.fillRect(bx, by, barW * pct, barH);
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 14px Verdana";
+        ctx.textAlign = "center";
+        ctx.fillText("末影龙", canvas.width / 2, by - 6);
+        ctx.textAlign = "left";
+    }
+
     requestAnimationFrame(() => { update(); draw(); });
 }
 
@@ -1114,6 +1396,186 @@ function drawCreeper(x, y) {
     ctx.fillRect(x + 13, y + 12, 6, 8);
 }
 
+function drawEnemy(enemy) {
+    if (enemy.remove || enemy.y > 900) return;
+    const x = enemy.x;
+    const y = enemy.y;
+
+    switch (enemy.type) {
+        case "zombie":
+            drawZombie(x, y);
+            break;
+        case "spider":
+            drawSpider(x, y);
+            break;
+        case "creeper":
+            drawCreeper(x, y);
+            if (enemy.state === "exploding") {
+                const flash = Math.floor(enemy.explodeTimer / 10) % 2 === 0;
+                if (flash) {
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                    ctx.fillRect(x - 5, y - 5, 42, 42);
+                }
+            }
+            break;
+        case "skeleton":
+            drawSkeleton(x, y);
+            break;
+        case "enderman":
+            drawEnderman(x, y);
+            break;
+        case "ender_dragon":
+            drawEnderDragon(x, y);
+            break;
+    }
+
+    if (enemy.hp < enemy.maxHp) {
+        drawHealthBar(x, y - 8, enemy.width, enemy.hp, enemy.maxHp);
+    }
+}
+
+function drawZombie(x, y) {
+    ctx.fillStyle = "#00AA00";
+    ctx.fillRect(x + 8, y, 16, 10);
+    ctx.fillRect(x + 10, y + 10, 12, 14);
+    ctx.fillRect(x + 6, y + 10, 4, 12);
+    ctx.fillRect(x + 22, y + 10, 4, 12);
+    ctx.fillRect(x + 10, y + 24, 5, 8);
+    ctx.fillRect(x + 17, y + 24, 5, 8);
+    ctx.fillStyle = "#000";
+    ctx.fillRect(x + 11, y + 4, 2, 2);
+    ctx.fillRect(x + 19, y + 4, 2, 2);
+}
+
+function drawSpider(x, y) {
+    ctx.fillStyle = "#4A0E0E";
+    ctx.fillRect(x + 8, y + 12, 16, 12);
+    ctx.fillStyle = "#FF0000";
+    ctx.fillRect(x + 12, y + 14, 2, 2);
+    ctx.fillRect(x + 18, y + 14, 2, 2);
+    ctx.strokeStyle = "#2A0A0A";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x + 8, y + 15); ctx.lineTo(x, y + 10);
+    ctx.moveTo(x + 8, y + 19); ctx.lineTo(x, y + 24);
+    ctx.moveTo(x + 24, y + 15); ctx.lineTo(x + 32, y + 10);
+    ctx.moveTo(x + 24, y + 19); ctx.lineTo(x + 32, y + 24);
+    ctx.stroke();
+}
+
+function drawSkeleton(x, y) {
+    ctx.fillStyle = "#C0C0C0";
+    ctx.fillRect(x + 8, y, 16, 10);
+    ctx.fillRect(x + 10, y + 10, 12, 14);
+    ctx.fillRect(x + 6, y + 10, 4, 12);
+    ctx.fillRect(x + 22, y + 10, 4, 12);
+    ctx.fillRect(x + 10, y + 24, 5, 8);
+    ctx.fillRect(x + 17, y + 24, 5, 8);
+    ctx.fillStyle = "#000";
+    ctx.fillRect(x + 11, y + 4, 3, 3);
+    ctx.fillRect(x + 18, y + 4, 3, 3);
+    ctx.strokeStyle = "#8B4513";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x + 4, y + 15, 4, 0, Math.PI);
+    ctx.stroke();
+}
+
+function drawEnderman(x, y) {
+    ctx.fillStyle = "#1A0033";
+    ctx.fillRect(x + 10, y, 12, 8);
+    ctx.fillRect(x + 12, y + 8, 8, 16);
+    ctx.fillRect(x + 8, y + 8, 3, 18);
+    ctx.fillRect(x + 21, y + 8, 3, 18);
+    ctx.fillRect(x + 12, y + 24, 3, 8);
+    ctx.fillRect(x + 17, y + 24, 3, 8);
+    ctx.fillStyle = "#AA00FF";
+    ctx.fillRect(x + 12, y + 3, 2, 2);
+    ctx.fillRect(x + 18, y + 3, 2, 2);
+}
+
+function drawEnderDragon(x, y) {
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(x, y + 20, 80, 30);
+    ctx.fillRect(x + 60, y + 30, 40, 15);
+    ctx.fillStyle = "#AA00FF";
+    ctx.fillRect(x + 85, y + 35, 4, 4);
+    const wingFlap = Math.sin(gameFrame * 0.1) * 10;
+    ctx.fillStyle = "#1A0033";
+    ctx.beginPath();
+    ctx.moveTo(x + 20, y + 25);
+    ctx.lineTo(x - 20, y + 10 + wingFlap);
+    ctx.lineTo(x + 10, y + 35);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + 60, y + 25);
+    ctx.lineTo(x + 100, y + 10 + wingFlap);
+    ctx.lineTo(x + 70, y + 35);
+    ctx.fill();
+}
+
+function drawGolem(golem) {
+    const x = golem.x;
+    const y = golem.y;
+    if (golem.type === "iron") {
+        ctx.fillStyle = "#757575";
+        ctx.fillRect(x + 10, y + 10, 20, 38);
+        ctx.fillStyle = "#424242";
+        ctx.fillRect(x + 5, y, 30, 10);
+        ctx.fillStyle = "#FF5722";
+        ctx.fillRect(x + 12, y + 3, 4, 4);
+        ctx.fillRect(x + 22, y + 3, 4, 4);
+    } else {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(x + 8, y + 15, 16, 16);
+        ctx.fillRect(x + 10, y, 12, 12);
+        ctx.fillStyle = "#FF5722";
+        ctx.fillRect(x + 12, y + 4, 2, 2);
+        ctx.fillRect(x + 18, y + 4, 2, 2);
+        ctx.fillStyle = "#FFA500";
+        ctx.fillRect(x + 15, y + 6, 4, 2);
+    }
+    drawHealthBar(x, y - 8, golem.width, golem.hp, golem.maxHp);
+}
+
+function drawHealthBar(x, y, width, hp, maxHp) {
+    const barWidth = width;
+    const barHeight = 4;
+    const hpPercent = Math.max(0, hp / maxHp);
+    ctx.fillStyle = "#333";
+    ctx.fillRect(x, y, barWidth, barHeight);
+    ctx.fillStyle = hpPercent > 0.5 ? "#4CAF50" : hpPercent > 0.2 ? "#FFC107" : "#F44336";
+    ctx.fillRect(x, y, barWidth * hpPercent, barHeight);
+}
+
+function drawProjectile(proj) {
+    if (proj instanceof Arrow) {
+        ctx.fillStyle = "#8B4513";
+        ctx.save();
+        ctx.translate(proj.x, proj.y);
+        const angle = Math.atan2(proj.velY, proj.velX);
+        ctx.rotate(angle);
+        ctx.fillRect(0, -1, 12, 2);
+        ctx.fillStyle = "#C0C0C0";
+        ctx.fillRect(10, -2, 2, 4);
+        ctx.restore();
+    } else if (proj instanceof Snowball) {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.beginPath();
+        ctx.arc(proj.x, proj.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#E0E0E0";
+        ctx.stroke();
+    } else if (proj instanceof DragonFireball) {
+        ctx.fillStyle = "#FF5722";
+        ctx.beginPath();
+        ctx.arc(proj.x, proj.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#FF9800";
+        ctx.stroke();
+    }
+}
+
 function colCheck(shapeA, shapeB) {
     return colCheckRect(shapeA.x, shapeA.y, shapeA.width, shapeA.height, shapeB.x, shapeB.y, shapeB.width, shapeB.height);
 }
@@ -1191,21 +1653,20 @@ class Chest extends Entity {
     open() {
         if (this.opened) return;
         this.opened = true;
-        const rand = Math.random();
-        let drop = "";
-        let dropIcon = "";
-        if (rand < 0.4) {
-            drop = "diamond";
-            dropIcon = "💎";
-        } else if (rand < 0.7) {
-            drop = "pumpkin";
-            dropIcon = "🎃";
-        } else {
-            drop = "iron";
-            dropIcon = "🧱";
-        }
+        const roll = Math.random();
+        let drop = "iron";
+        if (roll < 0.3) drop = "diamond";
+        else if (roll < 0.55) drop = "pumpkin";
+        else if (roll < 0.7) drop = "iron";
+        else if (roll < 0.8) drop = "stick";
+        else if (roll < 0.87) drop = "wooden_axe";
+        else if (roll < 0.93) drop = "stone_sword";
+        else if (roll < 0.97) drop = "arrow";
+        else drop = "iron_pickaxe";
+        if (!inventory[drop] && inventory[drop] !== 0) inventory[drop] = 0;
         inventory[drop]++;
         updateInventoryUI();
+        const dropIcon = ITEM_ICONS[drop] || "✨";
         showFloatingText(dropIcon, this.x + 10, this.y - 30);
     }
 }
@@ -1219,17 +1680,447 @@ class Item extends Entity {
     }
 }
 
+const ENEMY_STATS = {
+    zombie: {
+        hp: 20,
+        speed: 0.55,
+        damage: 10,
+        attackType: "melee",
+        color: "#00AA00",
+        drops: ["rotten_flesh"],
+        scoreValue: 10
+    },
+    spider: {
+        hp: 16,
+        speed: 1.2,
+        damage: 8,
+        attackType: "melee",
+        color: "#4A0E0E",
+        drops: ["string"],
+        scoreValue: 12
+    },
+    creeper: {
+        hp: 20,
+        speed: 0.4,
+        damage: 40,
+        attackType: "explode",
+        color: "#00AA00",
+        drops: ["gunpowder"],
+        scoreValue: 18
+    },
+    skeleton: {
+        hp: 15,
+        speed: 0.5,
+        damage: 12,
+        attackType: "ranged",
+        color: "#C0C0C0",
+        drops: ["bone", "arrow"],
+        scoreValue: 20
+    },
+    enderman: {
+        hp: 40,
+        speed: 2.0,
+        damage: 25,
+        attackType: "teleport",
+        color: "#1A0033",
+        drops: ["ender_pearl"],
+        scoreValue: 35
+    },
+    ender_dragon: {
+        hp: 200,
+        speed: 1.5,
+        damage: 30,
+        attackType: "boss",
+        color: "#000000",
+        drops: ["dragon_egg"],
+        scoreValue: 200,
+        size: { w: 120, h: 60 }
+    }
+};
+
+class Projectile extends Entity {
+    constructor(x, y, targetX, targetY, speed = 3, faction = "enemy") {
+        super(x, y, 8, 8);
+        const angle = Math.atan2(targetY - y, targetX - x);
+        this.velX = Math.cos(angle) * speed;
+        this.velY = Math.sin(angle) * speed;
+        this.lifetime = 180;
+        this.damage = 12;
+        this.faction = faction;
+    }
+
+    reset(x, y, targetX, targetY, speed) {
+        this.x = x;
+        this.y = y;
+        const angle = Math.atan2(targetY - y, targetX - x);
+        this.velX = Math.cos(angle) * speed;
+        this.velY = Math.sin(angle) * speed;
+        this.lifetime = 180;
+        this.remove = false;
+    }
+
+    update(playerRef, golemList, enemyList) {
+        this.x += this.velX;
+        this.y += this.velY;
+        this.lifetime--;
+
+        if (this.faction === "enemy") {
+            if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
+                damagePlayer(this.damage, this.x);
+                this.remove = true;
+                return;
+            }
+            for (const g of golemList) {
+                if (rectIntersect(this.x, this.y, this.width, this.height, g.x, g.y, g.width, g.height)) {
+                    g.takeDamage(this.damage);
+                    this.remove = true;
+                    return;
+                }
+            }
+        } else if (this.faction === "golem") {
+            for (const e of enemyList) {
+                if (!e.remove && rectIntersect(this.x, this.y, this.width, this.height, e.x, e.y, e.width, e.height)) {
+                    e.takeDamage(this.damage);
+                    showFloatingText(`⚔️ ${this.damage}`, e.x, e.y - 10);
+                    this.remove = true;
+                    return;
+                }
+            }
+        }
+
+        if (this.lifetime <= 0) this.remove = true;
+    }
+}
+
+class Arrow extends Projectile {
+    constructor(x, y, targetX, targetY) {
+        super(x, y, targetX, targetY, 4, "enemy");
+        this.damage = 12;
+    }
+}
+
+class Snowball extends Projectile {
+    constructor(x, y, targetX, targetY) {
+        super(x, y, targetX, targetY, 3, "golem");
+        this.damage = 8;
+    }
+}
+
+class DragonFireball extends Projectile {
+    constructor(x, y, targetX, targetY) {
+        super(x, y, targetX, targetY, 2, "enemy");
+        this.damage = 30;
+        this.width = 16;
+        this.height = 16;
+    }
+}
+
 class Enemy extends Entity {
-    constructor(x, y, range) {
-        super(x, y, 32, 32);
+    constructor(x, y, type = "zombie", range = 120) {
+        const stats = ENEMY_STATS[type] || ENEMY_STATS.zombie;
+        const size = stats.size || { w: 32, h: 32 };
+        super(x, y, size.w, size.h);
+        this.type = type;
         this.startX = x;
         this.range = range;
-        this.speed = 0.5;
+        this.hp = stats.hp;
+        this.maxHp = stats.hp;
+        this.speed = stats.speed;
+        this.damage = stats.damage;
+        this.attackType = stats.attackType;
+        this.color = stats.color;
+        this.drops = stats.drops || [];
+        this.scoreValue = stats.scoreValue || gameConfig.scoring.enemy;
         this.dir = 1;
+        this.state = "patrol";
+        this.attackCooldown = 0;
+        this.explodeTimer = 0;
+        this.teleportCooldown = 0;
+        this.phaseChanged = false;
     }
-    update() {
+
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.hp <= 0) this.die();
+    }
+
+    die() {
+        this.remove = true;
+        this.y = 1000;
+        if (Math.random() < 0.6 && this.drops.length) {
+            const drop = this.drops[Math.floor(Math.random() * this.drops.length)];
+            dropItem(drop, this.x, this.y);
+        }
+        addScore(this.scoreValue);
+    }
+
+    update(playerRef) {
+        if (this.remove || this.y > 900) return;
+
+        switch (this.type) {
+            case "zombie":
+                this.updateZombie(playerRef);
+                break;
+            case "spider":
+                this.updateSpider(playerRef);
+                break;
+            case "creeper":
+                this.updateCreeper(playerRef);
+                break;
+            case "skeleton":
+                this.updateSkeleton(playerRef);
+                break;
+            case "enderman":
+                this.updateEnderman(playerRef);
+                break;
+            case "ender_dragon":
+                this.updateEnderDragon(playerRef);
+                break;
+            default:
+                this.updateBasic();
+        }
+
+        if (this.attackCooldown > 0) this.attackCooldown--;
+        if (this.teleportCooldown > 0) this.teleportCooldown--;
+    }
+
+    updateBasic() {
         this.x += this.speed * this.dir;
         if (this.x > this.startX + this.range || this.x < this.startX) this.dir *= -1;
+    }
+
+    updateZombie(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        if (dist < 200) {
+            this.state = "chase";
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+        } else {
+            this.state = "patrol";
+            this.updateBasic();
+        }
+    }
+
+    updateSpider(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        if (dist < 240) {
+            this.state = "chase";
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+        } else {
+            this.state = "patrol";
+            this.updateBasic();
+        }
+    }
+
+    updateCreeper(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        if (dist < 60) {
+            this.state = "exploding";
+            if (this.explodeTimer === 0) this.explodeTimer = 90;
+            this.explodeTimer--;
+            if (this.explodeTimer <= 0) {
+                if (Math.abs(this.x - playerRef.x) < 120 && Math.abs(this.y - playerRef.y) < 120) {
+                    damagePlayer(this.damage, this.x);
+                    showFloatingText("💥 爆炸!", this.x, this.y);
+                }
+                this.die();
+            }
+        } else if (dist < 200) {
+            this.state = "chase";
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+            this.explodeTimer = 0;
+        } else {
+            this.state = "patrol";
+            this.explodeTimer = 0;
+            this.updateBasic();
+        }
+    }
+
+    updateSkeleton(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        if (dist < 80) {
+            this.x += (playerRef.x > this.x ? -1 : 1) * this.speed;
+        } else if (dist > 150 && dist < 300) {
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+        }
+
+        if (this.attackCooldown === 0 && dist < 260) {
+            const arrow = projectilePool.getArrow(this.x, this.y, playerRef.x, playerRef.y);
+            if (!projectiles.includes(arrow)) projectiles.push(arrow);
+            this.attackCooldown = 120;
+        }
+    }
+
+    updateEnderman(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        if (dist > 300 && this.teleportCooldown === 0 && Math.random() < 0.02) {
+            this.x = playerRef.x + (Math.random() > 0.5 ? 120 : -120);
+            this.y = playerRef.y;
+            this.teleportCooldown = 180;
+            showFloatingText("⚡", this.x, this.y);
+        } else if (dist < 150) {
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+        } else {
+            this.updateBasic();
+        }
+    }
+
+    updateEnderDragon(playerRef) {
+        const phase = this.hp > this.maxHp * 0.5 ? 1 : 2;
+        if (phase === 2 && !this.phaseChanged) {
+            this.phaseChanged = true;
+            this.speed *= 1.5;
+            showToast("⚠️ 末影龙进入狂暴状态！");
+        }
+
+        this.x += this.speed * this.dir;
+        this.y = 100 + Math.sin(gameFrame * 0.02) * 50;
+        if (this.x > this.startX + 400 || this.x < this.startX - 200) this.dir *= -1;
+
+        if (this.attackCooldown === 0 && Math.random() < 0.02) {
+            const fireball = projectilePool.getFireball(this.x + 40, this.y + 20, playerRef.x, playerRef.y);
+            if (!projectiles.includes(fireball)) projectiles.push(fireball);
+            this.attackCooldown = phase === 1 ? 120 : 60;
+        }
+
+        if (phase === 2 && Math.random() < 0.005) {
+            this.state = "diving";
+            this.targetDiveY = 400;
+        }
+
+        if (this.state === "diving") {
+            this.y += 5;
+            if (this.y >= this.targetDiveY) {
+                this.state = "patrol";
+                if (Math.abs(this.x - playerRef.x) < 150) {
+                    damagePlayer(this.damage, this.x, 150);
+                    showFloatingText("💥 龙息冲击!", playerRef.x, playerRef.y);
+                }
+            }
+        }
+    }
+}
+
+class Golem extends Entity {
+    constructor(x, y, type = "iron") {
+        super(x, y, type === "iron" ? 40 : 32, type === "iron" ? 48 : 40);
+        const config = getGolemConfig();
+        const stats = type === "iron" ? config.ironGolem : config.snowGolem;
+        this.type = type;
+        this.hp = stats.hp;
+        this.maxHp = stats.hp;
+        this.damage = stats.damage;
+        this.speed = stats.speed;
+        this.followDelay = 50;
+        this.attackCooldown = 0;
+        this.attackRange = type === "iron" ? 80 : 120;
+        this.velX = 0;
+        this.velY = 0;
+        this.grounded = false;
+        this.facingRight = true;
+        this.stuckCounter = 0;
+        this.lastX = x;
+    }
+
+    updateFollow(playerHistory, platformsRef) {
+        if (playerHistory.length < this.followDelay) return;
+        const target = playerHistory[playerHistory.length - this.followDelay];
+        const dx = target.x - this.x;
+        if (Math.abs(dx) > 30) {
+            this.velX = Math.sign(dx) * this.speed;
+            this.facingRight = dx > 0;
+        } else {
+            this.velX *= 0.8;
+        }
+        if (this.grounded && this.shouldJump(platformsRef)) {
+            this.velY = -10;
+        }
+    }
+
+    shouldJump(platformsRef) {
+        const checkX = this.facingRight ? this.x + this.width + 5 : this.x - 5;
+        const checkY = this.y + this.height;
+        for (const p of platformsRef) {
+            if (p.y < checkY && p.y > this.y - 50) {
+                if (checkX > p.x && checkX < p.x + p.width) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    updateAttack(enemyList) {
+        if (this.attackCooldown > 0) {
+            this.attackCooldown--;
+            return;
+        }
+        let nearest = null;
+        let minDist = this.attackRange;
+        for (const e of enemyList) {
+            if (e.remove || e.y > 900) continue;
+            const dist = Math.abs(this.x - e.x);
+            const vertDist = Math.abs(this.y - e.y);
+            if (dist < minDist && vertDist < 100) {
+                nearest = e;
+                minDist = dist;
+            }
+        }
+        if (nearest) {
+            if (this.type === "snow") {
+                const snowball = projectilePool.getSnowball(this.x + this.width / 2, this.y + this.height / 2, nearest.x, nearest.y);
+                if (!projectiles.includes(snowball)) projectiles.push(snowball);
+            } else {
+                nearest.takeDamage(this.damage);
+            }
+            this.attackCooldown = 60;
+            showFloatingText(`⚔️ ${this.damage}`, nearest.x, nearest.y - 20);
+        }
+    }
+
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.remove = true;
+            if (Math.random() < 0.5) {
+                const dropType = this.type === "iron" ? "iron" : "pumpkin";
+                dropItem(dropType, this.x, this.y);
+            }
+        }
+    }
+
+    update(playerRef, playerHistory, enemyList, platformsRef) {
+        this.updateFollow(playerHistory, platformsRef);
+        this.velY += gameConfig.physics.gravity;
+        this.grounded = false;
+
+        for (const p of platformsRef) {
+            const dir = colCheck(this, p);
+            if (dir === "l" || dir === "r") this.velX = 0;
+            else if (dir === "b") {
+                this.grounded = true;
+                this.y = p.y - this.height;
+                this.velY = 0;
+            } else if (dir === "t") {
+                this.velY = 0;
+            }
+        }
+
+        this.updateAttack(enemyList);
+
+        this.x += this.velX;
+        this.y += this.velY;
+
+        if (this.y > fallResetY) this.remove = true;
+
+        if (Math.abs(this.x - this.lastX) < 0.2) this.stuckCounter++;
+        else this.stuckCounter = 0;
+        this.lastX = this.x;
+
+        if (this.stuckCounter > 180 && playerRef) {
+            this.x = playerRef.x + (Math.random() > 0.5 ? 50 : -50);
+            this.y = playerRef.y;
+            this.stuckCounter = 0;
+        }
     }
 }
 
@@ -1461,6 +2352,8 @@ async function start() {
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
         const isInteract = matchesBinding(e, keyBindings.interact) || String(e.key || "").toLowerCase() === "y";
         const isPause = e.code === "Escape";
+        const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
+        const inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
         if (isJump) {
             if (!e.repeat) {
                 jumpBuffer = gameConfig.jump.bufferFrames;
@@ -1470,6 +2363,21 @@ async function start() {
         if (isLeft) keys.left = true;
         if (isAttack) handleAttack();
         if (isInteract) handleInteraction();
+        if (!inInput && e.key >= "1" && e.key <= "9") {
+            selectedSlot = parseInt(e.key, 10) - 1;
+            updateInventoryUI();
+            const itemKey = HOTBAR_ITEMS[selectedSlot];
+            showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "空"}`);
+        }
+        if (!inInput && String(e.key || "").toLowerCase() === "x" && !paused) {
+            if (inventory.iron >= 10) {
+                tryCraft("iron_golem");
+            } else if (inventory.pumpkin >= 10) {
+                tryCraft("snow_golem");
+            } else {
+                showToast("材料不足！需要 10 个铁块或南瓜");
+            }
+        }
         if (isPause && startedOnce) {
             paused = !paused;
             const btnPause = document.getElementById("btn-pause");

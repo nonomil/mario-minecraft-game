@@ -157,6 +157,11 @@ canvas {
     margin-bottom: 4px;
 }
 
+.inv-slot.selected {
+    border: 3px solid #FFD700;
+    box-shadow: 0 0 10px #FFD700;
+}
+
 .inv-icon {
     font-size: 20px;
     margin-bottom: 0;

@@ -35,5 +35,16 @@
         "chestChance": 0.35,
         "itemChance": 0.55,
         "enemyChance": 0.7
+    },
+    "enemies": {
+        "maxOnScreen": 8,
+        "spawnChance": 0.3,
+        "difficultyThresholds": [500, 1000, 2000, 3000],
+        "bossSpawnScore": 5000
+    },
+    "golems": {
+        "maxCount": 3,
+        "ironGolem": { "hp": 100, "damage": 20, "speed": 1.5 },
+        "snowGolem": { "hp": 50, "damage": 10, "speed": 2.0 }
     }
 }
