@@ -1,0 +1,39 @@
+{
+    "canvas": { "width": 800, "height": 600 },
+    "physics": {
+        "gravity": 0.2,
+        "friction": 0.85,
+        "jumpStrength": -7.0,
+        "movementSpeed": 2.0,
+        "groundY": 530
+    },
+    "world": {
+        "blockSize": 50,
+        "cameraOffsetX": 300,
+        "mapBuffer": 1000,
+        "removeThreshold": 200,
+        "fallResetY": 800
+    },
+    "scoring": {
+        "word": 10,
+        "enemy": 5,
+        "levelUp": 100
+    },
+    "jump": {
+        "bufferFrames": 12,
+        "coyoteFrames": 10
+    },
+    "player": {
+        "width": 26,
+        "height": 52,
+        "maxJumps": 2
+    },
+    "spawn": {
+        "floatingPlatformChance": 0.6,
+        "floatingItemChance": 0.5,
+        "treeChance": 0.2,
+        "chestChance": 0.35,
+        "itemChance": 0.55,
+        "enemyChance": 0.7
+    }
+}
