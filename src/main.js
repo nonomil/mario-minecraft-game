@@ -61,7 +61,13 @@ const INVENTORY_TEMPLATE = {
     rotten_flesh: 0,
     string: 0,
     ender_pearl: 0,
-    dragon_egg: 0
+    dragon_egg: 0,
+    flower: 0,
+    mushroom: 0,
+    coal: 0,
+    gold: 0,
+    shell: 0,
+    starfish: 0
 };
 let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
@@ -80,7 +86,13 @@ const ITEM_LABELS = {
     rotten_flesh: "腐肉",
     string: "蜘蛛丝",
     ender_pearl: "末影珍珠",
-    dragon_egg: "龙蛋"
+    dragon_egg: "龙蛋",
+    flower: "花朵",
+    mushroom: "蘑菇",
+    coal: "煤矿",
+    gold: "金矿",
+    shell: "贝壳",
+    starfish: "海星"
 };
 const ITEM_ICONS = {
     diamond: "💎",
@@ -96,7 +108,13 @@ const ITEM_ICONS = {
     rotten_flesh: "🥩",
     string: "🕸️",
     ender_pearl: "🟣",
-    dragon_egg: "🐉"
+    dragon_egg: "🐉",
+    flower: "🌸",
+    mushroom: "🍄",
+    coal: "🪨",
+    gold: "🪙",
+    shell: "🐚",
+    starfish: "⭐"
 };
 const TOOL_STATS = {
     wooden_axe: { damage: 5 },
@@ -163,6 +181,75 @@ const projectilePool = {
         return fireball;
     }
 };
+
+const DEFAULT_BIOME_CONFIGS = {
+    forest: {
+        id: "forest",
+        name: "森林",
+        color: "#4CAF50",
+        groundType: "grass",
+        decorations: { tree: 0.3, bush: 0.2, flower: 0.25, mushroom: 0.1, vine: 0.15 },
+        treeTypes: { oak: 0.5, birch: 0.3, dark_oak: 0.2 },
+        effects: { particles: "leaves", ambient: "#88CC88", weather: ["clear", "rain", "fog"] },
+        spawnWeight: { min: 0, max: 1000 }
+    },
+    snow: {
+        id: "snow",
+        name: "雪地",
+        color: "#FFFFFF",
+        groundType: "snow",
+        decorations: { spruce: 0.25, ice_spike: 0.1, snow_pile: 0.3, ice_block: 0.15 },
+        treeTypes: { spruce: 0.7, pine: 0.3 },
+        effects: { particles: "snowflakes", ambient: "#CCE6FF", speedMultiplier: 1.2, weather: ["snow"] },
+        spawnWeight: { min: 500, max: 1500 }
+    },
+    desert: {
+        id: "desert",
+        name: "沙漠",
+        color: "#FDD835",
+        groundType: "sand",
+        decorations: { cactus: 0.2, dead_bush: 0.15, rock: 0.1, bones: 0.05 },
+        treeTypes: { cactus: 1.0 },
+        effects: { particles: "dust", ambient: "#FFEECC", speedMultiplier: 0.85, heatWave: true, weather: ["clear", "sandstorm"] },
+        spawnWeight: { min: 1000, max: 2000 }
+    },
+    mountain: {
+        id: "mountain",
+        name: "山地",
+        color: "#757575",
+        groundType: "stone",
+        decorations: { ore_coal: 0.15, ore_iron: 0.1, ore_gold: 0.05, ore_diamond: 0.02, stalactite: 0.12, crystal: 0.08, lava_pool: 0.05 },
+        effects: { particles: "sparkle", ambient: "#666688", darkness: 0.3, weather: ["fog"] },
+        spawnWeight: { min: 1500, max: 3000 }
+    },
+    ocean: {
+        id: "ocean",
+        name: "海滨",
+        color: "#2196F3",
+        groundType: "sand",
+        decorations: { palm_tree: 0.15, shell: 0.2, starfish: 0.15, seaweed: 0.25, boat: 0.05 },
+        treeTypes: { palm: 1.0 },
+        effects: { particles: "bubbles", ambient: "#AAD4F5", waterLevel: 150 },
+        spawnWeight: { min: 2000, max: 4000 }
+    },
+    nether: {
+        id: "nether",
+        name: "地狱",
+        color: "#8B0000",
+        groundType: "netherrack",
+        decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
+        effects: { particles: "flames", ambient: "#CC3333", damage: 1, speedMultiplier: 0.7 },
+        spawnWeight: { min: 3500, max: 5000 }
+    }
+};
+
+let biomeConfigs = JSON.parse(JSON.stringify(DEFAULT_BIOME_CONFIGS));
+let currentBiome = "forest";
+let biomeTransitionX = 0;
+let decorations = [];
+let particles = [];
+let weatherState = { type: "clear", timer: 0 };
+const MAX_DECORATIONS_ONSCREEN = 60;
 let floatingTexts = [];
 let lastGenX = 0;
 
@@ -209,6 +296,92 @@ function getGolemConfig() {
         snowGolem: { hp: 50, damage: 10, speed: 2.0 }
     };
     return mergeDeep(base, gameConfig.golems || {});
+}
+
+function normalizeBiomeConfigs(raw) {
+    const out = raw && typeof raw === "object" ? raw : {};
+    if (!out.forest) return JSON.parse(JSON.stringify(DEFAULT_BIOME_CONFIGS));
+    return out;
+}
+
+function getBiomeById(id) {
+    return biomeConfigs[id] || biomeConfigs.forest;
+}
+
+function selectBiome(x, scoreValue) {
+    const available = Object.values(biomeConfigs).filter(b => scoreValue >= b.spawnWeight.min && scoreValue <= b.spawnWeight.max);
+    if (!available.length) return biomeConfigs.forest;
+    const biomeLength = 2000;
+    const idx = Math.floor(x / biomeLength) % available.length;
+    return available[idx];
+}
+
+function updateCurrentBiome() {
+    const nextBiome = selectBiome(player.x, score);
+    if (nextBiome.id !== currentBiome) {
+        currentBiome = nextBiome.id;
+        biomeTransitionX = player.x;
+        showToast(`🌍 进入${nextBiome.name}群系`);
+        updateWeatherForBiome(nextBiome);
+        const info = document.getElementById("level-info");
+        if (info) info.innerText = `生态: ${nextBiome.name}`;
+    }
+}
+
+function updateWeatherForBiome(biome) {
+    const options = biome.effects?.weather || ["clear"];
+    weatherState.type = options[Math.floor(Math.random() * options.length)];
+    weatherState.timer = 600 + Math.floor(Math.random() * 600);
+}
+
+function applyBiomeEffectsToPlayer() {
+    const biome = getBiomeById(currentBiome);
+    const speedMult = biome.effects?.speedMultiplier || 1;
+    let nextSpeed = player.baseSpeed * speedMult;
+    if (biome.effects?.waterLevel && player.y + player.height > biome.effects.waterLevel) {
+        nextSpeed *= 0.65;
+    }
+    player.speed = nextSpeed;
+    if (biome.effects?.damage) {
+        if (gameFrame % 90 === 0) {
+            damagePlayer(biome.effects.damage, player.x, 30);
+        }
+    }
+}
+
+function tickWeather() {
+    weatherState.timer--;
+    if (weatherState.timer <= 0) {
+        updateWeatherForBiome(getBiomeById(currentBiome));
+    }
+}
+
+function spawnBiomeParticles() {
+    const biome = getBiomeById(currentBiome);
+    const baseX = cameraX + Math.random() * canvas.width;
+    if (biome.effects?.particles === "snowflakes" && Math.random() < 0.2) {
+        particles.push(new Snowflake(baseX, -10));
+    } else if (biome.effects?.particles === "leaves" && Math.random() < 0.15) {
+        particles.push(new LeafParticle(baseX, -10));
+    } else if (biome.effects?.particles === "dust" && Math.random() < 0.2) {
+        particles.push(new DustParticle(baseX, Math.random() * canvas.height));
+    } else if (biome.effects?.particles === "flames" && Math.random() < 0.2) {
+        particles.push(new EmberParticle(baseX, canvas.height - 50));
+    } else if (biome.effects?.particles === "bubbles" && Math.random() < 0.2) {
+        particles.push(new BubbleParticle(baseX, canvas.height - 20));
+    } else if (biome.effects?.particles === "sparkle" && Math.random() < 0.15) {
+        particles.push(new SparkleParticle(baseX, Math.random() * canvas.height));
+    }
+
+    if (weatherState.type === "rain" && Math.random() < 0.4) {
+        particles.push(new RainParticle(baseX, -10));
+    }
+    if (weatherState.type === "snow" && Math.random() < 0.3) {
+        particles.push(new Snowflake(baseX, -10));
+    }
+    if (weatherState.type === "sandstorm" && Math.random() < 0.35) {
+        particles.push(new DustParticle(baseX, Math.random() * canvas.height));
+    }
 }
 
 function applyConfig() {
@@ -519,11 +692,11 @@ function setOverlay(visible, mode) {
         overlay.setAttribute("aria-hidden", "false");
         if (mode === "pause") {
             if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　Y 打开宝箱";
+            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　Y 打开宝箱　E 采集";
             if (btn) btn.innerText = "继续";
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　Y 打开宝箱";
+            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　Y 打开宝箱　E 采集";
             if (btn) btn.innerText = "开始游戏";
         }
     } else {
@@ -552,8 +725,10 @@ function applyMotionToPlayer(p) {
     if (!p) return;
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
     const scale = clamp(Number(settings.motionScale) || 1.0, 0.6, 2.0);
-    p.speed = (Number(gameConfig.physics.movementSpeed) || 2.0) * scale;
-    p.jumpStrength = (Number(gameConfig.physics.jumpStrength) || -7.0) * scale;
+    p.baseSpeed = (Number(gameConfig.physics.movementSpeed) || 2.0) * scale;
+    p.baseJumpStrength = (Number(gameConfig.physics.jumpStrength) || -7.0) * scale;
+    p.speed = p.baseSpeed;
+    p.jumpStrength = p.baseJumpStrength;
 }
 
 function createPlayer() {
@@ -592,11 +767,16 @@ function startLevel(idx) {
     currentLevelIdx = idx;
     const level = levels[currentLevelIdx];
     canvas.style.backgroundColor = level.bg;
-    document.getElementById("level-info").innerText = "场景: " + level.name;
+    const initBiome = selectBiome(player.x, score);
+    currentBiome = initBiome.id;
+    const info = document.getElementById("level-info");
+    if (info) info.innerText = `生态: ${initBiome.name}`;
     platforms = [];
     trees = [];
     chests = [];
     items = [];
+    decorations = [];
+    particles = [];
     enemies = [];
     golems = [];
     resetProjectiles();
@@ -711,11 +891,13 @@ function getSpawnRates() {
 
 function generatePlatform(startX, length, groundYValue) {
     const level = levels[currentLevelIdx];
+    const biome = selectBiome(startX, score);
+    const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
     let merged = false;
     for (let i = platforms.length - 1; i >= 0; i--) {
         const p = platforms[i];
-        if (p.y === groundYValue && p.type === level.ground) {
+        if (p.y === groundYValue && p.type === groundType) {
             if (Math.abs((p.x + p.width) - startX) < 1.5) {
                 p.width += newWidth;
                 merged = true;
@@ -725,14 +907,16 @@ function generatePlatform(startX, length, groundYValue) {
     }
 
     if (!merged) {
-        platforms.push(new Platform(startX, groundYValue, newWidth, blockSize, level.ground));
+        platforms.push(new Platform(startX, groundYValue, newWidth, blockSize, groundType));
     }
+
+    generateBiomeDecorations(startX, groundYValue, newWidth, biome);
 
     if (length > 5 && Math.random() < gameConfig.spawn.floatingPlatformChance) {
         const floatLen = 2 + Math.floor(Math.random() * 3);
         const floatY = groundYValue - 100 - Math.floor(Math.random() * 80);
         const floatX = startX + blockSize + Math.floor(Math.random() * (length - floatLen) * blockSize);
-        platforms.push(new Platform(floatX, floatY, floatLen * blockSize, blockSize, level.ground));
+        platforms.push(new Platform(floatX, floatY, floatLen * blockSize, blockSize, groundType));
         if (Math.random() < gameConfig.spawn.floatingItemChance) {
             const word = pickWordForSpawn();
             items.push(new Item(floatX + blockSize / 2, floatY - 50, word));
@@ -750,7 +934,7 @@ function generatePlatform(startX, length, groundYValue) {
         }
         enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance));
         if (rand < rates.treeChance) {
-            trees.push(new Tree(objectX, groundYValue, level.treeType));
+            spawnBiomeTree(objectX, groundYValue, biome, level.treeType);
         } else if (rand < rates.chestChance) {
             chests.push(new Chest(objectX, groundYValue));
         } else if (rand < rates.itemChance) {
@@ -778,6 +962,135 @@ function spawnEnemyByDifficulty(x, y) {
 
     const type = pool[Math.floor(Math.random() * pool.length)];
     enemies.push(new Enemy(x, y, type));
+}
+
+function weightedPick(table) {
+    const entries = Object.entries(table || {});
+    if (!entries.length) return null;
+    const total = entries.reduce((sum, [, w]) => sum + w, 0);
+    let r = Math.random() * (total || 1);
+    for (const [key, w] of entries) {
+        r -= w;
+        if (r <= 0) return key;
+    }
+    return entries[entries.length - 1][0];
+}
+
+function spawnBiomeTree(x, yPos, biome, fallbackType) {
+    const type = weightedPick(biome.treeTypes) || fallbackType || "oak";
+    trees.push(new Tree(x, yPos, type));
+}
+
+function generateBiomeDecorations(x, yPos, width, biome) {
+    const decorConfig = biome.decorations || {};
+    Object.entries(decorConfig).forEach(([decorType, probability]) => {
+        if (Math.random() >= probability) return;
+        const decorX = x + Math.random() * width;
+        switch (decorType) {
+            case "tree":
+                spawnBiomeTree(decorX, yPos, biome);
+                break;
+            case "spruce":
+            case "pine":
+            case "palm_tree":
+                spawnBiomeTree(decorX, yPos, biome);
+                break;
+            case "bush":
+                spawnDecoration("bush", obj => obj.reset(decorX, yPos - 20), () => new Bush(decorX, yPos - 20));
+                break;
+            case "flower":
+                spawnDecoration("flower", obj => obj.reset(decorX, yPos - 18), () => new Flower(decorX, yPos - 18));
+                break;
+            case "mushroom":
+                spawnDecoration("mushroom", obj => obj.reset(decorX, yPos - 20), () => new Mushroom(decorX, yPos - 20));
+                break;
+            case "vine":
+                spawnDecoration("vine", obj => obj.reset(decorX, yPos - 80, 40 + Math.random() * 30), () => new Vine(decorX, yPos - 80, 40 + Math.random() * 30));
+                break;
+            case "ice_spike":
+                spawnDecoration("ice_spike", obj => obj.reset(decorX, yPos - 80), () => new IceSpike(decorX, yPos - 80));
+                break;
+            case "snow_pile": {
+                const size = ["small", "medium", "large"][Math.floor(Math.random() * 3)];
+                spawnDecoration("snow_pile", obj => obj.reset(decorX, yPos - 25, size), () => new SnowPile(decorX, yPos - 25, size));
+                break;
+            }
+            case "ice_block": {
+                const blockWidth = 60 + Math.random() * 80;
+                spawnDecoration("ice_block", obj => obj.reset(decorX, yPos - 50, blockWidth), () => new IceBlock(decorX, yPos - 50, blockWidth));
+                break;
+            }
+            case "cactus":
+                spawnDecoration("cactus", obj => obj.reset(decorX, yPos - 100), () => new CactusDecor(decorX, yPos - 100));
+                break;
+            case "dead_bush":
+                spawnDecoration("dead_bush", obj => obj.reset(decorX, yPos - 30), () => new DeadBush(decorX, yPos - 30));
+                break;
+            case "rock": {
+                const size = ["small", "medium", "large"][Math.floor(Math.random() * 3)];
+                spawnDecoration("rock", obj => obj.reset(decorX, yPos - 30, size), () => new Rock(decorX, yPos - 30, size));
+                break;
+            }
+            case "bones":
+                spawnDecoration("bones", obj => obj.reset(decorX, yPos - 12), () => new BoneDecor(decorX, yPos - 12));
+                break;
+            case "ore_coal":
+            case "ore_iron":
+            case "ore_gold":
+            case "ore_diamond": {
+                const oreType = decorType.replace("ore_", "");
+                spawnDecoration(decorType, obj => obj.reset(decorX, yPos - 30, oreType), () => new Ore(decorX, yPos - 30, oreType));
+                break;
+            }
+            case "stalactite": {
+                const direction = Math.random() > 0.5 ? "down" : "up";
+                spawnDecoration("stalactite", obj => obj.reset(decorX, direction === "down" ? yPos - 100 : yPos - 20, direction), () => new Stalactite(decorX, direction === "down" ? yPos - 100 : yPos - 20, direction));
+                break;
+            }
+            case "crystal":
+                spawnDecoration("crystal", obj => obj.reset(decorX, yPos - 28), () => new Crystal(decorX, yPos - 28));
+                break;
+            case "lava_pool": {
+                const poolWidth = 60 + Math.random() * 80;
+                spawnDecoration("lava_pool", obj => obj.reset(decorX, yPos - 16, poolWidth, biome.id), () => new LavaPool(decorX, yPos - 16, poolWidth, biome.id));
+                break;
+            }
+            case "palm_tree":
+                spawnBiomeTree(decorX, yPos, biome);
+                break;
+            case "shell":
+                spawnDecoration("shell", obj => obj.reset(decorX, yPos - 10), () => new Shell(decorX, yPos - 10));
+                break;
+            case "starfish":
+                spawnDecoration("starfish", obj => obj.reset(decorX, yPos - 12), () => new Starfish(decorX, yPos - 12));
+                break;
+            case "seaweed":
+                spawnDecoration("seaweed", obj => obj.reset(decorX, yPos - 30), () => new Seaweed(decorX, yPos - 30));
+                break;
+            case "boat":
+                spawnDecoration("boat", obj => obj.reset(decorX, yPos - 18), () => new BoatDecor(decorX, yPos - 18));
+                break;
+            case "fire":
+                spawnDecoration("fire", obj => obj.reset(decorX, yPos - 24), () => new FireDecor(decorX, yPos - 24));
+                break;
+            case "lava_fall":
+                spawnDecoration("lava_fall", obj => obj.reset(decorX, yPos - 120), () => new LavaFall(decorX, yPos - 120));
+                break;
+            case "soul_sand": {
+                const sandWidth = 40 + Math.random() * 60;
+                spawnDecoration("soul_sand", obj => obj.reset(decorX, yPos - 10, sandWidth), () => new SoulSand(decorX, yPos - 10, sandWidth));
+                break;
+            }
+            case "nether_wart":
+                spawnDecoration("nether_wart", obj => obj.reset(decorX, yPos - 10), () => new NetherWart(decorX, yPos - 10));
+                break;
+            case "basalt":
+                spawnDecoration("basalt", obj => obj.reset(decorX, yPos - 40), () => new Basalt(decorX, yPos - 40));
+                break;
+            default:
+                break;
+        }
+    });
 }
 
 function updateMapGeneration() {
@@ -903,6 +1216,9 @@ function checkBossSpawn() {
 
 function update() {
     if (paused) return;
+    updateCurrentBiome();
+    applyBiomeEffectsToPlayer();
+    tickWeather();
     if (keys.right) {
         if (player.velX < player.speed) player.velX++;
         player.facingRight = true;
@@ -984,6 +1300,20 @@ function update() {
     if (targetCamX > cameraX) cameraX = targetCamX;
 
     updateMapGeneration();
+
+    decorations.forEach(d => {
+        d.update();
+        if ((d.interactive || d.harmful) && rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
+            d.onCollision(player);
+        }
+    });
+    decorations = decorations.filter(d => d.x + d.width > cameraX - removeThreshold && !d.remove);
+
+    if (particles.length) {
+        particles.forEach(p => p.update());
+        particles = particles.filter(p => !p.remove);
+    }
+    spawnBiomeParticles();
 
     checkBossSpawn();
 
@@ -1150,6 +1480,16 @@ function handleInteraction() {
     if (nearestChest) nearestChest.open();
 }
 
+function handleDecorationInteract() {
+    for (const d of decorations) {
+        if (!d.collectible) continue;
+        if (rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
+            d.interact(player);
+            break;
+        }
+    }
+}
+
 function handleAttack() {
     if (player.isAttacking) return;
     player.isAttacking = true;
@@ -1179,10 +1519,17 @@ function handleAttack() {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const biome = getBiomeById(currentBiome);
+    drawBackground(biome);
     ctx.save();
     ctx.translate(-cameraX, 0);
 
     platforms.forEach(p => drawBlock(p.x, p.y, p.width, p.height, p.type));
+
+    if (biome.effects?.waterLevel) {
+        ctx.fillStyle = "rgba(33, 150, 243, 0.25)";
+        ctx.fillRect(cameraX - 50, biome.effects.waterLevel, canvas.width + 100, canvas.height - biome.effects.waterLevel);
+    }
 
     trees.forEach(t => {
         if (t.shake > 0) t.shake--;
@@ -1190,11 +1537,17 @@ function draw() {
         drawPixelTree(ctx, t.x + shakeX, t.y, t.type, t.hp);
     });
 
+    decorations.forEach(d => drawDecoration(d));
+
     chests.forEach(c => drawChest(c.x, c.y, c.opened));
 
     items.forEach(i => {
         if (!i.collected) drawItem(i.x, i.y + i.floatY, i.wordObj.en);
     });
+
+    if (particles.length) {
+        particles.forEach(p => drawParticle(p));
+    }
 
     enemies.forEach(e => drawEnemy(e));
 
@@ -1274,6 +1627,12 @@ function drawBlock(x, y, w, h, type) {
         } else if (type === "sand") {
             ctx.fillStyle = "#FDD835";
             ctx.fillRect(cx, y, blockSize, h);
+        } else if (type === "netherrack") {
+            ctx.fillStyle = "#5E1B1B";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#8B0000";
+            ctx.fillRect(cx + 4, y + 6, 12, 8);
+            ctx.fillRect(cx + 20, y + 16, 10, 8);
         } else {
             ctx.fillStyle = "#5d4037";
             ctx.fillRect(cx, y, blockSize, h);
@@ -1291,6 +1650,7 @@ function drawBlock(x, y, w, h, type) {
                 else if (type === "snow") ctx.fillStyle = "#1e3f66";
                 else if (type === "stone") ctx.fillStyle = "#757575";
                 else if (type === "sand") ctx.fillStyle = "#FDD835";
+                else if (type === "netherrack") ctx.fillStyle = "#3E1010";
                 else ctx.fillStyle = "#5d4037";
                 ctx.fillRect(cx, y + h, blockSize, fillHeight);
                 ctx.fillStyle = "rgba(0,0,0,0.05)";
@@ -1305,10 +1665,9 @@ function drawPixelTree(ctx2d, x, y, type, hp) {
     const trunkH = 60;
     const trunkX = x + (80 - trunkW) / 2;
     const trunkY = y + 140 - trunkH;
-    ctx2d.fillStyle = type === "cactus" ? "#2E7D32" : "#5D4037";
-    ctx2d.fillRect(trunkX, trunkY, trunkW, trunkH);
-
     if (type === "cactus") {
+        ctx2d.fillStyle = "#2E7D32";
+        ctx2d.fillRect(trunkX, trunkY, trunkW, trunkH);
         ctx2d.fillRect(trunkX - 15, trunkY + 10, 15, 10);
         ctx2d.fillRect(trunkX - 15, trunkY - 10, 10, 20);
         ctx2d.fillRect(trunkX + 20, trunkY + 20, 15, 10);
@@ -1316,14 +1675,58 @@ function drawPixelTree(ctx2d, x, y, type, hp) {
         return;
     }
 
+    if (type === "palm") {
+        ctx2d.fillStyle = "#8D6E63";
+        ctx2d.fillRect(trunkX + 6, trunkY - 20, 8, trunkH + 20);
+        ctx2d.fillStyle = "#2E7D32";
+        ctx2d.beginPath();
+        ctx2d.moveTo(trunkX + 10, trunkY - 30);
+        ctx2d.lineTo(trunkX - 10, trunkY - 10);
+        ctx2d.lineTo(trunkX + 30, trunkY - 10);
+        ctx2d.closePath();
+        ctx2d.fill();
+        return;
+    }
+
+    if (type === "spruce" || type === "pine") {
+        ctx2d.fillStyle = "#5D4037";
+        ctx2d.fillRect(trunkX + 4, trunkY, trunkW - 8, trunkH);
+        ctx2d.fillStyle = type === "spruce" ? "#1B5E20" : "#2E7D32";
+        ctx2d.beginPath();
+        ctx2d.moveTo(x + 40, y + 10);
+        ctx2d.lineTo(x + 10, y + 70);
+        ctx2d.lineTo(x + 70, y + 70);
+        ctx2d.closePath();
+        ctx2d.fill();
+        ctx2d.fillStyle = "rgba(255,255,255,0.5)";
+        ctx2d.fillRect(x + 20, y + 40, 40, 6);
+        return;
+    }
+
     let leafColor = "#2E7D32";
-    if (type === "spruce") leafColor = "#1B5E20";
+    if (type === "birch") leafColor = "#7CB342";
+    if (type === "dark_oak") leafColor = "#1B5E20";
     if (type === "mushroom") leafColor = "#D32F2F";
+
+    if (type === "birch") {
+        ctx2d.fillStyle = "#F5F5F5";
+    } else if (type === "dark_oak") {
+        ctx2d.fillStyle = "#4E342E";
+    } else {
+        ctx2d.fillStyle = "#5D4037";
+    }
+    ctx2d.fillRect(trunkX, trunkY, trunkW, trunkH);
 
     ctx2d.fillStyle = leafColor;
     ctx2d.fillRect(x, y + 40, 80, 40);
     ctx2d.fillRect(x + 10, y + 20, 60, 20);
     ctx2d.fillRect(x + 20, y, 40, 20);
+
+    if (type === "birch") {
+        ctx2d.fillStyle = "#424242";
+        ctx2d.fillRect(trunkX + 4, trunkY + 10, 4, 6);
+        ctx2d.fillRect(trunkX + 12, trunkY + 28, 4, 6);
+    }
 
     if (hp < 5) {
         ctx2d.fillStyle = "rgba(0,0,0,0.3)";
@@ -1576,6 +1979,576 @@ function drawProjectile(proj) {
     }
 }
 
+function drawDecoration(decor) {
+    switch (decor.type) {
+        case "bush":
+            drawBush(decor);
+            break;
+        case "flower":
+            drawFlower(decor);
+            break;
+        case "mushroom":
+            drawMushroom(decor);
+            break;
+        case "vine":
+            drawVine(decor);
+            break;
+        case "ice_spike":
+            drawIceSpike(decor);
+            break;
+        case "snow_pile":
+            drawSnowPile(decor);
+            break;
+        case "ice_block":
+            drawIceBlock(decor);
+            break;
+        case "dead_bush":
+            drawDeadBush(decor);
+            break;
+        case "rock":
+            drawRock(decor);
+            break;
+        case "bones":
+            drawBones(decor);
+            break;
+        case "cactus":
+            drawCactusDecor(decor);
+            break;
+        case "ore_coal":
+        case "ore_iron":
+        case "ore_gold":
+        case "ore_diamond":
+            drawOre(decor);
+            break;
+        case "stalactite":
+            drawStalactite(decor);
+            break;
+        case "crystal":
+            drawCrystal(decor);
+            break;
+        case "lava_pool":
+            drawLavaPool(decor);
+            break;
+        case "shell":
+            drawShell(decor);
+            break;
+        case "starfish":
+            drawStarfish(decor);
+            break;
+        case "seaweed":
+            drawSeaweed(decor);
+            break;
+        case "boat":
+            drawBoatDecor(decor);
+            break;
+        case "fire":
+            drawFireDecor(decor);
+            break;
+        case "lava_fall":
+            drawLavaFall(decor);
+            break;
+        case "soul_sand":
+            drawSoulSand(decor);
+            break;
+        case "nether_wart":
+            drawNetherWart(decor);
+            break;
+        case "basalt":
+            drawBasalt(decor);
+            break;
+        default:
+            break;
+    }
+}
+
+function drawBush(bush) {
+    const x = bush.x;
+    const y = bush.y;
+    ctx.fillStyle = "#2E7D32";
+    ctx.beginPath();
+    ctx.ellipse(x + 15, y + 10, 15, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#4CAF50";
+    ctx.beginPath();
+    ctx.ellipse(x + 12, y + 8, 6, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (bush.variant === 1) {
+        ctx.fillStyle = "#2E7D32";
+        ctx.beginPath();
+        ctx.ellipse(x + 22, y + 12, 10, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+    } else if (bush.variant === 2) {
+        ctx.fillStyle = "#FF1744";
+        ctx.fillRect(x + 10, y + 5, 3, 3);
+        ctx.fillRect(x + 18, y + 7, 3, 3);
+    }
+}
+
+function drawFlower(flower) {
+    const x = flower.x;
+    const y = flower.y;
+    ctx.fillStyle = "#4CAF50";
+    ctx.fillRect(x + 5, y + 8, 2, 10);
+    ctx.fillStyle = flower.color;
+    for (let i = 0; i < 4; i++) {
+        const angle = (Math.PI / 2) * i;
+        const px = x + 6 + Math.cos(angle) * 4;
+        const py = y + 6 + Math.sin(angle) * 4;
+        ctx.fillRect(px, py, 4, 4);
+    }
+    ctx.fillStyle = "#FFEB3B";
+    ctx.fillRect(x + 5, y + 5, 3, 3);
+}
+
+function drawMushroom(mushroom) {
+    const x = mushroom.x;
+    const y = mushroom.y;
+    ctx.fillStyle = "#F5F5DC";
+    ctx.fillRect(x + 6, y + 8, 4, 12);
+    ctx.fillStyle = mushroom.isRed ? "#D32F2F" : "#8D6E63";
+    ctx.fillRect(x, y, 16, 10);
+    ctx.fillRect(x + 2, y - 2, 12, 2);
+    if (mushroom.isRed) {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(x + 4, y + 3, 3, 3);
+        ctx.fillRect(x + 10, y + 5, 2, 2);
+        ctx.fillRect(x + 7, y + 1, 2, 2);
+    }
+}
+
+function drawVine(vine) {
+    const x = vine.x;
+    const y = vine.y;
+    const sway = Math.sin(vine.animFrame * 0.05 + vine.swayOffset) * 3;
+    ctx.strokeStyle = "#2E7D32";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    const segments = 5;
+    for (let i = 1; i <= segments; i++) {
+        const segY = y + (vine.height / segments) * i;
+        const segX = x + sway * (i / segments);
+        ctx.lineTo(segX, segY);
+    }
+    ctx.stroke();
+    ctx.fillStyle = "#4CAF50";
+    for (let i = 1; i < segments; i++) {
+        const leafY = y + (vine.height / segments) * i;
+        const leafX = x + sway * (i / segments);
+        ctx.fillRect(leafX - 3, leafY, 6, 4);
+    }
+}
+
+function drawIceSpike(spike) {
+    const x = spike.x;
+    const y = spike.y;
+    const h = spike.height;
+    const gradient = ctx.createLinearGradient(x, y, x, y + h);
+    gradient.addColorStop(0, "#E3F2FD");
+    gradient.addColorStop(0.5, "#90CAF9");
+    gradient.addColorStop(1, "#42A5F5");
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y);
+    ctx.lineTo(x + 20, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    ctx.beginPath();
+    ctx.moveTo(x + 10, y + 5);
+    ctx.lineTo(x + 14, y + h / 2);
+    ctx.lineTo(x + 10, y + h / 2);
+    ctx.fill();
+}
+
+function drawSnowPile(pile) {
+    const x = pile.x;
+    const y = pile.y;
+    const w = pile.width;
+    const h = pile.height;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(200, 220, 255, 0.6)";
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h - 5, w / 2 - 3, h / 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawIceBlock(ice) {
+    const x = ice.x;
+    const y = ice.y;
+    const w = ice.width;
+    const h = ice.height;
+    ctx.fillStyle = "#B3E5FC";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fillRect(x + 5, y + 5, w - 10, 10);
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 4; i++) {
+        const cx = x + Math.random() * w;
+        const cy = y + Math.random() * h;
+        ctx.beginPath();
+        ctx.moveTo(cx - 5, cy);
+        ctx.lineTo(cx + 5, cy);
+        ctx.moveTo(cx, cy - 5);
+        ctx.lineTo(cx, cy + 5);
+        ctx.stroke();
+    }
+}
+
+function drawDeadBush(bush) {
+    const x = bush.x;
+    const y = bush.y;
+    ctx.strokeStyle = "#5D4037";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 12, y + 30);
+    ctx.lineTo(x + 12, y + 15);
+    ctx.stroke();
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x + 12, y + 18);
+    ctx.lineTo(x + 5, y + 10);
+    ctx.moveTo(x + 5, y + 10);
+    ctx.lineTo(x + 3, y + 5);
+    ctx.moveTo(x + 12, y + 20);
+    ctx.lineTo(x + 20, y + 12);
+    ctx.moveTo(x + 20, y + 12);
+    ctx.lineTo(x + 23, y + 8);
+    ctx.stroke();
+}
+
+function drawRock(rock) {
+    const x = rock.x;
+    const y = rock.y;
+    const w = rock.width;
+    const h = rock.height;
+    ctx.fillStyle = "#9E9E9E";
+    if (rock.shape === 0) {
+        ctx.beginPath();
+        ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+    } else if (rock.shape === 1) {
+        ctx.fillRect(x, y, w, h);
+    } else {
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.2, y);
+        ctx.lineTo(x + w * 0.8, y);
+        ctx.lineTo(x + w, y + h * 0.6);
+        ctx.lineTo(x + w * 0.7, y + h);
+        ctx.lineTo(x + w * 0.3, y + h);
+        ctx.lineTo(x, y + h * 0.5);
+        ctx.closePath();
+        ctx.fill();
+    }
+    ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+    ctx.fillRect(x + 5, y + h - 5, w - 10, 5);
+}
+
+function drawBones(bones) {
+    const x = bones.x;
+    const y = bones.y;
+    ctx.strokeStyle = "#E0E0E0";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y + 6);
+    ctx.lineTo(x + 30, y + 6);
+    ctx.stroke();
+    ctx.fillStyle = "#EEEEEE";
+    ctx.beginPath();
+    ctx.arc(x + 4, y + 6, 4, 0, Math.PI * 2);
+    ctx.arc(x + 26, y + 6, 4, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawCactusDecor(cactus) {
+    const x = cactus.x;
+    const y = cactus.y;
+    const h = cactus.height;
+    ctx.fillStyle = "#2E7D32";
+    ctx.fillRect(x + 4, y, 12, h);
+    ctx.fillStyle = "#1B5E20";
+    for (let i = 0; i < h; i += 10) {
+        ctx.fillRect(x + 2, y + i, 2, 4);
+        ctx.fillRect(x + 16, y + i + 5, 2, 4);
+    }
+    if (h > 50) {
+        ctx.fillStyle = "#2E7D32";
+        ctx.fillRect(x, y + 20, 8, 15);
+        ctx.fillRect(x + 12, y + 35, 8, 15);
+    }
+}
+
+function drawOre(ore) {
+    const x = ore.x;
+    const y = ore.y;
+    ctx.fillStyle = "#757575";
+    ctx.fillRect(x, y, 30, 30);
+    ctx.fillStyle = ore.color;
+    ctx.fillRect(x + 5, y + 8, 8, 8);
+    ctx.fillRect(x + 15, y + 5, 10, 6);
+    ctx.fillRect(x + 8, y + 18, 6, 8);
+    if (ore.oreType === "diamond" || ore.oreType === "gold") {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.fillRect(x + 7, y + 10, 2, 2);
+        ctx.fillRect(x + 18, y + 7, 2, 2);
+    }
+}
+
+function drawStalactite(stal) {
+    const x = stal.x;
+    const y = stal.y;
+    const h = stal.height;
+    ctx.fillStyle = "#616161";
+    ctx.beginPath();
+    if (stal.direction === "down") {
+        ctx.moveTo(x + 10, y);
+        ctx.lineTo(x + 20, y + h);
+        ctx.lineTo(x, y + h);
+    } else {
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 20, y);
+        ctx.lineTo(x + 10, y + h);
+    }
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawCrystal(crystal) {
+    const x = crystal.x;
+    const y = crystal.y;
+    const glow = 0.6 + Math.sin(crystal.animFrame * 0.1) * 0.2;
+    ctx.fillStyle = `rgba(160, 255, 255, ${glow})`;
+    ctx.beginPath();
+    ctx.moveTo(x + 9, y);
+    ctx.lineTo(x + 18, y + 16);
+    ctx.lineTo(x + 9, y + 28);
+    ctx.lineTo(x, y + 16);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawLavaPool(pool) {
+    const x = pool.x;
+    const y = pool.y;
+    const w = pool.width;
+    const h = pool.height;
+    const wave = Math.sin(pool.animFrame * 0.1) * 3;
+    ctx.fillStyle = "#FF5722";
+    ctx.fillRect(x, y + wave, w, h);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.fillRect(x + 5, y + 4 + wave, w - 10, 4);
+}
+
+function drawShell(shell) {
+    const x = shell.x;
+    const y = shell.y;
+    ctx.fillStyle = "#FFE0B2";
+    ctx.beginPath();
+    ctx.arc(x + 8, y + 6, 6, Math.PI, 0);
+    ctx.fill();
+}
+
+function drawStarfish(star) {
+    const x = star.x;
+    const y = star.y;
+    ctx.fillStyle = "#FF9800";
+    ctx.beginPath();
+    ctx.moveTo(x + 9, y);
+    ctx.lineTo(x + 12, y + 6);
+    ctx.lineTo(x + 18, y + 7);
+    ctx.lineTo(x + 13, y + 11);
+    ctx.lineTo(x + 15, y + 18);
+    ctx.lineTo(x + 9, y + 14);
+    ctx.lineTo(x + 3, y + 18);
+    ctx.lineTo(x + 5, y + 11);
+    ctx.lineTo(x, y + 7);
+    ctx.lineTo(x + 6, y + 6);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawSeaweed(seaweed) {
+    const x = seaweed.x;
+    const y = seaweed.y;
+    const sway = Math.sin(seaweed.animFrame * 0.05 + seaweed.swayOffset) * 4;
+    ctx.strokeStyle = "#2E7D32";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 5, y + seaweed.height);
+    ctx.lineTo(x + 5 + sway, y);
+    ctx.stroke();
+}
+
+function drawBoatDecor(boat) {
+    const x = boat.x;
+    const y = boat.y;
+    ctx.fillStyle = "#8D6E63";
+    ctx.fillRect(x, y, boat.width, boat.height);
+    ctx.fillStyle = "#6D4C41";
+    ctx.fillRect(x + 4, y - 6, boat.width - 8, 6);
+}
+
+function drawFireDecor(fire) {
+    const x = fire.x;
+    const y = fire.y;
+    const flicker = Math.sin(fire.animFrame * 0.2) * 2;
+    ctx.fillStyle = "#FF5722";
+    ctx.beginPath();
+    ctx.moveTo(x + 6, y + 24);
+    ctx.lineTo(x + 12, y + 24);
+    ctx.lineTo(x + 9, y + 6 + flicker);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#FFC107";
+    ctx.beginPath();
+    ctx.moveTo(x + 6, y + 20);
+    ctx.lineTo(x + 12, y + 20);
+    ctx.lineTo(x + 9, y + 10 + flicker);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawLavaFall(fall) {
+    const x = fall.x;
+    const y = fall.y;
+    const h = fall.height;
+    const wobble = Math.sin(fall.animFrame * 0.1) * 2;
+    ctx.fillStyle = "#FF7043";
+    ctx.fillRect(x + wobble, y, fall.width, h);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.fillRect(x + wobble + 2, y + 10, fall.width - 4, 6);
+}
+
+function drawSoulSand(sand) {
+    const x = sand.x;
+    const y = sand.y;
+    const w = sand.width;
+    ctx.fillStyle = "#5D4037";
+    ctx.fillRect(x, y, w, sand.height);
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(x + 4, y + 2, w - 8, 4);
+}
+
+function drawNetherWart(wart) {
+    const x = wart.x;
+    const y = wart.y;
+    ctx.fillStyle = "#B71C1C";
+    ctx.fillRect(x, y, 12, 10);
+    ctx.fillStyle = "#D32F2F";
+    ctx.fillRect(x + 2, y + 2, 8, 4);
+}
+
+function drawBasalt(basalt) {
+    const x = basalt.x;
+    const y = basalt.y;
+    ctx.fillStyle = "#424242";
+    ctx.fillRect(x, y, basalt.width, basalt.height);
+    ctx.fillStyle = "#303030";
+    ctx.fillRect(x + 4, y + 6, basalt.width - 8, 6);
+}
+
+function drawParticle(p) {
+    if (p.type === "snowflake") {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "leaf") {
+        ctx.fillStyle = p.color || "#7CB342";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "dust") {
+        ctx.fillStyle = "rgba(210, 180, 120, 0.5)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "ember") {
+        ctx.fillStyle = "rgba(255, 140, 0, 0.8)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "bubble") {
+        ctx.strokeStyle = "rgba(173, 216, 230, 0.8)";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.stroke();
+    } else if (p.type === "sparkle") {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "rain") {
+        ctx.strokeStyle = "rgba(120, 170, 255, 0.8)";
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + p.velX, p.y + p.size);
+        ctx.stroke();
+    }
+}
+
+function drawBackground(biome) {
+    const ambient = biome.effects?.ambient || "#87CEEB";
+    ctx.fillStyle = ambient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const parallaxX = cameraX * 0.2;
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    for (let i = 0; i < 3; i++) {
+        const mx = -parallaxX + i * 400;
+        ctx.beginPath();
+        ctx.moveTo(mx, canvas.height - 200);
+        ctx.lineTo(mx + 200, canvas.height - 320);
+        ctx.lineTo(mx + 400, canvas.height - 200);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    for (let i = 0; i < 4; i++) {
+        const cx = (i * 220 + (cameraX * 0.4) % 220) - 100;
+        ctx.beginPath();
+        ctx.arc(cx, 80, 30, 0, Math.PI * 2);
+        ctx.arc(cx + 40, 90, 20, 0, Math.PI * 2);
+        ctx.arc(cx + 70, 80, 26, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
+    ctx.beginPath();
+    ctx.arc(canvas.width - 80, 60, 24, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (biome.effects?.darkness) {
+        ctx.fillStyle = `rgba(0,0,0,${biome.effects.darkness})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (weatherState.type === "fog") {
+        ctx.fillStyle = "rgba(200,200,200,0.25)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "sandstorm") {
+        ctx.fillStyle = "rgba(210,180,140,0.35)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "rain") {
+        ctx.fillStyle = "rgba(0,0,50,0.15)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "snow") {
+        ctx.fillStyle = "rgba(255,255,255,0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (biome.effects?.heatWave) {
+        ctx.strokeStyle = "rgba(255, 200, 120, 0.25)";
+        for (let y = 120; y < canvas.height; y += 40) {
+            ctx.beginPath();
+            for (let x = 0; x <= canvas.width; x += 40) {
+                const offset = Math.sin((x + gameFrame) * 0.02 + y * 0.05) * 6;
+                ctx.lineTo(x, y + offset);
+            }
+            ctx.stroke();
+        }
+    }
+}
+
 function colCheck(shapeA, shapeB) {
     return colCheckRect(shapeA.x, shapeA.y, shapeA.width, shapeA.height, shapeB.x, shapeB.y, shapeB.width, shapeB.height);
 }
@@ -1677,6 +2650,578 @@ class Item extends Entity {
         this.wordObj = wordObj;
         this.collected = false;
         this.floatY = 0;
+    }
+}
+
+const decorationPool = Object.create(null);
+
+function getPooledDecoration(type, resetFn, createFn) {
+    const pool = decorationPool[type] || (decorationPool[type] = []);
+    const reused = pool.find(d => d.remove);
+    if (reused) {
+        resetFn(reused);
+        reused.remove = false;
+        return reused;
+    }
+    const fresh = createFn();
+    pool.push(fresh);
+    return fresh;
+}
+
+function spawnDecoration(type, resetFn, createFn) {
+    if (decorations.length >= MAX_DECORATIONS_ONSCREEN) return;
+    const decor = getPooledDecoration(type, resetFn, createFn);
+    decorations.push(decor);
+}
+
+class Decoration extends Entity {
+    constructor(x, y, type, biome) {
+        super(x, y, 0, 0);
+        this.type = type;
+        this.biome = biome;
+        this.interactive = false;
+        this.collectible = false;
+        this.harmful = false;
+        this.animated = false;
+        this.animFrame = 0;
+    }
+
+    resetBase(x, y, type, biome) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.biome = biome;
+        this.remove = false;
+        this.animFrame = 0;
+    }
+
+    update() {
+        if (this.animated) this.animFrame++;
+    }
+
+    interact() {
+    }
+
+    onCollision() {
+    }
+}
+
+class Bush extends Decoration {
+    constructor(x, y) {
+        super(x, y, "bush", "forest");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "bush", "forest");
+        this.width = 30;
+        this.height = 20;
+        this.variant = Math.floor(Math.random() * 3);
+    }
+}
+
+class Flower extends Decoration {
+    constructor(x, y) {
+        super(x, y, "flower", "forest");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "flower", "forest");
+        this.width = 12;
+        this.height = 18;
+        this.collectible = true;
+        this.color = ["#FF1744", "#FFEB3B", "#2196F3", "#9C27B0", "#FFFFFF"][Math.floor(Math.random() * 5)];
+    }
+    interact() {
+        inventory.flower = (inventory.flower || 0) + 1;
+        this.remove = true;
+        showFloatingText("🌸 +1", this.x, this.y);
+        updateInventoryUI();
+    }
+}
+
+class Mushroom extends Decoration {
+    constructor(x, y) {
+        super(x, y, "mushroom", "forest");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "mushroom", "forest");
+        this.width = 16;
+        this.height = 20;
+        this.collectible = true;
+        this.isRed = Math.random() > 0.5;
+    }
+    interact() {
+        inventory.mushroom = (inventory.mushroom || 0) + 1;
+        this.remove = true;
+        showFloatingText("🍄 +1", this.x, this.y);
+        updateInventoryUI();
+    }
+}
+
+class Vine extends Decoration {
+    constructor(x, y, height) {
+        super(x, y, "vine", "forest");
+        this.reset(x, y, height);
+    }
+    reset(x, y, height) {
+        this.resetBase(x, y, "vine", "forest");
+        this.width = 4;
+        this.height = height || (30 + Math.random() * 40);
+        this.animated = true;
+        this.swayOffset = Math.random() * Math.PI * 2;
+    }
+}
+
+class IceSpike extends Decoration {
+    constructor(x, y) {
+        super(x, y, "ice_spike", "snow");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "ice_spike", "snow");
+        this.width = 20;
+        this.height = 40 + Math.random() * 40;
+    }
+}
+
+class SnowPile extends Decoration {
+    constructor(x, y, size = "medium") {
+        super(x, y, "snow_pile", "snow");
+        this.reset(x, y, size);
+    }
+    reset(x, y, size = "medium") {
+        this.resetBase(x, y, "snow_pile", "snow");
+        this.size = size;
+        this.width = size === "small" ? 20 : size === "medium" ? 35 : 50;
+        this.height = size === "small" ? 10 : size === "medium" ? 18 : 25;
+        this.interactive = true;
+    }
+    onCollision(entity) {
+        if (entity === player && entity.grounded) {
+            entity.velX *= 0.9;
+        }
+    }
+}
+
+class IceBlock extends Decoration {
+    constructor(x, y, width) {
+        super(x, y, "ice_block", "snow");
+        this.reset(x, y, width);
+    }
+    reset(x, y, width) {
+        this.resetBase(x, y, "ice_block", "snow");
+        this.width = width || 80;
+        this.height = 50;
+        this.interactive = true;
+        this.slippery = true;
+    }
+    onCollision(entity) {
+        if (this.slippery && entity.grounded) {
+            entity.velX *= 1.2;
+        }
+    }
+}
+
+class DeadBush extends Decoration {
+    constructor(x, y) {
+        super(x, y, "dead_bush", "desert");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "dead_bush", "desert");
+        this.width = 25;
+        this.height = 30;
+    }
+}
+
+class Rock extends Decoration {
+    constructor(x, y, size = "medium") {
+        super(x, y, "rock", "desert");
+        this.reset(x, y, size);
+    }
+    reset(x, y, size = "medium") {
+        this.resetBase(x, y, "rock", "desert");
+        this.size = size;
+        this.width = size === "small" ? 20 : size === "medium" ? 35 : 50;
+        this.height = size === "small" ? 15 : size === "medium" ? 25 : 35;
+        this.shape = Math.floor(Math.random() * 3);
+    }
+}
+
+class BoneDecor extends Decoration {
+    constructor(x, y) {
+        super(x, y, "bones", "desert");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "bones", "desert");
+        this.width = 30;
+        this.height = 12;
+    }
+}
+
+class CactusDecor extends Decoration {
+    constructor(x, y, height) {
+        super(x, y, "cactus", "desert");
+        this.reset(x, y, height);
+    }
+    reset(x, y, height) {
+        this.resetBase(x, y, "cactus", "desert");
+        this.width = 20;
+        this.height = height || (40 + Math.random() * 60);
+        this.harmful = true;
+        this.damage = 5;
+    }
+    onCollision(entity) {
+        if (this.harmful && rectIntersect(entity.x, entity.y, entity.width, entity.height, this.x, this.y, this.width, this.height)) {
+            damagePlayer(this.damage, this.x, 40);
+            showFloatingText("🌵 -5", entity.x, entity.y - 20);
+        }
+    }
+}
+
+class Ore extends Decoration {
+    constructor(x, y, oreType) {
+        super(x, y, `ore_${oreType}`, "mountain");
+        this.reset(x, y, oreType);
+    }
+    reset(x, y, oreType) {
+        this.resetBase(x, y, `ore_${oreType}`, "mountain");
+        this.oreType = oreType;
+        this.width = 30;
+        this.height = 30;
+        this.collectible = true;
+        this.hp = { coal: 3, iron: 5, gold: 7, diamond: 10 }[oreType];
+        this.color = { coal: "#424242", iron: "#B0BEC5", gold: "#FFD700", diamond: "#00BCD4" }[oreType];
+    }
+    interact() {
+        if (inventory.iron_pickaxe <= 0) {
+            showToast("❌ 需要铁镐");
+            return;
+        }
+        this.hp--;
+        showFloatingText(`⛏️ ${this.hp}`, this.x, this.y - 20);
+        if (this.hp <= 0) {
+            inventory[this.oreType] = (inventory[this.oreType] || 0) + 1;
+            this.remove = true;
+            showFloatingText(`✨ +1 ${this.oreType}`, this.x, this.y);
+            updateInventoryUI();
+        }
+    }
+}
+
+class Stalactite extends Decoration {
+    constructor(x, y, direction = "down") {
+        super(x, y, "stalactite", "mountain");
+        this.reset(x, y, direction);
+    }
+    reset(x, y, direction = "down") {
+        this.resetBase(x, y, "stalactite", "mountain");
+        this.direction = direction;
+        this.width = 20;
+        this.height = 30 + Math.random() * 40;
+    }
+}
+
+class Crystal extends Decoration {
+    constructor(x, y) {
+        super(x, y, "crystal", "mountain");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "crystal", "mountain");
+        this.width = 18;
+        this.height = 28;
+        this.animated = true;
+    }
+}
+
+class LavaPool extends Decoration {
+    constructor(x, y, width, biome = "mountain") {
+        super(x, y, "lava_pool", biome);
+        this.reset(x, y, width, biome);
+    }
+    reset(x, y, width, biome = "mountain") {
+        this.resetBase(x, y, "lava_pool", biome);
+        this.width = width || (60 + Math.random() * 80);
+        this.height = 16;
+        this.harmful = true;
+        this.damage = 2;
+        this.animated = true;
+    }
+    onCollision() {
+        damagePlayer(this.damage, this.x, 30);
+    }
+}
+
+class Shell extends Decoration {
+    constructor(x, y) {
+        super(x, y, "shell", "ocean");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "shell", "ocean");
+        this.width = 16;
+        this.height = 10;
+        this.collectible = true;
+    }
+    interact() {
+        inventory.shell = (inventory.shell || 0) + 1;
+        this.remove = true;
+        showFloatingText("🐚 +1", this.x, this.y);
+        updateInventoryUI();
+    }
+}
+
+class Starfish extends Decoration {
+    constructor(x, y) {
+        super(x, y, "starfish", "ocean");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "starfish", "ocean");
+        this.width = 18;
+        this.height = 18;
+        this.collectible = true;
+    }
+    interact() {
+        inventory.starfish = (inventory.starfish || 0) + 1;
+        this.remove = true;
+        showFloatingText("⭐ +1", this.x, this.y);
+        updateInventoryUI();
+    }
+}
+
+class Seaweed extends Decoration {
+    constructor(x, y) {
+        super(x, y, "seaweed", "ocean");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "seaweed", "ocean");
+        this.width = 10;
+        this.height = 30 + Math.random() * 20;
+        this.animated = true;
+        this.swayOffset = Math.random() * Math.PI * 2;
+    }
+}
+
+class BoatDecor extends Decoration {
+    constructor(x, y) {
+        super(x, y, "boat", "ocean");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "boat", "ocean");
+        this.width = 40;
+        this.height = 16;
+    }
+}
+
+class FireDecor extends Decoration {
+    constructor(x, y) {
+        super(x, y, "fire", "nether");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "fire", "nether");
+        this.width = 12;
+        this.height = 24;
+        this.harmful = true;
+        this.damage = 2;
+        this.animated = true;
+    }
+    onCollision() {
+        damagePlayer(this.damage, this.x, 20);
+    }
+}
+
+class LavaFall extends Decoration {
+    constructor(x, y) {
+        super(x, y, "lava_fall", "nether");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "lava_fall", "nether");
+        this.width = 12;
+        this.height = 60 + Math.random() * 60;
+        this.harmful = true;
+        this.damage = 3;
+        this.animated = true;
+    }
+    onCollision() {
+        damagePlayer(this.damage, this.x, 20);
+    }
+}
+
+class SoulSand extends Decoration {
+    constructor(x, y, width) {
+        super(x, y, "soul_sand", "nether");
+        this.reset(x, y, width);
+    }
+    reset(x, y, width) {
+        this.resetBase(x, y, "soul_sand", "nether");
+        this.width = width || 50;
+        this.height = 10;
+        this.interactive = true;
+    }
+    onCollision(entity) {
+        if (entity === player && entity.grounded) {
+            entity.velX *= 0.8;
+        }
+    }
+}
+
+class NetherWart extends Decoration {
+    constructor(x, y) {
+        super(x, y, "nether_wart", "nether");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "nether_wart", "nether");
+        this.width = 12;
+        this.height = 10;
+    }
+}
+
+class Basalt extends Decoration {
+    constructor(x, y) {
+        super(x, y, "basalt", "nether");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "basalt", "nether");
+        this.width = 25;
+        this.height = 40;
+    }
+}
+
+class Particle {
+    constructor(x, y, type) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.velX = 0;
+        this.velY = 0;
+        this.life = 100;
+        this.remove = false;
+    }
+
+    reset(x, y) {
+        this.x = x;
+        this.y = y;
+        this.remove = false;
+    }
+
+    update() {
+        this.x += this.velX;
+        this.y += this.velY;
+        this.life--;
+        if (this.life <= 0) this.remove = true;
+    }
+}
+
+class Snowflake extends Particle {
+    constructor(x, y) {
+        super(x, y, "snowflake");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = (Math.random() - 0.5) * 0.5;
+        this.velY = 0.5 + Math.random() * 1;
+        this.size = 2 + Math.random() * 3;
+        this.life = 200;
+    }
+    update() {
+        super.update();
+        this.velX += Math.sin(this.life * 0.05) * 0.02;
+    }
+}
+
+class LeafParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "leaf");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = (Math.random() - 0.5) * 0.6;
+        this.velY = 0.4 + Math.random() * 0.6;
+        this.size = 3 + Math.random() * 3;
+        this.life = 180;
+        this.color = ["#7CB342", "#558B2F", "#9CCC65"][Math.floor(Math.random() * 3)];
+    }
+}
+
+class DustParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "dust");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = -0.5 + Math.random() * 1;
+        this.velY = 0.2 + Math.random() * 0.4;
+        this.size = 2 + Math.random() * 2;
+        this.life = 140;
+    }
+}
+
+class EmberParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "ember");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = (Math.random() - 0.5) * 0.3;
+        this.velY = -0.6 - Math.random() * 0.6;
+        this.size = 2 + Math.random() * 2;
+        this.life = 120;
+    }
+}
+
+class BubbleParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "bubble");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = (Math.random() - 0.5) * 0.2;
+        this.velY = -0.4 - Math.random() * 0.4;
+        this.size = 2 + Math.random() * 2;
+        this.life = 120;
+    }
+}
+
+class SparkleParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "sparkle");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = (Math.random() - 0.5) * 0.2;
+        this.velY = -0.2 + Math.random() * 0.4;
+        this.size = 2 + Math.random() * 3;
+        this.life = 100;
+    }
+}
+
+class RainParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "rain");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = -0.3 + Math.random() * 0.6;
+        this.velY = 3 + Math.random() * 2;
+        this.size = 6;
+        this.life = 80;
     }
 }
 
@@ -2206,7 +3751,10 @@ function wireSettingsModal() {
         wordPicker = null;
         saveSettings();
         applySettingsToUI();
-        if (player) applyMotionToPlayer(player);
+        if (player) {
+            applyMotionToPlayer(player);
+            applyBiomeEffectsToPlayer();
+        }
         setActiveVocabPack(settings.vocabSelection || "auto");
         close();
     }
@@ -2298,17 +3846,19 @@ function wireTouchControls() {
 }
 
 async function start() {
-    const [loadedGame, loadedControls, loadedLevels, loadedWords] = await Promise.all([
+    const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes] = await Promise.all([
         loadJsonWithFallback("../config/game.json", defaultGameConfig),
         loadJsonWithFallback("../config/controls.json", defaultControls),
         loadJsonWithFallback("../config/levels.json", defaultLevels),
-        loadJsonWithFallback("../words/words-base.json", defaultWords)
+        loadJsonWithFallback("../words/words-base.json", defaultWords),
+        loadJsonWithFallback("../config/biomes.json", DEFAULT_BIOME_CONFIGS)
     ]);
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
     keyBindings = { ...defaultControls, ...(loadedControls || {}) };
     levels = Array.isArray(loadedLevels) && loadedLevels.length ? loadedLevels : defaultLevels;
     wordDatabase = Array.isArray(loadedWords) && loadedWords.length ? loadedWords : defaultWords;
+    biomeConfigs = normalizeBiomeConfigs(loadedBiomes);
     settings = normalizeSettings(settings);
     const parsed = parseKeyCodes(settings.keyCodes);
     if (parsed) {
@@ -2351,6 +3901,7 @@ async function start() {
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
         const isInteract = matchesBinding(e, keyBindings.interact) || String(e.key || "").toLowerCase() === "y";
+        const isDecorInteract = String(e.key || "").toLowerCase() === "e";
         const isPause = e.code === "Escape";
         const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
         const inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
@@ -2363,6 +3914,7 @@ async function start() {
         if (isLeft) keys.left = true;
         if (isAttack) handleAttack();
         if (isInteract) handleInteraction();
+        if (isDecorInteract) handleDecorationInteract();
         if (!inInput && e.key >= "1" && e.key <= "9") {
             selectedSlot = parseInt(e.key, 10) - 1;
             updateInventoryUI();
