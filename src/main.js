@@ -1074,17 +1074,24 @@ function generatePlatform(startX, length, groundYValue) {
 
 function spawnEnemyByDifficulty(x, y) {
     const enemyConfig = getEnemyConfig();
-    const thresholds = enemyConfig.difficultyThresholds || [500, 1000, 2000, 3000];
-    let pool = ["zombie"];
-    if (score >= thresholds[0]) pool = ["zombie", "spider"];
-    if (score >= thresholds[1]) pool = ["zombie", "spider", "creeper"];
-    if (score >= thresholds[2]) pool = ["zombie", "spider", "creeper", "skeleton"];
-    if (score >= thresholds[3]) pool = ["zombie", "spider", "creeper", "skeleton", "enderman"];
+    const step = Number(getBiomeSwitchConfig().stepScore) || 200;
+    const tier = Math.max(0, Math.floor((Number(score) || 0) / Math.max(1, step)));
+    const biomePools = {
+        forest: ["zombie", "creeper", "spider", "skeleton", "enderman"],
+        snow: ["zombie", "skeleton", "creeper", "spider", "enderman"],
+        desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
+        mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
+        ocean: ["zombie", "creeper", "skeleton", "enderman"],
+        nether: ["zombie", "enderman", "skeleton", "creeper"]
+    };
+    const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
+    const take = Math.max(2, Math.min(basePool.length, 2 + tier));
+    const pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
 
     const aliveEnemies = enemies.filter(e => !e.remove && e.y < 900).length;
     if (aliveEnemies >= (enemyConfig.maxOnScreen || 8)) return;
 
-    const type = pool[Math.floor(Math.random() * pool.length)];
+    const type = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "zombie";
     enemies.push(new Enemy(x, y, type));
 }
 
@@ -1925,111 +1932,206 @@ function drawSteve(x, y, facingRight, attacking) {
     }
 }
 
-function drawCreeper(x, y) {
-    ctx.fillStyle = "#00AA00";
-    ctx.fillRect(x, y, 32, 32);
-    ctx.fillStyle = "#000";
-    ctx.fillRect(x + 6, y + 6, 6, 6);
-    ctx.fillRect(x + 20, y + 6, 6, 6);
-    ctx.fillRect(x + 13, y + 12, 6, 8);
+function drawMobRect(x, y, s, px, py, pw, ph) {
+    ctx.fillRect(x + px * s, y + py * s, pw * s, ph * s);
+}
+
+function drawCreeperMob(enemy) {
+    const x = enemy.x;
+    const s = enemy.width / 16;
+    const y = enemy.y + enemy.height - 24 * s;
+
+    // Base greens close to the in-game creeper texture.
+    ctx.fillStyle = "#3AAE2A";
+    drawMobRect(x, y, s, 0, 0, 16, 8); // head
+    drawMobRect(x, y, s, 2, 8, 12, 8); // body
+    // legs
+    drawMobRect(x, y, s, 1, 16, 3, 8);
+    drawMobRect(x, y, s, 5, 16, 3, 8);
+    drawMobRect(x, y, s, 8, 16, 3, 8);
+    drawMobRect(x, y, s, 12, 16, 3, 8);
+
+    // Texture patches
+    ctx.fillStyle = "#2E7D32";
+    drawMobRect(x, y, s, 1, 1, 3, 2);
+    drawMobRect(x, y, s, 10, 1, 3, 2);
+    drawMobRect(x, y, s, 4, 9, 2, 2);
+    drawMobRect(x, y, s, 11, 10, 2, 2);
+
+    // Face
+    ctx.fillStyle = "#111";
+    drawMobRect(x, y, s, 3, 2, 3, 3);  // left eye
+    drawMobRect(x, y, s, 10, 2, 3, 3); // right eye
+    drawMobRect(x, y, s, 7, 5, 2, 2);  // nose
+    drawMobRect(x, y, s, 6, 6, 4, 2);  // mouth top
+    drawMobRect(x, y, s, 5, 7, 2, 1);  // mouth left
+    drawMobRect(x, y, s, 9, 7, 2, 1);  // mouth right
 }
 
 function drawEnemy(enemy) {
     if (enemy.remove || enemy.y > 900) return;
-    const x = enemy.x;
-    const y = enemy.y;
-
     switch (enemy.type) {
         case "zombie":
-            drawZombie(x, y);
+            drawZombie(enemy);
             break;
         case "spider":
-            drawSpider(x, y);
+            drawSpider(enemy);
             break;
         case "creeper":
-            drawCreeper(x, y);
+            drawCreeperMob(enemy);
             if (enemy.state === "exploding") {
                 const flash = Math.floor(enemy.explodeTimer / 10) % 2 === 0;
                 if (flash) {
                     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-                    ctx.fillRect(x - 5, y - 5, 42, 42);
+                    ctx.fillRect(enemy.x - 6, enemy.y - 6, enemy.width + 12, enemy.height + 12);
                 }
             }
             break;
         case "skeleton":
-            drawSkeleton(x, y);
+            drawSkeleton(enemy);
             break;
         case "enderman":
-            drawEnderman(x, y);
+            drawEnderman(enemy);
             break;
         case "ender_dragon":
-            drawEnderDragon(x, y);
+            drawEnderDragon(enemy.x, enemy.y);
             break;
     }
 
     if (enemy.hp < enemy.maxHp) {
-        drawHealthBar(x, y - 8, enemy.width, enemy.hp, enemy.maxHp);
+        drawHealthBar(enemy.x, enemy.y - 8, enemy.width, enemy.hp, enemy.maxHp);
     }
 }
 
-function drawZombie(x, y) {
-    ctx.fillStyle = "#00AA00";
-    ctx.fillRect(x + 8, y, 16, 10);
-    ctx.fillRect(x + 10, y + 10, 12, 14);
-    ctx.fillRect(x + 6, y + 10, 4, 12);
-    ctx.fillRect(x + 22, y + 10, 4, 12);
-    ctx.fillRect(x + 10, y + 24, 5, 8);
-    ctx.fillRect(x + 17, y + 24, 5, 8);
-    ctx.fillStyle = "#000";
-    ctx.fillRect(x + 11, y + 4, 2, 2);
-    ctx.fillRect(x + 19, y + 4, 2, 2);
+function drawZombie(enemy) {
+    const x = enemy.x;
+    const s = enemy.width / 16;
+    const y = enemy.y + enemy.height - 24 * s;
+
+    // Head (green), shirt (blue), pants (purple) - closer to the classic Minecraft zombie palette.
+    ctx.fillStyle = "#4CAF50";
+    drawMobRect(x, y, s, 0, 0, 16, 8);
+    ctx.fillStyle = "#2E7D32";
+    drawMobRect(x, y, s, 2, 1, 3, 2);
+    drawMobRect(x, y, s, 11, 2, 3, 2);
+
+    // Face
+    ctx.fillStyle = "#1B1B1B";
+    drawMobRect(x, y, s, 4, 3, 2, 2);
+    drawMobRect(x, y, s, 10, 3, 2, 2);
+    ctx.fillStyle = "#2B2B2B";
+    drawMobRect(x, y, s, 7, 5, 2, 1);
+
+    // Torso + arms
+    ctx.fillStyle = "#2E7D9A"; // shirt
+    drawMobRect(x, y, s, 3, 8, 10, 8);
+    drawMobRect(x, y, s, 0, 8, 3, 12);
+    drawMobRect(x, y, s, 13, 8, 3, 12);
+
+    // Pants + legs
+    ctx.fillStyle = "#5E35B1";
+    drawMobRect(x, y, s, 3, 16, 5, 8);
+    drawMobRect(x, y, s, 8, 16, 5, 8);
+    ctx.fillStyle = "#4527A0";
+    drawMobRect(x, y, s, 3, 22, 5, 2);
+    drawMobRect(x, y, s, 8, 22, 5, 2);
 }
 
-function drawSpider(x, y) {
-    ctx.fillStyle = "#4A0E0E";
-    ctx.fillRect(x + 8, y + 12, 16, 12);
-    ctx.fillStyle = "#FF0000";
-    ctx.fillRect(x + 12, y + 14, 2, 2);
-    ctx.fillRect(x + 18, y + 14, 2, 2);
-    ctx.strokeStyle = "#2A0A0A";
-    ctx.lineWidth = 2;
+function drawSpider(enemy) {
+    const x = enemy.x;
+    const y = enemy.y + enemy.height - 12 * (enemy.width / 22);
+    const s = enemy.width / 22;
+
+    // Body
+    ctx.fillStyle = "#1B1B1B";
+    ctx.fillRect(x + 4 * s, y + 3 * s, 14 * s, 6 * s);
+    ctx.fillStyle = "#2B2B2B";
+    ctx.fillRect(x + 6 * s, y + 2 * s, 10 * s, 3 * s);
+
+    // Eyes (red)
+    ctx.fillStyle = "#D50000";
+    ctx.fillRect(x + 7 * s, y + 3 * s, 2 * s, 2 * s);
+    ctx.fillRect(x + 13 * s, y + 3 * s, 2 * s, 2 * s);
+
+    // Legs (8)
+    ctx.strokeStyle = "#111";
+    ctx.lineWidth = Math.max(2, s);
+    const legPairs = [
+        [[6, 4], [1, 1]],
+        [[6, 7], [1, 10]],
+        [[8, 4], [2, 0]],
+        [[8, 7], [2, 11]],
+        [[16, 4], [21, 1]],
+        [[16, 7], [21, 10]],
+        [[14, 4], [20, 0]],
+        [[14, 7], [20, 11]]
+    ];
     ctx.beginPath();
-    ctx.moveTo(x + 8, y + 15); ctx.lineTo(x, y + 10);
-    ctx.moveTo(x + 8, y + 19); ctx.lineTo(x, y + 24);
-    ctx.moveTo(x + 24, y + 15); ctx.lineTo(x + 32, y + 10);
-    ctx.moveTo(x + 24, y + 19); ctx.lineTo(x + 32, y + 24);
+    for (const [[sx, sy], [ex, ey]] of legPairs) {
+        ctx.moveTo(x + sx * s, y + sy * s);
+        ctx.lineTo(x + ex * s, y + ey * s);
+    }
     ctx.stroke();
 }
 
-function drawSkeleton(x, y) {
-    ctx.fillStyle = "#C0C0C0";
-    ctx.fillRect(x + 8, y, 16, 10);
-    ctx.fillRect(x + 10, y + 10, 12, 14);
-    ctx.fillRect(x + 6, y + 10, 4, 12);
-    ctx.fillRect(x + 22, y + 10, 4, 12);
-    ctx.fillRect(x + 10, y + 24, 5, 8);
-    ctx.fillRect(x + 17, y + 24, 5, 8);
-    ctx.fillStyle = "#000";
-    ctx.fillRect(x + 11, y + 4, 3, 3);
-    ctx.fillRect(x + 18, y + 4, 3, 3);
+function drawSkeleton(enemy) {
+    const x = enemy.x;
+    const s = enemy.width / 16;
+    const y = enemy.y + enemy.height - 24 * s;
+
+    ctx.fillStyle = "#E0E0E0";
+    drawMobRect(x, y, s, 0, 0, 16, 8); // head
+    ctx.fillStyle = "#111";
+    drawMobRect(x, y, s, 4, 3, 3, 3);
+    drawMobRect(x, y, s, 9, 3, 3, 3);
+
+    // torso + arms
+    ctx.fillStyle = "#D6D6D6";
+    drawMobRect(x, y, s, 4, 8, 8, 8);
+    drawMobRect(x, y, s, 1, 8, 3, 12);
+    drawMobRect(x, y, s, 12, 8, 3, 12);
+
+    // ribs detail
+    ctx.fillStyle = "#BDBDBD";
+    for (let i = 0; i < 4; i++) drawMobRect(x, y, s, 5, 9 + i * 2, 6, 1);
+
+    // legs
+    ctx.fillStyle = "#D6D6D6";
+    drawMobRect(x, y, s, 5, 16, 3, 8);
+    drawMobRect(x, y, s, 8, 16, 3, 8);
+
+    // simple bow hint
     ctx.strokeStyle = "#8B4513";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = Math.max(2, s);
     ctx.beginPath();
-    ctx.arc(x + 4, y + 15, 4, 0, Math.PI);
+    ctx.arc(x + 1.5 * s, y + 12 * s, 4 * s, 0, Math.PI);
     ctx.stroke();
 }
 
-function drawEnderman(x, y) {
-    ctx.fillStyle = "#1A0033";
-    ctx.fillRect(x + 10, y, 12, 8);
-    ctx.fillRect(x + 12, y + 8, 8, 16);
-    ctx.fillRect(x + 8, y + 8, 3, 18);
-    ctx.fillRect(x + 21, y + 8, 3, 18);
-    ctx.fillRect(x + 12, y + 24, 3, 8);
-    ctx.fillRect(x + 17, y + 24, 3, 8);
+function drawEnderman(enemy) {
+    const x = enemy.x;
+    const s = enemy.width / 16;
+    const y = enemy.y + enemy.height - 32 * s;
+
+    ctx.fillStyle = "#0B0B0B";
+    // head
+    drawMobRect(x, y, s, 0, 0, 16, 8);
+    // torso
+    drawMobRect(x, y, s, 6, 8, 4, 10);
+    // arms
+    drawMobRect(x, y, s, 4, 8, 2, 20);
+    drawMobRect(x, y, s, 10, 8, 2, 20);
+    // legs
+    drawMobRect(x, y, s, 6, 18, 2, 14);
+    drawMobRect(x, y, s, 8, 18, 2, 14);
+
+    // eyes
     ctx.fillStyle = "#AA00FF";
-    ctx.fillRect(x + 12, y + 3, 2, 2);
-    ctx.fillRect(x + 18, y + 3, 2, 2);
+    drawMobRect(x, y, s, 4, 3, 3, 1);
+    drawMobRect(x, y, s, 9, 3, 3, 1);
+    ctx.fillStyle = "#E1BEE7";
+    drawMobRect(x, y, s, 5, 3, 1, 1);
+    drawMobRect(x, y, s, 10, 3, 1, 1);
 }
 
 function drawEnderDragon(x, y) {
@@ -3390,7 +3492,8 @@ const ENEMY_STATS = {
         attackType: "melee",
         color: "#00AA00",
         drops: ["rotten_flesh"],
-        scoreValue: 10
+        scoreValue: 10,
+        size: { w: 32, h: 48 }
     },
     spider: {
         hp: 16,
@@ -3399,7 +3502,8 @@ const ENEMY_STATS = {
         attackType: "melee",
         color: "#4A0E0E",
         drops: ["string"],
-        scoreValue: 12
+        scoreValue: 12,
+        size: { w: 44, h: 24 }
     },
     creeper: {
         hp: 20,
@@ -3408,7 +3512,8 @@ const ENEMY_STATS = {
         attackType: "explode",
         color: "#00AA00",
         drops: ["gunpowder"],
-        scoreValue: 18
+        scoreValue: 18,
+        size: { w: 32, h: 48 }
     },
     skeleton: {
         hp: 15,
@@ -3417,7 +3522,8 @@ const ENEMY_STATS = {
         attackType: "ranged",
         color: "#C0C0C0",
         drops: ["bone", "arrow"],
-        scoreValue: 20
+        scoreValue: 20,
+        size: { w: 32, h: 48 }
     },
     enderman: {
         hp: 40,
@@ -3426,7 +3532,8 @@ const ENEMY_STATS = {
         attackType: "teleport",
         color: "#1A0033",
         drops: ["ender_pearl"],
-        scoreValue: 35
+        scoreValue: 35,
+        size: { w: 32, h: 64 }
     },
     ender_dragon: {
         hp: 200,
