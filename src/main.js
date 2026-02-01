@@ -1513,7 +1513,7 @@ function update() {
 
     if (playerInvincibleTimer > 0) playerInvincibleTimer--;
 
-    if (levelScore >= gameConfig.scoring.levelUp) nextLevel();
+    // Biomes are score-driven now; the old "next level / scene switch" caused conflicts.
     gameFrame++;
 }
 
@@ -1533,11 +1533,8 @@ function damagePlayer(amount, sourceX, knockback = 90) {
 }
 
 function nextLevel() {
+    // Deprecated: scenes are controlled by biomes now.
     levelScore = 0;
-    currentLevelIdx++;
-    if (currentLevelIdx >= levels.length) currentLevelIdx = 0;
-    showToast(`通关! 下一站: ${levels[currentLevelIdx].name}`);
-    setTimeout(() => { startLevel(currentLevelIdx); }, 2000);
 }
 
 function showToast(msg) {
