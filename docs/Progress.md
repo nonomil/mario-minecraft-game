@@ -2,7 +2,7 @@
 
 本文档记录了 **Minecraft Mario Words Game** 的开发历程与关键更新。
 
-**版本号**：2026-02-01.5
+**版本号**：2026-02-01.6
 
 ## 已完成阶段 (Completed)
 
@@ -26,6 +26,11 @@
 - **蓝色方块间距**：添加最小生成间隔，避免出现过密。
 - **召唤按钮**：物品栏第一格增加“召唤傀儡”按钮，逻辑与 X 键一致。
 - **离线单文件**：生成 `out/Game.offline.html`，可在安卓 `file://` 直接运行。
+### 9. 武器/物品栏与触控调整
+- **武器初始**：默认带弓和 5 支箭，可立即切换武器并查看当前弓箭数量。
+- **栏位重组**：去除木斧和骨头，弓与箭分开显示；系统已识别背包里的弓/箭来解锁武器。
+- **触控优化**：虚拟左右按钮下移与地面齐平，去掉圆角边框，保持操作简洁。
+- **进度提示**：HUD 增加武器信息条，显示当前武器与箭数，切换/PVP反馈清晰。
 ### 1. 基础架构重构与离线运行优化
 - **移除模块限制**：将 ES6 Module 结构调整为传统的 script 引入，解决了本地双击文件运行时由于 CORS 策略导致的加载失败问题。
 - **配置同步降级**：实现了 `loadJsonWithFallback` 机制，在外部 JSON 配置文件加载失败时自动使用 `src/defaults.js` 中的默认配置，确保游戏随时可用。
@@ -63,6 +68,9 @@
 - [x] 支持单词图片展示与失败占位图。
 
 ## 本地 Git 记录 (Local Git Log)
+- f8efd47 Update UI, offline build, and voice pacing
+- 8169ae8 Bump version and sync progress log
+- a41195d Stabilize progression for biome and difficulty
 - 8169ae8 Bump version and sync progress log
 - a41195d Stabilize progression for biome and difficulty
 - 55a65fb Update progress for difficulty system

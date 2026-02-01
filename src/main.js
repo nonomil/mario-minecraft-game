@@ -56,11 +56,10 @@ const INVENTORY_TEMPLATE = {
     pumpkin: 0,
     iron: 0,
     stick: 0,
-    wooden_axe: 0,
-    stone_sword: 0,
+    stone_sword: 1,
     iron_pickaxe: 0,
-    arrow: 0,
-    bone: 0,
+    bow: 1,
+    arrow: 5,
     gunpowder: 0,
     rotten_flesh: 0,
     string: 0,
@@ -75,17 +74,16 @@ const INVENTORY_TEMPLATE = {
 };
 let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
-const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "wooden_axe", "stone_sword", "iron_pickaxe", "arrow", "bone"];
+const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "stone_sword", "iron_pickaxe", "bow", "arrow"];
 const ITEM_LABELS = {
     diamond: "钻石",
     pumpkin: "南瓜",
     iron: "铁块",
     stick: "木棍",
-    wooden_axe: "木斧",
     stone_sword: "石剑",
     iron_pickaxe: "铁镐",
+    bow: "弓",
     arrow: "箭矢",
-    bone: "骨头",
     gunpowder: "火药",
     rotten_flesh: "腐肉",
     string: "蜘蛛丝",
@@ -103,11 +101,10 @@ const ITEM_ICONS = {
     pumpkin: "🎃",
     iron: "🧱",
     stick: "🥢",
-    wooden_axe: "🪓",
     stone_sword: "⚔️",
     iron_pickaxe: "⛏️",
+    bow: "🏹",
     arrow: "🏹",
-    bone: "🦴",
     gunpowder: "💥",
     rotten_flesh: "🥩",
     string: "🕸️",
@@ -124,9 +121,50 @@ const ITEM_ICONS = {
     score: "🪙"
 };
 const TOOL_STATS = {
-    wooden_axe: { damage: 5 },
     stone_sword: { damage: 8 },
     iron_pickaxe: { damage: 6 }
+};
+const WEAPONS = {
+    sword: {
+        id: "sword",
+        name: "石剑",
+        damage: 14,
+        range: 55,
+        cooldown: 18,
+        knockback: 8,
+        type: "melee",
+        emoji: "⚔️"
+    },
+    axe: {
+        id: "axe",
+        name: "木斧",
+        damage: 20,
+        range: 70,
+        cooldown: 30,
+        knockback: 12,
+        type: "melee",
+        emoji: "🪓"
+    },
+    bow: {
+        id: "bow",
+        name: "弓",
+        damage: 12,
+        range: 380,
+        cooldown: 26,
+        knockback: 5,
+        type: "ranged",
+        emoji: "🏹",
+        chargeMax: 40
+    }
+};
+const playerWeapons = {
+    current: "sword",
+    unlocked: ["sword", "bow"],
+    attackCooldown: 0,
+    isCharging: false,
+    chargeTime: 0,
+    lastPressTs: 0,
+    doublePressWindow: 220
 };
 const keys = { right: false, left: false };
 
@@ -306,7 +344,6 @@ const DEFAULT_CHEST_TABLES = {
         { item: "stick", weight: 12, min: 1, max: 3 },
         { item: "coal", weight: 10, min: 1, max: 3 },
         { item: "arrow", weight: 10, min: 2, max: 6 },
-        { item: "bone", weight: 8, min: 1, max: 3 },
         { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
         { item: "flower", weight: 6, min: 1, max: 2 },
         { item: "mushroom", weight: 6, min: 1, max: 2 },
@@ -368,6 +405,114 @@ function mergeDeep(target, source) {
 
 function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
+}
+
+function getArrowCount() {
+    return Number(inventory.arrow) || 0;
+}
+
+function unlockWeapon(id) {
+    if (!WEAPONS[id]) return false;
+    if (playerWeapons.unlocked.includes(id)) return false;
+    playerWeapons.unlocked.push(id);
+    showToast(`🎉 解锁武器: ${WEAPONS[id].emoji} ${WEAPONS[id].name}`);
+    updateWeaponUI();
+    return true;
+}
+
+function syncWeaponsFromInventory() {
+    if ((inventory.stone_sword || 0) > 0) unlockWeapon("sword");
+    if ((inventory.iron_pickaxe || 0) > 0) unlockWeapon("axe");
+    if ((inventory.bow || 0) > 0) unlockWeapon("bow");
+}
+
+function switchWeapon() {
+    const list = playerWeapons.unlocked;
+    if (!list.length) return;
+    if (list.length === 1) {
+        showToast("⚠️ 只有一种武器");
+        return;
+    }
+    const idx = list.indexOf(playerWeapons.current);
+    const nextIdx = idx >= 0 ? (idx + 1) % list.length : 0;
+    playerWeapons.current = list[nextIdx];
+    playerWeapons.attackCooldown = 0;
+    playerWeapons.isCharging = false;
+    playerWeapons.chargeTime = 0;
+    const weapon = WEAPONS[playerWeapons.current];
+    showToast(`⚔️ ${weapon.emoji} ${weapon.name}`);
+    updateWeaponUI();
+}
+
+function updateWeaponUI() {
+    const el = document.getElementById("weapon-info");
+    if (!el) return;
+    const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
+    const arrows = getArrowCount();
+    const arrowText = weapon.type === "ranged" ? ` | 🏹 ${arrows}` : "";
+    el.innerText = `武器: ${weapon.emoji} ${weapon.name}${arrowText}`;
+}
+
+function startBowCharge() {
+    const weapon = WEAPONS.bow;
+    if (playerWeapons.attackCooldown > 0) return;
+    if (getArrowCount() <= 0) {
+        showToast("❌ 没有箭！");
+        return;
+    }
+    playerWeapons.isCharging = true;
+    playerWeapons.chargeTime = 0;
+}
+
+function releaseBowShot(forceCharge = null) {
+    const weapon = WEAPONS.bow;
+    if (playerWeapons.attackCooldown > 0) return;
+    if (getArrowCount() <= 0) {
+        showToast("❌ 没有箭！");
+        return;
+    }
+    const ratio = forceCharge != null ? forceCharge : Math.min(1, playerWeapons.chargeTime / weapon.chargeMax);
+    const charge = clamp(ratio, 0.2, 1);
+    const dir = player.facingRight ? 1 : -1;
+    const startX = player.facingRight ? player.x + player.width : player.x;
+    const startY = player.y + player.height * 0.4;
+    const targetX = startX + dir * weapon.range;
+    const targetY = startY - 20 * charge;
+    const speed = 4 + charge * 4;
+    const damage = Math.round(weapon.damage * (0.6 + charge * 0.9));
+    const arrow = new Arrow(startX, startY, targetX, targetY, "player", speed, damage);
+    projectiles.push(arrow);
+    inventory.arrow = Math.max(0, (inventory.arrow || 0) - 1);
+    updateInventoryUI();
+    playerWeapons.attackCooldown = weapon.cooldown;
+    playerWeapons.isCharging = false;
+    playerWeapons.chargeTime = 0;
+}
+
+function performMeleeAttack(weapon) {
+    if (player.isAttacking) return;
+    player.isAttacking = true;
+    player.attackTimer = Math.max(12, Math.floor(weapon.cooldown * 0.6));
+    const range = weapon.range;
+    const ax = player.facingRight ? player.x + player.width : player.x - range;
+    const ay = player.y;
+    const dmg = weapon.damage;
+
+    trees.forEach(t => {
+        if (rectIntersect(ax, ay, range, player.height, t.x, t.y, t.width, t.height)) {
+            t.hit();
+        }
+    });
+
+    enemies.forEach(e => {
+        if (rectIntersect(ax, ay, range, player.height, e.x, e.y, e.width, e.height)) {
+            if (e.takeDamage) e.takeDamage(dmg);
+            else e.hp -= dmg;
+            showFloatingText(`-${dmg}`, e.x, e.y);
+        }
+    });
+
+    playerWeapons.attackCooldown = weapon.cooldown;
 }
 
 function getProgressScore() {
@@ -1739,6 +1884,11 @@ function update() {
     });
 
     if (playerInvincibleTimer > 0) playerInvincibleTimer--;
+    if (playerWeapons.attackCooldown > 0) playerWeapons.attackCooldown--;
+    if (playerWeapons.isCharging) {
+        const weapon = WEAPONS.bow;
+        playerWeapons.chargeTime = Math.min(weapon.chargeMax, playerWeapons.chargeTime + 1);
+    }
 
     // Biomes are score-driven now; the old "next level / scene switch" caused conflicts.
     updateDifficultyState();
@@ -1838,20 +1988,21 @@ function updateInventoryUI() {
         pumpkin: "count-pumpkin",
         iron: "count-iron",
         stick: "count-stick",
-        wooden_axe: "count-wooden_axe",
         stone_sword: "count-stone_sword",
         iron_pickaxe: "count-iron_pickaxe",
-        arrow: "count-arrow",
-        bone: "count-bone"
+        bow: "count-bow",
+        arrow: "count-arrow"
     };
     Object.keys(ids).forEach(key => {
         const el = document.getElementById(ids[key]);
         if (el) el.innerText = inventory[key] ?? 0;
     });
-    const slots = Array.from(document.querySelectorAll(".inventory-bar .inv-slot"));
+    const slots = Array.from(document.querySelectorAll(".inventory-bar .inv-slot:not(.inv-slot-button)"));
     slots.forEach((s, idx) => {
         s.classList.toggle("selected", idx === selectedSlot);
     });
+    syncWeaponsFromInventory();
+    updateWeaponUI();
 }
 
 const RECIPES = {
@@ -1914,31 +2065,37 @@ function handleDecorationInteract() {
     }
 }
 
-function handleAttack() {
-    if (player.isAttacking) return;
-    player.isAttacking = true;
-    player.attackTimer = 20;
+function handleAttack(mode = "press") {
+    const now = Date.now();
+    if (now - playerWeapons.lastPressTs < playerWeapons.doublePressWindow && mode === "press") {
+        playerWeapons.lastPressTs = 0;
+        switchWeapon();
+        return;
+    }
+    playerWeapons.lastPressTs = now;
 
-    const range = 50;
-    const ax = player.facingRight ? player.x + player.width : player.x - range;
-    const ay = player.y;
-    const itemKey = HOTBAR_ITEMS[selectedSlot];
-    const tool = TOOL_STATS[itemKey];
-    const dmg = tool ? tool.damage : 10;
+    if (playerWeapons.attackCooldown > 0) return;
+    const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
 
-    trees.forEach(t => {
-        if (rectIntersect(ax, ay, range, player.height, t.x, t.y, t.width, t.height)) {
-            t.hit();
+    if (weapon.type === "ranged") {
+        if (mode === "tap") {
+            releaseBowShot(0.35);
+            return;
         }
-    });
-
-    enemies.forEach(e => {
-        if (rectIntersect(ax, ay, range, player.height, e.x, e.y, e.width, e.height)) {
-            if (e.takeDamage) e.takeDamage(dmg);
-            else e.hp -= dmg;
-            showFloatingText(`-${dmg}`, e.x, e.y);
+        if (!playerWeapons.isCharging) {
+            startBowCharge();
         }
-    });
+        return;
+    }
+
+    performMeleeAttack(weapon);
+}
+
+function handleAttackRelease() {
+    const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
+    if (weapon.type !== "ranged") return;
+    if (!playerWeapons.isCharging) return;
+    releaseBowShot();
 }
 
 function draw() {
@@ -3807,7 +3964,7 @@ const ENEMY_STATS = {
         damage: 12,
         attackType: "ranged",
         color: "#C0C0C0",
-        drops: ["bone", "arrow"],
+        drops: ["arrow"],
         scoreValue: 20,
         size: { w: 32, h: 48 }
     },
@@ -3881,6 +4038,15 @@ class Projectile extends Entity {
                     return;
                 }
             }
+        } else if (this.faction === "player") {
+            for (const e of enemyList) {
+                if (!e.remove && rectIntersect(this.x, this.y, this.width, this.height, e.x, e.y, e.width, e.height)) {
+                    e.takeDamage(this.damage);
+                    showFloatingText(`-${this.damage}`, e.x, e.y - 10);
+                    this.remove = true;
+                    return;
+                }
+            }
         }
 
         if (this.lifetime <= 0) this.remove = true;
@@ -3888,9 +4054,11 @@ class Projectile extends Entity {
 }
 
 class Arrow extends Projectile {
-    constructor(x, y, targetX, targetY) {
-        super(x, y, targetX, targetY, 4, "enemy");
-        this.damage = 12;
+    constructor(x, y, targetX, targetY, faction = "enemy", speed = 4, damage = 12) {
+        super(x, y, targetX, targetY, speed, faction);
+        this.damage = damage;
+        this.width = 12;
+        this.height = 4;
     }
 }
 
@@ -4408,7 +4576,7 @@ function wireTouchControls() {
     bindHold("left", () => { keys.left = true; }, () => { keys.left = false; });
     bindHold("right", () => { keys.right = true; }, () => { keys.right = false; });
     bindTap("jump", () => { jumpBuffer = gameConfig.jump.bufferFrames; });
-    bindTap("attack", () => { handleAttack(); });
+    bindTap("attack", () => { handleAttack("tap"); });
     bindTap("interact", () => { handleInteraction(); });
 }
 
@@ -4483,7 +4651,7 @@ async function start() {
         }
         if (isRight) keys.right = true;
         if (isLeft) keys.left = true;
-        if (isAttack) handleAttack();
+        if (isAttack) handleAttack("press");
         if (isInteract) handleInteraction();
         if (isDecorInteract) handleDecorationInteract();
         if (!inInput && e.key >= "1" && e.key <= "9") {
@@ -4513,8 +4681,10 @@ async function start() {
     window.addEventListener("keyup", e => {
         const isRight = matchesBinding(e, keyBindings.right) || e.code === "ArrowRight" || e.key === "ArrowRight";
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
+        const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
         if (isRight) keys.right = false;
         if (isLeft) keys.left = false;
+        if (isAttack) handleAttackRelease();
     });
 
     window.addEventListener("blur", () => { keys.right = false; keys.left = false; });
