@@ -43,6 +43,7 @@ let sessionWordCounts = Object.create(null);
 
 let score = 0;
 let levelScore = 0;
+let runBestScore = 0;
 let cameraX = 0;
 let gameFrame = 0;
 let currentLevelIdx = 0;
@@ -345,6 +346,8 @@ const DEFAULT_CHEST_ROLLS = {
 let floatingTexts = [];
 let lastGenX = 0;
 let difficultyState = null;
+let difficultyConfigCache = null;
+let lootConfigCache = null;
 let lastDamageFrame = 0;
 
 function mergeDeep(target, source) {
@@ -366,9 +369,15 @@ function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
 }
 
+function getProgressScore() {
+    return runBestScore;
+}
+
 function getDifficultyConfig() {
+    if (difficultyConfigCache) return difficultyConfigCache;
     const cfg = gameConfig?.difficulty || {};
-    return mergeDeep(DEFAULT_DIFFICULTY_CONFIG, cfg);
+    difficultyConfigCache = mergeDeep(DEFAULT_DIFFICULTY_CONFIG, cfg);
+    return difficultyConfigCache;
 }
 
 function getDifficultyTier(scoreValue) {
@@ -382,7 +391,7 @@ function getDifficultyTier(scoreValue) {
 
 function computeDifficultyState() {
     const cfg = getDifficultyConfig();
-    const tier = getDifficultyTier(score);
+    const tier = getDifficultyTier(getProgressScore());
     const dda = cfg.dda || {};
     let enemyDamageMult = Number(tier.enemyDamage) || 1;
     let enemyHpMult = Number(tier.enemyHp) || 1;
@@ -394,9 +403,6 @@ function computeDifficultyState() {
 
     if (settings.learningMode) {
         enemyDamageMult *= 0.85;
-        enemySpawnMult *= 0.8;
-        chestSpawnMult *= 1.1;
-        chestRollBonus += 0.04;
     }
 
     if (dda.enabled) {
@@ -450,11 +456,13 @@ function getDifficultyState() {
 }
 
 function getLootConfig() {
+    if (lootConfigCache) return lootConfigCache;
     const cfg = gameConfig?.loot || {};
     const chestTables = mergeDeep(DEFAULT_CHEST_TABLES, cfg.chestTables || {});
     const chestRarities = Array.isArray(cfg.chestRarities) && cfg.chestRarities.length ? cfg.chestRarities : DEFAULT_CHEST_RARITIES;
     const chestRolls = mergeDeep(DEFAULT_CHEST_ROLLS, cfg.chestRolls || {});
-    return { chestTables, chestRarities, chestRolls };
+    lootConfigCache = { chestTables, chestRarities, chestRolls };
+    return lootConfigCache;
 }
 
 function resetInventory() {
@@ -537,7 +545,7 @@ function selectBiome(x, scoreValue) {
 }
 
 function updateCurrentBiome() {
-    const nextBiome = getBiomeById(getBiomeIdForScore(score));
+    const nextBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     if (nextBiome.id !== currentBiome) {
         currentBiome = nextBiome.id;
         biomeTransitionX = player.x;
@@ -977,6 +985,7 @@ function createPlayer() {
 function initGame() {
     score = 0;
     levelScore = 0;
+    runBestScore = 0;
     currentLevelIdx = 0;
     playerMaxHp = Number(gameConfig?.player?.maxHp) || 3;
     playerHp = playerMaxHp;
@@ -1137,7 +1146,7 @@ function estimateMaxJumpHeightPx() {
 
 function generatePlatform(startX, length, groundYValue) {
     const level = levels[currentLevelIdx];
-    const biome = getBiomeById(getBiomeIdForScore(score));
+    const biome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     const platformCfg = biome.platform || {};
     const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
@@ -1262,7 +1271,7 @@ function generatePlatform(startX, length, groundYValue) {
 function spawnEnemyByDifficulty(x, y) {
     const enemyConfig = getEnemyConfig();
     const step = Number(getBiomeSwitchConfig().stepScore) || 200;
-    const tier = Math.max(0, Math.floor((Number(score) || 0) / Math.max(1, step)));
+    const tier = Math.max(0, Math.floor((Number(getProgressScore()) || 0) / Math.max(1, step)));
     const biomePools = {
         forest: ["zombie", "creeper", "spider", "skeleton", "enderman"],
         snow: ["zombie", "skeleton", "creeper", "spider", "enderman"],
@@ -1547,7 +1556,7 @@ function optimizedUpdate(entity, updateFn) {
 function checkBossSpawn() {
     if (bossSpawned) return;
     const enemyConfig = getEnemyConfig();
-    if (score >= (enemyConfig.bossSpawnScore || 5000)) {
+    if (getProgressScore() >= (enemyConfig.bossSpawnScore || 5000)) {
         bossSpawned = true;
         const dragon = new Enemy(player.x + 300, 100, "ender_dragon");
         enemies.push(dragon);
@@ -1721,6 +1730,7 @@ function addScore(points) {
     levelScore += points;
     if (score < 0) score = 0;
     if (levelScore < 0) levelScore = 0;
+    runBestScore = Math.max(runBestScore, score);
     document.getElementById("score").innerText = score;
     updateDifficultyState();
 }
@@ -4365,6 +4375,8 @@ async function start() {
     ]);
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
+    difficultyConfigCache = null;
+    lootConfigCache = null;
     keyBindings = { ...defaultControls, ...(loadedControls || {}) };
     levels = Array.isArray(loadedLevels) && loadedLevels.length ? loadedLevels : defaultLevels;
     wordDatabase = Array.isArray(loadedWords) && loadedWords.length ? loadedWords : defaultWords;

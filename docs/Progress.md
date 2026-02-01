@@ -2,7 +2,7 @@
 
 本文档记录了 **Minecraft Mario Words Game** 的开发历程与关键更新。
 
-**版本号**：2026-02-01.2
+**版本号**：2026-02-01.3
 
 ## 已完成阶段 (Completed)
 
@@ -18,6 +18,7 @@
 - **动态难度 (DDA)**：低血量时降低敌人压力并提升补给；长时间无受伤则适度提高挑战。
 - **宝箱稀有度**：引入普通/稀有/史诗/传说稀有度，掉落表与多掉落概率支持配置。
 - **难度提示**：HUD 显示当前难度等级，切换时提示玩家。
+- **进度分数**：难度与群系切换按“本局最高分”推进，避免受伤扣分导致难度/环境来回跳变。
 ### 1. 基础架构重构与离线运行优化
 - **移除模块限制**：将 ES6 Module 结构调整为传统的 script 引入，解决了本地双击文件运行时由于 CORS 策略导致的加载失败问题。
 - **配置同步降级**：实现了 `loadJsonWithFallback` 机制，在外部 JSON 配置文件加载失败时自动使用 `src/defaults.js` 中的默认配置，确保游戏随时可用。
@@ -55,6 +56,7 @@
 - [x] 支持单词图片展示与失败占位图。
 
 ## 本地 Git 记录 (Local Git Log)
+- 55a65fb Update progress for difficulty system
 - 80adfd6 Add difficulty tiers and loot tuning
 - 98f7bef Add HP system and chest healing rewards
 - 6746102 Penalize player score on enemy contact
