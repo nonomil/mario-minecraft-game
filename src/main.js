@@ -1520,7 +1520,19 @@ function update() {
 function addScore(points) {
     score += points;
     levelScore += points;
+    if (score < 0) score = 0;
+    if (levelScore < 0) levelScore = 0;
     document.getElementById("score").innerText = score;
+}
+
+function scorePenaltyForDamage(amount) {
+    const dmg = Math.max(0, Number(amount) || 0);
+    // Score is the "HP" proxy in this game: lose a few points on contact, but not too punishing.
+    const scale = typeof gameConfig?.scoring?.hitPenaltyScale === "number" ? gameConfig.scoring.hitPenaltyScale : 0.5;
+    const minPenalty = typeof gameConfig?.scoring?.minHitPenalty === "number" ? gameConfig.scoring.minHitPenalty : 5;
+    const maxPenalty = typeof gameConfig?.scoring?.maxHitPenalty === "number" ? gameConfig.scoring.maxHitPenalty : 30;
+    const raw = Math.round(dmg * scale);
+    return Math.max(minPenalty, Math.min(maxPenalty, raw || minPenalty));
 }
 
 function damagePlayer(amount, sourceX, knockback = 90) {
@@ -1529,7 +1541,9 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const dir = sourceX != null ? (player.x > sourceX ? 1 : -1) : -1;
     player.x += dir * knockback;
     player.y -= 40;
-    showFloatingText(`-${amount}`, player.x, player.y);
+    const penalty = scorePenaltyForDamage(amount);
+    addScore(-penalty);
+    showFloatingText(`-${penalty}分`, player.x, player.y);
 }
 
 function nextLevel() {

@@ -18,7 +18,10 @@ window.MMWG_DEFAULTS = {
         scoring: {
             word: 10,
             enemy: 5,
-            levelUp: 100
+            levelUp: 100,
+            hitPenaltyScale: 0.5,
+            minHitPenalty: 5,
+            maxHitPenalty: 30
         },
         jump: {
             bufferFrames: 12,
