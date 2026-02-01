@@ -2,8 +2,16 @@
 
 本文档记录了 **Minecraft Mario Words Game** 的开发历程与关键更新。
 
+**版本号**：2026-02-01.1
+
 ## 已完成阶段 (Completed)
 
+### 6. 生态群系、敌人与生命系统
+- **生态群系切换**：改为按分数阶段切换，切换周期支持设置配置；顺序与解锁规则统一由 `config/biomes.json` 管理。
+- **地形与平台优化**：新增可控的浮空草方块与台阶式小平台生成，避免不可达/堵路情况。
+- **敌人多样化**：按分数区间和群系随机生成怪物，刷新率提升，造型更接近 Minecraft 像素风。
+- **生命值系统**：玩家生命与最大生命上限引入到配置；受伤扣分、宝箱可掉落回血与生命上限提升。
+- **关卡冲突修复**：停用旧的 100 分自动切关逻辑，避免与生态切换逻辑冲突。
 ### 1. 基础架构重构与离线运行优化
 - **移除模块限制**：将 ES6 Module 结构调整为传统的 script 引入，解决了本地双击文件运行时由于 CORS 策略导致的加载失败问题。
 - **配置同步降级**：实现了 `loadJsonWithFallback` 机制，在外部 JSON 配置文件加载失败时自动使用 `src/defaults.js` 中的默认配置，确保游戏随时可用。
@@ -39,6 +47,19 @@
 - [x] 支持多词库管理、词库选择与加权轮换。
 - [x] 支持词库完成度与自动切换。
 - [x] 支持单词图片展示与失败占位图。
+
+## 本地 Git 记录 (Local Git Log)
+- 98f7bef Add HP system and chest healing rewards
+- 6746102 Penalize player score on enemy contact
+- 93bd244 Disable legacy level scene switching
+- cc4d1d6 Increase enemy spawn rate
+- b16e6dd Improve enemy variety and Minecraft-like sprites
+- 858530c Constrain grass micro platforms to be jumpable
+- 8be91e7 Make biome switch configurable and add micro platforms
+- 0888563 Redesign biome switching to be score-driven
+- e30796a Adjust biome switch gate and chest loot
+- 700a331 Add biome environment expansion
+- 7307516 Implement golem and enemy system
 
 ## 未来规划 (Future)
 - [ ] **难度曲线**：根据玩家掌握程度自动调整平台间距或敌人速度。
