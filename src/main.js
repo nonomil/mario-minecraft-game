@@ -309,7 +309,10 @@ function getBiomeById(id) {
 }
 
 function selectBiome(x, scoreValue) {
-    const available = Object.values(biomeConfigs).filter(b => scoreValue >= b.spawnWeight.min && scoreValue <= b.spawnWeight.max);
+    let available = Object.values(biomeConfigs).filter(b => scoreValue >= b.spawnWeight.min && scoreValue <= b.spawnWeight.max);
+    if (available.length < 2) {
+        available = Object.values(biomeConfigs);
+    }
     if (!available.length) return biomeConfigs.forest;
     const biomeLength = 2000;
     const idx = Math.floor(x / biomeLength) % available.length;
@@ -317,6 +320,7 @@ function selectBiome(x, scoreValue) {
 }
 
 function updateCurrentBiome() {
+    if (score < 200) return;
     const nextBiome = selectBiome(player.x, score);
     if (nextBiome.id !== currentBiome) {
         currentBiome = nextBiome.id;
@@ -928,9 +932,11 @@ function generatePlatform(startX, length, groundYValue) {
         const rand = Math.random();
         const rates = getSpawnRates();
         const enemyConfig = getEnemyConfig();
-        let enemyChance = enemyConfig.spawnChance ?? rates.enemyChance;
-        if (enemyConfig.spawnChance != null && settings.learningMode) {
-            enemyChance *= 0.25;
+        let enemyChance = rates.enemyChance;
+        if (enemyConfig.spawnChance != null) {
+            let extra = enemyConfig.spawnChance;
+            if (settings.learningMode) extra *= 0.25;
+            enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance + extra));
         }
         enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance));
         if (rand < rates.treeChance) {
@@ -974,6 +980,17 @@ function weightedPick(table) {
         if (r <= 0) return key;
     }
     return entries[entries.length - 1][0];
+}
+
+function pickWeightedLoot(table) {
+    if (!table || !table.length) return null;
+    const total = table.reduce((sum, entry) => sum + (entry.weight || 0), 0);
+    let r = Math.random() * (total || 1);
+    for (const entry of table) {
+        r -= (entry.weight || 0);
+        if (r <= 0) return entry;
+    }
+    return table[table.length - 1];
 }
 
 function spawnBiomeTree(x, yPos, biome, fallbackType) {
@@ -2626,21 +2643,43 @@ class Chest extends Entity {
     open() {
         if (this.opened) return;
         this.opened = true;
-        const roll = Math.random();
-        let drop = "iron";
-        if (roll < 0.3) drop = "diamond";
-        else if (roll < 0.55) drop = "pumpkin";
-        else if (roll < 0.7) drop = "iron";
-        else if (roll < 0.8) drop = "stick";
-        else if (roll < 0.87) drop = "wooden_axe";
-        else if (roll < 0.93) drop = "stone_sword";
-        else if (roll < 0.97) drop = "arrow";
-        else drop = "iron_pickaxe";
-        if (!inventory[drop] && inventory[drop] !== 0) inventory[drop] = 0;
-        inventory[drop]++;
+        const lootTable = [
+            { item: "iron", weight: 18, min: 1, max: 3 },
+            { item: "pumpkin", weight: 12, min: 1, max: 2 },
+            { item: "stick", weight: 12, min: 1, max: 3 },
+            { item: "diamond", weight: 5, min: 1, max: 1 },
+            { item: "wooden_axe", weight: 6, min: 1, max: 1 },
+            { item: "stone_sword", weight: 5, min: 1, max: 1 },
+            { item: "iron_pickaxe", weight: 3, min: 1, max: 1 },
+            { item: "arrow", weight: 8, min: 2, max: 6 },
+            { item: "bone", weight: 6, min: 1, max: 3 },
+            { item: "gunpowder", weight: 5, min: 1, max: 2 },
+            { item: "rotten_flesh", weight: 7, min: 1, max: 3 },
+            { item: "string", weight: 6, min: 1, max: 3 },
+            { item: "ender_pearl", weight: 2, min: 1, max: 1 },
+            { item: "flower", weight: 5, min: 1, max: 2 },
+            { item: "mushroom", weight: 5, min: 1, max: 2 },
+            { item: "coal", weight: 8, min: 1, max: 3 },
+            { item: "gold", weight: 3, min: 1, max: 2 },
+            { item: "shell", weight: 4, min: 1, max: 2 },
+            { item: "starfish", weight: 4, min: 1, max: 2 }
+        ];
+        const rollCount = Math.random() < 0.15 ? 3 : Math.random() < 0.45 ? 2 : 1;
+        const drops = [];
+        for (let i = 0; i < rollCount; i++) {
+            const picked = pickWeightedLoot(lootTable);
+            if (!picked) continue;
+            const count = picked.min + Math.floor(Math.random() * (picked.max - picked.min + 1));
+            drops.push({ item: picked.item, count });
+        }
+        drops.forEach(d => {
+            if (!inventory[d.item] && inventory[d.item] !== 0) inventory[d.item] = 0;
+            inventory[d.item] += d.count;
+        });
         updateInventoryUI();
-        const dropIcon = ITEM_ICONS[drop] || "✨";
-        showFloatingText(dropIcon, this.x + 10, this.y - 30);
+        const summary = drops.map(d => `${ITEM_ICONS[d.item] || "✨"}x${d.count}`).join(" ");
+        showFloatingText("🎁", this.x + 10, this.y - 30);
+        if (summary) showToast(`获得: ${summary}`);
     }
 }
 
