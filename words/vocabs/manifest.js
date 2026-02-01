@@ -87,7 +87,7 @@
   packs.forEach(p => { byId[p.id] = p; });
 
   window.MMWG_VOCAB_MANIFEST = {
-    version: "2026-02-01.1",
+    version: "2026-02-01.2",
     packs,
     byId
   };

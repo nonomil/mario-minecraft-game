@@ -268,8 +268,84 @@ const DEFAULT_BIOME_SWITCH = {
     }
 };
 let biomeSwitchConfig = JSON.parse(JSON.stringify(DEFAULT_BIOME_SWITCH));
+const DEFAULT_DIFFICULTY_CONFIG = {
+    damageUnit: 20,
+    invincibleFrames: 120,
+    tiers: [
+        { name: "新手", minScore: 0, maxScore: 500, enemyDamage: 0.8, enemyHp: 0.85, enemySpawn: 0.75, chestSpawn: 1.1, chestRareBoost: 0.25, chestRollBonus: 0.08, scoreMultiplier: 1.0 },
+        { name: "简单", minScore: 500, maxScore: 1500, enemyDamage: 1.0, enemyHp: 1.0, enemySpawn: 0.95, chestSpawn: 1.0, chestRareBoost: 0.1, chestRollBonus: 0.04, scoreMultiplier: 1.0 },
+        { name: "普通", minScore: 1500, maxScore: 3000, enemyDamage: 1.15, enemyHp: 1.1, enemySpawn: 1.05, chestSpawn: 0.95, chestRareBoost: 0.0, chestRollBonus: 0.0, scoreMultiplier: 1.05 },
+        { name: "困难", minScore: 3000, maxScore: 5000, enemyDamage: 1.4, enemyHp: 1.25, enemySpawn: 1.2, chestSpawn: 0.9, chestRareBoost: -0.1, chestRollBonus: -0.02, scoreMultiplier: 1.1 },
+        { name: "地狱", minScore: 5000, maxScore: 999999, enemyDamage: 1.8, enemyHp: 1.5, enemySpawn: 1.35, chestSpawn: 0.85, chestRareBoost: -0.2, chestRollBonus: -0.04, scoreMultiplier: 1.2 }
+    ],
+    dda: {
+        enabled: true,
+        lowHpThreshold: 1,
+        lowHpEnemyDamage: 0.7,
+        lowHpEnemySpawn: 0.8,
+        lowHpChestBonus: 0.2,
+        noHitFramesForBoost: 720,
+        noHitEnemyDamage: 1.15,
+        noHitEnemySpawn: 1.1,
+        maxTotalEnemyDamage: 2.2,
+        maxTotalEnemySpawn: 1.6
+    }
+};
+const DEFAULT_CHEST_RARITIES = [
+    { id: "common", weight: 60 },
+    { id: "rare", weight: 30 },
+    { id: "epic", weight: 8 },
+    { id: "legendary", weight: 2 }
+];
+const DEFAULT_CHEST_TABLES = {
+    common: [
+        { item: "iron", weight: 18, min: 1, max: 3 },
+        { item: "pumpkin", weight: 12, min: 1, max: 2 },
+        { item: "stick", weight: 12, min: 1, max: 3 },
+        { item: "coal", weight: 10, min: 1, max: 3 },
+        { item: "arrow", weight: 10, min: 2, max: 6 },
+        { item: "bone", weight: 8, min: 1, max: 3 },
+        { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
+        { item: "flower", weight: 6, min: 1, max: 2 },
+        { item: "mushroom", weight: 6, min: 1, max: 2 },
+        { item: "hp", weight: 8, min: 1, max: 1 },
+        { item: "score", weight: 7, min: 10, max: 25 }
+    ],
+    rare: [
+        { item: "diamond", weight: 6, min: 1, max: 1 },
+        { item: "stone_sword", weight: 7, min: 1, max: 1 },
+        { item: "iron_pickaxe", weight: 5, min: 1, max: 1 },
+        { item: "gold", weight: 7, min: 1, max: 2 },
+        { item: "ender_pearl", weight: 4, min: 1, max: 1 },
+        { item: "iron", weight: 8, min: 2, max: 4 },
+        { item: "arrow", weight: 8, min: 4, max: 8 },
+        { item: "hp", weight: 8, min: 1, max: 1 },
+        { item: "score", weight: 8, min: 20, max: 40 }
+    ],
+    epic: [
+        { item: "max_hp", weight: 6, min: 1, max: 1 },
+        { item: "diamond", weight: 6, min: 1, max: 2 },
+        { item: "ender_pearl", weight: 5, min: 1, max: 2 },
+        { item: "gold", weight: 6, min: 2, max: 3 },
+        { item: "iron_pickaxe", weight: 6, min: 1, max: 1 },
+        { item: "score", weight: 8, min: 40, max: 80 }
+    ],
+    legendary: [
+        { item: "max_hp", weight: 8, min: 1, max: 2 },
+        { item: "diamond", weight: 8, min: 2, max: 3 },
+        { item: "dragon_egg", weight: 4, min: 1, max: 1 },
+        { item: "ender_pearl", weight: 6, min: 2, max: 3 },
+        { item: "score", weight: 10, min: 80, max: 150 }
+    ]
+};
+const DEFAULT_CHEST_ROLLS = {
+    twoDropChance: 0.45,
+    threeDropChance: 0.15
+};
 let floatingTexts = [];
 let lastGenX = 0;
+let difficultyState = null;
+let lastDamageFrame = 0;
 
 function mergeDeep(target, source) {
     const output = Array.isArray(target) ? [...target] : { ...target };
@@ -284,6 +360,101 @@ function mergeDeep(target, source) {
         });
     }
     return output;
+}
+
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
+function getDifficultyConfig() {
+    const cfg = gameConfig?.difficulty || {};
+    return mergeDeep(DEFAULT_DIFFICULTY_CONFIG, cfg);
+}
+
+function getDifficultyTier(scoreValue) {
+    const cfg = getDifficultyConfig();
+    const tiers = Array.isArray(cfg.tiers) ? cfg.tiers : [];
+    if (!tiers.length) return { name: "普通", minScore: 0, maxScore: 999999, enemyDamage: 1, enemyHp: 1, enemySpawn: 1, chestSpawn: 1, chestRareBoost: 0, chestRollBonus: 0, scoreMultiplier: 1 };
+    const s = Number(scoreValue) || 0;
+    const found = tiers.find(t => s >= (t.minScore ?? 0) && s < (t.maxScore ?? Number.MAX_SAFE_INTEGER));
+    return found || tiers[tiers.length - 1];
+}
+
+function computeDifficultyState() {
+    const cfg = getDifficultyConfig();
+    const tier = getDifficultyTier(score);
+    const dda = cfg.dda || {};
+    let enemyDamageMult = Number(tier.enemyDamage) || 1;
+    let enemyHpMult = Number(tier.enemyHp) || 1;
+    let enemySpawnMult = Number(tier.enemySpawn) || 1;
+    let chestSpawnMult = Number(tier.chestSpawn) || 1;
+    let chestRareBoost = Number(tier.chestRareBoost) || 0;
+    let chestRollBonus = Number(tier.chestRollBonus) || 0;
+    const scoreMultiplier = Number(tier.scoreMultiplier) || 1;
+
+    if (settings.learningMode) {
+        enemyDamageMult *= 0.85;
+        enemySpawnMult *= 0.8;
+        chestSpawnMult *= 1.1;
+        chestRollBonus += 0.04;
+    }
+
+    if (dda.enabled) {
+        const lowHpThreshold = Number(dda.lowHpThreshold ?? 1);
+        if (playerHp <= lowHpThreshold) {
+            enemyDamageMult *= Number(dda.lowHpEnemyDamage ?? 0.7);
+            enemySpawnMult *= Number(dda.lowHpEnemySpawn ?? 0.8);
+            chestRareBoost += Number(dda.lowHpChestBonus ?? 0.2);
+            chestSpawnMult *= 1.08;
+            chestRollBonus += 0.05;
+        }
+        const noHitFrames = Number(dda.noHitFramesForBoost ?? 720);
+        if (gameFrame - lastDamageFrame > noHitFrames) {
+            enemyDamageMult *= Number(dda.noHitEnemyDamage ?? 1.15);
+            enemySpawnMult *= Number(dda.noHitEnemySpawn ?? 1.1);
+        }
+        const maxDamage = Number(dda.maxTotalEnemyDamage ?? 2.2);
+        const maxSpawn = Number(dda.maxTotalEnemySpawn ?? 1.6);
+        enemyDamageMult = clamp(enemyDamageMult, 0.4, maxDamage);
+        enemySpawnMult = clamp(enemySpawnMult, 0.4, maxSpawn);
+    }
+
+    return {
+        name: tier.name || "普通",
+        minScore: tier.minScore ?? 0,
+        maxScore: tier.maxScore ?? 999999,
+        enemyDamageMult,
+        enemyHpMult,
+        enemySpawnMult,
+        chestSpawnMult,
+        chestRareBoost,
+        chestRollBonus,
+        scoreMultiplier
+    };
+}
+
+function updateDifficultyState(force = false) {
+    const next = computeDifficultyState();
+    const changed = !difficultyState || difficultyState.name !== next.name;
+    difficultyState = next;
+    if (changed || force) {
+        const el = document.getElementById("difficulty-info");
+        if (el) el.innerText = `难度: ${next.name}`;
+        if (changed && !force) showToast(`⚔️ 难度调整：${next.name}`);
+    }
+}
+
+function getDifficultyState() {
+    if (!difficultyState) updateDifficultyState(true);
+    return difficultyState;
+}
+
+function getLootConfig() {
+    const cfg = gameConfig?.loot || {};
+    const chestTables = mergeDeep(DEFAULT_CHEST_TABLES, cfg.chestTables || {});
+    const chestRarities = Array.isArray(cfg.chestRarities) && cfg.chestRarities.length ? cfg.chestRarities : DEFAULT_CHEST_RARITIES;
+    const chestRolls = mergeDeep(DEFAULT_CHEST_ROLLS, cfg.chestRolls || {});
+    return { chestTables, chestRarities, chestRolls };
 }
 
 function resetInventory() {
@@ -809,11 +980,14 @@ function initGame() {
     currentLevelIdx = 0;
     playerMaxHp = Number(gameConfig?.player?.maxHp) || 3;
     playerHp = playerMaxHp;
+    lastDamageFrame = 0;
+    difficultyState = null;
     resetInventory();
     updateInventoryUI();
     player = createPlayer();
     bossSpawned = false;
     startLevel(0);
+    updateDifficultyState(true);
 }
 
 function startLevel(idx) {
@@ -935,6 +1109,10 @@ function getSpawnRates() {
         chestChance *= 0.8;
         itemChance = Math.min(0.85, itemChance * 1.2);
     }
+
+    const diff = getDifficultyState();
+    enemyChance *= diff.enemySpawnMult;
+    chestChance *= diff.chestSpawnMult;
 
     const clamp01 = v => Math.max(0, Math.min(1, v));
     treeChance = clamp01(treeChance);
@@ -1125,6 +1303,18 @@ function pickWeightedLoot(table) {
         if (r <= 0) return entry;
     }
     return table[table.length - 1];
+}
+
+function pickChestRarity(rarities, rareBoost) {
+    if (!rarities || !rarities.length) return "common";
+    const boost = Number(rareBoost) || 0;
+    const adjusted = rarities.map((r, idx) => {
+        const base = Number(r.weight) || 1;
+        const mult = 1 + boost * idx;
+        return { ...r, weight: Math.max(1, base * mult) };
+    });
+    const picked = pickWeightedLoot(adjusted);
+    return picked?.id || "common";
 }
 
 function spawnBiomeTree(x, yPos, biome, fallbackType) {
@@ -1522,6 +1712,7 @@ function update() {
     if (playerInvincibleTimer > 0) playerInvincibleTimer--;
 
     // Biomes are score-driven now; the old "next level / scene switch" caused conflicts.
+    updateDifficultyState();
     gameFrame++;
 }
 
@@ -1531,6 +1722,7 @@ function addScore(points) {
     if (score < 0) score = 0;
     if (levelScore < 0) levelScore = 0;
     document.getElementById("score").innerText = score;
+    updateDifficultyState();
 }
 
 function updateHpUI() {
@@ -1559,13 +1751,19 @@ function scorePenaltyForDamage(amount) {
 
 function damagePlayer(amount, sourceX, knockback = 90) {
     if (playerInvincibleTimer > 0) return;
-    playerInvincibleTimer = 30;
+    const invFrames = Number(getDifficultyConfig().invincibleFrames ?? 30) || 30;
+    playerInvincibleTimer = Math.max(10, invFrames);
+    lastDamageFrame = gameFrame;
     const dir = sourceX != null ? (player.x > sourceX ? 1 : -1) : -1;
     player.x += dir * knockback;
     player.y -= 40;
-    const penalty = scorePenaltyForDamage(amount);
+    const baseDamage = Math.max(1, Number(amount) || 1);
+    const diff = getDifficultyState();
+    const damageUnit = Number(getDifficultyConfig().damageUnit ?? 20) || 20;
+    const scaledDamage = Math.max(1, Math.round((baseDamage * diff.enemyDamageMult) / damageUnit));
+    const penalty = scorePenaltyForDamage(baseDamage * diff.enemyDamageMult);
     addScore(-penalty);
-    playerHp = Math.max(0, playerHp - 1);
+    playerHp = Math.max(0, playerHp - scaledDamage);
     updateHpUI();
     showFloatingText(`-${penalty}分`, player.x, player.y);
     if (playerHp <= 0 || score <= 0) {
@@ -2904,31 +3102,16 @@ class Chest extends Entity {
     open() {
         if (this.opened) return;
         this.opened = true;
-        const lootTable = [
-            { item: "iron", weight: 18, min: 1, max: 3 },
-            { item: "pumpkin", weight: 12, min: 1, max: 2 },
-            { item: "stick", weight: 12, min: 1, max: 3 },
-            { item: "diamond", weight: 5, min: 1, max: 1 },
-            { item: "wooden_axe", weight: 6, min: 1, max: 1 },
-            { item: "stone_sword", weight: 5, min: 1, max: 1 },
-            { item: "iron_pickaxe", weight: 3, min: 1, max: 1 },
-            { item: "arrow", weight: 8, min: 2, max: 6 },
-            { item: "bone", weight: 6, min: 1, max: 3 },
-            { item: "gunpowder", weight: 5, min: 1, max: 2 },
-            { item: "rotten_flesh", weight: 7, min: 1, max: 3 },
-            { item: "string", weight: 6, min: 1, max: 3 },
-            { item: "ender_pearl", weight: 2, min: 1, max: 1 },
-            { item: "flower", weight: 5, min: 1, max: 2 },
-            { item: "mushroom", weight: 5, min: 1, max: 2 },
-            { item: "coal", weight: 8, min: 1, max: 3 },
-            { item: "gold", weight: 3, min: 1, max: 2 },
-            { item: "shell", weight: 4, min: 1, max: 2 },
-            { item: "starfish", weight: 4, min: 1, max: 2 },
-            { item: "hp", weight: 6, min: 1, max: 1 },
-            { item: "max_hp", weight: 2, min: 1, max: 1 },
-            { item: "score", weight: 5, min: 10, max: 30 }
-        ];
-        const rollCount = Math.random() < 0.15 ? 3 : Math.random() < 0.45 ? 2 : 1;
+        const diff = getDifficultyState();
+        const lootCfg = getLootConfig();
+        const rarity = pickChestRarity(lootCfg.chestRarities, diff.chestRareBoost);
+        const lootTable = lootCfg.chestTables[rarity] || lootCfg.chestTables.common || [];
+        const baseTwo = Number(lootCfg.chestRolls.twoDropChance ?? 0.45);
+        const baseThree = Number(lootCfg.chestRolls.threeDropChance ?? 0.15);
+        const rollBonus = Number(diff.chestRollBonus) || 0;
+        const twoChance = clamp(baseTwo + rollBonus, 0.1, 0.9);
+        const threeChance = clamp(baseThree + rollBonus * 0.6, 0.05, 0.6);
+        const rollCount = Math.random() < threeChance ? 3 : Math.random() < twoChance ? 2 : 1;
         const drops = [];
         for (let i = 0; i < rollCount; i++) {
             const picked = pickWeightedLoot(lootTable);
@@ -2956,8 +3139,9 @@ class Chest extends Entity {
         });
         updateInventoryUI();
         const summary = drops.map(d => `${ITEM_ICONS[d.item] || "✨"}x${d.count}`).join(" ");
+        const rarityLabel = { common: "普通", rare: "稀有", epic: "史诗", legendary: "传说" }[rarity] || "普通";
         showFloatingText("🎁", this.x + 10, this.y - 30);
-        if (summary) showToast(`获得: ${summary}`);
+        if (summary) showToast(`宝箱(${rarityLabel}): ${summary}`);
     }
 }
 
@@ -3686,18 +3870,19 @@ class Enemy extends Entity {
     constructor(x, y, type = "zombie", range = 120) {
         const stats = ENEMY_STATS[type] || ENEMY_STATS.zombie;
         const size = stats.size || { w: 32, h: 32 };
+        const diff = getDifficultyState();
         super(x, y, size.w, size.h);
         this.type = type;
         this.startX = x;
         this.range = range;
-        this.hp = stats.hp;
-        this.maxHp = stats.hp;
+        this.hp = Math.max(1, Math.round(stats.hp * diff.enemyHpMult));
+        this.maxHp = this.hp;
         this.speed = stats.speed;
-        this.damage = stats.damage;
+        this.damage = Math.max(1, Math.round(stats.damage * diff.enemyDamageMult));
         this.attackType = stats.attackType;
         this.color = stats.color;
         this.drops = stats.drops || [];
-        this.scoreValue = stats.scoreValue || gameConfig.scoring.enemy;
+        this.scoreValue = Math.max(1, Math.round((stats.scoreValue || gameConfig.scoring.enemy) * diff.scoreMultiplier));
         this.dir = 1;
         this.state = "patrol";
         this.attackCooldown = 0;
