@@ -92,6 +92,7 @@ window.MMWG_DEFAULTS = {
         touchControls: true,
         avoidWordRepeats: true,
         showWordImage: true,
+        biomeSwitchStepScore: 200,
         vocabSelection: "auto"
     }
 };

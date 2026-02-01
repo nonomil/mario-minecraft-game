@@ -250,7 +250,7 @@ let decorations = [];
 let particles = [];
 let weatherState = { type: "clear", timer: 0 };
 const MAX_DECORATIONS_ONSCREEN = 60;
-const BIOME_SWITCH = {
+const DEFAULT_BIOME_SWITCH = {
     stepScore: 200,
     order: ["forest", "snow", "desert", "mountain", "ocean", "nether"],
     unlockScore: {
@@ -262,6 +262,7 @@ const BIOME_SWITCH = {
         nether: 2000
     }
 };
+let biomeSwitchConfig = JSON.parse(JSON.stringify(DEFAULT_BIOME_SWITCH));
 let floatingTexts = [];
 let lastGenX = 0;
 
@@ -310,23 +311,39 @@ function getGolemConfig() {
     return mergeDeep(base, gameConfig.golems || {});
 }
 
-function normalizeBiomeConfigs(raw) {
+function normalizeBiomeBundle(raw) {
     const out = raw && typeof raw === "object" ? raw : {};
-    if (!out.forest) return JSON.parse(JSON.stringify(DEFAULT_BIOME_CONFIGS));
-    return out;
+    const switchCfg = out.switch && typeof out.switch === "object" ? out.switch : (out._switch && typeof out._switch === "object" ? out._switch : {});
+    let biomes = out.biomes && typeof out.biomes === "object" ? out.biomes : out;
+    if (biomes.switch) {
+        const { switch: _ignored, ...rest } = biomes;
+        biomes = rest;
+    }
+    if (!biomes || typeof biomes !== "object" || !biomes.forest) {
+        return { biomes: JSON.parse(JSON.stringify(DEFAULT_BIOME_CONFIGS)), switch: JSON.parse(JSON.stringify(DEFAULT_BIOME_SWITCH)) };
+    }
+    return { biomes, switch: mergeDeep(DEFAULT_BIOME_SWITCH, switchCfg) };
 }
 
 function getBiomeById(id) {
     return biomeConfigs[id] || biomeConfigs.forest;
 }
 
+function getBiomeSwitchConfig() {
+    const cfg = biomeSwitchConfig && typeof biomeSwitchConfig === "object" ? biomeSwitchConfig : DEFAULT_BIOME_SWITCH;
+    const stepFromSettings = Number(settings?.biomeSwitchStepScore);
+    const stepScore = isFinite(stepFromSettings) && stepFromSettings >= 50 ? stepFromSettings : (Number(cfg.stepScore) || 200);
+    return { ...cfg, stepScore };
+}
+
 function getBiomeIdForScore(scoreValue) {
-    const step = Math.max(1, Number(BIOME_SWITCH.stepScore) || 200);
+    const cfg = getBiomeSwitchConfig();
+    const step = Math.max(1, Number(cfg.stepScore) || 200);
     const cycle = Math.floor((Number(scoreValue) || 0) / step);
-    const order = (BIOME_SWITCH.order || []).filter(id => biomeConfigs[id]);
+    const order = (cfg.order || []).filter(id => biomeConfigs[id]);
     const baseOrder = order.length ? order : Object.keys(biomeConfigs);
     if (!baseOrder.length) return "forest";
-    const unlock = BIOME_SWITCH.unlockScore || {};
+    const unlock = cfg.unlockScore || {};
     const unlocked = baseOrder.filter(id => (Number(scoreValue) || 0) >= (Number(unlock[id]) || 0));
     const eligible = unlocked.length ? unlocked : [baseOrder[0]];
     return eligible[cycle % eligible.length];
@@ -434,6 +451,8 @@ function normalizeSettings(raw) {
     if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
+    if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
+    merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
     if (!merged.keyCodes) {
         merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact].filter(Boolean).join(",");
     }
@@ -919,6 +938,7 @@ function getSpawnRates() {
 function generatePlatform(startX, length, groundYValue) {
     const level = levels[currentLevelIdx];
     const biome = getBiomeById(getBiomeIdForScore(score));
+    const platformCfg = biome.platform || {};
     const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
     let merged = false;
@@ -939,14 +959,36 @@ function generatePlatform(startX, length, groundYValue) {
 
     generateBiomeDecorations(startX, groundYValue, newWidth, biome);
 
-    if (length > 5 && Math.random() < gameConfig.spawn.floatingPlatformChance) {
+    const floatChance = (gameConfig.spawn.floatingPlatformChance || 0) * (platformCfg.floatingChanceMult || 1);
+    const floatItemChance = (gameConfig.spawn.floatingItemChance || 0) * (platformCfg.floatingItemChanceMult || 1);
+    if (length > 5 && Math.random() < floatChance) {
         const floatLen = 2 + Math.floor(Math.random() * 3);
         const floatY = groundYValue - 100 - Math.floor(Math.random() * 80);
         const floatX = startX + blockSize + Math.floor(Math.random() * (length - floatLen) * blockSize);
-        platforms.push(new Platform(floatX, floatY, floatLen * blockSize, blockSize, groundType));
-        if (Math.random() < gameConfig.spawn.floatingItemChance) {
+        const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
+        const floatType = floatTypes[Math.floor(Math.random() * floatTypes.length)] || groundType;
+        platforms.push(new Platform(floatX, floatY, floatLen * blockSize, blockSize, floatType));
+        if (Math.random() < floatItemChance) {
             const word = pickWordForSpawn();
             items.push(new Item(floatX + blockSize / 2, floatY - 50, word));
+        }
+    }
+
+    const microChance = Number(platformCfg.microPlatformChance) || 0;
+    if (microChance > 0 && Math.random() < microChance && newWidth >= blockSize * 4) {
+        const maxCount = Math.max(1, Number(platformCfg.microPlatformMaxCount) || 2);
+        const count = 1 + Math.floor(Math.random() * maxCount);
+        const minOffset = Number(platformCfg.microPlatformMinOffset) || 120;
+        const maxExtra = Number(platformCfg.microPlatformMaxExtra) || 180;
+        const microType = platformCfg.microPlatformType || "grass";
+        for (let i = 0; i < count; i++) {
+            const mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
+            const my = groundYValue - minOffset - Math.random() * maxExtra;
+            platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
+            if (Math.random() < (platformCfg.microItemChance || 0)) {
+                const word = pickWordForSpawn();
+                items.push(new Item(mx + blockSize / 2, my - 50, word));
+            }
         }
     }
 
@@ -3745,6 +3787,7 @@ function wireSettingsModal() {
     const optSpeechZh = document.getElementById("opt-speech-zh");
     const optUiScale = document.getElementById("opt-ui-scale");
     const optMotionScale = document.getElementById("opt-motion-scale");
+    const optBiomeStep = document.getElementById("opt-biome-step");
     const optTouch = document.getElementById("opt-touch");
     const optNoRepeat = document.getElementById("opt-no-repeat");
     const optVocab = document.getElementById("opt-vocab");
@@ -3760,6 +3803,7 @@ function wireSettingsModal() {
         if (optSpeechZh) optSpeechZh.value = String(settings.speechZhRate ?? 0.9);
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
+        if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 200);
         if (optTouch) optTouch.checked = !!settings.touchControls;
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
@@ -3796,6 +3840,7 @@ function wireSettingsModal() {
         if (optSpeechZh) settings.speechZhRate = Number(optSpeechZh.value);
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);
+        if (optBiomeStep) settings.biomeSwitchStepScore = Number(optBiomeStep.value);
         if (optTouch) settings.touchControls = !!optTouch.checked;
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
         if (optShowImage) settings.showWordImage = !!optShowImage.checked;
@@ -3913,14 +3958,16 @@ async function start() {
         loadJsonWithFallback("../config/controls.json", defaultControls),
         loadJsonWithFallback("../config/levels.json", defaultLevels),
         loadJsonWithFallback("../words/words-base.json", defaultWords),
-        loadJsonWithFallback("../config/biomes.json", DEFAULT_BIOME_CONFIGS)
+        loadJsonWithFallback("../config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS })
     ]);
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
     keyBindings = { ...defaultControls, ...(loadedControls || {}) };
     levels = Array.isArray(loadedLevels) && loadedLevels.length ? loadedLevels : defaultLevels;
     wordDatabase = Array.isArray(loadedWords) && loadedWords.length ? loadedWords : defaultWords;
-    biomeConfigs = normalizeBiomeConfigs(loadedBiomes);
+    const bundle = normalizeBiomeBundle(loadedBiomes);
+    biomeConfigs = bundle.biomes;
+    biomeSwitchConfig = bundle.switch;
     settings = normalizeSettings(settings);
     const parsed = parseKeyCodes(settings.keyCodes);
     if (parsed) {
