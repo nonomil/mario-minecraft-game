@@ -46,6 +46,8 @@ let levelScore = 0;
 let cameraX = 0;
 let gameFrame = 0;
 let currentLevelIdx = 0;
+let playerHp = 3;
+let playerMaxHp = 3;
 
 const INVENTORY_TEMPLATE = {
     diamond: 0,
@@ -114,7 +116,10 @@ const ITEM_ICONS = {
     coal: "🪨",
     gold: "🪙",
     shell: "🐚",
-    starfish: "⭐"
+    starfish: "⭐",
+    hp: "❤️",
+    max_hp: "💖",
+    score: "🪙"
 };
 const TOOL_STATS = {
     wooden_axe: { damage: 5 },
@@ -802,6 +807,8 @@ function initGame() {
     score = 0;
     levelScore = 0;
     currentLevelIdx = 0;
+    playerMaxHp = Number(gameConfig?.player?.maxHp) || 3;
+    playerHp = playerMaxHp;
     resetInventory();
     updateInventoryUI();
     player = createPlayer();
@@ -829,6 +836,7 @@ function startLevel(idx) {
     playerPositionHistory = [];
     lastGenX = 0;
     cameraX = 0;
+    updateHpUI();
     player.x = 100;
     player.y = 300;
     player.velX = 0;
@@ -1525,6 +1533,20 @@ function addScore(points) {
     document.getElementById("score").innerText = score;
 }
 
+function updateHpUI() {
+    const el = document.getElementById("hp");
+    if (!el) return;
+    const hearts = "❤️".repeat(Math.max(0, playerHp));
+    const empties = "🖤".repeat(Math.max(0, playerMaxHp - playerHp));
+    el.innerText = `${hearts}${empties}`;
+}
+
+function healPlayer(amount) {
+    if (playerHp <= 0) return;
+    playerHp = Math.min(playerMaxHp, playerHp + amount);
+    updateHpUI();
+}
+
 function scorePenaltyForDamage(amount) {
     const dmg = Math.max(0, Number(amount) || 0);
     // Score is the "HP" proxy in this game: lose a few points on contact, but not too punishing.
@@ -1543,7 +1565,14 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     player.y -= 40;
     const penalty = scorePenaltyForDamage(amount);
     addScore(-penalty);
+    playerHp = Math.max(0, playerHp - 1);
+    updateHpUI();
     showFloatingText(`-${penalty}分`, player.x, player.y);
+    if (playerHp <= 0 || score <= 0) {
+        paused = true;
+        showToast("💀 生命耗尽");
+        setOverlay(true, "pause");
+    }
 }
 
 function nextLevel() {
@@ -2894,7 +2923,10 @@ class Chest extends Entity {
             { item: "coal", weight: 8, min: 1, max: 3 },
             { item: "gold", weight: 3, min: 1, max: 2 },
             { item: "shell", weight: 4, min: 1, max: 2 },
-            { item: "starfish", weight: 4, min: 1, max: 2 }
+            { item: "starfish", weight: 4, min: 1, max: 2 },
+            { item: "hp", weight: 6, min: 1, max: 1 },
+            { item: "max_hp", weight: 2, min: 1, max: 1 },
+            { item: "score", weight: 5, min: 10, max: 30 }
         ];
         const rollCount = Math.random() < 0.15 ? 3 : Math.random() < 0.45 ? 2 : 1;
         const drops = [];
@@ -2905,6 +2937,20 @@ class Chest extends Entity {
             drops.push({ item: picked.item, count });
         }
         drops.forEach(d => {
+            if (d.item === "hp") {
+                healPlayer(d.count);
+                return;
+            }
+            if (d.item === "max_hp") {
+                playerMaxHp = Math.min(8, playerMaxHp + d.count);
+                playerHp = Math.min(playerMaxHp, playerHp + d.count);
+                updateHpUI();
+                return;
+            }
+            if (d.item === "score") {
+                addScore(d.count);
+                return;
+            }
             if (!inventory[d.item] && inventory[d.item] !== 0) inventory[d.item] = 0;
             inventory[d.item] += d.count;
         });

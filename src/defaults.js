@@ -30,7 +30,8 @@ window.MMWG_DEFAULTS = {
         player: {
             width: 26,
             height: 52,
-            maxJumps: 2
+            maxJumps: 2,
+            maxHp: 3
         },
         spawn: {
             floatingPlatformChance: 0.6,
