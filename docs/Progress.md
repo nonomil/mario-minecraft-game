@@ -2,7 +2,7 @@
 
 本文档记录了 **Minecraft Mario Words Game** 的开发历程与关键更新。
 
-**版本号**：2026-02-01.3
+**版本号**：2026-02-01.4
 
 ## 已完成阶段 (Completed)
 
@@ -56,6 +56,7 @@
 - [x] 支持单词图片展示与失败占位图。
 
 ## 本地 Git 记录 (Local Git Log)
+- a41195d Stabilize progression for biome and difficulty
 - 55a65fb Update progress for difficulty system
 - 80adfd6 Add difficulty tiers and loot tuning
 - 98f7bef Add HP system and chest healing rewards
