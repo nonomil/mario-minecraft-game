@@ -31,7 +31,7 @@ window.MMWG_DEFAULTS = {
             width: 26,
             height: 52,
             maxJumps: 2,
-            maxHp: 3
+            maxHp: 10
         },
         spawn: {
             floatingPlatformChance: 0.6,
@@ -39,7 +39,8 @@ window.MMWG_DEFAULTS = {
             treeChance: 0.2,
             chestChance: 0.35,
             itemChance: 0.55,
-            enemyChance: 0.7
+            enemyChance: 0.7,
+            wordItemMinGap: 150
         },
         enemies: {
             maxOnScreen: 8,
@@ -165,7 +166,7 @@ window.MMWG_DEFAULTS = {
     settings: {
         learningMode: true,
         speechEnabled: true,
-        speechEnRate: 0.8,
+        speechEnRate: 1.1,
         speechZhRate: 0.9,
         uiScale: 1.0,
         motionScale: 1.25,

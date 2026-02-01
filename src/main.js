@@ -49,6 +49,7 @@ let gameFrame = 0;
 let currentLevelIdx = 0;
 let playerHp = 3;
 let playerMaxHp = 3;
+let lastWordItemX = -Infinity;
 
 const INVENTORY_TEMPLATE = {
     diamond: 0,
@@ -986,6 +987,7 @@ function initGame() {
     score = 0;
     levelScore = 0;
     runBestScore = 0;
+    lastWordItemX = -Infinity;
     currentLevelIdx = 0;
     playerMaxHp = Number(gameConfig?.player?.maxHp) || 3;
     playerHp = playerMaxHp;
@@ -1003,7 +1005,7 @@ function startLevel(idx) {
     currentLevelIdx = idx;
     const level = levels[currentLevelIdx];
     canvas.style.backgroundColor = level.bg;
-    const initBiome = getBiomeById(getBiomeIdForScore(score));
+    const initBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     currentBiome = initBiome.id;
     const info = document.getElementById("level-info");
     if (info) info.innerText = `生态: ${initBiome.name}`;
@@ -1131,6 +1133,15 @@ function getSpawnRates() {
     return { treeChance, chestChance, itemChance, enemyChance };
 }
 
+function canSpawnWordItemAt(x) {
+    const minGap = Number(gameConfig?.spawn?.wordItemMinGap ?? 150) || 150;
+    return Math.abs(x - lastWordItemX) >= minGap;
+}
+
+function registerWordItemSpawn(x) {
+    lastWordItemX = x;
+}
+
 function estimateMaxJumpHeightPx() {
     const g = Math.max(0.05, Number(gameConfig?.physics?.gravity) || 0.2);
     const v1 = Math.abs(Number(player?.jumpStrength ?? gameConfig?.physics?.jumpStrength ?? -7));
@@ -1183,9 +1194,11 @@ function generatePlatform(startX, length, groundYValue) {
         const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
         const floatType = floatTypes[Math.floor(Math.random() * floatTypes.length)] || groundType;
         platforms.push(new Platform(floatX, floatY, floatLen * blockSize, blockSize, floatType));
-        if (Math.random() < floatItemChance) {
+        const floatItemX = floatX + blockSize / 2;
+        if (Math.random() < floatItemChance && canSpawnWordItemAt(floatItemX)) {
             const word = pickWordForSpawn();
-            items.push(new Item(floatX + blockSize / 2, floatY - 50, word));
+            items.push(new Item(floatItemX, floatY - 50, word));
+            registerWordItemSpawn(floatItemX);
         }
     }
 
@@ -1213,11 +1226,12 @@ function generatePlatform(startX, length, groundYValue) {
                     const my = groundYValue - (i + 1) * blockSize;
                     platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
                 }
-                if (Math.random() < (platformCfg.microItemChance || 0)) {
+                const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
+                if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(topX)) {
                     const word = pickWordForSpawn();
-                    const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
                     const topY = groundYValue - steps * blockSize - 50;
                     items.push(new Item(topX, topY, word));
+                    registerWordItemSpawn(topX);
                 }
             }
         } else {
@@ -1233,9 +1247,11 @@ function generatePlatform(startX, length, groundYValue) {
                 mx = Math.floor(mx / blockSize) * blockSize;
                 const my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
                 platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
-                if (Math.random() < (platformCfg.microItemChance || 0)) {
+                const spawnX = mx + blockSize / 2;
+                if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(spawnX)) {
                     const word = pickWordForSpawn();
-                    items.push(new Item(mx + blockSize / 2, my - 50, word));
+                    items.push(new Item(spawnX, my - 50, word));
+                    registerWordItemSpawn(spawnX);
                 }
             }
         }
@@ -1257,9 +1273,10 @@ function generatePlatform(startX, length, groundYValue) {
             spawnBiomeTree(objectX, groundYValue, biome, level.treeType);
         } else if (rand < rates.chestChance) {
             chests.push(new Chest(objectX, groundYValue));
-        } else if (rand < rates.itemChance) {
+        } else if (rand < rates.itemChance && canSpawnWordItemAt(objectX)) {
             const word = pickWordForSpawn();
             items.push(new Item(objectX, groundYValue - 60, word));
+            registerWordItemSpawn(objectX);
         } else if (rand < enemyChance) {
             spawnEnemyByDifficulty(objectX, groundYValue - 32);
         }
@@ -1532,14 +1549,17 @@ function speakWord(wordObj) {
 
     try {
         window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
         const uEn = new SpeechSynthesisUtterance(wordObj.en);
         uEn.lang = "en-US";
-        uEn.rate = Number(settings.speechEnRate) || 0.8;
+        uEn.rate = Math.max(1.0, Number(settings.speechEnRate) || 1.0);
         const uZh = new SpeechSynthesisUtterance(wordObj.zh);
         uZh.lang = "zh-CN";
         uZh.rate = Number(settings.speechZhRate) || 0.9;
         window.speechSynthesis.speak(uEn);
-        window.speechSynthesis.speak(uZh);
+        if (wordObj.zh) {
+            setTimeout(() => window.speechSynthesis.speak(uZh), 120);
+        }
     } catch {
     }
 }
@@ -1738,9 +1758,22 @@ function addScore(points) {
 function updateHpUI() {
     const el = document.getElementById("hp");
     if (!el) return;
-    const hearts = "❤️".repeat(Math.max(0, playerHp));
-    const empties = "🖤".repeat(Math.max(0, playerMaxHp - playerHp));
-    el.innerText = `${hearts}${empties}`;
+    const maxPerRow = 5;
+    const total = Math.max(0, playerMaxHp);
+    const filled = Math.max(0, Math.min(playerHp, total));
+    const rows = Math.ceil(total / maxPerRow) || 1;
+    let html = "";
+    for (let r = 0; r < rows; r++) {
+        const rowStart = r * maxPerRow;
+        const rowEnd = Math.min(total, rowStart + maxPerRow);
+        const rowFilled = Math.max(0, Math.min(filled - rowStart, rowEnd - rowStart));
+        const rowEmpty = (rowEnd - rowStart) - rowFilled;
+        let rowHtml = "";
+        for (let i = 0; i < rowFilled; i++) rowHtml += `<span class="hp-heart">❤️</span>`;
+        for (let i = 0; i < rowEmpty; i++) rowHtml += `<span class="hp-heart">🖤</span>`;
+        html += `<div class="hp-row">${rowHtml}</div>`;
+    }
+    el.innerHTML = html;
 }
 
 function healPlayer(amount) {
@@ -3135,7 +3168,7 @@ class Chest extends Entity {
                 return;
             }
             if (d.item === "max_hp") {
-                playerMaxHp = Math.min(8, playerMaxHp + d.count);
+                playerMaxHp = Math.min(10, playerMaxHp + d.count);
                 playerHp = Math.min(playerMaxHp, playerHp + d.count);
                 updateHpUI();
                 return;
@@ -3147,6 +3180,7 @@ class Chest extends Entity {
             if (!inventory[d.item] && inventory[d.item] !== 0) inventory[d.item] = 0;
             inventory[d.item] += d.count;
         });
+        updateHpUI();
         updateInventoryUI();
         const summary = drops.map(d => `${ITEM_ICONS[d.item] || "✨"}x${d.count}`).join(" ");
         const rarityLabel = { common: "普通", rare: "稀有", epic: "史诗", legendary: "传说" }[rarity] || "普通";
@@ -4322,6 +4356,19 @@ function wireHudButtons() {
             btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
             if (paused && startedOnce) setOverlay(true, "pause");
             if (!paused) setOverlay(false);
+        });
+    }
+
+    const btnSummon = document.getElementById("btn-summon-golem");
+    if (btnSummon) {
+        btnSummon.addEventListener("click", () => {
+            if (inventory.iron >= 10) {
+                tryCraft("iron_golem");
+            } else if (inventory.pumpkin >= 10) {
+                tryCraft("snow_golem");
+            } else {
+                showToast("材料不足！需要 10 个铁块或南瓜");
+            }
         });
     }
 }

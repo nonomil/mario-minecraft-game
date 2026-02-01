@@ -2,7 +2,7 @@
 
 本文档记录了 **Minecraft Mario Words Game** 的开发历程与关键更新。
 
-**版本号**：2026-02-01.4
+**版本号**：2026-02-01.5
 
 ## 已完成阶段 (Completed)
 
@@ -19,6 +19,13 @@
 - **宝箱稀有度**：引入普通/稀有/史诗/传说稀有度，掉落表与多掉落概率支持配置。
 - **难度提示**：HUD 显示当前难度等级，切换时提示玩家。
 - **进度分数**：难度与群系切换按“本局最高分”推进，避免受伤扣分导致难度/环境来回跳变。
+
+### 8. UI与离线单文件优化
+- **血量显示**：上限调整为 10 心，心形缩小并双排展示，宝箱回血与上限提升会即时刷新。
+- **发音节奏**：英文默认语速提升，并在拾取蓝色方块后优先立即播报英文。
+- **蓝色方块间距**：添加最小生成间隔，避免出现过密。
+- **召唤按钮**：物品栏第一格增加“召唤傀儡”按钮，逻辑与 X 键一致。
+- **离线单文件**：生成 `out/Game.offline.html`，可在安卓 `file://` 直接运行。
 ### 1. 基础架构重构与离线运行优化
 - **移除模块限制**：将 ES6 Module 结构调整为传统的 script 引入，解决了本地双击文件运行时由于 CORS 策略导致的加载失败问题。
 - **配置同步降级**：实现了 `loadJsonWithFallback` 机制，在外部 JSON 配置文件加载失败时自动使用 `src/defaults.js` 中的默认配置，确保游戏随时可用。
@@ -56,6 +63,7 @@
 - [x] 支持单词图片展示与失败占位图。
 
 ## 本地 Git 记录 (Local Git Log)
+- 8169ae8 Bump version and sync progress log
 - a41195d Stabilize progression for biome and difficulty
 - 55a65fb Update progress for difficulty system
 - 80adfd6 Add difficulty tiers and loot tuning

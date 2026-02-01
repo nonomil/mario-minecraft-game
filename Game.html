@@ -14,7 +14,7 @@
     <div id="ui-layer">
         <div class="hud-top">
             <div class="hud-box">⭐ 分数: <span id="score">0</span></div>
-            <div class="hud-box" id="hp">❤️❤️❤️</div>
+            <div class="hud-box" id="hp"></div>
             <div class="hud-box" id="word-display">Start!</div>
             <div class="hud-box" id="level-info">场景: 草原</div>
             <div class="hud-box" id="difficulty-info">难度: 新手</div>
@@ -27,6 +27,10 @@
         </div>
 
         <div class="inventory-bar">
+            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="召唤傀儡 (X)">
+                <span class="inv-icon">🗿</span>
+                <span class="inv-label">召唤</span>
+            </button>
             <div class="inv-slot" title="钻石"><span class="inv-icon">💎</span><span class="inv-count" id="count-diamond">0</span></div>
             <div class="inv-slot" title="南瓜"><span class="inv-icon">🎃</span><span class="inv-count" id="count-pumpkin">0</span></div>
             <div class="inv-slot" title="铁块"><span class="inv-icon">🧱</span><span class="inv-count" id="count-iron">0</span></div>
