@@ -24,11 +24,14 @@
             "platform": {
                 "floatingChanceMult": 1.1,
                 "floatingGroundTypes": ["grass"],
+                "floatingMinOffset": 80,
+                "floatingMaxExtra": 50,
                 "microPlatformChance": 0.22,
+                "microPlatformPeriod": 2,
+                "microPattern": "stair",
                 "microPlatformType": "grass",
                 "microPlatformMaxCount": 3,
-                "microPlatformMinOffset": 120,
-                "microPlatformMaxExtra": 180,
+                "microMaxRiseBlocks": 3,
                 "microItemChance": 0.12
             }
         },

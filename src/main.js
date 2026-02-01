@@ -935,6 +935,19 @@ function getSpawnRates() {
     return { treeChance, chestChance, itemChance, enemyChance };
 }
 
+function estimateMaxJumpHeightPx() {
+    const g = Math.max(0.05, Number(gameConfig?.physics?.gravity) || 0.2);
+    const v1 = Math.abs(Number(player?.jumpStrength ?? gameConfig?.physics?.jumpStrength ?? -7));
+    let h = (v1 * v1) / (2 * g);
+    const maxJumps = Number(player?.maxJumps ?? gameConfig?.player?.maxJumps ?? 1);
+    if (maxJumps >= 2) {
+        const v2 = v1 * 0.8;
+        h += (v2 * v2) / (2 * g);
+    }
+    if (!isFinite(h) || h <= 0) return 120;
+    return h;
+}
+
 function generatePlatform(startX, length, groundYValue) {
     const level = levels[currentLevelIdx];
     const biome = getBiomeById(getBiomeIdForScore(score));
@@ -963,7 +976,13 @@ function generatePlatform(startX, length, groundYValue) {
     const floatItemChance = (gameConfig.spawn.floatingItemChance || 0) * (platformCfg.floatingItemChanceMult || 1);
     if (length > 5 && Math.random() < floatChance) {
         const floatLen = 2 + Math.floor(Math.random() * 3);
-        const floatY = groundYValue - 100 - Math.floor(Math.random() * 80);
+        const maxJump = estimateMaxJumpHeightPx() * 0.85;
+        const minOffset = Math.max(50, Number(platformCfg.floatingMinOffset) || 100);
+        const maxExtra = Math.max(0, Number(platformCfg.floatingMaxExtra) || 80);
+        const maxOffset = Math.max(60, Math.min(minOffset + maxExtra, maxJump - 12));
+        const baseOffset = Math.min(minOffset, maxOffset);
+        const extra = Math.max(0, maxOffset - baseOffset);
+        const floatY = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
         const floatX = startX + blockSize + Math.floor(Math.random() * (length - floatLen) * blockSize);
         const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
         const floatType = floatTypes[Math.floor(Math.random() * floatTypes.length)] || groundType;
@@ -975,19 +994,53 @@ function generatePlatform(startX, length, groundYValue) {
     }
 
     const microChance = Number(platformCfg.microPlatformChance) || 0;
-    if (microChance > 0 && Math.random() < microChance && newWidth >= blockSize * 4) {
+    const microPeriod = Math.max(1, Number(platformCfg.microPlatformPeriod) || 1);
+    const microSegment = Math.floor(startX / (blockSize * 6));
+    const allowMicro = microSegment % microPeriod === 0;
+    if (microChance > 0 && allowMicro && Math.random() < microChance && newWidth >= blockSize * 4) {
         const maxCount = Math.max(1, Number(platformCfg.microPlatformMaxCount) || 2);
         const count = 1 + Math.floor(Math.random() * maxCount);
-        const minOffset = Number(platformCfg.microPlatformMinOffset) || 120;
-        const maxExtra = Number(platformCfg.microPlatformMaxExtra) || 180;
         const microType = platformCfg.microPlatformType || "grass";
-        for (let i = 0; i < count; i++) {
-            const mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
-            const my = groundYValue - minOffset - Math.random() * maxExtra;
-            platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
-            if (Math.random() < (platformCfg.microItemChance || 0)) {
-                const word = pickWordForSpawn();
-                items.push(new Item(mx + blockSize / 2, my - 50, word));
+        const pattern = String(platformCfg.microPattern || "stair").toLowerCase();
+        const maxJumpBlocks = Math.max(1, Math.floor((estimateMaxJumpHeightPx() * 0.85) / blockSize));
+        const maxRiseBlocks = Math.max(1, Math.min(maxJumpBlocks, Number(platformCfg.microMaxRiseBlocks) || 2));
+
+        if (pattern === "stair") {
+            const steps = Math.max(1, Math.min(count, maxRiseBlocks));
+            const minX = startX + blockSize;
+            const maxX = startX + newWidth - blockSize * (steps + 1);
+            if (maxX > minX) {
+                let stairX0 = minX + Math.random() * (maxX - minX);
+                stairX0 = Math.floor(stairX0 / blockSize) * blockSize;
+                for (let i = 0; i < steps; i++) {
+                    const mx = stairX0 + i * blockSize;
+                    const my = groundYValue - (i + 1) * blockSize;
+                    platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
+                }
+                if (Math.random() < (platformCfg.microItemChance || 0)) {
+                    const word = pickWordForSpawn();
+                    const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
+                    const topY = groundYValue - steps * blockSize - 50;
+                    items.push(new Item(topX, topY, word));
+                }
+            }
+        } else {
+            // fallback: random but clamped to be reachable
+            const maxJump = estimateMaxJumpHeightPx() * 0.85;
+            const minOffset = Math.max(50, Number(platformCfg.microPlatformMinOffset) || 80);
+            const maxExtra = Math.max(0, Number(platformCfg.microPlatformMaxExtra) || 60);
+            const maxOffset = Math.max(60, Math.min(minOffset + maxExtra, maxJump - 12));
+            const baseOffset = Math.min(minOffset, maxOffset);
+            const extra = Math.max(0, maxOffset - baseOffset);
+            for (let i = 0; i < count; i++) {
+                let mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
+                mx = Math.floor(mx / blockSize) * blockSize;
+                const my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
+                platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
+                if (Math.random() < (platformCfg.microItemChance || 0)) {
+                    const word = pickWordForSpawn();
+                    items.push(new Item(mx + blockSize / 2, my - 50, word));
+                }
             }
         }
     }
