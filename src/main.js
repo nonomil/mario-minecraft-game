@@ -921,7 +921,8 @@ function getSpawnRates() {
     let enemyChance = s.enemyChance ?? 0.7;
 
     if (settings.learningMode) {
-        enemyChance *= 0.25;
+        // Learning mode should reduce enemies, but not to the point that they vanish.
+        enemyChance *= 0.6;
         treeChance *= 0.6;
         chestChance *= 0.8;
         itemChance = Math.min(0.85, itemChance * 1.2);
@@ -1053,7 +1054,7 @@ function generatePlatform(startX, length, groundYValue) {
         let enemyChance = rates.enemyChance;
         if (enemyConfig.spawnChance != null) {
             let extra = enemyConfig.spawnChance;
-            if (settings.learningMode) extra *= 0.25;
+            if (settings.learningMode) extra *= 0.6;
             enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance + extra));
         }
         enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance));

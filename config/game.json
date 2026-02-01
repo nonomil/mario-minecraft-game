@@ -38,7 +38,7 @@
     },
     "enemies": {
         "maxOnScreen": 8,
-        "spawnChance": 0.3,
+        "spawnChance": 0.45,
         "difficultyThresholds": [500, 1000, 2000, 3000],
         "bossSpawnScore": 5000
     },
