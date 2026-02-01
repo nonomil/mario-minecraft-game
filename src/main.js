@@ -250,6 +250,18 @@ let decorations = [];
 let particles = [];
 let weatherState = { type: "clear", timer: 0 };
 const MAX_DECORATIONS_ONSCREEN = 60;
+const BIOME_SWITCH = {
+    stepScore: 200,
+    order: ["forest", "snow", "desert", "mountain", "ocean", "nether"],
+    unlockScore: {
+        forest: 0,
+        snow: 200,
+        desert: 400,
+        mountain: 600,
+        ocean: 800,
+        nether: 2000
+    }
+};
 let floatingTexts = [];
 let lastGenX = 0;
 
@@ -308,6 +320,18 @@ function getBiomeById(id) {
     return biomeConfigs[id] || biomeConfigs.forest;
 }
 
+function getBiomeIdForScore(scoreValue) {
+    const step = Math.max(1, Number(BIOME_SWITCH.stepScore) || 200);
+    const cycle = Math.floor((Number(scoreValue) || 0) / step);
+    const order = (BIOME_SWITCH.order || []).filter(id => biomeConfigs[id]);
+    const baseOrder = order.length ? order : Object.keys(biomeConfigs);
+    if (!baseOrder.length) return "forest";
+    const unlock = BIOME_SWITCH.unlockScore || {};
+    const unlocked = baseOrder.filter(id => (Number(scoreValue) || 0) >= (Number(unlock[id]) || 0));
+    const eligible = unlocked.length ? unlocked : [baseOrder[0]];
+    return eligible[cycle % eligible.length];
+}
+
 function selectBiome(x, scoreValue) {
     let available = Object.values(biomeConfigs).filter(b => scoreValue >= b.spawnWeight.min && scoreValue <= b.spawnWeight.max);
     if (available.length < 2) {
@@ -320,8 +344,7 @@ function selectBiome(x, scoreValue) {
 }
 
 function updateCurrentBiome() {
-    if (score < 200) return;
-    const nextBiome = selectBiome(player.x, score);
+    const nextBiome = getBiomeById(getBiomeIdForScore(score));
     if (nextBiome.id !== currentBiome) {
         currentBiome = nextBiome.id;
         biomeTransitionX = player.x;
@@ -771,7 +794,7 @@ function startLevel(idx) {
     currentLevelIdx = idx;
     const level = levels[currentLevelIdx];
     canvas.style.backgroundColor = level.bg;
-    const initBiome = selectBiome(player.x, score);
+    const initBiome = getBiomeById(getBiomeIdForScore(score));
     currentBiome = initBiome.id;
     const info = document.getElementById("level-info");
     if (info) info.innerText = `生态: ${initBiome.name}`;
@@ -895,7 +918,7 @@ function getSpawnRates() {
 
 function generatePlatform(startX, length, groundYValue) {
     const level = levels[currentLevelIdx];
-    const biome = selectBiome(startX, score);
+    const biome = getBiomeById(getBiomeIdForScore(score));
     const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
     let merged = false;
