@@ -171,6 +171,7 @@ window.MMWG_DEFAULTS = {
         speechEnRate: 1.1,
         speechZhRate: 0.9,
         deviceMode: "auto",
+        orientationLock: "auto",
         uiScale: 1.0,
         motionScale: 1.25,
         touchControls: true,
