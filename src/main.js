@@ -1156,10 +1156,14 @@ function applySettingsToUI() {
         const modeMult = mode === "phone" ? 1.12 : 1.0;
         const padX = 18 + (safe.left || 0) + (safe.right || 0);
         const padY = 18 + (safe.top || 0) + (safe.bottom || 0);
+        const isLandscape = (viewport.width || 0) >= (viewport.height || 0);
         const fitW = (viewport.width - padX) / (gameConfig.canvas.width || 800);
         const fitH = (viewport.height - padY) / (gameConfig.canvas.height || 600);
-        const fit = Math.max(0.45, Math.min(1.6, Math.min(fitW, fitH)));
-        const s = Math.max(0.45, Math.min(1.6, base * modeMult * fit));
+        const fitContain = Math.min(fitW, fitH);
+        const fitCover = Math.max(fitW, fitH);
+        const fitTarget = mode === "phone" && isLandscape ? fitCover : fitContain;
+        const fit = Math.max(0.45, Math.min(2.2, fitTarget));
+        const s = Math.max(0.45, Math.min(2.2, base * modeMult * fit));
         container.style.transform = `scale(${s})`;
     }
 
