@@ -45,6 +45,7 @@ let audioUnlocked = false;
 let speechReady = false;
 let bgmAudio = null;
 let bgmReady = false;
+let ttsAudio = null;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
 
 let score = 0;
@@ -519,6 +520,28 @@ function playHitSfx(intensity = 1) {
     osc.connect(gain).connect(ctx.destination);
     osc.start(now);
     osc.stop(now + 0.16);
+}
+
+function playOnlineTts(text, lang) {
+    if (!text) return false;
+    const safeLang = String(lang || "").toLowerCase().startsWith("zh") ? "zh-CN" : "en";
+    const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(safeLang)}&q=${encodeURIComponent(text)}`;
+    if (!ttsAudio) {
+        ttsAudio = new Audio();
+        ttsAudio.preload = "auto";
+        ttsAudio.volume = 1;
+    }
+    try {
+        ttsAudio.pause();
+        ttsAudio.src = url;
+        const playPromise = ttsAudio.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+            playPromise.catch(() => {});
+        }
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 function getArrowCount() {
@@ -2026,8 +2049,16 @@ function speakWord(wordObj) {
     showWordCard(wordObj);
 
     if (!settings.speechEnabled) return;
-    if (!("speechSynthesis" in window)) return;
-    ensureSpeechReady();
+    const hasSpeech = "speechSynthesis" in window;
+    if (hasSpeech) ensureSpeechReady();
+    const voices = hasSpeech && window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+    if (!hasSpeech || !voices || !voices.length) {
+        playOnlineTts(wordObj.en, "en");
+        if (wordObj.zh) {
+            setTimeout(() => playOnlineTts(wordObj.zh, "zh"), 420);
+        }
+        return;
+    }
 
     try {
         window.speechSynthesis.cancel();
