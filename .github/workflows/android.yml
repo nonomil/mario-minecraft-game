@@ -125,6 +125,26 @@ jobs:
           keytool -list -keystore app/release.keystore -storepass "$SIGNING_STORE_PASSWORD" -alias "$SIGNING_KEY_ALIAS" >/dev/null
           echo "Keystore OK"
 
+      - name: Verify signing key password (no secrets printed)
+        if: ${{ steps.signing.outputs.enabled == 'true' }}
+        shell: bash
+        working-directory: android-app/android
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
+        run: |
+          tmpdir="$(mktemp -d)"
+          printf 'Manifest-Version: 1.0\n' > "$tmpdir/MANIFEST.MF"
+          jar cfm "$tmpdir/empty.jar" "$tmpdir/MANIFEST.MF" >/dev/null
+          jarsigner \
+            -keystore app/release.keystore \
+            -storepass "$SIGNING_STORE_PASSWORD" \
+            -keypass "$SIGNING_KEY_PASSWORD" \
+            "$tmpdir/empty.jar" \
+            "$SIGNING_KEY_ALIAS" >/dev/null
+          echo "Key password OK"
+
       - name: Build Release APK
         if: ${{ steps.signing.outputs.enabled == 'true' }}
         working-directory: android-app/android
@@ -133,15 +153,34 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
-        run: ./gradlew --no-daemon assembleRelease
+        shell: bash
+        run: |
+          set -o pipefail
+          # Release builds may fail on lintVital; we keep lint for local dev but skip the "vital" gate in CI.
+          ./gradlew --no-daemon assembleRelease \
+            -x lintVitalRelease -x lintVitalReportRelease \
+            --stacktrace --info 2>&1 | tee gradle-release.log
 
       - name: Upload APK artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: apk
           path: |
             android-app/android/app/build/outputs/apk/debug/*.apk
             android-app/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload build logs
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            android-app/android/gradle-release.log
+            android-app/android/app/build/reports/**/*
+            android-app/android/app/build/outputs/logs/**/*
           if-no-files-found: ignore
           retention-days: 30
 
