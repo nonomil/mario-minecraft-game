@@ -3,12 +3,23 @@ apply plugin: 'com.android.application'
 android {
     namespace "com.nonomil.mariominecraftgame"
     compileSdk rootProject.ext.compileSdkVersion
+    def signingStoreFile = System.getenv("SIGNING_STORE_FILE")
+    if (signingStoreFile) {
+        signingConfigs {
+            release {
+                storeFile file(signingStoreFile)
+                storePassword System.getenv("SIGNING_STORE_PASSWORD") ?: ""
+                keyAlias System.getenv("SIGNING_KEY_ALIAS") ?: ""
+                keyPassword System.getenv("SIGNING_KEY_PASSWORD") ?: ""
+            }
+        }
+    }
     defaultConfig {
         applicationId "com.nonomil.mariominecraftgame"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -20,6 +31,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (signingStoreFile) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
