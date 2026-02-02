@@ -8,6 +8,9 @@ android {
         signingConfigs {
             release {
                 storeFile file(signingStoreFile)
+                // Our keystore generator uses PKCS12 (keytool default on modern JDKs).
+                // Explicitly setting this avoids "keystore was tampered with" style errors when AGP assumes JKS.
+                storeType "PKCS12"
                 storePassword System.getenv("SIGNING_STORE_PASSWORD") ?: ""
                 keyAlias System.getenv("SIGNING_KEY_ALIAS") ?: ""
                 keyPassword System.getenv("SIGNING_KEY_PASSWORD") ?: ""
