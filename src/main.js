@@ -46,6 +46,7 @@ let speechReady = false;
 let bgmAudio = null;
 let bgmReady = false;
 let ttsAudio = null;
+let ttsSeqId = 0;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
 
 let score = 0;
@@ -546,7 +547,9 @@ function speakNativeTts(tts, text, lang, rate) {
             rate: typeof rate === "number" ? rate : 1.0,
             pitch: 1.0,
             volume: 1.0,
-            category: "ambient"
+            category: "ambient",
+            // Ensure EN->ZH does not cancel EN on Android (default is Flush).
+            queueStrategy: 1
         });
         return true;
     } catch {
@@ -554,26 +557,46 @@ function speakNativeTts(tts, text, lang, rate) {
     }
 }
 
-function playOnlineTts(text, lang) {
-    if (!text) return false;
+function buildOnlineTtsUrl(text, lang) {
     const safeLang = String(lang || "").toLowerCase().startsWith("zh") ? "zh-CN" : "en";
-    const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(safeLang)}&q=${encodeURIComponent(text)}`;
+    return `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(safeLang)}&q=${encodeURIComponent(text)}`;
+}
+
+function playOnlineTtsSequence(sequence) {
+    const items = Array.isArray(sequence) ? sequence.filter(it => it && it.text) : [];
+    if (!items.length) return false;
+
+    ttsSeqId += 1;
+    const seq = ttsSeqId;
+
     if (!ttsAudio) {
         ttsAudio = new Audio();
         ttsAudio.preload = "auto";
         ttsAudio.volume = 1;
     }
-    try {
-        ttsAudio.pause();
-        ttsAudio.src = url;
-        const playPromise = ttsAudio.play();
-        if (playPromise && typeof playPromise.catch === "function") {
-            playPromise.catch(() => {});
+
+    const playAt = idx => {
+        if (seq !== ttsSeqId) return;
+        const item = items[idx];
+        if (!item) return;
+
+        const url = buildOnlineTtsUrl(item.text, item.lang);
+        try {
+            ttsAudio.onended = () => playAt(idx + 1);
+            ttsAudio.onerror = () => playAt(idx + 1);
+            try { ttsAudio.pause(); } catch {}
+            try { ttsAudio.currentTime = 0; } catch {}
+            ttsAudio.src = url;
+            const playPromise = ttsAudio.play();
+            if (playPromise && typeof playPromise.catch === "function") {
+                playPromise.catch(() => {});
+            }
+        } catch {
         }
-        return true;
-    } catch {
-        return false;
-    }
+    };
+
+    playAt(0);
+    return true;
 }
 
 function getArrowCount() {
@@ -2083,12 +2106,27 @@ function speakWord(wordObj) {
     if (!settings.speechEnabled) return;
     const nativeTts = getNativeTts();
     if (nativeTts) {
-        try { if (typeof nativeTts.stop === "function") nativeTts.stop(); } catch {}
-        const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
-        const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-        speakNativeTts(nativeTts, wordObj.en, "en-US", enRate);
-        if (wordObj.zh) {
-            setTimeout(() => speakNativeTts(nativeTts, wordObj.zh, "zh-CN", zhRate), 420);
+        const speak = () => {
+            const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
+            const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
+            speakNativeTts(nativeTts, wordObj.en, "en-US", enRate);
+            if (wordObj.zh) {
+                speakNativeTts(nativeTts, wordObj.zh, "zh-CN", zhRate);
+            }
+        };
+        try {
+            if (typeof nativeTts.stop === "function") {
+                const p = nativeTts.stop();
+                if (p && typeof p.finally === "function") {
+                    p.finally(speak);
+                } else {
+                    speak();
+                }
+            } else {
+                speak();
+            }
+        } catch {
+            speak();
         }
         return;
     }
@@ -2096,10 +2134,10 @@ function speakWord(wordObj) {
     if (hasSpeech) ensureSpeechReady();
     const voices = hasSpeech && window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
     if (!hasSpeech || !voices || !voices.length) {
-        playOnlineTts(wordObj.en, "en");
-        if (wordObj.zh) {
-            setTimeout(() => playOnlineTts(wordObj.zh, "zh"), 420);
-        }
+        playOnlineTtsSequence([
+            { text: wordObj.en, lang: "en" },
+            wordObj.zh ? { text: wordObj.zh, lang: "zh-CN" } : null
+        ]);
         return;
     }
 
@@ -2116,10 +2154,12 @@ function speakWord(wordObj) {
         const zhVoice = pickVoice("zh");
         if (zhVoice) uZh.voice = zhVoice;
         uZh.rate = Number(settings.speechZhRate) || 0.9;
-        window.speechSynthesis.speak(uEn);
         if (wordObj.zh) {
-            setTimeout(() => window.speechSynthesis.speak(uZh), 120);
+            uEn.onend = () => {
+                try { window.speechSynthesis.speak(uZh); } catch {}
+            };
         }
+        window.speechSynthesis.speak(uEn);
     } catch {
     }
 }
