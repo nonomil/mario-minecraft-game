@@ -147,6 +147,7 @@ jobs:
 
       - name: Build Release APK
         if: ${{ steps.signing.outputs.enabled == 'true' }}
+        id: release_build
         working-directory: android-app/android
         env:
           SIGNING_STORE_FILE: app/release.keystore
@@ -154,12 +155,27 @@ jobs:
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
         shell: bash
+        continue-on-error: true
         run: |
           set -o pipefail
           # Release builds may fail on lintVital; we keep lint for local dev but skip the "vital" gate in CI.
           ./gradlew --no-daemon assembleRelease \
             -x lintVitalRelease -x lintVitalReportRelease \
             --stacktrace --info 2>&1 | tee gradle-release.log
+
+      - name: Report Release Build Failure (tail gradle log)
+        if: ${{ steps.release_build.outcome == 'failure' }}
+        shell: bash
+        working-directory: android-app/android
+        run: |
+          echo "::error::assembleRelease failed. Showing tail of gradle-release.log"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "## assembleRelease failed (tail of gradle-release.log)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -n 200 gradle-release.log >> "$GITHUB_STEP_SUMMARY" || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -n 120 gradle-release.log || true
+          exit 1
 
       - name: Upload APK artifacts
         if: ${{ always() }}
