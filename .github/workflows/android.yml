@@ -168,7 +168,17 @@ jobs:
         shell: bash
         working-directory: android-app/android
         run: |
-          echo "::error::assembleRelease failed. Showing tail of gradle-release.log"
+          # Put the tail into an annotation so we can read the failure cause without downloading artifacts.
+          tail -n 120 gradle-release.log > gradle-release.tail.txt || true
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("gradle-release.tail.txt")
+          text = p.read_text(errors="replace") if p.exists() else "(missing gradle-release.tail.txt)"
+          # Escape for workflow command message:
+          # https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#escaping-data
+          text = text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::error::assembleRelease failed. Tail of gradle-release.log:%0A{text}")
+          PY
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "## assembleRelease failed (tail of gradle-release.log)" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
