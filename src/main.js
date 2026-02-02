@@ -522,6 +522,38 @@ function playHitSfx(intensity = 1) {
     osc.stop(now + 0.16);
 }
 
+function getNativeTts() {
+    try {
+        const Cap = window.Capacitor;
+        if (!Cap || typeof Cap.isNativePlatform !== "function") return null;
+        if (!Cap.isNativePlatform()) return null;
+        const plugins = Cap.Plugins || {};
+        const tts = plugins.TextToSpeech;
+        if (!tts || typeof tts.speak !== "function") return null;
+        return tts;
+    } catch {
+        return null;
+    }
+}
+
+function speakNativeTts(tts, text, lang, rate) {
+    if (!tts || typeof tts.speak !== "function") return false;
+    if (!text) return false;
+    try {
+        tts.speak({
+            text: String(text),
+            lang: String(lang || ""),
+            rate: typeof rate === "number" ? rate : 1.0,
+            pitch: 1.0,
+            volume: 1.0,
+            category: "ambient"
+        });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 function playOnlineTts(text, lang) {
     if (!text) return false;
     const safeLang = String(lang || "").toLowerCase().startsWith("zh") ? "zh-CN" : "en";
@@ -2049,6 +2081,17 @@ function speakWord(wordObj) {
     showWordCard(wordObj);
 
     if (!settings.speechEnabled) return;
+    const nativeTts = getNativeTts();
+    if (nativeTts) {
+        try { if (typeof nativeTts.stop === "function") nativeTts.stop(); } catch {}
+        const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
+        const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
+        speakNativeTts(nativeTts, wordObj.en, "en-US", enRate);
+        if (wordObj.zh) {
+            setTimeout(() => speakNativeTts(nativeTts, wordObj.zh, "zh-CN", zhRate), 420);
+        }
+        return;
+    }
     const hasSpeech = "speechSynthesis" in window;
     if (hasSpeech) ensureSpeechReady();
     const voices = hasSpeech && window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];

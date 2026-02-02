@@ -52,7 +52,25 @@ jobs:
         working-directory: android-app/android
         run: ./gradlew --no-daemon assembleDebug
 
+      - name: Check signing secrets
+        id: signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          enabled=true
+
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then enabled=false; fi
+          if [ -z "$ANDROID_KEYSTORE_PASSWORD" ]; then enabled=false; fi
+          if [ -z "$ANDROID_KEY_ALIAS" ]; then enabled=false; fi
+          if [ -z "$ANDROID_KEY_PASSWORD" ]; then enabled=false; fi
+
+          echo "enabled=$enabled" >> "$GITHUB_OUTPUT"
+
       - name: Decode Android signing keystore
+        if: ${{ steps.signing.outputs.enabled == 'true' }}
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
@@ -61,7 +79,7 @@ jobs:
           fi
 
       - name: Build Release APK
-        if: ${{ hashFiles('android-app/android/app/release.keystore') != '' }}
+        if: ${{ steps.signing.outputs.enabled == 'true' }}
         working-directory: android-app/android
         env:
           SIGNING_STORE_FILE: app/release.keystore
@@ -80,13 +98,31 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+      - name: Select APK for Release
+        id: select_apk
+        run: |
+          if ls android-app/android/app/build/outputs/apk/release/*.apk >/dev/null 2>&1; then
+            echo "apk_glob=android-app/android/app/build/outputs/apk/release/*.apk" >> "$GITHUB_OUTPUT"
+            echo "release_name=Latest APK" >> "$GITHUB_OUTPUT"
+            echo "release_body=Signed release APK." >> "$GITHUB_OUTPUT"
+          elif ls android-app/android/app/build/outputs/apk/debug/*.apk >/dev/null 2>&1; then
+            echo "apk_glob=android-app/android/app/build/outputs/apk/debug/*.apk" >> "$GITHUB_OUTPUT"
+            echo "release_name=Latest APK (debug)" >> "$GITHUB_OUTPUT"
+            echo "release_body=Debug-signed APK (signing secrets not configured)." >> "$GITHUB_OUTPUT"
+          else
+            echo "apk_glob=" >> "$GITHUB_OUTPUT"
+            echo "release_name=Latest APK" >> "$GITHUB_OUTPUT"
+            echo "release_body=No APK found." >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish GitHub Release (apk-latest)
-        if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/*.apk') != '' }}
+        if: ${{ steps.select_apk.outputs.apk_glob != '' }}
         uses: ncipollo/release-action@v1
         with:
           tag: apk-latest
-          name: Latest APK
+          name: ${{ steps.select_apk.outputs.release_name }}
           allowUpdates: true
-          artifacts: |
-            android-app/android/app/build/outputs/apk/release/*.apk
+          replacesArtifacts: true
+          body: ${{ steps.select_apk.outputs.release_body }}
+          artifacts: ${{ steps.select_apk.outputs.apk_glob }}
 

@@ -39,3 +39,4 @@ android-app/android/app/build/
 out/
 android-app/web/index.html
 *.lnk
+apks/
