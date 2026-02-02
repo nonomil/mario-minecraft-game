@@ -820,7 +820,12 @@ function spawnBiomeParticles() {
     }
 }
 
+let baseCanvasSize = null;
+
 function applyConfig() {
+    if (!baseCanvasSize) {
+        baseCanvasSize = { width: gameConfig.canvas.width, height: gameConfig.canvas.height };
+    }
     canvas.width = gameConfig.canvas.width;
     canvas.height = gameConfig.canvas.height;
     const container = document.getElementById("game-container");
@@ -835,6 +840,30 @@ function applyConfig() {
     mapBuffer = gameConfig.world.mapBuffer;
     removeThreshold = gameConfig.world.removeThreshold;
     fallResetY = gameConfig.world.fallResetY;
+}
+
+function applyResponsiveCanvas(mode, viewport) {
+    if (!baseCanvasSize || !gameConfig?.canvas) return;
+    const vw = Number(viewport?.width) || 0;
+    const vh = Number(viewport?.height) || 0;
+    const isLandscape = vw >= vh && vw > 0 && vh > 0;
+
+    // Default: keep the designed canvas size.
+    let targetW = baseCanvasSize.width;
+    let targetH = baseCanvasSize.height;
+
+    // Phone landscape: adapt canvas aspect ratio to viewport so "contain" scaling still feels fullscreen.
+    if (mode === "phone" && isLandscape) {
+        targetH = baseCanvasSize.height; // keep vertical gameplay metrics stable (groundY, jump, etc.)
+        targetW = Math.round(targetH * (vw / vh));
+        targetW = Math.round(clamp(targetW, baseCanvasSize.width, 1600));
+    }
+
+    if (gameConfig.canvas.width !== targetW || gameConfig.canvas.height !== targetH) {
+        gameConfig.canvas.width = targetW;
+        gameConfig.canvas.height = targetH;
+        applyConfig();
+    }
 }
 
 function parsePx(value) {
@@ -1148,6 +1177,8 @@ function applySettingsToUI() {
     const minScreen = Math.min(viewport.width || 0, viewport.height || 0);
     const mode = rawMode === "phone" || rawMode === "tablet" ? rawMode : (minScreen && minScreen <= 760 ? "phone" : "tablet");
     document.documentElement.setAttribute("data-device-mode", mode);
+
+    applyResponsiveCanvas(mode, viewport);
 
     const container = document.getElementById("game-container");
     if (container) {
