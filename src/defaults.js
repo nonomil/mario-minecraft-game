@@ -170,6 +170,7 @@ window.MMWG_DEFAULTS = {
         speechEnabled: true,
         speechEnRate: 1.1,
         speechZhRate: 0.9,
+        musicEnabled: true,
         deviceMode: "auto",
         orientationLock: "landscape",
         uiScale: 1.0,

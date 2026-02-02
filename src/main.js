@@ -40,6 +40,12 @@ let vocabEngine = null;
 let activeVocabPackId = null;
 let loadedVocabFiles = Object.create(null);
 let sessionWordCounts = Object.create(null);
+let audioCtx = null;
+let audioUnlocked = false;
+let speechReady = false;
+let bgmAudio = null;
+let bgmReady = false;
+const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
 
 let score = 0;
 let levelScore = 0;
@@ -420,6 +426,99 @@ function mergeDeep(target, source) {
 
 function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
+}
+
+function ensureAudioContext() {
+    if (audioCtx) return audioCtx;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    audioCtx = new Ctx();
+    return audioCtx;
+}
+
+function ensureSpeechReady() {
+    if (!("speechSynthesis" in window)) return false;
+    try {
+        if (window.speechSynthesis.getVoices) {
+            window.speechSynthesis.getVoices();
+        }
+        window.speechSynthesis.resume();
+        speechReady = true;
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function pickVoice(langPrefix) {
+    if (!("speechSynthesis" in window)) return null;
+    const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+    if (!voices || !voices.length) return null;
+    const lang = String(langPrefix || "").toLowerCase();
+    return voices.find(v => String(v.lang || "").toLowerCase().startsWith(lang)) || null;
+}
+
+function setupBgm() {
+    if (bgmAudio) return bgmAudio;
+    const audio = new Audio();
+    audio.loop = true;
+    audio.preload = "auto";
+    audio.volume = 0.35;
+    const src = BGM_SOURCES.find(Boolean);
+    if (src) audio.src = src;
+    bgmAudio = audio;
+    bgmReady = !!src;
+    return bgmAudio;
+}
+
+function applyBgmSetting() {
+    setupBgm();
+    if (!bgmAudio) return;
+    const enabled = !!settings.musicEnabled;
+    if (!enabled) {
+        try { bgmAudio.pause(); } catch {}
+        return;
+    }
+    if (!audioUnlocked) return;
+    const playPromise = bgmAudio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {});
+    }
+}
+
+function unlockAudio() {
+    audioUnlocked = true;
+    const ctx = ensureAudioContext();
+    if (ctx && ctx.state === "suspended") {
+        try { ctx.resume(); } catch {}
+    }
+    ensureSpeechReady();
+    applyBgmSetting();
+}
+
+function wireAudioUnlock() {
+    if (wireAudioUnlock.bound) return;
+    wireAudioUnlock.bound = true;
+    document.addEventListener("pointerdown", unlockAudio, { passive: true });
+    document.addEventListener("touchstart", unlockAudio, { passive: true });
+    document.addEventListener("keydown", unlockAudio);
+}
+
+function playHitSfx(intensity = 1) {
+    const ctx = ensureAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const freq = 180 + Math.min(1, Math.max(0, intensity)) * 180;
+    osc.type = "square";
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.16);
 }
 
 function getArrowCount() {
@@ -911,6 +1010,7 @@ function normalizeSettings(raw) {
     merged.deviceMode = deviceMode === "auto" || deviceMode === "phone" || deviceMode === "tablet" ? deviceMode : "auto";
     const orientationLock = String(merged.orientationLock || defaultSettings.orientationLock || "auto");
     merged.orientationLock = orientationLock === "auto" || orientationLock === "portrait" || orientationLock === "landscape" ? orientationLock : "auto";
+    if (typeof merged.musicEnabled !== "boolean") merged.musicEnabled = defaultSettings.musicEnabled ?? true;
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
@@ -1927,15 +2027,20 @@ function speakWord(wordObj) {
 
     if (!settings.speechEnabled) return;
     if (!("speechSynthesis" in window)) return;
+    ensureSpeechReady();
 
     try {
         window.speechSynthesis.cancel();
         window.speechSynthesis.resume();
         const uEn = new SpeechSynthesisUtterance(wordObj.en);
         uEn.lang = "en-US";
+        const enVoice = pickVoice("en");
+        if (enVoice) uEn.voice = enVoice;
         uEn.rate = Math.max(1.0, Number(settings.speechEnRate) || 1.0);
         const uZh = new SpeechSynthesisUtterance(wordObj.zh);
         uZh.lang = "zh-CN";
+        const zhVoice = pickVoice("zh");
+        if (zhVoice) uZh.voice = zhVoice;
         uZh.rate = Number(settings.speechZhRate) || 0.9;
         window.speechSynthesis.speak(uEn);
         if (wordObj.zh) {
@@ -4386,6 +4491,7 @@ class Enemy extends Entity {
 
     takeDamage(amount) {
         this.hp -= amount;
+        playHitSfx(Math.min(1, Math.max(0.2, amount / 20)));
         if (this.hp <= 0) this.die();
     }
 
@@ -4704,6 +4810,7 @@ function wireSettingsModal() {
     const optSpeech = document.getElementById("opt-speech");
     const optSpeechEn = document.getElementById("opt-speech-en");
     const optSpeechZh = document.getElementById("opt-speech-zh");
+    const optBgm = document.getElementById("opt-bgm");
     const optUiScale = document.getElementById("opt-ui-scale");
     const optDeviceMode = document.getElementById("opt-device-mode");
     const optOrientationLock = document.getElementById("opt-orientation-lock");
@@ -4722,6 +4829,7 @@ function wireSettingsModal() {
         if (optSpeech) optSpeech.checked = !!settings.speechEnabled;
         if (optSpeechEn) optSpeechEn.value = String(settings.speechEnRate ?? 0.8);
         if (optSpeechZh) optSpeechZh.value = String(settings.speechZhRate ?? 0.9);
+        if (optBgm) optBgm.checked = !!settings.musicEnabled;
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
         if (optDeviceMode) optDeviceMode.value = String(settings.deviceMode || "auto");
         if (optOrientationLock) optOrientationLock.value = String(settings.orientationLock || "auto");
@@ -4761,6 +4869,7 @@ function wireSettingsModal() {
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;
         if (optSpeechEn) settings.speechEnRate = Number(optSpeechEn.value);
         if (optSpeechZh) settings.speechZhRate = Number(optSpeechZh.value);
+        if (optBgm) settings.musicEnabled = !!optBgm.checked;
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
         if (optDeviceMode) settings.deviceMode = String(optDeviceMode.value || "auto");
         if (optOrientationLock) settings.orientationLock = String(optOrientationLock.value || "auto");
@@ -4784,6 +4893,7 @@ function wireSettingsModal() {
         }
 
         wordPicker = null;
+        applyBgmSetting();
         saveSettings();
         handleViewportChange();
         applyScreenModeFromSettings(true);
@@ -4923,6 +5033,9 @@ async function start() {
         keyBindings.switch = parsed[3];
         keyBindings.useDiamond = parsed[4];
     }
+
+    wireAudioUnlock();
+    applyBgmSetting();
 
     applyConfig();
     handleViewportChange();
