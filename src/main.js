@@ -92,7 +92,7 @@ const ITEM_LABELS = {
     flower: "花朵",
     mushroom: "蘑菇",
     coal: "煤矿",
-    gold: "金矿",
+    gold: "钻石",
     shell: "贝壳",
     starfish: "海星"
 };
@@ -113,12 +113,12 @@ const ITEM_ICONS = {
     flower: "🌸",
     mushroom: "🍄",
     coal: "🪨",
-    gold: "🪙",
+    gold: "💎",
     shell: "🐚",
     starfish: "⭐",
     hp: "❤️",
     max_hp: "💖",
-    score: "🪙"
+    score: "💎"
 };
 const TOOL_STATS = {
     stone_sword: { damage: 8 },
@@ -145,6 +145,17 @@ const WEAPONS = {
         type: "melee",
         emoji: "🪓"
     },
+    pickaxe: {
+        id: "pickaxe",
+        name: "铁镐",
+        damage: 8,
+        range: 40,
+        cooldown: 180,
+        knockback: 0,
+        type: "dig",
+        emoji: "⛏️",
+        digHits: 3
+    },
     bow: {
         id: "bow",
         name: "弓",
@@ -159,7 +170,7 @@ const WEAPONS = {
 };
 const playerWeapons = {
     current: "sword",
-    unlocked: ["sword", "bow"],
+    unlocked: ["sword", "bow", "pickaxe", "axe"],
     attackCooldown: 0,
     isCharging: false,
     chargeTime: 0,
@@ -189,8 +200,12 @@ let golems = [];
 const MAX_GOLEMS = 3;
 let playerPositionHistory = [];
 let projectiles = [];
+let digHits = new Map();
 let bossSpawned = false;
 let playerInvincibleTimer = 0;
+let overlayMode = "start";
+let enemyKillStats = { total: 0 };
+let repeatPauseState = "repeat";
 const projectilePool = {
     arrows: [],
     snowballs: [],
@@ -294,6 +309,7 @@ let biomeTransitionX = 0;
 let decorations = [];
 let particles = [];
 let weatherState = { type: "clear", timer: 0 };
+let netherEntryPenaltyArmed = true;
 const MAX_DECORATIONS_ONSCREEN = 60;
 const DEFAULT_BIOME_SWITCH = {
     stepScore: 200,
@@ -342,6 +358,7 @@ const DEFAULT_CHEST_TABLES = {
         { item: "iron", weight: 18, min: 1, max: 3 },
         { item: "pumpkin", weight: 12, min: 1, max: 2 },
         { item: "stick", weight: 12, min: 1, max: 3 },
+        { item: "diamond", weight: 4, min: 1, max: 1 },
         { item: "coal", weight: 10, min: 1, max: 3 },
         { item: "arrow", weight: 10, min: 2, max: 6 },
         { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
@@ -354,7 +371,6 @@ const DEFAULT_CHEST_TABLES = {
         { item: "diamond", weight: 6, min: 1, max: 1 },
         { item: "stone_sword", weight: 7, min: 1, max: 1 },
         { item: "iron_pickaxe", weight: 5, min: 1, max: 1 },
-        { item: "gold", weight: 7, min: 1, max: 2 },
         { item: "ender_pearl", weight: 4, min: 1, max: 1 },
         { item: "iron", weight: 8, min: 2, max: 4 },
         { item: "arrow", weight: 8, min: 4, max: 8 },
@@ -365,7 +381,6 @@ const DEFAULT_CHEST_TABLES = {
         { item: "max_hp", weight: 6, min: 1, max: 1 },
         { item: "diamond", weight: 6, min: 1, max: 2 },
         { item: "ender_pearl", weight: 5, min: 1, max: 2 },
-        { item: "gold", weight: 6, min: 2, max: 3 },
         { item: "iron_pickaxe", weight: 6, min: 1, max: 1 },
         { item: "score", weight: 8, min: 40, max: 80 }
     ],
@@ -423,6 +438,7 @@ function unlockWeapon(id) {
 function syncWeaponsFromInventory() {
     if ((inventory.stone_sword || 0) > 0) unlockWeapon("sword");
     if ((inventory.iron_pickaxe || 0) > 0) unlockWeapon("axe");
+    if ((inventory.iron_pickaxe || 0) > 0) unlockWeapon("pickaxe");
     if ((inventory.bow || 0) > 0) unlockWeapon("bow");
 }
 
@@ -487,6 +503,38 @@ function releaseBowShot(forceCharge = null) {
     playerWeapons.attackCooldown = weapon.cooldown;
     playerWeapons.isCharging = false;
     playerWeapons.chargeTime = 0;
+}
+
+function digGroundBlock() {
+    const weapon = WEAPONS.pickaxe;
+    const dir = player.facingRight ? 1 : -1;
+    const targetX = player.x + (dir > 0 ? player.width + 6 : -6);
+    const blockX = Math.floor(targetX / blockSize) * blockSize;
+    const key = `${blockX}`;
+    const hit = (digHits.get(key) || 0) + 1;
+    digHits.set(key, hit);
+    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
+
+    if (hit < weapon.digHits) {
+        playerWeapons.attackCooldown = weapon.cooldown;
+        return;
+    }
+
+    const idx = platforms.findIndex(p => p.y === groundY && blockX >= p.x && blockX < p.x + p.width);
+    if (idx === -1) {
+        playerWeapons.attackCooldown = weapon.cooldown;
+        return;
+    }
+    const p = platforms[idx];
+    const leftWidth = blockX - p.x;
+    const rightStart = blockX + blockSize;
+    const rightWidth = (p.x + p.width) - rightStart;
+    platforms.splice(idx, 1);
+    if (leftWidth > 0) platforms.push(new Platform(p.x, p.y, leftWidth, p.height, p.type));
+    if (rightWidth > 0) platforms.push(new Platform(rightStart, p.y, rightWidth, p.height, p.type));
+    digHits.delete(key);
+    showFloatingText("🕳️ 深坑", blockX + blockSize / 2, groundY - 50);
+    playerWeapons.attackCooldown = weapon.cooldown;
 }
 
 function performMeleeAttack(weapon) {
@@ -699,6 +747,20 @@ function updateCurrentBiome() {
         updateWeatherForBiome(nextBiome);
         const info = document.getElementById("level-info");
         if (info) info.innerText = `生态: ${nextBiome.name}`;
+        if (currentBiome === "nether" && netherEntryPenaltyArmed) {
+            playerHp = Math.max(0, playerHp - 1);
+            updateHpUI();
+            showFloatingText("🔥 -1❤️", player.x, player.y - 20);
+            netherEntryPenaltyArmed = false;
+            if (playerHp <= 0) {
+                paused = true;
+                showToast("💀 生命耗尽");
+                setOverlay(true, "pause");
+            }
+        }
+        if (currentBiome !== "nether") {
+            netherEntryPenaltyArmed = true;
+        }
     }
 }
 
@@ -784,7 +846,16 @@ function normalizeSettings(raw) {
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
     if (!merged.keyCodes) {
-        merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact].filter(Boolean).join(",");
+        merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
+            .filter(Boolean)
+            .join(",");
+    } else {
+        const parsed = parseKeyCodes(merged.keyCodes);
+        if (!parsed) {
+            merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
+                .filter(Boolean)
+                .join(",");
+        }
     }
     return merged;
 }
@@ -1066,27 +1137,60 @@ function setOverlay(visible, mode) {
     if (visible) {
         overlay.classList.add("visible");
         overlay.setAttribute("aria-hidden", "false");
+        overlayMode = mode || "pause";
         if (mode === "pause") {
             if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　Y 打开宝箱　E 采集";
+            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
             if (btn) btn.innerText = "继续";
+        } else if (mode === "gameover") {
+            const diamonds = getDiamondCount();
+            if (title) title.innerText = "💀 游戏结束";
+            if (text) {
+                const level = Math.max(1, Math.floor(score / 1000) + 1);
+                text.innerHTML =
+                    `📚 学习单词: ${getLearnedWordCount()}<br>` +
+                    `💎 钻石: ${diamonds}<br>` +
+                    `⭐ 当前积分: ${score}<br>` +
+                    `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
+                    `🏆 玩家等级: ${level}`;
+            }
+            if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　Y 打开宝箱　E 采集";
+            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
             if (btn) btn.innerText = "开始游戏";
         }
     } else {
         overlay.classList.remove("visible");
         overlay.setAttribute("aria-hidden", "true");
+        overlayMode = "start";
     }
 }
 
 function resumeGameFromOverlay() {
-    paused = false;
-    startedOnce = true;
-    setOverlay(false);
-    const btnPause = document.getElementById("btn-pause");
-    if (btnPause) btnPause.innerText = "⏸ 暂停";
+    if (overlayMode === "gameover") {
+        if (getDiamondCount() >= 10) {
+            inventory.diamond -= 10;
+            playerHp = playerMaxHp;
+            updateHpUI();
+            updateDiamondUI();
+            paused = false;
+            startedOnce = true;
+            setOverlay(false);
+        } else {
+            initGame();
+            paused = false;
+            startedOnce = true;
+            setOverlay(false);
+        }
+    } else {
+        paused = false;
+        startedOnce = true;
+        setOverlay(false);
+    }
+    const btnMix = document.getElementById("btn-repeat-pause");
+    if (btnMix) btnMix.innerText = "🔊 重读";
+    repeatPauseState = "repeat";
 }
 
 function keyLabel(code) {
@@ -1162,6 +1266,7 @@ function startLevel(idx) {
     particles = [];
     enemies = [];
     golems = [];
+    digHits.clear();
     resetProjectiles();
     playerPositionHistory = [];
     lastGenX = 0;
@@ -1440,11 +1545,14 @@ function spawnEnemyByDifficulty(x, y) {
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
         ocean: ["zombie", "creeper", "skeleton", "enderman"],
-        nether: ["zombie", "enderman", "skeleton", "creeper"]
+        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
     const take = Math.max(2, Math.min(basePool.length, 2 + tier));
-    const pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
+    let pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
+    if (getProgressScore() < 3000) {
+        pool = pool.filter(t => t !== "enderman");
+    }
 
     const aliveEnemies = enemies.filter(e => !e.remove && e.y < 900).length;
     if (aliveEnemies >= (enemyConfig.maxOnScreen || 8)) return;
@@ -1926,6 +2034,39 @@ function updateHpUI() {
     el.innerHTML = html;
 }
 
+function getDiamondCount() {
+    return Number(inventory.diamond) || 0;
+}
+
+function updateDiamondUI() {
+    updateInventoryUI();
+}
+
+function useDiamondForHp() {
+    if (playerHp >= playerMaxHp) {
+        showToast("❤️ 已满血");
+        return;
+    }
+    if (getDiamondCount() < 1) {
+        showToast("💎 不足");
+        return;
+    }
+    inventory.diamond -= 1;
+    healPlayer(1);
+    updateDiamondUI();
+    showToast("💎 换取 +1❤️");
+}
+
+function getLearnedWordCount() {
+    const vocab = progress && progress.vocab ? Object.keys(progress.vocab) : [];
+    return vocab.length;
+}
+
+function recordEnemyKill(type) {
+    enemyKillStats.total = (enemyKillStats.total || 0) + 1;
+    enemyKillStats[type] = (enemyKillStats[type] || 0) + 1;
+}
+
 function healPlayer(amount) {
     if (playerHp <= 0) return;
     playerHp = Math.min(playerMaxHp, playerHp + amount);
@@ -1962,7 +2103,7 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     if (playerHp <= 0 || score <= 0) {
         paused = true;
         showToast("💀 生命耗尽");
-        setOverlay(true, "pause");
+        setOverlay(true, "gameover");
     }
 }
 
@@ -2066,14 +2207,6 @@ function handleDecorationInteract() {
 }
 
 function handleAttack(mode = "press") {
-    const now = Date.now();
-    if (now - playerWeapons.lastPressTs < playerWeapons.doublePressWindow && mode === "press") {
-        playerWeapons.lastPressTs = 0;
-        switchWeapon();
-        return;
-    }
-    playerWeapons.lastPressTs = now;
-
     if (playerWeapons.attackCooldown > 0) return;
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
 
@@ -2085,6 +2218,11 @@ function handleAttack(mode = "press") {
         if (!playerWeapons.isCharging) {
             startBowCharge();
         }
+        return;
+    }
+
+    if (weapon.type === "dig") {
+        digGroundBlock();
         return;
     }
 
@@ -2357,9 +2495,12 @@ function drawSteve(x, y, facingRight, attacking) {
     ctx.fillRect(x + 3, y, 20, 20);
     ctx.fillStyle = "#4A332A";
     ctx.fillRect(x + 3, y, 20, 6);
-    ctx.fillStyle = "white";
+    
+    // Eyes: Black
+    ctx.fillStyle = "#000";
     const ex = facingRight ? x + 16 : x + 6;
-    ctx.fillRect(ex, y + 6, 6, 4);
+    ctx.fillRect(ex, y + 6, 4, 4); // Steve's eye
+    
     if (attacking) {
         ctx.save();
         ctx.translate(x + (facingRight ? 26 : 0), y + 26);
@@ -3254,7 +3395,7 @@ function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) {
 function parseKeyCodes(raw) {
     if (!raw) return null;
     const parts = String(raw).split(",").map(s => s.trim()).filter(Boolean);
-    if (parts.length !== 3) return null;
+    if (parts.length !== 5) return null;
     return parts;
 }
 
@@ -3970,13 +4111,23 @@ const ENEMY_STATS = {
     },
     enderman: {
         hp: 40,
-        speed: 2.0,
+        speed: 1.4,
         damage: 25,
         attackType: "teleport",
         color: "#1A0033",
         drops: ["ender_pearl"],
         scoreValue: 35,
         size: { w: 32, h: 64 }
+    },
+    piglin: {
+        hp: 60,
+        speed: 1.1,
+        damage: 20,
+        attackType: "melee",
+        color: "#C68642",
+        drops: ["diamond"],
+        scoreValue: 28,
+        size: { w: 32, h: 52 }
     },
     ender_dragon: {
         hp: 200,
@@ -4101,6 +4252,8 @@ class Enemy extends Entity {
         this.explodeTimer = 0;
         this.teleportCooldown = 0;
         this.phaseChanged = false;
+        this.velY = 0;
+        this.grounded = false;
     }
 
     takeDamage(amount) {
@@ -4116,11 +4269,11 @@ class Enemy extends Entity {
             dropItem(drop, this.x, this.y);
         }
         addScore(this.scoreValue);
+        recordEnemyKill(this.type);
     }
 
     update(playerRef) {
         if (this.remove || this.y > 900) return;
-
         switch (this.type) {
             case "zombie":
                 this.updateZombie(playerRef);
@@ -4144,8 +4297,31 @@ class Enemy extends Entity {
                 this.updateBasic();
         }
 
+        this.applyGravity();
         if (this.attackCooldown > 0) this.attackCooldown--;
         if (this.teleportCooldown > 0) this.teleportCooldown--;
+    }
+
+    applyGravity() {
+        if (this.type === "ender_dragon") return;
+        this.velY += gameConfig.physics.gravity;
+        this.y += this.velY;
+        this.grounded = false;
+
+        for (const p of platforms) {
+            const dir = colCheck(this, p);
+            if (dir === "b") {
+                this.grounded = true;
+                this.y = p.y - this.height;
+                this.velY = 0;
+            } else if (dir === "t") {
+                this.velY = 0;
+            }
+        }
+
+        if (this.y > fallResetY) {
+            this.remove = true;
+        }
     }
 
     updateBasic() {
@@ -4423,7 +4599,7 @@ function wireSettingsModal() {
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
         if (optVocab) optVocab.value = settings.vocabSelection || "auto";
-        if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact].join(",");
+        if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact, keyBindings.switch, keyBindings.useDiamond].join(",");
         if (progressVocab) updateVocabProgressUI();
     }
 
@@ -4468,6 +4644,8 @@ function wireSettingsModal() {
             keyBindings.jump = parsed[0];
             keyBindings.attack = parsed[1];
             keyBindings.interact = parsed[2];
+            keyBindings.switch = parsed[3];
+            keyBindings.useDiamond = parsed[4];
         }
 
         wordPicker = null;
@@ -4510,20 +4688,20 @@ function wireSettingsModal() {
 }
 
 function wireHudButtons() {
-    const btnRepeat = document.getElementById("btn-repeat-word");
-    if (btnRepeat) {
-        btnRepeat.addEventListener("click", () => {
-            if (lastWord) speakWord(lastWord);
-        });
-    }
-
-    const btnPause = document.getElementById("btn-pause");
-    if (btnPause) {
-        btnPause.addEventListener("click", () => {
+    const btnMix = document.getElementById("btn-repeat-pause");
+    if (btnMix) {
+        btnMix.addEventListener("click", () => {
+            if (repeatPauseState === "repeat") {
+                if (lastWord) speakWord(lastWord);
+                repeatPauseState = "pause";
+                btnMix.innerText = "⏸ 暂停";
+                return;
+            }
             paused = !paused;
-            btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
             if (paused && startedOnce) setOverlay(true, "pause");
             if (!paused) setOverlay(false);
+            repeatPauseState = "repeat";
+            btnMix.innerText = "🔊 重读";
         });
     }
 
@@ -4578,6 +4756,8 @@ function wireTouchControls() {
     bindTap("jump", () => { jumpBuffer = gameConfig.jump.bufferFrames; });
     bindTap("attack", () => { handleAttack("tap"); });
     bindTap("interact", () => { handleInteraction(); });
+    bindTap("switch", () => { switchWeapon(); });
+    bindTap("use-diamond", () => { useDiamondForHp(); });
 }
 
 async function start() {
@@ -4604,6 +4784,8 @@ async function start() {
         keyBindings.jump = parsed[0];
         keyBindings.attack = parsed[1];
         keyBindings.interact = parsed[2];
+        keyBindings.switch = parsed[3];
+        keyBindings.useDiamond = parsed[4];
     }
 
     applyConfig();
@@ -4639,7 +4821,9 @@ async function start() {
         const isRight = matchesBinding(e, keyBindings.right) || e.code === "ArrowRight" || e.key === "ArrowRight";
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
+        const isWeaponSwitch = matchesBinding(e, keyBindings.switch) || String(e.key || "").toLowerCase() === "k";
         const isInteract = matchesBinding(e, keyBindings.interact) || String(e.key || "").toLowerCase() === "y";
+        const isUseDiamond = matchesBinding(e, keyBindings.useDiamond) || String(e.key || "").toLowerCase() === "z";
         const isDecorInteract = String(e.key || "").toLowerCase() === "e";
         const isPause = e.code === "Escape";
         const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
@@ -4652,6 +4836,8 @@ async function start() {
         if (isRight) keys.right = true;
         if (isLeft) keys.left = true;
         if (isAttack) handleAttack("press");
+        if (isWeaponSwitch) switchWeapon();
+        if (isUseDiamond) useDiamondForHp();
         if (isInteract) handleInteraction();
         if (isDecorInteract) handleDecorationInteract();
         if (!inInput && e.key >= "1" && e.key <= "9") {

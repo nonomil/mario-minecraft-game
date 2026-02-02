@@ -3,5 +3,7 @@
     "right": "ArrowRight",
     "jump": "Space",
     "attack": "KeyJ",
-    "interact": "KeyY"
+    "interact": "KeyY",
+    "switch": "KeyK",
+    "useDiamond": "KeyZ"
 }

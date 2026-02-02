@@ -83,6 +83,7 @@ window.MMWG_DEFAULTS = {
                     { item: "iron", weight: 18, min: 1, max: 3 },
                     { item: "pumpkin", weight: 12, min: 1, max: 2 },
                     { item: "stick", weight: 12, min: 1, max: 3 },
+                    { item: "diamond", weight: 4, min: 1, max: 1 },
                     { item: "coal", weight: 10, min: 1, max: 3 },
                     { item: "arrow", weight: 10, min: 2, max: 6 },
                     { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
@@ -96,7 +97,6 @@ window.MMWG_DEFAULTS = {
                     { item: "stone_sword", weight: 7, min: 1, max: 1 },
                     { item: "iron_pickaxe", weight: 5, min: 1, max: 1 },
                     { item: "bow", weight: 4, min: 1, max: 1 },
-                    { item: "gold", weight: 7, min: 1, max: 2 },
                     { item: "ender_pearl", weight: 4, min: 1, max: 1 },
                     { item: "iron", weight: 8, min: 2, max: 4 },
                     { item: "arrow", weight: 8, min: 4, max: 8 },
@@ -107,7 +107,6 @@ window.MMWG_DEFAULTS = {
                     { item: "max_hp", weight: 6, min: 1, max: 1 },
                     { item: "diamond", weight: 6, min: 1, max: 2 },
                     { item: "ender_pearl", weight: 5, min: 1, max: 2 },
-                    { item: "gold", weight: 6, min: 2, max: 3 },
                     { item: "iron_pickaxe", weight: 6, min: 1, max: 1 },
                     { item: "bow", weight: 6, min: 1, max: 1 },
                     { item: "score", weight: 8, min: 40, max: 80 }
@@ -136,7 +135,9 @@ window.MMWG_DEFAULTS = {
         right: "ArrowRight",
         jump: "Space",
         attack: "KeyJ",
-        interact: "KeyY"
+        interact: "KeyY",
+        switch: "KeyK",
+        useDiamond: "KeyZ"
     },
     levels: [
         { name: "草原", bg: "#87CEEB", ground: "grass", treeType: "oak" },
@@ -175,6 +176,7 @@ window.MMWG_DEFAULTS = {
         avoidWordRepeats: true,
         showWordImage: true,
         biomeSwitchStepScore: 200,
-        vocabSelection: "auto"
+        vocabSelection: "auto",
+        keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ"
     }
 };

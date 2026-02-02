@@ -348,10 +348,11 @@ canvas {
     position: absolute;
     right: 20px;
     bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-end;
+    display: grid;
+    grid-template-columns: repeat(2, 56px);
+    grid-template-rows: repeat(3, 56px);
+    gap: 12px;
+    align-items: end;
     pointer-events: auto;
 }
 
@@ -375,6 +376,12 @@ canvas {
 
 .touch-btn:active {
     transform: scale(0.92);
+}
+
+.touch-spacer {
+    width: 56px;
+    height: 56px;
+    display: block;
 }
 
 #settings-modal {

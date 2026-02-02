@@ -13,7 +13,7 @@
     
     <div id="ui-layer">
         <div class="hud-top">
-            <div class="hud-box">⭐ 分数: <span id="score">0</span></div>
+            <div class="hud-box">💎 钻石: <span id="score">0</span></div>
             <div class="hud-box" id="hp"></div>
             <div class="hud-box" id="word-display">Start!</div>
             <div class="hud-box" id="level-info">场景: 草原</div>
@@ -23,8 +23,7 @@
         
         <div class="btn-group">
             <button class="game-btn" id="btn-settings">⚙️ 设置</button>
-            <button class="game-btn" id="btn-repeat-word">🔊 重读</button>
-            <button class="game-btn" id="btn-pause">⏸ 暂停</button>
+            <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
         </div>
 
         <div class="inventory-bar">
@@ -58,8 +57,11 @@
             </div>
             <div class="touch-right">
                 <button class="touch-btn" data-action="jump">⤴️</button>
+                <span class="touch-spacer"></span>
                 <button class="touch-btn" data-action="attack">🗡️</button>
+                <button class="touch-btn" data-action="switch">🔁</button>
                 <button class="touch-btn" data-action="interact">🧰</button>
+                <button class="touch-btn" data-action="use-diamond">💎</button>
             </div>
         </div>
     </div>
@@ -70,7 +72,8 @@
         <div class="overlay-title" id="overlay-title">准备开始</div>
         <div class="overlay-text" id="overlay-text">
             ← → 移动　空格 跳(可二段跳)<br>
-            J 攻击　Y 打开宝箱　E 采集
+            J 攻击　K 切换武器　Z 使用钻石<br>
+            Y 打开宝箱　E 采集
         </div>
         <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
     </div>
@@ -122,8 +125,8 @@
         </div>
 
         <div class="settings-row settings-row-keys">
-            <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互</div>
-            <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY">
+            <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互,切换,使用钻石</div>
+            <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
         </div>
 
         <div class="settings-row settings-row-progress">
