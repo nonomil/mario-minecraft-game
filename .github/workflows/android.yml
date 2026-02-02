@@ -54,6 +54,7 @@ jobs:
 
       - name: Check signing secrets
         id: signing
+        shell: bash
         env:
           # Support both Repository secrets and Repository variables (in case values were saved under Variables tab).
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 || vars.ANDROID_KEYSTORE_BASE64 }}
@@ -62,29 +63,67 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
         run: |
           enabled=true
+          missing=""
 
-          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then enabled=false; fi
-          if [ -z "$ANDROID_KEYSTORE_PASSWORD" ]; then enabled=false; fi
-          if [ -z "$ANDROID_KEY_ALIAS" ]; then enabled=false; fi
-          if [ -z "$ANDROID_KEY_PASSWORD" ]; then enabled=false; fi
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then enabled=false; missing="$missing ANDROID_KEYSTORE_BASE64"; fi
+          if [ -z "$ANDROID_KEYSTORE_PASSWORD" ]; then enabled=false; missing="$missing ANDROID_KEYSTORE_PASSWORD"; fi
+          if [ -z "$ANDROID_KEY_ALIAS" ]; then enabled=false; missing="$missing ANDROID_KEY_ALIAS"; fi
+          if [ -z "$ANDROID_KEY_PASSWORD" ]; then enabled=false; missing="$missing ANDROID_KEY_PASSWORD"; fi
 
           echo "enabled=$enabled" >> "$GITHUB_OUTPUT"
+          echo "missing=$missing" >> "$GITHUB_OUTPUT"
+
+      - name: Debug signing availability (no secrets printed)
+        if: ${{ always() }}
+        shell: bash
+        env:
+          HAS_SECRET_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+          HAS_SECRET_STORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD != '' }}
+          HAS_SECRET_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS != '' }}
+          HAS_SECRET_KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD != '' }}
+          HAS_VAR_BASE64: ${{ vars.ANDROID_KEYSTORE_BASE64 != '' }}
+          HAS_VAR_STORE_PASS: ${{ vars.ANDROID_KEYSTORE_PASSWORD != '' }}
+          HAS_VAR_ALIAS: ${{ vars.ANDROID_KEY_ALIAS != '' }}
+          HAS_VAR_KEY_PASS: ${{ vars.ANDROID_KEY_PASSWORD != '' }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 || vars.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "from secrets: base64=$HAS_SECRET_BASE64 store_pass=$HAS_SECRET_STORE_PASS alias=$HAS_SECRET_ALIAS key_pass=$HAS_SECRET_KEY_PASS"
+          echo "from vars:    base64=$HAS_VAR_BASE64 store_pass=$HAS_VAR_STORE_PASS alias=$HAS_VAR_ALIAS key_pass=$HAS_VAR_KEY_PASS"
+          echo "combined lens: base64=${#ANDROID_KEYSTORE_BASE64} store_pass=${#ANDROID_KEYSTORE_PASSWORD} alias=${#ANDROID_KEY_ALIAS} key_pass=${#ANDROID_KEY_PASSWORD}"
 
       - name: Require signing secrets
         if: ${{ steps.signing.outputs.enabled != 'true' }}
+        shell: bash
         run: |
           echo "Missing signing secrets. Release APK is required for updates." >&2
           echo "Set ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD / ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD in GitHub Secrets (or Variables)." >&2
+          echo "Missing:${{ steps.signing.outputs.missing }}" >&2
           exit 1
 
       - name: Decode Android signing keystore
         if: ${{ steps.signing.outputs.enabled == 'true' }}
+        shell: bash
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 || vars.ANDROID_KEYSTORE_BASE64 }}
         run: |
           if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
             printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > android-app/android/app/release.keystore
           fi
+
+      - name: Verify signing keystore (no secrets printed)
+        if: ${{ steps.signing.outputs.enabled == 'true' }}
+        shell: bash
+        working-directory: android-app/android
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
+        run: |
+          test -s app/release.keystore
+          keytool -list -keystore app/release.keystore -storepass "$SIGNING_STORE_PASSWORD" -alias "$SIGNING_KEY_ALIAS" >/dev/null
+          echo "Keystore OK"
 
       - name: Build Release APK
         if: ${{ steps.signing.outputs.enabled == 'true' }}
