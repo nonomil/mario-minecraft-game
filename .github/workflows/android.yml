@@ -1,0 +1,77 @@
+name: Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: android-app/package-lock.json
+
+      - name: Install npm dependencies
+        working-directory: android-app
+        run: npm ci
+
+      - name: Build web (single file) and sync to Capacitor webDir
+        run: node scripts/sync-web.js
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          cache: "gradle"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept SDK licenses
+        run: |
+          yes | sdkmanager --licenses || true
+
+      - name: Sync Capacitor Android
+        working-directory: android-app
+        run: npx cap sync android
+
+      - name: Make gradlew executable
+        run: chmod +x android-app/android/gradlew
+
+      - name: Build Debug APK
+        working-directory: android-app/android
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Build Release APK (unsigned)
+        working-directory: android-app/android
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Upload APK artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: |
+            android-app/android/app/build/outputs/apk/debug/*.apk
+            android-app/android/app/build/outputs/apk/release/*.apk
+          retention-days: 30
+
+      - name: Publish GitHub Release (apk-latest)
+        uses: ncipollo/release-action@v1
+        with:
+          tag: apk-latest
+          name: Latest APK
+          allowUpdates: true
+          artifacts: |
+            android-app/android/app/build/outputs/apk/debug/*.apk,
+            android-app/android/app/build/outputs/apk/release/*.apk
+

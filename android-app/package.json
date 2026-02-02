@@ -1,0 +1,16 @@
+{
+  "name": "android-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "sync-web": "node ../scripts/sync-web.js"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  }
+}
+
