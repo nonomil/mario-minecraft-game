@@ -1093,6 +1093,8 @@ function normalizeSettings(raw) {
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
+    const vocabDifficulty = String(merged.vocabDifficulty || defaultSettings.vocabDifficulty || "auto");
+    merged.vocabDifficulty = ["auto", "basic", "intermediate", "advanced", "mixed"].includes(vocabDifficulty) ? vocabDifficulty : "auto";
     if (!merged.keyCodes) {
         merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
             .filter(Boolean)
@@ -1235,6 +1237,19 @@ function isPackCompleted(packId) {
     return !!pr?.completed;
 }
 
+function filterPacksByDifficulty(packs) {
+    const pref = String(settings.vocabDifficulty || "auto");
+    if (pref === "auto" || pref === "mixed") return packs;
+    const rank = { basic: 0, intermediate: 1, advanced: 2 };
+    const target = rank[pref];
+    if (target === undefined) return packs;
+    const exact = packs.filter(p => (rank[p.difficulty || "basic"] ?? 0) === target);
+    if (exact.length) return exact;
+    if (pref === "intermediate") return packs.filter(p => (rank[p.difficulty || "basic"] ?? 0) <= 1);
+    if (pref === "advanced") return packs.filter(p => (rank[p.difficulty || "basic"] ?? 0) >= 1);
+    return packs;
+}
+
 function pickPackAuto() {
     const engine = ensureVocabEngine();
     if (!engine) return null;
@@ -1244,6 +1259,8 @@ function pickPackAuto() {
         saveProgress();
         candidates = [...vocabManifest.packs];
     }
+    candidates = filterPacksByDifficulty(candidates);
+    if (!candidates.length) candidates = [...vocabManifest.packs];
     const last = vocabState.lastPackId;
     const scored = candidates.map(p => {
         const baseW = Math.max(0.05, Number(p.weight) || 1);
@@ -1362,7 +1379,7 @@ function applySettingsToUI() {
     const minScreen = Math.min(viewport.width || 0, viewport.height || 0);
     const dpr = window.devicePixelRatio || 1;
     const physicalMin = minScreen * dpr;
-    const autoMode = (minScreen && minScreen <= 820) || (physicalMin && physicalMin <= 1440) ? "phone" : "tablet";
+    const autoMode = "phone";
     const mode = rawMode === "phone" || rawMode === "tablet" ? rawMode : autoMode;
     document.documentElement.setAttribute("data-device-mode", mode);
 
@@ -4933,6 +4950,7 @@ function wireSettingsModal() {
     const optTouch = document.getElementById("opt-touch");
     const optNoRepeat = document.getElementById("opt-no-repeat");
     const optVocab = document.getElementById("opt-vocab");
+    const optVocabDifficulty = document.getElementById("opt-vocab-difficulty");
     const optShowImage = document.getElementById("opt-show-image");
     const optKeys = document.getElementById("opt-keys");
     let resetArmed = false;
@@ -4953,6 +4971,7 @@ function wireSettingsModal() {
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
         if (optVocab) optVocab.value = settings.vocabSelection || "auto";
+        if (optVocabDifficulty) optVocabDifficulty.value = settings.vocabDifficulty || "auto";
         if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact, keyBindings.switch, keyBindings.useDiamond].join(",");
         if (progressVocab) updateVocabProgressUI();
     }
@@ -4993,6 +5012,7 @@ function wireSettingsModal() {
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
         if (optShowImage) settings.showWordImage = !!optShowImage.checked;
         if (optVocab) settings.vocabSelection = String(optVocab.value || "auto");
+        if (optVocabDifficulty) settings.vocabDifficulty = String(optVocabDifficulty.value || "auto");
         if (optKeys) settings.keyCodes = String(optKeys.value || "");
 
         settings = normalizeSettings(settings);

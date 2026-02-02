@@ -180,6 +180,7 @@ window.MMWG_DEFAULTS = {
         showWordImage: true,
         biomeSwitchStepScore: 200,
         vocabSelection: "auto",
+        vocabDifficulty: "auto",
         keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ"
     }
 };
