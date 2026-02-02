@@ -842,21 +842,27 @@ function applyConfig() {
     fallResetY = gameConfig.world.fallResetY;
 }
 
-function applyResponsiveCanvas(mode, viewport) {
-    if (!baseCanvasSize || !gameConfig?.canvas) return;
+function applyResponsiveCanvas(mode, viewport, safe) {
+    if (!baseCanvasSize || !gameConfig?.canvas) return null;
     const vw = Number(viewport?.width) || 0;
     const vh = Number(viewport?.height) || 0;
     const isLandscape = vw >= vh && vw > 0 && vh > 0;
+    const padX = (safe?.left || 0) + (safe?.right || 0);
+    const padY = (safe?.top || 0) + (safe?.bottom || 0);
+    const availW = Math.max(1, vw - padX);
+    const availH = Math.max(1, vh - padY);
 
-    // Default: keep the designed canvas size.
     let targetW = baseCanvasSize.width;
     let targetH = baseCanvasSize.height;
+    let forcedScale = null;
 
-    // Phone landscape: adapt canvas aspect ratio to viewport so "contain" scaling still feels fullscreen.
+    // Phone landscape: match canvas aspect ratio to viewport, then scale by height so no clipping.
     if (mode === "phone" && isLandscape) {
         targetH = baseCanvasSize.height; // keep vertical gameplay metrics stable (groundY, jump, etc.)
-        targetW = Math.round(targetH * (vw / vh));
-        targetW = Math.round(clamp(targetW, baseCanvasSize.width, 1600));
+        const scale = availH / targetH;
+        targetW = Math.round(availW / scale);
+        targetW = Math.round(clamp(targetW, baseCanvasSize.width, 1800));
+        forcedScale = scale;
     }
 
     if (gameConfig.canvas.width !== targetW || gameConfig.canvas.height !== targetH) {
@@ -864,6 +870,7 @@ function applyResponsiveCanvas(mode, viewport) {
         gameConfig.canvas.height = targetH;
         applyConfig();
     }
+    return forcedScale ? { scale: forcedScale, padX, padY } : null;
 }
 
 function parsePx(value) {
@@ -1178,7 +1185,7 @@ function applySettingsToUI() {
     const mode = rawMode === "phone" || rawMode === "tablet" ? rawMode : (minScreen && minScreen <= 760 ? "phone" : "tablet");
     document.documentElement.setAttribute("data-device-mode", mode);
 
-    applyResponsiveCanvas(mode, viewport);
+    const responsive = applyResponsiveCanvas(mode, viewport, getSafeInsets());
 
     const container = document.getElementById("game-container");
     if (container) {
@@ -1192,9 +1199,10 @@ function applySettingsToUI() {
         const fitW = (viewport.width - padX) / (gameConfig.canvas.width || 800);
         const fitH = (viewport.height - padY) / (gameConfig.canvas.height || 600);
         const fitContain = Math.min(fitW, fitH);
-        const maxScale = mode === "phone" ? 2.6 : 1.8;
-        const fit = Math.max(0.45, Math.min(maxScale, fitContain));
-        const s = Math.max(0.45, Math.min(maxScale, Math.min(fitContain, base * modeMult * fit)));
+        let s = Math.min(fitContain, base * modeMult * fitContain);
+        if (responsive && responsive.scale) {
+            s = Math.min(fitContain, responsive.scale * base * modeMult);
+        }
         container.style.transform = `scale(${s})`;
     }
 
