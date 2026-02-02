@@ -1182,7 +1182,10 @@ function applySettingsToUI() {
     const rawMode = String(settings.deviceMode || "auto");
     const viewport = getViewportSize();
     const minScreen = Math.min(viewport.width || 0, viewport.height || 0);
-    const mode = rawMode === "phone" || rawMode === "tablet" ? rawMode : (minScreen && minScreen <= 760 ? "phone" : "tablet");
+    const dpr = window.devicePixelRatio || 1;
+    const physicalMin = minScreen * dpr;
+    const autoMode = (minScreen && minScreen <= 820) || (physicalMin && physicalMin <= 1440) ? "phone" : "tablet";
+    const mode = rawMode === "phone" || rawMode === "tablet" ? rawMode : autoMode;
     document.documentElement.setAttribute("data-device-mode", mode);
 
     const responsive = applyResponsiveCanvas(mode, viewport, getSafeInsets());
@@ -1191,9 +1194,10 @@ function applySettingsToUI() {
     if (container) {
         const safe = getSafeInsets();
         const base = Number(settings.uiScale) || 1.0;
-        const padX = 18 + (safe.left || 0) + (safe.right || 0);
-        const padY = 18 + (safe.top || 0) + (safe.bottom || 0);
         const isLandscape = (viewport.width || 0) >= (viewport.height || 0);
+        const padBase = mode === "phone" && isLandscape ? 0 : 18;
+        const padX = padBase + (safe.left || 0) + (safe.right || 0);
+        const padY = padBase + (safe.top || 0) + (safe.bottom || 0);
         // On phone landscape, never scale past "contain" (no clipping). We'll instead adapt canvas aspect ratio.
         const modeMult = mode === "phone" ? (isLandscape ? 1.0 : 1.12) : 1.0;
         const fitW = (viewport.width - padX) / (gameConfig.canvas.width || 800);
