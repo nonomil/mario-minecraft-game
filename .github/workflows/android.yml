@@ -245,6 +245,7 @@ jobs:
           tag: apk-latest
           name: Latest APK
           allowUpdates: true
+          removeArtifacts: true
           replacesArtifacts: true
           body: Signed release APK.
           artifacts: android-app/android/app/build/outputs/apk/release/app-release.apk
