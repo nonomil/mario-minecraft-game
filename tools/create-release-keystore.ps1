@@ -2,10 +2,41 @@ param(
   [string]$Alias = "release",
   [int]$ValidityDays = 36500,
   [string]$DName = "CN=release,O=mario-minecraft-game,C=CN",
+  [string]$KeytoolPath = "",
   [switch]$Force
 )
 
 $ErrorActionPreference = "Stop"
+
+$keytoolExe = $null
+if ($KeytoolPath) {
+  $keytoolExe = (Resolve-Path -LiteralPath $KeytoolPath).Path
+} else {
+  $cmd = Get-Command keytool -ErrorAction SilentlyContinue
+  if ($cmd) {
+    $keytoolExe = $cmd.Source
+  } elseif ($env:JAVA_HOME) {
+    $candidate = Join-Path $env:JAVA_HOME "bin\\keytool.exe"
+    if (Test-Path -LiteralPath $candidate) { $keytoolExe = $candidate }
+  }
+
+  if (-not $keytoolExe) {
+    $candidates = @(
+      "C:\\Program Files\\Android\\Android Studio\\jbr\\bin\\keytool.exe",
+      "C:\\Program Files\\Android\\Android Studio\\jre\\bin\\keytool.exe",
+      "C:\\Program Files\\Java\\jdk-21\\bin\\keytool.exe",
+      "C:\\Program Files\\Java\\jdk-17\\bin\\keytool.exe",
+      "C:\\Program Files\\Java\\jdk-11\\bin\\keytool.exe"
+    )
+    foreach ($c in $candidates) {
+      if (Test-Path -LiteralPath $c) { $keytoolExe = $c; break }
+    }
+  }
+}
+
+if (-not $keytoolExe) {
+  throw "keytool not found. Install JDK/Android Studio or set JAVA_HOME, or pass -KeytoolPath to this script."
+}
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $outDir = Join-Path $repoRoot "apks"
@@ -29,7 +60,7 @@ $storePass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.Interop
 $keyPass = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($keyPassSecure))
 
 try {
-  & keytool -genkeypair `
+  & $keytoolExe -genkeypair `
     -v `
     -storetype PKCS12 `
     -keystore $keystorePath `
