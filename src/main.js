@@ -1113,10 +1113,19 @@ function applySettingsToUI() {
     if (container) {
         const base = Number(settings.uiScale) || 1.0;
         const pad = 18;
-        const fitW = (window.innerWidth - pad) / (gameConfig.canvas.width || 800);
-        const fitH = (window.innerHeight - pad) / (gameConfig.canvas.height || 600);
-        const fit = Math.max(0.45, Math.min(1.6, Math.min(fitW, fitH)));
-        const s = Math.max(0.45, Math.min(1.6, base * fit));
+        const viewport = {
+            width: window.innerWidth || 0,
+            height: window.innerHeight || 0
+        };
+        const isLandscape = viewport.width >= viewport.height;
+        const minScreen = Math.min(viewport.width || 0, viewport.height || 0);
+        const fitW = (viewport.width - pad) / (gameConfig.canvas.width || 800);
+        const fitH = (viewport.height - pad) / (gameConfig.canvas.height || 600);
+        const fitContain = Math.min(fitW, fitH);
+        const fitCover = Math.max(fitW, fitH);
+        const fitTarget = isLandscape && minScreen && minScreen <= 760 ? fitCover : fitContain;
+        const fit = Math.max(0.45, Math.min(2.2, fitTarget));
+        const s = Math.max(0.45, Math.min(2.2, base * fit));
         container.style.transform = `scale(${s})`;
     }
 
