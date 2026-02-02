@@ -1184,16 +1184,17 @@ function applySettingsToUI() {
     if (container) {
         const safe = getSafeInsets();
         const base = Number(settings.uiScale) || 1.0;
-        const modeMult = mode === "phone" ? 1.12 : 1.0;
         const padX = 18 + (safe.left || 0) + (safe.right || 0);
         const padY = 18 + (safe.top || 0) + (safe.bottom || 0);
         const isLandscape = (viewport.width || 0) >= (viewport.height || 0);
+        // On phone landscape, never scale past "contain" (no clipping). We'll instead adapt canvas aspect ratio.
+        const modeMult = mode === "phone" ? (isLandscape ? 1.0 : 1.12) : 1.0;
         const fitW = (viewport.width - padX) / (gameConfig.canvas.width || 800);
         const fitH = (viewport.height - padY) / (gameConfig.canvas.height || 600);
         const fitContain = Math.min(fitW, fitH);
-        const maxScale = isLandscape && mode === "phone" ? 1.6 : 1.8;
+        const maxScale = mode === "phone" ? 2.6 : 1.8;
         const fit = Math.max(0.45, Math.min(maxScale, fitContain));
-        const s = Math.max(0.45, Math.min(maxScale, base * modeMult * fit));
+        const s = Math.max(0.45, Math.min(maxScale, Math.min(fitContain, base * modeMult * fit)));
         container.style.transform = `scale(${s})`;
     }
 
