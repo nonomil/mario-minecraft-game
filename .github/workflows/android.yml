@@ -69,6 +69,13 @@ jobs:
 
           echo "enabled=$enabled" >> "$GITHUB_OUTPUT"
 
+      - name: Require signing secrets
+        if: ${{ steps.signing.outputs.enabled != 'true' }}
+        run: |
+          echo "Missing signing secrets. Release APK is required for updates." >&2
+          echo "Set ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD / ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD in GitHub Secrets." >&2
+          exit 1
+
       - name: Decode Android signing keystore
         if: ${{ steps.signing.outputs.enabled == 'true' }}
         env:
@@ -98,31 +105,14 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
-      - name: Select APK for Release
-        id: select_apk
-        run: |
-          if ls android-app/android/app/build/outputs/apk/release/*.apk >/dev/null 2>&1; then
-            echo "apk_glob=android-app/android/app/build/outputs/apk/release/*.apk" >> "$GITHUB_OUTPUT"
-            echo "release_name=Latest APK" >> "$GITHUB_OUTPUT"
-            echo "release_body=Signed release APK." >> "$GITHUB_OUTPUT"
-          elif ls android-app/android/app/build/outputs/apk/debug/*.apk >/dev/null 2>&1; then
-            echo "apk_glob=android-app/android/app/build/outputs/apk/debug/*.apk" >> "$GITHUB_OUTPUT"
-            echo "release_name=Latest APK (debug)" >> "$GITHUB_OUTPUT"
-            echo "release_body=Debug-signed APK (signing secrets not configured)." >> "$GITHUB_OUTPUT"
-          else
-            echo "apk_glob=" >> "$GITHUB_OUTPUT"
-            echo "release_name=Latest APK" >> "$GITHUB_OUTPUT"
-            echo "release_body=No APK found." >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Publish GitHub Release (apk-latest)
-        if: ${{ steps.select_apk.outputs.apk_glob != '' }}
+        if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/*.apk') != '' }}
         uses: ncipollo/release-action@v1
         with:
           tag: apk-latest
-          name: ${{ steps.select_apk.outputs.release_name }}
+          name: Latest APK
           allowUpdates: true
           replacesArtifacts: true
-          body: ${{ steps.select_apk.outputs.release_body }}
-          artifacts: ${{ steps.select_apk.outputs.apk_glob }}
+          body: Signed release APK.
+          artifacts: android-app/android/app/build/outputs/apk/release/*.apk
 
