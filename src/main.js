@@ -1160,10 +1160,9 @@ function applySettingsToUI() {
         const fitW = (viewport.width - padX) / (gameConfig.canvas.width || 800);
         const fitH = (viewport.height - padY) / (gameConfig.canvas.height || 600);
         const fitContain = Math.min(fitW, fitH);
-        const fitCover = Math.max(fitW, fitH);
-        const fitTarget = mode === "phone" && isLandscape ? fitCover : fitContain;
-        const fit = Math.max(0.45, Math.min(2.2, fitTarget));
-        const s = Math.max(0.45, Math.min(2.2, base * modeMult * fit));
+        const maxScale = isLandscape && mode === "phone" ? 1.6 : 1.8;
+        const fit = Math.max(0.45, Math.min(maxScale, fitContain));
+        const s = Math.max(0.45, Math.min(maxScale, base * modeMult * fit));
         container.style.transform = `scale(${s})`;
     }
 
