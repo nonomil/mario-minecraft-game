@@ -150,7 +150,9 @@ jobs:
         id: release_build
         working-directory: android-app/android
         env:
-          SIGNING_STORE_FILE: app/release.keystore
+          # app/build.gradle resolves relative paths from the app module directory (android-app/android/app).
+          # So this must be "release.keystore" (NOT "app/release.keystore"), otherwise it becomes app/app/...
+          SIGNING_STORE_FILE: release.keystore
           SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
