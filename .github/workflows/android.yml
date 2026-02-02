@@ -168,16 +168,42 @@ jobs:
         shell: bash
         working-directory: android-app/android
         run: |
-          # Put the tail into an annotation so we can read the failure cause without downloading artifacts.
-          tail -n 120 gradle-release.log > gradle-release.tail.txt || true
+          # Put the most relevant failure section into an annotation so we can read the cause
+          # without downloading artifacts.
           python3 - <<'PY'
           import pathlib
-          p = pathlib.Path("gradle-release.tail.txt")
-          text = p.read_text(errors="replace") if p.exists() else "(missing gradle-release.tail.txt)"
+
+          log = pathlib.Path("gradle-release.log")
+          if not log.exists():
+              text = "(missing gradle-release.log)"
+          else:
+              lines = log.read_text(errors="replace").splitlines(True)
+              markers = (
+                  "FAILURE: Build failed",
+                  "* What went wrong:",
+                  "Execution failed for task",
+                  "A problem occurred",
+                  "Caused by:",
+              )
+              start = None
+              # Prefer the last "real" error section, not the very end of the stack trace.
+              for i in range(len(lines) - 1, -1, -1):
+                  if any(m in lines[i] for m in markers):
+                      start = i
+                      break
+              if start is None:
+                  start = max(0, len(lines) - 180)
+              snippet = "".join(lines[start:])
+              # Keep it reasonably short for the annotation UI.
+              snippet_lines = snippet.splitlines(True)
+              if len(snippet_lines) > 220:
+                  snippet = "".join(snippet_lines[:220])
+              text = snippet
+
           # Escape for workflow command message:
           # https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#escaping-data
           text = text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
-          print(f"::error::assembleRelease failed. Tail of gradle-release.log:%0A{text}")
+          print(f"::error::assembleRelease failed. Extracted failure section:%0A{text}")
           PY
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "## assembleRelease failed (tail of gradle-release.log)" >> "$GITHUB_STEP_SUMMARY"
