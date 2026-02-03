@@ -1,0 +1,106 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'apk/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(node -p "require('./apk/android-app/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apk/android-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: apk/android-app
+        run: npm ci
+
+      - name: Sync web assets
+        working-directory: apk/android-app
+        run: npm run sync-web
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Capacitor sync
+        working-directory: apk/android-app
+        run: npx cap sync android
+
+      - name: Grant execute permission for gradlew
+        working-directory: apk/android-app/android
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        working-directory: apk/android-app/android
+        run: ./gradlew assembleDebug
+
+      - name: Build Release APK
+        working-directory: apk/android-app/android
+        run: ./gradlew assembleRelease
+
+      - name: Rename APK files with version
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          cd apk/android-app/android/app/build/outputs/apk
+          mv debug/app-debug.apk debug/mario-minecraft-game-${VERSION}-debug.apk
+          mv release/app-release-unsigned.apk release/mario-minecraft-game-${VERSION}-release.apk
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-${{ steps.version.outputs.version }}
+          path: apk/android-app/android/app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-${{ steps.version.outputs.version }}
+          path: apk/android-app/android/app/build/outputs/apk/release/*.apk
+          retention-days: 30
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.version.outputs.tag }}
+          name: Mario Minecraft Game ${{ steps.version.outputs.tag }}
+          body: |
+            ## Mario Minecraft Game ${{ steps.version.outputs.tag }}
+
+            ### 下载
+            - **Debug APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk` - 用于测试
+            - **Release APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-release.apk` - 用于发布
+
+            ### 安装说明
+            1. 下载对应的 APK 文件
+            2. 在 Android 设备上启用"允许安装未知来源应用"
+            3. 安装 APK 文件
+          artifacts: |
+            apk/android-app/android/app/build/outputs/apk/debug/*.apk,
+            apk/android-app/android/app/build/outputs/apk/release/*.apk
+          makeLatest: true
