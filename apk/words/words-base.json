@@ -1,0 +1,19 @@
+[
+    { "en": "cat", "zh": "猫" },
+    { "en": "dog", "zh": "狗" },
+    { "en": "pig", "zh": "猪" },
+    { "en": "duck", "zh": "鸭" },
+    { "en": "cow", "zh": "牛" },
+    { "en": "red", "zh": "红色" },
+    { "en": "blue", "zh": "蓝色" },
+    { "en": "green", "zh": "绿色" },
+    { "en": "yellow", "zh": "黄色" },
+    { "en": "one", "zh": "一" },
+    { "en": "two", "zh": "二" },
+    { "en": "three", "zh": "三" },
+    { "en": "apple", "zh": "苹果" },
+    { "en": "tree", "zh": "树" },
+    { "en": "flower", "zh": "花" },
+    { "en": "grass", "zh": "草" },
+    { "en": "sky", "zh": "天空" }
+]

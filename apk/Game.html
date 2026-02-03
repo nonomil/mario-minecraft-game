@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>我的世界：单词大冒险 (宝箱增强版)</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <div id="ui-layer">
+        <div class="hud-top">
+            <div class="hud-box">💎 钻石: <span id="score">0</span></div>
+            <div class="hud-box" id="hp"></div>
+            <div class="hud-box" id="word-display">Start!</div>
+            <div class="hud-box" id="level-info">场景: 草原</div>
+            <div class="hud-box" id="difficulty-info">难度: 新手</div>
+            <div class="hud-box" id="weapon-info">武器: ⚔️ 石剑</div>
+        </div>
+        
+        <div class="btn-group">
+            <button class="game-btn" id="btn-settings">⚙️ 设置</button>
+            <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
+        </div>
+
+        <div class="inventory-bar">
+            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="召唤傀儡 (X)">
+                <span class="inv-icon">🗿</span>
+                <span class="inv-label">召唤</span>
+            </button>
+            <div class="inv-slot" title="钻石"><span class="inv-icon">💎</span><span class="inv-count" id="count-diamond">0</span></div>
+            <div class="inv-slot" title="南瓜"><span class="inv-icon">🎃</span><span class="inv-count" id="count-pumpkin">0</span></div>
+            <div class="inv-slot" title="铁块"><span class="inv-icon">🧱</span><span class="inv-count" id="count-iron">0</span></div>
+            <div class="inv-slot" title="木棍"><span class="inv-icon">🥢</span><span class="inv-count" id="count-stick">0</span></div>
+            <div class="inv-slot" title="石剑"><span class="inv-icon">⚔️</span><span class="inv-count" id="count-stone_sword">0</span></div>
+            <div class="inv-slot" title="铁镐"><span class="inv-icon">⛏️</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
+            <div class="inv-slot" title="弓"><span class="inv-icon">🏹</span><span class="inv-count" id="count-bow">0</span></div>
+            <div class="inv-slot" title="箭矢"><span class="inv-icon">🏹</span><span class="inv-count" id="count-arrow">0</span></div>
+        </div>
+
+        <div id="toast">Level Up!</div>
+        <div id="word-card" aria-hidden="true">
+            <div class="word-card-inner">
+                <div class="word-card-en" id="word-card-en"></div>
+                <div class="word-card-zh" id="word-card-zh"></div>
+                <img class="word-card-image" id="word-card-image" alt="" style="display:none;">
+            </div>
+        </div>
+
+        <div id="touch-controls" aria-hidden="true">
+            <div class="touch-left">
+                <button class="touch-btn" data-action="left">⬅️</button>
+                <button class="touch-btn" data-action="right">➡️</button>
+            </div>
+            <div class="touch-right">
+                <button class="touch-btn" data-action="use-diamond">💎</button>
+                <button class="touch-btn" data-action="interact">🧰</button>
+                <button class="touch-btn" data-action="switch">🔁</button>
+                <span class="touch-spacer"></span>
+                <button class="touch-btn" data-action="jump">⤴️</button>
+                <button class="touch-btn" data-action="attack">🗡️</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="screen-overlay" class="screen-overlay visible" aria-hidden="false">
+    <div class="overlay-card">
+        <div class="overlay-title" id="overlay-title">准备开始</div>
+        <div class="overlay-text" id="overlay-text">
+            ← → 移动。 空格 跳(可二段跳)<br>
+            J 攻击。 K 切换武器。 Z 使用钻石<br>
+            Y 打开宝箱。 E 采集
+        </div>
+        <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
+    </div>
+</div>
+
+<div id="settings-modal" aria-hidden="true">
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="游戏设置">
+        <div class="settings-actions settings-actions-top">
+            <button class="game-btn" id="btn-settings-save">保存</button>
+            <button class="game-btn" id="btn-settings-close">关闭</button>
+        </div>
+        <div class="settings-title">游戏设置</div>
+        <div class="settings-scroll">
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">英文语速</div>
+                <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">中文语速</div>
+                <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">界面大小</div>
+                <input class="settings-range" id="opt-ui-scale" type="range" min="0.8" max="1.4" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">显示模式</div>
+                <select class="settings-select" id="opt-device-mode">
+                    <option value="auto">自动</option>
+                    <option value="phone">手机</option>
+                    <option value="tablet">平板</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">屏幕方向</div>
+                <select class="settings-select" id="opt-orientation-lock">
+                    <option value="auto">自动</option>
+                    <option value="portrait">竖屏</option>
+                    <option value="landscape">横屏</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">分辨率模式(解决全屏黑边)</div>
+                <select class="settings-select" id="opt-resolution-mode">
+                    <option value="auto">自动适配 (推荐)</option>
+                    <option value="800x600">标准 800×600</option>
+                    <option value="1200x600">宽屏 1200×600</option>
+                    <option value="1600x600">超宽 1600×600</option>
+                    <option value="2000x600">极宽 2000×600</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">动作速度</div>
+                <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">游戏难度</div>
+                <select class="settings-select" id="opt-game-difficulty">
+                    <option value="simple">简单</option>
+                    <option value="medium">中等</option>
+                    <option value="hard">困难</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">环境切换周期(分数)</div>
+                <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重复(轮换)</label>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">词库</div>
+                <select class="settings-select" id="opt-vocab"></select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">词库阶段</div>
+                <select class="settings-select" id="opt-vocab-stage"></select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">词库难度</div>
+                <select class="settings-select" id="opt-vocab-difficulty">
+                    <option value="auto">自动</option>
+                    <option value="basic">基础</option>
+                    <option value="intermediate">进阶</option>
+                    <option value="advanced">高级</option>
+                    <option value="mixed">混合</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-show-image"> 显示图片</label>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-show-labels"> 环境标注</label>
+            </div>
+            <div class="settings-row settings-row-keys">
+                <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互,切换,使用钻石</div>
+                <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
+            </div>
+            <div class="settings-row settings-row-progress">
+                <div class="settings-label">词库轮换</div>
+                <div class="settings-progress" id="progress-vocab">未加载</div>
+                <button class="game-btn game-btn-danger" id="btn-reset-progress">重置轮换</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="src/defaults.js"></script>
+<script src="src/storage.js"></script>
+<script src="words/vocabs/manifest.js"></script>
+<script src="src/main.core.js"></script>
+<script src="src/main.entities.js"></script>
+<script src="src/main.ui.js"></script>
+</body>
+</html>
+
