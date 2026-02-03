@@ -81,98 +81,102 @@
 
 <div id="settings-modal" aria-hidden="true">
     <div class="settings-panel" role="dialog" aria-modal="true" aria-label="游戏设置">
-        <div class="settings-title">游戏设置</div>
-
-        <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
-        </div>
-        <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
-        </div>
-        <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">英文语速</div>
-            <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">中文语速</div>
-            <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">界面大小</div>
-            <input class="settings-range" id="opt-ui-scale" type="range" min="0.8" max="1.4" step="0.05">
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">显示模式</div>
-            <select class="settings-select" id="opt-device-mode">
-                <option value="auto">自动</option>
-                <option value="phone">手机</option>
-                <option value="tablet">平板</option>
-            </select>
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">屏幕方向</div>
-            <select class="settings-select" id="opt-orientation-lock">
-                <option value="auto">自动</option>
-                <option value="portrait">竖屏</option>
-                <option value="landscape">横屏</option>
-            </select>
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">动作速度</div>
-            <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">环境切换周期(分数)</div>
-            <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
-        </div>
-        <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
-        </div>
-        <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重复(轮换)</label>
-        </div>
-
-        <div class="settings-row">
-            <div class="settings-label">词库</div>
-            <select class="settings-select" id="opt-vocab"></select>
-        </div>
-        <div class="settings-row">
-            <div class="settings-label">词库难度</div>
-            <select class="settings-select" id="opt-vocab-difficulty">
-                <option value="auto">自动</option>
-                <option value="basic">基础</option>
-                <option value="intermediate">进阶</option>
-                <option value="advanced">高级</option>
-                <option value="mixed">混合</option>
-            </select>
-        </div>
-        <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-show-image"> 显示图片</label>
-        </div>
-
-        <div class="settings-row settings-row-keys">
-            <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互,切换,使用钻石</div>
-            <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
-        </div>
-
-        <div class="settings-row settings-row-progress">
-            <div class="settings-label">词库轮换</div>
-            <div class="settings-progress" id="progress-vocab">未加载</div>
-            <button class="game-btn game-btn-danger" id="btn-reset-progress">重置轮换</button>
-        </div>
-
-        <div class="settings-actions">
+        <div class="settings-actions settings-actions-top">
             <button class="game-btn" id="btn-settings-save">保存</button>
             <button class="game-btn" id="btn-settings-close">关闭</button>
+        </div>
+        <div class="settings-title">游戏设置</div>
+        <div class="settings-scroll">
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">英文语速</div>
+                <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">中文语速</div>
+                <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">界面大小</div>
+                <input class="settings-range" id="opt-ui-scale" type="range" min="0.8" max="1.4" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">显示模式</div>
+                <select class="settings-select" id="opt-device-mode">
+                    <option value="auto">自动</option>
+                    <option value="phone">手机</option>
+                    <option value="tablet">平板</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">屏幕方向</div>
+                <select class="settings-select" id="opt-orientation-lock">
+                    <option value="auto">自动</option>
+                    <option value="portrait">竖屏</option>
+                    <option value="landscape">横屏</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">动作速度</div>
+                <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">环境切换周期(分数)</div>
+                <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重复(轮换)</label>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">词库</div>
+                <select class="settings-select" id="opt-vocab"></select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">词库阶段</div>
+                <select class="settings-select" id="opt-vocab-stage"></select>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">词库难度</div>
+                <select class="settings-select" id="opt-vocab-difficulty">
+                    <option value="auto">自动</option>
+                    <option value="basic">基础</option>
+                    <option value="intermediate">进阶</option>
+                    <option value="advanced">高级</option>
+                    <option value="mixed">混合</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <label class="settings-label"><input type="checkbox" id="opt-show-image"> 显示图片</label>
+            </div>
+            <div class="settings-row settings-row-keys">
+                <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互,切换,使用钻石</div>
+                <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
+            </div>
+            <div class="settings-row settings-row-progress">
+                <div class="settings-label">词库轮换</div>
+                <div class="settings-progress" id="progress-vocab">未加载</div>
+                <button class="game-btn game-btn-danger" id="btn-reset-progress">重置轮换</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="src/defaults.js"></script>
 <script src="src/storage.js"></script>
+<script src="words/vocabs/html/kindergarten_complete.js"></script>
+<script src="words/vocabs/html/elementary_full.js"></script>
+<script src="words/vocabs/html/common_general.js"></script>
 <script src="words/vocabs/manifest.js"></script>
 <script src="src/main.js"></script>
 </body>

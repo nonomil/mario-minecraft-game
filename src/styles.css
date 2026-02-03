@@ -5,10 +5,6 @@
     --safe-left: env(safe-area-inset-left, 0px);
     --vvw: 100vw;
     --vvh: 100vh;
-    --touch-btn-size: clamp(42px, 7.2vw, 62px);
-    --touch-gap: clamp(6px, 1.6vw, 12px);
-    --touch-offset: clamp(90px, 14vh, 180px);
-    --touch-side: clamp(18px, 4vw, 36px);
 }
 
 html, body {
@@ -18,6 +14,14 @@ html, body {
     height: 100%;
     overscroll-behavior: none;
     touch-action: none;
+}
+
+html[data-device-mode="phone"] body {
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0;
+    background: #000;
+    min-height: 100%;
 }
 
 body {
@@ -46,6 +50,15 @@ body {
     border-radius: 8px;
     overflow: hidden;
     transform-origin: center center;
+}
+
+html[data-device-mode="phone"] #game-container,
+html[data-device-mode="phone"] #game-container #ui-layer,
+html[data-device-mode="phone"] #game-container canvas {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 html[data-device-mode="phone"] #game-container {
@@ -365,36 +378,36 @@ canvas {
 /* 宸︿晶鎺у埗鍖哄煙 - 灞忓箷宸︿晶涓棿 */
 .touch-left {
     position: absolute;
-    left: var(--touch-side);
-    bottom: var(--touch-offset);
+    left: 20px;
+    bottom: 20px;
     display: flex;
     flex-direction: row;
-    gap: var(--touch-gap);
+    gap: 15px;
     pointer-events: auto;
 }
 
 /* 鍙充晶鎺у埗鍖哄煙 - 灞忓箷鍙充晶涓棿 */
 .touch-right {
     position: absolute;
-    right: var(--touch-side);
-    bottom: var(--touch-offset);
+    right: 20px;
+    bottom: 20px;
     display: grid;
-    grid-template-columns: repeat(2, var(--touch-btn-size));
-    grid-template-rows: repeat(3, var(--touch-btn-size));
-    gap: var(--touch-gap);
+    grid-template-columns: repeat(2, 56px);
+    grid-template-rows: repeat(3, 56px);
+    gap: 12px;
     align-items: end;
     pointer-events: auto;
 }
 
 /* 鍗婇€忔槑娴呯櫧鑹茶竟妗嗘寜閽?- 鎴戠殑涓栫晫绉诲姩鐗堥鏍?*/
 .touch-btn {
-    width: var(--touch-btn-size);
-    height: var(--touch-btn-size);
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.55);
-    background: rgba(255, 255, 255, 0.18);
-    color: rgba(255, 255, 255, 0.95);
-    font-size: clamp(20px, 4.2vw, 30px);
+    width: 56px;
+    height: 56px;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 30px;
     font-weight: 700;
     cursor: pointer;
     user-select: none;
@@ -402,18 +415,15 @@ canvas {
     align-items: center;
     justify-content: center;
     transition: all 0.15s ease;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(2px);
-    padding: 0;
 }
 
 .touch-btn:active {
-    transform: scale(0.94);
+    transform: scale(0.92);
 }
 
 .touch-spacer {
-    width: var(--touch-btn-size);
-    height: var(--touch-btn-size);
+    width: 56px;
+    height: 56px;
     display: block;
 }
 
@@ -434,22 +444,48 @@ canvas {
     display: flex;
 }
 
+html[data-device-mode="phone"] {
+    touch-action: none;
+}
+
 .settings-panel {
-    width: 520px;
+    width: min(520px, 100%);
     max-width: calc(100% - 30px);
     background: rgba(20,20,20,0.95);
     border: 3px solid rgba(255,255,255,0.4);
     border-radius: 14px;
     box-shadow: 0 0 40px rgba(0,0,0,0.85);
-    padding: 16px 16px 12px 16px;
+    padding: 12px;
     color: #fff;
     pointer-events: auto;
+    max-height: min(90vh, 750px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.settings-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+}
+
+.settings-actions-top {
+    justify-content: space-between;
+    margin-bottom: 14px;
 }
 
 .settings-title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 900;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+}
+
+.settings-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
 }
 
 .settings-row {
@@ -457,48 +493,42 @@ canvas {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 8px 0;
+    padding: 6px 0;
+    font-size: 14px;
 }
 
 .settings-label {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
 }
 
 .settings-range {
-    width: 250px;
+    width: 220px;
 }
 
 .settings-select {
-    width: 250px;
-    padding: 8px 10px;
+    width: 220px;
+    padding: 6px 10px;
     border-radius: 8px;
     border: 2px solid rgba(255,255,255,0.35);
     background: rgba(0,0,0,0.35);
     color: #fff;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .settings-input {
     width: 100%;
-    padding: 8px 10px;
+    padding: 6px 10px;
     border-radius: 8px;
     border: 2px solid rgba(255,255,255,0.35);
     background: rgba(0,0,0,0.35);
     color: #fff;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .settings-row-keys {
     flex-direction: column;
     align-items: flex-start;
-}
-
-.settings-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 8px;
 }
 
 .settings-row-progress {

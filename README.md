@@ -1,4 +1,4 @@
-﻿﻿# Android APK锛圕apacitor锛夊湪绾挎瀯寤轰笌鍙戝竷
+﻿﻿﻿﻿# Android APK锛圕apacitor锛夊湪绾挎瀯寤轰笌鍙戝竷
 
 鍩轰簬椹噷濂ョ殑妯増杩囧叧娓告垙锛岃瀺鍚堟垜鐨勪笘鐣屼富棰樺厓绱狅紝鍦ㄦ父鎴忎腑瀛︿範鑻辫鍗曡瘝銆傛敮鎸?Android 骞冲彴锛屽彲鍦ㄧ嚎鑷姩缂栬瘧 APK銆侫 side-scrolling platformer inspired by Super Mario, featuring Minecraft-themed graphics and integrated English vocabulary learning gameplay. Built for Android with automated APK compilation.
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
-import android.webkit.WebSettings;
 
 import com.getcapacitor.BridgeActivity;
 
@@ -13,7 +12,6 @@ public class MainActivity extends BridgeActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    enableWebAudioPlayback();
     applyImmersiveMode();
   }
 
@@ -41,14 +39,5 @@ public class MainActivity extends BridgeActivity {
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
     decorView.setSystemUiVisibility(flags);
-  }
-
-  private void enableWebAudioPlayback() {
-    if (getBridge() == null || getBridge().getWebView() == null) return;
-    try {
-      WebSettings settings = getBridge().getWebView().getSettings();
-      settings.setMediaPlaybackRequiresUserGesture(false);
-    } catch (Exception ignored) {
-    }
   }
 }

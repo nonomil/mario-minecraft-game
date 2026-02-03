@@ -25,7 +25,21 @@ let gameConfig = JSON.parse(JSON.stringify(defaultGameConfig));
 let keyBindings = { ...defaultControls };
 let levels = [...defaultLevels];
 let wordDatabase = [...defaultWords];
+function hasStoredSettings() {
+    if (!storage) return false;
+    try {
+        return window.localStorage.getItem("mmwg:settings") !== null;
+    } catch {
+        return false;
+    }
+}
+
 let settings = storage ? storage.loadJson("mmwg:settings", defaultSettings) : JSON.parse(JSON.stringify(defaultSettings));
+if (!hasStoredSettings()) {
+    settings.deviceMode = "phone";
+    settings.orientationLock = "landscape";
+    settings.touchControls = true;
+}
 let vocabState = storage ? storage.loadJson("mmwg:vocabState", { runCounts: {}, lastPackId: null }) : { runCounts: {}, lastPackId: null };
 let progress = storage ? storage.loadJson("mmwg:progress", { vocab: {} }) : { vocab: {} };
 let lastWord = null;
@@ -45,9 +59,17 @@ let audioUnlocked = false;
 let speechReady = false;
 let bgmAudio = null;
 let bgmReady = false;
-let ttsAudio = null;
-let ttsSeqId = 0;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
+const STAGE_LABELS = {
+    kindergarten: "幼儿园",
+    elementary: "小学全阶段",
+    elementary_lower: "小学低年级",
+    elementary_upper: "小学高年级",
+    minecraft: "Minecraft",
+    general: "通用主题",
+    mixed: "混合/跨级",
+    game: "游戏专题"
+};
 
 let score = 0;
 let levelScore = 0;
@@ -523,82 +545,6 @@ function playHitSfx(intensity = 1) {
     osc.stop(now + 0.16);
 }
 
-function getNativeTts() {
-    try {
-        const Cap = window.Capacitor;
-        if (!Cap || typeof Cap.isNativePlatform !== "function") return null;
-        if (!Cap.isNativePlatform()) return null;
-        const plugins = Cap.Plugins || {};
-        const tts = plugins.TextToSpeech;
-        if (!tts || typeof tts.speak !== "function") return null;
-        return tts;
-    } catch {
-        return null;
-    }
-}
-
-function speakNativeTts(tts, text, lang, rate) {
-    if (!tts || typeof tts.speak !== "function") return false;
-    if (!text) return false;
-    try {
-        tts.speak({
-            text: String(text),
-            lang: String(lang || ""),
-            rate: typeof rate === "number" ? rate : 1.0,
-            pitch: 1.0,
-            volume: 1.0,
-            category: "ambient",
-            // Ensure EN->ZH does not cancel EN on Android (default is Flush).
-            queueStrategy: 1
-        });
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function buildOnlineTtsUrl(text, lang) {
-    const safeLang = String(lang || "").toLowerCase().startsWith("zh") ? "zh-CN" : "en";
-    return `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(safeLang)}&q=${encodeURIComponent(text)}`;
-}
-
-function playOnlineTtsSequence(sequence) {
-    const items = Array.isArray(sequence) ? sequence.filter(it => it && it.text) : [];
-    if (!items.length) return false;
-
-    ttsSeqId += 1;
-    const seq = ttsSeqId;
-
-    if (!ttsAudio) {
-        ttsAudio = new Audio();
-        ttsAudio.preload = "auto";
-        ttsAudio.volume = 1;
-    }
-
-    const playAt = idx => {
-        if (seq !== ttsSeqId) return;
-        const item = items[idx];
-        if (!item) return;
-
-        const url = buildOnlineTtsUrl(item.text, item.lang);
-        try {
-            ttsAudio.onended = () => playAt(idx + 1);
-            ttsAudio.onerror = () => playAt(idx + 1);
-            try { ttsAudio.pause(); } catch {}
-            try { ttsAudio.currentTime = 0; } catch {}
-            ttsAudio.src = url;
-            const playPromise = ttsAudio.play();
-            if (playPromise && typeof playPromise.catch === "function") {
-                playPromise.catch(() => {});
-            }
-        } catch {
-        }
-    };
-
-    playAt(0);
-    return true;
-}
-
 function getArrowCount() {
     return Number(inventory.arrow) || 0;
 }
@@ -1019,23 +965,37 @@ function applyConfig() {
     fallResetY = gameConfig.world.fallResetY;
 }
 
-function applyResponsiveCanvas(mode, viewport, safe) {
+function resolveAutoDeviceMode(viewport) {
+    const vw = Number(viewport?.width) || 0;
+    const vh = Number(viewport?.height) || 0;
+    const minScreen = Math.min(vw, vh);
+    const dpr = window.devicePixelRatio || 1;
+    const physicalMin = minScreen * dpr;
+    const AUTO_PIXEL_THRESHOLD = 1600;
+    const AUTO_PHYSICAL_THRESHOLD = 3200;
+    if (minScreen > 0 && minScreen <= AUTO_PIXEL_THRESHOLD) return "phone";
+    if (physicalMin > 0 && physicalMin <= AUTO_PHYSICAL_THRESHOLD) return "phone";
+    return "tablet";
+}
+
+function applyResponsiveCanvas(viewport) {
     if (!baseCanvasSize || !gameConfig?.canvas) return null;
     const vw = Number(viewport?.width) || 0;
     const vh = Number(viewport?.height) || 0;
     const isLandscape = vw >= vh && vw > 0 && vh > 0;
-    const padX = (safe?.left || 0) + (safe?.right || 0);
-    const padY = (safe?.top || 0) + (safe?.bottom || 0);
-    const availW = Math.max(1, vw - padX);
-    const availH = Math.max(1, vh - padY);
+    const minScreen = Math.min(vw, vh);
+    const dpr = window.devicePixelRatio || 1;
+    const physicalMin = minScreen * dpr;
+    const isPhone = (minScreen && minScreen <= 820) || (physicalMin && physicalMin <= 1440);
+    const availW = Math.max(1, vw);
+    const availH = Math.max(1, vh);
 
     let targetW = baseCanvasSize.width;
     let targetH = baseCanvasSize.height;
     let forcedScale = null;
 
-    // Phone landscape: match canvas aspect ratio to viewport, then scale by height so no clipping.
-    if (mode === "phone" && isLandscape) {
-        targetH = baseCanvasSize.height; // keep vertical gameplay metrics stable (groundY, jump, etc.)
+    if (isPhone && isLandscape) {
+        targetH = baseCanvasSize.height;
         const scale = availH / targetH;
         targetW = Math.round(availW / scale);
         targetW = Math.round(clamp(targetW, baseCanvasSize.width, 1800));
@@ -1047,54 +1007,26 @@ function applyResponsiveCanvas(mode, viewport, safe) {
         gameConfig.canvas.height = targetH;
         applyConfig();
     }
-    return forcedScale ? { scale: forcedScale, padX, padY } : null;
-}
-
-function parsePx(value) {
-    const n = Number.parseFloat(String(value || "").replace("px", ""));
-    return Number.isFinite(n) ? n : 0;
-}
-
-function getViewportSize() {
-    const vv = window.visualViewport;
-    if (vv && typeof vv.width === "number" && typeof vv.height === "number") {
-        return { width: vv.width, height: vv.height };
-    }
-    return { width: window.innerWidth || 0, height: window.innerHeight || 0 };
-}
-
-function getSafeInsets() {
-    const css = getComputedStyle(document.documentElement);
-    return {
-        top: parsePx(css.getPropertyValue("--safe-top")),
-        right: parsePx(css.getPropertyValue("--safe-right")),
-        bottom: parsePx(css.getPropertyValue("--safe-bottom")),
-        left: parsePx(css.getPropertyValue("--safe-left"))
-    };
-}
-
-function updateViewportVars() {
-    const { width, height } = getViewportSize();
-    const root = document.documentElement;
-    root.style.setProperty("--vvw", `${Math.max(0, Math.round(width))}px`);
-    root.style.setProperty("--vvh", `${Math.max(0, Math.round(height))}px`);
+    return forcedScale ? { scale: forcedScale } : null;
 }
 
 function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
     if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;
     if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
-    const deviceMode = String(merged.deviceMode || defaultSettings.deviceMode || "auto");
-    merged.deviceMode = deviceMode === "auto" || deviceMode === "phone" || deviceMode === "tablet" ? deviceMode : "auto";
-    const orientationLock = String(merged.orientationLock || defaultSettings.orientationLock || "auto");
-    merged.orientationLock = orientationLock === "auto" || orientationLock === "portrait" || orientationLock === "landscape" ? orientationLock : "auto";
     if (typeof merged.musicEnabled !== "boolean") merged.musicEnabled = defaultSettings.musicEnabled ?? true;
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
+    const deviceMode = String(merged.deviceMode || defaultSettings.deviceMode || "auto");
+    merged.deviceMode = deviceMode === "auto" || deviceMode === "phone" || deviceMode === "tablet" ? deviceMode : "auto";
+    const orientationLock = String(merged.orientationLock || defaultSettings.orientationLock || "auto");
+    merged.orientationLock = ["auto", "portrait", "landscape"].includes(orientationLock) ? orientationLock : "auto";
     const vocabDifficulty = String(merged.vocabDifficulty || defaultSettings.vocabDifficulty || "auto");
     merged.vocabDifficulty = ["auto", "basic", "intermediate", "advanced", "mixed"].includes(vocabDifficulty) ? vocabDifficulty : "auto";
+    const vocabStage = String(merged.vocabStage || defaultSettings.vocabStage || "auto");
+    merged.vocabStage = ["auto", "kindergarten", "elementary", "elementary_lower", "elementary_upper", "minecraft", "general", "mixed", "game"].includes(vocabStage) ? vocabStage : "auto";
     if (!merged.keyCodes) {
         merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
             .filter(Boolean)
@@ -1178,9 +1110,33 @@ function ensureVocabEngine() {
     return vocabEngine;
 }
 
+function getStageOptions() {
+    if (!vocabManifest || !Array.isArray(vocabManifest.packs)) return ["auto"];
+    const stageSet = new Set();
+    vocabManifest.packs.forEach(p => {
+        const val = String(p.stage || "").trim().toLowerCase();
+        if (val) stageSet.add(val);
+    });
+    const stages = Array.from(stageSet).sort();
+    return ["auto", ...stages];
+}
+
+function populateVocabStageSelect() {
+    const select = document.getElementById("opt-vocab-stage");
+    if (!select) return;
+    const options = getStageOptions();
+    const current = select.value || settings.vocabStage || "auto";
+    select.innerHTML = options.map(stage => {
+        const label = stage === "auto" ? "自动/全部" : (STAGE_LABELS[stage] || stage);
+        return `<option value="${stage}">${label}</option>`;
+    }).join("");
+    select.value = options.includes(current) ? current : "auto";
+}
+
 function renderVocabSelect() {
     const sel = document.getElementById("opt-vocab");
     if (!sel) return;
+    populateVocabStageSelect();
     sel.innerHTML = "";
     const add = (value, text) => {
         const opt = document.createElement("option");
@@ -1250,6 +1206,13 @@ function filterPacksByDifficulty(packs) {
     return packs;
 }
 
+function filterPacksByStage(packs) {
+    const pref = String(settings.vocabStage || "auto").toLowerCase();
+    if (pref === "auto") return packs;
+    const matches = packs.filter(p => String(p.stage || "").toLowerCase() === pref);
+    return matches.length ? matches : packs;
+}
+
 function pickPackAuto() {
     const engine = ensureVocabEngine();
     if (!engine) return null;
@@ -1259,6 +1222,8 @@ function pickPackAuto() {
         saveProgress();
         candidates = [...vocabManifest.packs];
     }
+    candidates = filterPacksByStage(candidates);
+    if (!candidates.length) candidates = [...vocabManifest.packs];
     candidates = filterPacksByDifficulty(candidates);
     if (!candidates.length) candidates = [...vocabManifest.packs];
     const last = vocabState.lastPackId;
@@ -1374,48 +1339,35 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
-    const rawMode = String(settings.deviceMode || "auto");
-    const viewport = getViewportSize();
-    const minScreen = Math.min(viewport.width || 0, viewport.height || 0);
-    const dpr = window.devicePixelRatio || 1;
-    const physicalMin = minScreen * dpr;
-    const autoMode = "phone";
-    const mode = rawMode === "phone" || rawMode === "tablet" ? rawMode : autoMode;
-    document.documentElement.setAttribute("data-device-mode", mode);
-
-    const responsive = applyResponsiveCanvas(mode, viewport, getSafeInsets());
-
     const container = document.getElementById("game-container");
     if (container) {
-        const safe = getSafeInsets();
         const base = Number(settings.uiScale) || 1.0;
-        const isLandscape = (viewport.width || 0) >= (viewport.height || 0);
-        const padBase = mode === "phone" && isLandscape ? 0 : 18;
-        const padX = padBase + (safe.left || 0) + (safe.right || 0);
-        const padY = padBase + (safe.top || 0) + (safe.bottom || 0);
-        // On phone landscape, never scale past "contain" (no clipping). We'll instead adapt canvas aspect ratio.
-        const modeMult = mode === "phone" ? (isLandscape ? 1.0 : 1.12) : 1.0;
-        const fitW = (viewport.width - padX) / (gameConfig.canvas.width || 800);
-        const fitH = (viewport.height - padY) / (gameConfig.canvas.height || 600);
+        const viewport = { width: window.innerWidth || 0, height: window.innerHeight || 0 };
+        const rawMode = String(settings.deviceMode || "auto");
+        const autoMode = resolveAutoDeviceMode(viewport);
+        const mode = rawMode === "phone" || rawMode === "tablet" ? rawMode : autoMode;
+        const isPhone = mode === "phone";
+        document.documentElement.setAttribute("data-device-mode", mode);
+        const pad = (isPhone && viewport.width >= viewport.height) ? 0 : 18;
+        const responsive = applyResponsiveCanvas(viewport);
+        const isLandscape = viewport.width >= viewport.height;
+        const fitW = (viewport.width - pad) / (gameConfig.canvas.width || 800);
+        const fitH = (viewport.height - pad) / (gameConfig.canvas.height || 600);
         const fitContain = Math.min(fitW, fitH);
-        let s = Math.min(fitContain, base * modeMult * fitContain);
+        let s = Math.min(fitContain, base * fitContain);
         if (responsive && responsive.scale) {
-            s = Math.min(fitContain, responsive.scale * base * modeMult);
+            s = Math.min(fitContain, responsive.scale * base);
         }
         container.style.transform = `scale(${s})`;
     }
 
     const touch = document.getElementById("touch-controls");
     if (touch) {
-        const enabled = mode === "phone" ? true : !!settings.touchControls;
+        const enabled = (settings.deviceMode === "phone") ? true : !!settings.touchControls;
         touch.classList.toggle("visible", enabled);
         touch.setAttribute("aria-hidden", enabled ? "false" : "true");
     }
-}
-
-function handleViewportChange() {
-    updateViewportVars();
-    applySettingsToUI();
+    applyOrientationLock();
 }
 
 function applyOrientationLock() {
@@ -1431,23 +1383,6 @@ function applyOrientationLock() {
     if (typeof orientation.lock !== "function") return;
     const target = mode === "portrait" ? "portrait-primary" : "landscape-primary";
     try { orientation.lock(target); } catch {}
-}
-
-function applyScreenModeFromSettings(fromUserGesture) {
-    const wantLock = String(settings.orientationLock || "auto") !== "auto";
-    if (fromUserGesture && wantLock && !document.fullscreenElement) {
-        const el = document.documentElement;
-        if (el && typeof el.requestFullscreen === "function") {
-            const onChange = () => applyOrientationLock();
-            try {
-                document.addEventListener("fullscreenchange", onChange, { once: true });
-                el.requestFullscreen({ navigationUI: "hide" });
-            } catch {
-                try { document.removeEventListener("fullscreenchange", onChange); } catch {}
-            }
-        }
-    }
-    applyOrientationLock();
 }
 
 function setOverlay(visible, mode) {
@@ -1490,7 +1425,6 @@ function setOverlay(visible, mode) {
 }
 
 function resumeGameFromOverlay() {
-    applyScreenModeFromSettings(true);
     if (overlayMode === "gameover") {
         if (getDiamondCount() >= 10) {
             inventory.diamond -= 10;
@@ -2121,42 +2055,8 @@ function speakWord(wordObj) {
     showWordCard(wordObj);
 
     if (!settings.speechEnabled) return;
-    const nativeTts = getNativeTts();
-    if (nativeTts) {
-        const speak = () => {
-            const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
-            const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-            speakNativeTts(nativeTts, wordObj.en, "en-US", enRate);
-            if (wordObj.zh) {
-                speakNativeTts(nativeTts, wordObj.zh, "zh-CN", zhRate);
-            }
-        };
-        try {
-            if (typeof nativeTts.stop === "function") {
-                const p = nativeTts.stop();
-                if (p && typeof p.finally === "function") {
-                    p.finally(speak);
-                } else {
-                    speak();
-                }
-            } else {
-                speak();
-            }
-        } catch {
-            speak();
-        }
-        return;
-    }
-    const hasSpeech = "speechSynthesis" in window;
-    if (hasSpeech) ensureSpeechReady();
-    const voices = hasSpeech && window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
-    if (!hasSpeech || !voices || !voices.length) {
-        playOnlineTtsSequence([
-            { text: wordObj.en, lang: "en" },
-            wordObj.zh ? { text: wordObj.zh, lang: "zh-CN" } : null
-        ]);
-        return;
-    }
+    if (!("speechSynthesis" in window)) return;
+    ensureSpeechReady();
 
     try {
         window.speechSynthesis.cancel();
@@ -4950,6 +4850,7 @@ function wireSettingsModal() {
     const optTouch = document.getElementById("opt-touch");
     const optNoRepeat = document.getElementById("opt-no-repeat");
     const optVocab = document.getElementById("opt-vocab");
+    const optVocabStage = document.getElementById("opt-vocab-stage");
     const optVocabDifficulty = document.getElementById("opt-vocab-difficulty");
     const optShowImage = document.getElementById("opt-show-image");
     const optKeys = document.getElementById("opt-keys");
@@ -4971,6 +4872,7 @@ function wireSettingsModal() {
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
         if (optVocab) optVocab.value = settings.vocabSelection || "auto";
+        if (optVocabStage) optVocabStage.value = settings.vocabStage || "auto";
         if (optVocabDifficulty) optVocabDifficulty.value = settings.vocabDifficulty || "auto";
         if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact, keyBindings.switch, keyBindings.useDiamond].join(",");
         if (progressVocab) updateVocabProgressUI();
@@ -5012,6 +4914,7 @@ function wireSettingsModal() {
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
         if (optShowImage) settings.showWordImage = !!optShowImage.checked;
         if (optVocab) settings.vocabSelection = String(optVocab.value || "auto");
+        if (optVocabStage) settings.vocabStage = String(optVocabStage.value || "auto");
         if (optVocabDifficulty) settings.vocabDifficulty = String(optVocabDifficulty.value || "auto");
         if (optKeys) settings.keyCodes = String(optKeys.value || "");
 
@@ -5029,8 +4932,7 @@ function wireSettingsModal() {
         wordPicker = null;
         applyBgmSetting();
         saveSettings();
-        handleViewportChange();
-        applyScreenModeFromSettings(true);
+        applySettingsToUI();
         if (player) {
             applyMotionToPlayer(player);
             applyBiomeEffectsToPlayer();
@@ -5172,14 +5074,9 @@ async function start() {
     applyBgmSetting();
 
     applyConfig();
-    handleViewportChange();
-    window.addEventListener("resize", handleViewportChange);
-    window.addEventListener("orientationchange", handleViewportChange);
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener("resize", handleViewportChange);
-        window.visualViewport.addEventListener("scroll", handleViewportChange);
-    }
-    applyScreenModeFromSettings(false);
+    applySettingsToUI();
+    window.addEventListener("resize", applySettingsToUI);
+    window.addEventListener("orientationchange", applySettingsToUI);
     ensureVocabEngine();
     renderVocabSelect();
     await setActiveVocabPack(settings.vocabSelection || "auto");

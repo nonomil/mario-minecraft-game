@@ -35,8 +35,8 @@ android-app/node_modules/
 android-app/android/.gradle/
 android-app/android/build/
 android-app/android/app/build/
-android-app/web/
 .jdk/
 out/
+android-app/web/index.html
 *.lnk
 apks/

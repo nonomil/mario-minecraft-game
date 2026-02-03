@@ -81,6 +81,33 @@
       file: "words/vocabs/minecraft/minecraft_basic.js",
       getRaw() { return typeof VOCAB_1_MINECRAFT____BASIC !== "undefined" ? VOCAB_1_MINECRAFT____BASIC : []; }
     },
+    {
+      id: "stage.kindergarten.full",
+      title: "幼儿园词库（全集）",
+      stage: "kindergarten",
+      difficulty: "mixed",
+      weight: 1,
+      file: "words/vocabs/html/kindergarten_complete.js",
+      getRaw() { return typeof MERGED_KINDERGARTEN_VOCAB !== "undefined" ? MERGED_KINDERGARTEN_VOCAB : []; }
+    },
+    {
+      id: "stage.elementary.full",
+      title: "小学全阶段词库",
+      stage: "mixed",
+      difficulty: "mixed",
+      weight: 0.85,
+      file: "words/vocabs/html/elementary_full.js",
+      getRaw() { return typeof MERGED_VOCABULARY !== "undefined" ? MERGED_VOCABULARY : []; }
+    },
+    {
+      id: "stage.general.common",
+      title: "常用词汇",
+      stage: "general",
+      difficulty: "basic",
+      weight: 0.7,
+      file: "words/vocabs/html/common_general.js",
+      getRaw() { return typeof VOCAB_1____COMMON !== "undefined" ? VOCAB_1____COMMON : []; }
+    },
     // EXTERNAL_PACKS_START
     {
       id: "external.kindergarten.all",
@@ -143,7 +170,7 @@
   packs.forEach(p => { byId[p.id] = p; });
 
   window.MMWG_VOCAB_MANIFEST = {
-    version: "2026-02-02.1",
+    version: "2026-02-03.1",
     packs,
     byId
   };
