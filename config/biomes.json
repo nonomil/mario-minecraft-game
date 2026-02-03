@@ -17,7 +17,7 @@
             "name": "森林",
             "color": "#4CAF50",
             "groundType": "grass",
-            "decorations": { "tree": 0.3, "bush": 0.2, "flower": 0.25, "mushroom": 0.1, "vine": 0.15 },
+            "decorations": { "tree": 0.3, "bush": 0.2, "flower": 0.25, "mushroom": 0.1, "vine": 0.15, "cave_entrance": 0.04, "vine_ladder": 0.02 },
             "treeTypes": { "oak": 0.5, "birch": 0.3, "dark_oak": 0.2 },
             "effects": { "particles": "leaves", "ambient": "#88CC88", "weather": ["clear", "rain", "fog"] },
             "spawnWeight": { "min": 0, "max": 1000 },
@@ -68,12 +68,34 @@
             "name": "山地",
             "color": "#757575",
             "groundType": "stone",
-            "decorations": { "ore_coal": 0.15, "ore_iron": 0.1, "ore_gold": 0.05, "ore_diamond": 0.02, "stalactite": 0.12, "crystal": 0.08, "lava_pool": 0.05 },
+            "decorations": { "ore_coal": 0.15, "ore_iron": 0.1, "ore_gold": 0.05, "ore_diamond": 0.02, "stalactite": 0.12, "crystal": 0.08, "lava_pool": 0.05, "cave_entrance": 0.03 },
             "effects": { "particles": "sparkle", "ambient": "#666688", "darkness": 0.3, "weather": ["fog"] },
             "spawnWeight": { "min": 1500, "max": 3000 },
             "platform": {
                 "floatingChanceMult": 1.1,
                 "floatingGroundTypes": ["stone", "grass"]
+            }
+        },
+        "cave": {
+            "id": "cave",
+            "name": "矿洞",
+            "color": "#3B3B4F",
+            "groundType": "stone",
+            "decorations": { "ore_coal": 0.25, "ore_iron": 0.18, "ore_gold": 0.08, "ore_diamond": 0.05, "stalactite": 0.2, "crystal": 0.1, "lava_pool": 0.08, "cave_exit": 0.08 },
+            "effects": { "particles": "sparkle", "ambient": "#3B3B4F", "darkness": 0.45, "weather": ["fog"] },
+            "spawnWeight": { "min": 0, "max": 99999 },
+            "platform": {
+                "floatingChanceMult": 0.6,
+                "floatingGroundTypes": ["stone"],
+                "microPlatformChance": 0.25,
+                "microPlatformPeriod": 2,
+                "microPattern": "stair",
+                "microPlatformType": "stone",
+                "microPlatformMaxCount": 3,
+                "microMaxRiseBlocks": 3,
+                "microItemChance": 0.15,
+                "fragileChance": 0.2,
+                "fragileBreakDelay": 100
             }
         },
         "ocean": {
@@ -102,6 +124,15 @@
                 "floatingChanceMult": 1.0,
                 "floatingGroundTypes": ["netherrack", "stone"]
             }
+        },
+        "sky": {
+            "id": "sky",
+            "name": "云端",
+            "color": "#87CEEB",
+            "groundType": "cloud",
+            "decorations": {},
+            "effects": { "particles": "sparkle", "ambient": "#9BD4FF", "weather": ["clear", "fog"] },
+            "spawnWeight": { "min": 0, "max": 99999 }
         }
     }
 }

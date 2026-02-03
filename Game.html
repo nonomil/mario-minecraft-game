@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的世界：单词大冒险 (宝箱增强版)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>我的世界：单词大冒险 (宝箱增强�?</title>
     <link rel="stylesheet" href="src/styles.css">
 </head>
 <body>
@@ -27,7 +27,7 @@
         </div>
 
         <div class="inventory-bar">
-            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="召唤傀儡 (X)">
+            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="召唤傀�?(X)">
                 <span class="inv-icon">🗿</span>
                 <span class="inv-label">召唤</span>
             </button>
@@ -37,7 +37,7 @@
             <div class="inv-slot" title="木棍"><span class="inv-icon">🥢</span><span class="inv-count" id="count-stick">0</span></div>
             <div class="inv-slot" title="石剑"><span class="inv-icon">⚔️</span><span class="inv-count" id="count-stone_sword">0</span></div>
             <div class="inv-slot" title="铁镐"><span class="inv-icon">⛏️</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
-            <div class="inv-slot" title="弓"><span class="inv-icon">🏹</span><span class="inv-count" id="count-bow">0</span></div>
+            <div class="inv-slot" title="�?><span class="inv-icon">🏹</span><span class="inv-count" id="count-bow">0</span></div>
             <div class="inv-slot" title="箭矢"><span class="inv-icon">🏹</span><span class="inv-count" id="count-arrow">0</span></div>
         </div>
 
@@ -56,12 +56,12 @@
                 <button class="touch-btn" data-action="right">➡️</button>
             </div>
             <div class="touch-right">
-                <button class="touch-btn" data-action="jump">⤴️</button>
-                <span class="touch-spacer"></span>
-                <button class="touch-btn" data-action="attack">🗡️</button>
-                <button class="touch-btn" data-action="switch">🔁</button>
-                <button class="touch-btn" data-action="interact">🧰</button>
                 <button class="touch-btn" data-action="use-diamond">💎</button>
+                <button class="touch-btn" data-action="interact">🧰</button>
+                <button class="touch-btn" data-action="switch">🔁</button>
+                <span class="touch-spacer"></span>
+                <button class="touch-btn" data-action="jump">⤴️</button>
+                <button class="touch-btn" data-action="attack">🗡�?/button>
             </div>
         </div>
     </div>
@@ -69,13 +69,13 @@
 
 <div id="screen-overlay" class="screen-overlay visible" aria-hidden="false">
     <div class="overlay-card">
-        <div class="overlay-title" id="overlay-title">准备开始</div>
+        <div class="overlay-title" id="overlay-title">准备开�?/div>
         <div class="overlay-text" id="overlay-text">
-            ← → 移动　空格 跳(可二段跳)<br>
+            �?�?移动　空格 �?可二段跳)<br>
             J 攻击　K 切换武器　Z 使用钻石<br>
             Y 打开宝箱　E 采集
         </div>
-        <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
+        <button class="overlay-btn" id="btn-overlay-action">开始游�?/button>
     </div>
 </div>
 
@@ -90,11 +90,14 @@
             <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
         </div>
         <div class="settings-row">
-            <div class="settings-label">英文语速</div>
+            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">英文语�?/div>
             <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">中文语速</div>
+            <div class="settings-label">中文语�?/div>
             <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
         </div>
         <div class="settings-row">
@@ -113,7 +116,7 @@
             <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重复(轮换)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重�?轮换)</label>
         </div>
 
         <div class="settings-row">
@@ -131,7 +134,7 @@
 
         <div class="settings-row settings-row-progress">
             <div class="settings-label">词库轮换</div>
-            <div class="settings-progress" id="progress-vocab">未加载</div>
+            <div class="settings-progress" id="progress-vocab">未加�?/div>
             <button class="game-btn game-btn-danger" id="btn-reset-progress">重置轮换</button>
         </div>
 

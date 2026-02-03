@@ -1,6 +1,6 @@
 window.MMWG_DEFAULTS = {
     gameConfig: {
-        canvas: { width: 800, height: 1440 },
+        canvas: { width: 800, height: 600 },
         physics: {
             gravity: 0.2,
             friction: 0.85,

@@ -40,6 +40,12 @@ let vocabEngine = null;
 let activeVocabPackId = null;
 let loadedVocabFiles = Object.create(null);
 let sessionWordCounts = Object.create(null);
+let audioCtx = null;
+let audioUnlocked = false;
+let speechReady = false;
+let bgmAudio = null;
+let bgmReady = false;
+const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
 
 let score = 0;
 let levelScore = 0;
@@ -118,7 +124,7 @@ const ITEM_ICONS = {
     starfish: "⭐",
     hp: "❤️",
     max_hp: "💖",
-    score: "💎"
+    score: "🪙"
 };
 const TOOL_STATS = {
     stone_sword: { damage: 8 },
@@ -420,6 +426,99 @@ function mergeDeep(target, source) {
 
 function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
+}
+
+function ensureAudioContext() {
+    if (audioCtx) return audioCtx;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    audioCtx = new Ctx();
+    return audioCtx;
+}
+
+function ensureSpeechReady() {
+    if (!("speechSynthesis" in window)) return false;
+    try {
+        if (window.speechSynthesis.getVoices) {
+            window.speechSynthesis.getVoices();
+        }
+        window.speechSynthesis.resume();
+        speechReady = true;
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function pickVoice(langPrefix) {
+    if (!("speechSynthesis" in window)) return null;
+    const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+    if (!voices || !voices.length) return null;
+    const lang = String(langPrefix || "").toLowerCase();
+    return voices.find(v => String(v.lang || "").toLowerCase().startsWith(lang)) || null;
+}
+
+function setupBgm() {
+    if (bgmAudio) return bgmAudio;
+    const audio = new Audio();
+    audio.loop = true;
+    audio.preload = "auto";
+    audio.volume = 0.35;
+    const src = BGM_SOURCES.find(Boolean);
+    if (src) audio.src = src;
+    bgmAudio = audio;
+    bgmReady = !!src;
+    return bgmAudio;
+}
+
+function applyBgmSetting() {
+    setupBgm();
+    if (!bgmAudio) return;
+    const enabled = !!settings.musicEnabled;
+    if (!enabled) {
+        try { bgmAudio.pause(); } catch {}
+        return;
+    }
+    if (!audioUnlocked) return;
+    const playPromise = bgmAudio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {});
+    }
+}
+
+function unlockAudio() {
+    audioUnlocked = true;
+    const ctx = ensureAudioContext();
+    if (ctx && ctx.state === "suspended") {
+        try { ctx.resume(); } catch {}
+    }
+    ensureSpeechReady();
+    applyBgmSetting();
+}
+
+function wireAudioUnlock() {
+    if (wireAudioUnlock.bound) return;
+    wireAudioUnlock.bound = true;
+    document.addEventListener("pointerdown", unlockAudio, { passive: true });
+    document.addEventListener("touchstart", unlockAudio, { passive: true });
+    document.addEventListener("keydown", unlockAudio);
+}
+
+function playHitSfx(intensity = 1) {
+    const ctx = ensureAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const freq = 180 + Math.min(1, Math.max(0, intensity)) * 180;
+    osc.type = "square";
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.16);
 }
 
 function getArrowCount() {
@@ -733,7 +832,7 @@ function selectBiome(x, scoreValue) {
         available = Object.values(biomeConfigs);
     }
     if (!available.length) return biomeConfigs.forest;
-    const biomeLength = 2000;
+    const biomeLength = 2000 * worldScale.x;
     const idx = Math.floor(x / biomeLength) % available.length;
     return available[idx];
 }
@@ -820,7 +919,157 @@ function spawnBiomeParticles() {
     }
 }
 
-function applyConfig() {
+let baseCanvasSize = null;
+let baseGameConfig = null;
+let baseEnemyStats = null;
+let baseWeapons = null;
+let baseBiomeConfigs = null;
+let baseCloudPlatformConfig = null;
+let worldScale = { x: 1, y: 1, unit: 1 };
+let lastViewport = { width: 0, height: 0 };
+
+function getViewportSize() {
+    const w = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 0);
+    const h = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 0);
+    return { width: w, height: h };
+}
+
+function computeWorldScale(viewport) {
+    if (!baseCanvasSize) {
+        baseCanvasSize = { width: gameConfig.canvas.width, height: gameConfig.canvas.height };
+    }
+    const vw = Math.max(1, Number(viewport?.width) || 0);
+    const vh = Math.max(1, Number(viewport?.height) || 0);
+    const scaleX = vw / baseCanvasSize.width;
+    const scaleY = vh / baseCanvasSize.height;
+    const unit = Math.min(scaleX, scaleY);
+    worldScale = { x: scaleX, y: scaleY, unit };
+    return worldScale;
+}
+
+function scaleGameConfig(viewport) {
+    if (!baseGameConfig) {
+        baseGameConfig = JSON.parse(JSON.stringify(gameConfig));
+        baseCanvasSize = { width: baseGameConfig.canvas.width, height: baseGameConfig.canvas.height };
+    }
+    const vp = viewport || getViewportSize();
+    const scale = computeWorldScale(vp);
+    const cfg = JSON.parse(JSON.stringify(baseGameConfig));
+
+    cfg.canvas.width = Math.round(vp.width);
+    cfg.canvas.height = Math.round(vp.height);
+
+    if (cfg.physics) {
+        cfg.physics.gravity = (baseGameConfig.physics?.gravity || 0) * scale.unit;
+        cfg.physics.jumpStrength = (baseGameConfig.physics?.jumpStrength || 0) * scale.unit;
+        cfg.physics.movementSpeed = (baseGameConfig.physics?.movementSpeed || 0) * scale.unit;
+        cfg.physics.groundY = (baseGameConfig.physics?.groundY || 0) * scale.y;
+    }
+
+    if (cfg.world) {
+        cfg.world.blockSize = (baseGameConfig.world?.blockSize || 0) * scale.unit;
+        cfg.world.cameraOffsetX = (baseGameConfig.world?.cameraOffsetX || 0) * scale.x;
+        cfg.world.mapBuffer = (baseGameConfig.world?.mapBuffer || 0) * scale.x;
+        cfg.world.removeThreshold = (baseGameConfig.world?.removeThreshold || 0) * scale.x;
+        cfg.world.fallResetY = (baseGameConfig.world?.fallResetY || 0) * scale.y;
+    }
+
+    if (cfg.player) {
+        cfg.player.width = (baseGameConfig.player?.width || 0) * scale.unit;
+        cfg.player.height = (baseGameConfig.player?.height || 0) * scale.unit;
+    }
+
+    if (cfg.spawn && baseGameConfig.spawn) {
+        if (typeof baseGameConfig.spawn.wordItemMinGap === "number") {
+            cfg.spawn.wordItemMinGap = baseGameConfig.spawn.wordItemMinGap * scale.x;
+        }
+    }
+
+    if (cfg.platforms && baseGameConfig.platforms) {
+        if (typeof baseGameConfig.platforms.cloudHeightMin === "number") {
+            cfg.platforms.cloudHeightMin = baseGameConfig.platforms.cloudHeightMin * scale.y;
+        }
+        if (typeof baseGameConfig.platforms.cloudHeightMax === "number") {
+            cfg.platforms.cloudHeightMax = baseGameConfig.platforms.cloudHeightMax * scale.y;
+        }
+        if (typeof baseGameConfig.platforms.movingPlatformSpeedMin === "number") {
+            cfg.platforms.movingPlatformSpeedMin = baseGameConfig.platforms.movingPlatformSpeedMin * scale.unit;
+        }
+        if (typeof baseGameConfig.platforms.movingPlatformSpeedMax === "number") {
+            cfg.platforms.movingPlatformSpeedMax = baseGameConfig.platforms.movingPlatformSpeedMax * scale.unit;
+        }
+    }
+
+    if (cfg.golems && baseGameConfig.golems) {
+        if (baseGameConfig.golems.ironGolem) {
+            cfg.golems.ironGolem.speed = baseGameConfig.golems.ironGolem.speed * scale.unit;
+        }
+        if (baseGameConfig.golems.snowGolem) {
+            cfg.golems.snowGolem.speed = baseGameConfig.golems.snowGolem.speed * scale.unit;
+        }
+    }
+
+    return cfg;
+}
+
+function scaleEnemyStats() {
+    if (!baseEnemyStats) baseEnemyStats = JSON.parse(JSON.stringify(ENEMY_STATS));
+    Object.keys(baseEnemyStats).forEach(key => {
+        const base = baseEnemyStats[key];
+        const target = ENEMY_STATS[key];
+        if (!target) return;
+        if (base.size) {
+            target.size = {
+                w: base.size.w * worldScale.unit,
+                h: base.size.h * worldScale.unit
+            };
+        }
+        if (typeof base.speed === "number") {
+            target.speed = base.speed * worldScale.unit;
+        }
+    });
+}
+
+function scaleWeapons() {
+    if (!baseWeapons) baseWeapons = JSON.parse(JSON.stringify(WEAPONS));
+    Object.keys(baseWeapons).forEach(key => {
+        const base = baseWeapons[key];
+        const target = WEAPONS[key];
+        if (!target) return;
+        if (typeof base.range === "number") target.range = base.range * worldScale.x;
+        if (typeof base.knockback === "number") target.knockback = base.knockback * worldScale.unit;
+    });
+}
+
+function scaleBiomeConfigs() {
+    if (!biomeConfigs || typeof biomeConfigs !== "object") return;
+    if (!baseBiomeConfigs) baseBiomeConfigs = JSON.parse(JSON.stringify(biomeConfigs));
+    Object.keys(biomeConfigs).forEach(key => {
+        const base = baseBiomeConfigs[key];
+        const target = biomeConfigs[key];
+        if (!base || !target) return;
+        if (base.effects && typeof base.effects.waterLevel === "number") {
+            if (!target.effects) target.effects = {};
+            target.effects.waterLevel = base.effects.waterLevel * worldScale.y;
+        }
+    });
+}
+
+function scaleCloudPlatformConfig() {
+    if (!baseCloudPlatformConfig) baseCloudPlatformConfig = JSON.parse(JSON.stringify(CLOUD_PLATFORM_CONFIG));
+    Object.keys(CLOUD_PLATFORM_CONFIG).forEach(key => {
+        const base = baseCloudPlatformConfig[key];
+        const target = CLOUD_PLATFORM_CONFIG[key];
+        if (!base || !target) return;
+        if (typeof base.bounceForce === "number") target.bounceForce = base.bounceForce * worldScale.unit;
+        if (typeof base.moveSpeed === "number") target.moveSpeed = base.moveSpeed * worldScale.unit;
+        if (typeof base.moveRange === "number") target.moveRange = base.moveRange * worldScale.unit;
+    });
+}
+
+function applyConfig(viewport = null) {
+    const vp = viewport || getViewportSize();
+    gameConfig = scaleGameConfig(vp);
     canvas.width = gameConfig.canvas.width;
     canvas.height = gameConfig.canvas.height;
     const container = document.getElementById("game-container");
@@ -835,12 +1084,17 @@ function applyConfig() {
     mapBuffer = gameConfig.world.mapBuffer;
     removeThreshold = gameConfig.world.removeThreshold;
     fallResetY = gameConfig.world.fallResetY;
+    scaleCloudPlatformConfig();
+    scaleEnemyStats();
+    scaleWeapons();
+    scaleBiomeConfigs();
 }
 
 function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
     if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;
     if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
+    if (typeof merged.musicEnabled !== "boolean") merged.musicEnabled = defaultSettings.musicEnabled ?? true;
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
@@ -1109,24 +1363,20 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
+    const viewport = getViewportSize();
+    applyConfig(viewport);
+    const viewportChanged = viewport.width !== lastViewport.width || viewport.height !== lastViewport.height;
+    lastViewport = { width: viewport.width, height: viewport.height };
+
+    const baseScale = Number(settings.uiScale) || 1.0;
+    const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
+    document.documentElement.style.setProperty("--ui-scale", uiScale.toFixed(3));
+    document.documentElement.style.setProperty("--vvw", `${viewport.width}px`);
+    document.documentElement.style.setProperty("--vvh", `${viewport.height}px`);
+
     const container = document.getElementById("game-container");
     if (container) {
-        const base = Number(settings.uiScale) || 1.0;
-        const pad = 18;
-        const viewport = {
-            width: window.innerWidth || 0,
-            height: window.innerHeight || 0
-        };
-        const isLandscape = viewport.width >= viewport.height;
-        const minScreen = Math.min(viewport.width || 0, viewport.height || 0);
-        const fitW = (viewport.width - pad) / (gameConfig.canvas.width || 800);
-        const fitH = (viewport.height - pad) / (gameConfig.canvas.height || 600);
-        const fitContain = Math.min(fitW, fitH);
-        const fitCover = Math.max(fitW, fitH);
-        const fitTarget = isLandscape && minScreen && minScreen <= 760 ? fitCover : fitContain;
-        const fit = Math.max(0.45, Math.min(2.2, fitTarget));
-        const s = Math.max(0.45, Math.min(2.2, base * fit));
-        container.style.transform = `scale(${s})`;
+        container.style.transform = "none";
     }
 
     const touch = document.getElementById("touch-controls");
@@ -1134,6 +1384,12 @@ function applySettingsToUI() {
         const enabled = !!settings.touchControls;
         touch.classList.toggle("visible", enabled);
         touch.setAttribute("aria-hidden", enabled ? "false" : "true");
+    }
+
+    if (viewportChanged && startedOnce) {
+        initGame();
+        paused = true;
+        setOverlay(true, "start");
     }
 }
 
@@ -1808,26 +2064,34 @@ function speakWord(wordObj) {
 
     if (!settings.speechEnabled) return;
     if (!("speechSynthesis" in window)) return;
+    ensureSpeechReady();
 
     try {
         window.speechSynthesis.cancel();
         window.speechSynthesis.resume();
         const uEn = new SpeechSynthesisUtterance(wordObj.en);
         uEn.lang = "en-US";
+        const enVoice = pickVoice("en");
+        if (enVoice) uEn.voice = enVoice;
         uEn.rate = Math.max(1.0, Number(settings.speechEnRate) || 1.0);
         const uZh = new SpeechSynthesisUtterance(wordObj.zh);
         uZh.lang = "zh-CN";
+        const zhVoice = pickVoice("zh");
+        if (zhVoice) uZh.voice = zhVoice;
         uZh.rate = Number(settings.speechZhRate) || 0.9;
-        window.speechSynthesis.speak(uEn);
         if (wordObj.zh) {
-            setTimeout(() => window.speechSynthesis.speak(uZh), 120);
+            uEn.onend = () => {
+                try { window.speechSynthesis.speak(uZh); } catch {}
+            };
         }
+        window.speechSynthesis.speak(uEn);
     } catch {
     }
 }
 
 function optimizedUpdate(entity, updateFn) {
-    const onScreen = entity.x > cameraX - 100 && entity.x < cameraX + 900;
+    const margin = blockSize * 2;
+    const onScreen = entity.x > cameraX - margin && entity.x < cameraX + canvas.width + margin;
     if (onScreen) {
         updateFn();
     } else if (gameFrame % 3 === 0) {
@@ -2464,59 +2728,85 @@ function drawPixelTree(ctx2d, x, y, type, hp) {
 }
 
 function drawChest(x, y, opened) {
+    const size = blockSize * 0.8;
     ctx.fillStyle = "#795548";
-    ctx.fillRect(x, y, 40, 40);
+    ctx.fillRect(x, y, size, size);
     ctx.fillStyle = "#3E2723";
-    ctx.strokeRect(x, y, 40, 40);
+    ctx.strokeRect(x, y, size, size);
     ctx.fillStyle = "#FFC107";
     if (opened) {
-        ctx.fillRect(x + 15, y + 5, 10, 5);
+        ctx.fillRect(x + size * 0.38, y + size * 0.12, size * 0.25, size * 0.12);
         ctx.fillStyle = "#000";
-        ctx.fillText("空", x + 10, y + 25);
+        ctx.fillText("?", x + size * 0.25, y + size * 0.62);
     } else {
-        ctx.fillRect(x + 15, y + 18, 10, 6);
+        ctx.fillRect(x + size * 0.38, y + size * 0.45, size * 0.25, size * 0.15);
     }
 }
 
 function drawItem(x, y, text) {
-    ctx.fillStyle = "#00FFFF";
+    const size = blockSize * 0.6;
+    const cx = x + size / 2;
+    const cy = y + size / 2;
+    const r = size / 2;
+    const grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.2, cx, cy, r);
+    grad.addColorStop(0, "#FFF7B0");
+    grad.addColorStop(0.55, "#FFD54F");
+    grad.addColorStop(1, "#F9A825");
+
+    ctx.save();
+    ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.moveTo(x + 15, y);
-    ctx.lineTo(x + 30, y + 15);
-    ctx.lineTo(x + 15, y + 30);
-    ctx.lineTo(x, y + 15);
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = "#C99700";
+    ctx.lineWidth = Math.max(2, size * 0.08);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.6)";
+    ctx.lineWidth = Math.max(1, size * 0.05);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.72, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    ctx.beginPath();
+    ctx.arc(cx - r * 0.25, cy - r * 0.28, r * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 3;
-    ctx.font = "bold 16px Arial";
+    ctx.lineWidth = Math.max(2, size * 0.12);
+    ctx.font = `bold ${Math.max(12, Math.round(size * 0.6))}px Arial`;
     ctx.textAlign = "center";
-    ctx.strokeText(text, x + 15, y - 5);
-    ctx.fillText(text, x + 15, y - 5);
+    ctx.strokeText(text, cx, y - size * 0.2);
+    ctx.fillText(text, cx, y - size * 0.2);
 }
 
+
 function drawSteve(x, y, facingRight, attacking) {
+    const s = player.width / 26;
     ctx.fillStyle = "#00AAAA";
-    ctx.fillRect(x + 6, y + 20, 14, 20);
+    ctx.fillRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
     ctx.fillStyle = "#0000AA";
-    ctx.fillRect(x + 6, y + 40, 14, 12);
+    ctx.fillRect(x + 6 * s, y + 40 * s, 14 * s, 12 * s);
     ctx.fillStyle = "#F5Bca9";
-    ctx.fillRect(x + 3, y, 20, 20);
+    ctx.fillRect(x + 3 * s, y, 20 * s, 20 * s);
     ctx.fillStyle = "#4A332A";
-    ctx.fillRect(x + 3, y, 20, 6);
+    ctx.fillRect(x + 3 * s, y, 20 * s, 6 * s);
     
     // Eyes: Black
     ctx.fillStyle = "#000";
-    const ex = facingRight ? x + 16 : x + 6;
-    ctx.fillRect(ex, y + 6, 4, 4); // Steve's eye
+    const ex = facingRight ? x + 16 * s : x + 6 * s;
+    ctx.fillRect(ex, y + 6 * s, 4 * s, 4 * s); // Steve's eye
     
     if (attacking) {
         ctx.save();
-        ctx.translate(x + (facingRight ? 26 : 0), y + 26);
+        ctx.translate(x + (facingRight ? 26 * s : 0), y + 26 * s);
         if (!facingRight) ctx.scale(-1, 1);
         ctx.rotate(Math.PI / 4);
         ctx.fillStyle = "#00FFFF";
-        ctx.fillRect(0, -16, 5, 32);
+        ctx.fillRect(0, -16 * s, 5 * s, 32 * s);
         ctx.restore();
     }
 }
@@ -3427,8 +3717,8 @@ class Platform extends Entity {
 
 class Tree extends Entity {
     constructor(x, y, type) {
-        const h = 140;
-        const w = 80;
+        const w = blockSize * 1.6;
+        const h = blockSize * 2.8;
         super(x, y - h, w, h);
         this.type = type;
         this.hp = 5;
@@ -3439,14 +3729,15 @@ class Tree extends Entity {
         this.shake = 8;
         if (this.hp <= 0) {
             this.remove = true;
-            dropItem("stick", this.x + this.width / 2, this.y + this.height - 20);
+            dropItem("stick", this.x + this.width / 2, this.y + this.height - blockSize * 0.4);
         }
     }
 }
 
 class Chest extends Entity {
     constructor(x, y) {
-        super(x, y - 40, 40, 40);
+        const size = blockSize * 0.8;
+        super(x, y - size, size, size);
         this.opened = false;
     }
     open() {
@@ -3498,7 +3789,8 @@ class Chest extends Entity {
 
 class Item extends Entity {
     constructor(x, y, wordObj) {
-        super(x, y, 30, 30);
+        const size = blockSize * 0.6;
+        super(x, y, size, size);
         this.wordObj = wordObj;
         this.collected = false;
         this.floatY = 0;
@@ -4152,10 +4444,11 @@ const ENEMY_STATS = {
 
 class Projectile extends Entity {
     constructor(x, y, targetX, targetY, speed = 3, faction = "enemy") {
-        super(x, y, 8, 8);
+        super(x, y, 8 * worldScale.unit, 8 * worldScale.unit);
         const angle = Math.atan2(targetY - y, targetX - x);
-        this.velX = Math.cos(angle) * speed;
-        this.velY = Math.sin(angle) * speed;
+        const scaledSpeed = speed * worldScale.unit;
+        this.velX = Math.cos(angle) * scaledSpeed;
+        this.velY = Math.sin(angle) * scaledSpeed;
         this.lifetime = 180;
         this.damage = 12;
         this.faction = faction;
@@ -4165,8 +4458,9 @@ class Projectile extends Entity {
         this.x = x;
         this.y = y;
         const angle = Math.atan2(targetY - y, targetX - x);
-        this.velX = Math.cos(angle) * speed;
-        this.velY = Math.sin(angle) * speed;
+        const scaledSpeed = speed * worldScale.unit;
+        this.velX = Math.cos(angle) * scaledSpeed;
+        this.velY = Math.sin(angle) * scaledSpeed;
         this.lifetime = 180;
         this.remove = false;
     }
@@ -4267,6 +4561,7 @@ class Enemy extends Entity {
 
     takeDamage(amount) {
         this.hp -= amount;
+        playHitSfx(Math.min(1, Math.max(0.2, amount / 20)));
         if (this.hp <= 0) this.die();
     }
 
@@ -4451,7 +4746,8 @@ class Enemy extends Entity {
 
 class Golem extends Entity {
     constructor(x, y, type = "iron") {
-        super(x, y, type === "iron" ? 40 : 32, type === "iron" ? 48 : 40);
+        const sizeScale = worldScale.unit;
+        super(x, y, type === "iron" ? 40 * sizeScale : 32 * sizeScale, type === "iron" ? 48 * sizeScale : 40 * sizeScale);
         const config = getGolemConfig();
         const stats = type === "iron" ? config.ironGolem : config.snowGolem;
         this.type = type;
@@ -4461,7 +4757,7 @@ class Golem extends Entity {
         this.speed = stats.speed;
         this.followDelay = 50;
         this.attackCooldown = 0;
-        this.attackRange = type === "iron" ? 80 : 120;
+        this.attackRange = (type === "iron" ? 80 : 120) * sizeScale;
         this.velX = 0;
         this.velY = 0;
         this.grounded = false;
@@ -4474,22 +4770,23 @@ class Golem extends Entity {
         if (playerHistory.length < this.followDelay) return;
         const target = playerHistory[playerHistory.length - this.followDelay];
         const dx = target.x - this.x;
-        if (Math.abs(dx) > 30) {
+        if (Math.abs(dx) > 30 * worldScale.unit) {
             this.velX = Math.sign(dx) * this.speed;
             this.facingRight = dx > 0;
         } else {
             this.velX *= 0.8;
         }
         if (this.grounded && this.shouldJump(platformsRef)) {
-            this.velY = -10;
+            this.velY = -10 * worldScale.unit;
         }
     }
 
     shouldJump(platformsRef) {
-        const checkX = this.facingRight ? this.x + this.width + 5 : this.x - 5;
+        const offset = 5 * worldScale.unit;
+        const checkX = this.facingRight ? this.x + this.width + offset : this.x - offset;
         const checkY = this.y + this.height;
         for (const p of platformsRef) {
-            if (p.y < checkY && p.y > this.y - 50) {
+            if (p.y < checkY && p.y > this.y - 50 * worldScale.unit) {
                 if (checkX > p.x && checkX < p.x + p.width) {
                     return true;
                 }
@@ -4506,10 +4803,10 @@ class Golem extends Entity {
         let nearest = null;
         let minDist = this.attackRange;
         for (const e of enemyList) {
-            if (e.remove || e.y > 900) continue;
+            if (e.remove || e.y > canvas.height + blockSize * 4) continue;
             const dist = Math.abs(this.x - e.x);
             const vertDist = Math.abs(this.y - e.y);
-            if (dist < minDist && vertDist < 100) {
+            if (dist < minDist && vertDist < blockSize * 2) {
                 nearest = e;
                 minDist = dist;
             }
@@ -4585,6 +4882,7 @@ function wireSettingsModal() {
     const optSpeech = document.getElementById("opt-speech");
     const optSpeechEn = document.getElementById("opt-speech-en");
     const optSpeechZh = document.getElementById("opt-speech-zh");
+    const optBgm = document.getElementById("opt-bgm");
     const optUiScale = document.getElementById("opt-ui-scale");
     const optMotionScale = document.getElementById("opt-motion-scale");
     const optBiomeStep = document.getElementById("opt-biome-step");
@@ -4601,6 +4899,7 @@ function wireSettingsModal() {
         if (optSpeech) optSpeech.checked = !!settings.speechEnabled;
         if (optSpeechEn) optSpeechEn.value = String(settings.speechEnRate ?? 0.8);
         if (optSpeechZh) optSpeechZh.value = String(settings.speechZhRate ?? 0.9);
+        if (optBgm) optBgm.checked = !!settings.musicEnabled;
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
         if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 200);
@@ -4638,6 +4937,7 @@ function wireSettingsModal() {
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;
         if (optSpeechEn) settings.speechEnRate = Number(optSpeechEn.value);
         if (optSpeechZh) settings.speechZhRate = Number(optSpeechZh.value);
+        if (optBgm) settings.musicEnabled = !!optBgm.checked;
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);
         if (optBiomeStep) settings.biomeSwitchStepScore = Number(optBiomeStep.value);
@@ -4658,6 +4958,7 @@ function wireSettingsModal() {
         }
 
         wordPicker = null;
+        applyBgmSetting();
         saveSettings();
         applySettingsToUI();
         if (player) {
@@ -4787,6 +5088,12 @@ async function start() {
     const bundle = normalizeBiomeBundle(loadedBiomes);
     biomeConfigs = bundle.biomes;
     biomeSwitchConfig = bundle.switch;
+    baseGameConfig = JSON.parse(JSON.stringify(gameConfig));
+    baseCanvasSize = { width: baseGameConfig.canvas.width, height: baseGameConfig.canvas.height };
+    baseEnemyStats = JSON.parse(JSON.stringify(ENEMY_STATS));
+    baseWeapons = JSON.parse(JSON.stringify(WEAPONS));
+    baseBiomeConfigs = JSON.parse(JSON.stringify(biomeConfigs));
+    baseCloudPlatformConfig = JSON.parse(JSON.stringify(CLOUD_PLATFORM_CONFIG));
     settings = normalizeSettings(settings);
     const parsed = parseKeyCodes(settings.keyCodes);
     if (parsed) {
@@ -4797,7 +5104,9 @@ async function start() {
         keyBindings.useDiamond = parsed[4];
     }
 
-    applyConfig();
+    wireAudioUnlock();
+    applyBgmSetting();
+
     applySettingsToUI();
     window.addEventListener("resize", applySettingsToUI);
     window.addEventListener("orientationchange", applySettingsToUI);

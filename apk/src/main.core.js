@@ -326,7 +326,7 @@ const projectilePool = {
 const DEFAULT_BIOME_CONFIGS = {
     forest: {
         id: "forest",
-        name: "森林",
+        name: "妫灄",
         color: "#4CAF50",
         groundType: "grass",
         decorations: { tree: 0.3, bush: 0.2, flower: 0.25, mushroom: 0.1, vine: 0.15, cave_entrance: 0.04, vine_ladder: 0.02 },
@@ -336,7 +336,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     snow: {
         id: "snow",
-        name: "雪地",
+        name: "闆湴",
         color: "#FFFFFF",
         groundType: "snow",
         decorations: { spruce: 0.25, ice_spike: 0.1, snow_pile: 0.3, ice_block: 0.15 },
@@ -346,7 +346,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     desert: {
         id: "desert",
-        name: "沙漠",
+        name: "娌欐紶",
         color: "#FDD835",
         groundType: "sand",
         decorations: { cactus: 0.2, dead_bush: 0.15, rock: 0.1, bones: 0.05 },
@@ -356,7 +356,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     mountain: {
         id: "mountain",
-        name: "山地",
+        name: "灞卞湴",
         color: "#757575",
         groundType: "stone",
         decorations: { ore_coal: 0.15, ore_iron: 0.1, ore_gold: 0.05, ore_diamond: 0.02, stalactite: 0.12, crystal: 0.08, lava_pool: 0.05, cave_entrance: 0.03 },
@@ -365,7 +365,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     ocean: {
         id: "ocean",
-        name: "海滨",
+        name: "娴锋花",
         color: "#2196F3",
         groundType: "sand",
         decorations: { palm_tree: 0.15, shell: 0.2, starfish: 0.15, seaweed: 0.25, boat: 0.05 },
@@ -375,7 +375,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     nether: {
         id: "nether",
-        name: "地狱",
+        name: "鍦扮嫳",
         color: "#8B0000",
         groundType: "netherrack",
         decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
@@ -384,7 +384,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     cave: {
         id: "cave",
-        name: "矿洞",
+        name: "鐭挎礊",
         color: "#3B3B4F",
         groundType: "stone",
         decorations: { ore_coal: 0.25, ore_iron: 0.18, ore_gold: 0.08, ore_diamond: 0.05, stalactite: 0.2, crystal: 0.1, lava_pool: 0.08, cave_exit: 0.08 },
@@ -406,7 +406,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     sky: {
         id: "sky",
-        name: "云端",
+        name: "浜戠",
         color: "#87CEEB",
         groundType: "cloud",
         decorations: { },
@@ -722,7 +722,7 @@ function digGroundBlock() {
     const key = `${blockX}`;
     const hit = (digHits.get(key) || 0) + 1;
     digHits.set(key, hit);
-    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
+    showFloatingText(`${weapon.emoji} ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
 
     if (hit < weapon.digHits) {
         playerWeapons.attackCooldown = weapon.cooldown;
@@ -752,7 +752,7 @@ function digDownBlock() {
     const key = `down:${blockX}`;
     const hit = (digHits.get(key) || 0) + 1;
     digHits.set(key, hit);
-    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
+    showFloatingText(`${weapon.emoji} ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
 
     if (hit < weapon.digHits) {
         playerWeapons.attackCooldown = weapon.cooldown;
