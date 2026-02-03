@@ -1,4 +1,4 @@
-const defaults = window.MMWG_DEFAULTS || {};
+﻿const defaults = window.MMWG_DEFAULTS || {};
 const storage = window.MMWG_STORAGE;
 const defaultGameConfig = defaults.gameConfig || {};
 const defaultControls = defaults.controls || {};
@@ -61,14 +61,14 @@ let bgmAudio = null;
 let bgmReady = false;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
 const STAGE_LABELS = {
-    kindergarten: "幼儿�?,
-    elementary: "小学全阶�?,
-    elementary_lower: "小学低年�?,
-    elementary_upper: "小学高年�?,
+    kindergarten: "骞煎効鍥?,
+    elementary: "灏忓鍏ㄩ樁娈?,
+    elementary_lower: "灏忓浣庡勾绾?,
+    elementary_upper: "灏忓楂樺勾绾?,
     minecraft: "Minecraft",
-    general: "通用主题",
-    mixed: "混合/跨级",
-    game: "游戏专题"
+    general: "閫氱敤涓婚",
+    mixed: "娣峰悎/璺ㄧ骇",
+    game: "娓告垙涓撻"
 };
 
 let score = 0;
@@ -112,61 +112,61 @@ let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
 const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "stone_sword", "iron_pickaxe", "bow", "arrow"];
 const ITEM_LABELS = {
-    diamond: "钻石",
-    pumpkin: "南瓜",
-    iron: "铁块",
-    stick: "木棍",
-    stone_sword: "石剑",
-    iron_pickaxe: "铁镐",
-    bow: "�?,
-    arrow: "箭矢",
-    gunpowder: "火药",
-    rotten_flesh: "腐肉",
-    string: "蜘蛛�?,
-    ender_pearl: "末影珍珠",
-    dragon_egg: "龙蛋",
-    flower: "花朵",
-    mushroom: "蘑菇",
-    coal: "煤矿",
-    gold: "钻石",
-    shell: "贝壳",
-    starfish: "海星",
-    slime_ball: "史莱姆球",
-    magma_cream: "岩浆�?,
-    phantom_membrane: "幻翼�?,
-    ghast_tear: "恶魂之泪",
-    blaze_rod: "烈焰�?,
-    spider_eye: "蜘蛛�?
+    diamond: "閽荤煶",
+    pumpkin: "鍗楃摐",
+    iron: "閾佸潡",
+    stick: "鏈ㄦ",
+    stone_sword: "鐭冲墤",
+    iron_pickaxe: "閾侀晲",
+    bow: "寮?,
+    arrow: "绠煝",
+    gunpowder: "鐏嵂",
+    rotten_flesh: "鑵愯倝",
+    string: "铚樿洓涓?,
+    ender_pearl: "鏈奖鐝嶇彔",
+    dragon_egg: "榫欒泲",
+    flower: "鑺辨湹",
+    mushroom: "铇戣弴",
+    coal: "鐓ょ熆",
+    gold: "閽荤煶",
+    shell: "璐濆３",
+    starfish: "娴锋槦",
+    slime_ball: "鍙茶幈濮嗙悆",
+    magma_cream: "宀╂祮鑶?,
+    phantom_membrane: "骞荤考鑶?,
+    ghast_tear: "鎭堕瓊涔嬫唱",
+    blaze_rod: "鐑堢劙妫?,
+    spider_eye: "铚樿洓鐪?
 };
 const ITEM_ICONS = {
-    diamond: "💎",
-    pumpkin: "🎃",
-    iron: "🧱",
-    stick: "🥢",
-    stone_sword: "⚔️",
-    iron_pickaxe: "⛏️",
-    bow: "🏹",
-    arrow: "🏹",
-    gunpowder: "💥",
-    rotten_flesh: "🥩",
-    string: "🕸�?,
-    ender_pearl: "🟣",
-    dragon_egg: "🐉",
-    flower: "🌸",
-    mushroom: "🍄",
-    coal: "🪨",
-    gold: "💎",
-    shell: "🐚",
-    starfish: "�?,
-    slime_ball: "🟢",
-    magma_cream: "🟠",
-    phantom_membrane: "🪽",
-    ghast_tear: "💧",
-    blaze_rod: "🔥",
-    spider_eye: "👁�?,
-    hp: "❤️",
-    max_hp: "💖",
-    score: "💎"
+    diamond: "馃拵",
+    pumpkin: "馃巸",
+    iron: "馃П",
+    stick: "馃ア",
+    stone_sword: "鈿旓笍",
+    iron_pickaxe: "鉀忥笍",
+    bow: "馃徆",
+    arrow: "馃徆",
+    gunpowder: "馃挜",
+    rotten_flesh: "馃ォ",
+    string: "馃暩锔?,
+    ender_pearl: "馃煟",
+    dragon_egg: "馃悏",
+    flower: "馃尭",
+    mushroom: "馃崉",
+    coal: "馃",
+    gold: "馃拵",
+    shell: "馃悮",
+    starfish: "猸?,
+    slime_ball: "馃煝",
+    magma_cream: "馃煚",
+    phantom_membrane: "馃",
+    ghast_tear: "馃挧",
+    blaze_rod: "馃敟",
+    spider_eye: "馃憗锔?,
+    hp: "鉂わ笍",
+    max_hp: "馃挅",
+    score: "馃拵"
 };
 const JUMP_VERBS = ["jump", "leap", "hop"];
 const CLOUD_WORDS = ["cloud", "sky", "windy", "sunny"];
@@ -177,29 +177,29 @@ const CLOUD_PLATFORM_CONFIG = {
     moving: { duration: Infinity, respawnTime: 0, bounceForce: 0, moveSpeed: 0.6, moveRange: 80 }
 };
 const ENTITY_LABELS = {
-    zombie: { en: "Zombie", zh: "僵尸", emoji: "🧟" },
-    skeleton: { en: "Skeleton", zh: "骷髅", emoji: "💀" },
-    creeper: { en: "Creeper", zh: "苦力�?, emoji: "💚" },
-    spider: { en: "Spider", zh: "蜘蛛", emoji: "🕷�? },
-    cave_spider: { en: "Cave Spider", zh: "洞穴蜘蛛", emoji: "🕷�? },
-    enderman: { en: "Enderman", zh: "末影�?, emoji: "👤" },
-    slime: { en: "Slime", zh: "史莱�?, emoji: "🟢" },
-    magma_cube: { en: "Magma Cube", zh: "岩浆�?, emoji: "🟠" },
-    phantom: { en: "Phantom", zh: "幻翼", emoji: "🪽" },
-    ghast: { en: "Ghast", zh: "恶魂", emoji: "👻" },
-    blaze: { en: "Blaze", zh: "烈焰�?, emoji: "🔥" },
-    chest: { en: "Chest", zh: "宝箱", emoji: "📦" },
-    tree: { en: "Tree", zh: "�?, emoji: "🌳" },
-    flower: { en: "Flower", zh: "�?, emoji: "🌸" },
-    mushroom: { en: "Mushroom", zh: "蘑菇", emoji: "🍄" },
-    cactus: { en: "Cactus", zh: "仙人�?, emoji: "🌵" },
-    ore_coal: { en: "Coal", zh: "煤炭", emoji: "�? },
-    ore_iron: { en: "Iron", zh: "�?, emoji: "🔶" },
-    ore_gold: { en: "Gold", zh: "�?, emoji: "🟡" },
-    ore_diamond: { en: "Diamond", zh: "钻石", emoji: "💎" },
-    cloud: { en: "Cloud", zh: "�?, emoji: "☁️" },
-    lava_pool: { en: "Lava", zh: "岩浆", emoji: "🔥" },
-    water: { en: "Water", zh: "�?, emoji: "💧" }
+    zombie: { en: "Zombie", zh: "鍍靛案", emoji: "馃" },
+    skeleton: { en: "Skeleton", zh: "楠烽珔", emoji: "馃拃" },
+    creeper: { en: "Creeper", zh: "鑻﹀姏鎬?, emoji: "馃挌" },
+    spider: { en: "Spider", zh: "铚樿洓", emoji: "馃暦锔? },
+    cave_spider: { en: "Cave Spider", zh: "娲炵┐铚樿洓", emoji: "馃暦锔? },
+    enderman: { en: "Enderman", zh: "鏈奖浜?, emoji: "馃懁" },
+    slime: { en: "Slime", zh: "鍙茶幈濮?, emoji: "馃煝" },
+    magma_cube: { en: "Magma Cube", zh: "宀╂祮鎬?, emoji: "馃煚" },
+    phantom: { en: "Phantom", zh: "骞荤考", emoji: "馃" },
+    ghast: { en: "Ghast", zh: "鎭堕瓊", emoji: "馃懟" },
+    blaze: { en: "Blaze", zh: "鐑堢劙浜?, emoji: "馃敟" },
+    chest: { en: "Chest", zh: "瀹濈", emoji: "馃摝" },
+    tree: { en: "Tree", zh: "鏍?, emoji: "馃尦" },
+    flower: { en: "Flower", zh: "鑺?, emoji: "馃尭" },
+    mushroom: { en: "Mushroom", zh: "铇戣弴", emoji: "馃崉" },
+    cactus: { en: "Cactus", zh: "浠欎汉鎺?, emoji: "馃尩" },
+    ore_coal: { en: "Coal", zh: "鐓ょ偔", emoji: "猬? },
+    ore_iron: { en: "Iron", zh: "閾?, emoji: "馃敹" },
+    ore_gold: { en: "Gold", zh: "閲?, emoji: "馃煛" },
+    ore_diamond: { en: "Diamond", zh: "閽荤煶", emoji: "馃拵" },
+    cloud: { en: "Cloud", zh: "浜?, emoji: "鈽侊笍" },
+    lava_pool: { en: "Lava", zh: "宀╂祮", emoji: "馃敟" },
+    water: { en: "Water", zh: "姘?, emoji: "馃挧" }
 };
 let wordLearnCount = {};
 const TOOL_STATS = {
@@ -209,44 +209,44 @@ const TOOL_STATS = {
 const WEAPONS = {
     sword: {
         id: "sword",
-        name: "石剑",
+        name: "鐭冲墤",
         damage: 14,
         range: 55,
         cooldown: 18,
         knockback: 8,
         type: "melee",
-        emoji: "⚔️"
+        emoji: "鈿旓笍"
     },
     axe: {
         id: "axe",
-        name: "木斧",
+        name: "鏈ㄦ枾",
         damage: 20,
         range: 70,
         cooldown: 30,
         knockback: 12,
         type: "melee",
-        emoji: "🪓"
+        emoji: "馃獡"
     },
     pickaxe: {
         id: "pickaxe",
-        name: "铁镐",
+        name: "閾侀晲",
         damage: 8,
         range: 40,
         cooldown: 180,
         knockback: 0,
         type: "dig",
-        emoji: "⛏️",
+        emoji: "鉀忥笍",
         digHits: 3
     },
     bow: {
         id: "bow",
-        name: "�?,
+        name: "寮?,
         damage: 12,
         range: 380,
         cooldown: 26,
         knockback: 5,
         type: "ranged",
-        emoji: "🏹",
+        emoji: "馃徆",
         chargeMax: 40
     }
 };
@@ -328,7 +328,7 @@ const projectilePool = {
 const DEFAULT_BIOME_CONFIGS = {
     forest: {
         id: "forest",
-        name: "森林",
+        name: "妫灄",
         color: "#4CAF50",
         groundType: "grass",
         decorations: { tree: 0.3, bush: 0.2, flower: 0.25, mushroom: 0.1, vine: 0.15, cave_entrance: 0.04, vine_ladder: 0.02 },
@@ -338,7 +338,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     snow: {
         id: "snow",
-        name: "雪地",
+        name: "闆湴",
         color: "#FFFFFF",
         groundType: "snow",
         decorations: { spruce: 0.25, ice_spike: 0.1, snow_pile: 0.3, ice_block: 0.15 },
@@ -348,7 +348,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     desert: {
         id: "desert",
-        name: "沙漠",
+        name: "娌欐紶",
         color: "#FDD835",
         groundType: "sand",
         decorations: { cactus: 0.2, dead_bush: 0.15, rock: 0.1, bones: 0.05 },
@@ -358,7 +358,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     mountain: {
         id: "mountain",
-        name: "山地",
+        name: "灞卞湴",
         color: "#757575",
         groundType: "stone",
         decorations: { ore_coal: 0.15, ore_iron: 0.1, ore_gold: 0.05, ore_diamond: 0.02, stalactite: 0.12, crystal: 0.08, lava_pool: 0.05, cave_entrance: 0.03 },
@@ -367,7 +367,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     ocean: {
         id: "ocean",
-        name: "海滨",
+        name: "娴锋花",
         color: "#2196F3",
         groundType: "sand",
         decorations: { palm_tree: 0.15, shell: 0.2, starfish: 0.15, seaweed: 0.25, boat: 0.05 },
@@ -377,7 +377,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     nether: {
         id: "nether",
-        name: "地狱",
+        name: "鍦扮嫳",
         color: "#8B0000",
         groundType: "netherrack",
         decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
@@ -386,7 +386,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     cave: {
         id: "cave",
-        name: "矿洞",
+        name: "鐭挎礊",
         color: "#3B3B4F",
         groundType: "stone",
         decorations: { ore_coal: 0.25, ore_iron: 0.18, ore_gold: 0.08, ore_diamond: 0.05, stalactite: 0.2, crystal: 0.1, lava_pool: 0.08, cave_exit: 0.08 },
@@ -408,7 +408,7 @@ const DEFAULT_BIOME_CONFIGS = {
     },
     sky: {
         id: "sky",
-        name: "云端",
+        name: "浜戠",
         color: "#87CEEB",
         groundType: "cloud",
         decorations: { },
@@ -446,11 +446,11 @@ const DEFAULT_DIFFICULTY_CONFIG = {
     damageUnit: 20,
     invincibleFrames: 120,
     tiers: [
-        { name: "新手", minScore: 0, maxScore: 500, enemyDamage: 0.8, enemyHp: 0.85, enemySpawn: 0.75, chestSpawn: 1.1, chestRareBoost: 0.25, chestRollBonus: 0.08, scoreMultiplier: 1.0 },
-        { name: "简�?, minScore: 500, maxScore: 1500, enemyDamage: 1.0, enemyHp: 1.0, enemySpawn: 0.95, chestSpawn: 1.0, chestRareBoost: 0.1, chestRollBonus: 0.04, scoreMultiplier: 1.0 },
-        { name: "普�?, minScore: 1500, maxScore: 3000, enemyDamage: 1.15, enemyHp: 1.1, enemySpawn: 1.05, chestSpawn: 0.95, chestRareBoost: 0.0, chestRollBonus: 0.0, scoreMultiplier: 1.05 },
-        { name: "困难", minScore: 3000, maxScore: 5000, enemyDamage: 1.4, enemyHp: 1.25, enemySpawn: 1.2, chestSpawn: 0.9, chestRareBoost: -0.1, chestRollBonus: -0.02, scoreMultiplier: 1.1 },
-        { name: "地狱", minScore: 5000, maxScore: 999999, enemyDamage: 1.8, enemyHp: 1.5, enemySpawn: 1.35, chestSpawn: 0.85, chestRareBoost: -0.2, chestRollBonus: -0.04, scoreMultiplier: 1.2 }
+        { name: "鏂版墜", minScore: 0, maxScore: 500, enemyDamage: 0.8, enemyHp: 0.85, enemySpawn: 0.75, chestSpawn: 1.1, chestRareBoost: 0.25, chestRollBonus: 0.08, scoreMultiplier: 1.0 },
+        { name: "绠€鍗?, minScore: 500, maxScore: 1500, enemyDamage: 1.0, enemyHp: 1.0, enemySpawn: 0.95, chestSpawn: 1.0, chestRareBoost: 0.1, chestRollBonus: 0.04, scoreMultiplier: 1.0 },
+        { name: "鏅€?, minScore: 1500, maxScore: 3000, enemyDamage: 1.15, enemyHp: 1.1, enemySpawn: 1.05, chestSpawn: 0.95, chestRareBoost: 0.0, chestRollBonus: 0.0, scoreMultiplier: 1.05 },
+        { name: "鍥伴毦", minScore: 3000, maxScore: 5000, enemyDamage: 1.4, enemyHp: 1.25, enemySpawn: 1.2, chestSpawn: 0.9, chestRareBoost: -0.1, chestRollBonus: -0.02, scoreMultiplier: 1.1 },
+        { name: "鍦扮嫳", minScore: 5000, maxScore: 999999, enemyDamage: 1.8, enemyHp: 1.5, enemySpawn: 1.35, chestSpawn: 0.85, chestRareBoost: -0.2, chestRollBonus: -0.04, scoreMultiplier: 1.2 }
     ],
     dda: {
         enabled: true,
@@ -641,7 +641,7 @@ function unlockWeapon(id) {
     if (!WEAPONS[id]) return false;
     if (playerWeapons.unlocked.includes(id)) return false;
     playerWeapons.unlocked.push(id);
-    showToast(`🎉 解锁武器: ${WEAPONS[id].emoji} ${WEAPONS[id].name}`);
+    showToast(`馃帀 瑙ｉ攣姝﹀櫒: ${WEAPONS[id].emoji} ${WEAPONS[id].name}`);
     updateWeaponUI();
     return true;
 }
@@ -657,7 +657,7 @@ function switchWeapon() {
     const list = playerWeapons.unlocked;
     if (!list.length) return;
     if (list.length === 1) {
-        showToast("⚠️ 只有一种武�?);
+        showToast("鈿狅笍 鍙湁涓€绉嶆鍣?);
         return;
     }
     const idx = list.indexOf(playerWeapons.current);
@@ -667,7 +667,7 @@ function switchWeapon() {
     playerWeapons.isCharging = false;
     playerWeapons.chargeTime = 0;
     const weapon = WEAPONS[playerWeapons.current];
-    showToast(`⚔️ ${weapon.emoji} ${weapon.name}`);
+                    `击杀敌人: ${enemyKillStats.total || 0}<br>` +
     updateWeaponUI();
 }
 
@@ -676,15 +676,15 @@ function updateWeaponUI() {
     if (!el) return;
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
     const arrows = getArrowCount();
-    const arrowText = weapon.type === "ranged" ? ` | 🏹 ${arrows}` : "";
-    el.innerText = `武器: ${weapon.emoji} ${weapon.name}${arrowText}`;
+    const arrowText = weapon.type === "ranged" ? ` | 馃徆 ${arrows}` : "";
+    el.innerText = `姝﹀櫒: ${weapon.emoji} ${weapon.name}${arrowText}`;
 }
 
 function startBowCharge() {
     const weapon = WEAPONS.bow;
     if (playerWeapons.attackCooldown > 0) return;
     if (getArrowCount() <= 0) {
-        showToast("�?没有箭！");
+        showToast("鉂?娌℃湁绠紒");
         return;
     }
     playerWeapons.isCharging = true;
@@ -695,7 +695,7 @@ function releaseBowShot(forceCharge = null) {
     const weapon = WEAPONS.bow;
     if (playerWeapons.attackCooldown > 0) return;
     if (getArrowCount() <= 0) {
-        showToast("�?没有箭！");
+        showToast("鉂?娌℃湁绠紒");
         return;
     }
     const ratio = forceCharge != null ? forceCharge : Math.min(1, playerWeapons.chargeTime / weapon.chargeMax);
@@ -724,7 +724,7 @@ function digGroundBlock() {
     const key = `${blockX}`;
     const hit = (digHits.get(key) || 0) + 1;
     digHits.set(key, hit);
-    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
+    showFloatingText(`鉀忥笍 ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
 
     if (hit < weapon.digHits) {
         playerWeapons.attackCooldown = weapon.cooldown;
@@ -744,7 +744,7 @@ function digGroundBlock() {
     if (leftWidth > 0) platforms.push(new Platform(p.x, p.y, leftWidth, p.height, p.type));
     if (rightWidth > 0) platforms.push(new Platform(rightStart, p.y, rightWidth, p.height, p.type));
     digHits.delete(key);
-    showFloatingText("🕳�?深坑", blockX + blockSize / 2, groundY - 50);
+    showFloatingText("馃暢锔?娣卞潙", blockX + blockSize / 2, groundY - 50);
     playerWeapons.attackCooldown = weapon.cooldown;
 }
 
@@ -754,7 +754,7 @@ function digDownBlock() {
     const key = `down:${blockX}`;
     const hit = (digHits.get(key) || 0) + 1;
     digHits.set(key, hit);
-    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
+    showFloatingText(`鉀忥笍 ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
 
     if (hit < weapon.digHits) {
         playerWeapons.attackCooldown = weapon.cooldown;
@@ -775,7 +775,7 @@ function digDownBlock() {
     if (rightWidth > 0) platforms.push(new Platform(rightStart, p.y, rightWidth, p.height, p.type));
     digHits.delete(key);
     caveEntryArmed = { x: blockX, width: blockSize, ttl: 180 };
-    showFloatingText("🕳�?向下�?, blockX + blockSize / 2, groundY - 50);
+    showFloatingText("馃暢锔?鍚戜笅鎸?, blockX + blockSize / 2, groundY - 50);
     playerWeapons.attackCooldown = weapon.cooldown;
 }
 
@@ -819,7 +819,7 @@ function getDifficultyConfig() {
 function getDifficultyTier(scoreValue) {
     const cfg = getDifficultyConfig();
     const tiers = Array.isArray(cfg.tiers) ? cfg.tiers : [];
-    if (!tiers.length) return { name: "普�?, minScore: 0, maxScore: 999999, enemyDamage: 1, enemyHp: 1, enemySpawn: 1, chestSpawn: 1, chestRareBoost: 0, chestRollBonus: 0, scoreMultiplier: 1 };
+    if (!tiers.length) return { name: "鏅€?, minScore: 0, maxScore: 999999, enemyDamage: 1, enemyHp: 1, enemySpawn: 1, chestSpawn: 1, chestRareBoost: 0, chestRollBonus: 0, scoreMultiplier: 1 };
     const s = Number(scoreValue) || 0;
     const found = tiers.find(t => s >= (t.minScore ?? 0) && s < (t.maxScore ?? Number.MAX_SAFE_INTEGER));
     return found || tiers[tiers.length - 1];
@@ -834,7 +834,7 @@ function computeDifficultyState() {
         const idx = Math.min(cfg.tiers.length - 1, Math.max(0, forcedIndex));
         tier = cfg.tiers[idx] || tier;
     }
-    const displayName = pref === "simple" ? "��" : pref === "medium" ? "�е�" : pref === "hard" ? "����" : tier.name;
+    const displayName = pref === "simple" ? "简单" : pref === "medium" ? "中等" : pref === "hard" ? "困难" : tier.name;
     const dda = cfg.dda || {};
     let enemyDamageMult = Number(tier.enemyDamage) || 1;
     let enemyHpMult = Number(tier.enemyHp) || 1;
@@ -869,7 +869,7 @@ function computeDifficultyState() {
     }
 
     return {
-        name: displayName || tier.name || "普�?,
+        name: displayName || tier.name || "鏅€?,
         minScore: tier.minScore ?? 0,
         maxScore: tier.maxScore ?? 999999,
         enemyDamageMult,
@@ -888,8 +888,8 @@ function updateDifficultyState(force = false) {
     difficultyState = next;
     if (changed || force) {
         const el = document.getElementById("difficulty-info");
-        if (el) el.innerText = `难度: ${next.name}`;
-        if (changed && !force) showToast(`⚔️ 难度调整�?{next.name}`);
+        if (el) el.innerText = `闅惧害: ${next.name}`;
+                    `击杀敌人: ${enemyKillStats.total || 0}<br>` +
     }
 }
 
@@ -993,18 +993,18 @@ function updateCurrentBiome() {
     if (nextBiome.id !== currentBiome) {
         currentBiome = nextBiome.id;
         biomeTransitionX = player.x;
-        showToast(`🌍 进入${nextBiome.name}群系`);
+        showToast(`馃實 杩涘叆${nextBiome.name}缇ょ郴`);
         updateWeatherForBiome(nextBiome);
         const info = document.getElementById("level-info");
-        if (info) info.innerText = `生�? ${nextBiome.name}`;
+        if (info) info.innerText = `鐢熸€? ${nextBiome.name}`;
         if (currentBiome === "nether" && netherEntryPenaltyArmed) {
             playerHp = Math.max(0, playerHp - 1);
             updateHpUI();
-            showFloatingText("🔥 -1❤️", player.x, player.y - 20);
+            showFloatingText("馃敟 -1鉂わ笍", player.x, player.y - 20);
             netherEntryPenaltyArmed = false;
             if (playerHp <= 0) {
                 paused = true;
-                showToast("💀 生命耗尽");
+                showToast("馃拃 鐢熷懡鑰楀敖");
                 setOverlay(true, "pause");
             }
         }
@@ -1044,8 +1044,8 @@ function enterUnderground(source = "entrance") {
     currentBiome = biomeConfigs.cave ? "cave" : "mountain";
     updateWeatherForBiome(getBiomeById(currentBiome));
     const info = document.getElementById("level-info");
-    if (info) info.innerText = "生�? 矿洞";
-    showToast(source === "dig" ? "⛏️ 挖进矿洞�? : "⛏️ 进入矿洞");
+    if (info) info.innerText = "鐢熸€? 鐭挎礊";
+    showToast(source === "dig" ? "鉀忥笍 鎸栬繘鐭挎礊锛? : "鉀忥笍 杩涘叆鐭挎礊");
     resetWorldForMode();
 }
 
@@ -1056,8 +1056,8 @@ function exitUnderground() {
     currentBiome = nextBiome.id || surfaceBiomeId || "forest";
     updateWeatherForBiome(getBiomeById(currentBiome));
     const info = document.getElementById("level-info");
-    if (info) info.innerText = `生�? ${getBiomeById(currentBiome).name}`;
-    showToast("⬆️ 返回地表");
+    if (info) info.innerText = `鐢熸€? ${getBiomeById(currentBiome).name}`;
+    showToast("猬嗭笍 杩斿洖鍦拌〃");
     resetWorldForMode();
 }
 
@@ -1068,8 +1068,8 @@ function enterSky() {
     currentBiome = biomeConfigs.sky ? "sky" : "forest";
     updateWeatherForBiome(getBiomeById(currentBiome));
     const info = document.getElementById("level-info");
-    if (info) info.innerText = "生�? 云端";
-    showToast("☁️ 进入云端");
+    if (info) info.innerText = "鐢熸€? 浜戠";
+    showToast("鈽侊笍 杩涘叆浜戠");
     resetWorldForMode();
 }
 
@@ -1080,8 +1080,8 @@ function exitSky() {
     currentBiome = nextBiome.id || surfaceBiomeId || "forest";
     updateWeatherForBiome(getBiomeById(currentBiome));
     const info = document.getElementById("level-info");
-    if (info) info.innerText = `生�? ${getBiomeById(currentBiome).name}`;
-    showToast("⬇️ 返回地表");
+    if (info) info.innerText = `鐢熸€? ${getBiomeById(currentBiome).name}`;
+    showToast("猬囷笍 杩斿洖鍦拌〃");
     resetWorldForMode();
 }
 
@@ -1328,7 +1328,7 @@ function populateVocabStageSelect() {
     const options = getStageOptions();
     const current = select.value || settings.vocabStage || "auto";
     select.innerHTML = options.map(stage => {
-        const label = stage === "auto" ? "自动/全部" : (STAGE_LABELS[stage] || stage);
+        const label = stage === "auto" ? "鑷姩/鍏ㄩ儴" : (STAGE_LABELS[stage] || stage);
         return `<option value="${stage}">${label}</option>`;
     }).join("");
     select.value = options.includes(current) ? current : "auto";
@@ -1345,7 +1345,7 @@ function renderVocabSelect() {
         opt.innerText = text;
         sel.appendChild(opt);
     };
-    add("auto", "随机词库（加权轮换）");
+    add("auto", "闅忔満璇嶅簱锛堝姞鏉冭疆鎹級");
     const engine = ensureVocabEngine();
     if (!engine) return;
     vocabManifest.packs.forEach(p => add(p.id, p.title));
@@ -1369,7 +1369,7 @@ function updateVocabProgressUI() {
     if (!el) return;
     const engine = ensureVocabEngine();
     if (!engine || !activeVocabPackId) {
-        el.innerText = "未加�?;
+        el.innerText = "鏈姞杞?;
         return;
     }
     const pack = vocabPacks[activeVocabPackId];
@@ -1597,26 +1597,26 @@ function setOverlay(visible, mode) {
         overlay.setAttribute("aria-hidden", "false");
         overlayMode = mode || "pause";
         if (mode === "pause") {
-            if (title) title.innerText = "已暂�?;
-            if (text) text.innerHTML = "�?�?移动　空格 �?可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
+            if (title) title.innerText = "已暂停";
+            if (text) text.innerHTML = "← → 移动。 空格 跳(可二段跳)<br>J 攻击。 K 切换武器。 Z 使用钻石<br>Y 打开宝箱。 E 采集";
             if (btn) btn.innerText = "继续";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
-            if (title) title.innerText = "💀 游戏结束";
+            if (title) title.innerText = "游戏结束";
             if (text) {
                 const level = Math.max(1, Math.floor(score / 1000) + 1);
                 text.innerHTML =
-                    `📚 学习单词: ${getLearnedWordCount()}<br>` +
-                    `💎 钻石: ${diamonds}<br>` +
-                    `�?当前积分: ${score}<br>` +
-                    `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
-                    `🏆 玩家等级: ${level}`;
+                    `学习单词: ${getLearnedWordCount()}<br>` +
+                    `钻石: ${diamonds}<br>` +
+                    `当前积分: ${score}<br>` +
+                    `击杀敌人: ${enemyKillStats.total || 0}<br>` +
+                    `玩家等级: ${level}`;
             }
-            if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开�?;
+            if (btn) btn.innerText = diamonds >= 10 ? "复活(10钻石)" : "重新开始";
         } else {
-            if (title) title.innerText = "准备开�?;
-            if (text) text.innerHTML = "�?�?移动　空格 �?可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
-            if (btn) btn.innerText = "开始游�?;
+            if (title) title.innerText = "准备开始";
+            if (text) text.innerHTML = "← → 移动。 空格 跳(可二段跳)<br>J 攻击。 K 切换武器。 Z 使用钻石<br>Y 打开宝箱。 E 采集";
+            if (btn) btn.innerText = "开始游戏";
         }
     } else {
         overlay.classList.remove("visible");
@@ -1647,7 +1647,7 @@ function resumeGameFromOverlay() {
         setOverlay(false);
     }
     const btnMix = document.getElementById("btn-repeat-pause");
-    if (btnMix) btnMix.innerText = "🔊 重读";
+    if (btnMix) btnMix.innerText = "重读";
     repeatPauseState = "repeat";
 }
 
@@ -1721,7 +1721,7 @@ function startLevel(idx) {
     const initBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     currentBiome = initBiome.id;
     const info = document.getElementById("level-info");
-    if (info) info.innerText = `生�? ${initBiome.name}`;
+    if (info) info.innerText = `鐢熸€? ${initBiome.name}`;
     platforms = [];
     movingPlatforms = [];
     trees = [];
@@ -1766,7 +1766,7 @@ function buildWordPicker() {
     base.forEach(w => { byEn[w.en] = w; });
     return {
         next(excludeSet) {
-            if (!base.length) return { en: "word", zh: "单词" };
+            if (!base.length) return { en: "word", zh: "鍗曡瘝" };
             const excludes = excludeSet || new Set();
             tick++;
 
@@ -2427,7 +2427,7 @@ function dropItem(type, x, y) {
     if (!inventory[type] && inventory[type] !== 0) inventory[type] = 0;
     inventory[type]++;
     updateInventoryUI();
-    const icon = ITEM_ICONS[type] || "�?;
+    const icon = ITEM_ICONS[type] || "鉁?;
     showFloatingText(`${icon} +1`, x, y);
 }
 
@@ -2470,7 +2470,7 @@ function recordWordProgress(wordObj) {
             saveProgress();
             updateVocabProgressUI();
             const pack = vocabPacks[activeVocabPackId];
-            showToast(`${pack?.title || activeVocabPackId} 已完成，切换下一个词库`);
+            showToast(`${pack?.title || activeVocabPackId} 宸插畬鎴愶紝鍒囨崲涓嬩竴涓瘝搴揱);
             switchToNextPackInOrder();
             return;
         }
@@ -2482,7 +2482,7 @@ function recordWordProgress(wordObj) {
 function updateWordUI(wordObj) {
     const el = document.getElementById("word-display");
     if (!el) return;
-    const times = wordObj && wordObj.en && sessionWordCounts[wordObj.en] ? ` ×${sessionWordCounts[wordObj.en]}` : "";
+    const times = wordObj && wordObj.en && sessionWordCounts[wordObj.en] ? ` 脳${sessionWordCounts[wordObj.en]}` : "";
     el.innerText = wordObj ? `${wordObj.en} ${wordObj.zh}${times}` : "Start!";
 }
 
@@ -2535,7 +2535,7 @@ function checkBossSpawn() {
         bossSpawned = true;
         const dragon = new Enemy(player.x + 300, 100, "ender_dragon");
         enemies.push(dragon);
-        showToast("⚠️ 末影龙降临！");
+        showToast("鈿狅笍 鏈奖榫欓檷涓达紒");
     }
 }
 
@@ -2783,8 +2783,8 @@ function updateHpUI() {
         const rowFilled = Math.max(0, Math.min(filled - rowStart, rowEnd - rowStart));
         const rowEmpty = (rowEnd - rowStart) - rowFilled;
         let rowHtml = "";
-        for (let i = 0; i < rowFilled; i++) rowHtml += `<span class="hp-heart">❤️</span>`;
-        for (let i = 0; i < rowEmpty; i++) rowHtml += `<span class="hp-heart">🖤</span>`;
+        for (let i = 0; i < rowFilled; i++) rowHtml += `<span class="hp-heart">鉂わ笍</span>`;
+        for (let i = 0; i < rowEmpty; i++) rowHtml += `<span class="hp-heart">馃枻</span>`;
         html += `<div class="hp-row">${rowHtml}</div>`;
     }
     el.innerHTML = html;
@@ -2800,17 +2800,17 @@ function updateDiamondUI() {
 
 function useDiamondForHp() {
     if (playerHp >= playerMaxHp) {
-        showToast("❤️ 已满血");
+        showToast("鉂わ笍 宸叉弧琛€");
         return;
     }
     if (getDiamondCount() < 1) {
-        showToast("💎 不足");
+        showToast("馃拵 涓嶈冻");
         return;
     }
     inventory.diamond -= 1;
     healPlayer(1);
     updateDiamondUI();
-    showToast("💎 换取 +1❤️");
+    showToast("馃拵 鎹㈠彇 +1鉂わ笍");
 }
 
 function getLearnedWordCount() {
@@ -2855,10 +2855,10 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     addScore(-penalty);
     playerHp = Math.max(0, playerHp - scaledDamage);
     updateHpUI();
-    showFloatingText(`-${penalty}分`, player.x, player.y);
+    showFloatingText(`-${penalty}鍒哷, player.x, player.y);
     if (playerHp <= 0 || score <= 0) {
         paused = true;
-        showToast("💀 生命耗尽");
+        showToast("馃拃 鐢熷懡鑰楀敖");
         setOverlay(true, "gameover");
     }
 }
@@ -2912,7 +2912,7 @@ function tryCraft(recipeKey) {
     if (!recipe) return false;
     for (const [item, count] of Object.entries(recipe)) {
         if ((inventory[item] || 0) < count) {
-            showToast(`材料不足: 需�?${ITEM_LABELS[item] || item} x${count}`);
+            showToast(`鏉愭枡涓嶈冻: 闇€瑕?${ITEM_LABELS[item] || item} x${count}`);
             return false;
         }
     }
@@ -2928,14 +2928,14 @@ function spawnGolem(type) {
     const config = getGolemConfig();
     const maxCount = Number(config.maxCount) || MAX_GOLEMS;
     if (golems.length >= maxCount) {
-        showToast(`最多同时存�?${maxCount} 个傀儡！`);
+        showToast(`鏈€澶氬悓鏃跺瓨鍦?${maxCount} 涓個鍎★紒`);
         return;
     }
     const newGolem = new Golem(player.x + 50, player.y, type);
     golems.push(newGolem);
-    const name = type === "iron" ? "铁傀�? : "雪傀�?;
-    showToast(`�?成功召唤 ${name}！`);
-    showFloatingText(`⚒️ ${name}`, player.x, player.y - 40);
+    const name = type === "iron" ? "閾佸個鍎? : "闆個鍎?;
+    showToast(`鉁?鎴愬姛鍙敜 ${name}锛乣);
+                    `击杀敌人: ${enemyKillStats.total || 0}<br>` +
 }
 
 function handleInteraction() {
@@ -3059,7 +3059,7 @@ function draw() {
             ctx.lineWidth = 4;
             ctx.fillStyle = "white";
             const label = keyLabel(keyBindings.interact) || "Y";
-            const hint = `�?${label} 打开`;
+            const hint = `鎸?${label} 鎵撳紑`;
             ctx.strokeText(hint, c.x - 10, c.y - 15);
             ctx.fillText(hint, c.x - 10, c.y - 15);
         }
@@ -3085,7 +3085,7 @@ function draw() {
         ctx.fillStyle = "#fff";
         ctx.font = "bold 14px Verdana";
         ctx.textAlign = "center";
-        ctx.fillText("末影�?, canvas.width / 2, by - 6);
+        ctx.fillText("鏈奖榫?, canvas.width / 2, by - 6);
         ctx.textAlign = "left";
     }
 
@@ -3257,7 +3257,7 @@ function drawChest(x, y, opened) {
     if (opened) {
         ctx.fillRect(x + 15, y + 5, 10, 5);
         ctx.fillStyle = "#000";
-        ctx.fillText("�?, x + 10, y + 25);
+        ctx.fillText("绌?, x + 10, y + 25);
     } else {
         ctx.fillRect(x + 15, y + 18, 10, 6);
     }
@@ -3928,7 +3928,7 @@ function drawVineLadder(vine) {
     ctx.fillStyle = "rgba(255,255,255,0.8)";
     ctx.font = "12px Verdana";
     ctx.textAlign = "center";
-    ctx.fillText("☁️", x + vine.width / 2, y - 6);
+    ctx.fillText("鈽侊笍", x + vine.width / 2, y - 6);
 }
 
 function drawIceSpike(spike) {
@@ -4556,10 +4556,10 @@ class Chest extends Entity {
         });
         updateHpUI();
         updateInventoryUI();
-        const summary = drops.map(d => `${ITEM_ICONS[d.item] || "�?}x${d.count}`).join(" ");
-        const rarityLabel = { common: "普�?, rare: "稀�?, epic: "史诗", legendary: "传说" }[rarity] || "普�?;
-        showFloatingText("🎁", this.x + 10, this.y - 30);
-        if (summary) showToast(`宝箱(${rarityLabel}): ${summary}`);
+        const summary = drops.map(d => `${ITEM_ICONS[d.item] || "鉁?}x${d.count}`).join(" ");
+        const rarityLabel = { common: "鏅€?, rare: "绋€鏈?, epic: "鍙茶瘲", legendary: "浼犺" }[rarity] || "鏅€?;
+        showFloatingText("馃巵", this.x + 10, this.y - 30);
+        if (summary) showToast(`瀹濈(${rarityLabel}): ${summary}`);
         if (settings.learningMode) {
             const word = pickWordForSpawn();
             if (word) {
@@ -4661,7 +4661,7 @@ class Flower extends Decoration {
     interact() {
         inventory.flower = (inventory.flower || 0) + 1;
         this.remove = true;
-        showFloatingText("🌸 +1", this.x, this.y);
+        showFloatingText("馃尭 +1", this.x, this.y);
         updateInventoryUI();
     }
 }
@@ -4681,7 +4681,7 @@ class Mushroom extends Decoration {
     interact() {
         inventory.mushroom = (inventory.mushroom || 0) + 1;
         this.remove = true;
-        showFloatingText("🍄 +1", this.x, this.y);
+        showFloatingText("馃崉 +1", this.x, this.y);
         updateInventoryUI();
     }
 }
@@ -4835,7 +4835,7 @@ class CactusDecor extends Decoration {
     onCollision(entity) {
         if (this.harmful && rectIntersect(entity.x, entity.y, entity.width, entity.height, this.x, this.y, this.width, this.height)) {
             damagePlayer(this.damage, this.x, 40);
-            showFloatingText("🌵 -5", entity.x, entity.y - 20);
+            showFloatingText("馃尩 -5", entity.x, entity.y - 20);
         }
     }
 }
@@ -4856,15 +4856,15 @@ class Ore extends Decoration {
     }
     interact() {
         if (inventory.iron_pickaxe <= 0) {
-            showToast("�?需要铁�?);
+            showToast("鉂?闇€瑕侀搧闀?);
             return;
         }
         this.hp--;
-        showFloatingText(`⛏️ ${this.hp}`, this.x, this.y - 20);
+        showFloatingText(`鉀忥笍 ${this.hp}`, this.x, this.y - 20);
         if (this.hp <= 0) {
             inventory[this.oreType] = (inventory[this.oreType] || 0) + 1;
             this.remove = true;
-            showFloatingText(`�?+1 ${this.oreType}`, this.x, this.y);
+            showFloatingText(`鉁?+1 ${this.oreType}`, this.x, this.y);
             updateInventoryUI();
         }
     }
@@ -4960,7 +4960,7 @@ class Shell extends Decoration {
     interact() {
         inventory.shell = (inventory.shell || 0) + 1;
         this.remove = true;
-        showFloatingText("🐚 +1", this.x, this.y);
+        showFloatingText("馃悮 +1", this.x, this.y);
         updateInventoryUI();
     }
 }
@@ -4979,7 +4979,7 @@ class Starfish extends Decoration {
     interact() {
         inventory.starfish = (inventory.starfish || 0) + 1;
         this.remove = true;
-        showFloatingText("�?+1", this.x, this.y);
+        showFloatingText("猸?+1", this.x, this.y);
         updateInventoryUI();
     }
 }
@@ -5392,7 +5392,7 @@ class Projectile extends Entity {
             for (const e of enemyList) {
                 if (!e.remove && rectIntersect(this.x, this.y, this.width, this.height, e.x, e.y, e.width, e.height)) {
                     e.takeDamage(this.damage);
-                    showFloatingText(`⚔️ ${this.damage}`, e.x, e.y - 10);
+                    `击杀敌人: ${enemyKillStats.total || 0}<br>` +
                     this.remove = true;
                     return;
                 }
@@ -5647,7 +5647,7 @@ class Enemy extends Entity {
             if (this.explodeTimer <= 0) {
                 if (Math.abs(this.x - playerRef.x) < 120 && Math.abs(this.y - playerRef.y) < 120) {
                     damagePlayer(this.damage, this.x);
-                    showFloatingText("💥 爆炸!", this.x, this.y);
+                    showFloatingText("馃挜 鐖嗙偢!", this.x, this.y);
                 }
                 this.die();
             }
@@ -5683,7 +5683,7 @@ class Enemy extends Entity {
             this.x = playerRef.x + (Math.random() > 0.5 ? 120 : -120);
             this.y = playerRef.y;
             this.teleportCooldown = 180;
-            showFloatingText("�?, this.x, this.y);
+            showFloatingText("鈿?, this.x, this.y);
         } else if (dist < 150) {
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
         } else {
@@ -5784,7 +5784,7 @@ class Enemy extends Entity {
         if (phase === 2 && !this.phaseChanged) {
             this.phaseChanged = true;
             this.speed *= 1.5;
-            showToast("⚠️ 末影龙进入狂暴状态！");
+            showToast("鈿狅笍 鏈奖榫欒繘鍏ョ媯鏆寸姸鎬侊紒");
         }
 
         this.x += this.speed * this.dir;
@@ -5809,7 +5809,7 @@ class Enemy extends Entity {
                 this.state = "patrol";
                 if (Math.abs(this.x - playerRef.x) < 150) {
                     damagePlayer(this.damage, this.x, 150);
-                    showFloatingText("💥 龙息冲击!", playerRef.x, playerRef.y);
+                    showFloatingText("馃挜 榫欐伅鍐插嚮!", playerRef.x, playerRef.y);
                 }
             }
         }
@@ -5889,7 +5889,7 @@ class Golem extends Entity {
                 nearest.takeDamage(this.damage);
             }
             this.attackCooldown = 60;
-            showFloatingText(`⚔️ ${this.damage}`, nearest.x, nearest.y - 20);
+                    `击杀敌人: ${enemyKillStats.total || 0}<br>` +
         }
     }
 
@@ -6067,17 +6067,17 @@ function wireSettingsModal() {
         btnResetProgress.addEventListener("click", () => {
             if (!resetArmed) {
                 resetArmed = true;
-                btnResetProgress.innerText = "再点一次确�?;
+                btnResetProgress.innerText = "鍐嶇偣涓€娆＄‘璁?;
                 if (resetTimer) clearTimeout(resetTimer);
                 resetTimer = setTimeout(() => {
                     resetArmed = false;
-                    btnResetProgress.innerText = "重置轮换";
+                    btnResetProgress.innerText = "閲嶇疆杞崲";
                 }, 2000);
                 return;
             }
             resetArmed = false;
             if (resetTimer) clearTimeout(resetTimer);
-            btnResetProgress.innerText = "重置轮换";
+            btnResetProgress.innerText = "閲嶇疆杞崲";
             resetProgress();
         });
     }
@@ -6095,14 +6095,14 @@ function wireHudButtons() {
             if (repeatPauseState === "repeat") {
                 if (lastWord) speakWord(lastWord);
                 repeatPauseState = "pause";
-                btnMix.innerText = "�?暂停";
+    if (btnMix) btnMix.innerText = "重读";
                 return;
             }
             paused = !paused;
             if (paused && startedOnce) setOverlay(true, "pause");
             if (!paused) setOverlay(false);
             repeatPauseState = "repeat";
-            btnMix.innerText = "🔊 重读";
+    if (btnMix) btnMix.innerText = "重读";
         });
     }
 
@@ -6114,7 +6114,7 @@ function wireHudButtons() {
             } else if (inventory.pumpkin >= 10) {
                 tryCraft("snow_golem");
             } else {
-                showToast("材料不足！需�?10 个铁块或南瓜");
+                showToast("鏉愭枡涓嶈冻锛侀渶瑕?10 涓搧鍧楁垨鍗楃摐");
             }
         });
     }
@@ -6252,7 +6252,7 @@ async function start() {
             selectedSlot = parseInt(e.key, 10) - 1;
             updateInventoryUI();
             const itemKey = HOTBAR_ITEMS[selectedSlot];
-            showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "�?}`);
+            showToast(`閫夋嫨: ${ITEM_LABELS[itemKey] || itemKey || "绌?}`);
         }
         if (!inInput && String(e.key || "").toLowerCase() === "x" && !paused) {
             if (inventory.iron >= 10) {
@@ -6260,13 +6260,13 @@ async function start() {
             } else if (inventory.pumpkin >= 10) {
                 tryCraft("snow_golem");
             } else {
-                showToast("材料不足！需�?10 个铁块或南瓜");
+                showToast("鏉愭枡涓嶈冻锛侀渶瑕?10 涓搧鍧楁垨鍗楃摐");
             }
         }
         if (isPause && startedOnce) {
             paused = !paused;
             const btnPause = document.getElementById("btn-pause");
-            if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "�?暂停";
+            if (btnPause) btnPause.innerText = paused ? "鈻讹笍 缁х画" : "鈴?鏆傚仠";
             if (paused) setOverlay(true, "pause");
             else setOverlay(false);
         }
@@ -6291,7 +6291,7 @@ async function start() {
         if (document.hidden) {
             paused = true;
             const btnPause = document.getElementById("btn-pause");
-            if (btnPause) btnPause.innerText = "▶️ 继续";
+            if (btnPause) btnPause.innerText = "鈻讹笍 缁х画";
             if (!pausedByModal) setOverlay(true, "pause");
         }
     });
