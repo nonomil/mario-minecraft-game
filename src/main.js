@@ -61,10 +61,10 @@ let bgmAudio = null;
 let bgmReady = false;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
 const STAGE_LABELS = {
-    kindergarten: "幼儿园",
-    elementary: "小学全阶段",
-    elementary_lower: "小学低年级",
-    elementary_upper: "小学高年级",
+    kindergarten: "幼儿�?,
+    elementary: "小学全阶�?,
+    elementary_lower: "小学低年�?,
+    elementary_upper: "小学高年�?,
     minecraft: "Minecraft",
     general: "通用主题",
     mixed: "混合/跨级",
@@ -100,7 +100,13 @@ const INVENTORY_TEMPLATE = {
     coal: 0,
     gold: 0,
     shell: 0,
-    starfish: 0
+    starfish: 0,
+    slime_ball: 0,
+    magma_cream: 0,
+    phantom_membrane: 0,
+    ghast_tear: 0,
+    blaze_rod: 0,
+    spider_eye: 0
 };
 let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
@@ -112,11 +118,11 @@ const ITEM_LABELS = {
     stick: "木棍",
     stone_sword: "石剑",
     iron_pickaxe: "铁镐",
-    bow: "弓",
+    bow: "�?,
     arrow: "箭矢",
     gunpowder: "火药",
     rotten_flesh: "腐肉",
-    string: "蜘蛛丝",
+    string: "蜘蛛�?,
     ender_pearl: "末影珍珠",
     dragon_egg: "龙蛋",
     flower: "花朵",
@@ -124,7 +130,13 @@ const ITEM_LABELS = {
     coal: "煤矿",
     gold: "钻石",
     shell: "贝壳",
-    starfish: "海星"
+    starfish: "海星",
+    slime_ball: "史莱姆球",
+    magma_cream: "岩浆�?,
+    phantom_membrane: "幻翼�?,
+    ghast_tear: "恶魂之泪",
+    blaze_rod: "烈焰�?,
+    spider_eye: "蜘蛛�?
 };
 const ITEM_ICONS = {
     diamond: "💎",
@@ -137,7 +149,7 @@ const ITEM_ICONS = {
     arrow: "🏹",
     gunpowder: "💥",
     rotten_flesh: "🥩",
-    string: "🕸️",
+    string: "🕸�?,
     ender_pearl: "🟣",
     dragon_egg: "🐉",
     flower: "🌸",
@@ -145,11 +157,51 @@ const ITEM_ICONS = {
     coal: "🪨",
     gold: "💎",
     shell: "🐚",
-    starfish: "⭐",
+    starfish: "�?,
+    slime_ball: "🟢",
+    magma_cream: "🟠",
+    phantom_membrane: "🪽",
+    ghast_tear: "💧",
+    blaze_rod: "🔥",
+    spider_eye: "👁�?,
     hp: "❤️",
     max_hp: "💖",
     score: "💎"
 };
+const JUMP_VERBS = ["jump", "leap", "hop"];
+const CLOUD_WORDS = ["cloud", "sky", "windy", "sunny"];
+const CLOUD_PLATFORM_CONFIG = {
+    normal: { duration: Infinity, respawnTime: 0, bounceForce: 0, moveSpeed: 0, moveRange: 0 },
+    thin: { duration: 80, respawnTime: 260, bounceForce: 0, moveSpeed: 0, moveRange: 0 },
+    bouncy: { duration: Infinity, respawnTime: 0, bounceForce: -12, moveSpeed: 0, moveRange: 0 },
+    moving: { duration: Infinity, respawnTime: 0, bounceForce: 0, moveSpeed: 0.6, moveRange: 80 }
+};
+const ENTITY_LABELS = {
+    zombie: { en: "Zombie", zh: "僵尸", emoji: "🧟" },
+    skeleton: { en: "Skeleton", zh: "骷髅", emoji: "💀" },
+    creeper: { en: "Creeper", zh: "苦力�?, emoji: "💚" },
+    spider: { en: "Spider", zh: "蜘蛛", emoji: "🕷�? },
+    cave_spider: { en: "Cave Spider", zh: "洞穴蜘蛛", emoji: "🕷�? },
+    enderman: { en: "Enderman", zh: "末影�?, emoji: "👤" },
+    slime: { en: "Slime", zh: "史莱�?, emoji: "🟢" },
+    magma_cube: { en: "Magma Cube", zh: "岩浆�?, emoji: "🟠" },
+    phantom: { en: "Phantom", zh: "幻翼", emoji: "🪽" },
+    ghast: { en: "Ghast", zh: "恶魂", emoji: "👻" },
+    blaze: { en: "Blaze", zh: "烈焰�?, emoji: "🔥" },
+    chest: { en: "Chest", zh: "宝箱", emoji: "📦" },
+    tree: { en: "Tree", zh: "�?, emoji: "🌳" },
+    flower: { en: "Flower", zh: "�?, emoji: "🌸" },
+    mushroom: { en: "Mushroom", zh: "蘑菇", emoji: "🍄" },
+    cactus: { en: "Cactus", zh: "仙人�?, emoji: "🌵" },
+    ore_coal: { en: "Coal", zh: "煤炭", emoji: "�? },
+    ore_iron: { en: "Iron", zh: "�?, emoji: "🔶" },
+    ore_gold: { en: "Gold", zh: "�?, emoji: "🟡" },
+    ore_diamond: { en: "Diamond", zh: "钻石", emoji: "💎" },
+    cloud: { en: "Cloud", zh: "�?, emoji: "☁️" },
+    lava_pool: { en: "Lava", zh: "岩浆", emoji: "🔥" },
+    water: { en: "Water", zh: "�?, emoji: "💧" }
+};
+let wordLearnCount = {};
 const TOOL_STATS = {
     stone_sword: { damage: 8 },
     iron_pickaxe: { damage: 6 }
@@ -188,7 +240,7 @@ const WEAPONS = {
     },
     bow: {
         id: "bow",
-        name: "弓",
+        name: "�?,
         damage: 12,
         range: 380,
         cooldown: 26,
@@ -207,7 +259,7 @@ const playerWeapons = {
     lastPressTs: 0,
     doublePressWindow: 220
 };
-const keys = { right: false, left: false };
+const keys = { right: false, left: false, down: false, up: false };
 
 let jumpBuffer = 0;
 let coyoteTimer = 0;
@@ -222,6 +274,7 @@ let fallResetY = 800;
 
 let player = null;
 let platforms = [];
+let movingPlatforms = [];
 let trees = [];
 let chests = [];
 let items = [];
@@ -278,7 +331,7 @@ const DEFAULT_BIOME_CONFIGS = {
         name: "森林",
         color: "#4CAF50",
         groundType: "grass",
-        decorations: { tree: 0.3, bush: 0.2, flower: 0.25, mushroom: 0.1, vine: 0.15 },
+        decorations: { tree: 0.3, bush: 0.2, flower: 0.25, mushroom: 0.1, vine: 0.15, cave_entrance: 0.04, vine_ladder: 0.02 },
         treeTypes: { oak: 0.5, birch: 0.3, dark_oak: 0.2 },
         effects: { particles: "leaves", ambient: "#88CC88", weather: ["clear", "rain", "fog"] },
         spawnWeight: { min: 0, max: 1000 }
@@ -308,7 +361,7 @@ const DEFAULT_BIOME_CONFIGS = {
         name: "山地",
         color: "#757575",
         groundType: "stone",
-        decorations: { ore_coal: 0.15, ore_iron: 0.1, ore_gold: 0.05, ore_diamond: 0.02, stalactite: 0.12, crystal: 0.08, lava_pool: 0.05 },
+        decorations: { ore_coal: 0.15, ore_iron: 0.1, ore_gold: 0.05, ore_diamond: 0.02, stalactite: 0.12, crystal: 0.08, lava_pool: 0.05, cave_entrance: 0.03 },
         effects: { particles: "sparkle", ambient: "#666688", darkness: 0.3, weather: ["fog"] },
         spawnWeight: { min: 1500, max: 3000 }
     },
@@ -330,12 +383,47 @@ const DEFAULT_BIOME_CONFIGS = {
         decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
         effects: { particles: "flames", ambient: "#CC3333", damage: 1, speedMultiplier: 0.7 },
         spawnWeight: { min: 3500, max: 5000 }
+    },
+    cave: {
+        id: "cave",
+        name: "矿洞",
+        color: "#3B3B4F",
+        groundType: "stone",
+        decorations: { ore_coal: 0.25, ore_iron: 0.18, ore_gold: 0.08, ore_diamond: 0.05, stalactite: 0.2, crystal: 0.1, lava_pool: 0.08, cave_exit: 0.08 },
+        effects: { particles: "sparkle", ambient: "#3B3B4F", darkness: 0.45, weather: ["fog"] },
+        spawnWeight: { min: 0, max: 99999 },
+        platform: {
+            floatingChanceMult: 0.6,
+            floatingGroundTypes: ["stone"],
+            microPlatformChance: 0.25,
+            microPlatformPeriod: 2,
+            microPattern: "stair",
+            microPlatformType: "stone",
+            microPlatformMaxCount: 3,
+            microMaxRiseBlocks: 3,
+            microItemChance: 0.15,
+            fragileChance: 0.2,
+            fragileBreakDelay: 100
+        }
+    },
+    sky: {
+        id: "sky",
+        name: "云端",
+        color: "#87CEEB",
+        groundType: "cloud",
+        decorations: { },
+        effects: { particles: "sparkle", ambient: "#9BD4FF", weather: ["clear", "fog"] },
+        spawnWeight: { min: 0, max: 99999 }
     }
 };
 
 let biomeConfigs = JSON.parse(JSON.stringify(DEFAULT_BIOME_CONFIGS));
 let currentBiome = "forest";
 let biomeTransitionX = 0;
+let undergroundMode = false;
+let skyMode = false;
+let surfaceBiomeId = "forest";
+let caveEntryArmed = null;
 let decorations = [];
 let particles = [];
 let weatherState = { type: "clear", timer: 0 };
@@ -359,8 +447,8 @@ const DEFAULT_DIFFICULTY_CONFIG = {
     invincibleFrames: 120,
     tiers: [
         { name: "新手", minScore: 0, maxScore: 500, enemyDamage: 0.8, enemyHp: 0.85, enemySpawn: 0.75, chestSpawn: 1.1, chestRareBoost: 0.25, chestRollBonus: 0.08, scoreMultiplier: 1.0 },
-        { name: "简单", minScore: 500, maxScore: 1500, enemyDamage: 1.0, enemyHp: 1.0, enemySpawn: 0.95, chestSpawn: 1.0, chestRareBoost: 0.1, chestRollBonus: 0.04, scoreMultiplier: 1.0 },
-        { name: "普通", minScore: 1500, maxScore: 3000, enemyDamage: 1.15, enemyHp: 1.1, enemySpawn: 1.05, chestSpawn: 0.95, chestRareBoost: 0.0, chestRollBonus: 0.0, scoreMultiplier: 1.05 },
+        { name: "简�?, minScore: 500, maxScore: 1500, enemyDamage: 1.0, enemyHp: 1.0, enemySpawn: 0.95, chestSpawn: 1.0, chestRareBoost: 0.1, chestRollBonus: 0.04, scoreMultiplier: 1.0 },
+        { name: "普�?, minScore: 1500, maxScore: 3000, enemyDamage: 1.15, enemyHp: 1.1, enemySpawn: 1.05, chestSpawn: 0.95, chestRareBoost: 0.0, chestRollBonus: 0.0, scoreMultiplier: 1.05 },
         { name: "困难", minScore: 3000, maxScore: 5000, enemyDamage: 1.4, enemyHp: 1.25, enemySpawn: 1.2, chestSpawn: 0.9, chestRareBoost: -0.1, chestRollBonus: -0.02, scoreMultiplier: 1.1 },
         { name: "地狱", minScore: 5000, maxScore: 999999, enemyDamage: 1.8, enemyHp: 1.5, enemySpawn: 1.35, chestSpawn: 0.85, chestRareBoost: -0.2, chestRollBonus: -0.04, scoreMultiplier: 1.2 }
     ],
@@ -569,7 +657,7 @@ function switchWeapon() {
     const list = playerWeapons.unlocked;
     if (!list.length) return;
     if (list.length === 1) {
-        showToast("⚠️ 只有一种武器");
+        showToast("⚠️ 只有一种武�?);
         return;
     }
     const idx = list.indexOf(playerWeapons.current);
@@ -596,7 +684,7 @@ function startBowCharge() {
     const weapon = WEAPONS.bow;
     if (playerWeapons.attackCooldown > 0) return;
     if (getArrowCount() <= 0) {
-        showToast("❌ 没有箭！");
+        showToast("�?没有箭！");
         return;
     }
     playerWeapons.isCharging = true;
@@ -607,7 +695,7 @@ function releaseBowShot(forceCharge = null) {
     const weapon = WEAPONS.bow;
     if (playerWeapons.attackCooldown > 0) return;
     if (getArrowCount() <= 0) {
-        showToast("❌ 没有箭！");
+        showToast("�?没有箭！");
         return;
     }
     const ratio = forceCharge != null ? forceCharge : Math.min(1, playerWeapons.chargeTime / weapon.chargeMax);
@@ -656,7 +744,38 @@ function digGroundBlock() {
     if (leftWidth > 0) platforms.push(new Platform(p.x, p.y, leftWidth, p.height, p.type));
     if (rightWidth > 0) platforms.push(new Platform(rightStart, p.y, rightWidth, p.height, p.type));
     digHits.delete(key);
-    showFloatingText("🕳️ 深坑", blockX + blockSize / 2, groundY - 50);
+    showFloatingText("🕳�?深坑", blockX + blockSize / 2, groundY - 50);
+    playerWeapons.attackCooldown = weapon.cooldown;
+}
+
+function digDownBlock() {
+    const weapon = WEAPONS.pickaxe;
+    const blockX = Math.floor((player.x + player.width / 2) / blockSize) * blockSize;
+    const key = `down:${blockX}`;
+    const hit = (digHits.get(key) || 0) + 1;
+    digHits.set(key, hit);
+    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
+
+    if (hit < weapon.digHits) {
+        playerWeapons.attackCooldown = weapon.cooldown;
+        return;
+    }
+
+    const idx = platforms.findIndex(p => p.y === groundY && blockX >= p.x && blockX < p.x + p.width);
+    if (idx === -1) {
+        playerWeapons.attackCooldown = weapon.cooldown;
+        return;
+    }
+    const p = platforms[idx];
+    const leftWidth = blockX - p.x;
+    const rightStart = blockX + blockSize;
+    const rightWidth = (p.x + p.width) - rightStart;
+    platforms.splice(idx, 1);
+    if (leftWidth > 0) platforms.push(new Platform(p.x, p.y, leftWidth, p.height, p.type));
+    if (rightWidth > 0) platforms.push(new Platform(rightStart, p.y, rightWidth, p.height, p.type));
+    digHits.delete(key);
+    caveEntryArmed = { x: blockX, width: blockSize, ttl: 180 };
+    showFloatingText("🕳�?向下�?, blockX + blockSize / 2, groundY - 50);
     playerWeapons.attackCooldown = weapon.cooldown;
 }
 
@@ -700,7 +819,7 @@ function getDifficultyConfig() {
 function getDifficultyTier(scoreValue) {
     const cfg = getDifficultyConfig();
     const tiers = Array.isArray(cfg.tiers) ? cfg.tiers : [];
-    if (!tiers.length) return { name: "普通", minScore: 0, maxScore: 999999, enemyDamage: 1, enemyHp: 1, enemySpawn: 1, chestSpawn: 1, chestRareBoost: 0, chestRollBonus: 0, scoreMultiplier: 1 };
+    if (!tiers.length) return { name: "普�?, minScore: 0, maxScore: 999999, enemyDamage: 1, enemyHp: 1, enemySpawn: 1, chestSpawn: 1, chestRareBoost: 0, chestRollBonus: 0, scoreMultiplier: 1 };
     const s = Number(scoreValue) || 0;
     const found = tiers.find(t => s >= (t.minScore ?? 0) && s < (t.maxScore ?? Number.MAX_SAFE_INTEGER));
     return found || tiers[tiers.length - 1];
@@ -708,7 +827,14 @@ function getDifficultyTier(scoreValue) {
 
 function computeDifficultyState() {
     const cfg = getDifficultyConfig();
-    const tier = getDifficultyTier(getProgressScore());
+    let tier = getDifficultyTier(getProgressScore());
+    const pref = settings.gameDifficulty || "medium";
+    const forcedIndex = pref === "simple" ? 1 : pref === "medium" ? 2 : pref === "hard" ? 3 : null;
+    if (forcedIndex !== null && Array.isArray(cfg.tiers) && cfg.tiers.length) {
+        const idx = Math.min(cfg.tiers.length - 1, Math.max(0, forcedIndex));
+        tier = cfg.tiers[idx] || tier;
+    }
+    const displayName = pref === "simple" ? "��" : pref === "medium" ? "�е�" : pref === "hard" ? "����" : tier.name;
     const dda = cfg.dda || {};
     let enemyDamageMult = Number(tier.enemyDamage) || 1;
     let enemyHpMult = Number(tier.enemyHp) || 1;
@@ -743,7 +869,7 @@ function computeDifficultyState() {
     }
 
     return {
-        name: tier.name || "普通",
+        name: displayName || tier.name || "普�?,
         minScore: tier.minScore ?? 0,
         maxScore: tier.maxScore ?? 999999,
         enemyDamageMult,
@@ -763,7 +889,7 @@ function updateDifficultyState(force = false) {
     if (changed || force) {
         const el = document.getElementById("difficulty-info");
         if (el) el.innerText = `难度: ${next.name}`;
-        if (changed && !force) showToast(`⚔️ 难度调整：${next.name}`);
+        if (changed && !force) showToast(`⚔️ 难度调整�?{next.name}`);
     }
 }
 
@@ -862,6 +988,7 @@ function selectBiome(x, scoreValue) {
 }
 
 function updateCurrentBiome() {
+    if (undergroundMode || skyMode) return;
     const nextBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     if (nextBiome.id !== currentBiome) {
         currentBiome = nextBiome.id;
@@ -869,7 +996,7 @@ function updateCurrentBiome() {
         showToast(`🌍 进入${nextBiome.name}群系`);
         updateWeatherForBiome(nextBiome);
         const info = document.getElementById("level-info");
-        if (info) info.innerText = `生态: ${nextBiome.name}`;
+        if (info) info.innerText = `生�? ${nextBiome.name}`;
         if (currentBiome === "nether" && netherEntryPenaltyArmed) {
             playerHp = Math.max(0, playerHp - 1);
             updateHpUI();
@@ -885,6 +1012,77 @@ function updateCurrentBiome() {
             netherEntryPenaltyArmed = true;
         }
     }
+}
+
+function resetWorldForMode() {
+    platforms = [];
+    movingPlatforms = [];
+    trees = [];
+    chests = [];
+    items = [];
+    decorations = [];
+    particles = [];
+    enemies = [];
+    golems = [];
+    caveEntryArmed = null;
+    digHits.clear();
+    resetProjectiles();
+    playerPositionHistory = [];
+    lastGenX = 0;
+    cameraX = 0;
+    player.x = 100;
+    player.y = 300;
+    player.velX = 0;
+    player.velY = 0;
+    generatePlatform(0, 12, groundY);
+}
+
+function enterUnderground(source = "entrance") {
+    if (undergroundMode) return;
+    undergroundMode = true;
+    surfaceBiomeId = currentBiome;
+    currentBiome = biomeConfigs.cave ? "cave" : "mountain";
+    updateWeatherForBiome(getBiomeById(currentBiome));
+    const info = document.getElementById("level-info");
+    if (info) info.innerText = "生�? 矿洞";
+    showToast(source === "dig" ? "⛏️ 挖进矿洞�? : "⛏️ 进入矿洞");
+    resetWorldForMode();
+}
+
+function exitUnderground() {
+    if (!undergroundMode) return;
+    undergroundMode = false;
+    const nextBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
+    currentBiome = nextBiome.id || surfaceBiomeId || "forest";
+    updateWeatherForBiome(getBiomeById(currentBiome));
+    const info = document.getElementById("level-info");
+    if (info) info.innerText = `生�? ${getBiomeById(currentBiome).name}`;
+    showToast("⬆️ 返回地表");
+    resetWorldForMode();
+}
+
+function enterSky() {
+    if (skyMode) return;
+    skyMode = true;
+    surfaceBiomeId = currentBiome;
+    currentBiome = biomeConfigs.sky ? "sky" : "forest";
+    updateWeatherForBiome(getBiomeById(currentBiome));
+    const info = document.getElementById("level-info");
+    if (info) info.innerText = "生�? 云端";
+    showToast("☁️ 进入云端");
+    resetWorldForMode();
+}
+
+function exitSky() {
+    if (!skyMode) return;
+    skyMode = false;
+    const nextBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
+    currentBiome = nextBiome.id || surfaceBiomeId || "forest";
+    updateWeatherForBiome(getBiomeById(currentBiome));
+    const info = document.getElementById("level-info");
+    if (info) info.innerText = `生�? ${getBiomeById(currentBiome).name}`;
+    showToast("⬇️ 返回地表");
+    resetWorldForMode();
 }
 
 function updateWeatherForBiome(biome) {
@@ -1018,6 +1216,9 @@ function normalizeSettings(raw) {
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
+    if (typeof merged.showEnvironmentLabels !== "boolean") merged.showEnvironmentLabels = defaultSettings.showEnvironmentLabels ?? true;
+    const gameDifficulty = String(merged.gameDifficulty || defaultSettings.gameDifficulty || "medium");
+    merged.gameDifficulty = ["simple", "medium", "hard"].includes(gameDifficulty) ? gameDifficulty : "medium";
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
     const deviceMode = String(merged.deviceMode || defaultSettings.deviceMode || "auto");
     merged.deviceMode = deviceMode === "auto" || deviceMode === "phone" || deviceMode === "tablet" ? deviceMode : "auto";
@@ -1168,7 +1369,7 @@ function updateVocabProgressUI() {
     if (!el) return;
     const engine = ensureVocabEngine();
     if (!engine || !activeVocabPackId) {
-        el.innerText = "未加载";
+        el.innerText = "未加�?;
         return;
     }
     const pack = vocabPacks[activeVocabPackId];
@@ -1396,8 +1597,8 @@ function setOverlay(visible, mode) {
         overlay.setAttribute("aria-hidden", "false");
         overlayMode = mode || "pause";
         if (mode === "pause") {
-            if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
+            if (title) title.innerText = "已暂�?;
+            if (text) text.innerHTML = "�?�?移动　空格 �?可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
             if (btn) btn.innerText = "继续";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
@@ -1407,15 +1608,15 @@ function setOverlay(visible, mode) {
                 text.innerHTML =
                     `📚 学习单词: ${getLearnedWordCount()}<br>` +
                     `💎 钻石: ${diamonds}<br>` +
-                    `⭐ 当前积分: ${score}<br>` +
+                    `�?当前积分: ${score}<br>` +
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
                     `🏆 玩家等级: ${level}`;
             }
-            if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
+            if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开�?;
         } else {
-            if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
-            if (btn) btn.innerText = "开始游戏";
+            if (title) title.innerText = "准备开�?;
+            if (text) text.innerHTML = "�?�?移动　空格 �?可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
+            if (btn) btn.innerText = "开始游�?;
         }
     } else {
         overlay.classList.remove("visible");
@@ -1483,7 +1684,10 @@ function createPlayer() {
         jumpCount: 0,
         maxJumps: gameConfig.player.maxJumps,
         isAttacking: false,
-        attackTimer: 0
+        attackTimer: 0,
+        airFrames: 0,
+        lastJumpVerbFrame: -Infinity,
+        lastPlatformType: null
     };
     applyMotionToPlayer(p);
     return p;
@@ -1494,6 +1698,9 @@ function initGame() {
     levelScore = 0;
     runBestScore = 0;
     lastWordItemX = -Infinity;
+    undergroundMode = false;
+    skyMode = false;
+    caveEntryArmed = null;
     currentLevelIdx = 0;
     playerMaxHp = Number(gameConfig?.player?.maxHp) || 3;
     playerHp = playerMaxHp;
@@ -1514,8 +1721,9 @@ function startLevel(idx) {
     const initBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     currentBiome = initBiome.id;
     const info = document.getElementById("level-info");
-    if (info) info.innerText = `生态: ${initBiome.name}`;
+    if (info) info.innerText = `生�? ${initBiome.name}`;
     platforms = [];
+    movingPlatforms = [];
     trees = [];
     chests = [];
     items = [];
@@ -1662,9 +1870,194 @@ function estimateMaxJumpHeightPx() {
     return h;
 }
 
+function getPlatformConfig() {
+    const cfg = gameConfig.platforms || {};
+    const clamp01 = v => Math.max(0, Math.min(1, v));
+    return {
+        gapChance: clamp01(cfg.gapChance ?? 0.12),
+        gapWeights: cfg.gapWeights || { narrow: 0.5, medium: 0.35, wide: 0.15 },
+        gapSizes: cfg.gapSizes || { narrow: [1, 2], medium: [2, 3], wide: [3, 4] },
+        cloudGapChance: clamp01(cfg.cloudGapChance ?? 0.06),
+        cloudHeightMin: Math.max(60, Number(cfg.cloudHeightMin) || 120),
+        cloudHeightMax: Math.max(80, Number(cfg.cloudHeightMax) || 200),
+        cloudPlatformMin: Math.max(1, Number(cfg.cloudPlatformMin) || 2),
+        cloudPlatformMax: Math.max(1, Number(cfg.cloudPlatformMax) || 4),
+        cloudSpacingMin: Math.max(0, Number(cfg.cloudSpacingMin) || 1),
+        cloudSpacingMax: Math.max(0, Number(cfg.cloudSpacingMax) || 2),
+        cloudFragileChance: clamp01(cfg.cloudFragileChance ?? 0.35),
+        fragileBreakDelay: Math.max(30, Number(cfg.fragileBreakDelay) || 120),
+        jumpVerbMinAirFrames: Math.max(6, Number(cfg.jumpVerbMinAirFrames) || 18),
+        movingPlatformChance: clamp01(cfg.movingPlatformChance ?? 0.15),
+        movingPlatformSpeedMin: Math.max(0.2, Number(cfg.movingPlatformSpeedMin) || 0.4),
+        movingPlatformSpeedMax: Math.max(0.3, Number(cfg.movingPlatformSpeedMax) || 1.1),
+        movingPlatformRangeMult: Math.max(0.2, Number(cfg.movingPlatformRangeMult) || 0.4),
+        cloudTypeWeights: cfg.cloudTypeWeights || { normal: 0.6, thin: 0.25, moving: 0.1, bouncy: 0.05 }
+    };
+}
+
+function pickGapSize(cfg, preferWide = false) {
+    const weights = { ...cfg.gapWeights };
+    if (preferWide) {
+        weights.wide = Math.max(weights.wide || 0.2, 0.5);
+        weights.medium = Math.max(weights.medium || 0.2, 0.3);
+        weights.narrow = Math.max(weights.narrow || 0.1, 0.2);
+    }
+    const total = Object.values(weights).reduce((s, v) => s + v, 0) || 1;
+    let roll = Math.random() * total;
+    let choice = "narrow";
+    for (const [key, val] of Object.entries(weights)) {
+        roll -= val;
+        if (roll <= 0) {
+            choice = key;
+            break;
+        }
+    }
+    const range = cfg.gapSizes[choice] || [1, 2];
+    const min = Math.max(1, Number(range[0]) || 1);
+    const max = Math.max(min, Number(range[1]) || min);
+    return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function pickCloudType(cfg) {
+    const weights = cfg.cloudTypeWeights || { normal: 1 };
+    const total = Object.values(weights).reduce((s, v) => s + v, 0) || 1;
+    let roll = Math.random() * total;
+    for (const [key, val] of Object.entries(weights)) {
+        roll -= val;
+        if (roll <= 0) return key;
+    }
+    return Object.keys(weights)[0] || "normal";
+}
+
+function getWordLearnCount(word) {
+    return wordLearnCount[String(word || "").toLowerCase()] || 0;
+}
+
+function incrementWordLearnCount(word) {
+    const key = String(word || "").toLowerCase();
+    wordLearnCount[key] = (wordLearnCount[key] || 0) + 1;
+}
+
+function showEntityLabel(entity, text) {
+    const sx = entity.x + entity.width / 2;
+    const sy = entity.y - 18;
+    ctx.save();
+    ctx.font = "12px Verdana";
+    ctx.textAlign = "center";
+    const metrics = ctx.measureText(text);
+    const padding = 4;
+    ctx.fillStyle = "rgba(0,0,0,0.7)";
+    ctx.fillRect(sx - metrics.width / 2 - padding, sy - 10, metrics.width + padding * 2, 16);
+    ctx.fillStyle = "#fff";
+    ctx.fillText(text, sx, sy);
+    ctx.restore();
+}
+
+function updateEnvironmentLabels() {
+    if (!settings.showEnvironmentLabels) return;
+    const labelRange = 80;
+    const nearby = [
+        ...enemies.filter(e => !e.remove),
+        ...chests.filter(c => !c.opened),
+        ...trees.filter(t => !t.remove),
+        ...decorations.filter(d => d && d.type)
+    ];
+    for (const entity of nearby) {
+        const dist = Math.abs(player.x - entity.x);
+        if (dist > labelRange) continue;
+        const typeKey = entity.type || (entity.opened !== undefined ? "chest" : null);
+        const label = typeKey ? ENTITY_LABELS[typeKey] : null;
+        if (!label) continue;
+        const count = getWordLearnCount(label.en);
+        if (count === 0) {
+            showEntityLabel(entity, `${label.emoji} ${label.en} - ${label.zh}`);
+            if (dist < 30) incrementWordLearnCount(label.en);
+        } else if (count === 1) {
+            showEntityLabel(entity, `${label.emoji} ${label.en}`);
+            if (dist < 30) incrementWordLearnCount(label.en);
+        }
+    }
+}
+
+function spawnCloudBridge(startX, gapBlocks, cfg) {
+    const widthPx = gapBlocks * blockSize;
+    const heightMin = Math.min(cfg.cloudHeightMin, cfg.cloudHeightMax);
+    const heightMax = Math.max(cfg.cloudHeightMin, cfg.cloudHeightMax);
+    const height = heightMin + Math.random() * (heightMax - heightMin);
+    const cloudY = Math.max(40, groundY - height);
+    const minLen = Math.min(cfg.cloudPlatformMin, cfg.cloudPlatformMax);
+    const maxLen = Math.max(cfg.cloudPlatformMin, cfg.cloudPlatformMax);
+    const minGap = Math.min(cfg.cloudSpacingMin, cfg.cloudSpacingMax);
+    const maxGap = Math.max(cfg.cloudSpacingMin, cfg.cloudSpacingMax);
+    let x = startX + blockSize * 0.5;
+    let loops = 0;
+    while (x < startX + widthPx - blockSize && loops < 20) {
+        loops++;
+        const lenBlocks = minLen + Math.floor(Math.random() * (maxLen - minLen + 1));
+        const platWidth = lenBlocks * blockSize;
+        const cloudType = pickCloudType(cfg);
+        const p = new CloudPlatform(x, cloudY, platWidth, blockSize, cloudType);
+        if (Math.random() < cfg.cloudFragileChance && cloudType === "normal") {
+            p.fragile = true;
+            p.breakDelay = cfg.fragileBreakDelay;
+        }
+        platforms.push(p);
+        movingPlatforms.push(p);
+        if (Math.random() < (gameConfig.spawn?.floatingItemChance ?? 0.4)) {
+            const word = pickWordForSpawn();
+            const wordX = x + platWidth / 2;
+            if (canSpawnWordItemAt(wordX)) {
+                items.push(new Item(wordX, cloudY - 50, word));
+                registerWordItemSpawn(wordX);
+            }
+        }
+        const gapBlocksNext = minGap + Math.floor(Math.random() * (maxGap - minGap + 1));
+        x += platWidth + gapBlocksNext * blockSize;
+    }
+}
+
+function armPlatformBreak(p) {
+    if (!p || !p.fragile) return;
+    if (p.breakDelay == null) return;
+    if (p.breakTimer == null) p.breakTimer = p.breakDelay;
+}
+
+function handlePlatformLanding(p) {
+    if (!p) return;
+    player.lastPlatformType = p.type;
+    if (p.fragile) armPlatformBreak(p);
+    if (p.type === "cloud") {
+        if (!p.lastWordFrame || gameFrame - p.lastWordFrame > 180) {
+            p.lastWordFrame = gameFrame;
+            const word = CLOUD_WORDS[Math.floor(Math.random() * CLOUD_WORDS.length)];
+            showFloatingText(word, p.x + p.width / 2, p.y - 20);
+        }
+    }
+}
+
+function updatePlatformStates() {
+    for (const p of platforms) {
+        if (p.breakTimer != null) {
+            p.breakTimer--;
+            if (p.breakTimer <= 0) {
+                p.remove = true;
+            }
+        }
+    }
+}
+
+function maybeShowJumpVerb() {
+    const cfg = getPlatformConfig();
+    if (player.airFrames < cfg.jumpVerbMinAirFrames) return;
+    if (gameFrame - player.lastJumpVerbFrame < 120) return;
+    const word = JUMP_VERBS[Math.floor(Math.random() * JUMP_VERBS.length)];
+    showFloatingText(word, player.x + player.width / 2, player.y - 20);
+    player.lastJumpVerbFrame = gameFrame;
+}
+
 function generatePlatform(startX, length, groundYValue) {
     const level = levels[currentLevelIdx];
-    const biome = getBiomeById(getBiomeIdForScore(getProgressScore()));
+    const biome = undergroundMode ? getBiomeById("cave") : (skyMode ? getBiomeById("sky") : getBiomeById(getBiomeIdForScore(getProgressScore())));
     const platformCfg = biome.platform || {};
     const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
@@ -1717,6 +2110,8 @@ function generatePlatform(startX, length, groundYValue) {
         const maxCount = Math.max(1, Number(platformCfg.microPlatformMaxCount) || 2);
         const count = 1 + Math.floor(Math.random() * maxCount);
         const microType = platformCfg.microPlatformType || "grass";
+        const fragileChance = Number(platformCfg.fragileChance ?? gameConfig.platforms?.cloudFragileChance ?? 0);
+        const fragileBreakDelay = Number(platformCfg.fragileBreakDelay ?? gameConfig.platforms?.fragileBreakDelay ?? 120);
         const pattern = String(platformCfg.microPattern || "stair").toLowerCase();
         const maxJumpBlocks = Math.max(1, Math.floor((estimateMaxJumpHeightPx() * 0.85) / blockSize));
         const maxRiseBlocks = Math.max(1, Math.min(maxJumpBlocks, Number(platformCfg.microMaxRiseBlocks) || 2));
@@ -1731,7 +2126,13 @@ function generatePlatform(startX, length, groundYValue) {
                 for (let i = 0; i < steps; i++) {
                     const mx = stairX0 + i * blockSize;
                     const my = groundYValue - (i + 1) * blockSize;
-                    platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
+                    const makeFragile = Math.random() < fragileChance;
+                    const p = new Platform(mx, my, blockSize, blockSize, makeFragile ? "fragile" : microType);
+                    if (makeFragile) {
+                        p.fragile = true;
+                        p.breakDelay = fragileBreakDelay;
+                    }
+                    platforms.push(p);
                 }
                 const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(topX)) {
@@ -1753,7 +2154,13 @@ function generatePlatform(startX, length, groundYValue) {
                 let mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
                 mx = Math.floor(mx / blockSize) * blockSize;
                 const my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
-                platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
+                const makeFragile = Math.random() < fragileChance;
+                const p = new Platform(mx, my, blockSize, blockSize, makeFragile ? "fragile" : microType);
+                if (makeFragile) {
+                    p.fragile = true;
+                    p.breakDelay = fragileBreakDelay;
+                }
+                platforms.push(p);
                 const spawnX = mx + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(spawnX)) {
                     const word = pickWordForSpawn();
@@ -1802,7 +2209,9 @@ function spawnEnemyByDifficulty(x, y) {
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
         ocean: ["zombie", "creeper", "skeleton", "enderman"],
-        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
+        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"],
+        cave: ["cave_spider", "slime", "magma_cube", "spider", "skeleton"],
+        sky: ["phantom", "ghast", "blaze", "skeleton", "enderman"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
     const take = Math.max(2, Math.min(basePool.length, 2 + tier));
@@ -1884,6 +2293,11 @@ function generateBiomeDecorations(x, yPos, width, biome) {
             case "vine":
                 spawnDecoration("vine", obj => obj.reset(decorX, yPos - 80, 40 + Math.random() * 30), () => new Vine(decorX, yPos - 80, 40 + Math.random() * 30));
                 break;
+            case "vine_ladder": {
+                const ladderHeight = 160 + Math.random() * 120;
+                spawnDecoration("vine_ladder", obj => obj.reset(decorX, yPos - ladderHeight, ladderHeight), () => new VineLadder(decorX, yPos - ladderHeight, ladderHeight));
+                break;
+            }
             case "ice_spike":
                 spawnDecoration("ice_spike", obj => obj.reset(decorX, yPos - 80), () => new IceSpike(decorX, yPos - 80));
                 break;
@@ -1926,6 +2340,12 @@ function generateBiomeDecorations(x, yPos, width, biome) {
             }
             case "crystal":
                 spawnDecoration("crystal", obj => obj.reset(decorX, yPos - 28), () => new Crystal(decorX, yPos - 28));
+                break;
+            case "cave_entrance":
+                spawnDecoration("cave_entrance", obj => obj.reset(decorX, yPos - 40), () => new CaveEntrance(decorX, yPos - 40));
+                break;
+            case "cave_exit":
+                spawnDecoration("cave_exit", obj => obj.reset(decorX, yPos - 40), () => new CaveExit(decorX, yPos - 40));
                 break;
             case "lava_pool": {
                 const poolWidth = 60 + Math.random() * 80;
@@ -1972,13 +2392,31 @@ function generateBiomeDecorations(x, yPos, width, biome) {
 
 function updateMapGeneration() {
     if (player.x + mapBuffer > lastGenX) {
-        if (Math.random() < 0.05) {
-            lastGenX += 80 + Math.random() * 40;
+        const platformCfg = getPlatformConfig();
+        const useCloudGap = Math.random() < platformCfg.cloudGapChance;
+        const useGap = useCloudGap || Math.random() < platformCfg.gapChance;
+        let gapStartX = lastGenX;
+        let gapBlocks = 0;
+        if (useGap) {
+            gapBlocks = pickGapSize(platformCfg, useCloudGap);
+            if (useCloudGap) {
+                spawnCloudBridge(lastGenX, gapBlocks, platformCfg);
+            }
+            lastGenX += gapBlocks * blockSize;
         }
         const length = Math.floor(4 + Math.random() * 7);
         generatePlatform(lastGenX, length, groundY);
+        if (useGap && gapBlocks >= 3 && Math.random() < platformCfg.movingPlatformChance) {
+            const mpX = gapStartX + blockSize;
+            const mpY = groundY - blockSize * 2;
+            const mpWidth = blockSize * 2;
+            const speed = platformCfg.movingPlatformSpeedMin + Math.random() * (platformCfg.movingPlatformSpeedMax - platformCfg.movingPlatformSpeedMin);
+            const range = (gapBlocks - 1) * blockSize * platformCfg.movingPlatformRangeMult;
+            movingPlatforms.push(new MovingPlatform(mpX, mpY, mpWidth, blockSize, "stone", "horizontal", range, speed));
+        }
     }
-    platforms = platforms.filter(p => p.x + p.width > cameraX - removeThreshold);
+    platforms = platforms.filter(p => p.x + p.width > cameraX - removeThreshold && !p.remove);
+    movingPlatforms = movingPlatforms.filter(p => p.x + p.width > cameraX - removeThreshold && !p.remove);
     trees = trees.filter(t => t.x + t.width > cameraX - removeThreshold && !t.remove);
     chests = chests.filter(c => c.x + 40 > cameraX - removeThreshold);
     items = items.filter(i => i.x + 30 > cameraX - removeThreshold && !i.collected);
@@ -1989,7 +2427,7 @@ function dropItem(type, x, y) {
     if (!inventory[type] && inventory[type] !== 0) inventory[type] = 0;
     inventory[type]++;
     updateInventoryUI();
-    const icon = ITEM_ICONS[type] || "✨";
+    const icon = ITEM_ICONS[type] || "�?;
     showFloatingText(`${icon} +1`, x, y);
 }
 
@@ -2106,6 +2544,8 @@ function update() {
     updateCurrentBiome();
     applyBiomeEffectsToPlayer();
     tickWeather();
+    movingPlatforms.forEach(mp => mp.update());
+    const wasGrounded = player.grounded;
     if (keys.right) {
         if (player.velX < player.speed) player.velX++;
         player.facingRight = true;
@@ -2122,14 +2562,35 @@ function update() {
     player.grounded = false;
 
     for (let p of platforms) {
+        if (p.disappeared) continue;
         const dir = colCheck(player, p);
         if (dir === "l" || dir === "r") player.velX = 0;
         else if (dir === "b") {
             player.grounded = true;
             player.jumpCount = 0;
             coyoteTimer = gameConfig.jump.coyoteFrames;
+            handlePlatformLanding(p);
+            if (p.onPlayerLand) p.onPlayerLand(player);
         } else if (dir === "t") {
             player.velY *= -1;
+        }
+    }
+
+    for (const mp of movingPlatforms) {
+        if (mp.disappeared) continue;
+        if (platforms.includes(mp)) continue;
+        const dir = colCheck(player, mp);
+        if (dir === "b") {
+            player.grounded = true;
+            player.y = mp.y - player.height;
+            player.velY = 0;
+            if (mp.moveType === "horizontal") {
+                player.x += mp.speed * mp.direction;
+            }
+            handlePlatformLanding(mp);
+            if (mp.onPlayerLand) mp.onPlayerLand(player);
+        } else if (dir === "l" || dir === "r") {
+            player.velX = 0;
         }
     }
 
@@ -2170,12 +2631,41 @@ function update() {
         }
     }
 
+    if (player.grounded) {
+        if (!wasGrounded) maybeShowJumpVerb();
+        player.airFrames = 0;
+    } else {
+        player.airFrames++;
+    }
     if (player.grounded) player.velY = 0;
 
     player.x += player.velX;
     player.y += player.velY;
 
+    if (caveEntryArmed) {
+        caveEntryArmed.ttl -= 1;
+        if (caveEntryArmed.ttl <= 0) caveEntryArmed = null;
+    }
+    if (!undergroundMode && caveEntryArmed && player.y > groundY + blockSize * 0.6) {
+        const px = player.x + player.width / 2;
+        if (px >= caveEntryArmed.x && px <= caveEntryArmed.x + caveEntryArmed.width) {
+            caveEntryArmed = null;
+            enterUnderground("dig");
+            return;
+        }
+    }
+
     if (player.y > fallResetY) {
+        const cloudFall = player.lastPlatformType === "cloud";
+        if (cloudFall) {
+            playerInvincibleTimer = 0;
+            const fatalDamage = (getDifficultyConfig().damageUnit || 20) * (playerMaxHp + 2);
+            damagePlayer(fatalDamage, player.x);
+        }
+        if (skyMode) {
+            exitSky();
+            return;
+        }
         player.y = 0;
         player.x -= 200;
         if (player.x < 0) player.x = 100;
@@ -2187,9 +2677,11 @@ function update() {
     if (targetCamX > cameraX) cameraX = targetCamX;
 
     updateMapGeneration();
+    updatePlatformStates();
 
     decorations.forEach(d => {
-        d.update();
+        if (d.type === "vine_ladder") d.update(player);
+        else d.update();
         if ((d.interactive || d.harmful) && rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
             d.onCollision(player);
         }
@@ -2420,7 +2912,7 @@ function tryCraft(recipeKey) {
     if (!recipe) return false;
     for (const [item, count] of Object.entries(recipe)) {
         if ((inventory[item] || 0) < count) {
-            showToast(`材料不足: 需要 ${ITEM_LABELS[item] || item} x${count}`);
+            showToast(`材料不足: 需�?${ITEM_LABELS[item] || item} x${count}`);
             return false;
         }
     }
@@ -2436,13 +2928,13 @@ function spawnGolem(type) {
     const config = getGolemConfig();
     const maxCount = Number(config.maxCount) || MAX_GOLEMS;
     if (golems.length >= maxCount) {
-        showToast(`最多同时存在 ${maxCount} 个傀儡！`);
+        showToast(`最多同时存�?${maxCount} 个傀儡！`);
         return;
     }
     const newGolem = new Golem(player.x + 50, player.y, type);
     golems.push(newGolem);
-    const name = type === "iron" ? "铁傀儡" : "雪傀儡";
-    showToast(`✅ 成功召唤 ${name}！`);
+    const name = type === "iron" ? "铁傀�? : "雪傀�?;
+    showToast(`�?成功召唤 ${name}！`);
     showFloatingText(`⚒️ ${name}`, player.x, player.y - 40);
 }
 
@@ -2486,7 +2978,8 @@ function handleAttack(mode = "press") {
     }
 
     if (weapon.type === "dig") {
-        digGroundBlock();
+        if (keys.down && player.grounded) digDownBlock();
+        else digGroundBlock();
         return;
     }
 
@@ -2507,7 +3000,16 @@ function draw() {
     ctx.save();
     ctx.translate(-cameraX, 0);
 
-    platforms.forEach(p => drawBlock(p.x, p.y, p.width, p.height, p.type));
+    platforms.forEach(p => {
+        if (p.disappeared) return;
+        drawBlock(p.x, p.y, p.width, p.height, p.type);
+    });
+    movingPlatforms.forEach(p => {
+        if (!platforms.includes(p)) {
+            if (p.disappeared) return;
+            drawBlock(p.x, p.y, p.width, p.height, p.type);
+        }
+    });
 
     if (biome.effects?.waterLevel) {
         ctx.fillStyle = "rgba(33, 150, 243, 0.25)";
@@ -2557,11 +3059,13 @@ function draw() {
             ctx.lineWidth = 4;
             ctx.fillStyle = "white";
             const label = keyLabel(keyBindings.interact) || "Y";
-            const hint = `按 ${label} 打开`;
+            const hint = `�?${label} 打开`;
             ctx.strokeText(hint, c.x - 10, c.y - 15);
             ctx.fillText(hint, c.x - 10, c.y - 15);
         }
     });
+
+    updateEnvironmentLabels();
 
     ctx.restore();
 
@@ -2581,7 +3085,7 @@ function draw() {
         ctx.fillStyle = "#fff";
         ctx.font = "bold 14px Verdana";
         ctx.textAlign = "center";
-        ctx.fillText("末影龙", canvas.width / 2, by - 6);
+        ctx.fillText("末影�?, canvas.width / 2, by - 6);
         ctx.textAlign = "left";
     }
 
@@ -2597,6 +3101,30 @@ function drawBlock(x, y, w, h, type) {
             ctx.fillRect(cx, y, blockSize, h);
             ctx.fillStyle = "#4CAF50";
             ctx.fillRect(cx, y, blockSize, h / 3);
+        } else if (type === "cloud") {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#DDEBFF";
+            ctx.fillRect(cx, y + h / 2, blockSize, h / 2);
+            ctx.fillStyle = "rgba(180,210,255,0.6)";
+            ctx.beginPath();
+            ctx.arc(cx + blockSize * 0.3, y + h * 0.35, 6, 0, Math.PI * 2);
+            ctx.arc(cx + blockSize * 0.6, y + h * 0.3, 8, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (type === "fragile") {
+            ctx.fillStyle = "#D7CCC8";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#A1887F";
+            ctx.fillRect(cx, y, blockSize, h / 3);
+            ctx.strokeStyle = "rgba(120,80,60,0.6)";
+            ctx.beginPath();
+            ctx.moveTo(cx + 6, y + 8);
+            ctx.lineTo(cx + 18, y + 22);
+            ctx.lineTo(cx + 10, y + 34);
+            ctx.moveTo(cx + 26, y + 6);
+            ctx.lineTo(cx + 38, y + 24);
+            ctx.lineTo(cx + 30, y + 38);
+            ctx.stroke();
         } else if (type === "snow") {
             ctx.fillStyle = "#1e3f66";
             ctx.fillRect(cx, y, blockSize, h);
@@ -2630,6 +3158,8 @@ function drawBlock(x, y, w, h, type) {
             const fillHeight = canvasHeight - (y + h);
             if (fillHeight > 0) {
                 if (type === "grass") ctx.fillStyle = "#5d4037";
+                else if (type === "cloud") ctx.fillStyle = "#E3F2FD";
+                else if (type === "fragile") ctx.fillStyle = "#D7CCC8";
                 else if (type === "snow") ctx.fillStyle = "#1e3f66";
                 else if (type === "stone") ctx.fillStyle = "#757575";
                 else if (type === "sand") ctx.fillStyle = "#FDD835";
@@ -2727,7 +3257,7 @@ function drawChest(x, y, opened) {
     if (opened) {
         ctx.fillRect(x + 15, y + 5, 10, 5);
         ctx.fillStyle = "#000";
-        ctx.fillText("空", x + 10, y + 25);
+        ctx.fillText("�?, x + 10, y + 25);
     } else {
         ctx.fillRect(x + 15, y + 18, 10, 6);
     }
@@ -2821,6 +3351,9 @@ function drawEnemy(enemy) {
         case "spider":
             drawSpider(enemy);
             break;
+        case "cave_spider":
+            drawCaveSpider(enemy);
+            break;
         case "creeper":
             drawCreeperMob(enemy);
             if (enemy.state === "exploding") {
@@ -2836,6 +3369,21 @@ function drawEnemy(enemy) {
             break;
         case "enderman":
             drawEnderman(enemy);
+            break;
+        case "slime":
+            drawSlime(enemy);
+            break;
+        case "magma_cube":
+            drawMagmaCube(enemy);
+            break;
+        case "phantom":
+            drawPhantom(enemy);
+            break;
+        case "ghast":
+            drawGhast(enemy);
+            break;
+        case "blaze":
+            drawBlaze(enemy);
             break;
         case "ender_dragon":
             drawEnderDragon(enemy.x, enemy.y);
@@ -2916,6 +3464,143 @@ function drawSpider(enemy) {
         ctx.lineTo(x + ex * s, y + ey * s);
     }
     ctx.stroke();
+}
+
+function drawCaveSpider(enemy) {
+    const x = enemy.x;
+    const y = enemy.y + enemy.height - 12 * (enemy.width / 22);
+    const s = enemy.width / 22;
+
+    ctx.fillStyle = "#1E2D2D";
+    ctx.fillRect(x + 4 * s, y + 3 * s, 14 * s, 6 * s);
+    ctx.fillStyle = "#263C3C";
+    ctx.fillRect(x + 6 * s, y + 2 * s, 10 * s, 3 * s);
+
+    ctx.fillStyle = "#26C6DA";
+    ctx.fillRect(x + 7 * s, y + 3 * s, 2 * s, 2 * s);
+    ctx.fillRect(x + 13 * s, y + 3 * s, 2 * s, 2 * s);
+
+    ctx.strokeStyle = "#0F1A1A";
+    ctx.lineWidth = Math.max(2, s);
+    const legPairs = [
+        [[6, 4], [1, 1]],
+        [[6, 7], [1, 10]],
+        [[8, 4], [2, 0]],
+        [[8, 7], [2, 11]],
+        [[16, 4], [21, 1]],
+        [[16, 7], [21, 10]],
+        [[14, 4], [20, 0]],
+        [[14, 7], [20, 11]]
+    ];
+    ctx.beginPath();
+    for (const [[sx, sy], [ex, ey]] of legPairs) {
+        ctx.moveTo(x + sx * s, y + sy * s);
+        ctx.lineTo(x + ex * s, y + ey * s);
+    }
+    ctx.stroke();
+}
+
+function drawSlime(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.fillStyle = "#4CAF50";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "rgba(255,255,255,0.2)";
+    ctx.fillRect(x + 2, y + 2, w - 4, h - 4);
+    ctx.fillStyle = "#1B5E20";
+    ctx.fillRect(x + w * 0.2, y + h * 0.35, w * 0.2, h * 0.2);
+    ctx.fillRect(x + w * 0.6, y + h * 0.35, w * 0.2, h * 0.2);
+    ctx.fillRect(x + w * 0.35, y + h * 0.65, w * 0.3, h * 0.1);
+}
+
+function drawMagmaCube(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.fillStyle = "#FF5722";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "#FF8A50";
+    ctx.fillRect(x + 3, y + 3, w - 6, h - 6);
+    ctx.fillStyle = "#5D2A1B";
+    ctx.fillRect(x + w * 0.2, y + h * 0.35, w * 0.2, h * 0.2);
+    ctx.fillRect(x + w * 0.6, y + h * 0.35, w * 0.2, h * 0.2);
+    ctx.fillRect(x + w * 0.3, y + h * 0.65, w * 0.4, h * 0.12);
+    ctx.strokeStyle = "#3A1B10";
+    ctx.lineWidth = Math.max(1, w * 0.04);
+    ctx.strokeRect(x + w * 0.1, y + h * 0.1, w * 0.8, h * 0.8);
+}
+
+function drawPhantom(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.fillStyle = "#4B0082";
+    ctx.fillRect(x + w * 0.25, y + h * 0.35, w * 0.5, h * 0.3);
+    ctx.fillStyle = "#2C003E";
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.25, y + h * 0.5);
+    ctx.lineTo(x, y + h * 0.2);
+    ctx.lineTo(x + w * 0.2, y + h * 0.7);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.75, y + h * 0.5);
+    ctx.lineTo(x + w, y + h * 0.2);
+    ctx.lineTo(x + w * 0.8, y + h * 0.7);
+    ctx.fill();
+    ctx.fillStyle = "#E0E0FF";
+    ctx.fillRect(x + w * 0.45, y + h * 0.42, w * 0.08, h * 0.08);
+}
+
+function drawGhast(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.fillStyle = "#F5F5F5";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "#E0E0E0";
+    ctx.fillRect(x + 4, y + 4, w - 8, h - 8);
+    ctx.fillStyle = "#333";
+    ctx.fillRect(x + w * 0.25, y + h * 0.35, w * 0.12, h * 0.12);
+    ctx.fillRect(x + w * 0.63, y + h * 0.35, w * 0.12, h * 0.12);
+    ctx.fillRect(x + w * 0.42, y + h * 0.6, w * 0.16, h * 0.18);
+    ctx.strokeStyle = "#C0C0C0";
+    ctx.lineWidth = Math.max(1, w * 0.06);
+    for (let i = 0; i < 4; i++) {
+        const tx = x + w * 0.2 + i * w * 0.18;
+        ctx.beginPath();
+        ctx.moveTo(tx, y + h);
+        ctx.lineTo(tx, y + h + h * 0.25);
+        ctx.stroke();
+    }
+}
+
+function drawBlaze(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.fillStyle = "#FFB300";
+    ctx.fillRect(x + w * 0.25, y + h * 0.25, w * 0.5, h * 0.5);
+    ctx.fillStyle = "#6D4C41";
+    ctx.fillRect(x + w * 0.4, y + h * 0.4, w * 0.08, h * 0.08);
+    ctx.fillRect(x + w * 0.52, y + h * 0.4, w * 0.08, h * 0.08);
+    const angle = gameFrame * 0.05;
+    ctx.strokeStyle = "#FF8C00";
+    ctx.lineWidth = Math.max(2, w * 0.08);
+    for (let i = 0; i < 6; i++) {
+        const a = angle + (Math.PI * 2 * i) / 6;
+        const rx = x + w * 0.5 + Math.cos(a) * w * 0.45;
+        const ry = y + h * 0.5 + Math.sin(a) * h * 0.45;
+        ctx.beginPath();
+        ctx.moveTo(x + w * 0.5, y + h * 0.5);
+        ctx.lineTo(rx, ry);
+        ctx.stroke();
+    }
 }
 
 function drawSkeleton(enemy) {
@@ -3074,6 +3759,9 @@ function drawDecoration(decor) {
         case "vine":
             drawVine(decor);
             break;
+        case "vine_ladder":
+            drawVineLadder(decor);
+            break;
         case "ice_spike":
             drawIceSpike(decor);
             break;
@@ -3106,6 +3794,12 @@ function drawDecoration(decor) {
             break;
         case "crystal":
             drawCrystal(decor);
+            break;
+        case "cave_entrance":
+            drawCaveEntrance(decor);
+            break;
+        case "cave_exit":
+            drawCaveExit(decor);
             break;
         case "lava_pool":
             drawLavaPool(decor);
@@ -3218,6 +3912,23 @@ function drawVine(vine) {
         const leafX = x + sway * (i / segments);
         ctx.fillRect(leafX - 3, leafY, 6, 4);
     }
+}
+
+function drawVineLadder(vine) {
+    const x = vine.x;
+    const y = vine.y;
+    const sway = Math.sin(vine.animFrame * 0.04 + vine.swayOffset) * 2;
+    ctx.fillStyle = "#228B22";
+    ctx.fillRect(x + 5 + sway, y, 6, vine.height);
+    ctx.fillRect(x + 18 + sway, y, 6, vine.height);
+    ctx.fillStyle = "#2E8B2E";
+    for (let i = 0; i < vine.height; i += 24) {
+        ctx.fillRect(x + sway, y + i, vine.width, 4);
+    }
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.font = "12px Verdana";
+    ctx.textAlign = "center";
+    ctx.fillText("☁️", x + vine.width / 2, y - 6);
 }
 
 function drawIceSpike(spike) {
@@ -3411,6 +4122,32 @@ function drawCrystal(crystal) {
     ctx.lineTo(x, y + 16);
     ctx.closePath();
     ctx.fill();
+}
+
+function drawCaveEntrance(entrance) {
+    const x = entrance.x;
+    const y = entrance.y;
+    ctx.fillStyle = "#2E2E2E";
+    ctx.fillRect(x, y + 8, 50, 32);
+    ctx.fillStyle = "#111";
+    ctx.beginPath();
+    ctx.arc(x + 25, y + 18, 16, Math.PI, 0);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.15)";
+    ctx.fillRect(x + 6, y + 10, 8, 6);
+}
+
+function drawCaveExit(exit) {
+    const x = exit.x;
+    const y = exit.y;
+    ctx.fillStyle = "#6D4C41";
+    ctx.fillRect(x, y + 8, 50, 32);
+    ctx.fillStyle = "#3E2723";
+    ctx.beginPath();
+    ctx.arc(x + 25, y + 18, 16, Math.PI, 0);
+    ctx.fill();
+    ctx.fillStyle = "#FFD54F";
+    ctx.fillRect(x + 22, y + 14, 6, 10);
 }
 
 function drawLavaPool(pool) {
@@ -3680,6 +4417,81 @@ class Platform extends Entity {
     }
 }
 
+class MovingPlatform extends Platform {
+    constructor(x, y, w, h, type, moveType = "horizontal", range = 100, speed = 1) {
+        super(x, y, w, h, type);
+        this.moveType = moveType;
+        this.range = range;
+        this.speed = speed;
+        this.startX = x;
+        this.startY = y;
+        this.direction = 1;
+        this.isMoving = true;
+    }
+    update() {
+        if (!this.isMoving) return;
+        if (this.moveType === "horizontal") {
+            this.x += this.speed * this.direction;
+            if (this.x > this.startX + this.range || this.x < this.startX - this.range) {
+                this.direction *= -1;
+            }
+        } else if (this.moveType === "vertical") {
+            this.y += this.speed * this.direction;
+            if (this.y > this.startY + this.range || this.y < this.startY - this.range) {
+                this.direction *= -1;
+            }
+        }
+    }
+}
+
+class CloudPlatform extends Platform {
+    constructor(x, y, w, h, cloudType = "normal") {
+        super(x, y, w, h, "cloud");
+        this.cloudType = cloudType;
+        this.config = CLOUD_PLATFORM_CONFIG[cloudType] || CLOUD_PLATFORM_CONFIG.normal;
+        this.standTimer = 0;
+        this.disappeared = false;
+        this.respawnTimer = 0;
+        if (cloudType === "moving") {
+            this.startX = x;
+            this.direction = 1;
+        }
+    }
+    update() {
+        if (this.cloudType === "moving" && !this.disappeared) {
+            const speed = this.config.moveSpeed || 0.6;
+            const range = this.config.moveRange || 80;
+            this.x += speed * this.direction;
+            if (Math.abs(this.x - this.startX) > range) {
+                this.direction *= -1;
+            }
+        }
+        if (this.cloudType === "thin" && this.standTimer > 0) {
+            this.standTimer--;
+            if (this.standTimer <= 0 && !this.disappeared) {
+                this.disappeared = true;
+                this.respawnTimer = this.config.respawnTime || 240;
+            }
+        }
+        if (this.disappeared && this.respawnTimer > 0) {
+            this.respawnTimer--;
+            if (this.respawnTimer <= 0) {
+                this.disappeared = false;
+                this.standTimer = 0;
+            }
+        }
+    }
+    onPlayerLand(playerRef) {
+        if (this.cloudType === "thin" && this.standTimer === 0) {
+            this.standTimer = this.config.duration || 60;
+        }
+        if (this.cloudType === "bouncy") {
+            playerRef.velY = this.config.bounceForce || -12;
+            showFloatingText("Bounce!", playerRef.x, playerRef.y - 30);
+        }
+    }
+}
+
 class Tree extends Entity {
     constructor(x, y, type) {
         const h = 140;
@@ -3744,10 +4556,18 @@ class Chest extends Entity {
         });
         updateHpUI();
         updateInventoryUI();
-        const summary = drops.map(d => `${ITEM_ICONS[d.item] || "✨"}x${d.count}`).join(" ");
-        const rarityLabel = { common: "普通", rare: "稀有", epic: "史诗", legendary: "传说" }[rarity] || "普通";
+        const summary = drops.map(d => `${ITEM_ICONS[d.item] || "�?}x${d.count}`).join(" ");
+        const rarityLabel = { common: "普�?, rare: "稀�?, epic: "史诗", legendary: "传说" }[rarity] || "普�?;
         showFloatingText("🎁", this.x + 10, this.y - 30);
         if (summary) showToast(`宝箱(${rarityLabel}): ${summary}`);
+        if (settings.learningMode) {
+            const word = pickWordForSpawn();
+            if (word) {
+                recordWordProgress(word);
+                speakWord(word);
+                showFloatingText(word.zh || word.en, this.x + 20, this.y - 50);
+            }
+        }
     }
 }
 
@@ -3880,6 +4700,38 @@ class Vine extends Decoration {
     }
 }
 
+class VineLadder extends Decoration {
+    constructor(x, y, height = 200) {
+        super(x, y, "vine_ladder", "forest");
+        this.reset(x, y, height);
+    }
+    reset(x, y, height = 200) {
+        this.resetBase(x, y, "vine_ladder", "forest");
+        this.width = 30;
+        this.height = height;
+        this.animated = true;
+        this.swayOffset = Math.random() * Math.PI * 2;
+        this.climbSpeed = 2.6;
+    }
+    update(playerRef) {
+        if (!playerRef) return;
+        const inRange = rectIntersect(
+            playerRef.x, playerRef.y, playerRef.width, playerRef.height,
+            this.x, this.y, this.width, this.height
+        );
+        const climb = keys.up || (settings.touchControls && jumpBuffer > 0);
+        if (inRange && climb) {
+            playerRef.velY = -this.climbSpeed;
+            playerRef.velX *= 0.5;
+            playerRef.grounded = true;
+            playerRef.jumpCount = 0;
+            if (playerRef.y <= this.y + 30) {
+                enterSky();
+            }
+        }
+    }
+}
+
 class IceSpike extends Decoration {
     constructor(x, y) {
         super(x, y, "ice_spike", "snow");
@@ -4004,7 +4856,7 @@ class Ore extends Decoration {
     }
     interact() {
         if (inventory.iron_pickaxe <= 0) {
-            showToast("❌ 需要铁镐");
+            showToast("�?需要铁�?);
             return;
         }
         this.hp--;
@@ -4012,7 +4864,7 @@ class Ore extends Decoration {
         if (this.hp <= 0) {
             inventory[this.oreType] = (inventory[this.oreType] || 0) + 1;
             this.remove = true;
-            showFloatingText(`✨ +1 ${this.oreType}`, this.x, this.y);
+            showFloatingText(`�?+1 ${this.oreType}`, this.x, this.y);
             updateInventoryUI();
         }
     }
@@ -4041,6 +4893,38 @@ class Crystal extends Decoration {
         this.width = 18;
         this.height = 28;
         this.animated = true;
+    }
+}
+
+class CaveEntrance extends Decoration {
+    constructor(x, y) {
+        super(x, y, "cave_entrance", "forest");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "cave_entrance", "forest");
+        this.width = 50;
+        this.height = 40;
+        this.collectible = true;
+    }
+    interact() {
+        if (!undergroundMode) enterUnderground("entrance");
+    }
+}
+
+class CaveExit extends Decoration {
+    constructor(x, y) {
+        super(x, y, "cave_exit", "cave");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "cave_exit", "cave");
+        this.width = 50;
+        this.height = 40;
+        this.collectible = true;
+    }
+    interact() {
+        if (undergroundMode) exitUnderground();
     }
 }
 
@@ -4095,7 +4979,7 @@ class Starfish extends Decoration {
     interact() {
         inventory.starfish = (inventory.starfish || 0) + 1;
         this.remove = true;
-        showFloatingText("⭐ +1", this.x, this.y);
+        showFloatingText("�?+1", this.x, this.y);
         updateInventoryUI();
     }
 }
@@ -4402,6 +5286,66 @@ const ENEMY_STATS = {
         drops: ["dragon_egg"],
         scoreValue: 200,
         size: { w: 120, h: 60 }
+    },
+    cave_spider: {
+        hp: 16,
+        speed: 1.3,
+        damage: 9,
+        attackType: "melee",
+        color: "#3A3A3A",
+        drops: ["string", "spider_eye"],
+        scoreValue: 22,
+        size: { w: 38, h: 22 }
+    },
+    slime: {
+        hp: 14,
+        speed: 0.6,
+        damage: 8,
+        attackType: "bounce",
+        color: "#4CAF50",
+        drops: ["slime_ball"],
+        scoreValue: 18,
+        size: { w: 32, h: 32 }
+    },
+    magma_cube: {
+        hp: 22,
+        speed: 0.5,
+        damage: 12,
+        attackType: "bounce",
+        color: "#FF5722",
+        drops: ["magma_cream"],
+        scoreValue: 30,
+        size: { w: 34, h: 34 }
+    },
+    phantom: {
+        hp: 26,
+        speed: 2.0,
+        damage: 12,
+        attackType: "dive",
+        color: "#4B0082",
+        drops: ["phantom_membrane"],
+        scoreValue: 40,
+        size: { w: 52, h: 26 }
+    },
+    ghast: {
+        hp: 40,
+        speed: 0.8,
+        damage: 20,
+        attackType: "ranged",
+        color: "#F5F5F5",
+        drops: ["ghast_tear"],
+        scoreValue: 60,
+        size: { w: 52, h: 52 }
+    },
+    blaze: {
+        hp: 30,
+        speed: 1.2,
+        damage: 15,
+        attackType: "ranged",
+        color: "#FF8C00",
+        drops: ["blaze_rod"],
+        scoreValue: 50,
+        size: { w: 34, h: 40 }
     }
 };
 
@@ -4510,6 +5454,10 @@ class Enemy extends Entity {
         this.color = stats.color;
         this.drops = stats.drops || [];
         this.scoreValue = Math.max(1, Math.round((stats.scoreValue || gameConfig.scoring.enemy) * diff.scoreMultiplier));
+        this.baseHp = this.hp;
+        this.baseDamage = this.damage;
+        this.baseSpeed = this.speed;
+        this.baseSize = { ...size };
         this.dir = 1;
         this.state = "patrol";
         this.attackCooldown = 0;
@@ -4518,6 +5466,13 @@ class Enemy extends Entity {
         this.phaseChanged = false;
         this.velY = 0;
         this.grounded = false;
+        if (this.type === "slime" || this.type === "magma_cube") {
+            this.sizeStage = 2;
+            this.applySlimeSize();
+        }
+        if (this.isFlyingType()) {
+            this.flyPhase = Math.random() * Math.PI * 2;
+        }
     }
 
     takeDamage(amount) {
@@ -4527,6 +5482,20 @@ class Enemy extends Entity {
     }
 
     die() {
+        const spawnX = this.x;
+        const spawnY = this.y;
+        if ((this.type === "slime" || this.type === "magma_cube") && (this.sizeStage ?? 0) > 0) {
+            const nextStage = this.sizeStage - 1;
+            for (let i = 0; i < 2; i++) {
+                const offset = i === 0 ? -12 : 12;
+                const child = new Enemy(spawnX + offset, spawnY - 4, this.type);
+                child.sizeStage = nextStage;
+                child.applySlimeSize();
+                child.velY = -4;
+                child.dir = i === 0 ? -1 : 1;
+                enemies.push(child);
+            }
+        }
         this.remove = true;
         this.y = 1000;
         if (Math.random() < 0.6 && this.drops.length) {
@@ -4546,6 +5515,9 @@ class Enemy extends Entity {
             case "spider":
                 this.updateSpider(playerRef);
                 break;
+            case "cave_spider":
+                this.updateCaveSpider(playerRef);
+                break;
             case "creeper":
                 this.updateCreeper(playerRef);
                 break;
@@ -4554,6 +5526,21 @@ class Enemy extends Entity {
                 break;
             case "enderman":
                 this.updateEnderman(playerRef);
+                break;
+            case "slime":
+                this.updateSlime(playerRef);
+                break;
+            case "magma_cube":
+                this.updateMagmaCube(playerRef);
+                break;
+            case "phantom":
+                this.updatePhantom(playerRef);
+                break;
+            case "ghast":
+                this.updateGhast(playerRef);
+                break;
+            case "blaze":
+                this.updateBlaze(playerRef);
                 break;
             case "ender_dragon":
                 this.updateEnderDragon(playerRef);
@@ -4568,7 +5555,7 @@ class Enemy extends Entity {
     }
 
     applyGravity() {
-        if (this.type === "ender_dragon") return;
+        if (this.isFlyingType()) return;
         this.velY += gameConfig.physics.gravity;
         this.y += this.velY;
         this.grounded = false;
@@ -4587,6 +5574,26 @@ class Enemy extends Entity {
         if (this.y > fallResetY) {
             this.remove = true;
         }
+    }
+
+    isFlyingType() {
+        return this.type === "ender_dragon" || this.type === "phantom" || this.type === "ghast" || this.type === "blaze";
+    }
+
+    applySlimeSize() {
+        if (this.type !== "slime" && this.type !== "magma_cube") return;
+        const stage = Math.max(0, Math.min(2, this.sizeStage ?? 2));
+        const scale = stage === 2 ? 1 : stage === 1 ? 0.7 : 0.5;
+        const centerX = this.x + this.width / 2;
+        const centerY = this.y + this.height / 2;
+        this.width = this.baseSize.w * scale;
+        this.height = this.baseSize.h * scale;
+        this.x = centerX - this.width / 2;
+        this.y = centerY - this.height / 2;
+        this.maxHp = Math.max(1, Math.round(this.baseHp * scale));
+        this.hp = Math.min(this.hp, this.maxHp);
+        this.damage = Math.max(1, Math.round(this.baseDamage * scale));
+        this.speed = this.baseSpeed * (1 + (2 - stage) * 0.15);
     }
 
     updateBasic() {
@@ -4610,6 +5617,21 @@ class Enemy extends Entity {
         if (dist < 240) {
             this.state = "chase";
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+        } else {
+            this.state = "patrol";
+            this.updateBasic();
+        }
+    }
+
+    updateCaveSpider(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        if (dist < 260) {
+            this.state = "chase";
+            this.dir = playerRef.x > this.x ? 1 : -1;
+            this.x += this.dir * this.speed * 1.1;
+            if (this.grounded && Math.random() < 0.02) {
+                this.velY = -6;
+            }
         } else {
             this.state = "patrol";
             this.updateBasic();
@@ -4661,11 +5683,99 @@ class Enemy extends Entity {
             this.x = playerRef.x + (Math.random() > 0.5 ? 120 : -120);
             this.y = playerRef.y;
             this.teleportCooldown = 180;
-            showFloatingText("⚡", this.x, this.y);
+            showFloatingText("�?, this.x, this.y);
         } else if (dist < 150) {
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
         } else {
             this.updateBasic();
+        }
+    }
+
+    updateSlime(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        this.dir = playerRef.x > this.x ? 1 : -1;
+        if (this.grounded) {
+            if (this.attackCooldown === 0) {
+                this.velY = -7;
+                this.attackCooldown = 60;
+            }
+            if (dist < 240) {
+                this.x += this.dir * this.speed;
+            } else {
+                this.updateBasic();
+            }
+        } else {
+            this.x += this.dir * this.speed * 0.6;
+        }
+    }
+
+    updateMagmaCube(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        this.dir = playerRef.x > this.x ? 1 : -1;
+        if (this.grounded) {
+            if (this.attackCooldown === 0) {
+                this.velY = -9;
+                this.attackCooldown = 50;
+            }
+            if (dist < 260) {
+                this.x += this.dir * this.speed * 1.1;
+            } else {
+                this.updateBasic();
+            }
+        } else {
+            this.x += this.dir * this.speed * 0.7;
+        }
+    }
+
+    updatePhantom(playerRef) {
+        const distX = playerRef.x - this.x;
+        this.dir = distX >= 0 ? 1 : -1;
+        this.x += Math.sign(distX) * this.speed;
+        const hoverY = Math.max(60, playerRef.y - 140 + Math.sin(gameFrame * 0.05 + this.flyPhase) * 30);
+        if (this.state === "dive") {
+            this.y += 5;
+            if (this.y >= playerRef.y - 10) {
+                this.state = "recover";
+            }
+        } else if (this.state === "recover") {
+            this.y += (hoverY - this.y) * 0.08;
+            if (Math.abs(this.y - hoverY) < 2) {
+                this.state = "patrol";
+            }
+        } else {
+            this.y += (hoverY - this.y) * 0.06;
+            if (this.attackCooldown === 0 && Math.abs(distX) < 200 && Math.random() < 0.02) {
+                this.state = "dive";
+                this.attackCooldown = 120;
+            }
+        }
+    }
+
+    updateGhast(playerRef) {
+        const distX = playerRef.x - this.x;
+        const targetX = playerRef.x + (distX > 0 ? -220 : 220);
+        this.x += Math.sign(targetX - this.x) * this.speed;
+        const hoverY = Math.max(60, playerRef.y - 160 + Math.sin(gameFrame * 0.02 + this.flyPhase) * 20);
+        this.y += (hoverY - this.y) * 0.04;
+        if (this.attackCooldown === 0 && Math.abs(distX) < 360) {
+            const fireball = projectilePool.getFireball(this.x + this.width / 2, this.y + this.height / 2, playerRef.x, playerRef.y);
+            fireball.damage = this.damage;
+            if (!projectiles.includes(fireball)) projectiles.push(fireball);
+            this.attackCooldown = 150;
+        }
+    }
+
+    updateBlaze(playerRef) {
+        const distX = playerRef.x - this.x;
+        const targetX = playerRef.x + (distX > 0 ? -140 : 140);
+        this.x += Math.sign(targetX - this.x) * this.speed * 1.2;
+        const hoverY = Math.max(60, playerRef.y - 120 + Math.sin(gameFrame * 0.08 + this.flyPhase) * 40);
+        this.y += (hoverY - this.y) * 0.06;
+        if (this.attackCooldown === 0 && Math.abs(distX) < 300) {
+            const fireball = projectilePool.getFireball(this.x + this.width / 2, this.y + this.height / 2, playerRef.x, playerRef.y);
+            fireball.damage = this.damage;
+            if (!projectiles.includes(fireball)) projectiles.push(fireball);
+            this.attackCooldown = 90;
         }
     }
 
@@ -4683,6 +5793,7 @@ class Enemy extends Entity {
 
         if (this.attackCooldown === 0 && Math.random() < 0.02) {
             const fireball = projectilePool.getFireball(this.x + 40, this.y + 20, playerRef.x, playerRef.y);
+            fireball.damage = this.damage;
             if (!projectiles.includes(fireball)) projectiles.push(fireball);
             this.attackCooldown = phase === 1 ? 120 : 60;
         }
@@ -4847,12 +5958,14 @@ function wireSettingsModal() {
     const optOrientationLock = document.getElementById("opt-orientation-lock");
     const optMotionScale = document.getElementById("opt-motion-scale");
     const optBiomeStep = document.getElementById("opt-biome-step");
+    const optGameDifficulty = document.getElementById("opt-game-difficulty");
     const optTouch = document.getElementById("opt-touch");
     const optNoRepeat = document.getElementById("opt-no-repeat");
     const optVocab = document.getElementById("opt-vocab");
     const optVocabStage = document.getElementById("opt-vocab-stage");
     const optVocabDifficulty = document.getElementById("opt-vocab-difficulty");
     const optShowImage = document.getElementById("opt-show-image");
+    const optShowLabels = document.getElementById("opt-show-labels");
     const optKeys = document.getElementById("opt-keys");
     let resetArmed = false;
     let resetTimer = null;
@@ -4868,9 +5981,11 @@ function wireSettingsModal() {
         if (optOrientationLock) optOrientationLock.value = String(settings.orientationLock || "auto");
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
         if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 200);
+        if (optGameDifficulty) optGameDifficulty.value = settings.gameDifficulty || "medium";
         if (optTouch) optTouch.checked = !!settings.touchControls;
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
+        if (optShowLabels) optShowLabels.checked = !!settings.showEnvironmentLabels;
         if (optVocab) optVocab.value = settings.vocabSelection || "auto";
         if (optVocabStage) optVocabStage.value = settings.vocabStage || "auto";
         if (optVocabDifficulty) optVocabDifficulty.value = settings.vocabDifficulty || "auto";
@@ -4910,15 +6025,18 @@ function wireSettingsModal() {
         if (optOrientationLock) settings.orientationLock = String(optOrientationLock.value || "auto");
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);
         if (optBiomeStep) settings.biomeSwitchStepScore = Number(optBiomeStep.value);
+        if (optGameDifficulty) settings.gameDifficulty = String(optGameDifficulty.value || "medium");
         if (optTouch) settings.touchControls = !!optTouch.checked;
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
         if (optShowImage) settings.showWordImage = !!optShowImage.checked;
+        if (optShowLabels) settings.showEnvironmentLabels = !!optShowLabels.checked;
         if (optVocab) settings.vocabSelection = String(optVocab.value || "auto");
         if (optVocabStage) settings.vocabStage = String(optVocabStage.value || "auto");
         if (optVocabDifficulty) settings.vocabDifficulty = String(optVocabDifficulty.value || "auto");
         if (optKeys) settings.keyCodes = String(optKeys.value || "");
 
         settings = normalizeSettings(settings);
+        difficultyState = null;
         if (settings.deviceMode === "phone") settings.touchControls = true;
         const parsed = parseKeyCodes(settings.keyCodes);
         if (parsed) {
@@ -4933,6 +6051,7 @@ function wireSettingsModal() {
         applyBgmSetting();
         saveSettings();
         applySettingsToUI();
+        updateDifficultyState(true);
         if (player) {
             applyMotionToPlayer(player);
             applyBiomeEffectsToPlayer();
@@ -4948,7 +6067,7 @@ function wireSettingsModal() {
         btnResetProgress.addEventListener("click", () => {
             if (!resetArmed) {
                 resetArmed = true;
-                btnResetProgress.innerText = "再点一次确认";
+                btnResetProgress.innerText = "再点一次确�?;
                 if (resetTimer) clearTimeout(resetTimer);
                 resetTimer = setTimeout(() => {
                     resetArmed = false;
@@ -4976,7 +6095,7 @@ function wireHudButtons() {
             if (repeatPauseState === "repeat") {
                 if (lastWord) speakWord(lastWord);
                 repeatPauseState = "pause";
-                btnMix.innerText = "⏸ 暂停";
+                btnMix.innerText = "�?暂停";
                 return;
             }
             paused = !paused;
@@ -4995,7 +6114,7 @@ function wireHudButtons() {
             } else if (inventory.pumpkin >= 10) {
                 tryCraft("snow_golem");
             } else {
-                showToast("材料不足！需要 10 个铁块或南瓜");
+                showToast("材料不足！需�?10 个铁块或南瓜");
             }
         });
     }
@@ -5105,6 +6224,8 @@ async function start() {
         const isJump = matchesBinding(e, keyBindings.jump) || e.code === "ArrowUp" || e.code === "Space";
         const isRight = matchesBinding(e, keyBindings.right) || e.code === "ArrowRight" || e.key === "ArrowRight";
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
+        const isDown = e.code === "ArrowDown" || String(e.key || "").toLowerCase() === "s";
+        const isUp = e.code === "ArrowUp" || String(e.key || "").toLowerCase() === "w";
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
         const isWeaponSwitch = matchesBinding(e, keyBindings.switch) || String(e.key || "").toLowerCase() === "k";
         const isInteract = matchesBinding(e, keyBindings.interact) || String(e.key || "").toLowerCase() === "y";
@@ -5120,6 +6241,8 @@ async function start() {
         }
         if (isRight) keys.right = true;
         if (isLeft) keys.left = true;
+        if (isDown) keys.down = true;
+        if (isUp) keys.up = true;
         if (isAttack) handleAttack("press");
         if (isWeaponSwitch) switchWeapon();
         if (isUseDiamond) useDiamondForHp();
@@ -5129,7 +6252,7 @@ async function start() {
             selectedSlot = parseInt(e.key, 10) - 1;
             updateInventoryUI();
             const itemKey = HOTBAR_ITEMS[selectedSlot];
-            showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "空"}`);
+            showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "�?}`);
         }
         if (!inInput && String(e.key || "").toLowerCase() === "x" && !paused) {
             if (inventory.iron >= 10) {
@@ -5137,13 +6260,13 @@ async function start() {
             } else if (inventory.pumpkin >= 10) {
                 tryCraft("snow_golem");
             } else {
-                showToast("材料不足！需要 10 个铁块或南瓜");
+                showToast("材料不足！需�?10 个铁块或南瓜");
             }
         }
         if (isPause && startedOnce) {
             paused = !paused;
             const btnPause = document.getElementById("btn-pause");
-            if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
+            if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "�?暂停";
             if (paused) setOverlay(true, "pause");
             else setOverlay(false);
         }
@@ -5152,13 +6275,17 @@ async function start() {
     window.addEventListener("keyup", e => {
         const isRight = matchesBinding(e, keyBindings.right) || e.code === "ArrowRight" || e.key === "ArrowRight";
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
+        const isDown = e.code === "ArrowDown" || String(e.key || "").toLowerCase() === "s";
+        const isUp = e.code === "ArrowUp" || String(e.key || "").toLowerCase() === "w";
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
         if (isRight) keys.right = false;
         if (isLeft) keys.left = false;
+        if (isDown) keys.down = false;
+        if (isUp) keys.up = false;
         if (isAttack) handleAttackRelease();
     });
 
-    window.addEventListener("blur", () => { keys.right = false; keys.left = false; });
+    window.addEventListener("blur", () => { keys.right = false; keys.left = false; keys.down = false; keys.up = false; });
     document.addEventListener("visibilitychange", () => {
         if (!startedOnce) return;
         if (document.hidden) {
