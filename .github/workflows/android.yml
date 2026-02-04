@@ -50,6 +50,53 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Check signing secrets
+        id: signing
+        shell: bash
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          enabled=true
+          missing=""
+
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then enabled=false; missing="$missing ANDROID_KEYSTORE_BASE64"; fi
+          if [ -z "$ANDROID_KEYSTORE_PASSWORD" ]; then enabled=false; missing="$missing ANDROID_KEYSTORE_PASSWORD"; fi
+          if [ -z "$ANDROID_KEY_ALIAS" ]; then enabled=false; missing="$missing ANDROID_KEY_ALIAS"; fi
+          if [ -z "$ANDROID_KEY_PASSWORD" ]; then enabled=false; missing="$missing ANDROID_KEY_PASSWORD"; fi
+
+          echo "enabled=$enabled" >> "$GITHUB_OUTPUT"
+          echo "missing=$missing" >> "$GITHUB_OUTPUT"
+
+      - name: Require signing secrets (release must be installable)
+        if: ${{ steps.signing.outputs.enabled != 'true' }}
+        shell: bash
+        run: |
+          echo "Missing signing secrets. Release APK must be signed to be installable." >&2
+          echo "Set ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD / ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD in GitHub Secrets." >&2
+          echo "Missing:${{ steps.signing.outputs.missing }}" >&2
+          exit 1
+
+      - name: Decode Android signing keystore
+        shell: bash
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > apk/android-app/android/app/release.keystore
+
+      - name: Verify signing keystore (no secrets printed)
+        shell: bash
+        working-directory: apk/android-app/android
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          test -s app/release.keystore
+          keytool -list -keystore app/release.keystore -storepass "$SIGNING_STORE_PASSWORD" -alias "$SIGNING_KEY_ALIAS" >/dev/null
+          echo "Keystore OK"
+
       - name: Capacitor sync
         working-directory: apk/android-app
         run: npx cap sync android
@@ -60,10 +107,21 @@ jobs:
 
       - name: Build Debug APK
         working-directory: apk/android-app/android
+        env:
+          SIGNING_STORE_FILE: release.keystore
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: ./gradlew assembleDebug
 
       - name: Build Release APK
         working-directory: apk/android-app/android
+        env:
+          # build.gradle resolves relative paths from the app module directory (apk/android-app/android/app).
+          SIGNING_STORE_FILE: release.keystore
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: ./gradlew assembleRelease
 
       - name: Rename APK files with version
@@ -71,7 +129,16 @@ jobs:
           VERSION=${{ steps.version.outputs.version }}
           cd apk/android-app/android/app/build/outputs/apk
           mv debug/app-debug.apk debug/mario-minecraft-game-${VERSION}-debug.apk
-          mv release/app-release-unsigned.apk release/mario-minecraft-game-${VERSION}-release.apk
+          if [ -f release/app-release.apk ]; then
+            mv release/app-release.apk release/mario-minecraft-game-${VERSION}-release.apk
+          elif [ -f release/app-release-unsigned.apk ]; then
+            echo "ERROR: release APK is unsigned; signing secrets may be missing/misconfigured." >&2
+            exit 1
+          else
+            echo "ERROR: release APK not found." >&2
+            ls -la release || true
+            exit 1
+          fi
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4

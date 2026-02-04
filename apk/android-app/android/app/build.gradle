@@ -31,6 +31,12 @@ android {
         }
     }
     buildTypes {
+        debug {
+            // CI debug builds should be upgradable without uninstalling, so use the same keystore when provided.
+            if (signingStoreFile) {
+                signingConfig signingConfigs.release
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
