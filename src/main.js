@@ -98,7 +98,7 @@ const ITEM_LABELS = {
     flower: "花朵",
     mushroom: "蘑菇",
     coal: "煤矿",
-    gold: "钻石",
+    gold: "黄金",
     shell: "贝壳",
     starfish: "海星"
 };
@@ -119,7 +119,7 @@ const ITEM_ICONS = {
     flower: "🌸",
     mushroom: "🍄",
     coal: "🪨",
-    gold: "💎",
+    gold: "🪙",
     shell: "🐚",
     starfish: "⭐",
     hp: "❤️",
@@ -1065,6 +1065,9 @@ function scaleBiomeConfigs() {
 }
 
 function scaleCloudPlatformConfig() {
+    // Cloud platforms are an optional feature. Some builds/scripts may not include the
+    // config (and related entities). Guard to avoid crashing the whole game.
+    if (typeof CLOUD_PLATFORM_CONFIG === "undefined") return;
     if (!baseCloudPlatformConfig) baseCloudPlatformConfig = JSON.parse(JSON.stringify(CLOUD_PLATFORM_CONFIG));
     Object.keys(CLOUD_PLATFORM_CONFIG).forEach(key => {
         const base = baseCloudPlatformConfig[key];
@@ -1417,7 +1420,7 @@ function setOverlay(visible, mode) {
         overlayMode = mode || "pause";
         if (mode === "pause") {
             if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用金币<br>Y 打开宝箱 E 采集";
+            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用钻石<br>Y 打开宝箱 E 采集";
             if (btn) btn.innerText = "继续";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
@@ -1426,15 +1429,15 @@ function setOverlay(visible, mode) {
                 const level = Math.max(1, Math.floor(score / 1000) + 1);
                 text.innerHTML =
                     `📚 学习单词: ${getLearnedWordCount()}<br>` +
-                    `🪙 金币: ${diamonds}<br>` +
+                    `💎 钻石: ${diamonds}<br>` +
                     `⭐ 当前积分: ${score}<br>` +
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
                     `🏅 玩家等级: ${level}`;
             }
-            if (btn) btn.innerText = diamonds >= 10 ? "🪙10 复活" : "重新开始";
+            if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用金币<br>Y 打开宝箱 E 采集";
+            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用钻石<br>Y 打开宝箱 E 采集";
             if (btn) btn.innerText = "开始游戏";
         }
     } else {
@@ -5085,11 +5088,11 @@ function wireTouchControls() {
 
 async function start() {
     const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes] = await Promise.all([
-        loadJsonWithFallback("../config/game.json", defaultGameConfig),
-        loadJsonWithFallback("../config/controls.json", defaultControls),
-        loadJsonWithFallback("../config/levels.json", defaultLevels),
-        loadJsonWithFallback("../words/words-base.json", defaultWords),
-        loadJsonWithFallback("../config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS })
+        loadJsonWithFallback("config/game.json", defaultGameConfig),
+        loadJsonWithFallback("config/controls.json", defaultControls),
+        loadJsonWithFallback("config/levels.json", defaultLevels),
+        loadJsonWithFallback("words/words-base.json", defaultWords),
+        loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS })
     ]);
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
@@ -5106,7 +5109,9 @@ async function start() {
     baseEnemyStats = JSON.parse(JSON.stringify(ENEMY_STATS));
     baseWeapons = JSON.parse(JSON.stringify(WEAPONS));
     baseBiomeConfigs = JSON.parse(JSON.stringify(biomeConfigs));
-    baseCloudPlatformConfig = JSON.parse(JSON.stringify(CLOUD_PLATFORM_CONFIG));
+    baseCloudPlatformConfig = typeof CLOUD_PLATFORM_CONFIG === "undefined"
+        ? null
+        : JSON.parse(JSON.stringify(CLOUD_PLATFORM_CONFIG));
     settings = normalizeSettings(settings);
     const parsed = parseKeyCodes(settings.keyCodes);
     if (parsed) {
