@@ -927,6 +927,15 @@ let baseBiomeConfigs = null;
 let baseCloudPlatformConfig = null;
 let worldScale = { x: 1, y: 1, unit: 1 };
 let lastViewport = { width: 0, height: 0 };
+// Mobile browsers often change the visual viewport (URL bar show/hide) right after first interaction.
+// If we pause+reset immediately, the start overlay can appear "unclickable". We ignore viewport changes briefly.
+let viewportIgnoreUntilMs = 0;
+
+function nowMs() {
+    return (typeof performance !== "undefined" && performance && typeof performance.now === "function")
+        ? performance.now()
+        : Date.now();
+}
 
 function getViewportSize() {
     const w = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 0);
@@ -1387,6 +1396,7 @@ function applySettingsToUI() {
     }
 
     if (viewportChanged && startedOnce) {
+        if (nowMs() < viewportIgnoreUntilMs) return;
         initGame();
         paused = true;
         setOverlay(true, "start");
@@ -1432,6 +1442,8 @@ function setOverlay(visible, mode) {
     }
 }
 function resumeGameFromOverlay() {
+    // Prevent an immediate mobile viewport change from reopening the start overlay.
+    viewportIgnoreUntilMs = nowMs() + 900;
     if (overlayMode === "gameover") {
         if (getDiamondCount() >= 10) {
             inventory.diamond -= 10;
