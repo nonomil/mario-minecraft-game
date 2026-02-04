@@ -944,8 +944,33 @@ function nowMs() {
 }
 
 function getViewportSize() {
-    const w = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 0);
-    const h = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 0);
+    // Prefer visual viewport for more accurate sizing on mobile (URL bar / keyboard / zoom).
+    const vv = typeof window !== "undefined" ? window.visualViewport : null;
+    const w = Math.max(1, (vv && vv.width) ? vv.width : (window.innerWidth || document.documentElement.clientWidth || 0));
+    const h = Math.max(1, (vv && vv.height) ? vv.height : (window.innerHeight || document.documentElement.clientHeight || 0));
+    return { width: w, height: h };
+}
+
+function getSafeInsetsPx() {
+    const cs = getComputedStyle(document.documentElement);
+    const toPx = (v) => {
+        const n = Number(String(v || "").trim().replace("px", ""));
+        return Number.isFinite(n) ? n : 0;
+    };
+    return {
+        top: toPx(cs.getPropertyValue("--safe-top")),
+        right: toPx(cs.getPropertyValue("--safe-right")),
+        bottom: toPx(cs.getPropertyValue("--safe-bottom")),
+        left: toPx(cs.getPropertyValue("--safe-left"))
+    };
+}
+
+function getGameAreaSize() {
+    const vv = getViewportSize();
+    const insets = getSafeInsetsPx();
+    // Body already applies safe-area padding, so the usable game area is the visible viewport minus insets.
+    const w = Math.max(1, Math.floor(vv.width - insets.left - insets.right));
+    const h = Math.max(1, Math.floor(vv.height - insets.top - insets.bottom));
     return { width: w, height: h };
 }
 
@@ -971,8 +996,8 @@ function scaleGameConfig(viewport) {
     const scale = computeWorldScale(vp);
     const cfg = JSON.parse(JSON.stringify(baseGameConfig));
 
-    cfg.canvas.width = Math.round(vp.width);
-    cfg.canvas.height = Math.round(vp.height);
+    cfg.canvas.width = Math.max(1, Math.floor(vp.width));
+    cfg.canvas.height = Math.max(1, Math.floor(vp.height));
 
     if (cfg.physics) {
         cfg.physics.gravity = (baseGameConfig.physics?.gravity || 0) * scale.unit;
@@ -1086,15 +1111,10 @@ function scaleCloudPlatformConfig() {
 }
 
 function applyConfig(viewport = null) {
-    const vp = viewport || getViewportSize();
+    const vp = viewport || getGameAreaSize();
     gameConfig = scaleGameConfig(vp);
     canvas.width = gameConfig.canvas.width;
     canvas.height = gameConfig.canvas.height;
-    const container = document.getElementById("game-container");
-    if (container) {
-        container.style.width = `${gameConfig.canvas.width}px`;
-        container.style.height = `${gameConfig.canvas.height}px`;
-    }
     canvasHeight = gameConfig.canvas.height;
     groundY = gameConfig.physics.groundY;
     blockSize = gameConfig.world.blockSize;
@@ -1382,16 +1402,18 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
-    const viewport = getViewportSize();
-    applyConfig(viewport);
-    const viewportChanged = viewport.width !== lastViewport.width || viewport.height !== lastViewport.height;
-    lastViewport = { width: viewport.width, height: viewport.height };
+    const visualViewport = getViewportSize();
+    // Use the safe-area-adjusted game area for canvas + physics scaling.
+    const gameArea = getGameAreaSize();
+    applyConfig(gameArea);
+    const viewportChanged = gameArea.width !== lastViewport.width || gameArea.height !== lastViewport.height;
+    lastViewport = { width: gameArea.width, height: gameArea.height };
 
     const baseScale = Number(settings.uiScale) || 1.0;
     const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
     document.documentElement.style.setProperty("--ui-scale", uiScale.toFixed(3));
-    document.documentElement.style.setProperty("--vvw", `${viewport.width}px`);
-    document.documentElement.style.setProperty("--vvh", `${viewport.height}px`);
+    document.documentElement.style.setProperty("--vvw", `${Math.floor(visualViewport.width)}px`);
+    document.documentElement.style.setProperty("--vvh", `${Math.floor(visualViewport.height)}px`);
 
     const container = document.getElementById("game-container");
     if (container) {
@@ -1413,6 +1435,15 @@ function applySettingsToUI() {
         setOverlay(false);
         showToast("已适配屏幕，游戏重新开始");
     }
+}
+
+let applySettingsRaf = 0;
+function scheduleApplySettingsToUI() {
+    if (applySettingsRaf) return;
+    applySettingsRaf = requestAnimationFrame(() => {
+        applySettingsRaf = 0;
+        applySettingsToUI();
+    });
 }
 
 function setOverlay(visible, mode) {
@@ -5143,8 +5174,13 @@ async function start() {
     applyBgmSetting();
 
     applySettingsToUI();
-    window.addEventListener("resize", applySettingsToUI);
-    window.addEventListener("orientationchange", applySettingsToUI);
+    window.addEventListener("resize", scheduleApplySettingsToUI);
+    window.addEventListener("orientationchange", scheduleApplySettingsToUI);
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", scheduleApplySettingsToUI, { passive: true });
+        // Some mobile browsers only update visual viewport via scroll when the URL bar collapses/expands.
+        window.visualViewport.addEventListener("scroll", scheduleApplySettingsToUI, { passive: true });
+    }
     ensureVocabEngine();
     renderVocabSelect();
     await setActiveVocabPack(settings.vocabSelection || "auto");

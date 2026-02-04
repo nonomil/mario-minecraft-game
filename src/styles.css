@@ -21,9 +21,10 @@ html, body {
 body {
     background-color: #1a1a1a;
     display: block;
-    width: var(--vvw);
-    height: var(--vvh);
-    min-height: var(--vvh);
+    /* Prefer modern dynamic viewport units when available; JS still updates --vvw/--vvh for older quirks. */
+    width: var(--vvw, 100vw);
+    height: var(--vvh, 100vh);
+    min-height: var(--vvh, 100vh);
     padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
     box-sizing: border-box;
     font-family: "Verdana", sans-serif;
@@ -31,6 +32,14 @@ body {
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
+}
+
+@supports (height: 100dvh) {
+    body {
+        width: var(--vvw, 100dvw);
+        height: var(--vvh, 100dvh);
+        min-height: var(--vvh, 100dvh);
+    }
 }
 
 #game-container {
