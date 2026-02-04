@@ -47,6 +47,8 @@ let speechVoicesReady = false;
 let speechPendingWord = null;
 let speechPendingTimer = null;
 let speechPendingAttempts = 0;
+let ttsAudio = null;
+let ttsSeqId = 0;
 let bgmAudio = null;
 let bgmReady = false;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
@@ -486,6 +488,82 @@ function pickVoice(langPrefix) {
     if (!voices || !voices.length) return null;
     const lang = String(langPrefix || "").toLowerCase();
     return voices.find(v => String(v.lang || "").toLowerCase().startsWith(lang)) || null;
+}
+
+function getNativeTts() {
+    try {
+        const Cap = window.Capacitor;
+        if (!Cap || typeof Cap.isNativePlatform !== "function") return null;
+        if (!Cap.isNativePlatform()) return null;
+        const plugins = Cap.Plugins || {};
+        const tts = plugins.TextToSpeech;
+        if (!tts || typeof tts.speak !== "function") return null;
+        return tts;
+    } catch {
+        return null;
+    }
+}
+
+function speakNativeTts(tts, text, lang, rate) {
+    if (!tts || typeof tts.speak !== "function") return false;
+    if (!text) return false;
+    try {
+        tts.speak({
+            text: String(text),
+            lang: String(lang || ""),
+            rate: typeof rate === "number" ? rate : 1.0,
+            pitch: 1.0,
+            volume: 1.0,
+            category: "ambient",
+            // Ensure EN->ZH does not cancel EN on Android (default is Flush).
+            queueStrategy: 1
+        });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function buildOnlineTtsUrl(text, lang) {
+    const safeLang = String(lang || "").toLowerCase().startsWith("zh") ? "zh-CN" : "en";
+    return `https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(safeLang)}&q=${encodeURIComponent(text)}`;
+}
+
+function playOnlineTtsSequence(sequence) {
+    const items = Array.isArray(sequence) ? sequence.filter(it => it && it.text) : [];
+    if (!items.length) return false;
+
+    ttsSeqId += 1;
+    const seq = ttsSeqId;
+
+    if (!ttsAudio) {
+        ttsAudio = new Audio();
+        ttsAudio.preload = "auto";
+        ttsAudio.volume = 1;
+    }
+
+    const playAt = idx => {
+        if (seq !== ttsSeqId) return;
+        const item = items[idx];
+        if (!item) return;
+
+        const url = buildOnlineTtsUrl(item.text, item.lang);
+        try {
+            ttsAudio.onended = () => playAt(idx + 1);
+            ttsAudio.onerror = () => playAt(idx + 1);
+            try { ttsAudio.pause(); } catch {}
+            try { ttsAudio.currentTime = 0; } catch {}
+            ttsAudio.src = url;
+            const playPromise = ttsAudio.play();
+            if (playPromise && typeof playPromise.catch === "function") {
+                playPromise.catch(() => {});
+            }
+        } catch {
+        }
+    };
+
+    playAt(0);
+    return true;
 }
 
 function setupBgm() {
@@ -2147,10 +2225,41 @@ function speakWord(wordObj) {
     showWordCard(wordObj);
 
     if (!settings.speechEnabled) return;
-    if (!("speechSynthesis" in window)) return;
-    ensureSpeechReady();
-    const voicesReady = ensureSpeechVoices();
-    if (!voicesReady && speechPendingAttempts < 2) {
+
+    const nativeTts = getNativeTts();
+    if (nativeTts) {
+        const speak = () => {
+            const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
+            const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
+            let ok = speakNativeTts(nativeTts, wordObj.en, "en-US", enRate);
+            if (wordObj.zh) {
+                ok = speakNativeTts(nativeTts, wordObj.zh, "zh-CN", zhRate) || ok;
+            }
+            return ok;
+        };
+        try {
+            if (typeof nativeTts.stop === "function") {
+                const p = nativeTts.stop();
+                if (p && typeof p.finally === "function") {
+                    p.finally(speak);
+                    return;
+                } else {
+                    if (speak()) return;
+                }
+            } else if (speak()) {
+                return;
+            }
+        } catch {
+            if (speak()) return;
+        }
+    }
+
+    const hasSpeech = "speechSynthesis" in window;
+    if (hasSpeech) ensureSpeechReady();
+    const voicesReady = hasSpeech && ensureSpeechVoices();
+    const voices = hasSpeech && window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+    const canUseSpeech = !!(voicesReady && voices && voices.length);
+    if (!canUseSpeech && speechPendingAttempts < 2) {
         speechPendingWord = wordObj;
         speechPendingAttempts += 1;
         if (!speechPendingTimer) {
@@ -2166,6 +2275,13 @@ function speakWord(wordObj) {
         return;
     }
     speechPendingAttempts = 0;
+    if (!canUseSpeech) {
+        playOnlineTtsSequence([
+            { text: wordObj.en, lang: "en" },
+            wordObj.zh ? { text: wordObj.zh, lang: "zh-CN" } : null
+        ]);
+        return;
+    }
 
     try {
         window.speechSynthesis.cancel();
