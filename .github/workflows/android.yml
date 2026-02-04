@@ -92,6 +92,11 @@ jobs:
         with:
           tag: ${{ steps.version.outputs.tag }}
           name: Mario Minecraft Game ${{ steps.version.outputs.tag }}
+          # Re-runs for the same version should update the existing release instead of failing with:
+          # Error 422: Validation Failed: {"code":"already_exists","field":"tag_name"}
+          allowUpdates: true
+          removeArtifacts: true
+          replacesArtifacts: true
           body: |
             ## Mario Minecraft Game ${{ steps.version.outputs.tag }}
 
