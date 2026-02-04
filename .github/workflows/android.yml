@@ -90,15 +90,15 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.version.outputs.tag }}
-          name: Mario Minecraft Game ${{ steps.version.outputs.tag }}
-          # Re-runs for the same version should update the existing release instead of failing with:
-          # Error 422: Validation Failed: {"code":"already_exists","field":"tag_name"}
-          allowUpdates: true
-          removeArtifacts: true
-          replacesArtifacts: true
+          # Always create a unique release even when the app version stays the same.
+          # Include run_attempt so "Re-run jobs" also produces a new release (no tag collisions).
+          tag: v${{ steps.version.outputs.version }}-run${{ github.run_number }}-a${{ github.run_attempt }}
+          name: Mario Minecraft Game v${{ steps.version.outputs.version }} (run ${{ github.run_number }} attempt ${{ github.run_attempt }})
           body: |
-            ## Mario Minecraft Game ${{ steps.version.outputs.tag }}
+            ## Mario Minecraft Game v${{ steps.version.outputs.version }}
+
+            - Build: run ${{ github.run_number }} attempt ${{ github.run_attempt }}
+            - Commit: ${{ github.sha }}
 
             ### 下载
             - **Debug APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk` - 用于测试
