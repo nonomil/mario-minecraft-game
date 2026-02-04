@@ -43,6 +43,10 @@ let sessionWordCounts = Object.create(null);
 let audioCtx = null;
 let audioUnlocked = false;
 let speechReady = false;
+let speechVoicesReady = false;
+let speechPendingWord = null;
+let speechPendingTimer = null;
+let speechPendingAttempts = 0;
 let bgmAudio = null;
 let bgmReady = false;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
@@ -448,6 +452,32 @@ function ensureSpeechReady() {
     } catch {
         return false;
     }
+}
+
+function ensureSpeechVoices() {
+    if (!("speechSynthesis" in window)) return false;
+    const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+    if (voices && voices.length) {
+        speechVoicesReady = true;
+        return true;
+    }
+    if (!ensureSpeechVoices.bound && window.speechSynthesis.addEventListener) {
+        ensureSpeechVoices.bound = true;
+        window.speechSynthesis.addEventListener("voiceschanged", () => {
+            const updated = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+            if (updated && updated.length) {
+                speechVoicesReady = true;
+                if (speechPendingWord) {
+                    const pending = speechPendingWord;
+                    speechPendingWord = null;
+                    setTimeout(() => {
+                        speakWord(pending);
+                    }, 0);
+                }
+            }
+        });
+    }
+    return false;
 }
 
 function pickVoice(langPrefix) {
@@ -2119,6 +2149,23 @@ function speakWord(wordObj) {
     if (!settings.speechEnabled) return;
     if (!("speechSynthesis" in window)) return;
     ensureSpeechReady();
+    const voicesReady = ensureSpeechVoices();
+    if (!voicesReady && speechPendingAttempts < 2) {
+        speechPendingWord = wordObj;
+        speechPendingAttempts += 1;
+        if (!speechPendingTimer) {
+            speechPendingTimer = setTimeout(() => {
+                speechPendingTimer = null;
+                if (speechPendingWord && settings.speechEnabled) {
+                    const pending = speechPendingWord;
+                    speechPendingWord = null;
+                    speakWord(pending);
+                }
+            }, 600);
+        }
+        return;
+    }
+    speechPendingAttempts = 0;
 
     try {
         window.speechSynthesis.cancel();
