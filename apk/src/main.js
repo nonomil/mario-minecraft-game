@@ -677,6 +677,12 @@ function getDifficultyTier(scoreValue) {
     const cfg = getDifficultyConfig();
     const tiers = Array.isArray(cfg.tiers) ? cfg.tiers : [];
     if (!tiers.length) return { name: "普通", minScore: 0, maxScore: 999999, enemyDamage: 1, enemyHp: 1, enemySpawn: 1, chestSpawn: 1, chestRareBoost: 0, chestRollBonus: 0, scoreMultiplier: 1 };
+    // Allow selecting a fixed difficulty tier from settings (otherwise follow score tiers).
+    const selected = String(settings?.difficultySelection || "auto");
+    if (selected && selected !== "auto") {
+        const fixed = tiers.find(t => String(t?.name || "") === selected);
+        if (fixed) return fixed;
+    }
     const s = Number(scoreValue) || 0;
     const found = tiers.find(t => s >= (t.minScore ?? 0) && s < (t.maxScore ?? Number.MAX_SAFE_INTEGER));
     return found || tiers[tiers.length - 1];
@@ -1110,6 +1116,7 @@ function normalizeSettings(raw) {
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
+    if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
     if (!merged.keyCodes) {
         merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
@@ -4901,6 +4908,7 @@ function wireSettingsModal() {
     const optBgm = document.getElementById("opt-bgm");
     const optUiScale = document.getElementById("opt-ui-scale");
     const optMotionScale = document.getElementById("opt-motion-scale");
+    const optDifficulty = document.getElementById("opt-difficulty");
     const optBiomeStep = document.getElementById("opt-biome-step");
     const optTouch = document.getElementById("opt-touch");
     const optNoRepeat = document.getElementById("opt-no-repeat");
@@ -4918,6 +4926,11 @@ function wireSettingsModal() {
         if (optBgm) optBgm.checked = !!settings.musicEnabled;
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
+        if (optDifficulty) {
+            const desired = settings.difficultySelection || "auto";
+            optDifficulty.value = desired;
+            if (optDifficulty.value !== desired) optDifficulty.value = "auto";
+        }
         if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 200);
         if (optTouch) optTouch.checked = !!settings.touchControls;
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
@@ -4956,6 +4969,7 @@ function wireSettingsModal() {
         if (optBgm) settings.musicEnabled = !!optBgm.checked;
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);
+        if (optDifficulty) settings.difficultySelection = String(optDifficulty.value || "auto");
         if (optBiomeStep) settings.biomeSwitchStepScore = Number(optBiomeStep.value);
         if (optTouch) settings.touchControls = !!optTouch.checked;
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
@@ -4977,6 +4991,9 @@ function wireSettingsModal() {
         applyBgmSetting();
         saveSettings();
         applySettingsToUI();
+        // Apply selected difficulty immediately (even while paused in settings).
+        difficultyState = null;
+        updateDifficultyState(true);
         if (player) {
             applyMotionToPlayer(player);
             applyBiomeEffectsToPlayer();

@@ -6,6 +6,7 @@
     --vvw: 100vw;
     --vvh: 100vh;
     --ui-scale: 1;
+    --touch-btn-size: 64px;
 }
 
 html, body {
@@ -371,8 +372,8 @@ canvas {
     right: 20px;
     bottom: 20px;
     display: grid;
-    grid-template-columns: repeat(2, 56px);
-    grid-template-rows: repeat(3, 56px);
+    grid-template-columns: repeat(2, var(--touch-btn-size));
+    grid-template-rows: repeat(3, var(--touch-btn-size));
     gap: 12px;
     align-items: end;
     pointer-events: auto;
@@ -380,11 +381,11 @@ canvas {
 
 /* 鍗婇€忔槑娴呯櫧鑹茶竟妗嗘寜閽?- 鎴戠殑涓栫晫绉诲姩鐗堥鏍?*/
 .touch-btn {
-    width: 56px;
-    height: 56px;
-    border-radius: 0;
-    border: none;
-    background: transparent;
+    width: var(--touch-btn-size);
+    height: var(--touch-btn-size);
+    border-radius: 999px;
+    border: 2px solid rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.16);
     color: rgba(255, 255, 255, 0.9);
     font-size: 30px;
     font-weight: 700;
@@ -401,8 +402,8 @@ canvas {
 }
 
 .touch-spacer {
-    width: 56px;
-    height: 56px;
+    width: var(--touch-btn-size);
+    height: var(--touch-btn-size);
     display: block;
 }
 

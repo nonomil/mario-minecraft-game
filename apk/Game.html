@@ -17,7 +17,6 @@
             <div class="hud-box" id="hp"></div>
             <div class="hud-box" id="word-display">Start!</div>
             <div class="hud-box" id="level-info">场景: 草原</div>
-            <div class="hud-box" id="difficulty-info">难度: 新手</div>
             <div class="hud-box" id="weapon-info">武器: ⚔️ 石剑</div>
         </div>
         
@@ -137,6 +136,17 @@
         <div class="settings-row">
             <div class="settings-label">动作速度</div>
             <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">游戏难度</div>
+            <select class="settings-select" id="opt-difficulty">
+                <option value="auto">自动(随积分)</option>
+                <option value="新手">新手</option>
+                <option value="简单">简单</option>
+                <option value="普通">普通</option>
+                <option value="困难">困难</option>
+                <option value="地狱">地狱</option>
+            </select>
         </div>
         <div class="settings-row">
             <div class="settings-label">环境切换周期(分数)</div>
