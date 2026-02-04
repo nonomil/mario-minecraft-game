@@ -1398,8 +1398,10 @@ function applySettingsToUI() {
     if (viewportChanged && startedOnce) {
         if (nowMs() < viewportIgnoreUntilMs) return;
         initGame();
-        paused = true;
-        setOverlay(true, "start");
+        paused = false;
+        startedOnce = true;
+        setOverlay(false);
+        showToast("已适配屏幕，游戏重新开始");
     }
 }
 
@@ -5129,9 +5131,22 @@ async function start() {
     wireTouchControls();
 
     const overlayBtn = document.getElementById("btn-overlay-action");
-    if (overlayBtn) overlayBtn.addEventListener("click", resumeGameFromOverlay);
+    if (overlayBtn) {
+        overlayBtn.addEventListener("click", resumeGameFromOverlay);
+        overlayBtn.addEventListener("pointerdown", e => {
+            e.preventDefault();
+            resumeGameFromOverlay();
+        }, { passive: false });
+    }
     const overlay = document.getElementById("screen-overlay");
-    if (overlay) overlay.addEventListener("click", e => { if (e.target === overlay) resumeGameFromOverlay(); });
+    if (overlay) {
+        overlay.addEventListener("click", e => { if (e.target === overlay) resumeGameFromOverlay(); });
+        overlay.addEventListener("pointerdown", e => {
+            if (e.target !== overlay) return;
+            e.preventDefault();
+            resumeGameFromOverlay();
+        }, { passive: false });
+    }
 
     function matchesBinding(e, binding) {
         if (!binding) return false;
@@ -5215,8 +5230,10 @@ async function start() {
 
     initGame();
     updateWordUI(null);
-    paused = true;
-    setOverlay(true, "start");
+    paused = false;
+    startedOnce = true;
+    setOverlay(false);
+    showToast("提示：操作说明在【设置】中");
     update();
     draw();
 }

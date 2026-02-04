@@ -454,6 +454,12 @@ canvas {
     font-weight: 700;
 }
 
+.settings-hint {
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
 .settings-range {
     width: 250px;
 }

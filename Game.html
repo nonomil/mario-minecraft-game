@@ -67,13 +67,13 @@
     </div>
 </div>
 
-<div id="screen-overlay" class="screen-overlay visible" aria-hidden="false">
+<div id="screen-overlay" class="screen-overlay" aria-hidden="true">
     <div class="overlay-card">
         <div class="overlay-title" id="overlay-title">准备开始</div>
         <div class="overlay-text" id="overlay-text">
-            ←→移动 空格 跳(可二段跳)<br>
-            J 攻击 K 切换武器 Z 使用金币<br>
-            Y 打开宝箱 E 采集
+            ←→移动　空格 跳(可二段跳)<br>
+            J 攻击　K 切换武器　Z 使用金币<br>
+            Y 打开宝箱　E 采集
         </div>
         <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
     </div>
@@ -82,6 +82,15 @@
 <div id="settings-modal" aria-hidden="true">
     <div class="settings-panel" role="dialog" aria-modal="true" aria-label="游戏设置">
         <div class="settings-title">游戏设置</div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-label">操作提示</div>
+            <div class="settings-hint">
+                ←→移动　空格 跳(可二段跳)<br>
+                J 攻击　K 切换武器　Z 使用金币<br>
+                Y 打开宝箱　E 采集
+            </div>
+        </div>
 
         <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
