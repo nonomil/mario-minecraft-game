@@ -1405,7 +1405,7 @@ function setOverlay(visible, mode) {
         overlayMode = mode || "pause";
         if (mode === "pause") {
             if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
+            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用金币<br>Y 打开宝箱 E 采集";
             if (btn) btn.innerText = "继续";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
@@ -1414,15 +1414,15 @@ function setOverlay(visible, mode) {
                 const level = Math.max(1, Math.floor(score / 1000) + 1);
                 text.innerHTML =
                     `📚 学习单词: ${getLearnedWordCount()}<br>` +
-                    `💎 钻石: ${diamonds}<br>` +
+                    `🪙 金币: ${diamonds}<br>` +
                     `⭐ 当前积分: ${score}<br>` +
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
-                    `🏆 玩家等级: ${level}`;
+                    `🏅 玩家等级: ${level}`;
             }
-            if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
+            if (btn) btn.innerText = diamonds >= 10 ? "🪙10 复活" : "重新开始";
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "← → 移动　空格 跳(可二段跳)<br>J 攻击　K 切换武器　Z 使用钻石<br>Y 打开宝箱　E 采集";
+            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用金币<br>Y 打开宝箱 E 采集";
             if (btn) btn.innerText = "开始游戏";
         }
     } else {
@@ -1431,7 +1431,6 @@ function setOverlay(visible, mode) {
         overlayMode = "start";
     }
 }
-
 function resumeGameFromOverlay() {
     if (overlayMode === "gameover") {
         if (getDiamondCount() >= 10) {
