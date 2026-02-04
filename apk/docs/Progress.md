@@ -29,6 +29,13 @@
 
 ## 修订记录
 
+## v1.2.6（发布日期：2026-02-04）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.6，versionCode = 19
+- 主要变更
+  - 修复 APK 版本不发音的问题：在原生端自动注册并调用 Capacitor TextToSpeech 插件；Web Speech/在线 TTS 作为兜底
+  - App 隐藏到后台时，自动停止背景音乐；回到前台按设置恢复
+
 ## v1.2.5（发布日期：2026-02-04）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.5，versionCode = 18
