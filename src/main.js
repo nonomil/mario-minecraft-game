@@ -1443,7 +1443,7 @@ function setOverlay(visible, mode) {
 }
 function resumeGameFromOverlay() {
     // Prevent an immediate mobile viewport change from reopening the start overlay.
-    viewportIgnoreUntilMs = nowMs() + 900;
+    viewportIgnoreUntilMs = nowMs() + 2000;
     if (overlayMode === "gameover") {
         if (getDiamondCount() >= 10) {
             inventory.diamond -= 10;
