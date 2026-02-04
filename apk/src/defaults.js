@@ -5,7 +5,7 @@ window.MMWG_DEFAULTS = {
             gravity: 0.2,
             friction: 0.85,
             jumpStrength: -7.0,
-            movementSpeed: 2.0,
+            movementSpeed: 1.6,
             groundY: 530
         },
         world: {
@@ -188,8 +188,8 @@ window.MMWG_DEFAULTS = {
     settings: {
         learningMode: true,
         speechEnabled: true,
-        speechEnRate: 1.1,
-        speechZhRate: 0.9,
+        speechEnRate: 1.2,
+        speechZhRate: 1.1,
         musicEnabled: true,
         deviceMode: "phone",
         orientationLock: "auto",
@@ -202,7 +202,7 @@ window.MMWG_DEFAULTS = {
         biomeSwitchStepScore: 200,
         gameDifficulty: "medium",
         vocabStage: "auto",
-        vocabSelection: "auto",
+        vocabSelection: "vocab.kindergarten",
         vocabDifficulty: "auto",
         keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ"
     }

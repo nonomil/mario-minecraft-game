@@ -40,6 +40,10 @@ let vocabEngine = null;
 let activeVocabPackId = null;
 let loadedVocabFiles = Object.create(null);
 let sessionWordCounts = Object.create(null);
+let chestHintSeen = storage ? storage.loadJson("mmwg:hintChestSeen", false) : false;
+let chestHintFramesLeft = 0;
+const CHEST_HINT_FRAMES = 180;
+let chestHintPos = null;
 let audioCtx = null;
 let audioUnlocked = false;
 let speechReady = false;
@@ -1348,7 +1352,7 @@ function renderVocabSelect() {
         opt.innerText = text;
         sel.appendChild(opt);
     };
-    add("auto", "随机词库（加权轮换）");
+    add("auto", "随机词库（按类别轮换）");
     const engine = ensureVocabEngine();
     if (!engine) return;
     vocabManifest.packs.forEach(p => add(p.id, p.title));
@@ -1438,6 +1442,12 @@ function loadVocabPackFile(file) {
     return loadedVocabFiles[file];
 }
 
+function loadVocabPackFiles(files) {
+    const list = Array.isArray(files) ? files.filter(Boolean) : (files ? [files] : []);
+    if (!list.length) return Promise.resolve();
+    return list.reduce((chain, file) => chain.then(() => loadVocabPackFile(file)), Promise.resolve());
+}
+
 function normalizeRawWord(raw) {
     if (!raw || typeof raw !== "object") return null;
     const en = String(raw.standardized || raw.word || "").trim();
@@ -1464,8 +1474,20 @@ async function setActiveVocabPack(selection) {
     saveVocabState();
 
     try {
-        await loadVocabPackFile(pack.file);
-        const rawList = typeof pack.getRaw === "function" ? pack.getRaw() : [];
+        if (pack.files && Array.isArray(pack.files)) {
+            await loadVocabPackFiles(pack.files);
+        } else if (pack.file) {
+            await loadVocabPackFile(pack.file);
+        }
+        let rawList = [];
+        if (typeof pack.getRaw === "function") {
+            rawList = pack.getRaw();
+        } else if (Array.isArray(pack.globals)) {
+            rawList = pack.globals.flatMap(name => {
+                const value = window[name];
+                return Array.isArray(value) ? value : [];
+            });
+        }
         const mapped = [];
         const seen = new Set();
         (Array.isArray(rawList) ? rawList : []).forEach(r => {
@@ -1575,7 +1597,7 @@ function setOverlay(visible, mode) {
         overlayMode = mode || "pause";
         if (mode === "pause") {
             if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用钻石<br>Y 打开宝箱 E 采集";
+            if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
             if (btn) btn.innerText = "继续";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
@@ -1592,7 +1614,7 @@ function setOverlay(visible, mode) {
             if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "←→移动 空格 跳(可二段跳)<br>J 攻击 K 切换武器 Z 使用钻石<br>Y 打开宝箱 E 采集";
+            if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
             if (btn) btn.innerText = "开始游戏";
         }
     } else {
@@ -2735,6 +2757,14 @@ function handleAttackRelease() {
     releaseBowShot();
 }
 
+function triggerChestHint() {
+    if (chestHintSeen) return;
+    chestHintSeen = true;
+    chestHintFramesLeft = CHEST_HINT_FRAMES;
+    chestHintPos = null;
+    if (storage) storage.saveJson("mmwg:hintChestSeen", true);
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const biome = getBiomeById(currentBiome);
@@ -2787,16 +2817,21 @@ function draw() {
     });
 
     chests.forEach(c => {
-        if (!c.opened && Math.abs(player.x - c.x) < 60) {
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 4;
-            ctx.fillStyle = "white";
-            const label = keyLabel(keyBindings.interact) || "Y";
-            const hint = `按 ${label} 打开`;
-            ctx.strokeText(hint, c.x - 10, c.y - 15);
-            ctx.fillText(hint, c.x - 10, c.y - 15);
+        if (!c.opened && Math.abs(player.x - c.x) < 60 && !chestHintSeen) {
+            triggerChestHint();
+            chestHintPos = { x: c.x, y: c.y };
         }
     });
+
+    if (chestHintFramesLeft > 0 && chestHintPos) {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 4;
+        ctx.fillStyle = "white";
+        const hint = "按(📦)打开";
+        ctx.strokeText(hint, chestHintPos.x - 10, chestHintPos.y - 15);
+        ctx.fillText(hint, chestHintPos.x - 10, chestHintPos.y - 15);
+        chestHintFramesLeft--;
+    }
 
     ctx.restore();
 
