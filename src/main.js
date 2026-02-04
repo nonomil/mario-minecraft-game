@@ -51,6 +51,7 @@ let ttsAudio = null;
 let ttsSeqId = 0;
 let bgmAudio = null;
 let bgmReady = false;
+let bgmPausedByVisibility = false;
 const BGM_SOURCES = ["audio/minecraft-theme.mp3"];
 
 let score = 0;
@@ -495,10 +496,18 @@ function getNativeTts() {
         const Cap = window.Capacitor;
         if (!Cap || typeof Cap.isNativePlatform !== "function") return null;
         if (!Cap.isNativePlatform()) return null;
+        if (typeof Cap.isPluginAvailable === "function" && !Cap.isPluginAvailable("TextToSpeech")) return null;
+
         const plugins = Cap.Plugins || {};
-        const tts = plugins.TextToSpeech;
-        if (!tts || typeof tts.speak !== "function") return null;
-        return tts;
+        const existing = plugins.TextToSpeech;
+        if (existing && typeof existing.speak === "function") return existing;
+
+        if (typeof Cap.registerPlugin === "function") {
+            const registered = Cap.registerPlugin("TextToSpeech");
+            if (registered && typeof registered.speak === "function") return registered;
+        }
+
+        return null;
     } catch {
         return null;
     }
@@ -5440,6 +5449,16 @@ async function start() {
 
     window.addEventListener("blur", () => { keys.right = false; keys.left = false; });
     document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            if (bgmAudio && !bgmAudio.paused) {
+                bgmPausedByVisibility = true;
+                try { bgmAudio.pause(); } catch {}
+            }
+        } else if (bgmPausedByVisibility) {
+            bgmPausedByVisibility = false;
+            applyBgmSetting();
+        }
+
         if (!startedOnce) return;
         if (document.hidden) {
             paused = true;
