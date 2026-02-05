@@ -7,6 +7,7 @@
     --vvh: 100vh;
     --ui-scale: 1;
     --touch-btn-size: 64px;
+    --ui-bottom-offset: 0px;
 }
 
 html, body {
@@ -96,6 +97,13 @@ body {
     line-height: 1.6;
     margin-bottom: 14px;
     text-shadow: 2px 2px 0 #000;
+}
+
+.overlay-recommend {
+    margin-bottom: 10px;
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 900;
+    color: rgba(255,255,255,0.95);
 }
 
 .controls-legend {
@@ -256,7 +264,7 @@ canvas {
 
 .inventory-bar {
     position: absolute;
-    bottom: 0;
+    bottom: var(--ui-bottom-offset, 0px);
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.85);
@@ -436,7 +444,7 @@ canvas {
 .touch-left {
     position: absolute;
     left: 20px;
-    bottom: 20px;
+    bottom: calc(20px + var(--ui-bottom-offset, 0px));
     display: flex;
     flex-direction: row;
     gap: 15px;
@@ -447,7 +455,7 @@ canvas {
 .touch-right {
     position: absolute;
     right: 20px;
-    bottom: 20px;
+    bottom: calc(20px + var(--ui-bottom-offset, 0px));
     display: grid;
     grid-template-columns: repeat(2, var(--touch-btn-size));
     grid-template-rows: repeat(3, var(--touch-btn-size));

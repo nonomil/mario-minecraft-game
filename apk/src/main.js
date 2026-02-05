@@ -1553,6 +1553,21 @@ function applySettingsToUI() {
     document.documentElement.style.setProperty("--ui-scale", uiScale.toFixed(3));
     document.documentElement.style.setProperty("--vvw", `${Math.floor(visualViewport.width)}px`);
     document.documentElement.style.setProperty("--vvh", `${Math.floor(visualViewport.height)}px`);
+    const systemBottom = (() => {
+        const vv = typeof window !== "undefined" ? window.visualViewport : null;
+        const innerH = window.innerHeight || document.documentElement.clientHeight || 0;
+        let fromViewport = 0;
+        if (vv && typeof vv.height === "number") {
+            const offsetTop = typeof vv.offsetTop === "number" ? vv.offsetTop : 0;
+            fromViewport = Math.max(0, Math.round(innerH - (vv.height + offsetTop)));
+        }
+        let fromScreen = 0;
+        if (window.screen && typeof window.screen.height === "number" && typeof window.screen.availHeight === "number") {
+            fromScreen = Math.max(0, Math.round(window.screen.height - window.screen.availHeight));
+        }
+        return Math.max(fromViewport, fromScreen);
+    })();
+    document.documentElement.style.setProperty("--ui-bottom-offset", `${Math.round(systemBottom / uiScale)}px`);
 
     const container = document.getElementById("game-container");
     if (container) {
@@ -1614,7 +1629,7 @@ function setOverlay(visible, mode) {
             if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = getControlsLegendHtml();
+            if (text) text.innerHTML = `<div class="overlay-recommend">建议横屏游玩</div>${getControlsLegendHtml()}`;
             if (btn) btn.innerText = "开始游戏";
         }
     } else {
