@@ -1,6 +1,6 @@
 // Minecraft_Simple - 3.minecraft_é«çº§_advanced.json
 const VOCAB_3_MINECRAFT____ADVANCED = [
-  {
+{
     "word": "Enderman",
     "standardized": "Enderman",
     "chinese": "末影人",
@@ -876,5 +876,5 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VOCAB_3_MINECRAFT____ADVANCED;
 } else if (typeof window !== 'undefined') {
-  window.VOCAB_3_MINECRAFT____ADVANCED = VOCAB_3_MINECRAFT____ADVANCED;
+//   window.VOCAB_3_MINECRAFT____ADVANCED = VOCAB_3_MINECRAFT____ADVANCED;
 }

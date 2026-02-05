@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_5.biomes_çç©ç¾¤ç³».json
 const MINECRAFT_5_BIOMES_____ = [
-  {
+{
     "word": "Dark Forest",
     "standardized": "Dark Forest",
     "chinese": "黑森林",
@@ -1179,5 +1179,5 @@ const MINECRAFT_5_BIOMES_____ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_5_BIOMES_____;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_5_BIOMES_____ = MINECRAFT_5_BIOMES_____;
+//   window.MINECRAFT_5_BIOMES_____ = MINECRAFT_5_BIOMES_____;
 }

@@ -1,6 +1,6 @@
 // Generated from 幼儿园完整词库.js
 const STAGE_KINDERGARTEN_PART05 = [
-  {
+{
     "word": "far",
     "standardized": "far",
     "chinese": "远的",

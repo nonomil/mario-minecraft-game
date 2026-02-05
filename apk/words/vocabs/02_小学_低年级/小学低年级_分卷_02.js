@@ -1,6 +1,6 @@
 // Generated from 小学低年级基础.js
 const STAGE_ELEMENTARY_LOWER_PART02 = [
-  {
+{
     "word": "count",
     "standardized": "count",
     "chinese": "数数",
@@ -183,7 +183,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "dig",
     "standardized": "dig",
-    "chinese": "",
+    "chinese": "挖",
     "phonetic": "/dɪɡ/",
     "phrase": "Dig in the garden",
     "phraseTranslation": "在花园里挖土",
@@ -291,7 +291,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "climb",
     "standardized": "climb",
-    "chinese": "",
+    "chinese": "爬",
     "phonetic": "/klaɪm/",
     "phrase": "Climb the tree",
     "phraseTranslation": "爬树",
@@ -309,7 +309,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "fly",
     "standardized": "fly",
-    "chinese": "",
+    "chinese": "飞",
     "phonetic": "/flaɪ/",
     "phrase": "Birds can fly",
     "phraseTranslation": "鸟儿会飞",
@@ -435,7 +435,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "rain",
     "standardized": "rain",
-    "chinese": "",
+    "chinese": "雨",
     "phonetic": "/reɪn/",
     "phrase": "It's raining",
     "phraseTranslation": "下雨",
@@ -453,7 +453,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "snow",
     "standardized": "snow",
-    "chinese": "",
+    "chinese": "雪",
     "phonetic": "/snoʊ/",
     "phrase": "White snow",
     "phraseTranslation": "白雪",
@@ -579,7 +579,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "ball",
     "standardized": "ball",
-    "chinese": "",
+    "chinese": "球",
     "phonetic": "/bɔːl/",
     "phrase": "Throw the ball",
     "phraseTranslation": "扔球",
@@ -651,7 +651,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "walk",
     "standardized": "walk",
-    "chinese": "",
+    "chinese": "走路",
     "phonetic": "/wɔːk/",
     "phrase": "Walk to school",
     "phraseTranslation": "走路上学",
@@ -687,7 +687,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "eat",
     "standardized": "eat",
-    "chinese": "",
+    "chinese": "吃",
     "phonetic": "/iːt/",
     "phrase": "Eat breakfast",
     "phraseTranslation": "吃早",
@@ -741,7 +741,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "hands",
     "standardized": "hands",
-    "chinese": "",
+    "chinese": "手",
     "phonetic": "/hændz/",
     "phrase": "Clap hands",
     "phraseTranslation": "拍手",
@@ -885,7 +885,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "horse",
     "standardized": "horse",
-    "chinese": "",
+    "chinese": "马",
     "phonetic": "/hɔːrs/",
     "phrase": "Fast horse",
     "phraseTranslation": "快马",
@@ -921,7 +921,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "pig",
     "standardized": "pig",
-    "chinese": "",
+    "chinese": "猪",
     "phonetic": "/pɪɡ/",
     "phrase": "Pink pig",
     "phraseTranslation": "粉色的猪",
@@ -939,7 +939,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "sheep",
     "standardized": "sheep",
-    "chinese": "",
+    "chinese": "羊",
     "phonetic": "/ʃiːp/",
     "phrase": "White sheep",
     "phraseTranslation": "白色的羊",
@@ -957,7 +957,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "add",
     "standardized": "add",
-    "chinese": "",
+    "chinese": "添加",
     "phonetic": "/æd/",
     "phrase": "Add numbers",
     "phraseTranslation": "数字相加",
@@ -975,7 +975,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "subtract",
     "standardized": "subtract",
-    "chinese": "",
+    "chinese": "减去",
     "phonetic": "/səbˈtrækt/",
     "phrase": "Subtract numbers",
     "phraseTranslation": "数字相减",
@@ -993,7 +993,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "multiply",
     "standardized": "multiply",
-    "chinese": "",
+    "chinese": "乘",
     "phonetic": "/ˈmʌltɪplaɪ/",
     "phrase": "Multiply by two",
     "phraseTranslation": "乘以",
@@ -1011,7 +1011,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "divide",
     "standardized": "divide",
-    "chinese": "",
+    "chinese": "拆分",
     "phonetic": "/dɪˈvaɪd/",
     "phrase": "Divide by three",
     "phraseTranslation": "除以",
@@ -1083,7 +1083,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "root",
     "standardized": "root",
-    "chinese": "",
+    "chinese": "根",
     "phonetic": "/ruːt/",
     "phrase": "Plant roots",
     "phraseTranslation": "植物根部",
@@ -1101,7 +1101,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "stem",
     "standardized": "stem",
-    "chinese": "",
+    "chinese": "莖 茎 [jing1]",
     "phonetic": "/stem/",
     "phrase": "Plant stem",
     "phraseTranslation": "植物茎部",
@@ -1317,7 +1317,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "year",
     "standardized": "year",
-    "chinese": "",
+    "chinese": "年",
     "phonetic": "/jɪr/",
     "phrase": "This year",
     "phraseTranslation": "今年",
@@ -1569,7 +1569,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "leg",
     "standardized": "leg",
-    "chinese": "",
+    "chinese": "腿",
     "phonetic": "/leɡ/",
     "phrase": "My legs",
     "phraseTranslation": "我的",
@@ -1749,7 +1749,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "tea",
     "standardized": "tea",
-    "chinese": "",
+    "chinese": "茶",
     "phonetic": "/tiː/",
     "phrase": "Hot tea",
     "phraseTranslation": "热茶",
@@ -1785,7 +1785,7 @@ const STAGE_ELEMENTARY_LOWER_PART02 = [
   {
     "word": "soup",
     "standardized": "soup",
-    "chinese": "",
+    "chinese": "汤",
     "phonetic": "/suːp/",
     "phrase": "Chicken soup",
     "phraseTranslation": "鸡汤",

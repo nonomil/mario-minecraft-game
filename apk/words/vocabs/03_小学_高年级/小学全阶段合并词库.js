@@ -2,13 +2,13 @@
 // Generated on 2025-09-15T05:57:25.475Z
 
 const MERGED_VOCABULARY = [
-  {
+{
     "word": "英文",
     "standardized": "英文",
     "chinese": "中文",
     "phonetic": "",
     "phrase": "ä¾å¥",
-    "phraseTranslation": "",
+    "phraseTranslation": "中文",
     "difficulty": "basic",
     "category": "common_adjectives",
     "stage": "kindergarten",
@@ -35,7 +35,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "add",
     "standardized": "add",
-    "chinese": "",
+    "chinese": "添加",
     "phonetic": "/æd/",
     "phrase": "Add numbers",
     "phraseTranslation": "数字相加",
@@ -359,7 +359,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "ask",
     "standardized": "ask",
-    "chinese": "",
+    "chinese": "问",
     "phonetic": "/ask/",
     "phrase": "Ask a question",
     "phraseTranslation": "问一个问",
@@ -539,7 +539,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Ball",
     "standardized": "Ball",
-    "chinese": "",
+    "chinese": "球",
     "phonetic": "/bɔːl/",
     "phrase": "throw ball",
     "phraseTranslation": "扔球",
@@ -665,7 +665,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "bear",
     "standardized": "bear",
-    "chinese": "",
+    "chinese": "熊",
     "phonetic": "/bɛr/",
     "phrase": "Brown bear",
     "phraseTranslation": "棕熊",
@@ -701,7 +701,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Bed",
     "standardized": "Bed",
-    "chinese": "",
+    "chinese": "床",
     "phonetic": "/bed/",
     "phrase": "sleep bed",
     "phraseTranslation": "在床上睡",
@@ -827,7 +827,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Bird",
     "standardized": "Bird",
-    "chinese": "",
+    "chinese": "鸟",
     "phonetic": "/bɜːrd/",
     "phrase": "bird fly",
     "phraseTranslation": "鸟飞",
@@ -902,7 +902,7 @@ const MERGED_VOCABULARY = [
     "chinese": "眨眼",
     "phonetic": "/blink/",
     "phrase": "Blink eyes",
-    "phraseTranslation": "",
+    "phraseTranslation": "眨眨眼睛",
     "difficulty": "basic",
     "category": "general",
     "stage": "kindergarten",
@@ -935,7 +935,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "blow",
     "standardized": "blow",
-    "chinese": "",
+    "chinese": "吹",
     "phonetic": "/blow/",
     "phrase": "Blow a dandelion",
     "phraseTranslation": "吹蒲公英",
@@ -1025,7 +1025,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Book",
     "standardized": "Book",
-    "chinese": "",
+    "chinese": "书",
     "phonetic": "/bʊk/",
     "phrase": "read book",
     "phraseTranslation": "读书",
@@ -1529,7 +1529,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Cat",
     "standardized": "Cat",
-    "chinese": "",
+    "chinese": "猫",
     "phonetic": "/kæt/",
     "phrase": "cat play",
     "phraseTranslation": "猫玩",
@@ -1691,7 +1691,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "chicken",
     "standardized": "chicken",
-    "chinese": "",
+    "chinese": "鸡",
     "phonetic": "/chicken/",
     "phrase": "Clucking chicken",
     "phraseTranslation": "咯咯叫的",
@@ -1881,7 +1881,7 @@ const MERGED_VOCABULARY = [
     "imageURLs": [
       {
         "filename": "sun-behind-cloud-emoji.png",
-        "url": "https://emojicdn.elk.sh/â",
+        "url": "https://emojicdn.elk.sh/1f324",
         "type": "Emoji"
       }
     ]
@@ -1979,7 +1979,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "cloud",
     "standardized": "cloud",
-    "chinese": "",
+    "chinese": "云",
     "phonetic": "/cloud/",
     "phrase": "White cloud",
     "phraseTranslation": "白白的云",
@@ -2537,7 +2537,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "cry",
     "standardized": "cry",
-    "chinese": "",
+    "chinese": "哭",
     "phonetic": "/cry/",
     "phrase": "Cry sadly",
     "phraseTranslation": "伤心地哭",
@@ -2609,7 +2609,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "cut",
     "standardized": "cut",
-    "chinese": "",
+    "chinese": "剪",
     "phonetic": "/cut/",
     "phrase": "Cut paper",
     "phraseTranslation": "剪纸",
@@ -2763,7 +2763,7 @@ const MERGED_VOCABULARY = [
     "imageURLs": [
       {
         "filename": "sunrise-emoji.png",
-        "url": "https://emojicdn.elk.sh/ð",
+        "url": "https://emojicdn.elk.sh/1f4a1",
         "type": "Emoji"
       }
     ]
@@ -2825,7 +2825,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "deer",
     "standardized": "deer",
-    "chinese": "",
+    "chinese": "鹿",
     "phonetic": "/deer/",
     "phrase": "Gentle deer",
     "phraseTranslation": "温顺的鹿",
@@ -2987,7 +2987,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "divide",
     "standardized": "divide",
-    "chinese": "",
+    "chinese": "拆分",
     "phonetic": "/dɪˈvaɪd/",
     "phrase": "Divide by three",
     "phraseTranslation": "除以",
@@ -3041,7 +3041,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Dog",
     "standardized": "Dog",
-    "chinese": "",
+    "chinese": "狗",
     "phonetic": "/dɔːɡ/",
     "phrase": "friendly dog",
     "phraseTranslation": "友好的狗",
@@ -3095,7 +3095,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Door",
     "standardized": "Door",
-    "chinese": "",
+    "chinese": "门",
     "phonetic": "/dɔːr/",
     "phrase": "open door",
     "phraseTranslation": "开",
@@ -3113,7 +3113,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Down",
     "standardized": "Down",
-    "chinese": "",
+    "chinese": "下",
     "phonetic": "/daʊn/",
     "phrase": "go down",
     "phraseTranslation": "往下走",
@@ -3401,7 +3401,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "East",
     "standardized": "East",
-    "chinese": "",
+    "chinese": "东",
     "phonetic": "/iːst/",
     "phrase": "go east",
     "phraseTranslation": "往东走",
@@ -3437,7 +3437,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Eat",
     "standardized": "Eat",
-    "chinese": "",
+    "chinese": "吃",
     "phonetic": "/iːt/",
     "phrase": "eat breakfast",
     "phraseTranslation": "吃早",
@@ -3887,7 +3887,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "face",
     "standardized": "face",
-    "chinese": "",
+    "chinese": "脸",
     "phonetic": "/face/",
     "phrase": "Wash face",
     "phraseTranslation": "洗脸",
@@ -4193,7 +4193,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "fire",
     "standardized": "fire",
-    "chinese": "",
+    "chinese": "火",
     "phonetic": "/fire/",
     "phrase": "Fire is hot",
     "phraseTranslation": "火很",
@@ -4247,7 +4247,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Fish",
     "standardized": "Fish",
-    "chinese": "",
+    "chinese": "鱼",
     "phonetic": "/fɪʃ/",
     "phrase": "fish swim",
     "phraseTranslation": "鱼游",
@@ -4301,7 +4301,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Flower",
     "standardized": "Flower",
-    "chinese": "",
+    "chinese": "花",
     "phonetic": "/ˈflaʊər/",
     "phrase": "pretty flower",
     "phraseTranslation": "漂亮花朵",
@@ -4373,7 +4373,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "foot",
     "standardized": "foot",
-    "chinese": "",
+    "chinese": "脚",
     "phonetic": "/fʊt/",
     "phrase": "My foot",
     "phraseTranslation": "我的",
@@ -4967,7 +4967,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "grass",
     "standardized": "grass",
-    "chinese": "",
+    "chinese": "草",
     "phonetic": "/grass/",
     "phrase": "Green grass",
     "phraseTranslation": "绿绿的草",
@@ -5147,7 +5147,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "hand",
     "standardized": "hand",
-    "chinese": "",
+    "chinese": "手",
     "phonetic": "/hænd/",
     "phrase": "Wash hands",
     "phraseTranslation": "洗手",
@@ -5165,7 +5165,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Hands",
     "standardized": "Hands",
-    "chinese": "",
+    "chinese": "手",
     "phonetic": "/hændz/",
     "phrase": "clap hands",
     "phraseTranslation": "拍手",
@@ -5219,7 +5219,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "he",
     "standardized": "he",
-    "chinese": "",
+    "chinese": "他",
     "phonetic": "/he/",
     "phrase": "He is my friend",
     "phraseTranslation": "他是我的朋友",
@@ -5237,7 +5237,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Head",
     "standardized": "Head",
-    "chinese": "",
+    "chinese": "头",
     "phonetic": "/hed/",
     "phrase": "touch head",
     "phraseTranslation": "摸头",
@@ -5615,7 +5615,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "horse",
     "standardized": "horse",
-    "chinese": "",
+    "chinese": "马",
     "phonetic": "/horse/",
     "phrase": "Running horse",
     "phraseTranslation": "奔跑的马",
@@ -5813,7 +5813,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "I",
     "standardized": "I",
-    "chinese": "",
+    "chinese": "我",
     "phonetic": "/i/",
     "phrase": "I am a good kid",
     "phraseTranslation": "我是个好孩子",
@@ -6263,7 +6263,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "island",
     "standardized": "island",
-    "chinese": "",
+    "chinese": "岛",
     "phonetic": "/island/",
     "phrase": "The island is beautiful",
     "phraseTranslation": "小岛很美",
@@ -6281,7 +6281,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "it",
     "standardized": "it",
-    "chinese": "",
+    "chinese": "它",
     "phonetic": "/it/",
     "phrase": "It is a cat",
     "phraseTranslation": "它是一只猫",
@@ -6533,7 +6533,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "laugh",
     "standardized": "laugh",
-    "chinese": "",
+    "chinese": "笑",
     "phonetic": "/laugh/",
     "phrase": "Laugh out loud",
     "phraseTranslation": "哈哈大笑",
@@ -6641,7 +6641,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Left",
     "standardized": "Left",
-    "chinese": "",
+    "chinese": "左",
     "phonetic": "/left/",
     "phrase": "turn left",
     "phraseTranslation": "向左",
@@ -6659,7 +6659,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "leg",
     "standardized": "leg",
-    "chinese": "",
+    "chinese": "腿",
     "phonetic": "/leg/",
     "phrase": "Lift leg",
     "phraseTranslation": "抬起",
@@ -6983,7 +6983,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "listen",
     "standardized": "listen",
-    "chinese": "",
+    "chinese": "听",
     "phonetic": "/listen/",
     "phrase": "Listen to a story",
     "phraseTranslation": "听故",
@@ -7037,7 +7037,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "look",
     "standardized": "look",
-    "chinese": "",
+    "chinese": "看",
     "phonetic": "/look/",
     "phrase": "Look here",
     "phraseTranslation": "看这",
@@ -7163,7 +7163,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "meat",
     "standardized": "meat",
-    "chinese": "",
+    "chinese": "肉",
     "phonetic": "/miːt/",
     "phrase": "Fresh meat",
     "phraseTranslation": "新鲜的肉",
@@ -7469,7 +7469,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "mountain",
     "standardized": "mountain",
-    "chinese": "",
+    "chinese": "山",
     "phonetic": "/mountain/",
     "phrase": "Tall mountain",
     "phraseTranslation": "高高的山",
@@ -7523,7 +7523,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "mud",
     "standardized": "mud",
-    "chinese": "",
+    "chinese": "泥",
     "phonetic": "/mud/",
     "phrase": "Mud is dirty",
     "phraseTranslation": "泥巴很脏",
@@ -7559,7 +7559,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "multiply",
     "standardized": "multiply",
-    "chinese": "",
+    "chinese": "乘",
     "phonetic": "/ˈmʌltɪplaɪ/",
     "phrase": "Multiply by two",
     "phraseTranslation": "乘以",
@@ -7901,7 +7901,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "no",
     "standardized": "no",
-    "chinese": "",
+    "chinese": "不",
     "phonetic": "/no/",
     "phrase": "Shake head no",
     "phraseTranslation": "摇头说不",
@@ -7973,7 +7973,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "North",
     "standardized": "North",
-    "chinese": "",
+    "chinese": "北",
     "phonetic": "/nɔːrθ/",
     "phrase": "go north",
     "phraseTranslation": "往北走",
@@ -8441,7 +8441,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "paper",
     "standardized": "paper",
-    "chinese": "",
+    "chinese": "纸",
     "phonetic": "/ˈpeɪpər/",
     "phrase": "Write on paper",
     "phraseTranslation": "在纸上写",
@@ -8657,7 +8657,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "pig",
     "standardized": "pig",
-    "chinese": "",
+    "chinese": "猪",
     "phonetic": "/pig/",
     "phrase": "Pink pig",
     "phraseTranslation": "粉红色的",
@@ -8765,7 +8765,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "play",
     "standardized": "play",
-    "chinese": "",
+    "chinese": "玩",
     "phonetic": "/pleɪ/",
     "phrase": "Play games",
     "phraseTranslation": "玩游戏",
@@ -8801,7 +8801,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "please",
     "standardized": "please",
-    "chinese": "",
+    "chinese": "请",
     "phonetic": "/please/",
     "phrase": "Apple, please",
     "phraseTranslation": "请给我苹",
@@ -8837,7 +8837,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "point",
     "standardized": "point",
-    "chinese": "",
+    "chinese": "指",
     "phonetic": "/point/",
     "phrase": "Point over there",
     "phraseTranslation": "指一指那",
@@ -8891,7 +8891,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "polo shirt",
     "standardized": "polo shirt",
-    "chinese": "polo",
+    "chinese": "polo衫",
     "phonetic": "/polo shirt/",
     "phrase": "Wear a polo shirt",
     "phraseTranslation": "穿polo",
@@ -9071,7 +9071,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "rain",
     "standardized": "rain",
-    "chinese": "",
+    "chinese": "雨",
     "phonetic": "/rain/",
     "phrase": "Cool rain",
     "phraseTranslation": "清凉的雨",
@@ -9305,7 +9305,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "ride",
     "standardized": "ride",
-    "chinese": "",
+    "chinese": "骑",
     "phonetic": "/ride/",
     "phrase": "Ride a bike",
     "phraseTranslation": "骑自行车",
@@ -9323,7 +9323,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Right",
     "standardized": "Right",
-    "chinese": "",
+    "chinese": "右",
     "phonetic": "/raɪt/",
     "phrase": "turn right",
     "phraseTranslation": "向右",
@@ -9341,7 +9341,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "river",
     "standardized": "river",
-    "chinese": "",
+    "chinese": "河",
     "phonetic": "/river/",
     "phrase": "Long river",
     "phraseTranslation": "长长的河",
@@ -9395,7 +9395,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "root",
     "standardized": "root",
-    "chinese": "",
+    "chinese": "根",
     "phonetic": "/root/",
     "phrase": "Tree roots",
     "phraseTranslation": "树的",
@@ -9557,7 +9557,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "salt",
     "standardized": "salt",
-    "chinese": "",
+    "chinese": "盐",
     "phonetic": "/sɔːlt/",
     "phrase": "Sea salt",
     "phraseTranslation": "海盐",
@@ -9719,7 +9719,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "sea",
     "standardized": "sea",
-    "chinese": "",
+    "chinese": "海",
     "phonetic": "/sea/",
     "phrase": "The sea is deep",
     "phraseTranslation": "大海很深",
@@ -9989,7 +9989,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "she",
     "standardized": "she",
-    "chinese": "",
+    "chinese": "她",
     "phonetic": "/she/",
     "phrase": "She is my teacher",
     "phraseTranslation": "她是我的老师",
@@ -10169,7 +10169,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "sit",
     "standardized": "sit",
-    "chinese": "",
+    "chinese": "坐",
     "phonetic": "/sɪt/",
     "phrase": "Sit down",
     "phraseTranslation": "坐下",
@@ -10457,7 +10457,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "snake",
     "standardized": "snake",
-    "chinese": "",
+    "chinese": "蛇",
     "phonetic": "/snake/",
     "phrase": "Long snake",
     "phraseTranslation": "长长的蛇",
@@ -10511,7 +10511,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "snow",
     "standardized": "snow",
-    "chinese": "",
+    "chinese": "雪",
     "phonetic": "/snow/",
     "phrase": "White snow",
     "phraseTranslation": "白雪皑皑",
@@ -10673,7 +10673,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "soup",
     "standardized": "soup",
-    "chinese": "",
+    "chinese": "汤",
     "phonetic": "/suːp/",
     "phrase": "Chicken soup",
     "phraseTranslation": "鸡汤",
@@ -10709,7 +10709,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "South",
     "standardized": "South",
-    "chinese": "",
+    "chinese": "南",
     "phonetic": "/saʊθ/",
     "phrase": "go south",
     "phraseTranslation": "往南走",
@@ -10763,7 +10763,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "speak",
     "standardized": "speak",
-    "chinese": "",
+    "chinese": "speak（英文）",
     "phonetic": "/spiːk/",
     "phrase": "Speak clearly",
     "phraseTranslation": "说清楚",
@@ -10907,7 +10907,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "stand",
     "standardized": "stand",
-    "chinese": "",
+    "chinese": "开始",
     "phonetic": "/stænd/",
     "phrase": "Stand up",
     "phraseTranslation": "站起来",
@@ -10943,7 +10943,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "stem",
     "standardized": "stem",
-    "chinese": "",
+    "chinese": "莖 茎 [jing1]",
     "phonetic": "/stem/",
     "phrase": "Plant stem",
     "phraseTranslation": "植物茎部",
@@ -11123,7 +11123,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "subtract",
     "standardized": "subtract",
-    "chinese": "",
+    "chinese": "减去",
     "phonetic": "/səbˈtrækt/",
     "phrase": "Subtract numbers",
     "phraseTranslation": "数字相减",
@@ -11177,7 +11177,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "sugar",
     "standardized": "sugar",
-    "chinese": "",
+    "chinese": "糖",
     "phonetic": "/ˈʃʊɡər/",
     "phrase": "White sugar",
     "phraseTranslation": "白糖",
@@ -11537,7 +11537,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "t-shirt",
     "standardized": "t-shirt",
-    "chinese": "T",
+    "chinese": "T恤",
     "phonetic": "/t-shirt/",
     "phrase": "A t-shirt",
     "phraseTranslation": "一件T",
@@ -11591,7 +11591,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "tea",
     "standardized": "tea",
-    "chinese": "",
+    "chinese": "茶",
     "phonetic": "/tiː/",
     "phrase": "Hot tea",
     "phraseTranslation": "热茶",
@@ -12059,7 +12059,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "throw",
     "standardized": "throw",
-    "chinese": "",
+    "chinese": "扔",
     "phonetic": "/throw/",
     "phrase": "Throw the ball",
     "phraseTranslation": "扔球",
@@ -12311,7 +12311,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Tree",
     "standardized": "Tree",
-    "chinese": "",
+    "chinese": "树",
     "phonetic": "/triː/",
     "phrase": "green tree",
     "phraseTranslation": "绿树",
@@ -12491,7 +12491,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "Up",
     "standardized": "Up",
-    "chinese": "",
+    "chinese": "上",
     "phonetic": "/ʌp/",
     "phrase": "dig up",
     "phraseTranslation": "往上挖",
@@ -12689,7 +12689,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "watch",
     "standardized": "watch",
-    "chinese": "",
+    "chinese": "手表",
     "phonetic": "/wɑːtʃ/",
     "phrase": "Watch TV",
     "phraseTranslation": "看电视",
@@ -12725,7 +12725,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "water",
     "standardized": "water",
-    "chinese": "",
+    "chinese": "水",
     "phonetic": "/water/",
     "phrase": "Clear water",
     "phraseTranslation": "清澈的水",
@@ -12905,7 +12905,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "West",
     "standardized": "West",
-    "chinese": "",
+    "chinese": "西",
     "phonetic": "/west/",
     "phrase": "go west",
     "phraseTranslation": "往西走",
@@ -13085,7 +13085,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "who",
     "standardized": "who",
-    "chinese": "",
+    "chinese": "谁",
     "phonetic": "/who/",
     "phrase": "Who is he?",
     "phraseTranslation": "他是谁？",
@@ -13157,7 +13157,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "wind",
     "standardized": "wind",
-    "chinese": "",
+    "chinese": "风",
     "phonetic": "/wind/",
     "phrase": "Wind is blowing",
     "phraseTranslation": "刮风",
@@ -13229,7 +13229,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "wolf",
     "standardized": "wolf",
-    "chinese": "",
+    "chinese": "狼",
     "phonetic": "/wolf/",
     "phrase": "Howling wolf",
     "phraseTranslation": "嚎叫的狼",
@@ -13319,7 +13319,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "year",
     "standardized": "year",
-    "chinese": "",
+    "chinese": "年",
     "phonetic": "/jɪr/",
     "phrase": "This year",
     "phraseTranslation": "今年",
@@ -13355,7 +13355,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "yes",
     "standardized": "yes",
-    "chinese": "",
+    "chinese": "是",
     "phonetic": "/yes/",
     "phrase": "Nod yes",
     "phraseTranslation": "点头说是",
@@ -13391,7 +13391,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "you",
     "standardized": "you",
-    "chinese": "",
+    "chinese": "你",
     "phonetic": "/you/",
     "phrase": "How are you?",
     "phraseTranslation": "你好吗？",
@@ -13463,7 +13463,7 @@ const MERGED_VOCABULARY = [
   {
     "word": "zero",
     "standardized": "zero",
-    "chinese": "",
+    "chinese": "零",
     "phonetic": "/zero/",
     "phrase": "Zero apples",
     "phraseTranslation": "零个苹果",

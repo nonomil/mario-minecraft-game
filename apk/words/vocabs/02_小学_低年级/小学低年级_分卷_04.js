@@ -1,6 +1,6 @@
 // Generated from 小学低年级基础.js
 const STAGE_ELEMENTARY_LOWER_PART04 = [
-  {
+{
     "word": "subway",
     "standardized": "subway",
     "chinese": "地铁",

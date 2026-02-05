@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_6.ç¶æææ (Status Effects).json
 const MINECRAFT_6_______STATUS_EFFECTS_ = [
-  {
+{
     "word": "Speed",
     "standardized": "Speed",
     "chinese": "迅捷",
@@ -1476,5 +1476,5 @@ const MINECRAFT_6_______STATUS_EFFECTS_ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_6_______STATUS_EFFECTS_;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_6_______STATUS_EFFECTS_ = MINECRAFT_6_______STATUS_EFFECTS_;
+//   window.MINECRAFT_6_______STATUS_EFFECTS_ = MINECRAFT_6_______STATUS_EFFECTS_;
 }

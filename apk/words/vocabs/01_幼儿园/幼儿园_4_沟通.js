@@ -1,6 +1,6 @@
 // Kindergarten - 4.äº¤æµè¯æ±.json
 const VOCAB_4_____ = [
-  {
+{
     "word": "mine",
     "standardized": "mine",
     "chinese": "挖掘",
@@ -346,7 +346,7 @@ const VOCAB_4_____ = [
     "chinese": "中文",
     "phonetic": "",
     "phrase": "ä¾å¥",
-    "phraseTranslation": "",
+    "phraseTranslation": "中文",
     "difficulty": "basic",
     "category": "common_adjectives",
     "imageURLs": []
@@ -646,7 +646,7 @@ const VOCAB_4_____ = [
     "chinese": "中文",
     "phonetic": "",
     "phrase": "ä¾å¥",
-    "phraseTranslation": "",
+    "phraseTranslation": "中文",
     "difficulty": "basic",
     "category": "locations_directions",
     "imageURLs": []
@@ -946,7 +946,7 @@ const VOCAB_4_____ = [
     "chinese": "中文",
     "phonetic": "",
     "phrase": "ä¾å¥",
-    "phraseTranslation": "",
+    "phraseTranslation": "中文",
     "difficulty": "basic",
     "category": "game_status",
     "imageURLs": []
@@ -2021,7 +2021,7 @@ const VOCAB_4_____ = [
     "chinese": "中文",
     "phonetic": "",
     "phrase": "ä¾å¥",
-    "phraseTranslation": "",
+    "phraseTranslation": "中文",
     "difficulty": "basic",
     "category": "time",
     "imageURLs": []
@@ -2168,7 +2168,7 @@ const VOCAB_4_____ = [
     "chinese": "中文",
     "phonetic": "",
     "phrase": "ä¾å¥",
-    "phraseTranslation": "",
+    "phraseTranslation": "中文",
     "difficulty": "basic",
     "category": "weather",
     "imageURLs": []
@@ -2479,5 +2479,5 @@ const VOCAB_4_____ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VOCAB_4_____;
 } else if (typeof window !== 'undefined') {
-  window.VOCAB_4_____ = VOCAB_4_____;
+//   window.VOCAB_4_____ = VOCAB_4_____;
 }

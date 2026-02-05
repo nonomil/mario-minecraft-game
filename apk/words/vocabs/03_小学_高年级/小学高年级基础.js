@@ -1,7 +1,7 @@
 // Elementary Upper Grade Vocabulary - Abstract Concepts and Cross-curricular Integration
 
 const STAGE_ELEMENTARY_UPPER = [
-  {
+{
     "word": "imagination",
     "standardized": "imagination",
     "chinese": "想象",
@@ -296,7 +296,8 @@ const STAGE_ELEMENTARY_UPPER = [
     ]
   },
 
-  // === é«çº§ç¤¾äº¤ææ ===
+  // === é«çº§ç¤¾äº¤æ
+// æ ===
   {
     "word": "cooperation",
     "standardized": "cooperation",
@@ -1705,5 +1706,5 @@ const STAGE_ELEMENTARY_UPPER = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = STAGE_ELEMENTARY_UPPER;
 } else if (typeof window !== 'undefined') {
-  window.STAGE_ELEMENTARY_UPPER = STAGE_ELEMENTARY_UPPER;
+//   window.STAGE_ELEMENTARY_UPPER = STAGE_ELEMENTARY_UPPER;
 }

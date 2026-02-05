@@ -1,6 +1,6 @@
 // Generated from 幼儿园完整词库.js
 const STAGE_KINDERGARTEN_PART02 = [
-  {
+{
     "word": "seventeen",
     "standardized": "seventeen",
     "chinese": "十七",

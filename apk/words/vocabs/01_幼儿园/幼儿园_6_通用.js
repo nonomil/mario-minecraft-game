@@ -1,6 +1,8 @@
-ï»¿// Kindergarten - 6.éªçå¹é¥î¡çå§¹?json
+// ï»¿// Kindergarten - 6.éªç
+// å¹é¥î
+// ¡çå§¹?json
 const VOCAB_6______ = [
-  {
+{
     "word": "smile",
     "standardized": "smile",
     "chinese": "寰瑧",
@@ -37,10 +39,10 @@ const VOCAB_6______ = [
   {
     "word": "look",
     "standardized": "look",
-    "chinese": "鐪?,
+    "chinese": "鐪?",
     "phonetic": "/look/",
     "phrase": "Look here",
-    "phraseTranslation": "鐪嬭繖杈?,
+    "phraseTranslation": "鐪嬭繖杈?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -108,7 +110,7 @@ const VOCAB_6______ = [
     "chinese": "娓告吵",
     "phonetic": "/swim/",
     "phrase": "Go swimming",
-    "phraseTranslation": "鍘绘父娉?,
+    "phraseTranslation": "鍘绘父娉?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -122,10 +124,10 @@ const VOCAB_6______ = [
   {
     "word": "yawn",
     "standardized": "yawn",
-    "chinese": "鎵撳搱娆?,
+    "chinese": "鎵撳搱娆?",
     "phonetic": "/yawn/",
     "phrase": "Yawn before bed",
-    "phraseTranslation": "鐫″墠鎵撳搱娆?,
+    "phraseTranslation": "鐫″墠鎵撳搱娆?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -159,7 +161,7 @@ const VOCAB_6______ = [
     "chinese": "闃呰",
     "phonetic": "/read/",
     "phrase": "Read a storybook",
-    "phraseTranslation": "闃呰鏁呬簨涔?,
+    "phraseTranslation": "闃呰鏁呬簨涔?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -176,7 +178,7 @@ const VOCAB_6______ = [
     "chinese": "鐫¤",
     "phonetic": "/sleep/",
     "phrase": "Baby is sleeping",
-    "phraseTranslation": "瀹濆疂鐫¤浜?,
+    "phraseTranslation": "瀹濆疂鐫¤浜?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -210,7 +212,7 @@ const VOCAB_6______ = [
     "chinese": "鍥炵瓟",
     "phonetic": "/answer/",
     "phrase": "Answer the teacher's question",
-    "phraseTranslation": "鍥炵瓟鑰佸笀鐨勯棶棰?,
+    "phraseTranslation": "鍥炵瓟鑰佸笀鐨勯棶棰?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -224,7 +226,7 @@ const VOCAB_6______ = [
   {
     "word": "blow",
     "standardized": "blow",
-    "chinese": "鍚?,
+    "chinese": "鍚?",
     "phonetic": "/blow/",
     "phrase": "Blow a dandelion",
     "phraseTranslation": "鍚硅挷鍏嫳",
@@ -258,7 +260,7 @@ const VOCAB_6______ = [
   {
     "word": "no",
     "standardized": "no",
-    "chinese": "涓?,
+    "chinese": "涓?",
     "phonetic": "/no/",
     "phrase": "Shake head no",
     "phraseTranslation": "鎽囧ご璇翠笉",
@@ -275,10 +277,10 @@ const VOCAB_6______ = [
   {
     "word": "sorry",
     "standardized": "sorry",
-    "chinese": "瀵逛笉璧?,
+    "chinese": "瀵逛笉璧?",
     "phonetic": "/sorry/",
     "phrase": "Sorry, I am wrong",
-    "phraseTranslation": "瀵逛笉璧凤紝鎴戦敊浜?,
+    "phraseTranslation": "瀵逛笉璧凤紝鎴戦敊浜?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -292,7 +294,7 @@ const VOCAB_6______ = [
   {
     "word": "he",
     "standardized": "he",
-    "chinese": "浠?,
+    "chinese": "浠?",
     "phonetic": "/he/",
     "phrase": "He is my friend",
     "phraseTranslation": "浠栨槸鎴戠殑鏈嬪弸",
@@ -326,7 +328,7 @@ const VOCAB_6______ = [
   {
     "word": "who",
     "standardized": "who",
-    "chinese": "璋?,
+    "chinese": "璋?",
     "phonetic": "/who/",
     "phrase": "Who is he?",
     "phraseTranslation": "浠栨槸璋侊紵",
@@ -343,10 +345,10 @@ const VOCAB_6______ = [
   {
     "word": "why",
     "standardized": "why",
-    "chinese": "涓轰粈涔?,
+    "chinese": "涓轰粈涔?",
     "phonetic": "/why/",
     "phrase": "Why is the sky blue?",
-    "phraseTranslation": "涓轰粈涔堝ぉ绌烘槸钃濈殑锛?,
+    "phraseTranslation": "涓轰粈涔堝ぉ绌烘槸钃濈殑锛?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -397,7 +399,7 @@ const VOCAB_6______ = [
     "chinese": "寮€蹇冪殑",
     "phonetic": "/?h?pi/",
     "phrase": "Happy child",
-    "phraseTranslation": "寮€蹇冪殑灏忔湅鍙?,
+    "phraseTranslation": "寮€蹇冪殑灏忔湅鍙?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -414,7 +416,7 @@ const VOCAB_6______ = [
     "chinese": "楗跨殑",
     "phonetic": "/hungry/",
     "phrase": "I'm hungry, want to eat",
-    "phraseTranslation": "鎴戦タ浜嗭紝鎯冲悆楗?,
+    "phraseTranslation": "鎴戦タ浜嗭紝鎯冲悆楗?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -431,7 +433,7 @@ const VOCAB_6______ = [
     "chinese": "鍧忕殑",
     "phonetic": "/bad/",
     "phrase": "Bad weather",
-    "phraseTranslation": "鍧忓ぉ姘?,
+    "phraseTranslation": "鍧忓ぉ姘?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -445,7 +447,7 @@ const VOCAB_6______ = [
   {
     "word": "clean",
     "standardized": "clean",
-    "chinese": "骞插噣鐨?,
+    "chinese": "骞插噣鐨?",
     "phonetic": "/clean/",
     "phrase": "Clean hands",
     "phraseTranslation": "骞插噣鐨勬墜",
@@ -479,7 +481,7 @@ const VOCAB_6______ = [
   {
     "word": "beautiful",
     "standardized": "beautiful",
-    "chinese": "缇庝附鐨?,
+    "chinese": "缇庝附鐨?",
     "phonetic": "/beautiful/",
     "phrase": "Beautiful flower",
     "phraseTranslation": "缇庝附鐨勮姳",
@@ -496,10 +498,10 @@ const VOCAB_6______ = [
   {
     "word": "funny",
     "standardized": "funny",
-    "chinese": "鏈夎叮鐨?濂界瑧鐨?,
+    "chinese": "鏈夎叮鐨?濂界瑧鐨?",
     "phonetic": "/funny/",
     "phrase": "Funny monkey",
-    "phraseTranslation": "鏈夎叮鐨勭尨瀛?,
+    "phraseTranslation": "鏈夎叮鐨勭尨瀛?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -513,10 +515,10 @@ const VOCAB_6______ = [
   {
     "word": "loud",
     "standardized": "loud",
-    "chinese": "鍚甸椆鐨?,
+    "chinese": "鍚甸椆鐨?",
     "phonetic": "/loud/",
     "phrase": "Loud playground",
-    "phraseTranslation": "鍚甸椆鐨勬搷鍦?,
+    "phraseTranslation": "鍚甸椆鐨勬搷鍦?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -530,10 +532,10 @@ const VOCAB_6______ = [
   {
     "word": "strong",
     "standardized": "strong",
-    "chinese": "寮哄．鐨?,
+    "chinese": "寮哄．鐨?",
     "phonetic": "/strong/",
     "phrase": "Strong elephant",
-    "phraseTranslation": "寮哄．鐨勫ぇ璞?,
+    "phraseTranslation": "寮哄．鐨勫ぇ璞?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -550,7 +552,7 @@ const VOCAB_6______ = [
     "chinese": "閲嶇殑",
     "phonetic": "/heavy/",
     "phrase": "Heavy stone",
-    "phraseTranslation": "閲嶉噸鐨勭煶澶?,
+    "phraseTranslation": "閲嶉噸鐨勭煶澶?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -567,7 +569,7 @@ const VOCAB_6______ = [
     "chinese": "绌虹殑",
     "phonetic": "/empty/",
     "phrase": "Empty cup",
-    "phraseTranslation": "绌虹┖鐨勬澂瀛?,
+    "phraseTranslation": "绌虹┖鐨勬澂瀛?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -584,7 +586,7 @@ const VOCAB_6______ = [
     "chinese": "骞茬殑",
     "phonetic": "/dry/",
     "phrase": "Dry towel",
-    "phraseTranslation": "骞茬嚗鐨勬瘺宸?,
+    "phraseTranslation": "骞茬嚗鐨勬瘺宸?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -601,7 +603,7 @@ const VOCAB_6______ = [
     "chinese": "閰哥殑",
     "phonetic": "/sour/",
     "phrase": "Sour lemon",
-    "phraseTranslation": "閰搁吀鐨勬煚妾?,
+    "phraseTranslation": "閰搁吀鐨勬煚妾?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -635,7 +637,7 @@ const VOCAB_6______ = [
     "chinese": "鏃╀笂",
     "phonetic": "/morning/",
     "phrase": "Good morning",
-    "phraseTranslation": "鏃╀笂濂?,
+    "phraseTranslation": "鏃╀笂濂?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -652,7 +654,7 @@ const VOCAB_6______ = [
     "chinese": "鏄庡ぉ",
     "phonetic": "/tomorrow/",
     "phrase": "See you tomorrow",
-    "phraseTranslation": "鏄庡ぉ瑙?,
+    "phraseTranslation": "鏄庡ぉ瑙?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -666,7 +668,7 @@ const VOCAB_6______ = [
   {
     "word": "three",
     "standardized": "three",
-    "chinese": "涓?,
+    "chinese": "涓?",
     "phonetic": "/three/",
     "phrase": "Three stars",
     "phraseTranslation": "涓夐鏄熸槦",
@@ -703,7 +705,7 @@ const VOCAB_6______ = [
     "chinese": "瀛︾敓",
     "phonetic": "/student/",
     "phrase": "Good student",
-    "phraseTranslation": "濂藉鐢?,
+    "phraseTranslation": "濂藉鐢?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -754,7 +756,7 @@ const VOCAB_6______ = [
     "chinese": "鑸屽ご",
     "phonetic": "/tongue/",
     "phrase": "Stick out tongue",
-    "phraseTranslation": "浼歌垖澶?,
+    "phraseTranslation": "浼歌垖澶?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -771,7 +773,7 @@ const VOCAB_6______ = [
     "chinese": "鑴搁",
     "phonetic": "/cheek/",
     "phrase": "Rosy cheek",
-    "phraseTranslation": "绾㈢孩鐨勮劯棰?,
+    "phraseTranslation": "绾㈢孩鐨勮劯棰?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -853,10 +855,10 @@ const VOCAB_6______ = [
   {
     "word": "feet",
     "standardized": "feet",
-    "chinese": "鑴氾紙澶嶆暟锛?,
+    "chinese": "鑴氾紙澶嶆暟锛?",
     "phonetic": "/feet/",
     "phrase": "Walk with two feet",
-    "phraseTranslation": "涓ゅ彧鑴氳蛋璺?,
+    "phraseTranslation": "涓ゅ彧鑴氳蛋璺?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -870,7 +872,7 @@ const VOCAB_6______ = [
   {
     "word": "cry",
     "standardized": "cry",
-    "chinese": "鍝?,
+    "chinese": "鍝?",
     "phonetic": "/cry/",
     "phrase": "Cry sadly",
     "phraseTranslation": "浼ゅ績鍦板摥",
@@ -887,10 +889,10 @@ const VOCAB_6______ = [
   {
     "word": "heel",
     "standardized": "heel",
-    "chinese": "鑴氬悗璺?,
+    "chinese": "鑴氬悗璺?",
     "phonetic": "/heel/",
     "phrase": "Lift heel",
-    "phraseTranslation": "鎶捣鑴氬悗璺?,
+    "phraseTranslation": "鎶捣鑴氬悗璺?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -907,7 +909,7 @@ const VOCAB_6______ = [
     "chinese": "楠ㄥご",
     "phonetic": "/bone/",
     "phrase": "Hard bone",
-    "phraseTranslation": "鍧氱‖鐨勯澶?,
+    "phraseTranslation": "鍧氱‖鐨勯澶?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -924,7 +926,7 @@ const VOCAB_6______ = [
     "chinese": "鍛煎惛",
     "phonetic": "/breathe/",
     "phrase": "Deep breath",
-    "phraseTranslation": "娣卞懠鍚?,
+    "phraseTranslation": "娣卞懠鍚?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -958,7 +960,7 @@ const VOCAB_6______ = [
     "chinese": "姣涜。",
     "phonetic": "/sweater/",
     "phrase": "Warm sweater",
-    "phraseTranslation": "娓╂殩鐨勬瘺琛?,
+    "phraseTranslation": "娓╂殩鐨勬瘺琛?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -989,7 +991,7 @@ const VOCAB_6______ = [
   {
     "word": "sneakers",
     "standardized": "sneakers",
-    "chinese": "杩愬姩闉?,
+    "chinese": "杩愬姩闉?",
     "phonetic": "/sneakers/",
     "phrase": "Wear sneakers",
     "phraseTranslation": "绌胯繍鍔ㄩ瀷",
@@ -1006,7 +1008,7 @@ const VOCAB_6______ = [
   {
     "word": "jeans",
     "standardized": "jeans",
-    "chinese": "鐗涗粩瑁?,
+    "chinese": "鐗涗粩瑁?",
     "phonetic": "/jeans/",
     "phrase": "Wear jeans",
     "phraseTranslation": "绌跨墰浠旇￥",
@@ -1023,7 +1025,7 @@ const VOCAB_6______ = [
   {
     "word": "hoodie",
     "standardized": "hoodie",
-    "chinese": "杩炲附琛?,
+    "chinese": "杩炲附琛?",
     "phonetic": "/hoodie/",
     "phrase": "Wear a hoodie",
     "phraseTranslation": "绌胯繛甯借～",
@@ -1040,7 +1042,7 @@ const VOCAB_6______ = [
   {
     "word": "beanie",
     "standardized": "beanie",
-    "chinese": "姣涚嚎甯?,
+    "chinese": "姣涚嚎甯?",
     "phonetic": "/beanie/",
     "phrase": "Wear a beanie",
     "phraseTranslation": "鎴存瘺绾垮附",
@@ -1060,7 +1062,7 @@ const VOCAB_6______ = [
     "chinese": "娉宠。",
     "phonetic": "/swimsuit/",
     "phrase": "Wear a swimsuit",
-    "phraseTranslation": "绌挎吵琛?,
+    "phraseTranslation": "绌挎吵琛?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1074,7 +1076,7 @@ const VOCAB_6______ = [
   {
     "word": "overalls",
     "standardized": "overalls",
-    "chinese": "宸ヨ瑁?,
+    "chinese": "宸ヨ瑁?",
     "phonetic": "/overalls/",
     "phrase": "Wear overalls",
     "phraseTranslation": "绌垮伐瑁呰￥",
@@ -1094,7 +1096,7 @@ const VOCAB_6______ = [
     "chinese": "濡堝",
     "phonetic": "/mother/",
     "phrase": "Gentle mother",
-    "phraseTranslation": "娓╂煍鐨勫濡?,
+    "phraseTranslation": "娓╂煍鐨勫濡?",
     "difficulty": "intermediate",
     "category": "family_member",
     "imageURLs": [
@@ -1111,7 +1113,7 @@ const VOCAB_6______ = [
     "chinese": "瀹濆疂",
     "phonetic": "/baby/",
     "phrase": "Cute baby",
-    "phraseTranslation": "鍙埍鐨勫疂瀹?,
+    "phraseTranslation": "鍙埍鐨勫疂瀹?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1128,7 +1130,7 @@ const VOCAB_6______ = [
     "chinese": "姗欏瓙",
     "phonetic": "/orange/",
     "phrase": "Sweet orange",
-    "phraseTranslation": "鐢滅敎鐨勬瀛?,
+    "phraseTranslation": "鐢滅敎鐨勬瀛?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1145,7 +1147,7 @@ const VOCAB_6______ = [
     "chinese": "绫抽キ",
     "phonetic": "/rice/",
     "phrase": "Fragrant rice",
-    "phraseTranslation": "棣欓鐨勭背楗?,
+    "phraseTranslation": "棣欓鐨勭背楗?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1159,10 +1161,10 @@ const VOCAB_6______ = [
   {
     "word": "three",
     "standardized": "three",
-    "chinese": "涓?,
+    "chinese": "涓?",
     "phonetic": "/three/",
     "phrase": "Number three",
-    "phraseTranslation": "鏁板瓧涓?,
+    "phraseTranslation": "鏁板瓧涓?",
     "difficulty": "basic",
     "category": "number_color",
     "imageURLs": [
@@ -1179,7 +1181,7 @@ const VOCAB_6______ = [
     "chinese": "绾㈣壊",
     "phonetic": "/red/",
     "phrase": "Bright red",
-    "phraseTranslation": "椴滆壋鐨勭孩鑹?,
+    "phraseTranslation": "椴滆壋鐨勭孩鑹?",
     "difficulty": "basic",
     "category": "number_color",
     "imageURLs": [
@@ -1196,7 +1198,7 @@ const VOCAB_6______ = [
     "chinese": "缁胯壊",
     "phonetic": "/green/",
     "phrase": "Fresh green",
-    "phraseTranslation": "娓呮柊鐨勭豢鑹?,
+    "phraseTranslation": "娓呮柊鐨勭豢鑹?",
     "difficulty": "basic",
     "category": "number_color",
     "imageURLs": [
@@ -1213,7 +1215,7 @@ const VOCAB_6______ = [
     "chinese": "瀛︾敓",
     "phonetic": "/student/",
     "phrase": "Smart student",
-    "phraseTranslation": "鑱槑鐨勫鐢?,
+    "phraseTranslation": "鑱槑鐨勫鐢?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1227,10 +1229,10 @@ const VOCAB_6______ = [
   {
     "word": "marker",
     "standardized": "marker",
-    "chinese": "璁板彿绗?,
+    "chinese": "璁板彿绗?",
     "phonetic": "/marker/",
     "phrase": "Colorful markers",
-    "phraseTranslation": "褰╄壊璁板彿绗?,
+    "phraseTranslation": "褰╄壊璁板彿绗?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1264,7 +1266,7 @@ const VOCAB_6______ = [
     "chinese": "绮夌瑪",
     "phonetic": "/chalk/",
     "phrase": "White chalk",
-    "phraseTranslation": "鐧借壊鐨勭矇绗?,
+    "phraseTranslation": "鐧借壊鐨勭矇绗?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1281,7 +1283,7 @@ const VOCAB_6______ = [
     "chinese": "鏃ュ巻",
     "phonetic": "/calendar/",
     "phrase": "Calendar on the wall",
-    "phraseTranslation": "鎸傚湪澧欎笂鐨勬棩鍘?,
+    "phraseTranslation": "鎸傚湪澧欎笂鐨勬棩鍘?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1315,7 +1317,7 @@ const VOCAB_6______ = [
     "chinese": "鍗堥",
     "phonetic": "/lunch/",
     "phrase": "Eat lunch",
-    "phraseTranslation": "鍚冨崍椁?,
+    "phraseTranslation": "鍚冨崍椁?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1332,7 +1334,7 @@ const VOCAB_6______ = [
     "chinese": "瀹跺涵浣滀笟",
     "phonetic": "/homework/",
     "phrase": "Do homework",
-    "phraseTranslation": "鍋氬搴綔涓?,
+    "phraseTranslation": "鍋氬搴綔涓?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1349,7 +1351,7 @@ const VOCAB_6______ = [
     "chinese": "闊充箰",
     "phonetic": "/music/",
     "phrase": "Listen to music",
-    "phraseTranslation": "鍚煶涔?,
+    "phraseTranslation": "鍚煶涔?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1366,7 +1368,7 @@ const VOCAB_6______ = [
     "chinese": "鏁呬簨",
     "phonetic": "/story/",
     "phrase": "Tell a story",
-    "phraseTranslation": "璁叉晠浜?,
+    "phraseTranslation": "璁叉晠浜?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1383,7 +1385,7 @@ const VOCAB_6______ = [
     "chinese": "娓告垙",
     "phonetic": "/game/",
     "phrase": "Play a game",
-    "phraseTranslation": "鐜╂父鎴?,
+    "phraseTranslation": "鐜╂父鎴?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1434,7 +1436,7 @@ const VOCAB_6______ = [
     "chinese": "鏁板",
     "phonetic": "/math/",
     "phrase": "Learn math",
-    "phraseTranslation": "瀛︽暟瀛?,
+    "phraseTranslation": "瀛︽暟瀛?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1451,7 +1453,7 @@ const VOCAB_6______ = [
     "chinese": "涓枃",
     "phonetic": "/chinese/",
     "phrase": "Speak Chinese",
-    "phraseTranslation": "璇翠腑鏂?,
+    "phraseTranslation": "璇翠腑鏂?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1465,7 +1467,7 @@ const VOCAB_6______ = [
   {
     "word": "oval",
     "standardized": "oval",
-    "chinese": "妞渾褰?,
+    "chinese": "妞渾褰?",
     "phonetic": "/oval/",
     "phrase": "Oval egg",
     "phraseTranslation": "妞渾褰㈢殑楦¤泲",
@@ -1482,10 +1484,10 @@ const VOCAB_6______ = [
   {
     "word": "crescent",
     "standardized": "crescent",
-    "chinese": "鏂版湀褰?,
+    "chinese": "鏂版湀褰?",
     "phonetic": "/crescent/",
     "phrase": "Crescent moon",
-    "phraseTranslation": "寮集鐨勬湀浜?,
+    "phraseTranslation": "寮集鐨勬湀浜?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1502,7 +1504,7 @@ const VOCAB_6______ = [
     "chinese": "鐞冧綋",
     "phonetic": "/sphere/",
     "phrase": "Round sphere",
-    "phraseTranslation": "鍦嗗渾鐨勭悆浣?,
+    "phraseTranslation": "鍦嗗渾鐨勭悆浣?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1516,10 +1518,10 @@ const VOCAB_6______ = [
   {
     "word": "pyramid",
     "standardized": "pyramid",
-    "chinese": "閲戝瓧濉?,
+    "chinese": "閲戝瓧濉?",
     "phonetic": "/pyramid/",
     "phrase": "Egyptian pyramid",
-    "phraseTranslation": "鍩冨強閲戝瓧濉?,
+    "phraseTranslation": "鍩冨強閲戝瓧濉?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1533,10 +1535,10 @@ const VOCAB_6______ = [
   {
     "word": "zigzag",
     "standardized": "zigzag",
-    "chinese": "閿娇褰?,
+    "chinese": "閿娇褰?",
     "phonetic": "/zigzag/",
     "phrase": "Zigzag line",
-    "phraseTranslation": "閿娇褰㈢殑绾?,
+    "phraseTranslation": "閿娇褰㈢殑绾?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1553,7 +1555,7 @@ const VOCAB_6______ = [
     "chinese": "骞抽潰",
     "phonetic": "/flat/",
     "phrase": "Flat surface",
-    "phraseTranslation": "骞冲钩鐨勮〃闈?,
+    "phraseTranslation": "骞冲钩鐨勮〃闈?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1570,7 +1572,7 @@ const VOCAB_6______ = [
     "chinese": "鍥炬",
     "phonetic": "/pattern/",
     "phrase": "Beautiful pattern",
-    "phraseTranslation": "婕備寒鐨勫浘妗?,
+    "phraseTranslation": "婕備寒鐨勫浘妗?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1601,7 +1603,7 @@ const VOCAB_6______ = [
   {
     "word": "robot",
     "standardized": "robot",
-    "chinese": "鏈哄櫒浜?,
+    "chinese": "鏈哄櫒浜?",
     "phonetic": "/robot/",
     "phrase": "Cool robot",
     "phraseTranslation": "閰烽叿鐨勬満鍣ㄤ汉",
@@ -1618,10 +1620,10 @@ const VOCAB_6______ = [
   {
     "word": "two",
     "standardized": "two",
-    "chinese": "浜?,
+    "chinese": "浜?",
     "phonetic": "/tu?/",
     "phrase": "Two hands",
-    "phraseTranslation": "涓ゅ彧鎵?,
+    "phraseTranslation": "涓ゅ彧鎵?",
     "difficulty": "basic",
     "category": "number_color",
     "imageURLs": [
@@ -1635,7 +1637,7 @@ const VOCAB_6______ = [
   {
     "word": "five",
     "standardized": "five",
-    "chinese": "浜?,
+    "chinese": "浜?",
     "phonetic": "/five/",
     "phrase": "Five fingers",
     "phraseTranslation": "浜斾釜鎵嬫寚",
@@ -1652,10 +1654,10 @@ const VOCAB_6______ = [
   {
     "word": "eight",
     "standardized": "eight",
-    "chinese": "鍏?,
+    "chinese": "鍏?",
     "phonetic": "/eight/",
     "phrase": "Eight legs",
-    "phraseTranslation": "鍏潯鑵?,
+    "phraseTranslation": "鍏潯鑵?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1689,7 +1691,7 @@ const VOCAB_6______ = [
     "chinese": "鍗佸洓",
     "phonetic": "/fourteen/",
     "phrase": "Fourteen friends",
-    "phraseTranslation": "鍗佸洓涓湅鍙?,
+    "phraseTranslation": "鍗佸洓涓湅鍙?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1706,7 +1708,7 @@ const VOCAB_6______ = [
     "chinese": "鍗佷竷",
     "phonetic": "/seventeen/",
     "phrase": "Seventeen friends",
-    "phraseTranslation": "鍗佷竷涓湅鍙?,
+    "phraseTranslation": "鍗佷竷涓湅鍙?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1723,7 +1725,7 @@ const VOCAB_6______ = [
     "chinese": "浜屽崄",
     "phonetic": "/twenty/",
     "phrase": "Twenty students",
-    "phraseTranslation": "浜屽崄涓鐢?,
+    "phraseTranslation": "浜屽崄涓鐢?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1757,7 +1759,7 @@ const VOCAB_6______ = [
     "chinese": "鏈€鍚庣殑",
     "phonetic": "/last/",
     "phrase": "The last one",
-    "phraseTranslation": "鏈€鍚庝竴涓?,
+    "phraseTranslation": "鏈€鍚庝竴涓?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1791,7 +1793,7 @@ const VOCAB_6______ = [
     "chinese": "鏇村",
     "phonetic": "/more/",
     "phrase": "A bit more",
-    "phraseTranslation": "鍐嶅涓€鐐?,
+    "phraseTranslation": "鍐嶅涓€鐐?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -1808,7 +1810,7 @@ const VOCAB_6______ = [
     "chinese": "钃濊壊",
     "phonetic": "/blu?/",
     "phrase": "Blue sky",
-    "phraseTranslation": "钃濊壊鐨勫ぉ绌?,
+    "phraseTranslation": "钃濊壊鐨勫ぉ绌?",
     "difficulty": "basic",
     "category": "number_color",
     "imageURLs": [
@@ -1825,7 +1827,7 @@ const VOCAB_6______ = [
     "chinese": "姗欒壊",
     "phonetic": "/orange/",
     "phrase": "Orange fruit",
-    "phraseTranslation": "姗欒壊鐨勬瀛?,
+    "phraseTranslation": "姗欒壊鐨勬瀛?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1907,7 +1909,7 @@ const VOCAB_6______ = [
   {
     "word": "oval",
     "standardized": "oval",
-    "chinese": "妞渾褰?,
+    "chinese": "妞渾褰?",
     "phonetic": "/oval/",
     "phrase": "Oval egg",
     "phraseTranslation": "妞渾褰㈢殑楦¤泲",
@@ -1924,7 +1926,7 @@ const VOCAB_6______ = [
   {
     "word": "snow",
     "standardized": "snow",
-    "chinese": "闆?,
+    "chinese": "闆?",
     "phonetic": "/snow/",
     "phrase": "White snow",
     "phraseTranslation": "鐧介洩鐨戠殤",
@@ -1941,10 +1943,10 @@ const VOCAB_6______ = [
   {
     "word": "thunder",
     "standardized": "thunder",
-    "chinese": "闆?,
+    "chinese": "闆?",
     "phonetic": "/thunder/",
     "phrase": "Loud thunder",
-    "phraseTranslation": "杞伴殕闅嗙殑闆?,
+    "phraseTranslation": "杞伴殕闅嗙殑闆?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -1958,10 +1960,10 @@ const VOCAB_6______ = [
   {
     "word": "snowy",
     "standardized": "snowy",
-    "chinese": "涓嬮洩鐨?,
+    "chinese": "涓嬮洩鐨?",
     "phonetic": "/snowy/",
     "phrase": "Snowy weather",
-    "phraseTranslation": "涓嬮洩鐨勫ぉ姘?,
+    "phraseTranslation": "涓嬮洩鐨勫ぉ姘?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2046,7 +2048,7 @@ const VOCAB_6______ = [
     "chinese": "涓嬪崍",
     "phonetic": "/afternoon/",
     "phrase": "Good afternoon",
-    "phraseTranslation": "涓嬪崍濂?,
+    "phraseTranslation": "涓嬪崍濂?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2063,7 +2065,7 @@ const VOCAB_6______ = [
     "chinese": "鐧藉ぉ",
     "phonetic": "/day/",
     "phrase": "We play during the day",
-    "phraseTranslation": "鐧藉ぉ鎴戜滑鐜╄€?,
+    "phraseTranslation": "鐧藉ぉ鎴戜滑鐜╄€?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2080,7 +2082,7 @@ const VOCAB_6______ = [
     "chinese": "鏄ㄥぉ",
     "phonetic": "/yesterday/",
     "phrase": "We watched a movie yesterday",
-    "phraseTranslation": "鏄ㄥぉ鎴戜滑鐪嬬數褰?,
+    "phraseTranslation": "鏄ㄥぉ鎴戜滑鐪嬬數褰?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2097,7 +2099,7 @@ const VOCAB_6______ = [
     "chinese": "鏍戞灊",
     "phonetic": "/branch/",
     "phrase": "Long branch",
-    "phraseTranslation": "闀块暱鐨勬爲鏋?,
+    "phraseTranslation": "闀块暱鐨勬爲鏋?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2111,7 +2113,7 @@ const VOCAB_6______ = [
   {
     "word": "mountain",
     "standardized": "mountain",
-    "chinese": "灞?,
+    "chinese": "灞?",
     "phonetic": "/mountain/",
     "phrase": "Tall mountain",
     "phraseTranslation": "楂橀珮鐨勫北",
@@ -2128,7 +2130,7 @@ const VOCAB_6______ = [
   {
     "word": "river",
     "standardized": "river",
-    "chinese": "娌?,
+    "chinese": "娌?",
     "phonetic": "/river/",
     "phrase": "Long river",
     "phraseTranslation": "闀块暱鐨勬渤",
@@ -2148,7 +2150,7 @@ const VOCAB_6______ = [
     "chinese": "娴锋哗",
     "phonetic": "/beach/",
     "phrase": "Play on the beach",
-    "phraseTranslation": "娌欐哗涓婄帺鑰?,
+    "phraseTranslation": "娌欐哗涓婄帺鑰?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2182,7 +2184,7 @@ const VOCAB_6______ = [
     "chinese": "宀╃煶",
     "phonetic": "/rock/",
     "phrase": "Hard rock",
-    "phraseTranslation": "纭‖鐨勫博鐭?,
+    "phraseTranslation": "纭‖鐨勫博鐭?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2199,7 +2201,7 @@ const VOCAB_6______ = [
     "chinese": "鍦熷￥",
     "phonetic": "/soil/",
     "phrase": "Fertile soil",
-    "phraseTranslation": "鑲ユ矁鐨勫湡澹?,
+    "phraseTranslation": "鑲ユ矁鐨勫湡澹?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2233,7 +2235,7 @@ const VOCAB_6______ = [
     "chinese": "浠撻紶",
     "phonetic": "/hamster/",
     "phrase": "Cute hamster",
-    "phraseTranslation": "鍙埍鐨勪粨榧?,
+    "phraseTranslation": "鍙埍鐨勪粨榧?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2264,7 +2266,7 @@ const VOCAB_6______ = [
   {
     "word": "snake",
     "standardized": "snake",
-    "chinese": "铔?,
+    "chinese": "铔?",
     "phonetic": "/snake/",
     "phrase": "Long snake",
     "phraseTranslation": "闀块暱鐨勮泧",
@@ -2335,7 +2337,7 @@ const VOCAB_6______ = [
     "chinese": "椴搁奔",
     "phonetic": "/whale/",
     "phrase": "Giant whale",
-    "phraseTranslation": "宸ㄥぇ鐨勯哺楸?,
+    "phraseTranslation": "宸ㄥぇ鐨勯哺楸?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2386,7 +2388,7 @@ const VOCAB_6______ = [
     "chinese": "瓒呭競",
     "phonetic": "/supermarket/",
     "phrase": "Go to the supermarket",
-    "phraseTranslation": "閫涜秴甯?,
+    "phraseTranslation": "閫涜秴甯?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2420,7 +2422,7 @@ const VOCAB_6______ = [
     "chinese": "涔℃潙",
     "phonetic": "/countryside/",
     "phrase": "Beautiful countryside",
-    "phraseTranslation": "缇庝附鐨勪埂鏉?,
+    "phraseTranslation": "缇庝附鐨勪埂鏉?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2434,7 +2436,7 @@ const VOCAB_6______ = [
   {
     "word": "eraser",
     "standardized": "eraser",
-    "chinese": "姗＄毊鎿?,
+    "chinese": "姗＄毊鎿?",
     "phonetic": "/eraser/",
     "phrase": "Use an eraser",
     "phraseTranslation": "鐢ㄦ鐨摝",
@@ -2454,7 +2456,7 @@ const VOCAB_6______ = [
     "chinese": "鑳舵按",
     "phonetic": "/glue/",
     "phrase": "Sticky glue",
-    "phraseTranslation": "绮樼矘鐨勮兌姘?,
+    "phraseTranslation": "绮樼矘鐨勮兌姘?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2471,7 +2473,7 @@ const VOCAB_6______ = [
     "chinese": "榛戞澘",
     "phonetic": "/blackboard/",
     "phrase": "Write on the blackboard",
-    "phraseTranslation": "鍐欏湪榛戞澘涓?,
+    "phraseTranslation": "鍐欏湪榛戞澘涓?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2488,7 +2490,7 @@ const VOCAB_6______ = [
     "chinese": "鐢佃剳",
     "phonetic": "/computer/",
     "phrase": "Learn with a computer",
-    "phraseTranslation": "鐢ㄧ數鑴戝涔?,
+    "phraseTranslation": "鐢ㄧ數鑴戝涔?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2522,7 +2524,7 @@ const VOCAB_6______ = [
     "chinese": "鍗堥",
     "phonetic": "/lunch/",
     "phrase": "Eat lunch",
-    "phraseTranslation": "鍚冨崍椁?,
+    "phraseTranslation": "鍚冨崍椁?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2539,7 +2541,7 @@ const VOCAB_6______ = [
     "chinese": "瀹跺涵浣滀笟",
     "phonetic": "/homework/",
     "phrase": "Do homework",
-    "phraseTranslation": "鍋氬搴綔涓?,
+    "phraseTranslation": "鍋氬搴綔涓?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2556,7 +2558,7 @@ const VOCAB_6______ = [
     "chinese": "闊充箰",
     "phonetic": "/music/",
     "phrase": "Listen to music",
-    "phraseTranslation": "鍚煶涔?,
+    "phraseTranslation": "鍚煶涔?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2573,7 +2575,7 @@ const VOCAB_6______ = [
     "chinese": "鏁呬簨",
     "phonetic": "/story/",
     "phrase": "Tell a story",
-    "phraseTranslation": "璁叉晠浜?,
+    "phraseTranslation": "璁叉晠浜?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2590,7 +2592,7 @@ const VOCAB_6______ = [
     "chinese": "娓告垙",
     "phonetic": "/game/",
     "phrase": "Play a game",
-    "phraseTranslation": "鐜╂父鎴?,
+    "phraseTranslation": "鐜╂父鎴?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2641,7 +2643,7 @@ const VOCAB_6______ = [
     "chinese": "鏁板",
     "phonetic": "/math/",
     "phrase": "Learn math",
-    "phraseTranslation": "瀛︽暟瀛?,
+    "phraseTranslation": "瀛︽暟瀛?",
     "difficulty": "basic",
     "category": "general",
     "imageURLs": [
@@ -2658,7 +2660,7 @@ const VOCAB_6______ = [
     "chinese": "涓枃",
     "phonetic": "/chinese/",
     "phrase": "Speak Chinese",
-    "phraseTranslation": "璇翠腑鏂?,
+    "phraseTranslation": "璇翠腑鏂?",
     "difficulty": "intermediate",
     "category": "general",
     "imageURLs": [
@@ -2675,6 +2677,5 @@ const VOCAB_6______ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VOCAB_6______;
 } else if (typeof window !== 'undefined') {
-  window.VOCAB_6______ = VOCAB_6______;
+//   window.VOCAB_6______ = VOCAB_6______;
 }
-

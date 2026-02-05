@@ -150,6 +150,6 @@
   window.MMWG_VOCAB_MANIFEST = {
     version: "2026-02-04.1",
     packs,
-    byId
+//     byId
   };
 })();

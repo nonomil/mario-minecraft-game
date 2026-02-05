@@ -1553,26 +1553,6 @@ function applySettingsToUI() {
     document.documentElement.style.setProperty("--ui-scale", uiScale.toFixed(3));
     document.documentElement.style.setProperty("--vvw", `${Math.floor(visualViewport.width)}px`);
     document.documentElement.style.setProperty("--vvh", `${Math.floor(visualViewport.height)}px`);
-    const systemBottom = (() => {
-        const vv = typeof window !== "undefined" ? window.visualViewport : null;
-        const innerH = window.innerHeight || document.documentElement.clientHeight || 0;
-        let fromViewport = 0;
-        if (vv && typeof vv.height === "number") {
-            const offsetTop = typeof vv.offsetTop === "number" ? vv.offsetTop : 0;
-            fromViewport = Math.max(0, Math.round(innerH - (vv.height + offsetTop)));
-        }
-        let fromScreen = 0;
-        if (window.screen && typeof window.screen.height === "number" && typeof window.screen.availHeight === "number") {
-            fromScreen = Math.max(0, Math.round(window.screen.height - window.screen.availHeight));
-        }
-        const measured = Math.max(fromViewport, fromScreen);
-        const ua = (navigator && navigator.userAgent) || "";
-        const isCoarse = typeof window.matchMedia === "function" ? window.matchMedia("(pointer: coarse)").matches : false;
-        const isMobile = isCoarse || /Android|iPhone|iPad|iPod/i.test(ua);
-        const minFallback = isMobile ? 24 : 0;
-        return Math.max(measured, minFallback);
-    })();
-    document.documentElement.style.setProperty("--ui-bottom-offset", `${Math.round(systemBottom / uiScale)}px`);
 
     const container = document.getElementById("game-container");
     if (container) {

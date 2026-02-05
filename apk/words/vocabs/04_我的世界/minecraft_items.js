@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_2.items_ç©å.json
 const MINECRAFT_2_ITEMS___ = [
-  {
+{
     "word": "old_Nugget",
     "standardized": "Golold_Nugget",
     "chinese": "金锭",
@@ -4126,7 +4126,8 @@ const MINECRAFT_2_ITEMS___ = [
     ]
   },
 
-  // === é£ç©ç¸å³ ===
+  // === é£ç©ç¸å
+// ³ ===
   {
     "word": "Cooked Beef",
     "standardized": "Cooked Beef",
@@ -4150,5 +4151,5 @@ const MINECRAFT_2_ITEMS___ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_2_ITEMS___;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_2_ITEMS___ = MINECRAFT_2_ITEMS___;
+//   window.MINECRAFT_2_ITEMS___ = MINECRAFT_2_ITEMS___;
 }
