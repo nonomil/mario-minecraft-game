@@ -1597,7 +1597,7 @@ function setOverlay(visible, mode) {
         overlayMode = mode || "pause";
         if (mode === "pause") {
             if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
+            if (text) text.innerHTML = getControlsLegendHtml();
             if (btn) btn.innerText = "继续";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
@@ -1614,7 +1614,7 @@ function setOverlay(visible, mode) {
             if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
+            if (text) text.innerHTML = getControlsLegendHtml();
             if (btn) btn.innerText = "开始游戏";
         }
     } else {
@@ -1654,9 +1654,70 @@ function resumeGameFromOverlay() {
 function keyLabel(code) {
     if (!code) return "";
     if (code === "Space") return "空格";
+    if (code === "Escape") return "Esc";
+    if (code === "ArrowLeft") return "←";
+    if (code === "ArrowRight") return "→";
+    if (code === "ArrowUp") return "↑";
+    if (code === "ArrowDown") return "↓";
     if (code.startsWith("Key") && code.length === 4) return code.slice(3);
-    if (code.startsWith("Arrow")) return code.replace("Arrow", "方向");
+    if (code.startsWith("Digit") && code.length === 6) return code.slice(5);
     return code;
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function uniqueKeyLabels(codes) {
+    const out = [];
+    const seen = new Set();
+    for (const code of codes) {
+        if (!code) continue;
+        const label = keyLabel(String(code));
+        if (!label) continue;
+        if (seen.has(label)) continue;
+        seen.add(label);
+        out.push(label);
+    }
+    return out;
+}
+
+function getControlsLegendHtml() {
+    const items = [
+        { icon: "⬅️➡️", label: "移动", keys: [keyBindings?.left, keyBindings?.right] },
+        { icon: "⤴️", label: "跳跃(二段跳)", keys: [keyBindings?.jump, "ArrowUp"] },
+        { icon: "🗡️", label: "攻击/采集", keys: [keyBindings?.attack] },
+        { icon: "🔄", label: "切换武器", keys: [keyBindings?.switch] },
+        { icon: "🧰", label: "交互/开宝箱", keys: [keyBindings?.interact, "KeyE"] },
+        { icon: "💎", label: "使用钻石回血", keys: [keyBindings?.useDiamond] },
+        { icon: "🗿", label: "召唤傀儡", keys: ["KeyX"] },
+        { icon: "⏸️", label: "暂停", keys: ["Escape"] }
+    ];
+
+    const html = items.map(item => {
+        const keyLabels = uniqueKeyLabels(item.keys || []);
+        const keycaps = keyLabels.map(k => `<span class="keycap">${escapeHtml(k)}</span>`).join("");
+        return `<div class="controls-legend-item"><span class="controls-legend-icon">${escapeHtml(item.icon)}</span><span class="controls-legend-label">${escapeHtml(item.label)}</span><span class="controls-legend-keys">${keycaps}</span></div>`;
+    }).join("");
+
+    return `<div class="controls-legend">${html}</div>`;
+}
+
+function updateControlsLegendUI() {
+    const settingsHint = document.getElementById("settings-controls-legend");
+    if (settingsHint) settingsHint.innerHTML = getControlsLegendHtml();
+    if (overlayMode === "start" || overlayMode === "pause") {
+        const overlayText = document.getElementById("overlay-text");
+        const overlay = document.getElementById("screen-overlay");
+        if (overlay && overlay.classList.contains("visible") && overlayText) {
+            overlayText.innerHTML = getControlsLegendHtml();
+        }
+    }
 }
 
 function applyMotionToPlayer(p) {
@@ -5176,6 +5237,7 @@ function wireSettingsModal() {
         if (optVocab) optVocab.value = settings.vocabSelection || "auto";
         if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact, keyBindings.switch, keyBindings.useDiamond].join(",");
         if (progressVocab) updateVocabProgressUI();
+        updateControlsLegendUI();
     }
 
     function open() {
@@ -5224,6 +5286,7 @@ function wireSettingsModal() {
             keyBindings.switch = parsed[3];
             keyBindings.useDiamond = parsed[4];
         }
+        updateControlsLegendUI();
 
         wordPicker = null;
         applyBgmSetting();
@@ -5505,10 +5568,10 @@ async function start() {
 
     initGame();
     updateWordUI(null);
-    paused = false;
-    startedOnce = true;
-    setOverlay(false);
-    showToast("提示：操作说明在【设置】中");
+    paused = true;
+    startedOnce = false;
+    updateControlsLegendUI();
+    setOverlay(true, "start");
     update();
     draw();
 }
