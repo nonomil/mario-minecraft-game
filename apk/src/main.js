@@ -1565,7 +1565,12 @@ function applySettingsToUI() {
         if (window.screen && typeof window.screen.height === "number" && typeof window.screen.availHeight === "number") {
             fromScreen = Math.max(0, Math.round(window.screen.height - window.screen.availHeight));
         }
-        return Math.max(fromViewport, fromScreen);
+        const measured = Math.max(fromViewport, fromScreen);
+        const ua = (navigator && navigator.userAgent) || "";
+        const isCoarse = typeof window.matchMedia === "function" ? window.matchMedia("(pointer: coarse)").matches : false;
+        const isMobile = isCoarse || /Android|iPhone|iPad|iPod/i.test(ua);
+        const minFallback = isMobile ? 24 : 0;
+        return Math.max(measured, minFallback);
     })();
     document.documentElement.style.setProperty("--ui-bottom-offset", `${Math.round(systemBottom / uiScale)}px`);
 
