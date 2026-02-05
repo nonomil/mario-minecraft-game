@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_3.entities_å®ä½.json
 const MINECRAFT_3_ENTITIES___ = [
-  {
+{
     "word": "Agent",
     "standardized": "Agent",
     "chinese": "智能体",
@@ -972,7 +972,7 @@ const MINECRAFT_3_ENTITIES___ = [
   {
     "word": "Npc",
     "standardized": "NPC",
-    "chinese": "NPC",
+    "chinese": "Npc（英文）",
     "phonetic": "/ɛn pi si/",
     "phrase": "education edition npc",
     "phraseTranslation": "教育版NPC",
@@ -1825,5 +1825,5 @@ const MINECRAFT_3_ENTITIES___ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_3_ENTITIES___;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_3_ENTITIES___ = MINECRAFT_3_ENTITIES___;
+//   window.MINECRAFT_3_ENTITIES___ = MINECRAFT_3_ENTITIES___;
 }

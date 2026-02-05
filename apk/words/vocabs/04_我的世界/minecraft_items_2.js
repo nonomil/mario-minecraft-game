@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_2.items_ç©å2.json
 const MINECRAFT_2_ITEMS___2 = [
-  {
+{
     "word": "String",
     "standardized": "String",
     "chinese": "线",
@@ -1601,7 +1601,7 @@ const MINECRAFT_2_ITEMS___2 = [
   {
     "word": "TNT",
     "standardized": "TNT",
-    "chinese": "TNT",
+    "chinese": "TNT（英文）",
     "phonetic": "/ˌtiˈɛnˈti/",
     "phrase": "explode TNT blocks",
     "phraseTranslation": "引爆TNT方块",
@@ -1808,5 +1808,5 @@ const MINECRAFT_2_ITEMS___2 = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_2_ITEMS___2;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_2_ITEMS___2 = MINECRAFT_2_ITEMS___2;
+//   window.MINECRAFT_2_ITEMS___2 = MINECRAFT_2_ITEMS___2;
 }

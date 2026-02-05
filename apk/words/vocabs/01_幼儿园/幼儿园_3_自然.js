@@ -1,6 +1,6 @@
 // Kindergarten - 3.å¹¼å¿å­--èªç¶è¯æ±.json
 const VOCAB_3__________ = [
-  {
+{
     "word": "cry",
     "standardized": "cry",
     "chinese": "哭",
@@ -2213,7 +2213,7 @@ const VOCAB_3__________ = [
   {
     "word": "rectangle",
     "standardized": "rectangle",
-    "chinese": "",
+    "chinese": "长方形",
     "phonetic": "/rectangle/",
     "phrase": "Rectangle door",
     "phraseTranslation": "长方形的门",
@@ -3610,5 +3610,5 @@ const VOCAB_3__________ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VOCAB_3__________;
 } else if (typeof window !== 'undefined') {
-  window.VOCAB_3__________ = VOCAB_3__________;
+//   window.VOCAB_3__________ = VOCAB_3__________;
 }

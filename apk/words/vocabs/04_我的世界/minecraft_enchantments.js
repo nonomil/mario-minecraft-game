@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_7.é­å (Enchantments).json
 const MINECRAFT_7_____ENCHANTMENTS_ = [
-  {
+{
     "word": "Protection",
     "standardized": "Protection",
     "chinese": "保护",
@@ -1315,5 +1315,5 @@ const MINECRAFT_7_____ENCHANTMENTS_ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_7_____ENCHANTMENTS_;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_7_____ENCHANTMENTS_ = MINECRAFT_7_____ENCHANTMENTS_;
+//   window.MINECRAFT_7_____ENCHANTMENTS_ = MINECRAFT_7_____ENCHANTMENTS_;
 }

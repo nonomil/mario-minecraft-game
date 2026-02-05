@@ -1,6 +1,6 @@
 // Generated from 幼儿园完整词库.js
 const STAGE_KINDERGARTEN_PART04 = [
-  {
+{
     "word": "green",
     "standardized": "green",
     "chinese": "绿色",

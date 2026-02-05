@@ -1,6 +1,6 @@
 // Generated from 幼儿园完整词库.js
 const STAGE_KINDERGARTEN_PART08 = [
-  {
+{
     "word": "grandfather",
     "standardized": "grandfather",
     "chinese": "爷爷",
@@ -1408,4 +1408,6 @@ const STAGE_KINDERGARTEN_PART08 = [
         "url": "https://images.unsplash.com/photo-1576566588027-0c13f0e1fef5?w=400&q=80&auto=format&fit=crop",
         "type": "Concept Image"
       }
+    ]
+  }
 ];

@@ -1,8 +1,10 @@
 // å¹¼å¿å­é¶æ®µè¯ï¿½?- åå¹¶æækindergartenè¯æ±
-// åå«ï¼åºç¡å¨ä½ãå½¢å®¹è¯ãåè¯ãå¨ç©ãé£ç©ãé¢è²ãæ°å­ãèº«ä½é¨ä½ãå®¶åº­ãç©å·ãå¤©æ°ãæ¶é´ãå­¦ä¹ ãæ¥å¸¸ãä½ç½®ãæå®ãèªç¶ç­
+// å
+// å«ï¼åºç¡å¨ä½ãå½¢å®¹è¯ãåè¯ãå¨ç©ãé£ç©ãé¢è²ãæ°å­ãèº«ä½é¨ä½ãå®¶åº­ãç©å
+// ·ãå¤©æ°ãæ¶é´ãå­¦ä¹ ãæ¥å¸¸ãä½ç½®ãæå®ãèªç¶ç­
 
 const STAGE_KINDERGARTEN = [
-  {
+{
     "word": "smile",
     "standardized": "smile",
     "chinese": "微笑",
@@ -41,7 +43,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "look",
     "standardized": "look",
-    "chinese": "",
+    "chinese": "看",
     "phonetic": "/look/",
     "phrase": "Look here",
     "phraseTranslation": "看这",
@@ -239,7 +241,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "blow",
     "standardized": "blow",
-    "chinese": "",
+    "chinese": "吹",
     "phonetic": "/blow/",
     "phrase": "Blow a dandelion",
     "phraseTranslation": "吹蒲公英",
@@ -275,7 +277,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "no",
     "standardized": "no",
-    "chinese": "",
+    "chinese": "不",
     "phonetic": "/no/",
     "phrase": "Shake head no",
     "phraseTranslation": "摇头说不",
@@ -311,7 +313,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "he",
     "standardized": "he",
-    "chinese": "",
+    "chinese": "他",
     "phonetic": "/he/",
     "phrase": "He is my friend",
     "phraseTranslation": "他是我的朋友",
@@ -347,7 +349,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "who",
     "standardized": "who",
-    "chinese": "",
+    "chinese": "谁",
     "phonetic": "/who/",
     "phrase": "Who is he?",
     "phraseTranslation": "他是谁？",
@@ -689,7 +691,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "three",
     "standardized": "three",
-    "chinese": "",
+    "chinese": "三",
     "phonetic": "/three/",
     "phrase": "Three stars",
     "phraseTranslation": "三颗星星",
@@ -905,7 +907,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "cry",
     "standardized": "cry",
-    "chinese": "",
+    "chinese": "哭",
     "phonetic": "/cry/",
     "phrase": "Cry sadly",
     "phraseTranslation": "伤心地哭",
@@ -1625,7 +1627,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "two",
     "standardized": "two",
-    "chinese": "",
+    "chinese": "二",
     "phonetic": "/tu?/",
     "phrase": "Two hands",
     "phraseTranslation": "两只",
@@ -1643,7 +1645,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "five",
     "standardized": "five",
-    "chinese": "",
+    "chinese": "五",
     "phonetic": "/five/",
     "phrase": "Five fingers",
     "phraseTranslation": "五个手指",
@@ -1661,7 +1663,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "eight",
     "standardized": "eight",
-    "chinese": "",
+    "chinese": "八",
     "phonetic": "/eight/",
     "phrase": "Eight legs",
     "phraseTranslation": "八条",
@@ -1895,7 +1897,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "snow",
     "standardized": "snow",
-    "chinese": "",
+    "chinese": "雪",
     "phonetic": "/snow/",
     "phrase": "White snow",
     "phraseTranslation": "白雪皑皑",
@@ -1913,7 +1915,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "thunder",
     "standardized": "thunder",
-    "chinese": "",
+    "chinese": "雷",
     "phonetic": "/thunder/",
     "phrase": "Loud thunder",
     "phraseTranslation": "轰隆隆的",
@@ -2093,7 +2095,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "mountain",
     "standardized": "mountain",
-    "chinese": "",
+    "chinese": "山",
     "phonetic": "/mountain/",
     "phrase": "Tall mountain",
     "phraseTranslation": "高高的山",
@@ -2111,7 +2113,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "river",
     "standardized": "river",
-    "chinese": "",
+    "chinese": "河",
     "phonetic": "/river/",
     "phrase": "Long river",
     "phraseTranslation": "长长的河",
@@ -2255,7 +2257,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "snake",
     "standardized": "snake",
-    "chinese": "",
+    "chinese": "蛇",
     "phonetic": "/snake/",
     "phrase": "Long snake",
     "phraseTranslation": "长长的蛇",
@@ -2525,7 +2527,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "listen",
     "standardized": "listen",
-    "chinese": "",
+    "chinese": "听",
     "phonetic": "/listen/",
     "phrase": "Listen to a story",
     "phraseTranslation": "听故",
@@ -2597,7 +2599,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "ride",
     "standardized": "ride",
-    "chinese": "",
+    "chinese": "骑",
     "phonetic": "/ride/",
     "phrase": "Ride a bike",
     "phraseTranslation": "骑自行车",
@@ -2633,7 +2635,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "point",
     "standardized": "point",
-    "chinese": "",
+    "chinese": "指",
     "phonetic": "/point/",
     "phrase": "Point over there",
     "phraseTranslation": "指一指那",
@@ -2669,7 +2671,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "jump",
     "standardized": "jump",
-    "chinese": "",
+    "chinese": "跳",
     "phonetic": "/jump/",
     "phrase": "Jump high",
     "phraseTranslation": "高高地跳",
@@ -2759,7 +2761,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "ask",
     "standardized": "ask",
-    "chinese": "",
+    "chinese": "问",
     "phonetic": "/ask/",
     "phrase": "Ask a question",
     "phraseTranslation": "问一个问",
@@ -2777,7 +2779,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "cut",
     "standardized": "cut",
-    "chinese": "",
+    "chinese": "剪",
     "phonetic": "/cut/",
     "phrase": "Cut paper",
     "phraseTranslation": "剪纸",
@@ -2795,7 +2797,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "throw",
     "standardized": "throw",
-    "chinese": "",
+    "chinese": "扔",
     "phonetic": "/throw/",
     "phrase": "Throw the ball",
     "phraseTranslation": "扔球",
@@ -2831,7 +2833,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "yes",
     "standardized": "yes",
-    "chinese": "",
+    "chinese": "是",
     "phonetic": "/yes/",
     "phrase": "Nod yes",
     "phraseTranslation": "点头说是",
@@ -2867,7 +2869,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "you",
     "standardized": "you",
-    "chinese": "",
+    "chinese": "你",
     "phonetic": "/you/",
     "phrase": "How are you?",
     "phraseTranslation": "你好吗？",
@@ -2885,7 +2887,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "it",
     "standardized": "it",
-    "chinese": "",
+    "chinese": "它",
     "phonetic": "/it/",
     "phrase": "It is a cat",
     "phraseTranslation": "它是一只猫",
@@ -3335,7 +3337,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "face",
     "standardized": "face",
-    "chinese": "",
+    "chinese": "脸",
     "phonetic": "/face/",
     "phrase": "Wash face",
     "phraseTranslation": "洗脸",
@@ -3551,7 +3553,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "leg",
     "standardized": "leg",
-    "chinese": "",
+    "chinese": "腿",
     "phonetic": "/leg/",
     "phrase": "Lift leg",
     "phraseTranslation": "抬起",
@@ -3623,7 +3625,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "laugh",
     "standardized": "laugh",
-    "chinese": "",
+    "chinese": "笑",
     "phonetic": "/laugh/",
     "phrase": "Laugh out loud",
     "phraseTranslation": "哈哈大笑",
@@ -3752,7 +3754,7 @@ const STAGE_KINDERGARTEN = [
     "chinese": "眨眼",
     "phonetic": "/blink/",
     "phrase": "Blink eyes",
-    "phraseTranslation": "",
+    "phraseTranslation": "眨眨眼睛",
     "difficulty": "basic",
     "category": "general",
     "stage": "kindergarten",
@@ -3767,7 +3769,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "t-shirt",
     "standardized": "t-shirt",
-    "chinese": "T",
+    "chinese": "T恤",
     "phonetic": "/t-shirt/",
     "phrase": "A t-shirt",
     "phraseTranslation": "一件T",
@@ -4001,7 +4003,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "polo shirt",
     "standardized": "polo shirt",
-    "chinese": "polo",
+    "chinese": "polo衫",
     "phonetic": "/polo shirt/",
     "phrase": "Wear a polo shirt",
     "phraseTranslation": "穿polo",
@@ -4181,7 +4183,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "rain",
     "standardized": "rain",
-    "chinese": "",
+    "chinese": "雨",
     "phonetic": "/rain/",
     "phrase": "Cool rain",
     "phraseTranslation": "清凉的雨",
@@ -4379,7 +4381,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "lesson",
     "standardized": "lesson",
-    "chinese": "",
+    "chinese": "课",
     "phonetic": "/lesson/",
     "phrase": "Have a lesson",
     "phraseTranslation": "上课",
@@ -4667,7 +4669,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "four",
     "standardized": "four",
-    "chinese": "",
+    "chinese": "四",
     "phonetic": "/four/",
     "phrase": "Four wheels",
     "phraseTranslation": "四个轮子",
@@ -4685,7 +4687,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "seven",
     "standardized": "seven",
-    "chinese": "",
+    "chinese": "七",
     "phonetic": "/seven/",
     "phrase": "Seven stars",
     "phraseTranslation": "七颗星星",
@@ -4703,7 +4705,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "ten",
     "standardized": "ten",
-    "chinese": "",
+    "chinese": "十",
     "phonetic": "/ten/",
     "phrase": "Ten fingers",
     "phraseTranslation": "十个手指",
@@ -5855,7 +5857,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "please",
     "standardized": "please",
-    "chinese": "",
+    "chinese": "请",
     "phonetic": "/please/",
     "phrase": "Apple, please",
     "phraseTranslation": "请给我苹",
@@ -5873,7 +5875,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "I",
     "standardized": "I",
-    "chinese": "",
+    "chinese": "我",
     "phonetic": "/i/",
     "phrase": "I am a good kid",
     "phraseTranslation": "我是个好孩子",
@@ -5891,7 +5893,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "she",
     "standardized": "she",
-    "chinese": "",
+    "chinese": "她",
     "phonetic": "/she/",
     "phrase": "She is my teacher",
     "phraseTranslation": "她是我的老师",
@@ -6683,7 +6685,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "cloud",
     "standardized": "cloud",
-    "chinese": "",
+    "chinese": "云",
     "phonetic": "/cloud/",
     "phrase": "White cloud",
     "phraseTranslation": "白白的云",
@@ -6701,7 +6703,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "grass",
     "standardized": "grass",
-    "chinese": "",
+    "chinese": "草",
     "phonetic": "/grass/",
     "phrase": "Green grass",
     "phraseTranslation": "绿绿的草",
@@ -7079,7 +7081,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "six",
     "standardized": "six",
-    "chinese": "",
+    "chinese": "六",
     "phonetic": "/six/",
     "phrase": "Six flowers",
     "phraseTranslation": "六朵",
@@ -7097,7 +7099,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "nine",
     "standardized": "nine",
-    "chinese": "",
+    "chinese": "九",
     "phonetic": "/nine/",
     "phrase": "Nine balloons",
     "phraseTranslation": "九个气球",
@@ -7187,7 +7189,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "zero",
     "standardized": "zero",
-    "chinese": "",
+    "chinese": "零",
     "phonetic": "/zero/",
     "phrase": "Zero apples",
     "phraseTranslation": "零个苹果",
@@ -7331,7 +7333,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "wind",
     "standardized": "wind",
-    "chinese": "",
+    "chinese": "风",
     "phonetic": "/wind/",
     "phrase": "Wind is blowing",
     "phraseTranslation": "刮风",
@@ -7475,7 +7477,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "root",
     "standardized": "root",
-    "chinese": "",
+    "chinese": "根",
     "phonetic": "/root/",
     "phrase": "Tree roots",
     "phraseTranslation": "树的",
@@ -7547,7 +7549,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "sea",
     "standardized": "sea",
-    "chinese": "",
+    "chinese": "海",
     "phonetic": "/sea/",
     "phrase": "The sea is deep",
     "phraseTranslation": "大海很深",
@@ -7565,7 +7567,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "island",
     "standardized": "island",
-    "chinese": "",
+    "chinese": "岛",
     "phonetic": "/island/",
     "phrase": "The island is beautiful",
     "phraseTranslation": "小岛很美",
@@ -7601,7 +7603,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "mud",
     "standardized": "mud",
-    "chinese": "",
+    "chinese": "泥",
     "phonetic": "/mud/",
     "phrase": "Mud is dirty",
     "phraseTranslation": "泥巴很脏",
@@ -7619,7 +7621,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "water",
     "standardized": "water",
-    "chinese": "",
+    "chinese": "水",
     "phonetic": "/water/",
     "phrase": "Clear water",
     "phraseTranslation": "清澈的水",
@@ -7637,7 +7639,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "fire",
     "standardized": "fire",
-    "chinese": "",
+    "chinese": "火",
     "phonetic": "/fire/",
     "phrase": "Fire is hot",
     "phraseTranslation": "火很",
@@ -7727,7 +7729,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "chicken",
     "standardized": "chicken",
-    "chinese": "",
+    "chinese": "鸡",
     "phonetic": "/chicken/",
     "phrase": "Clucking chicken",
     "phraseTranslation": "咯咯叫的",
@@ -7763,7 +7765,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "pig",
     "standardized": "pig",
-    "chinese": "",
+    "chinese": "猪",
     "phonetic": "/pig/",
     "phrase": "Pink pig",
     "phraseTranslation": "粉红色的",
@@ -7781,7 +7783,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "horse",
     "standardized": "horse",
-    "chinese": "",
+    "chinese": "马",
     "phonetic": "/horse/",
     "phrase": "Running horse",
     "phraseTranslation": "奔跑的马",
@@ -7853,7 +7855,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "wolf",
     "standardized": "wolf",
-    "chinese": "",
+    "chinese": "狼",
     "phonetic": "/wolf/",
     "phrase": "Howling wolf",
     "phraseTranslation": "嚎叫的狼",
@@ -7889,7 +7891,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "deer",
     "standardized": "deer",
-    "chinese": "",
+    "chinese": "鹿",
     "phonetic": "/deer/",
     "phrase": "Gentle deer",
     "phraseTranslation": "温顺的鹿",
@@ -8522,7 +8524,7 @@ const STAGE_KINDERGARTEN = [
     "chinese": "中文",
     "phonetic": "",
     "phrase": "ä¾å¥",
-    "phraseTranslation": "",
+    "phraseTranslation": "中文",
     "difficulty": "basic",
     "category": "common_adjectives",
     "stage": "kindergarten",
@@ -8675,7 +8677,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "north",
     "standardized": "north",
-    "chinese": "",
+    "chinese": "北",
     "phonetic": "",
     "phrase": "Go north from spawn",
     "phraseTranslation": "从出生点往北走",
@@ -8693,7 +8695,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "south",
     "standardized": "south",
-    "chinese": "",
+    "chinese": "南",
     "phonetic": "",
     "phrase": "The village is south",
     "phraseTranslation": "村庄在南",
@@ -8711,7 +8713,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "east",
     "standardized": "east",
-    "chinese": "",
+    "chinese": "东",
     "phonetic": "",
     "phrase": "Mine to the east",
     "phraseTranslation": "往东边",
@@ -8729,7 +8731,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "west",
     "standardized": "west",
-    "chinese": "",
+    "chinese": "西",
     "phonetic": "",
     "phrase": "Sunset is in the west",
     "phraseTranslation": "日落在西",
@@ -8747,7 +8749,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "up",
     "standardized": "up",
-    "chinese": "",
+    "chinese": "上",
     "phonetic": "",
     "phrase": "Dig up carefully",
     "phraseTranslation": "小心往上挖",
@@ -8765,7 +8767,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "down",
     "standardized": "down",
-    "chinese": "",
+    "chinese": "下",
     "phonetic": "",
     "phrase": "Go down to bedrock",
     "phraseTranslation": "往下挖到基",
@@ -8783,7 +8785,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "left",
     "standardized": "left",
-    "chinese": "",
+    "chinese": "左",
     "phonetic": "",
     "phrase": "Turn left here",
     "phraseTranslation": "在这里向左转",
@@ -8801,7 +8803,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "right",
     "standardized": "right",
-    "chinese": "",
+    "chinese": "右",
     "phonetic": "",
     "phrase": "The door is on the right",
     "phraseTranslation": "门在右边",
@@ -8847,7 +8849,7 @@ const STAGE_KINDERGARTEN = [
     "imageURLs": [
       {
         "filename": "left-arrow-emoji.png",
-        "url": "https://emojicdn.elk.sh/â¬ï¸",
+        "url": "https://emojicdn.elk.sh/2b05",
         "type": "Emoji"
       }
     ]
@@ -10035,7 +10037,7 @@ const STAGE_KINDERGARTEN = [
     "imageURLs": [
       {
         "filename": "sunrise-emoji.png",
-        "url": "https://emojicdn.elk.sh/ð",
+        "url": "https://emojicdn.elk.sh/1f4a1",
         "type": "Emoji"
       }
     ]
@@ -10313,7 +10315,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Dig",
     "standardized": "Dig",
-    "chinese": "",
+    "chinese": "挖",
     "phonetic": "/dɪɡ/",
     "phrase": "dig down",
     "phraseTranslation": "往下挖",
@@ -10493,7 +10495,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Run",
     "standardized": "Run",
-    "chinese": "",
+    "chinese": "跑",
     "phonetic": "/rʌn/",
     "phrase": "run away",
     "phraseTranslation": "逃跑",
@@ -10511,7 +10513,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Jump",
     "standardized": "Jump",
-    "chinese": "",
+    "chinese": "跳",
     "phonetic": "/dʒʌmp/",
     "phrase": "jump over",
     "phraseTranslation": "跳过",
@@ -10529,7 +10531,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Climb",
     "standardized": "Climb",
-    "chinese": "",
+    "chinese": "爬",
     "phonetic": "/klaɪm/",
     "phrase": "climb ladder",
     "phraseTranslation": "爬梯",
@@ -10565,7 +10567,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Fly",
     "standardized": "Fly",
-    "chinese": "",
+    "chinese": "飞",
     "phonetic": "/flaɪ/",
     "phrase": "fly mode",
     "phraseTranslation": "飞行模式",
@@ -10961,7 +10963,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "North",
     "standardized": "North",
-    "chinese": "",
+    "chinese": "北",
     "phonetic": "/nɔːrθ/",
     "phrase": "go north",
     "phraseTranslation": "往北走",
@@ -10979,7 +10981,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "South",
     "standardized": "South",
-    "chinese": "",
+    "chinese": "南",
     "phonetic": "/saʊθ/",
     "phrase": "go south",
     "phraseTranslation": "往南走",
@@ -10997,7 +10999,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "East",
     "standardized": "East",
-    "chinese": "",
+    "chinese": "东",
     "phonetic": "/iːst/",
     "phrase": "go east",
     "phraseTranslation": "往东走",
@@ -11015,7 +11017,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "West",
     "standardized": "West",
-    "chinese": "",
+    "chinese": "西",
     "phonetic": "/west/",
     "phrase": "go west",
     "phraseTranslation": "往西走",
@@ -11033,7 +11035,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Up",
     "standardized": "Up",
-    "chinese": "",
+    "chinese": "上",
     "phonetic": "/ʌp/",
     "phrase": "dig up",
     "phraseTranslation": "往上挖",
@@ -11051,7 +11053,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Down",
     "standardized": "Down",
-    "chinese": "",
+    "chinese": "下",
     "phonetic": "/daʊn/",
     "phrase": "go down",
     "phraseTranslation": "往下走",
@@ -11069,7 +11071,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Left",
     "standardized": "Left",
-    "chinese": "",
+    "chinese": "左",
     "phonetic": "/left/",
     "phrase": "turn left",
     "phraseTranslation": "向左",
@@ -11087,7 +11089,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Right",
     "standardized": "Right",
-    "chinese": "",
+    "chinese": "右",
     "phonetic": "/raɪt/",
     "phrase": "turn right",
     "phraseTranslation": "向右",
@@ -11231,7 +11233,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Far",
     "standardized": "Far",
-    "chinese": "",
+    "chinese": "远",
     "phonetic": "/fɑːr/",
     "phrase": "too far",
     "phraseTranslation": "太远",
@@ -11249,7 +11251,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Close",
     "standardized": "Close",
-    "chinese": "",
+    "chinese": "近",
     "phonetic": "/kloʊs/",
     "phrase": "stay close",
     "phraseTranslation": "待在附近",
@@ -11493,7 +11495,7 @@ const STAGE_KINDERGARTEN = [
     "imageURLs": [
       {
         "filename": "sunrise-emoji.png",
-        "url": "https://emojicdn.elk.sh/ð",
+        "url": "https://emojicdn.elk.sh/1f4a1",
         "type": "Emoji"
       }
     ]
@@ -11565,7 +11567,7 @@ const STAGE_KINDERGARTEN = [
     "imageURLs": [
       {
         "filename": "sunrise-emoji.png",
-        "url": "https://emojicdn.elk.sh/ð",
+        "url": "https://emojicdn.elk.sh/1f4a1",
         "type": "Emoji"
       }
     ]
@@ -11591,7 +11593,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Rain",
     "standardized": "Rain",
-    "chinese": "",
+    "chinese": "雨",
     "phonetic": "/reɪn/",
     "phrase": "heavy rain",
     "phraseTranslation": "大雨",
@@ -11673,7 +11675,7 @@ const STAGE_KINDERGARTEN = [
     "imageURLs": [
       {
         "filename": "sun-behind-cloud-emoji.png",
-        "url": "https://emojicdn.elk.sh/â",
+        "url": "https://emojicdn.elk.sh/1f324",
         "type": "Emoji"
       }
     ]
@@ -11699,7 +11701,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Snow",
     "standardized": "Snow",
-    "chinese": "",
+    "chinese": "雪",
     "phonetic": "/snoʊ/",
     "phrase": "snow falling",
     "phraseTranslation": "下雪",
@@ -11915,7 +11917,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Door",
     "standardized": "Door",
-    "chinese": "",
+    "chinese": "门",
     "phonetic": "/dɔːr/",
     "phrase": "open door",
     "phraseTranslation": "开",
@@ -11951,7 +11953,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Bed",
     "standardized": "Bed",
-    "chinese": "",
+    "chinese": "床",
     "phonetic": "/bed/",
     "phrase": "sleep bed",
     "phraseTranslation": "在床上睡",
@@ -12077,7 +12079,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Dog",
     "standardized": "Dog",
-    "chinese": "",
+    "chinese": "狗",
     "phonetic": "/dɔːɡ/",
     "phrase": "friendly dog",
     "phraseTranslation": "友好的狗",
@@ -12095,7 +12097,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Cat",
     "standardized": "Cat",
-    "chinese": "",
+    "chinese": "猫",
     "phonetic": "/kæt/",
     "phrase": "cat play",
     "phraseTranslation": "猫玩",
@@ -12113,7 +12115,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Bird",
     "standardized": "Bird",
-    "chinese": "",
+    "chinese": "鸟",
     "phonetic": "/bɜːrd/",
     "phrase": "bird fly",
     "phraseTranslation": "鸟飞",
@@ -12131,7 +12133,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Fish",
     "standardized": "Fish",
-    "chinese": "",
+    "chinese": "鱼",
     "phonetic": "/fɪʃ/",
     "phrase": "fish swim",
     "phraseTranslation": "鱼游",
@@ -12257,7 +12259,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Two",
     "standardized": "Two",
-    "chinese": "",
+    "chinese": "二",
     "phonetic": "/tuː/",
     "phrase": "two hands",
     "phraseTranslation": "两只",
@@ -12275,7 +12277,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Three",
     "standardized": "Three",
-    "chinese": "",
+    "chinese": "三",
     "phonetic": "/θriː/",
     "phrase": "three pigs",
     "phraseTranslation": "三只",
@@ -12293,7 +12295,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Four",
     "standardized": "Four",
-    "chinese": "",
+    "chinese": "四",
     "phonetic": "/fɔːr/",
     "phrase": "four legs",
     "phraseTranslation": "四条",
@@ -12311,7 +12313,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Five",
     "standardized": "Five",
-    "chinese": "",
+    "chinese": "五",
     "phonetic": "/faɪv/",
     "phrase": "five fingers",
     "phraseTranslation": "五根手指",
@@ -12401,7 +12403,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Ball",
     "standardized": "Ball",
-    "chinese": "",
+    "chinese": "球",
     "phonetic": "/bɔːl/",
     "phrase": "throw ball",
     "phraseTranslation": "扔球",
@@ -12437,7 +12439,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Book",
     "standardized": "Book",
-    "chinese": "",
+    "chinese": "书",
     "phonetic": "/bʊk/",
     "phrase": "read book",
     "phraseTranslation": "读书",
@@ -12527,7 +12529,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Tree",
     "standardized": "Tree",
-    "chinese": "",
+    "chinese": "树",
     "phonetic": "/triː/",
     "phrase": "green tree",
     "phraseTranslation": "绿树",
@@ -12545,7 +12547,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Flower",
     "standardized": "Flower",
-    "chinese": "",
+    "chinese": "花",
     "phonetic": "/ˈflaʊər/",
     "phrase": "pretty flower",
     "phraseTranslation": "漂亮花朵",
@@ -12599,7 +12601,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Walk",
     "standardized": "Walk",
-    "chinese": "",
+    "chinese": "走",
     "phonetic": "/wɔːk/",
     "phrase": "walk school",
     "phraseTranslation": "走路上学",
@@ -12635,7 +12637,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Eat",
     "standardized": "Eat",
-    "chinese": "",
+    "chinese": "吃",
     "phonetic": "/iːt/",
     "phrase": "eat breakfast",
     "phraseTranslation": "吃早",
@@ -12653,7 +12655,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Head",
     "standardized": "Head",
-    "chinese": "",
+    "chinese": "头",
     "phonetic": "/hed/",
     "phrase": "touch head",
     "phraseTranslation": "摸头",
@@ -12725,7 +12727,7 @@ const STAGE_KINDERGARTEN = [
   {
     "word": "Hands",
     "standardized": "Hands",
-    "chinese": "",
+    "chinese": "手",
     "phonetic": "/hændz/",
     "phrase": "clap hands",
     "phraseTranslation": "拍手",
@@ -12747,7 +12749,8 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = STAGE_KINDERGARTEN;
 }
 
-// ç¡®ä¿å¨å±åéSTAGE_KINDERGARTENå­å¨
+// ç¡®ä¿å
+// ¨å±åéSTAGE_KINDERGARTENå­å¨
 if (typeof window !== 'undefined') {
-  window.STAGE_KINDERGARTEN = STAGE_KINDERGARTEN;
+//   window.STAGE_KINDERGARTEN = STAGE_KINDERGARTEN;
 }

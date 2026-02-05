@@ -2,7 +2,7 @@
 // Generated on 2025-09-15T22:46:00.000Z
 
 const MERGED_KINDERGARTEN_VOCAB = [
-  {
+{
     "word": "smile",
     "standardized": "smile",
     "chinese": "微笑",

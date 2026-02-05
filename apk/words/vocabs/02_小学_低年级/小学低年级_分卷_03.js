@@ -1,6 +1,6 @@
 // Generated from 小学低年级基础.js
 const STAGE_ELEMENTARY_LOWER_PART03 = [
-  {
+{
     "word": "salad",
     "standardized": "salad",
     "chinese": "沙拉",
@@ -57,7 +57,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "chicken",
     "standardized": "chicken",
-    "chinese": "",
+    "chinese": "鸡",
     "phonetic": "/ˈtʃɪkən/",
     "phrase": "Red chicken",
     "phraseTranslation": "红色的鸡",
@@ -327,7 +327,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "sit",
     "standardized": "sit",
-    "chinese": "",
+    "chinese": "坐",
     "phonetic": "/sɪt/",
     "phrase": "Sit down",
     "phraseTranslation": "坐下",
@@ -345,7 +345,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "stand",
     "standardized": "stand",
-    "chinese": "",
+    "chinese": "开始",
     "phonetic": "/stænd/",
     "phrase": "Stand up",
     "phraseTranslation": "站起来",
@@ -363,7 +363,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "drink",
     "standardized": "drink",
-    "chinese": "",
+    "chinese": "喝水",
     "phonetic": "/drɪŋk/",
     "phrase": "Drink water",
     "phraseTranslation": "喝水",
@@ -381,7 +381,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "speak",
     "standardized": "speak",
-    "chinese": "",
+    "chinese": "speak（英文）",
     "phonetic": "/spiːk/",
     "phrase": "Speak clearly",
     "phraseTranslation": "说清楚",
@@ -399,7 +399,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "watch",
     "standardized": "watch",
-    "chinese": "",
+    "chinese": "手表",
     "phonetic": "/wɑːtʃ/",
     "phrase": "Watch TV",
     "phraseTranslation": "看电视",
@@ -417,7 +417,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "play",
     "standardized": "play",
-    "chinese": "",
+    "chinese": "玩",
     "phonetic": "/pleɪ/",
     "phrase": "Play games",
     "phraseTranslation": "玩游戏",
@@ -813,7 +813,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "meat",
     "standardized": "meat",
-    "chinese": "",
+    "chinese": "肉",
     "phonetic": "/miːt/",
     "phrase": "Fresh meat",
     "phraseTranslation": "新鲜的肉",
@@ -921,7 +921,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "sugar",
     "standardized": "sugar",
-    "chinese": "",
+    "chinese": "糖",
     "phonetic": "/ˈʃʊɡər/",
     "phrase": "White sugar",
     "phraseTranslation": "白糖",
@@ -939,7 +939,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "salt",
     "standardized": "salt",
-    "chinese": "",
+    "chinese": "盐",
     "phonetic": "/sɔːlt/",
     "phrase": "Sea salt",
     "phraseTranslation": "海盐",
@@ -957,7 +957,7 @@ const STAGE_ELEMENTARY_LOWER_PART03 = [
   {
     "word": "snake",
     "standardized": "snake",
-    "chinese": "",
+    "chinese": "蛇",
     "phonetic": "/sneɪk/",
     "phrase": "Long snake",
     "phraseTranslation": "长蛇",

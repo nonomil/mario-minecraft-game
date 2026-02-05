@@ -1,6 +1,6 @@
 // Generated from 小学低年级基础.js
 const STAGE_ELEMENTARY_LOWER_PART01 = [
-  {
+{
     "word": "school",
     "standardized": "school",
     "chinese": "学校",
@@ -62,7 +62,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "book",
     "standardized": "book",
-    "chinese": "",
+    "chinese": "书",
     "phonetic": "/bʊk/",
     "phrase": "Read a book",
     "phraseTranslation": "读一本书",
@@ -368,7 +368,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "tree",
     "standardized": "tree",
-    "chinese": "",
+    "chinese": "树",
     "phonetic": "/triː/",
     "phrase": "Big tree",
     "phraseTranslation": "大树",
@@ -386,7 +386,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "flower",
     "standardized": "flower",
-    "chinese": "",
+    "chinese": "花",
     "phonetic": "/ˈflaʊər/",
     "phrase": "Beautiful flower",
     "phraseTranslation": "美丽的花",
@@ -404,7 +404,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "water",
     "standardized": "water",
-    "chinese": "",
+    "chinese": "水",
     "phonetic": "/ˈwɔːtər/",
     "phrase": "Clean water",
     "phraseTranslation": "干净的水",
@@ -548,7 +548,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "paper",
     "standardized": "paper",
-    "chinese": "",
+    "chinese": "纸",
     "phonetic": "/ˈpeɪpər/",
     "phrase": "Write on paper",
     "phraseTranslation": "在纸上写",
@@ -710,7 +710,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "cat",
     "standardized": "cat",
-    "chinese": "",
+    "chinese": "猫",
     "phonetic": "/kæt/",
     "phrase": "Cute cat",
     "phraseTranslation": "可爱的猫",
@@ -728,7 +728,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "dog",
     "standardized": "dog",
-    "chinese": "",
+    "chinese": "狗",
     "phonetic": "/dɔːɡ/",
     "phrase": "Friendly dog",
     "phraseTranslation": "友好的狗",
@@ -746,7 +746,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "bird",
     "standardized": "bird",
-    "chinese": "",
+    "chinese": "鸟",
     "phonetic": "/bɜːrd/",
     "phrase": "Flying bird",
     "phraseTranslation": "飞翔的鸟",
@@ -764,7 +764,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "fish",
     "standardized": "fish",
-    "chinese": "",
+    "chinese": "鱼",
     "phonetic": "/fɪʃ/",
     "phrase": "Swimming fish",
     "phraseTranslation": "游泳的鱼",
@@ -872,7 +872,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "bear",
     "standardized": "bear",
-    "chinese": "",
+    "chinese": "熊",
     "phonetic": "/bɛr/",
     "phrase": "Brown bear",
     "phraseTranslation": "棕熊",
@@ -1070,7 +1070,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "head",
     "standardized": "head",
-    "chinese": "",
+    "chinese": "头",
     "phonetic": "/hɛd/",
     "phrase": "My head",
     "phraseTranslation": "我的",
@@ -1088,7 +1088,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "hand",
     "standardized": "hand",
-    "chinese": "",
+    "chinese": "手",
     "phonetic": "/hænd/",
     "phrase": "Wash hands",
     "phraseTranslation": "洗手",
@@ -1106,7 +1106,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "foot",
     "standardized": "foot",
-    "chinese": "",
+    "chinese": "脚",
     "phonetic": "/fʊt/",
     "phrase": "My foot",
     "phraseTranslation": "我的",
@@ -1250,7 +1250,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "listen",
     "standardized": "listen",
-    "chinese": "",
+    "chinese": "听",
     "phonetic": "/ˈlɪsən/",
     "phrase": "Listen to a story",
     "phraseTranslation": "听故",
@@ -1322,7 +1322,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "ask",
     "standardized": "ask",
-    "chinese": "",
+    "chinese": "问",
     "phonetic": "/æsk/",
     "phrase": "Ask a question",
     "phraseTranslation": "问一个问",
@@ -1340,7 +1340,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "cut",
     "standardized": "cut",
-    "chinese": "",
+    "chinese": "剪",
     "phonetic": "/kʌt/",
     "phrase": "Cut paper",
     "phraseTranslation": "剪纸",
@@ -1358,7 +1358,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "throw",
     "standardized": "throw",
-    "chinese": "",
+    "chinese": "扔",
     "phonetic": "/θroʊ/",
     "phrase": "Throw the ball",
     "phraseTranslation": "扔球",
@@ -1628,7 +1628,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "cry",
     "standardized": "cry",
-    "chinese": "",
+    "chinese": "哭",
     "phonetic": "/kraɪ/",
     "phrase": "The child is crying",
     "phraseTranslation": "小孩在哭",
@@ -1664,7 +1664,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "touch",
     "standardized": "touch",
-    "chinese": "",
+    "chinese": "摸",
     "phonetic": "/tʌtʃ/",
     "phrase": "Touch it",
     "phraseTranslation": "摸一",
@@ -1754,7 +1754,7 @@ const STAGE_ELEMENTARY_LOWER_PART01 = [
   {
     "word": "laugh",
     "standardized": "laugh",
-    "chinese": "",
+    "chinese": "笑",
     "phonetic": "/læf/",
     "phrase": "Laugh out loud",
     "phraseTranslation": "大声",

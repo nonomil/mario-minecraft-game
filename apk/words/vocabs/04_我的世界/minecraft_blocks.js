@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_1.blocks_æ¹å.json
 const MINECRAFT_1_BLOCKS___ = [
-  {
+{
     "word": "Acacia Button",
     "standardized": "Acacia Button",
     "chinese": "金合欢木按钮",
@@ -530,7 +530,7 @@ const MINECRAFT_1_BLOCKS___ = [
   {
     "word": "TNT",
     "standardized": "TNT",
-    "chinese": "TNT",
+    "chinese": "TNT（英文）",
     "phonetic": "/ˌtiɛnˈti/",
     "phrase": "TNT explosion mining",
     "phraseTranslation": "TNT爆炸开采",
@@ -2627,7 +2627,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === æåç³å¤´ç³»å ===
+  // === æå
+// ç³å¤´ç³»å ===
   {
     "word": "Polished Granite",
     "standardized": "Polished Granite",
@@ -2803,7 +2804,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === ç»çç¸å³ ===
+  // === ç»çç¸å
+// ³ ===
   {
     "word": "Glass Pane",
     "standardized": "Glass Pane",
@@ -2822,7 +2824,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === é¨ç¸å³ ===
+  // === é¨ç¸å
+// ³ ===
   {
     "word": "Oak Door",
     "standardized": "Oak Door",
@@ -2841,7 +2844,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === çº¢ç³ç¸å³ ===
+  // === çº¢ç³ç¸å
+// ³ ===
   {
     "word": "Redstone Torch",
     "standardized": "Redstone Torch",
@@ -2860,7 +2864,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === çº¢ç³æ§å¶åä»¶ ===
+  // === çº¢ç³æ§å¶å
+// ä»¶ ===
   {
     "word": "Stone Button",
     "standardized": "Stone Button",
@@ -2879,7 +2884,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === ççç¸å³ ===
+  // === ççç¸å
+// ³ ===
   {
     "word": "Blast Furnace",
     "standardized": "Blast Furnace",
@@ -2898,7 +2904,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === å°ç¸å³ ===
+  // === å°ç¸å
+// ³ ===
   {
     "word": "Blue Ice",
     "standardized": "Blue Ice",
@@ -2917,7 +2924,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === ç ç¸å³ ===
+  // === ç ç¸å
+// ³ ===
   {
     "word": "Brick Stairs",
     "standardized": "Brick Stairs",
@@ -2936,7 +2944,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === ç å¢ç¸å³ ===
+  // === ç å¢ç¸å
+// ³ ===
   {
     "word": "Brick Wall",
     "standardized": "Brick Wall",
@@ -2955,7 +2964,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === èèç¸å³ ===
+  // === èèç¸å
+// ³ ===
   {
     "word": "Brown Mushroom",
     "standardized": "Brown Mushroom",
@@ -2974,7 +2984,8 @@ const MINECRAFT_1_BLOCKS___ = [
     ]
   },
 
-  // === èèåç¸å³ ===
+  // === èèåç¸å
+// ³ ===
   {
     "word": "Brown Mushroom Block",
     "standardized": "Brown Mushroom Block",
@@ -2998,5 +3009,5 @@ const MINECRAFT_1_BLOCKS___ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_1_BLOCKS___;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_1_BLOCKS___ = MINECRAFT_1_BLOCKS___;
+//   window.MINECRAFT_1_BLOCKS___ = MINECRAFT_1_BLOCKS___;
 }

@@ -1,6 +1,6 @@
 // Kindergarten - 5.æ¥å¸¸è¯æ±.json
 const VOCAB_5_____ = [
-  {
+{
     "word": "Mine",
     "standardized": "Mine",
     "chinese": "挖掘",
@@ -2352,5 +2352,5 @@ const VOCAB_5_____ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VOCAB_5_____;
 } else if (typeof window !== 'undefined') {
-  window.VOCAB_5_____ = VOCAB_5_____;
+//   window.VOCAB_5_____ = VOCAB_5_____;
 }

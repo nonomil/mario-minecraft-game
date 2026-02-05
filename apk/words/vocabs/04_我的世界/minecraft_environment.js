@@ -1,6 +1,6 @@
 // Minecraft_Standard - minecraft_4.environment_ç¯å¢.json
 const MINECRAFT_4_ENVIRONMENT___ = [
-  {
+{
     "word": "Desert Pyramid",
     "standardized": "Desert Pyramid",
     "chinese": "沙漠神殿",
@@ -2182,5 +2182,5 @@ const MINECRAFT_4_ENVIRONMENT___ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = MINECRAFT_4_ENVIRONMENT___;
 } else if (typeof window !== 'undefined') {
-  window.MINECRAFT_4_ENVIRONMENT___ = MINECRAFT_4_ENVIRONMENT___;
+//   window.MINECRAFT_4_ENVIRONMENT___ = MINECRAFT_4_ENVIRONMENT___;
 }

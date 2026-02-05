@@ -1,6 +1,6 @@
 // Kindergarten - 2.å¹¼å¿å­--å­¦ä¹ è¯æ±.json
 const VOCAB_2__________ = [
-  {
+{
     "word": "hug",
     "standardized": "hug",
     "chinese": "拥抱",
@@ -3440,5 +3440,5 @@ const VOCAB_2__________ = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VOCAB_2__________;
 } else if (typeof window !== 'undefined') {
-  window.VOCAB_2__________ = VOCAB_2__________;
+//   window.VOCAB_2__________ = VOCAB_2__________;
 }

@@ -1,6 +1,6 @@
 // Minecraft_Simple - 2.minecraft_ä¸­çº§_basic.json
 const VOCAB_2_MINECRAFT____BASIC = [
-  {
+{
     "word": "Diamond",
     "standardized": "Diamond",
     "chinese": "钻石",
@@ -930,5 +930,5 @@ const VOCAB_2_MINECRAFT____BASIC = [
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = VOCAB_2_MINECRAFT____BASIC;
 } else if (typeof window !== 'undefined') {
-  window.VOCAB_2_MINECRAFT____BASIC = VOCAB_2_MINECRAFT____BASIC;
+//   window.VOCAB_2_MINECRAFT____BASIC = VOCAB_2_MINECRAFT____BASIC;
 }
