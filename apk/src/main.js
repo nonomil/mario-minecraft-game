@@ -1,5 +1,8 @@
 const defaults = window.MMWG_DEFAULTS || {};
 const storage = window.MMWG_STORAGE;
+// start() finishes wiring input/UI handlers before gameplay loop can begin.
+// This prevents "login shown but game loop already running" and avoids races on auto-login.
+let bootReady = false;
 const defaultGameConfig = defaults.gameConfig || {};
 const defaultControls = defaults.controls || {};
 const defaultLevels = defaults.levels || [];
@@ -1404,7 +1407,7 @@ function applySpeedSetting() {
     saveSettings();
 }
 
-function initLoginScreen() {
+async function initLoginScreen() {
     const screen = document.getElementById("login-screen");
     if (!screen) return;
     const loginForm = document.getElementById("login-form");
@@ -1428,7 +1431,7 @@ function initLoginScreen() {
     if (storedId) {
         const saved = storage.getAccount(storedId);
         if (saved) {
-            loginWithAccount(saved);
+            await loginWithAccount(saved);
             return;
         }
     }
@@ -1509,6 +1512,21 @@ async function loginWithAccount(account) {
     startAutoSave();
     await setActiveVocabPack(settings.vocabSelection || "auto");
     clearOldWordItems();
+
+    // If start() already finished wiring handlers, boot the game loop on first successful login.
+    if (bootReady) bootGameLoopIfNeeded();
+}
+
+function bootGameLoopIfNeeded() {
+    if (startedOnce) return;
+    initGame();
+    updateWordUI(null);
+    paused = false;
+    startedOnce = true;
+    setOverlay(false);
+    showToast("鎻愮ず锛氭搷浣滆鏄庡湪銆愯缃€戜腑");
+    update();
+    draw();
 }
 
 function loadAccountData(account) {
@@ -1865,7 +1883,12 @@ function updateVocabPreview(selection) {
         return;
     }
     const details = [];
-    if (pack.stage) details.push(STAGE_LABELS[pack.stage] || pack.stage);
+    if (pack.stage) {
+        const stageLabel = (typeof STAGE_LABELS !== "undefined" && STAGE_LABELS && STAGE_LABELS[pack.stage])
+            ? STAGE_LABELS[pack.stage]
+            : pack.stage;
+        details.push(stageLabel);
+    }
     if (pack.difficulty) details.push(pack.difficulty);
     preview.innerHTML = `<strong>${pack.title}</strong>${details.length ? `<br>${details.join(" · ")}` : ""}`;
 }
@@ -6738,7 +6761,7 @@ async function start() {
     wireSettingsModal();
     wireLearningModals();
     wireTouchControls();
-    initLoginScreen();
+    await initLoginScreen();
 
     const overlayBtn = document.getElementById("btn-overlay-action");
     if (overlayBtn) {
@@ -6854,14 +6877,91 @@ async function start() {
         }
     });
 
-    initGame();
-    updateWordUI(null);
-    paused = false;
-    startedOnce = true;
-    setOverlay(false);
-    showToast("提示：操作说明在【设置】中");
-    update();
-    draw();
+    bootReady = true;
+    const loginVisible = document.getElementById("login-screen")?.classList.contains("visible");
+    if (!loginVisible) {
+        bootGameLoopIfNeeded();
+    }
+    return;
 }
 
 start();
+
+// Minimal test hook for Playwright. Kept small to avoid coupling gameplay to tests.
+// (Top-level `let` bindings are not readable from Playwright `page.evaluate()`, so expose closures instead.)
+function registerTestApi() {
+    if (typeof window === "undefined") return;
+    if (window.MMWG_TEST_API) return;
+
+    window.MMWG_TEST_API = {
+        getState() {
+            return {
+                paused,
+                pausedByModal,
+                startedOnce,
+                bootReady,
+                score,
+                levelScore,
+                playerHp,
+                playerMaxHp,
+                playerInvincibleTimer,
+                settings: settings ? { ...settings } : null,
+                activeVocabPackId: activeVocabPackId || null,
+                wordCount: Array.isArray(wordDatabase) ? wordDatabase.length : 0,
+                wordItemsCount: Array.isArray(items) ? items.filter(i => i && i.wordObj).length : 0,
+                movementSpeed: gameConfig?.physics?.movementSpeed ?? null,
+                golemCount: Array.isArray(golems) ? golems.length : 0,
+                firstGolemFollowDelay: Array.isArray(golems) && golems[0] ? (golems[0].followDelay ?? null) : null,
+                inventory: inventory ? { ...inventory } : null,
+                equipment: playerEquipment ? { ...playerEquipment } : null,
+                armorInventory: Array.isArray(armorInventory) ? [...armorInventory] : null,
+                currentAccount: currentAccount ? { id: currentAccount.id, username: currentAccount.username } : null
+            };
+        },
+        setState(patch) {
+            if (!patch || typeof patch !== "object") return;
+            if (typeof patch.score === "number") score = patch.score;
+            if (typeof patch.levelScore === "number") levelScore = patch.levelScore;
+            if (typeof patch.paused === "boolean") paused = patch.paused;
+            if (typeof patch.pausedByModal === "boolean") pausedByModal = patch.pausedByModal;
+            if (typeof patch.playerHp === "number") playerHp = patch.playerHp;
+            if (typeof patch.playerMaxHp === "number") playerMaxHp = patch.playerMaxHp;
+            if (typeof patch.playerInvincibleTimer === "number") playerInvincibleTimer = patch.playerInvincibleTimer;
+            if (patch.settings && typeof patch.settings === "object") {
+                settings = normalizeSettings({ ...settings, ...patch.settings });
+                saveSettings();
+                applySettingsToUI();
+            }
+            if (patch.inventory && typeof patch.inventory === "object" && inventory) {
+                inventory = { ...inventory, ...patch.inventory };
+                updateInventoryUI();
+            }
+            if (patch.equipment && typeof patch.equipment === "object" && playerEquipment) {
+                playerEquipment = { ...playerEquipment, ...patch.equipment };
+                updateArmorUI();
+            }
+            if (Array.isArray(patch.armorInventory)) {
+                armorInventory = patch.armorInventory.map(a => ({ id: a.id, durability: a.durability }));
+                updateArmorUI();
+            }
+        },
+        actions: {
+            bootGameLoopIfNeeded,
+            loginWithAccount,
+            reviveWithScore,
+            setActiveVocabPack,
+            clearOldWordItems,
+            equipArmor,
+            unequipArmor,
+            applySpeedSetting,
+            spawnWordItemNearPlayer,
+            tryCraft,
+            saveCurrentProgress,
+            updateInventoryUI,
+            updateArmorUI,
+            updateVocabProgressUI
+        }
+    };
+}
+
+registerTestApi();

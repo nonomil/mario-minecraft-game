@@ -1,5 +1,7 @@
 ## v1.2.12（发布日期：2026-02-06）
 - 类型：PATCH
+- Hotfix：修复账号登录页“连接”按钮无响应（启动阶段异常导致 initLoginScreen 未完成事件绑定）。
+- QA：新增 Playwright 端到端(E2E)测试覆盖需求 1~8（`npm test`）。
 - APK 版本：versionName = 1.2.12，versionCode = 25
 - 构建方式：本地构建
 - 主要变更

@@ -1,0 +1,27 @@
+{
+  "name": "minecraft_mario_words_game-v1.2.8",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nonomil/mario-minecraft-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nonomil/mario-minecraft-game/issues"
+  },
+  "homepage": "https://github.com/nonomil/mario-minecraft-game#readme",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.58.1"
+  }
+}
