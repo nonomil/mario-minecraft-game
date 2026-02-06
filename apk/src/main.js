@@ -1,4 +1,4 @@
-const defaults = window.MMWG_DEFAULTS || {};
+﻿const defaults = window.MMWG_DEFAULTS || {};
 const storage = window.MMWG_STORAGE;
 // start() finishes wiring input/UI handlers before gameplay loop can begin.
 // This prevents "login shown but game loop already running" and avoids races on auto-login.
@@ -1416,24 +1416,21 @@ async function initLoginScreen() {
     const usernameInput = document.getElementById("username-input");
     const btnLogin = document.getElementById("btn-login");
     const btnNewAccount = document.getElementById("btn-new-account");
+    const storedId = storage.getCurrentAccountId();
     const accounts = storage.getAccountList();
+    const sortedAccounts = [...accounts].sort((a, b) => {
+        if (a.id === storedId) return -1;
+        if (b.id === storedId) return 1;
+        return 0;
+    });
 
-    renderAccountList(accountsContainer, accounts);
+    renderAccountList(accountsContainer, sortedAccounts, storedId);
     if (accounts.length) {
         loginForm.style.display = "none";
         accountList.style.display = "block";
     } else {
         loginForm.style.display = "block";
         accountList.style.display = "none";
-    }
-
-    const storedId = storage.getCurrentAccountId();
-    if (storedId) {
-        const saved = storage.getAccount(storedId);
-        if (saved) {
-            await loginWithAccount(saved);
-            return;
-        }
     }
 
     screen.classList.add("visible");
@@ -1449,7 +1446,7 @@ async function initLoginScreen() {
             }
             const existing = storage.getAccountList().find(a => a.username === username);
             const account = existing || storage.createAccount(username);
-            loginWithAccount(account);
+            loginWithAccount(account, { mode: "continue" });
         });
     }
 
@@ -1461,7 +1458,7 @@ async function initLoginScreen() {
     }
 }
 
-function renderAccountList(container, accounts) {
+function renderAccountList(container, accounts, storedId) {
     if (!container) return;
     container.innerHTML = "";
     if (!accounts.length) {
@@ -1472,30 +1469,63 @@ function renderAccountList(container, accounts) {
         const div = document.createElement("div");
         div.className = "account-item";
         div.innerHTML = `
-            <div class="account-avatar">👤</div>
+            <div class="account-avatar">用户</div>
             <div class="account-info">
-                <div class="account-name">${account.username}</div>
+                <div class="account-name">${account.username}${storedId && account.id === storedId ? ' <span style="opacity:.7;font-weight:700;">(上次)</span>' : ""}</div>
                 <div class="account-stats">
-                    积分: ${account.progress?.highScore || 0} · 已学 ${account.vocabulary?.learnedWords?.length || 0}
+                    最高分: ${account.progress?.highScore || 0} · 已学: ${account.vocabulary?.learnedWords?.length || 0}
                 </div>
             </div>
-            <button class="btn-delete-account" data-id="${account.id}">删除</button>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <button class="game-btn game-btn-small btn-account-continue" data-id="${account.id}">继续</button>
+                <button class="game-btn game-btn-small game-btn-danger btn-account-restart" data-id="${account.id}">重玩</button>
+                <button class="game-btn game-btn-small btn-delete-account" data-id="${account.id}">删除</button>
+            </div>
         `;
-        div.querySelector(".account-info")?.addEventListener("click", () => loginWithAccount(account));
+
+        div.querySelector(".account-info")?.addEventListener("click", () => loginWithAccount(account, { mode: "continue" }));
+        div.querySelector(".btn-account-continue")?.addEventListener("click", e => {
+            e.stopPropagation();
+            loginWithAccount(account, { mode: "continue" });
+        });
+        div.querySelector(".btn-account-restart")?.addEventListener("click", e => {
+            e.stopPropagation();
+            if (!confirm(`确定重玩 "${account.username}" 吗？\n将清空本账号的金币/背包/装备，但保留已学单词与成就。`)) return;
+            loginWithAccount(account, { mode: "restart" });
+        });
+
         const del = div.querySelector(".btn-delete-account");
         del?.addEventListener("click", e => {
             e.stopPropagation();
             if (confirm(`确定删除账号 "${account.username}" 吗？`)) {
                 storage.deleteAccount(account.id);
-                renderAccountList(container, storage.getAccountList());
+                renderAccountList(container, storage.getAccountList(), storage.getCurrentAccountId());
             }
         });
+
         container.appendChild(div);
     });
 }
 
-async function loginWithAccount(account) {
+function resetAccountRunState(account) {
     if (!account) return;
+    account.progress = account.progress || {};
+    account.progress.currentCoins = 0;
+    account.progress.currentDiamonds = 0;
+
+    account.inventory = account.inventory || {};
+    account.inventory.items = { ...INVENTORY_TEMPLATE };
+    account.inventory.equipment = { armor: null, armorDurability: 0 };
+    account.inventory.armorCollection = [];
+}
+
+async function loginWithAccount(account, options) {
+    if (!account) return;
+    const mode = options && options.mode ? options.mode : "continue";
+    if (mode === "restart") {
+        resetAccountRunState(account);
+        storage.saveAccount(account);
+    }
     stopAutoSave();
     currentAccount = account;
     currentAccount.lastLoginAt = Date.now();
@@ -1524,13 +1554,13 @@ function bootGameLoopIfNeeded() {
     paused = false;
     startedOnce = true;
     setOverlay(false);
-    showToast("鎻愮ず锛氭搷浣滆鏄庡湪銆愯缃€戜腑");
+    showToast("提示：操作说明在【设置】中");
     update();
     draw();
 }
 
 function loadAccountData(account) {
-    score = 0;
+    score = account?.progress?.currentCoins || 0;
     levelScore = 0;
     progress = normalizeProgress({
         vocab: (account.vocabulary && account.vocabulary.packProgress) ? account.vocabulary.packProgress : {}
@@ -1543,6 +1573,8 @@ function loadAccountData(account) {
     armorInventory = Array.isArray(account.inventory?.armorCollection) ? [...account.inventory.armorCollection] : [];
     updateInventoryUI();
     updateArmorUI();
+    const scoreEl = document.getElementById("score");
+    if (scoreEl) scoreEl.innerText = score;
     updateVocabProgressUI();
     updateVocabPreview(settings.vocabSelection);
     if (player) {
@@ -6965,3 +6997,4 @@ function registerTestApi() {
 }
 
 registerTestApi();
+
