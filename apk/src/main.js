@@ -662,16 +662,21 @@ function speakNativeTts(tts, text, lang, rate) {
     if (!tts || typeof tts.speak !== "function") return false;
     if (!text) return false;
     try {
-        tts.speak({
+        const result = tts.speak({
             text: String(text),
             lang: String(lang || ""),
             rate: typeof rate === "number" ? rate : 1.0,
             pitch: 1.0,
             volume: 1.0,
             category: "ambient",
-            // Ensure EN->ZH does not cancel EN on Android (default is Flush).
-            queueStrategy: 1
+            // Ensure EN->ZH does not cancel EN on Android (default may flush).
+            // Capacitor TextToSpeech expects string strategies like QUEUE_ADD/QUEUE_FLUSH.
+            queueStrategy: "QUEUE_ADD"
         });
+        // Some implementations return a Promise.
+        if (result && typeof result.catch === "function") {
+            result.catch(() => {});
+        }
         return true;
     } catch {
         return false;
