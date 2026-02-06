@@ -70,6 +70,11 @@ let matchResultEl = null;
 let matchSubtitleEl = null;
 let matchTimerEl = null;
 let activeWordMatch = null;
+let inventoryModalEl = null;
+let inventoryContentEl = null;
+let inventoryTabButtons = null;
+let inventoryTab = "items";
+let inventoryDropMode = false;
 let profileModalEl = null;
 let profileUsernameEl = null;
 let profilePlaytimeEl = null;
@@ -173,6 +178,11 @@ const ITEM_ICONS = {
     hp: "❤️",
     max_hp: "💖",
     score: "🪙"
+};
+const INVENTORY_CATEGORIES = {
+    items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow"],
+    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom"],
+    equipment: []
 };
 const SPEED_LEVELS = {
     slow: 0.8,
@@ -428,8 +438,8 @@ const DEFAULT_BIOME_CONFIGS = {
         name: "海滨",
         color: "#2196F3",
         groundType: "sand",
-        decorations: { palm_tree: 0.15, shell: 0.2, starfish: 0.15, seaweed: 0.25, boat: 0.05 },
-        treeTypes: { palm: 1.0 },
+        decorations: { shell: 0.2, starfish: 0.15, seaweed: 0.35, boat: 0.05 },
+        treeTypes: {},
         effects: { particles: "bubbles", ambient: "#AAD4F5", waterLevel: 150 },
         spawnWeight: { min: 2000, max: 4000 }
     },
@@ -439,7 +449,7 @@ const DEFAULT_BIOME_CONFIGS = {
         color: "#8B0000",
         groundType: "netherrack",
         decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
-        effects: { particles: "flames", ambient: "#CC3333", damage: 1, speedMultiplier: 0.7 },
+        effects: { particles: "flames", ambient: "#CC3333", damage: 1, onEnterOnly: true, speedMultiplier: 0.7 },
         spawnWeight: { min: 3500, max: 5000 }
     }
 };
@@ -540,7 +550,7 @@ const DEFAULT_CHEST_ROLLS = {
 
 const LEARNING_CONFIG = {
     challenge: {
-        timeLimit: 10000,
+        timeLimit: 15000,
         baseOptions: 3,
         rewards: {
             correct: { score: 20, diamond: 1 },
@@ -1167,7 +1177,7 @@ function applyBiomeEffectsToPlayer() {
         nextSpeed *= 0.65;
     }
     player.speed = nextSpeed;
-    if (biome.effects?.damage) {
+    if (biome.effects?.damage && !biome.effects.onEnterOnly) {
         if (gameFrame % 90 === 0) {
             damagePlayer(biome.effects.damage, player.x, 30);
         }
@@ -2389,11 +2399,20 @@ class WordMatchGame {
         this.connections = [];
         this.selectedLeftId = null;
         this.timerMs = LEARNING_CONFIG.wordMatch.timeLimit || 30000;
+        this.timerEndAt = 0;
         this.finished = false;
+        this.attempts = 0;
+        this.maxAttempts = 1;
     }
 
     start() {
         if (!wordMatchScreenEl) return;
+        if (this.attempts >= this.maxAttempts) {
+            showToast("复活机会已用完");
+            setOverlay(true, "gameover");
+            return;
+        }
+        this.attempts++;
         wordMatchActive = true;
         wordMatchScreenEl.classList.add("visible");
         this.render();
@@ -2406,13 +2425,14 @@ class WordMatchGame {
             matchResultEl.classList.remove("visible");
             matchResultEl.innerText = "";
         }
-        if (matchSubtitleEl) matchSubtitleEl.innerText = "将英文与中文拉线连对，助你复活";
+        if (matchSubtitleEl) matchSubtitleEl.innerText = "将英文与中文拉线连对，只有1次机会";
         matchLeftEl.innerHTML = this.leftItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="en">${item.text}</div>`).join("");
         matchRightEl.innerHTML = this.rightItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="zh">${item.text}</div>`).join("");
         matchTotalEl.innerText = String(this.words.length);
         this.bindEvents();
         this.updateMatchCount();
         this.drawLines();
+        if (matchSubmitBtn) matchSubmitBtn.disabled = false;
     }
 
     bindEvents() {
@@ -2474,15 +2494,16 @@ class WordMatchGame {
     }
 
     startTimer() {
-        if (matchTimerEl) matchTimerEl.innerText = String(Math.ceil(this.timerMs / 1000));
         this.stopTimer();
+        this.timerEndAt = Date.now() + this.timerMs;
+        if (matchTimerEl) matchTimerEl.innerText = String(Math.ceil(this.timerMs / 1000));
         wordMatchTimer = setInterval(() => {
-            this.timerMs -= 1000;
-            if (matchTimerEl) matchTimerEl.innerText = String(Math.max(0, Math.ceil(this.timerMs / 1000)));
-            if (this.timerMs <= 0) {
+            const remaining = this.timerEndAt - Date.now();
+            if (matchTimerEl) matchTimerEl.innerText = String(Math.max(0, Math.ceil(remaining / 1000)));
+            if (remaining <= 0) {
                 this.submit();
             }
-        }, 1000);
+        }, 100);
     }
 
     stopTimer() {
@@ -2496,6 +2517,7 @@ class WordMatchGame {
         if (this.finished) return;
         this.finished = true;
         this.stopTimer();
+        if (matchSubmitBtn) matchSubmitBtn.disabled = true;
         const correct = this.connections.filter(conn => conn.left === conn.right).length;
         const success = correct >= (LEARNING_CONFIG.wordMatch.minCorrectToRevive || 4);
         this.showResult(success, correct);
@@ -2997,7 +3019,7 @@ function spawnEnemyByDifficulty(x, y) {
         snow: ["zombie", "skeleton", "creeper", "spider", "enderman"],
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
-        ocean: ["zombie", "creeper", "skeleton", "enderman"],
+        ocean: ["drowned", "pufferfish"],
         nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
@@ -3050,6 +3072,10 @@ function pickChestRarity(rarities, rareBoost) {
 }
 
 function spawnBiomeTree(x, yPos, biome, fallbackType) {
+    if (biome && biome.id === "ocean") {
+        spawnDecoration("seaweed", obj => obj.reset(x, yPos - 30), () => new Seaweed(x, yPos - 30));
+        return;
+    }
     const type = weightedPick(biome.treeTypes) || fallbackType || "oak";
     trees.push(new Tree(x, yPos, type));
 }
@@ -3253,6 +3279,64 @@ function getUniqueSessionWords() {
     });
 }
 
+function generateLetterOptions(correctLetter, count = 4) {
+    const options = [correctLetter];
+    const similarLetters = {
+        a: ["e", "o", "u"],
+        b: ["d", "p", "q"],
+        c: ["o", "e", "g"],
+        d: ["b", "p", "q"],
+        e: ["a", "o", "c"],
+        i: ["l", "j", "t"],
+        l: ["i", "t", "j"],
+        m: ["n", "w", "v"],
+        n: ["m", "h", "u"],
+        o: ["a", "e", "c"],
+        p: ["b", "d", "q"],
+        q: ["p", "g", "o"],
+        s: ["z", "c", "x"],
+        t: ["i", "l", "f"],
+        u: ["v", "n", "w"],
+        v: ["u", "w", "y"],
+        w: ["v", "m", "n"],
+        z: ["s", "x", "y"]
+    };
+    const similar = similarLetters[correctLetter] || [];
+    for (const letter of similar) {
+        if (options.length >= count) break;
+        if (!options.includes(letter)) options.push(letter);
+    }
+    const allLetters = "abcdefghijklmnopqrstuvwxyz";
+    while (options.length < count) {
+        const rand = allLetters[Math.floor(Math.random() * allLetters.length)];
+        if (!options.includes(rand)) options.push(rand);
+    }
+    return options;
+}
+
+function generateFillBlankChallenge(wordObj) {
+    const enRaw = String(wordObj?.en || "").toLowerCase();
+    const en = enRaw.replace(/[^a-z]/g, "");
+    if (!en) return null;
+    const minIndex = en.length > 2 ? 1 : 0;
+    const maxIndex = en.length > 2 ? en.length - 2 : Math.max(0, en.length - 1);
+    const missingIndex = Math.floor(Math.random() * (maxIndex - minIndex + 1)) + minIndex;
+    const missingLetter = en[missingIndex];
+    const wordDisplay = en.split("").map((char, i) => (i === missingIndex ? "_" : char)).join(" ");
+    const options = generateLetterOptions(missingLetter, 4);
+    return {
+        mode: "fill_blank",
+        questionHtml:
+            `<div class="challenge-fill">` +
+            `<div class="challenge-fill-word">${wordDisplay}</div>` +
+            `<div class="challenge-fill-hint">缺少哪个字母？</div>` +
+            `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
+            `</div>`,
+        options: shuffle(options).map(letter => ({ text: letter, value: letter, correct: letter === missingLetter })),
+        answer: missingLetter
+    };
+}
+
 const CHALLENGE_TYPES = {
     translate(wordObj) {
         const options = generateChallengeOptions(wordObj, "zh", LEARNING_CONFIG.challenge.baseOptions);
@@ -3272,17 +3356,12 @@ const CHALLENGE_TYPES = {
             answer: wordObj.en
         };
     },
-    spell(wordObj) {
-        return {
-            mode: "input",
-            question: `Spell the word for ${wordObj.zh || wordObj.en}`,
-            answer: (wordObj.en || "").toLowerCase(),
-            hint: (wordObj.en && wordObj.en.charAt(0)) || ""
-        };
+    fill_blank(wordObj) {
+        return generateFillBlankChallenge(wordObj);
     }
 };
 
-const CHALLENGE_TYPE_KEYS = Object.keys(CHALLENGE_TYPES);
+const CHALLENGE_TYPE_KEYS = ["translate", "listen", "fill_blank"];
 
 function generateChallengeOptions(wordObj, key, count) {
     const distinct = pickDistinctWords(wordObj, count);
@@ -3352,7 +3431,13 @@ function startLearningChallenge(wordObj, forcedType, origin) {
 function showLearningChallenge(challenge) {
     if (!challengeModalEl) return;
     challengeModalEl.classList.add("visible");
-    if (challengeQuestionEl) challengeQuestionEl.innerText = challenge.question || "";
+    if (challengeQuestionEl) {
+        if (challenge.questionHtml) {
+            challengeQuestionEl.innerHTML = challenge.questionHtml;
+        } else {
+            challengeQuestionEl.innerText = challenge.question || "";
+        }
+    }
     const isInput = challenge.mode === "input";
     if (challengeInputWrapperEl) {
         challengeInputWrapperEl.classList.toggle("active", isInput);
@@ -3368,7 +3453,9 @@ function showLearningChallenge(challenge) {
                 const btn = document.createElement("button");
                 btn.type = "button";
                 btn.innerText = option.text;
-                btn.className = "challenge-option";
+                btn.className = challenge.mode === "fill_blank"
+                    ? "challenge-option letter-option"
+                    : "challenge-option";
                 btn.addEventListener("click", () => {
                     completeLearningChallenge(option.correct);
                 });
@@ -3429,7 +3516,7 @@ function completeLearningChallenge(correct) {
 function triggerWordGateChallenge(gate) {
     if (!gate || !gate.wordObj || gate.locked === false) return;
     if (currentLearningChallenge) return;
-    startLearningChallenge(gate.wordObj, "spell", gate);
+    startLearningChallenge(gate.wordObj, "fill_blank", gate);
     gate.cooldown = 60;
 }
 
@@ -3884,6 +3971,99 @@ function updateInventoryUI() {
     });
     syncWeaponsFromInventory();
     updateWeaponUI();
+    updateInventoryModal();
+}
+
+function getInventoryEntries(keys) {
+    return keys
+        .map(key => ({
+            key,
+            count: Number(inventory[key]) || 0,
+            label: ITEM_LABELS[key] || key,
+            icon: ITEM_ICONS[key] || "📦"
+        }))
+        .filter(entry => entry.count > 0);
+}
+
+function renderInventoryModal() {
+    if (!inventoryContentEl) return;
+    if (inventoryTab === "equipment") {
+        const armorLabel = playerEquipment.armor ? (ARMOR_TYPES[playerEquipment.armor]?.name || playerEquipment.armor) : "无";
+        const armorDur = playerEquipment.armor ? `${playerEquipment.armorDurability}%` : "--";
+        const armorList = (armorInventory || []).map(entry => {
+            const name = ARMOR_TYPES[entry.id]?.name || entry.id;
+            return `${name} (${entry.durability}%)`;
+        });
+        const weapons = getInventoryEntries(["stone_sword", "iron_pickaxe", "bow", "arrow"]);
+        const armorHtml = `
+            <div class="inventory-equipment">
+                <div>当前护甲：${armorLabel}</div>
+                <div>护甲耐久：${armorDur}</div>
+                <div>护甲库存：${armorList.length ? armorList.join("、") : "无"}</div>
+            </div>
+        `;
+        const weaponHtml = weapons.length
+            ? weapons.map(entry => `
+                <div class="inventory-item">
+                    <div class="inventory-item-left">
+                        <div class="inventory-item-icon">${entry.icon}</div>
+                        <div>${entry.label}</div>
+                    </div>
+                    <div>x${entry.count}</div>
+                </div>
+            `).join("")
+            : `<div class="inventory-empty">暂无装备</div>`;
+        inventoryContentEl.innerHTML = `${armorHtml}${weaponHtml}`;
+        return;
+    }
+
+    const keys = INVENTORY_CATEGORIES[inventoryTab] || [];
+    const entries = getInventoryEntries(keys);
+    if (!entries.length) {
+        inventoryContentEl.innerHTML = `<div class="inventory-empty">暂无物品</div>`;
+        return;
+    }
+    inventoryContentEl.innerHTML = entries.map(entry => `
+        <div class="inventory-item">
+            <div class="inventory-item-left">
+                <div class="inventory-item-icon">${entry.icon}</div>
+                <div>${entry.label}</div>
+            </div>
+            <div>x${entry.count}</div>
+        </div>
+    `).join("");
+}
+
+function setInventoryTab(tab) {
+    inventoryTab = tab;
+    if (inventoryTabButtons) {
+        inventoryTabButtons.forEach(btn => {
+            btn.classList.toggle("active", btn.dataset.tab === tab);
+        });
+    }
+    renderInventoryModal();
+}
+
+function showInventoryModal() {
+    if (!inventoryModalEl) return;
+    pausedByModal = !paused;
+    paused = true;
+    inventoryModalEl.classList.add("visible");
+    inventoryModalEl.setAttribute("aria-hidden", "false");
+    renderInventoryModal();
+}
+
+function hideInventoryModal() {
+    if (!inventoryModalEl) return;
+    inventoryModalEl.classList.remove("visible");
+    inventoryModalEl.setAttribute("aria-hidden", "true");
+    if (pausedByModal) paused = false;
+    pausedByModal = false;
+}
+
+function updateInventoryModal() {
+    if (!inventoryModalEl || !inventoryModalEl.classList.contains("visible")) return;
+    renderInventoryModal();
 }
 
 function addArmorToInventory(armorId) {
@@ -6082,6 +6262,26 @@ const ENEMY_STATS = {
         scoreValue: 20,
         size: { w: 32, h: 48 }
     },
+    drowned: {
+        hp: 18,
+        speed: 0.6,
+        damage: 9,
+        attackType: "melee",
+        color: "#1E88E5",
+        drops: ["rotten_flesh", "shell"],
+        scoreValue: 14,
+        size: { w: 32, h: 48 }
+    },
+    pufferfish: {
+        hp: 14,
+        speed: 0.9,
+        damage: 7,
+        attackType: "melee",
+        color: "#FFB300",
+        drops: ["shell", "starfish"],
+        scoreValue: 12,
+        size: { w: 30, h: 30 }
+    },
     enderman: {
         hp: 40,
         speed: 1.4,
@@ -6801,6 +7001,12 @@ function wireHudButtons() {
             showArmorSelectUI();
         });
     }
+    const invBadge = document.getElementById("inventory-status");
+    if (invBadge) {
+        invBadge.addEventListener("click", () => {
+            showInventoryModal();
+        });
+    }
 }
 
 function wireArmorModal() {
@@ -6810,6 +7016,26 @@ function wireArmorModal() {
     if (modal) {
         modal.addEventListener("click", e => {
             if (e.target === modal) hideArmorSelectUI();
+        });
+    }
+}
+
+function wireInventoryModal() {
+    inventoryModalEl = document.getElementById("inventory-modal");
+    inventoryContentEl = document.getElementById("inventory-content");
+    inventoryTabButtons = Array.from(document.querySelectorAll(".inventory-tab"));
+    const btnClose = document.getElementById("btn-inventory-close");
+    if (btnClose) btnClose.addEventListener("click", hideInventoryModal);
+    if (inventoryTabButtons) {
+        inventoryTabButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                setInventoryTab(btn.dataset.tab || "items");
+            });
+        });
+    }
+    if (inventoryModalEl) {
+        inventoryModalEl.addEventListener("click", e => {
+            if (e.target === inventoryModalEl) hideInventoryModal();
         });
     }
 }
@@ -6950,6 +7176,7 @@ async function start() {
     await setActiveVocabPack(settings.vocabSelection || "auto");
     wireHudButtons();
     wireArmorModal();
+    wireInventoryModal();
     wireProfileModal();
     wireSettingsModal();
     wireLearningModals();

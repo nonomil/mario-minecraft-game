@@ -37,6 +37,7 @@
             <div class="hud-box" id="level-info">场景: 草原</div>
             <div class="hud-box" id="weapon-info">武器: ⚔️ 石剑</div>
             <div class="hud-box hud-box-clickable" id="armor-status">皮甲: 无</div>
+            <div class="hud-box hud-box-clickable" id="inventory-status">🎒 背包</div>
         </div>
         
         <div class="btn-group">
@@ -241,6 +242,21 @@
     </div>
 </div>
 
+<div id="inventory-modal" class="inventory-modal" aria-hidden="true">
+    <div class="inventory-panel">
+        <div class="inventory-header">
+            <span>🎒 背包</span>
+            <button class="game-btn game-btn-small" id="btn-inventory-close">关闭</button>
+        </div>
+        <div class="inventory-tabs">
+            <button class="inventory-tab active" data-tab="items">物品</button>
+            <button class="inventory-tab" data-tab="materials">材料</button>
+            <button class="inventory-tab" data-tab="equipment">装备</button>
+        </div>
+        <div class="inventory-content" id="inventory-content"></div>
+    </div>
+</div>
+
 <div id="challenge-modal" class="learning-modal" aria-hidden="true">
     <div class="learning-modal-content">
         <div class="learning-modal-header">
@@ -264,7 +280,7 @@
             <h2>词语匹配复活</h2>
             <div class="match-timer" id="match-timer">30</div>
         </div>
-        <p class="word-match-subtitle" id="match-subtitle">将英文与中文拉线连对，助你复活</p>
+        <p class="word-match-subtitle" id="match-subtitle">将英文与中文拉线连对，只有1次机会</p>
         <div class="match-container">
             <div class="match-column" id="match-left"></div>
             <svg class="match-lines" id="match-lines" xmlns="http://www.w3.org/2000/svg"></svg>
