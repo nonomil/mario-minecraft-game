@@ -98,6 +98,88 @@ body {
     text-shadow: 2px 2px 0 #000;
 }
 
+.overlay-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.overlay-start {
+    text-align: left;
+}
+
+.overlay-start .overlay-page {
+    display: none;
+}
+
+.overlay-start .overlay-page.active {
+    display: block;
+}
+
+.overlay-intro-title {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 900;
+    margin-bottom: 6px;
+}
+
+.overlay-intro-sub {
+    font-size: clamp(14px, 3vw, 18px);
+    font-weight: 700;
+    opacity: 0.95;
+    line-height: 1.6;
+}
+
+.overlay-account {
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+}
+
+.overlay-account-title {
+    font-weight: 900;
+    margin-bottom: 8px;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.overlay-account-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.overlay-account-hint {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 8px;
+}
+
+.overlay-input {
+    flex: 1 1 160px;
+    min-width: 140px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-size: 15px;
+}
+
+.overlay-hints-title {
+    font-weight: 900;
+    margin-bottom: 6px;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.overlay-hints-text {
+    font-size: clamp(13px, 3vw, 18px);
+    line-height: 1.6;
+}
+
 .overlay-btn {
     width: 100%;
     height: clamp(44px, 6vh, 56px);

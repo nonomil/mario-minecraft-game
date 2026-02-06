@@ -340,6 +340,11 @@ let digHits = new Map();
 let bossSpawned = false;
 let playerInvincibleTimer = 0;
 let overlayMode = "start";
+const START_OVERLAY_INTRO_MS = 1600;
+const START_OVERLAY_HINT_HTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
+let startOverlayTimer = 0;
+let startOverlayReady = false;
+let startOverlayActive = false;
 let enemyKillStats = { total: 0 };
 let repeatPauseState = "repeat";
 const projectilePool = {
@@ -658,7 +663,7 @@ function getNativeTts() {
     }
 }
 
-function speakNativeTts(tts, text, lang, rate) {
+function speakNativeTts(tts, text, lang, rate, queueStrategy) {
     if (!tts || typeof tts.speak !== "function") return false;
     if (!text) return false;
     try {
@@ -671,7 +676,7 @@ function speakNativeTts(tts, text, lang, rate) {
             category: "ambient",
             // Ensure EN->ZH does not cancel EN on Android (default may flush).
             // Capacitor TextToSpeech expects string strategies like QUEUE_ADD/QUEUE_FLUSH.
-            queueStrategy: "QUEUE_ADD"
+            queueStrategy: queueStrategy || "QUEUE_ADD"
         });
         // Some implementations return a Promise.
         if (result && typeof result.catch === "function") {
@@ -681,6 +686,15 @@ function speakNativeTts(tts, text, lang, rate) {
     } catch {
         return false;
     }
+}
+
+function normalizeSpeechText(primary, fallback) {
+    const main = primary == null ? "" : String(primary);
+    const alt = fallback == null ? "" : String(fallback);
+    const trimmed = main.trim();
+    if (trimmed) return trimmed;
+    const altTrimmed = alt.trim();
+    return altTrimmed || "";
 }
 
 function buildOnlineTtsUrl(text, lang) {
@@ -1412,6 +1426,103 @@ function applySpeedSetting() {
     saveSettings();
 }
 
+function clearStartOverlayTimer() {
+    if (startOverlayTimer) {
+        clearTimeout(startOverlayTimer);
+        startOverlayTimer = 0;
+    }
+}
+
+function setStartOverlayPage(page) {
+    const root = document.getElementById("overlay-start");
+    if (!root) return;
+    root.querySelectorAll(".overlay-page").forEach(el => {
+        const active = el.dataset.page === page;
+        el.classList.toggle("active", active);
+    });
+    const title = document.getElementById("overlay-title");
+    if (title) title.innerText = page === "intro" ? "Minecraft 单词游戏" : "选择档案";
+}
+
+function ensureStartOverlayContent() {
+    const text = document.getElementById("overlay-text");
+    if (!text) return;
+    if (document.getElementById("overlay-start")) return;
+    text.innerHTML = `
+        <div class="overlay-start" id="overlay-start">
+            <div class="overlay-page overlay-page-intro active" data-page="intro">
+                <div class="overlay-intro-title">Minecraft 单词游戏</div>
+                <div class="overlay-intro-sub">在冒险中学习单词，闯关解锁更多词库与装备。</div>
+            </div>
+            <div class="overlay-page overlay-page-setup" data-page="setup">
+                <div class="overlay-account">
+                    <div class="overlay-account-title">输入档案</div>
+                    <div class="overlay-account-row">
+                        <input class="overlay-input" id="overlay-username-input" type="text" placeholder="输入昵称/档案名" maxlength="20">
+                        <button class="game-btn game-btn-small" id="btn-overlay-create">创建/进入</button>
+                    </div>
+                    <div class="overlay-account-hint">已有档案：选择继续/重玩/删除</div>
+                    <div id="overlay-accounts-container" class="account-list"></div>
+                </div>
+                <div class="overlay-hints-title">操作说明</div>
+                <div class="overlay-hints-text">${START_OVERLAY_HINT_HTML}</div>
+            </div>
+        </div>
+    `;
+}
+
+function renderStartOverlayAccounts() {
+    const container = document.getElementById("overlay-accounts-container");
+    if (!container) return;
+    const storedId = storage.getCurrentAccountId();
+    const accounts = storage.getAccountList();
+    const sortedAccounts = [...accounts].sort((a, b) => {
+        if (a.id === storedId) return -1;
+        if (b.id === storedId) return 1;
+        return 0;
+    });
+    renderAccountList(container, sortedAccounts, storedId);
+}
+
+function wireStartOverlayAccountActions() {
+    const input = document.getElementById("overlay-username-input");
+    const btn = document.getElementById("btn-overlay-create");
+    if (btn) {
+        btn.addEventListener("click", () => {
+            const username = (input?.value || "").trim();
+            if (!username) {
+                showToast("请输入用户名");
+                input?.focus();
+                return;
+            }
+            const existing = storage.getAccountList().find(a => a.username === username);
+            const account = existing || storage.createAccount(username);
+            loginWithAccount(account, { mode: "continue" });
+            renderStartOverlayAccounts();
+        });
+    }
+    if (input) {
+        input.addEventListener("keydown", e => {
+            if (e.key !== "Enter") return;
+            e.preventDefault();
+            btn?.click();
+        });
+    }
+}
+
+function updateStartOverlayActionState() {
+    const btn = document.getElementById("btn-overlay-action");
+    startOverlayReady = !!currentAccount;
+    if (!btn) return;
+    btn.disabled = !startOverlayReady;
+    btn.innerText = startOverlayReady ? "开始游戏" : "请先选择档案";
+}
+
+function isStartOverlayVisible() {
+    const overlay = document.getElementById("screen-overlay");
+    return !!overlay && overlay.classList.contains("visible") && overlayMode === "start";
+}
+
 async function initLoginScreen() {
     const screen = document.getElementById("login-screen");
     if (!screen) return;
@@ -1438,9 +1549,13 @@ async function initLoginScreen() {
         accountList.style.display = "none";
     }
 
-    screen.classList.add("visible");
+    ensureStartOverlayContent();
+    renderStartOverlayAccounts();
+    wireStartOverlayAccountActions();
+    screen.classList.remove("visible");
     paused = true;
     pausedByModal = true;
+    setOverlay(true, "start");
 
     if (btnLogin) {
         btnLogin.addEventListener("click", () => {
@@ -1537,19 +1652,26 @@ async function loginWithAccount(account, options) {
     storage.setCurrentAccountId(account.id);
     storage.saveAccount(currentAccount);
     loadAccountData(account);
+    const startOverlayVisible = isStartOverlayVisible();
     const screen = document.getElementById("login-screen");
     if (screen) {
         screen.classList.remove("visible");
     }
-    paused = false;
-    pausedByModal = false;
+    if (startOverlayVisible) {
+        paused = true;
+        pausedByModal = true;
+    } else {
+        paused = false;
+        pausedByModal = false;
+    }
     showToast(`欢迎回来 ${account.username}`);
     startAutoSave();
     await setActiveVocabPack(settings.vocabSelection || "auto");
     clearOldWordItems();
 
+    updateStartOverlayActionState();
     // If start() already finished wiring handlers, boot the game loop on first successful login.
-    if (bootReady) bootGameLoopIfNeeded();
+    if (bootReady && !startOverlayVisible) bootGameLoopIfNeeded();
 }
 
 function bootGameLoopIfNeeded() {
@@ -1559,7 +1681,7 @@ function bootGameLoopIfNeeded() {
     paused = false;
     startedOnce = true;
     setOverlay(false);
-    showToast("提示：操作说明在【设置】中");
+    showToast("冒险开始！");
     update();
     draw();
 }
@@ -2154,11 +2276,11 @@ function applySettingsToUI() {
 
     if (viewportChanged && startedOnce) {
         if (nowMs() < viewportIgnoreUntilMs) return;
-        initGame();
-        paused = false;
-        startedOnce = true;
-        setOverlay(false);
-        showToast("已适配屏幕，游戏重新开始");
+        if (startOverlayActive || pausedByModal) return;
+        paused = true;
+        pausedByModal = true;
+        setOverlay(true, "pause");
+        showToast("已适配屏幕，已暂停游戏");
     }
 }
 
@@ -2182,9 +2304,19 @@ function setOverlay(visible, mode) {
         overlay.classList.add("visible");
         overlay.setAttribute("aria-hidden", "false");
         overlayMode = mode || "pause";
-        if (mode === "pause") {
+        if (mode === "start") {
+            startOverlayActive = true;
+            ensureStartOverlayContent();
+            renderStartOverlayAccounts();
+            updateStartOverlayActionState();
+            setStartOverlayPage("intro");
+            clearStartOverlayTimer();
+            startOverlayTimer = setTimeout(() => setStartOverlayPage("setup"), START_OVERLAY_INTRO_MS);
+            if (title) title.innerText = "Minecraft 单词游戏";
+            if (btnScoreRevive) btnScoreRevive.style.display = "none";
+        } else if (mode === "pause") {
             if (title) title.innerText = "已暂停";
-            if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
+            if (text) text.innerHTML = START_OVERLAY_HINT_HTML;
             if (btn) btn.innerText = "继续";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
         } else if (mode === "gameover") {
@@ -2207,22 +2339,26 @@ function setOverlay(visible, mode) {
             if (btnScoreRevive) {
                 const cfg = getReviveConfig();
                 const scoreCost = Number(cfg.scoreCost) || 500;
-                if (score >= scoreCost) {
-                    btnScoreRevive.style.display = "block";
-                    btnScoreRevive.innerText = `积分复活 (${scoreCost}分)`;
-                } else {
-                    btnScoreRevive.style.display = "none";
-                }
+                const enoughScore = score >= scoreCost;
+                btnScoreRevive.style.display = "block";
+                btnScoreRevive.disabled = !enoughScore;
+                btnScoreRevive.innerText = enoughScore
+                    ? `积分复活 (${scoreCost}分)`
+                    : `积分复活 (需要${scoreCost}分)`;
             }
         } else {
             if (title) title.innerText = "准备开始";
-            if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
+            if (text) text.innerHTML = START_OVERLAY_HINT_HTML;
             if (btn) btn.innerText = "开始游戏";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
         }
     } else {
         overlay.classList.remove("visible");
         overlay.setAttribute("aria-hidden", "true");
+        if (overlayMode === "start") {
+            clearStartOverlayTimer();
+            startOverlayActive = false;
+        }
         overlayMode = "start";
         if (btnScoreRevive) btnScoreRevive.style.display = "none";
     }
@@ -2404,7 +2540,21 @@ class WordMatchGame {
 function resumeGameFromOverlay() {
     // Prevent an immediate mobile viewport change from reopening the start overlay.
     viewportIgnoreUntilMs = nowMs() + 2000;
-    if (overlayMode === "gameover") {
+    if (overlayMode === "start") {
+        if (!currentAccount) {
+            showToast("请先选择或创建档案");
+            setStartOverlayPage("setup");
+            const input = document.getElementById("overlay-username-input");
+            input?.focus();
+            return;
+        }
+        if (!startedOnce) {
+            bootGameLoopIfNeeded();
+        } else {
+            paused = false;
+            setOverlay(false);
+        }
+    } else if (overlayMode === "gameover") {
         if (getDiamondCount() >= 10) {
             inventory.diamond -= 10;
             playerHp = playerMaxHp;
@@ -3297,17 +3447,23 @@ function speakWord(wordObj) {
     showWordCard(wordObj);
 
     if (!settings.speechEnabled) return;
+    const enText = normalizeSpeechText(wordObj?.en, wordObj?.word);
+    const zhText = normalizeSpeechText(wordObj?.zh, wordObj?.en);
+    if (!enText && !zhText) return;
 
     const nativeTts = getNativeTts();
     if (nativeTts) {
         const speak = () => {
             const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
             const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-            let ok = speakNativeTts(nativeTts, wordObj.en, "en-US", enRate);
-            if (wordObj.zh) {
-                ok = speakNativeTts(nativeTts, wordObj.zh, "zh-CN", zhRate) || ok;
+            let ok = false;
+            if (enText) {
+                ok = speakNativeTts(nativeTts, enText, "en-US", enRate, "QUEUE_FLUSH") || ok;
             }
-            return ok;
+            if (zhText) {
+                ok = speakNativeTts(nativeTts, zhText, "zh-CN", zhRate, "QUEUE_ADD") || ok;
+            }
+            return ok || false;
         };
         try {
             if (typeof nativeTts.stop === "function") {
@@ -3337,14 +3493,24 @@ function speakWord(wordObj) {
             window.speechSynthesis.cancel();
             window.speechSynthesis.resume();
 
-            const uEn = new SpeechSynthesisUtterance(wordObj.en);
+            if (!enText && zhText) {
+                const onlyZh = new SpeechSynthesisUtterance(zhText);
+                onlyZh.lang = "zh-CN";
+                const zhVoice = pickVoice("zh");
+                if (zhVoice) onlyZh.voice = zhVoice;
+                onlyZh.rate = clamp(Number(settings.speechZhRate) || 0.9, 0.5, 2.0);
+                window.speechSynthesis.speak(onlyZh);
+                return;
+            }
+
+            const uEn = new SpeechSynthesisUtterance(enText);
             uEn.lang = "en-US";
             const enVoice = pickVoice("en");
             if (enVoice) uEn.voice = enVoice;
             uEn.rate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
 
-            if (wordObj.zh) {
-                const uZh = new SpeechSynthesisUtterance(wordObj.zh);
+            if (zhText) {
+                const uZh = new SpeechSynthesisUtterance(zhText);
                 uZh.lang = "zh-CN";
                 const zhVoice = pickVoice("zh");
                 if (zhVoice) uZh.voice = zhVoice;
@@ -3363,8 +3529,8 @@ function speakWord(wordObj) {
 
     // Online fallback (may be blocked by autoplay policies until the first user gesture).
     playOnlineTtsSequence([
-        { text: wordObj.en, lang: "en" },
-        wordObj.zh ? { text: wordObj.zh, lang: "zh-CN" } : null
+        enText ? { text: enText, lang: "en" } : null,
+        zhText ? { text: zhText, lang: "zh-CN" } : null
     ]);
 }
 
