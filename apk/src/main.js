@@ -3321,56 +3321,46 @@ function speakWord(wordObj) {
         }
     }
 
-    const hasSpeech = "speechSynthesis" in window;
-    if (hasSpeech) ensureSpeechReady();
-    const voicesReady = hasSpeech && ensureSpeechVoices();
-    const voices = hasSpeech && window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
-    const canUseSpeech = !!(voicesReady && voices && voices.length);
-    if (!canUseSpeech && speechPendingAttempts < 2) {
-        speechPendingWord = wordObj;
-        speechPendingAttempts += 1;
-        if (!speechPendingTimer) {
-            speechPendingTimer = setTimeout(() => {
-                speechPendingTimer = null;
-                if (speechPendingWord && settings.speechEnabled) {
-                    const pending = speechPendingWord;
-                    speechPendingWord = null;
-                    speakWord(pending);
-                }
-            }, 600);
+    // Web Speech is the best offline fallback on browsers (some WebViews return empty voices but can still speak).
+    const hasSpeech = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+    if (hasSpeech) {
+        try {
+            ensureSpeechReady();
+            // Still listen for voiceschanged so we can pick better voices later, but do not block speaking on it.
+            ensureSpeechVoices();
+
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+
+            const uEn = new SpeechSynthesisUtterance(wordObj.en);
+            uEn.lang = "en-US";
+            const enVoice = pickVoice("en");
+            if (enVoice) uEn.voice = enVoice;
+            uEn.rate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
+
+            if (wordObj.zh) {
+                const uZh = new SpeechSynthesisUtterance(wordObj.zh);
+                uZh.lang = "zh-CN";
+                const zhVoice = pickVoice("zh");
+                if (zhVoice) uZh.voice = zhVoice;
+                uZh.rate = clamp(Number(settings.speechZhRate) || 0.9, 0.5, 2.0);
+                uEn.onend = () => {
+                    try { window.speechSynthesis.speak(uZh); } catch {}
+                };
+            }
+
+            window.speechSynthesis.speak(uEn);
+            return;
+        } catch {
+            // Fall back to online audio below.
         }
-        return;
-    }
-    speechPendingAttempts = 0;
-    if (!canUseSpeech) {
-        playOnlineTtsSequence([
-            { text: wordObj.en, lang: "en" },
-            wordObj.zh ? { text: wordObj.zh, lang: "zh-CN" } : null
-        ]);
-        return;
     }
 
-    try {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.resume();
-        const uEn = new SpeechSynthesisUtterance(wordObj.en);
-        uEn.lang = "en-US";
-        const enVoice = pickVoice("en");
-        if (enVoice) uEn.voice = enVoice;
-        uEn.rate = Math.max(1.0, Number(settings.speechEnRate) || 1.0);
-        const uZh = new SpeechSynthesisUtterance(wordObj.zh);
-        uZh.lang = "zh-CN";
-        const zhVoice = pickVoice("zh");
-        if (zhVoice) uZh.voice = zhVoice;
-        uZh.rate = Number(settings.speechZhRate) || 0.9;
-        if (wordObj.zh) {
-            uEn.onend = () => {
-                try { window.speechSynthesis.speak(uZh); } catch {}
-            };
-        }
-        window.speechSynthesis.speak(uEn);
-    } catch {
-    }
+    // Online fallback (may be blocked by autoplay policies until the first user gesture).
+    playOnlineTtsSequence([
+        { text: wordObj.en, lang: "en" },
+        wordObj.zh ? { text: wordObj.zh, lang: "zh-CN" } : null
+    ]);
 }
 
 function optimizedUpdate(entity, updateFn) {
