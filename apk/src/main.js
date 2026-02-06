@@ -40,6 +40,40 @@ let vocabEngine = null;
 let activeVocabPackId = null;
 let loadedVocabFiles = Object.create(null);
 let sessionWordCounts = Object.create(null);
+let sessionCollectedWords = [];
+let wordGates = [];
+let wordMatchActive = false;
+let wordMatchTimer = null;
+let currentLearningChallenge = null;
+let challengeTimerId = null;
+let challengeDeadline = 0;
+let challengeOrigin = null;
+let challengePausedBefore = false;
+let challengeModalEl = null;
+let challengeQuestionEl = null;
+let challengeOptionsEl = null;
+let challengeInputWrapperEl = null;
+let challengeInputEl = null;
+let challengeTimerEl = null;
+let challengeRepeatBtn = null;
+let wordMatchScreenEl = null;
+let matchLeftEl = null;
+let matchRightEl = null;
+let matchLinesEl = null;
+let matchCountEl = null;
+let matchTotalEl = null;
+let matchSubmitBtn = null;
+let matchResultEl = null;
+let matchSubtitleEl = null;
+let matchTimerEl = null;
+let activeWordMatch = null;
+let profileModalEl = null;
+let profileUsernameEl = null;
+let profilePlaytimeEl = null;
+let profileHighscoreEl = null;
+let profileWordsEl = null;
+let profileGamesEl = null;
+let achievementsContainerEl = null;
 let chestHintSeen = storage ? storage.loadJson("mmwg:hintChestSeen", false) : false;
 let chestHintFramesLeft = 0;
 const CHEST_HINT_FRAMES = 180;
@@ -137,6 +171,35 @@ const ITEM_ICONS = {
     max_hp: "💖",
     score: "🪙"
 };
+const SPEED_LEVELS = {
+    slow: 0.8,
+    normal: 1.0,
+    fast: 1.3
+};
+const ACHIEVEMENTS = {
+    first_word: { id: "first_word", name: "初识词语", desc: "学习第一个词", icon: "🎉", target: 1 },
+    words_10: { id: "words_10", name: "十词入门", desc: "学习 10 个词", icon: "📘", target: 10 },
+    words_50: { id: "words_50", name: "词语进阶", desc: "学习 50 个词", icon: "📗", target: 50 },
+    words_100: { id: "words_100", name: "词海探险", desc: "学习 100 个词", icon: "📙", target: 100 },
+    words_500: { id: "words_500", name: "词语大师", desc: "学习 500 个词", icon: "🏅", target: 500 },
+    pack_complete: { id: "pack_complete", name: "词库通关", desc: "完成一个词库", icon: "🗂️", target: 1 },
+    first_game: { id: "first_game", name: "首次出航", desc: "完成第一场游戏", icon: "🚀", target: 1 },
+    score_1000: { id: "score_1000", name: "千分进击", desc: "累积 1000 分", icon: "⭐", target: 1000 },
+    score_5000: { id: "score_5000", name: "突破 5000", desc: "累积 5000 分", icon: "🏆", target: 5000 },
+    enemies_100: { id: "enemies_100", name: "斩妖 100", desc: "击败 100 个敌人", icon: "⚔️", target: 100 },
+    chests_50: { id: "chests_50", name: "开宝 50", desc: "打开 50 个宝箱", icon: "📦", target: 50 },
+    diamond_collector: { id: "diamond_collector", name: "钻石收藏家", desc: "收集 100 颗钻石", icon: "💎", target: 100 },
+    armor_collector: { id: "armor_collector", name: "盔甲收藏家", desc: "收集全部 盔甲", icon: "🛡️", target: 6 }
+};
+const ACHIEVEMENT_MAP = {
+    words: ["first_word", "words_10", "words_50", "words_100", "words_500"],
+    enemies: ["enemies_100"],
+    chests: ["chests_50"],
+    score: ["score_1000", "score_5000"]
+};
+let currentAccount = null;
+let autoSaveInterval = null;
+let lastSaveTime = Date.now();
 const TOOL_STATS = {
     stone_sword: { damage: 8 },
     iron_pickaxe: { damage: 6 }
@@ -185,6 +248,59 @@ const WEAPONS = {
         chargeMax: 40
     }
 };
+const ARMOR_TYPES = {
+    leather: {
+        id: "leather",
+        name: "皮革护甲",
+        defense: 1,
+        rarity: "common",
+        color: "#8B4513",
+        description: "轻便护卫"
+    },
+    chainmail: {
+        id: "chainmail",
+        name: "链甲护甲",
+        defense: 2,
+        rarity: "rare",
+        color: "#A9A9A9",
+        description: "坚固的环形金属"
+    },
+    iron: {
+        id: "iron",
+        name: "铁护甲",
+        defense: 3,
+        rarity: "rare",
+        color: "#C0C0C0",
+        description: "标准防护"
+    },
+    gold: {
+        id: "gold",
+        name: "金护甲",
+        defense: 2,
+        rarity: "epic",
+        color: "#FFD700",
+        description: "华丽防御"
+    },
+    diamond: {
+        id: "diamond",
+        name: "钻石护甲",
+        defense: 4,
+        rarity: "epic",
+        color: "#00CED1",
+        description: "强力守卫"
+    },
+    netherite: {
+        id: "netherite",
+        name: "下界合金护甲",
+        defense: 5,
+        rarity: "legendary",
+        color: "#4A4A4A",
+        description: "传说加护"
+    }
+};
+let playerEquipment = { armor: null, armorDurability: 0 };
+let armorInventory = [];
+
 const playerWeapons = {
     current: "sword",
     unlocked: ["sword", "bow", "pickaxe", "axe"],
@@ -412,6 +528,28 @@ const DEFAULT_CHEST_TABLES = {
 const DEFAULT_CHEST_ROLLS = {
     twoDropChance: 0.45,
     threeDropChance: 0.15
+};
+
+const LEARNING_CONFIG = {
+    challenge: {
+        timeLimit: 10000,
+        baseOptions: 3,
+        rewards: {
+            correct: { score: 20, diamond: 1 },
+            wrong: { scorePenalty: 8 }
+        }
+    },
+    wordGate: {
+        spawnChance: 0.08,
+        minScore: 500
+    },
+    wordMatch: {
+        wordCount: 5,
+        timeLimit: 30000,
+        minCorrectToRevive: 4,
+        reviveHp: 3,
+        bonusPerMatch: 10
+    }
 };
 let floatingTexts = [];
 let lastGenX = 0;
@@ -887,6 +1025,9 @@ function getLootConfig() {
 
 function resetInventory() {
     inventory = { ...INVENTORY_TEMPLATE };
+    playerEquipment = { armor: null, armorDurability: 0 };
+    armorInventory = [];
+    updateArmorUI();
 }
 
 function resetProjectiles() {
@@ -1247,6 +1388,347 @@ function applyConfig(viewport = null) {
     scaleEnemyStats();
     scaleWeapons();
     scaleBiomeConfigs();
+    applySpeedSetting();
+}
+
+function applySpeedSetting() {
+    if (!gameConfig?.physics || !baseGameConfig?.physics) return;
+    const level = String(settings.movementSpeedLevel || "normal").toLowerCase();
+    const multiplier = SPEED_LEVELS[level] ?? SPEED_LEVELS.normal;
+    const unit = worldScale?.unit || 1;
+    const baseSpeed = (baseGameConfig.physics?.movementSpeed || 1.2) * unit;
+    gameConfig.physics.movementSpeed = baseSpeed * multiplier;
+    if (player) {
+        applyMotionToPlayer(player);
+    }
+    saveSettings();
+}
+
+function initLoginScreen() {
+    const screen = document.getElementById("login-screen");
+    if (!screen) return;
+    const loginForm = document.getElementById("login-form");
+    const accountList = document.getElementById("account-list");
+    const accountsContainer = document.getElementById("accounts-container");
+    const usernameInput = document.getElementById("username-input");
+    const btnLogin = document.getElementById("btn-login");
+    const btnNewAccount = document.getElementById("btn-new-account");
+    const accounts = storage.getAccountList();
+
+    renderAccountList(accountsContainer, accounts);
+    if (accounts.length) {
+        loginForm.style.display = "none";
+        accountList.style.display = "block";
+    } else {
+        loginForm.style.display = "block";
+        accountList.style.display = "none";
+    }
+
+    const storedId = storage.getCurrentAccountId();
+    if (storedId) {
+        const saved = storage.getAccount(storedId);
+        if (saved) {
+            loginWithAccount(saved);
+            return;
+        }
+    }
+
+    screen.classList.add("visible");
+    paused = true;
+    pausedByModal = true;
+
+    if (btnLogin) {
+        btnLogin.addEventListener("click", () => {
+            const username = (usernameInput?.value || "").trim();
+            if (!username) {
+                showToast("请输入用户名");
+                return;
+            }
+            const existing = storage.getAccountList().find(a => a.username === username);
+            const account = existing || storage.createAccount(username);
+            loginWithAccount(account);
+        });
+    }
+
+    if (btnNewAccount) {
+        btnNewAccount.addEventListener("click", () => {
+            loginForm.style.display = "block";
+            accountList.style.display = "none";
+        });
+    }
+}
+
+function renderAccountList(container, accounts) {
+    if (!container) return;
+    container.innerHTML = "";
+    if (!accounts.length) {
+        container.innerHTML = "<div class=\"account-empty\">暂无账号</div>";
+        return;
+    }
+    accounts.forEach(account => {
+        const div = document.createElement("div");
+        div.className = "account-item";
+        div.innerHTML = `
+            <div class="account-avatar">👤</div>
+            <div class="account-info">
+                <div class="account-name">${account.username}</div>
+                <div class="account-stats">
+                    积分: ${account.progress?.highScore || 0} · 已学 ${account.vocabulary?.learnedWords?.length || 0}
+                </div>
+            </div>
+            <button class="btn-delete-account" data-id="${account.id}">删除</button>
+        `;
+        div.querySelector(".account-info")?.addEventListener("click", () => loginWithAccount(account));
+        const del = div.querySelector(".btn-delete-account");
+        del?.addEventListener("click", e => {
+            e.stopPropagation();
+            if (confirm(`确定删除账号 "${account.username}" 吗？`)) {
+                storage.deleteAccount(account.id);
+                renderAccountList(container, storage.getAccountList());
+            }
+        });
+        container.appendChild(div);
+    });
+}
+
+async function loginWithAccount(account) {
+    if (!account) return;
+    stopAutoSave();
+    currentAccount = account;
+    currentAccount.lastLoginAt = Date.now();
+    storage.setCurrentAccountId(account.id);
+    storage.saveAccount(currentAccount);
+    loadAccountData(account);
+    const screen = document.getElementById("login-screen");
+    if (screen) {
+        screen.classList.remove("visible");
+    }
+    paused = false;
+    pausedByModal = false;
+    showToast(`欢迎回来 ${account.username}`);
+    startAutoSave();
+    await setActiveVocabPack(settings.vocabSelection || "auto");
+    clearOldWordItems();
+}
+
+function loadAccountData(account) {
+    score = 0;
+    levelScore = 0;
+    progress = normalizeProgress({
+        vocab: (account.vocabulary && account.vocabulary.packProgress) ? account.vocabulary.packProgress : {}
+    });
+    if (account.vocabulary?.currentPack) {
+        settings.vocabSelection = account.vocabulary.currentPack;
+    }
+    inventory = { ...INVENTORY_TEMPLATE, ...(account.inventory?.items || {}) };
+    playerEquipment = account.inventory?.equipment ? { ...account.inventory.equipment } : { armor: null, armorDurability: 0 };
+    armorInventory = Array.isArray(account.inventory?.armorCollection) ? [...account.inventory.armorCollection] : [];
+    updateInventoryUI();
+    updateArmorUI();
+    updateVocabProgressUI();
+    updateVocabPreview(settings.vocabSelection);
+    if (player) {
+        applyMotionToPlayer(player);
+    }
+}
+
+function startAutoSave() {
+    stopAutoSave();
+    lastSaveTime = Date.now();
+    autoSaveInterval = setInterval(() => {
+        saveCurrentProgress();
+    }, 30000);
+}
+
+function stopAutoSave() {
+    if (autoSaveInterval) {
+        clearInterval(autoSaveInterval);
+        autoSaveInterval = null;
+    }
+}
+
+function saveCurrentProgress() {
+    if (!currentAccount) return;
+    const now = Date.now();
+    const delta = Math.max(0, Math.floor((now - lastSaveTime) / 1000));
+    lastSaveTime = now;
+    currentAccount.totalPlayTime += delta;
+    currentAccount.lastLoginAt = now;
+    currentAccount.progress = currentAccount.progress || {};
+    currentAccount.progress.currentCoins = score;
+    currentAccount.progress.currentDiamonds = inventory.diamond || 0;
+    currentAccount.vocabulary = currentAccount.vocabulary || {};
+    currentAccount.vocabulary.packProgress = progress.vocab || {};
+    currentAccount.vocabulary.currentPack = settings.vocabSelection || "";
+    currentAccount.inventory = currentAccount.inventory || {};
+    currentAccount.inventory.items = { ...inventory };
+    currentAccount.inventory.equipment = { ...playerEquipment };
+    currentAccount.inventory.armorCollection = [...armorInventory];
+    storage.saveAccount(currentAccount);
+}
+
+function onWordCollected(wordObj) {
+    if (!currentAccount || !wordObj?.en) return;
+    if (!currentAccount.vocabulary) currentAccount.vocabulary = { learnedWords: [], packProgress: {}, currentPack: "" };
+    const known = currentAccount.vocabulary.learnedWords || [];
+    if (!known.includes(wordObj.en)) {
+        known.push(wordObj.en);
+        currentAccount.vocabulary.learnedWords = known;
+        checkAchievement("words", known.length);
+    }
+    currentAccount.stats = currentAccount.stats || {};
+    currentAccount.stats.wordsCollected = (currentAccount.stats.wordsCollected || 0) + 1;
+    checkAchievement("score", score);
+    saveCurrentProgress();
+}
+
+function onEnemyKilled() {
+    if (!currentAccount) return;
+    currentAccount.stats = currentAccount.stats || {};
+    currentAccount.stats.enemiesKilled = (currentAccount.stats.enemiesKilled || 0) + 1;
+    checkAchievement("enemies", currentAccount.stats.enemiesKilled);
+    saveCurrentProgress();
+}
+
+function onChestOpened() {
+    if (!currentAccount) return;
+    currentAccount.stats = currentAccount.stats || {};
+    currentAccount.stats.chestsOpened = (currentAccount.stats.chestsOpened || 0) + 1;
+    checkAchievement("chests", currentAccount.stats.chestsOpened);
+    saveCurrentProgress();
+}
+
+function onGameOver() {
+    if (!currentAccount) return;
+    currentAccount.stats = currentAccount.stats || {};
+    currentAccount.stats.gamesPlayed = (currentAccount.stats.gamesPlayed || 0) + 1;
+    currentAccount.stats.deathCount = (currentAccount.stats.deathCount || 0) + 1;
+    currentAccount.progress = currentAccount.progress || {};
+    currentAccount.progress.totalScore = (currentAccount.progress.totalScore || 0) + score;
+    if (score > (currentAccount.progress.highScore || 0)) {
+        currentAccount.progress.highScore = score;
+        showToast(`新纪录！当前积分 ${score}`);
+    }
+    checkAchievement("score", score);
+    saveCurrentProgress();
+}
+
+function checkAchievement(type, value) {
+    if (!currentAccount) return;
+    const relevant = ACHIEVEMENT_MAP[type] || [];
+    relevant.forEach(id => {
+        if (currentAccount.achievements?.unlocked?.includes(id)) return;
+        const achievement = ACHIEVEMENTS[id];
+        if (!achievement) return;
+        if (value >= (achievement.target || 0)) {
+            unlockAchievement(id);
+        }
+    });
+}
+
+function unlockAchievement(id) {
+    if (!currentAccount) return;
+    if (!currentAccount.achievements) {
+        currentAccount.achievements = { unlocked: [], progress: {} };
+    }
+    if (currentAccount.achievements.unlocked.includes(id)) return;
+    const achievement = ACHIEVEMENTS[id];
+    if (!achievement) return;
+    currentAccount.achievements.unlocked.push(id);
+    storage.saveAccount(currentAccount);
+    showAchievementUnlock(achievement);
+}
+
+function showAchievementUnlock(achievement) {
+    const popup = document.createElement("div");
+    popup.className = "achievement-popup";
+    popup.innerHTML = `
+        <div class="achievement-icon">${achievement.icon || "⭐"}</div>
+        <div class="achievement-info">
+            <div class="achievement-title">成就解锁</div>
+            <div class="achievement-name">${achievement.name}</div>
+            <div class="achievement-desc">${achievement.desc}</div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.classList.add("show"), 100);
+    setTimeout(() => {
+        popup.classList.remove("show");
+        setTimeout(() => popup.remove(), 400);
+    }, 3200);
+}
+
+function showProfileModal() {
+    if (!currentAccount) return;
+    const modal = document.getElementById("profile-modal");
+    if (!modal) return;
+    profileModalEl = modal;
+    profileUsernameEl = document.getElementById("profile-username");
+    profilePlaytimeEl = document.getElementById("profile-playtime");
+    profileHighscoreEl = document.getElementById("profile-highscore");
+    profileWordsEl = document.getElementById("profile-words");
+    profileGamesEl = document.getElementById("profile-games");
+    achievementsContainerEl = document.getElementById("achievements-container");
+    if (profileUsernameEl) profileUsernameEl.innerText = currentAccount.username;
+    if (profilePlaytimeEl) profilePlaytimeEl.innerText = formatPlayTime(currentAccount.totalPlayTime || 0);
+    if (profileHighscoreEl) profileHighscoreEl.innerText = currentAccount.progress?.highScore || 0;
+    if (profileWordsEl) profileWordsEl.innerText = currentAccount.vocabulary?.learnedWords?.length || 0;
+    if (profileGamesEl) profileGamesEl.innerText = currentAccount.stats?.gamesPlayed || 0;
+    renderAchievements();
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    pausedByModal = true;
+    paused = true;
+}
+
+function hideProfileModal() {
+    if (!profileModalEl) return;
+    profileModalEl.classList.remove("visible");
+    profileModalEl.setAttribute("aria-hidden", "true");
+    if (pausedByModal) {
+        pausedByModal = false;
+        paused = false;
+    }
+}
+
+function renderAchievements() {
+    if (!achievementsContainerEl) return;
+    achievementsContainerEl.innerHTML = "";
+    const unlocked = new Set(currentAccount?.achievements?.unlocked || []);
+    Object.values(ACHIEVEMENTS).forEach(achievement => {
+        const div = document.createElement("div");
+        const isUnlocked = unlocked.has(achievement.id);
+        div.className = `achievement-item ${isUnlocked ? "unlocked" : "locked"}`;
+        div.innerHTML = `
+            <div class="achievement-icon">${isUnlocked ? achievement.icon : "🔒"}</div>
+            <div class="achievement-content">
+                <div class="achievement-name">${achievement.name}</div>
+                <div class="achievement-desc">${achievement.desc}</div>
+            </div>
+        `;
+        achievementsContainerEl.appendChild(div);
+    });
+}
+
+function formatPlayTime(seconds) {
+    const totalMinutes = Math.floor(seconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours > 0) {
+        return `${hours}小时 ${minutes} 分钟`;
+    }
+    return `${minutes} 分钟`;
+}
+
+function wireProfileModal() {
+    const modal = document.getElementById("profile-modal");
+    const btnClose = document.getElementById("btn-profile-close");
+    if (btnClose) btnClose.addEventListener("click", hideProfileModal);
+    if (modal) {
+        modal.addEventListener("click", e => {
+            if (e.target === modal) hideProfileModal();
+        });
+    }
 }
 
 function normalizeSettings(raw) {
@@ -1257,6 +1739,9 @@ function normalizeSettings(raw) {
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
+    if (typeof merged.wordGateEnabled !== "boolean") merged.wordGateEnabled = defaultSettings.wordGateEnabled ?? true;
+    if (typeof merged.wordMatchEnabled !== "boolean") merged.wordMatchEnabled = defaultSettings.wordMatchEnabled ?? true;
+    if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
     if (!merged.keyCodes) {
@@ -1357,6 +1842,40 @@ function renderVocabSelect() {
     if (!engine) return;
     vocabManifest.packs.forEach(p => add(p.id, p.title));
     sel.value = settings.vocabSelection || "auto";
+    updateVocabPreview(sel.value);
+}
+
+function getActivePackTitle() {
+    if (!activeVocabPackId) return "自动词库";
+    const pack = vocabPacks[activeVocabPackId];
+    return pack ? pack.title : activeVocabPackId;
+}
+
+function updateVocabPreview(selection) {
+    const preview = document.getElementById("vocab-preview");
+    if (!preview) return;
+    const key = selection || settings.vocabSelection || "auto";
+    if (key === "auto") {
+        preview.innerHTML = `<strong>自动轮换</strong><br>根据阶段与难度智能匹配`;
+        return;
+    }
+    const pack = vocabPacks[key];
+    if (!pack) {
+        preview.innerText = "词库数据未就绪";
+        return;
+    }
+    const details = [];
+    if (pack.stage) details.push(STAGE_LABELS[pack.stage] || pack.stage);
+    if (pack.difficulty) details.push(pack.difficulty);
+    preview.innerHTML = `<strong>${pack.title}</strong>${details.length ? `<br>${details.join(" · ")}` : ""}`;
+}
+
+function showVocabSwitchEffect() {
+    const title = getActivePackTitle();
+    const px = player ? player.x : cameraX;
+    const py = player ? player.y - 60 : canvas.height / 2;
+    showFloatingText(`切换词库：${title}`, px, py);
+    showToast(`已切换至 ${title}`);
 }
 
 function getPackProgress(packId) {
@@ -1497,18 +2016,25 @@ async function setActiveVocabPack(selection) {
             seen.add(w.en);
             mapped.push(w);
         });
-        if (mapped.length) {
-            wordDatabase = mapped;
+        const fallbackSource = Array.isArray(defaultWords) ? defaultWords : [];
+        const fallbackWords = fallbackSource.map(w => normalizeRawWord(w)).filter(Boolean);
+        const target = mapped.length ? mapped : fallbackWords;
+        if (!target.length) {
+            console.warn(`[Vocab] Pack ${pack.id} produced no words and no fallback data`);
+        }
+        if (target.length) {
+            wordDatabase = target;
             wordPicker = null;
             const pr = getPackProgress(pack.id);
-            pr.total = mapped.length;
+            pr.total = target.length;
             saveProgress();
         }
     } catch {
     }
 
-    renderVocabSelect();
-    updateVocabProgressUI();
+        renderVocabSelect();
+        updateVocabProgressUI();
+        updateVocabPreview(activeVocabPackId || settings.vocabSelection);
     return true;
 }
 
@@ -1591,6 +2117,7 @@ function setOverlay(visible, mode) {
     const title = document.getElementById("overlay-title");
     const text = document.getElementById("overlay-text");
     const btn = document.getElementById("btn-overlay-action");
+    const btnScoreRevive = document.getElementById("btn-overlay-score-revive");
     if (visible) {
         overlay.classList.add("visible");
         overlay.setAttribute("aria-hidden", "false");
@@ -1599,6 +2126,7 @@ function setOverlay(visible, mode) {
             if (title) title.innerText = "已暂停";
             if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
             if (btn) btn.innerText = "继续";
+            if (btnScoreRevive) btnScoreRevive.style.display = "none";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
             if (title) title.innerText = "💀 游戏结束";
@@ -1611,16 +2139,206 @@ function setOverlay(visible, mode) {
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
                     `🏅 玩家等级: ${level}`;
             }
-            if (btn) btn.innerText = diamonds >= 10 ? "💎10 复活" : "重新开始";
+            if (btn) {
+                const cfg = getReviveConfig();
+                const diamondCost = Number(cfg.diamondCost) || 10;
+                btn.innerText = diamonds >= diamondCost ? `💎${diamondCost} 复活` : "重新开始";
+            }
+            if (btnScoreRevive) {
+                const cfg = getReviveConfig();
+                const scoreCost = Number(cfg.scoreCost) || 500;
+                if (score >= scoreCost) {
+                    btnScoreRevive.style.display = "block";
+                    btnScoreRevive.innerText = `积分复活 (${scoreCost}分)`;
+                } else {
+                    btnScoreRevive.style.display = "none";
+                }
+            }
         } else {
             if (title) title.innerText = "准备开始";
             if (text) text.innerHTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
             if (btn) btn.innerText = "开始游戏";
+            if (btnScoreRevive) btnScoreRevive.style.display = "none";
         }
     } else {
         overlay.classList.remove("visible");
         overlay.setAttribute("aria-hidden", "true");
         overlayMode = "start";
+        if (btnScoreRevive) btnScoreRevive.style.display = "none";
+    }
+}
+function triggerGameOver() {
+    paused = true;
+    showToast("💀 生命耗尽");
+    onGameOver();
+    if (maybeLaunchWordMatchRevive()) {
+        return;
+    }
+    setOverlay(true, "gameover");
+}
+function maybeLaunchWordMatchRevive() {
+    if (!settings.wordMatchEnabled || wordMatchActive || !matchLeftEl || !matchRightEl) return false;
+    const words = getUniqueSessionWords();
+    if (words.length < (LEARNING_CONFIG.wordMatch.wordCount || 5)) return false;
+    activeWordMatch = new WordMatchGame(words);
+    activeWordMatch.start();
+    return true;
+}
+
+class WordMatchGame {
+    constructor(words) {
+        this.words = shuffle(words).slice(0, Math.max(1, LEARNING_CONFIG.wordMatch.wordCount || 5));
+        this.leftItems = shuffle(this.words.map(w => ({ id: w.en, text: w.en, word: w })));
+        this.rightItems = shuffle(this.words.map(w => ({ id: w.en, text: w.zh || w.en, word: w })));
+        this.connections = [];
+        this.selectedLeftId = null;
+        this.timerMs = LEARNING_CONFIG.wordMatch.timeLimit || 30000;
+        this.finished = false;
+    }
+
+    start() {
+        if (!wordMatchScreenEl) return;
+        wordMatchActive = true;
+        wordMatchScreenEl.classList.add("visible");
+        this.render();
+        this.startTimer();
+    }
+
+    render() {
+        if (!matchLeftEl || !matchRightEl || !matchTotalEl) return;
+        if (matchResultEl) {
+            matchResultEl.classList.remove("visible");
+            matchResultEl.innerText = "";
+        }
+        if (matchSubtitleEl) matchSubtitleEl.innerText = "将英文与中文拉线连对，助你复活";
+        matchLeftEl.innerHTML = this.leftItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="en">${item.text}</div>`).join("");
+        matchRightEl.innerHTML = this.rightItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="zh">${item.text}</div>`).join("");
+        matchTotalEl.innerText = String(this.words.length);
+        this.bindEvents();
+        this.updateMatchCount();
+        this.drawLines();
+    }
+
+    bindEvents() {
+        if (matchLeftEl) {
+            matchLeftEl.querySelectorAll(".match-item").forEach(el => {
+                el.addEventListener("click", () => this.selectLeft(el));
+            });
+        }
+        if (matchRightEl) {
+            matchRightEl.querySelectorAll(".match-item").forEach(el => {
+                el.addEventListener("click", () => this.selectRight(el));
+            });
+        }
+    }
+
+    selectLeft(el) {
+        if (!el) return;
+        this.selectedLeftId = el.dataset.id;
+        matchLeftEl.querySelectorAll(".match-item").forEach(item => item.classList.remove("selected"));
+        el.classList.add("selected");
+    }
+
+    selectRight(el) {
+        if (!el || !this.selectedLeftId) return;
+        const leftId = this.selectedLeftId;
+        const rightId = el.dataset.id;
+        const existingIndex = this.connections.findIndex(conn => conn.left === leftId || conn.right === rightId);
+        if (existingIndex >= 0) this.connections.splice(existingIndex, 1);
+        this.connections.push({ left: leftId, right: rightId });
+        this.selectedLeftId = null;
+        matchLeftEl.querySelectorAll(".match-item").forEach(item => item.classList.remove("selected"));
+        this.drawLines();
+        this.updateMatchCount();
+    }
+
+    drawLines() {
+        if (!matchLinesEl || !matchLeftEl || !matchRightEl) return;
+        const container = document.querySelector(".match-container");
+        if (!container) return;
+        const containerRect = container.getBoundingClientRect();
+        const lines = this.connections.map(conn => {
+            const leftEl = matchLeftEl.querySelector(`[data-id="${conn.left}"]`);
+            const rightEl = matchRightEl.querySelector(`[data-id="${conn.right}"]`);
+            if (!leftEl || !rightEl) return "";
+            const leftRect = leftEl.getBoundingClientRect();
+            const rightRect = rightEl.getBoundingClientRect();
+            const x1 = leftRect.right - containerRect.left;
+            const y1 = leftRect.top + leftRect.height / 2 - containerRect.top;
+            const x2 = rightRect.left - containerRect.left;
+            const y2 = rightRect.top + rightRect.height / 2 - containerRect.top;
+            const isCorrect = conn.left === conn.right;
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${isCorrect ? "#4CAF50" : "#FFCA28"}" stroke-width="3"/>`;
+        }).join("");
+        matchLinesEl.innerHTML = lines;
+    }
+
+    updateMatchCount() {
+        if (matchCountEl) matchCountEl.innerText = String(this.connections.length);
+    }
+
+    startTimer() {
+        if (matchTimerEl) matchTimerEl.innerText = String(Math.ceil(this.timerMs / 1000));
+        this.stopTimer();
+        wordMatchTimer = setInterval(() => {
+            this.timerMs -= 1000;
+            if (matchTimerEl) matchTimerEl.innerText = String(Math.max(0, Math.ceil(this.timerMs / 1000)));
+            if (this.timerMs <= 0) {
+                this.submit();
+            }
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (wordMatchTimer) {
+            clearInterval(wordMatchTimer);
+            wordMatchTimer = null;
+        }
+    }
+
+    submit() {
+        if (this.finished) return;
+        this.finished = true;
+        this.stopTimer();
+        const correct = this.connections.filter(conn => conn.left === conn.right).length;
+        const success = correct >= (LEARNING_CONFIG.wordMatch.minCorrectToRevive || 4);
+        this.showResult(success, correct);
+    }
+
+    showResult(success, correctCount) {
+        if (matchResultEl) {
+            matchResultEl.classList.add("visible");
+            matchResultEl.innerText = success
+                ? `✅ 正确 ${correctCount} 道，祝你复活！`
+                : `❌ 正确 ${correctCount} 道，复活失败`;
+        }
+        if (matchSubtitleEl) {
+            matchSubtitleEl.innerText = success ? "继续前行！" : "重整旗鼓再来一次";
+        }
+        if (success) {
+            playerHp = Math.min(playerMaxHp, LEARNING_CONFIG.wordMatch.reviveHp || 3);
+            addScore(correctCount * (LEARNING_CONFIG.wordMatch.bonusPerMatch || 10));
+            updateHpUI();
+            showToast("✨ 词语匹配复活成功！");
+            setTimeout(() => this.cleanup(true), 1200);
+        } else {
+            setTimeout(() => {
+                this.cleanup(false);
+                setOverlay(true, "gameover");
+            }, 1400);
+        }
+    }
+
+    cleanup(success) {
+        this.stopTimer();
+        wordMatchActive = false;
+        activeWordMatch = null;
+        if (matchResultEl) matchResultEl.classList.remove("visible");
+        if (wordMatchScreenEl) wordMatchScreenEl.classList.remove("visible");
+        if (success) {
+            paused = false;
+            setOverlay(false);
+        }
     }
 }
 function resumeGameFromOverlay() {
@@ -1649,6 +2367,40 @@ function resumeGameFromOverlay() {
     const btnMix = document.getElementById("btn-repeat-pause");
     if (btnMix) btnMix.innerText = "🔊 重读";
     repeatPauseState = "repeat";
+}
+
+function getReviveConfig() {
+    const revive = (gameConfig && gameConfig.revive) || {};
+    return {
+        diamondCost: revive.diamondCost ?? 10,
+        scoreCost: revive.scoreCost ?? 500,
+        scoreReviveHpPercent: revive.scoreReviveHpPercent ?? 0.5,
+        invincibleFrames: revive.invincibleFrames ?? 180
+    };
+}
+
+function reviveWithScore() {
+    const cfg = getReviveConfig();
+    const cost = Number(cfg.scoreCost) || 500;
+    if (score < cost) {
+        showToast(`积分不足（需要 ${cost} 分）`);
+        return;
+    }
+    score -= cost;
+    if (score < 0) score = 0;
+    const scoreEl = document.getElementById("score");
+    if (scoreEl) scoreEl.innerText = score;
+    const hpPercent = Math.max(0, Math.min(1, Number(cfg.scoreReviveHpPercent) || 0.5));
+    playerHp = Math.max(1, Math.floor(playerMaxHp * hpPercent));
+    updateHpUI();
+    playerInvincibleTimer = Number(cfg.invincibleFrames) || 180;
+    paused = false;
+    startedOnce = true;
+    setOverlay(false);
+    const px = player ? player.x : cameraX;
+    const py = player ? player.y - 50 : canvas.height / 2;
+    showFloatingText("积分复活", px, py);
+    showToast("积分复活成功");
 }
 
 function keyLabel(code) {
@@ -1700,6 +2452,17 @@ function initGame() {
     playerHp = playerMaxHp;
     lastDamageFrame = 0;
     difficultyState = null;
+    sessionCollectedWords = [];
+    wordGates = [];
+    currentLearningChallenge = null;
+    clearLearningChallengeTimer();
+    hideLearningChallenge();
+    wordMatchActive = false;
+    if (wordMatchTimer) {
+        clearInterval(wordMatchTimer);
+        wordMatchTimer = null;
+    }
+    activeWordMatch = null;
     resetInventory();
     updateInventoryUI();
     player = createPlayer();
@@ -1729,6 +2492,8 @@ function startLevel(idx) {
     playerPositionHistory = [];
     lastGenX = 0;
     cameraX = 0;
+    wordGates = [];
+    sessionCollectedWords = [];
     updateHpUI();
     player.x = 100;
     player.y = 300;
@@ -1812,6 +2577,23 @@ function pickWordForSpawn() {
         if (lastWord && lastWord.en) exclude.add(lastWord.en);
     }
     return wordPicker.next(exclude);
+}
+
+function clearOldWordItems() {
+    items = items.filter(item => !(item && item.wordObj));
+    lastWordItemX = cameraX - 100;
+}
+
+function spawnWordItemNearPlayer() {
+    if (!player) return;
+    const word = pickWordForSpawn();
+    if (!word) return;
+    const spawnX = player.x + 200;
+    if (!canSpawnWordItemAt(spawnX)) return;
+    const spawnY = player.y - 50;
+    const item = new Item(spawnX, spawnY, word);
+    items.push(item);
+    registerWordItemSpawn(spawnX);
 }
 
 function getSpawnRates() {
@@ -1985,6 +2767,9 @@ function generatePlatform(startX, length, groundYValue) {
             const word = pickWordForSpawn();
             items.push(new Item(objectX, groundYValue - 60, word));
             registerWordItemSpawn(objectX);
+        } else if (settings.wordGateEnabled && Math.random() < LEARNING_CONFIG.wordGate.spawnChance && getProgressScore() >= (LEARNING_CONFIG.wordGate.minScore || 0)) {
+            const gateWord = pickWordForSpawn();
+            if (gateWord) wordGates.push(new WordGate(objectX, groundYValue - 20, gateWord));
         } else if (rand < enemyChance) {
             spawnEnemyByDifficulty(objectX, groundYValue - 32);
         }
@@ -2228,6 +3013,7 @@ function recordWordProgress(wordObj) {
     if (!pr.unique[en]) {
         pr.unique[en] = 1;
         pr.uniqueCount = (pr.uniqueCount || 0) + 1;
+        onWordCollected(wordObj);
         if (pr.total && pr.uniqueCount >= pr.total) {
             pr.completed = true;
             saveProgress();
@@ -2240,6 +3026,201 @@ function recordWordProgress(wordObj) {
         saveProgress();
         updateVocabProgressUI();
     }
+}
+
+function registerCollectedWord(wordObj) {
+    if (!wordObj || !wordObj.en) return;
+    sessionCollectedWords.push(wordObj);
+}
+
+function getUniqueSessionWords() {
+    const seen = new Set();
+    return sessionCollectedWords.filter(w => {
+        if (!w || !w.en) return false;
+        if (seen.has(w.en)) return false;
+        seen.add(w.en);
+        return true;
+    });
+}
+
+const CHALLENGE_TYPES = {
+    translate(wordObj) {
+        const options = generateChallengeOptions(wordObj, "zh", LEARNING_CONFIG.challenge.baseOptions);
+        return {
+            mode: "options",
+            question: `Translate "${wordObj.en}"`,
+            options,
+            answer: wordObj.zh || wordObj.en
+        };
+    },
+    listen(wordObj) {
+        const options = generateChallengeOptions(wordObj, "en", LEARNING_CONFIG.challenge.baseOptions);
+        return {
+            mode: "options",
+            question: "听音选择正确的单词",
+            options,
+            answer: wordObj.en
+        };
+    },
+    spell(wordObj) {
+        return {
+            mode: "input",
+            question: `Spell the word for ${wordObj.zh || wordObj.en}`,
+            answer: (wordObj.en || "").toLowerCase(),
+            hint: (wordObj.en && wordObj.en.charAt(0)) || ""
+        };
+    }
+};
+
+const CHALLENGE_TYPE_KEYS = Object.keys(CHALLENGE_TYPES);
+
+function generateChallengeOptions(wordObj, key, count) {
+    const distinct = pickDistinctWords(wordObj, count);
+    const baseValue = key === "zh" ? wordObj.zh || wordObj.en : wordObj.en;
+    const options = [{ text: baseValue, value: baseValue, correct: true }];
+    distinct.forEach(entry => {
+        const value = key === "zh" ? entry.zh || entry.en : entry.en || entry.zh;
+        if (!value) return;
+        options.push({ text: value, value, correct: false });
+    });
+    return shuffle(options).slice(0, Math.max(2, options.length));
+}
+
+function pickDistinctWords(wordObj, count) {
+    if (!Array.isArray(wordDatabase) || !wordDatabase.length) return [];
+    const pool = wordDatabase.filter(w => w && w.en && w.en !== wordObj.en);
+    return shuffle(pool).slice(0, Math.max(0, count));
+}
+
+function shouldTriggerLearningChallenge(wordObj) {
+    if (!settings.learningMode) return false;
+    if (!settings.challengeEnabled || currentLearningChallenge) return false;
+    if (!wordObj || !wordObj.en) return false;
+    const freq = Number(settings.challengeFrequency ?? 0.3);
+    if (Math.random() >= Math.max(0.1, Math.min(0.9, freq))) return false;
+    return true;
+}
+
+function maybeTriggerLearningChallenge(wordObj) {
+    if (!wordObj || !wordObj.en) return;
+    registerCollectedWord(wordObj);
+    if (!shouldTriggerLearningChallenge(wordObj)) return;
+    startLearningChallenge(wordObj);
+}
+
+function pickChallengeType(forced) {
+    if (forced && CHALLENGE_TYPES[forced]) return forced;
+    return CHALLENGE_TYPE_KEYS[Math.floor(Math.random() * CHALLENGE_TYPE_KEYS.length)];
+}
+
+function startLearningChallenge(wordObj, forcedType, origin) {
+    const type = pickChallengeType(forcedType);
+    const handler = CHALLENGE_TYPES[type];
+    if (!handler) return;
+    const payload = handler(wordObj);
+    if (!payload) return;
+    payload.type = type;
+    payload.wordObj = wordObj;
+    currentLearningChallenge = payload;
+    challengeOrigin = origin || null;
+    challengePausedBefore = paused;
+    paused = true;
+    showLearningChallenge(payload);
+    challengeDeadline = Date.now() + (LEARNING_CONFIG.challenge.timeLimit || 10000);
+    updateChallengeTimerDisplay();
+    clearLearningChallengeTimer();
+    challengeTimerId = setInterval(() => {
+        const remaining = challengeDeadline - Date.now();
+        if (remaining <= 0) {
+            completeLearningChallenge(false);
+        } else {
+            updateChallengeTimerDisplay();
+        }
+    }, 250);
+}
+
+function showLearningChallenge(challenge) {
+    if (!challengeModalEl) return;
+    challengeModalEl.classList.add("visible");
+    if (challengeQuestionEl) challengeQuestionEl.innerText = challenge.question || "";
+    const isInput = challenge.mode === "input";
+    if (challengeInputWrapperEl) {
+        challengeInputWrapperEl.classList.toggle("active", isInput);
+        if (isInput && challengeInputEl) {
+            challengeInputEl.value = "";
+            challengeInputEl.focus();
+        }
+    }
+    if (challengeOptionsEl) {
+        challengeOptionsEl.innerHTML = "";
+        if (challenge.options && challenge.options.length && !isInput) {
+            challenge.options.forEach(option => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.innerText = option.text;
+                btn.className = "challenge-option";
+                btn.addEventListener("click", () => {
+                    completeLearningChallenge(option.correct);
+                });
+                challengeOptionsEl.appendChild(btn);
+            });
+        }
+    }
+    if (challengeRepeatBtn) {
+        challengeRepeatBtn.style.display = challenge.type === "listen" ? "inline-flex" : "none";
+    }
+}
+
+function updateChallengeTimerDisplay() {
+    if (!challengeTimerEl || !currentLearningChallenge) return;
+    const remaining = Math.max(0, Math.ceil((challengeDeadline - Date.now()) / 1000));
+    challengeTimerEl.innerText = String(remaining);
+}
+
+function clearLearningChallengeTimer() {
+    if (challengeTimerId) {
+        clearInterval(challengeTimerId);
+        challengeTimerId = null;
+    }
+}
+
+function hideLearningChallenge() {
+    if (challengeModalEl) challengeModalEl.classList.remove("visible");
+    if (challengeInputEl) challengeInputEl.value = "";
+}
+
+function completeLearningChallenge(correct) {
+    if (!currentLearningChallenge) return;
+    clearLearningChallengeTimer();
+    hideLearningChallenge();
+    const reward = LEARNING_CONFIG.challenge.rewards;
+    if (correct) {
+        addScore(reward.correct.score);
+        inventory.diamond = (inventory.diamond || 0) + (reward.correct.diamond || 0);
+        updateInventoryUI();
+        showFloatingText("🎉 挑战成功", player.x, player.y - 40);
+        if (challengeOrigin && challengeOrigin instanceof WordGate) {
+            challengeOrigin.locked = false;
+            challengeOrigin.remove = true;
+            showToast("💠 词语闸门已解锁！");
+        }
+    } else {
+        addScore(-reward.wrong.scorePenalty);
+        showFloatingText("❌ 挑战失败", player.x, player.y - 40);
+        if (challengeOrigin && challengeOrigin instanceof WordGate) {
+            challengeOrigin.cooldown = 180;
+        }
+    }
+    paused = challengePausedBefore;
+    currentLearningChallenge = null;
+    challengeOrigin = null;
+}
+
+function triggerWordGateChallenge(gate) {
+    if (!gate || !gate.wordObj || gate.locked === false) return;
+    if (currentLearningChallenge) return;
+    startLearningChallenge(gate.wordObj, "spell", gate);
+    gate.cooldown = 60;
 }
 
 function updateWordUI(wordObj) {
@@ -2498,8 +3479,17 @@ function update() {
             recordWordProgress(item.wordObj);
             speakWord(item.wordObj);
             showFloatingText(item.wordObj.zh, item.x, item.y);
+            maybeTriggerLearningChallenge(item.wordObj);
         }
     });
+
+    wordGates.forEach(gate => {
+        if (gate.cooldown > 0) gate.cooldown--;
+        if (gate.locked && gate.cooldown <= 0 && rectIntersect(player.x, player.y, player.width, player.height, gate.x, gate.y, gate.width, gate.height)) {
+            triggerWordGateChallenge(gate);
+        }
+    });
+    wordGates = wordGates.filter(gate => !gate.remove);
 
     if (player.isAttacking) {
         player.attackTimer--;
@@ -2531,6 +3521,7 @@ function addScore(points) {
     if (levelScore < 0) levelScore = 0;
     runBestScore = Math.max(runBestScore, score);
     document.getElementById("score").innerText = score;
+    checkAchievement("score", score);
     updateDifficultyState();
 }
 
@@ -2586,6 +3577,7 @@ function getLearnedWordCount() {
 function recordEnemyKill(type) {
     enemyKillStats.total = (enemyKillStats.total || 0) + 1;
     enemyKillStats[type] = (enemyKillStats[type] || 0) + 1;
+    onEnemyKilled();
 }
 
 function healPlayer(amount) {
@@ -2618,13 +3610,24 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const scaledDamage = Math.max(1, Math.round((baseDamage * diff.enemyDamageMult) / damageUnit));
     const penalty = scorePenaltyForDamage(baseDamage * diff.enemyDamageMult);
     addScore(-penalty);
-    playerHp = Math.max(0, playerHp - scaledDamage);
+    const defense = getArmorDefense();
+    const reduction = Math.min(0.5, defense * 0.1);
+    const actualDamage = Math.max(1, Math.round(scaledDamage * (1 - reduction)));
+    if (playerEquipment.armor && playerEquipment.armorDurability > 0) {
+        playerEquipment.armorDurability = Math.max(0, playerEquipment.armorDurability - 5);
+        if (playerEquipment.armorDurability <= 0) {
+            const broken = ARMOR_TYPES[playerEquipment.armor];
+            showToast(`${broken?.name || "盔甲"} 已破损`);
+            playerEquipment.armor = null;
+            playerEquipment.armorDurability = 0;
+        }
+    }
+    updateArmorUI();
+    playerHp = Math.max(0, playerHp - actualDamage);
     updateHpUI();
     showFloatingText(`-${penalty}分`, player.x, player.y);
     if (playerHp <= 0 || score <= 0) {
-        paused = true;
-        showToast("💀 生命耗尽");
-        setOverlay(true, "gameover");
+        triggerGameOver();
     }
 }
 
@@ -2667,6 +3670,138 @@ function updateInventoryUI() {
     updateWeaponUI();
 }
 
+function addArmorToInventory(armorId) {
+    if (!ARMOR_TYPES[armorId]) return;
+    armorInventory.push({
+        id: armorId,
+        durability: 100
+    });
+    updateArmorUI();
+}
+
+function equipArmor(armorId) {
+    const armor = ARMOR_TYPES[armorId];
+    if (!armor) return false;
+    if (playerEquipment.armor === armorId) return false;
+    const idx = armorInventory.findIndex(a => a.id === armorId);
+    if (idx === -1) {
+        return false;
+    }
+    const selected = armorInventory.splice(idx, 1)[0];
+    if (playerEquipment.armor) {
+        armorInventory.push({
+            id: playerEquipment.armor,
+            durability: playerEquipment.armorDurability
+        });
+    }
+    playerEquipment.armor = selected.id;
+    playerEquipment.armorDurability = selected.durability;
+    updateArmorUI();
+    showToast(`🛡️ 装备 ${armor.name}`);
+    showFloatingText(`🛡️ ${armor.name}`, player ? player.x : 0, player ? player.y - 60 : 120);
+    return true;
+}
+
+function unequipArmor() {
+    if (!playerEquipment.armor) return;
+    const armor = ARMOR_TYPES[playerEquipment.armor];
+    armorInventory.push({
+        id: playerEquipment.armor,
+        durability: playerEquipment.armorDurability
+    });
+    playerEquipment.armor = null;
+    playerEquipment.armorDurability = 0;
+    updateArmorUI();
+    showToast(`${armor?.name || "盔甲"} 已卸下`);
+}
+
+function getArmorDefense() {
+    if (!playerEquipment.armor) return 0;
+    const armor = ARMOR_TYPES[playerEquipment.armor];
+    return armor ? armor.defense : 0;
+}
+
+function updateArmorUI() {
+    const el = document.getElementById("armor-status");
+    if (!el) return;
+    if (playerEquipment.armor) {
+        const armor = ARMOR_TYPES[playerEquipment.armor];
+        const dur = Math.max(0, Math.min(100, playerEquipment.armorDurability));
+        el.innerText = `${armor.name} (${dur}%)`;
+        el.classList.add("hud-box-active");
+    } else {
+        el.innerText = "盔甲: 无";
+        el.classList.remove("hud-box-active");
+    }
+}
+
+function showArmorSelectUI() {
+    const modal = document.getElementById("armor-select-modal");
+    if (!modal) return;
+    const list = modal.querySelector(".armor-list");
+    if (!list) return;
+    list.innerHTML = "";
+    if (playerEquipment.armor) {
+        const armor = ARMOR_TYPES[playerEquipment.armor];
+        const card = document.createElement("div");
+        card.className = "armor-item equipped";
+        card.innerHTML = `
+            <span class="armor-icon" style="background:${armor.color}">🛡️</span>
+            <div class="armor-details">
+                <div class="armor-name">${armor.name}（已装备）</div>
+                <div class="armor-defense">防御 ${armor.defense}</div>
+                <div class="armor-durability">耐久 ${playerEquipment.armorDurability}%</div>
+            </div>
+        `;
+        card.addEventListener("click", () => {
+            unequipArmor();
+            hideArmorSelectUI();
+        });
+        list.appendChild(card);
+    }
+    if (armorInventory.length) {
+        armorInventory.forEach(item => {
+            const armor = ARMOR_TYPES[item.id];
+            if (!armor) return;
+            const card = document.createElement("div");
+            card.className = "armor-item";
+            card.innerHTML = `
+                <span class="armor-icon" style="background:${armor.color}">🛡️</span>
+                <div class="armor-details">
+                    <div class="armor-name">${armor.name}</div>
+                    <div class="armor-defense">防御 ${armor.defense}</div>
+                    <div class="armor-durability">耐久 ${item.durability}%</div>
+                </div>
+            `;
+            card.addEventListener("click", () => {
+                if (equipArmor(item.id)) {
+                    hideArmorSelectUI();
+                }
+            });
+            list.appendChild(card);
+        });
+    } else if (!playerEquipment.armor) {
+        list.innerHTML = "<div class=\"armor-item\">当前无盔甲可用</div>";
+    }
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    pausedByModal = !paused;
+    paused = true;
+}
+
+function hideArmorSelectUI() {
+    const modal = document.getElementById("armor-select-modal");
+    if (!modal) return;
+    modal.classList.remove("visible");
+    modal.setAttribute("aria-hidden", "true");
+    if (pausedByModal) {
+        paused = false;
+        pausedByModal = false;
+    } else {
+        paused = false;
+    }
+}
+
 const RECIPES = {
     iron_golem: { iron: 10 },
     snow_golem: { pumpkin: 10 }
@@ -2706,15 +3841,23 @@ function spawnGolem(type) {
 function handleInteraction() {
     let nearestChest = null;
     let minDist = 60;
+    const now = Date.now();
     for (let c of chests) {
-        if (c.opened) continue;
         const d = Math.abs((player.x + player.width / 2) - (c.x + c.width / 2));
         if (d < minDist) {
             nearestChest = c;
-            break;
+            minDist = d;
         }
     }
-    if (nearestChest) nearestChest.open();
+    if (!nearestChest) return;
+    if (nearestChest.opened) {
+        if (now - (nearestChest.lastClickTime || 0) < 350) {
+            nearestChest.onDoubleClick();
+        }
+    } else {
+        nearestChest.open();
+    }
+    nearestChest.lastClickTime = now;
 }
 
 function handleDecorationInteract() {
@@ -2792,6 +3935,8 @@ function draw() {
     items.forEach(i => {
         if (!i.collected) drawItem(i.x, i.y + i.floatY, i.wordObj.en);
     });
+
+    wordGates.forEach(gate => drawWordGate(gate));
 
     if (particles.length) {
         particles.forEach(p => drawParticle(p));
@@ -3042,6 +4187,24 @@ function drawItem(x, y, text) {
     ctx.textAlign = "center";
     ctx.strokeText(text, cx, y - size * 0.2);
     ctx.fillText(text, cx, y - size * 0.2);
+}
+
+function drawWordGate(gate) {
+    if (!gate || gate.remove) return;
+    ctx.save();
+    ctx.translate(0, 0);
+    ctx.fillStyle = gate.locked ? "#FFA726" : "#4CAF50";
+    ctx.strokeStyle = "rgba(255,255,255,0.6)";
+    ctx.lineWidth = 3;
+    ctx.fillRect(gate.x, gate.y, gate.width, gate.height);
+    ctx.strokeRect(gate.x, gate.y, gate.width, gate.height);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 16px Verdana";
+    ctx.textAlign = "center";
+    ctx.fillText(gate.wordObj?.en || "词语", gate.x + gate.width / 2, gate.y + 28);
+    ctx.font = "14px Verdana";
+    ctx.fillText(gate.locked ? "词语闸门" : "已解锁", gate.x + gate.width / 2, gate.y + gate.height - 12);
+    ctx.restore();
 }
 
 
@@ -4000,6 +5163,8 @@ class Chest extends Entity {
         const size = blockSize * 0.8;
         super(x, y - size, size, size);
         this.opened = false;
+        this.lastClickTime = 0;
+        this.pendingArmor = null;
     }
     open() {
         if (this.opened) return;
@@ -4036,6 +5201,14 @@ class Chest extends Entity {
                 addScore(d.count);
                 return;
             }
+            if (d.item && d.item.startsWith("armor_")) {
+                const armorId = d.item.replace("armor_", "");
+                this.pendingArmor = armorId;
+                if (typeof addArmorToInventory === "function") addArmorToInventory(armorId);
+                const armorName = ARMOR_TYPES[armorId]?.name || armorId;
+                showToast(`✨ 获得 ${armorName}，双击宝箱即可装备`);
+                return;
+            }
             if (!inventory[d.item] && inventory[d.item] !== 0) inventory[d.item] = 0;
             inventory[d.item] += d.count;
         });
@@ -4045,6 +5218,18 @@ class Chest extends Entity {
         const rarityLabel = { common: "普通", rare: "稀有", epic: "史诗", legendary: "传说" }[rarity] || "普通";
         showFloatingText("🎁", this.x + 10, this.y - 30);
         if (summary) showToast(`宝箱(${rarityLabel}): ${summary}`);
+        onChestOpened();
+    }
+
+    onDoubleClick() {
+        if (!this.opened) return;
+        if (this.pendingArmor && equipArmor(this.pendingArmor)) {
+            this.pendingArmor = null;
+            return;
+        }
+        if (typeof showArmorSelectUI === "function") {
+            showArmorSelectUI();
+        }
     }
 }
 
@@ -4055,6 +5240,16 @@ class Item extends Entity {
         this.wordObj = wordObj;
         this.collected = false;
         this.floatY = 0;
+    }
+}
+
+class WordGate extends Entity {
+    constructor(x, y, wordObj) {
+        super(x - 30, y - 90, 90, 90);
+        this.wordObj = wordObj;
+        this.locked = true;
+        this.attempts = 0;
+        this.cooldown = 0;
     }
 }
 
@@ -5016,7 +6211,7 @@ class Golem extends Entity {
         this.maxHp = stats.hp;
         this.damage = stats.damage;
         this.speed = stats.speed;
-        this.followDelay = 50;
+        this.followDelay = 30;
         this.attackCooldown = 0;
         this.attackRange = (type === "iron" ? 80 : 120) * sizeScale;
         this.velX = 0;
@@ -5027,7 +6222,7 @@ class Golem extends Entity {
         this.lastX = x;
     }
 
-    updateFollow(playerHistory, platformsRef) {
+    updateFollow(playerHistory, platformsRef, playerRef) {
         if (playerHistory.length < this.followDelay) return;
         const target = playerHistory[playerHistory.length - this.followDelay];
         const dx = target.x - this.x;
@@ -5037,21 +6232,85 @@ class Golem extends Entity {
         } else {
             this.velX *= 0.8;
         }
-        if (this.grounded && this.shouldJump(platformsRef)) {
+        if (this.grounded && this.shouldJump(playerRef, platformsRef)) {
             this.velY = -10 * worldScale.unit;
         }
     }
 
-    shouldJump(platformsRef) {
-        const offset = 5 * worldScale.unit;
+    shouldJump(playerRef, platformsRef) {
+        if (this.detectObstacle(platformsRef)) return true;
+        if (this.detectGap(platformsRef)) return true;
+        return this.shouldMirrorPlayerJump(playerRef);
+    }
+
+    detectObstacle(platformsRef) {
+        if (!platformsRef || !platformsRef.length) return false;
+        const unit = worldScale?.unit || 1;
+        const offset = 5 * unit;
         const checkX = this.facingRight ? this.x + this.width + offset : this.x - offset;
         const checkY = this.y + this.height;
+        return platformsRef.some(p => {
+            const withinY = p.y < checkY && p.y > this.y - 40 * unit;
+            return withinY && checkX >= p.x && checkX <= p.x + p.width;
+        });
+    }
+
+    detectGap(platformsRef) {
+        if (!platformsRef || !platformsRef.length) return false;
+        if (this.hasGroundAhead(platformsRef)) return false;
+        return this.findLandingPlatform(platformsRef);
+    }
+
+    hasGroundAhead(platformsRef) {
+        if (!platformsRef || !platformsRef.length) return false;
+        const unit = worldScale?.unit || 1;
+        const lookX = this.facingRight ? this.x + this.width + 10 * unit : this.x - 10 * unit;
+        const feetY = this.y + this.height;
+        return platformsRef.some(p => {
+            const withinY = p.y >= feetY - 4 * unit && p.y <= feetY + 12 * unit;
+            return withinY && lookX >= p.x && lookX <= p.x + p.width;
+        });
+    }
+
+    findLandingPlatform(platformsRef) {
+        if (!platformsRef || !platformsRef.length) return false;
+        const unit = worldScale?.unit || 1;
+        const offset = 20 * unit;
+        const lookRange = 160 * unit;
+        const start = this.facingRight ? this.x + this.width + offset : this.x - offset;
+        const end = this.facingRight ? start + lookRange : start - lookRange;
+        const minX = Math.min(start, end);
+        const maxX = Math.max(start, end);
         for (const p of platformsRef) {
-            if (p.y < checkY && p.y > this.y - 50 * worldScale.unit) {
-                if (checkX > p.x && checkX < p.x + p.width) {
-                    return true;
-                }
-            }
+            if (p.x + p.width < minX || p.x > maxX) continue;
+            if (p.y < this.y - 120 * unit || p.y > this.y + 60 * unit) continue;
+            return true;
+        }
+        return false;
+    }
+
+    shouldMirrorPlayerJump(playerRef) {
+        if (!playerRef) return false;
+        const unit = worldScale?.unit || 1;
+        const horizontalGap = Math.abs(playerRef.x - this.x);
+        return horizontalGap < 150 * unit && playerRef.velY < -2 && !playerRef.grounded;
+    }
+
+    checkFallRecovery(playerRef) {
+        if (!playerRef) return false;
+        const unit = worldScale?.unit || 1;
+        const verticalGap = this.y - playerRef.y;
+        const threshold = 280 * unit;
+        if (this.y > fallResetY + 80 || verticalGap > threshold) {
+            const offset = (Math.random() > 0.5 ? -1 : 1) * 80 * unit;
+            this.x = playerRef.x + offset;
+            this.y = playerRef.y - 10 * unit;
+            this.velX = 0;
+            this.velY = 0;
+            this.grounded = false;
+            this.stuckCounter = 0;
+            this.lastX = this.x;
+            return true;
         }
         return false;
     }
@@ -5096,7 +6355,7 @@ class Golem extends Entity {
     }
 
     update(playerRef, playerHistory, enemyList, platformsRef) {
-        this.updateFollow(playerHistory, platformsRef);
+        this.updateFollow(playerHistory, platformsRef, playerRef);
         this.velY += gameConfig.physics.gravity;
         this.grounded = false;
 
@@ -5117,7 +6376,8 @@ class Golem extends Entity {
         this.x += this.velX;
         this.y += this.velY;
 
-        if (this.y > fallResetY) this.remove = true;
+        const recovered = this.checkFallRecovery(playerRef);
+        if (!recovered && this.y > fallResetY) this.remove = true;
 
         if (Math.abs(this.x - this.lastX) < 0.2) this.stuckCounter++;
         else this.stuckCounter = 0;
@@ -5151,7 +6411,13 @@ function wireSettingsModal() {
     const optTouch = document.getElementById("opt-touch");
     const optNoRepeat = document.getElementById("opt-no-repeat");
     const optVocab = document.getElementById("opt-vocab");
+    if (optVocab) {
+        optVocab.addEventListener("change", () => updateVocabPreview(optVocab.value));
+    }
     const optShowImage = document.getElementById("opt-show-image");
+    const optWordGate = document.getElementById("opt-word-gate");
+    const optWordMatch = document.getElementById("opt-word-match");
+    const optSpeed = document.getElementById("opt-speed");
     const optKeys = document.getElementById("opt-keys");
     let resetArmed = false;
     let resetTimer = null;
@@ -5174,8 +6440,12 @@ function wireSettingsModal() {
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
         if (optVocab) optVocab.value = settings.vocabSelection || "auto";
+        if (optWordGate) optWordGate.checked = !!settings.wordGateEnabled;
+        if (optWordMatch) optWordMatch.checked = !!settings.wordMatchEnabled;
+        if (optSpeed) optSpeed.value = settings.movementSpeedLevel || "normal";
         if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact, keyBindings.switch, keyBindings.useDiamond].join(",");
         if (progressVocab) updateVocabProgressUI();
+        if (optVocab) updateVocabPreview(optVocab.value);
     }
 
     function open() {
@@ -5199,7 +6469,7 @@ function wireSettingsModal() {
         resetVocabRotationAndProgress();
     }
 
-    function save() {
+    async function save() {
         if (optLearningMode) settings.learningMode = !!optLearningMode.checked;
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;
         if (optSpeechEn) settings.speechEnRate = Number(optSpeechEn.value);
@@ -5213,6 +6483,9 @@ function wireSettingsModal() {
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
         if (optShowImage) settings.showWordImage = !!optShowImage.checked;
         if (optVocab) settings.vocabSelection = String(optVocab.value || "auto");
+        if (optWordGate) settings.wordGateEnabled = !!optWordGate.checked;
+        if (optWordMatch) settings.wordMatchEnabled = !!optWordMatch.checked;
+        if (optSpeed) settings.movementSpeedLevel = String(optSpeed.value || "normal");
         if (optKeys) settings.keyCodes = String(optKeys.value || "");
 
         settings = normalizeSettings(settings);
@@ -5236,7 +6509,11 @@ function wireSettingsModal() {
             applyMotionToPlayer(player);
             applyBiomeEffectsToPlayer();
         }
-        setActiveVocabPack(settings.vocabSelection || "auto");
+        await setActiveVocabPack(settings.vocabSelection || "auto");
+        clearOldWordItems();
+        spawnWordItemNearPlayer();
+        showVocabSwitchEffect();
+        updateVocabPreview(settings.vocabSelection);
         close();
     }
 
@@ -5298,6 +6575,27 @@ function wireHudButtons() {
             }
         });
     }
+    const btnProfile = document.getElementById("btn-profile");
+    if (btnProfile) {
+        btnProfile.addEventListener("click", showProfileModal);
+    }
+    const armorBadge = document.getElementById("armor-status");
+    if (armorBadge) {
+        armorBadge.addEventListener("click", () => {
+            showArmorSelectUI();
+        });
+    }
+}
+
+function wireArmorModal() {
+    const modal = document.getElementById("armor-select-modal");
+    const btnClose = document.getElementById("btn-armor-close");
+    if (btnClose) btnClose.addEventListener("click", hideArmorSelectUI);
+    if (modal) {
+        modal.addEventListener("click", e => {
+            if (e.target === modal) hideArmorSelectUI();
+        });
+    }
 }
 
 function wireTouchControls() {
@@ -5339,6 +6637,49 @@ function wireTouchControls() {
     bindTap("interact", () => { handleInteraction(); });
     bindTap("switch", () => { switchWeapon(); });
     bindTap("use-diamond", () => { useDiamondForHp(); });
+}
+
+function wireLearningModals() {
+    challengeModalEl = document.getElementById("challenge-modal");
+    challengeQuestionEl = document.getElementById("challenge-question");
+    challengeOptionsEl = document.getElementById("challenge-options");
+    challengeInputWrapperEl = document.getElementById("challenge-input-wrapper");
+    challengeInputEl = document.getElementById("challenge-input");
+    challengeTimerEl = document.getElementById("challenge-timer");
+    challengeRepeatBtn = document.getElementById("challenge-repeat");
+    wordMatchScreenEl = document.getElementById("word-match-screen");
+    matchLeftEl = document.getElementById("match-left");
+    matchRightEl = document.getElementById("match-right");
+    matchLinesEl = document.getElementById("match-lines");
+    matchCountEl = document.getElementById("match-count");
+    matchTotalEl = document.getElementById("match-total");
+    matchResultEl = document.getElementById("match-result");
+    matchSubtitleEl = document.getElementById("match-subtitle");
+    matchTimerEl = document.getElementById("match-timer");
+    matchSubmitBtn = document.getElementById("btn-match-submit");
+
+    if (challengeRepeatBtn) {
+        challengeRepeatBtn.addEventListener("click", () => {
+            if (currentLearningChallenge?.wordObj) {
+                speakWord(currentLearningChallenge.wordObj);
+            }
+        });
+    }
+    if (challengeInputEl) {
+        challengeInputEl.addEventListener("keydown", e => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const userAnswer = (challengeInputEl.value || "").trim().toLowerCase();
+                const target = (currentLearningChallenge?.answer || "").toLowerCase();
+                completeLearningChallenge(userAnswer === target);
+            }
+        });
+    }
+    if (matchSubmitBtn) {
+        matchSubmitBtn.addEventListener("click", () => {
+            activeWordMatch?.submit();
+        });
+    }
 }
 
 async function start() {
@@ -5392,8 +6733,12 @@ async function start() {
     renderVocabSelect();
     await setActiveVocabPack(settings.vocabSelection || "auto");
     wireHudButtons();
+    wireArmorModal();
+    wireProfileModal();
     wireSettingsModal();
+    wireLearningModals();
     wireTouchControls();
+    initLoginScreen();
 
     const overlayBtn = document.getElementById("btn-overlay-action");
     if (overlayBtn) {
@@ -5402,6 +6747,12 @@ async function start() {
             e.preventDefault();
             resumeGameFromOverlay();
         }, { passive: false });
+    }
+    const overlayScorebtn = document.getElementById("btn-overlay-score-revive");
+    if (overlayScorebtn) {
+        overlayScorebtn.addEventListener("click", () => {
+            reviveWithScore();
+        });
     }
     const overlay = document.getElementById("screen-overlay");
     if (overlay) {

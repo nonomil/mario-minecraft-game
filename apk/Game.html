@@ -8,6 +8,24 @@
 </head>
 <body>
 
+<div id="login-screen" class="login-screen visible">
+    <div class="login-container">
+        <h1 class="game-title">Minecraft 单词游戏</h1>
+        <div id="login-form" class="login-form">
+            <div class="form-group">
+                <label for="username-input">请输入用户名</label>
+                <input type="text" id="username-input" placeholder="昵称" maxlength="20">
+            </div>
+            <button id="btn-login" class="game-btn">连接</button>
+        </div>
+        <div id="account-list" class="account-list">
+            <h3>已有账号</h3>
+            <div id="accounts-container"></div>
+            <button id="btn-new-account" class="game-btn game-btn-small">创建新账号</button>
+        </div>
+    </div>
+</div>
+
 <div id="game-container">
     <canvas id="gameCanvas" width="800" height="600"></canvas>
     
@@ -18,10 +36,12 @@
             <div class="hud-box" id="word-display">Start!</div>
             <div class="hud-box" id="level-info">场景: 草原</div>
             <div class="hud-box" id="weapon-info">武器: ⚔️ 石剑</div>
+            <div class="hud-box hud-box-clickable" id="armor-status">皮甲: 无</div>
         </div>
         
         <div class="btn-group">
             <button class="game-btn" id="btn-settings">⚙️ 设置</button>
+            <button class="game-btn" id="btn-profile">📋 档案</button>
             <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
         </div>
 
@@ -74,7 +94,10 @@
             ⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>
             📦 打开宝箱  ⛏️ 采集
         </div>
-        <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
+        <div class="overlay-buttons">
+            <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
+            <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">积分复活</button>
+        </div>
     </div>
 </div>
 
@@ -98,6 +121,13 @@
 
         <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-challenge-mode"> 学习挑战(随机弹出)</label>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">挑战频率</div>
+            <input class="settings-range" id="opt-challenge-freq" type="range" min="0.1" max="0.6" step="0.05" value="0.3">
         </div>
         <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
@@ -138,6 +168,14 @@
             <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
         </div>
         <div class="settings-row">
+            <div class="settings-label">移动速度</div>
+            <select class="settings-select" id="opt-speed">
+                <option value="slow">慢（练习）</option>
+                <option value="normal">普通</option>
+                <option value="fast">快（挑战）</option>
+            </select>
+        </div>
+        <div class="settings-row">
             <div class="settings-label">游戏难度</div>
             <select class="settings-select" id="opt-difficulty">
                 <option value="auto">自动(随积分)</option>
@@ -164,7 +202,17 @@
             <select class="settings-select" id="opt-vocab"></select>
         </div>
         <div class="settings-row">
+            <div class="settings-label">词库预览</div>
+            <div id="vocab-preview" class="settings-hint">自动轮换词库</div>
+        </div>
+        <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-show-image"> 显示图片</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-word-gate"> 词语闸门(触发额外挑战)</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-word-match"> 词语匹配复活(结束时)</label>
         </div>
 
         <div class="settings-row settings-row-keys">
@@ -180,6 +228,71 @@
 
         <div class="settings-actions">
             <button class="game-btn" id="btn-settings-close">关闭</button>
+        </div>
+    </div>
+</div>
+<div id="armor-select-modal" class="armor-modal" aria-hidden="true">
+    <div class="armor-modal-content">
+        <div class="armor-modal-header">
+            <span>盔甲仓库</span>
+            <button class="game-btn game-btn-small" id="btn-armor-close">关闭</button>
+        </div>
+        <div class="armor-list"></div>
+    </div>
+</div>
+
+<div id="challenge-modal" class="learning-modal" aria-hidden="true">
+    <div class="learning-modal-content">
+        <div class="learning-modal-header">
+            <span>学习挑战</span>
+        </div>
+        <div class="learning-modal-question" id="challenge-question"></div>
+        <div class="learning-modal-options" id="challenge-options"></div>
+        <div class="learning-modal-input" id="challenge-input-wrapper">
+            <input type="text" id="challenge-input" placeholder="输入英文或中文" autocomplete="off">
+        </div>
+        <div class="learning-modal-footer">
+            <div class="learning-modal-timer" id="challenge-timer">10</div>
+            <button class="game-btn game-btn-small" id="challenge-repeat">再听一次</button>
+        </div>
+    </div>
+</div>
+
+<div id="word-match-screen" class="learning-modal" aria-hidden="true">
+    <div class="learning-modal-content word-match-content">
+        <div class="word-match-header">
+            <h2>词语匹配复活</h2>
+            <div class="match-timer" id="match-timer">30</div>
+        </div>
+        <p class="word-match-subtitle" id="match-subtitle">将英文与中文拉线连对，助你复活</p>
+        <div class="match-container">
+            <div class="match-column" id="match-left"></div>
+            <svg class="match-lines" id="match-lines" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="match-column" id="match-right"></div>
+        </div>
+        <div class="match-footer">
+            <div>已连线: <span id="match-count">0</span>/<span id="match-total">0</span></div>
+            <button class="game-btn" id="btn-match-submit">提交复活</button>
+        </div>
+        <div id="match-result" class="match-result"></div>
+    </div>
+</div>
+
+<div id="profile-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2 id="profile-username">玩家档案</h2>
+            <button class="game-btn game-btn-small" id="btn-profile-close">关闭</button>
+        </div>
+        <div class="profile-stats">
+            <div>游戏次数: <span id="profile-games">0</span></div>
+            <div>最高积分: <span id="profile-highscore">0</span></div>
+            <div>已学词数: <span id="profile-words">0</span></div>
+            <div>游玩时长: <span id="profile-playtime">0 分钟</span></div>
+        </div>
+        <div class="profile-achievements">
+            <h3>成就</h3>
+            <div id="achievements-container"></div>
         </div>
     </div>
 </div>

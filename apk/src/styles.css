@@ -114,6 +114,244 @@ body {
     transform: scale(0.98);
 }
 
+.overlay-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+#btn-overlay-score-revive {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #333;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 6px 15px rgba(255, 215, 0, 0.4);
+}
+
+#btn-overlay-score-revive:hover {
+    transform: translateY(-2px);
+}
+
+#btn-overlay-score-revive:disabled {
+    background: #666;
+    color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+ .learning-modal,
+.word-match-screen {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 190;
+    padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+    box-sizing: border-box;
+ }
+
+.learning-modal.visible,
+.word-match-screen.visible {
+    display: flex;
+ }
+
+.learning-modal-content,
+.word-match-content {
+    width: min(640px, 92vw);
+    background: rgba(12, 12, 12, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.85);
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    padding: 24px;
+    color: #fff;
+    text-align: center;
+ }
+
+.learning-modal-header {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 900;
+    margin-bottom: 12px;
+    color: #FFD54F;
+ }
+
+.learning-modal-question {
+    font-size: clamp(18px, 2.5vw, 26px);
+    margin-bottom: 16px;
+    min-height: 48px;
+ }
+
+.learning-modal-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+ }
+
+.learning-modal-options button {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    background: linear-gradient(180deg, #333, #111);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+ }
+
+.learning-modal-options button.correct {
+    background: linear-gradient(180deg, #26a69a, #00796b);
+    border-color: #26a69a;
+ }
+
+.learning-modal-options button.wrong {
+    background: linear-gradient(180deg, #f44336, #c62828);
+    border-color: #f44336;
+ }
+
+.learning-modal-options button:hover:not(.correct):not(.wrong) {
+    transform: translateY(-2px);
+    background: linear-gradient(180deg, #555, #222);
+ }
+
+.learning-modal-input {
+    display: none;
+    margin-bottom: 12px;
+ }
+
+.learning-modal-input.active {
+    display: block;
+ }
+
+.learning-modal-input input {
+    width: 100%;
+    font-size: 20px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    text-align: center;
+ }
+
+.learning-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+ }
+
+.learning-modal-timer {
+    font-size: 24px;
+    font-weight: 900;
+    color: #ffecb3;
+    min-width: 48px;
+ }
+
+.game-btn-small {
+    padding: 6px 14px;
+    font-size: 14px;
+}
+
+.word-match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.match-timer {
+    font-size: 28px;
+    font-weight: 900;
+    color: #ffd700;
+}
+
+.word-match-subtitle {
+    font-size: 16px;
+    color: #f0f0f0;
+    margin-bottom: 10px;
+}
+
+.match-container {
+    display: flex;
+    gap: 40px;
+    position: relative;
+    min-height: 260px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.match-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 150px;
+}
+
+.match-item {
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.07);
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.match-item.selected {
+    border-color: #ffd700;
+    transform: scale(1.02);
+}
+
+.match-item.correct {
+    background: #4caf50;
+    border-color: #1b5e20;
+    color: #fff;
+}
+
+.match-item.wrong {
+    background: #f44336;
+    border-color: #c62828;
+    color: #fff;
+}
+
+.match-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.match-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    font-size: 18px;
+}
+
+.match-result {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 16px;
+    border: 2px solid transparent;
+    background: rgba(0, 0, 0, 0.4);
+    font-weight: 700;
+    display: none;
+}
+
+.match-result.visible {
+    display: block;
+}
 canvas {
     background-color: #87CEEB;
     display: block;
@@ -150,6 +388,19 @@ canvas {
     font-weight: bold;
     border: 2px solid rgba(255,255,255,0.3);
     text-shadow: 1px 1px 0 #000;
+}
+
+.hud-box-clickable {
+    cursor: pointer;
+}
+
+.hud-box-clickable:hover {
+    border-color: #FFD700;
+}
+
+.hud-box-active {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
 }
 
 #hp {
@@ -498,6 +749,13 @@ canvas {
     font-size: 15px;
 }
 
+#vocab-preview {
+    font-size: 14px;
+    color: #f0f0f0;
+    text-align: right;
+    line-height: 1.4;
+}
+
 .settings-row-keys {
     flex-direction: column;
     align-items: flex-start;
@@ -508,6 +766,101 @@ canvas {
     gap: 10px;
     justify-content: flex-end;
     margin-top: 8px;
+}
+
+#armor-select-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    z-index: 210;
+    padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+    box-sizing: border-box;
+}
+
+#armor-select-modal.visible {
+    display: flex;
+}
+
+.armor-modal-content {
+    width: min(420px, 90vw);
+    background: rgba(10, 10, 10, 0.95);
+    border-radius: 18px;
+    border: 3px solid rgba(255, 215, 0, 0.5);
+    padding: 18px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.85);
+    color: #fff;
+    text-align: left;
+}
+
+.armor-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.armor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.armor-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.armor-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.armor-item.equipped {
+    border-color: #4CAF50;
+}
+
+.armor-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.armor-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.armor-name {
+    font-weight: 700;
+}
+
+.armor-defense {
+    color: #4CAF50;
+}
+
+.armor-durability {
+    color: #FFC107;
 }
 
 .settings-actions-top {
@@ -532,4 +885,174 @@ canvas {
 
 .game-btn-danger {
     background: #D32F2F;
+}
+
+.login-screen {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 8, 16, 0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 220;
+    padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+
+.login-screen.visible {
+    display: flex;
+}
+
+.login-container {
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 18px;
+    padding: 30px;
+    text-align: center;
+    width: min(420px, 90vw);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.login-form .form-group {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 16px;
+}
+
+.account-list {
+    margin-top: 16px;
+    text-align: left;
+}
+
+.account-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.account-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.account-avatar {
+    font-size: 24px;
+    margin-right: 12px;
+}
+
+.account-info {
+    flex: 1;
+}
+
+.btn-delete-account {
+    background: #D32F2F;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.account-empty {
+    padding: 12px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.achievement-popup {
+    position: fixed;
+    top: 20px;
+    right: -320px;
+    background: linear-gradient(135deg, #ffd700, #ffa000);
+    color: #222;
+    padding: 12px 18px;
+    border-radius: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    z-index: 3100;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    transition: right 0.4s ease;
+}
+
+.achievement-popup.show {
+    right: 20px;
+}
+
+.achievement-icon {
+    font-size: 24px;
+}
+
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 220;
+}
+
+.profile-modal.visible {
+    display: flex;
+}
+
+.profile-modal-content {
+    background: rgba(15, 15, 15, 0.95);
+    border-radius: 20px;
+    padding: 24px;
+    width: min(460px, 90vw);
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.profile-stats {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.profile-achievements {
+    margin-top: 12px;
+}
+
+.profile-achievements h3 {
+    margin-bottom: 10px;
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.achievement-item.unlocked {
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.achievement-content {
+    flex: 1;
 }

@@ -113,6 +113,8 @@ class Chest extends Entity {
     constructor(x, y) {
         super(x, y - 40, 40, 40);
         this.opened = false;
+        this.lastClickTime = 0;
+        this.pendingArmor = null;
     }
     open() {
         if (this.opened) return;
@@ -149,6 +151,14 @@ class Chest extends Entity {
                 addScore(d.count);
                 return;
             }
+            if (d.item && d.item.startsWith("armor_")) {
+                const armorId = d.item.replace("armor_", "");
+                this.pendingArmor = armorId;
+                if (typeof addArmorToInventory === "function") addArmorToInventory(armorId);
+                const armorName = ARMOR_TYPES[armorId]?.name || armorId;
+                showToast(`✨ 获得 ${armorName}`);
+                return;
+            }
             if (!inventory[d.item] && inventory[d.item] !== 0) inventory[d.item] = 0;
             inventory[d.item] += d.count;
         });
@@ -159,6 +169,15 @@ class Chest extends Entity {
         showFloatingText("🎁", this.x + 10, this.y - 30);
         if (summary) showToast(`宝箱(${rarityLabel}): ${summary}`);
     }
+    onDoubleClick() {
+        if (!this.opened) return;
+        if (this.pendingArmor) {
+            if (typeof equipArmor === 'function') equipArmor(this.pendingArmor);
+            this.pendingArmor = null;
+            return;
+        }
+        if (typeof showArmorSelectUI === 'function') showArmorSelectUI();
+    }
 }
 
 class Item extends Entity {
@@ -167,6 +186,16 @@ class Item extends Entity {
         this.wordObj = wordObj;
         this.collected = false;
         this.floatY = 0;
+    }
+}
+
+class WordGate extends Entity {
+    constructor(x, y, wordObj) {
+        super(x - 30, y - 80, 90, 90);
+        this.wordObj = wordObj;
+        this.locked = true;
+        this.attempts = 0;
+        this.cooldown = 0;
     }
 }
 

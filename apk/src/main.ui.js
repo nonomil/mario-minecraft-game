@@ -7,6 +7,8 @@ function wireSettingsModal() {
     const progressVocab = document.getElementById("progress-vocab");
 
     const optLearningMode = document.getElementById("opt-learning-mode");
+    const optChallengeMode = document.getElementById("opt-challenge-mode");
+    const optChallengeFreq = document.getElementById("opt-challenge-freq");
     const optSpeech = document.getElementById("opt-speech");
     const optSpeechEn = document.getElementById("opt-speech-en");
     const optSpeechZh = document.getElementById("opt-speech-zh");
@@ -24,6 +26,8 @@ function wireSettingsModal() {
     const optVocabDifficulty = document.getElementById("opt-vocab-difficulty");
     const optShowImage = document.getElementById("opt-show-image");
     const optShowLabels = document.getElementById("opt-show-labels");
+    const optWordGate = document.getElementById("opt-word-gate");
+    const optWordMatch = document.getElementById("opt-word-match");
     const optResolutionMode = document.getElementById("opt-resolution-mode");
     const optKeys = document.getElementById("opt-keys");
     let resetArmed = false;
@@ -31,6 +35,8 @@ function wireSettingsModal() {
 
     function fill() {
         if (optLearningMode) optLearningMode.checked = !!settings.learningMode;
+        if (optChallengeMode) optChallengeMode.checked = !!settings.challengeEnabled;
+        if (optChallengeFreq) optChallengeFreq.value = String(settings.challengeFrequency ?? 0.3);
         if (optSpeech) optSpeech.checked = !!settings.speechEnabled;
         if (optSpeechEn) optSpeechEn.value = String(settings.speechEnRate ?? 0.8);
         if (optSpeechZh) optSpeechZh.value = String(settings.speechZhRate ?? 0.9);
@@ -44,6 +50,8 @@ function wireSettingsModal() {
         if (optTouch) optTouch.checked = !!settings.touchControls;
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
+        if (optWordGate) optWordGate.checked = !!settings.wordGateEnabled;
+        if (optWordMatch) optWordMatch.checked = !!settings.wordMatchEnabled;
         if (optShowLabels) optShowLabels.checked = !!settings.showEnvironmentLabels;
         if (optResolutionMode) optResolutionMode.value = settings.resolutionMode || "auto";
         if (optVocab) optVocab.value = settings.vocabSelection || "auto";
@@ -76,6 +84,8 @@ function wireSettingsModal() {
 
     function save() {
         if (optLearningMode) settings.learningMode = !!optLearningMode.checked;
+        if (optChallengeMode) settings.challengeEnabled = !!optChallengeMode.checked;
+        if (optChallengeFreq) settings.challengeFrequency = Number(optChallengeFreq.value);
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;
         if (optSpeechEn) settings.speechEnRate = Number(optSpeechEn.value);
         if (optSpeechZh) settings.speechZhRate = Number(optSpeechZh.value);
@@ -89,6 +99,8 @@ function wireSettingsModal() {
         if (optTouch) settings.touchControls = !!optTouch.checked;
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
         if (optShowImage) settings.showWordImage = !!optShowImage.checked;
+        if (optWordGate) settings.wordGateEnabled = !!optWordGate.checked;
+        if (optWordMatch) settings.wordMatchEnabled = !!optWordMatch.checked;
         if (optShowLabels) settings.showEnvironmentLabels = !!optShowLabels.checked;
         if (optResolutionMode) settings.resolutionMode = String(optResolutionMode.value || "auto");
         if (optVocab) settings.vocabSelection = String(optVocab.value || "auto");

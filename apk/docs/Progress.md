@@ -1,3 +1,16 @@
+## v1.2.12（发布日期：2026-02-06）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.12，versionCode = 25
+- 构建方式：本地构建
+- 主要变更
+  - 词库与设置打通：manifest 恢复 byId、setActiveVocabPack 支持多文件、词库预览/切换提示、保存时清屏并立刻生成新词
+  - 死亡复活与学习流程：积分复活按钮、学习挑战/词语匹配 modal、word gate、account/achievement/storage/auto-save、复活保留分数
+  - 装备与 AI 完善：宝箱装备掉落、双击装备 UI、盔甲减伤/更新、傀儡跳跃+掉落恢复、移动速度档位及 armor HUD、hud/learning UI 完善
+- 安装说明
+  - 覆盖安装请保持签名一致并提升 versionCode
+- 备注
+  - 本次版本对表内所有学习增强需求做了实现与整理，建议同步发布 GitHub Release（见 tag v1.2.12）
+
 ## v1.2.11（发布日期：2026-02-05）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.11，versionCode = 24

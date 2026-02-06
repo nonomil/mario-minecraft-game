@@ -1630,6 +1630,7 @@ function setOverlay(visible, mode) {
     const title = document.getElementById("overlay-title");
     const text = document.getElementById("overlay-text");
     const btn = document.getElementById("btn-overlay-action");
+    const btnScoreRevive = document.getElementById("btn-overlay-score-revive");
     if (visible) {
         overlay.classList.add("visible");
         overlay.setAttribute("aria-hidden", "false");
@@ -1638,6 +1639,7 @@ function setOverlay(visible, mode) {
             if (title) title.innerText = "已暂停";
             if (text) text.innerHTML = "← → 移动。 空格 跳(可二段跳)<br>J 攻击。 K 切换武器。 Z 使用钻石<br>Y 打开宝箱。 E 采集";
             if (btn) btn.innerText = "继续";
+            if (btnScoreRevive) btnScoreRevive.style.display = "none";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
             if (title) title.innerText = "游戏结束";
@@ -1650,16 +1652,32 @@ function setOverlay(visible, mode) {
                     `击杀敌人: ${enemyKillStats.total || 0}<br>` +
                     `玩家等级: ${level}`;
             }
-            if (btn) btn.innerText = diamonds >= 10 ? "复活(10钻石)" : "重新开始";
+            if (btn) {
+                const cfg = getReviveConfig();
+                const diamondCost = Number(cfg.diamondCost) || 10;
+                btn.innerText = diamonds >= diamondCost ? `复活(${diamondCost}钻石)` : "重新开始";
+            }
+            if (btnScoreRevive) {
+                const cfg = getReviveConfig();
+                const scoreCost = Number(cfg.scoreCost) || 500;
+                if (score >= scoreCost) {
+                    btnScoreRevive.style.display = "block";
+                    btnScoreRevive.innerText = `积分复活(${scoreCost}分)`;
+                } else {
+                    btnScoreRevive.style.display = "none";
+                }
+            }
         } else {
             if (title) title.innerText = "准备开始";
             if (text) text.innerHTML = "← → 移动。 空格 跳(可二段跳)<br>J 攻击。 K 切换武器。 Z 使用钻石<br>Y 打开宝箱。 E 采集";
             if (btn) btn.innerText = "开始游戏";
+            if (btnScoreRevive) btnScoreRevive.style.display = "none";
         }
     } else {
         overlay.classList.remove("visible");
         overlay.setAttribute("aria-hidden", "true");
         overlayMode = "start";
+        if (btnScoreRevive) btnScoreRevive.style.display = "none";
     }
 }
 
@@ -1687,6 +1705,40 @@ function resumeGameFromOverlay() {
     const btnMix = document.getElementById("btn-repeat-pause");
     if (btnMix) btnMix.innerText = "重读";
     repeatPauseState = "repeat";
+}
+
+function getReviveConfig() {
+    const revive = (gameConfig && gameConfig.revive) || {};
+    return {
+        diamondCost: revive.diamondCost ?? 10,
+        scoreCost: revive.scoreCost ?? 500,
+        scoreReviveHpPercent: revive.scoreReviveHpPercent ?? 0.5,
+        invincibleFrames: revive.invincibleFrames ?? 180
+    };
+}
+
+function reviveWithScore() {
+    const cfg = getReviveConfig();
+    const cost = Number(cfg.scoreCost) || 500;
+    if (score < cost) {
+        showToast(`积分不足（需要 ${cost} 分）`);
+        return;
+    }
+    score -= cost;
+    if (score < 0) score = 0;
+    const scoreEl = document.getElementById("score");
+    if (scoreEl) scoreEl.innerText = score;
+    const hpPercent = Math.max(0, Math.min(1, Number(cfg.scoreReviveHpPercent) || 0.5));
+    playerHp = Math.max(1, Math.floor(playerMaxHp * hpPercent));
+    updateHpUI();
+    playerInvincibleTimer = Number(cfg.invincibleFrames) || 180;
+    paused = false;
+    startedOnce = true;
+    setOverlay(false);
+    const px = player ? player.x : cameraX;
+    const py = player ? player.y - 50 : canvas.height / 2;
+    showFloatingText("积分复活", px, py);
+    showToast("积分复活成功");
 }
 
 function keyLabel(code) {

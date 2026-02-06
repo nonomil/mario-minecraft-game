@@ -25,6 +25,7 @@
             M.vocabManifest.packs.forEach(p => { M.vocabPacks[p.id] = p; });
         }
         M.vocabEngine = { version: M.vocabManifest.version, packIds: M.vocabPackOrder };
+        console.debug("[Vocab] Engine initialized", { version: M.vocabManifest.version, packs: M.vocabPackOrder });
         return M.vocabEngine;
     }
 
@@ -177,6 +178,7 @@
     function loadVocabPackFile(file) {
         if (!file) return Promise.reject(new Error("missing vocab file"));
         if (M.loadedVocabFiles[file]) return M.loadedVocabFiles[file];
+        console.debug(`[Vocab] Loading file: ${file}`);
         M.loadedVocabFiles[file] = new Promise((resolve, reject) => {
             const script = document.createElement("script");
             script.src = file;
@@ -213,9 +215,15 @@
         M.vocabState.runCounts[pack.id] = (M.vocabState.runCounts[pack.id] || 0) + 1;
         M.saveVocabState();
 
+        console.debug("[Vocab] Setting active pack", { selection, pickId, files: pack.files || pack.file });
+
         try {
-            await loadVocabPackFile(pack.file);
+            const files = Array.isArray(pack.files) ? [...pack.files] : [];
+            if (pack.file) files.push(pack.file);
+            if (!files.length) throw new Error(`no vocab files defined for pack ${pack.id}`);
+            await Promise.all(files.map(f => loadVocabPackFile(f)));
             const rawList = typeof pack.getRaw === "function" ? pack.getRaw() : [];
+            console.debug(`[Vocab] Pack ${pack.id} raw list size`, rawList.length);
             const mapped = [];
             const seen = new Set();
             (Array.isArray(rawList) ? rawList : []).forEach(r => {
@@ -225,14 +233,21 @@
                 seen.add(w.en);
                 mapped.push(w);
             });
-            if (mapped.length) {
-                M.wordDatabase = mapped;
+            const fallbackSource = Array.isArray(M.defaultWords) ? M.defaultWords : [];
+            const fallbackWords = fallbackSource.map(w => normalizeRawWord(w)).filter(Boolean);
+            let target = mapped.length ? mapped : fallbackWords;
+            if (!target.length) {
+                console.warn(`[Vocab] Pack ${pack.id} produced no words and no fallback data`);
+            }
+            if (target.length) {
+                M.wordDatabase = target;
                 M.wordPicker = null;
                 const pr = getPackProgress(pack.id);
-                pr.total = mapped.length;
+                pr.total = target.length;
                 M.saveProgress();
             }
         } catch {
+            console.error(`[Vocab] Failed to load pack ${pack.id}`, arguments.length ? arguments[0] : undefined);
         }
 
         renderVocabSelect();
