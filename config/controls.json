@@ -1,0 +1,9 @@
+{
+    "left": "ArrowLeft",
+    "right": "ArrowRight",
+    "jump": "Space",
+    "attack": "KeyJ",
+    "interact": "KeyY",
+    "switch": "KeyK",
+    "useDiamond": "KeyZ"
+}

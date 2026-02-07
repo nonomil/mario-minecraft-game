@@ -1,0 +1,16 @@
+{
+  "name": "android-app",
+  "version": "1.2.15",
+  "private": true,
+  "scripts": {
+    "sync-web": "node ../scripts/sync-web.js"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.3"
+  },
+  "dependencies": {
+    "@capacitor-community/text-to-speech": "^6.1.0",
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/core": "^7.4.3"
+  }
+}
