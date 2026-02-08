@@ -276,8 +276,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Lodestone.png",
-        "url": "https://minecraft.wiki/w/File:Lodestone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lodestone_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -402,8 +402,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Lodestone.png",
-        "url": "https://minecraft.wiki/w/File:Lodestone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lodestone_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -612,8 +612,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Basalt.png",
-        "url": "https://minecraft.wiki/w/File:Basalt.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/basalt_side.png",
+        "type": "Block Texture"
       }
     ]
   },

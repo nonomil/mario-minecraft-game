@@ -2,7 +2,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Air",
     "standardized": "Air",
-    "chinese": "Air",
+    "chinese": "空气",
     "phonetic": "/er/",
     "phrase": "fresh air",
     "phraseTranslation": "",
@@ -32,7 +32,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Granite",
     "standardized": "Granite",
-    "chinese": "Granite",
+    "chinese": "花岗岩",
     "imageURLs": [
       {
         "filename": "Granite.png",
@@ -44,7 +44,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Polished",
     "standardized": "Polished",
-    "chinese": "Polished",
+    "chinese": "磨制的",
     "imageURLs": [
       {
         "filename": "Polished.png",
@@ -56,7 +56,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Diorite",
     "standardized": "Diorite",
-    "chinese": "Diorite",
+    "chinese": "闪长岩",
     "imageURLs": [
       {
         "filename": "Diorite.png",
@@ -68,7 +68,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Andesite",
     "standardized": "Andesite",
-    "chinese": "Andesite",
+    "chinese": "安山岩",
     "imageURLs": [
       {
         "filename": "Andesite.png",
@@ -104,7 +104,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Coarse",
     "standardized": "Coarse",
-    "chinese": "Coarse",
+    "chinese": "砂土",
     "imageURLs": [
       {
         "filename": "Coarse.png",
@@ -116,7 +116,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Podzol",
     "standardized": "Podzol",
-    "chinese": "Podzol",
+    "chinese": "灰化土",
     "imageURLs": [
       {
         "filename": "Podzol.png",
@@ -140,7 +140,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Oak",
     "standardized": "Oak",
-    "chinese": "Oak",
+    "chinese": "橡木",
     "imageURLs": [
       {
         "filename": "Oak.png",
@@ -164,7 +164,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Plank",
     "standardized": "Plank",
-    "chinese": "Plank",
+    "chinese": "木板",
     "imageURLs": [
       {
         "filename": "Plank.png",
@@ -188,7 +188,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Spruce",
     "standardized": "Spruce",
-    "chinese": "Spruce",
+    "chinese": "云杉",
     "imageURLs": [
       {
         "filename": "Spruce.png",
@@ -200,7 +200,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Birch",
     "standardized": "Birch",
-    "chinese": "Birch",
+    "chinese": "白桦",
     "imageURLs": [
       {
         "filename": "Birch.png",
@@ -212,7 +212,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Jungle",
     "standardized": "Jungle",
-    "chinese": "Jungle",
+    "chinese": "丛林",
     "imageURLs": [
       {
         "filename": "Jungle.png",
@@ -224,7 +224,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Acacia",
     "standardized": "Acacia",
-    "chinese": "Acacia",
+    "chinese": "金合欢",
     "imageURLs": [
       {
         "filename": "Acacia.png",
@@ -236,7 +236,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Dark",
     "standardized": "Dark",
-    "chinese": "Dark",
+    "chinese": "深色",
     "imageURLs": [
       {
         "filename": "Dark.png",
@@ -248,7 +248,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sapling",
     "standardized": "Sapling",
-    "chinese": "Sapling",
+    "chinese": "树苗",
     "imageURLs": [
       {
         "filename": "Sapling.png",
@@ -272,7 +272,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Flowing",
     "standardized": "Flowing",
-    "chinese": "Flowing",
+    "chinese": "流动的",
     "imageURLs": [
       {
         "filename": "Flowing.png",
@@ -284,7 +284,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Water",
     "standardized": "Water",
-    "chinese": "Water",
+    "chinese": "水",
     "imageURLs": [
       {
         "filename": "Water.png",
@@ -296,7 +296,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Still",
     "standardized": "Still",
-    "chinese": "Still",
+    "chinese": "静止的",
     "imageURLs": [
       {
         "filename": "Still.png",
@@ -308,7 +308,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lava",
     "standardized": "Lava",
-    "chinese": "Lava",
+    "chinese": "熔岩",
     "imageURLs": [
       {
         "filename": "Lava.png",
@@ -332,7 +332,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Red",
     "standardized": "Red",
-    "chinese": "Red",
+    "chinese": "红色",
     "imageURLs": [
       {
         "filename": "Red.png",
@@ -368,7 +368,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ore",
     "standardized": "Ore",
-    "chinese": "Ore",
+    "chinese": "矿石",
     "imageURLs": [
       {
         "filename": "Ore.png",
@@ -404,7 +404,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "log",
     "standardized": "Log",
-    "chinese": "Log",
+    "chinese": "原木",
     "imageURLs": [
       {
         "filename": "Log.png",
@@ -416,7 +416,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Leaves",
     "standardized": "Leaves",
-    "chinese": "Leaves",
+    "chinese": "树叶",
     "imageURLs": [
       {
         "filename": "Leaves.png",
@@ -428,7 +428,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sponge",
     "standardized": "Sponge",
-    "chinese": "Sponge",
+    "chinese": "海绵",
     "imageURLs": [
       {
         "filename": "Sponge.png",
@@ -440,7 +440,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wet",
     "standardized": "Wet",
-    "chinese": "Wet",
+    "chinese": "湿的",
     "imageURLs": [
       {
         "filename": "Wet.png",
@@ -452,7 +452,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Glass",
     "standardized": "Glass",
-    "chinese": "Glass",
+    "chinese": "玻璃",
     "imageURLs": [
       {
         "filename": "Glass.png",
@@ -476,7 +476,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lazuli",
     "standardized": "Lazuli",
-    "chinese": "Lazuli",
+    "chinese": "青金石",
     "imageURLs": [
       {
         "filename": "Lazuli.png",
@@ -488,7 +488,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Block",
     "standardized": "Block",
-    "chinese": "Block",
+    "chinese": "方块",
     "imageURLs": [
       {
         "filename": "Block.png",
@@ -500,7 +500,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Dispenser",
     "standardized": "Dispenser",
-    "chinese": "Dispenser",
+    "chinese": "发射器",
     "imageURLs": [
       {
         "filename": "Dispenser.png",
@@ -512,7 +512,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sandstone",
     "standardized": "Sandstone",
-    "chinese": "Sandstone",
+    "chinese": "砂岩",
     "imageURLs": [
       {
         "filename": "Sandstone.png",
@@ -524,7 +524,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Chiseled",
     "standardized": "Chiseled",
-    "chinese": "Chiseled",
+    "chinese": "錾制的",
     "imageURLs": [
       {
         "filename": "Chiseled.png",
@@ -536,7 +536,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Smooth",
     "standardized": "Smooth",
-    "chinese": "Smooth",
+    "chinese": "平滑的",
     "imageURLs": [
       {
         "filename": "Smooth.png",
@@ -548,7 +548,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Note",
     "standardized": "Note",
-    "chinese": "Note",
+    "chinese": "音符",
     "imageURLs": [
       {
         "filename": "Note.png",
@@ -560,7 +560,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "noteblock",
     "standardized": "Note Block",
-    "chinese": "Note Block",
+    "chinese": "音符方块",
     "imageURLs": [
       {
         "filename": "Note_Block.png",
@@ -572,7 +572,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bed",
     "standardized": "Bed",
-    "chinese": "Bed",
+    "chinese": "床",
     "imageURLs": [
       {
         "filename": "Bed.png",
@@ -584,7 +584,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Powered",
     "standardized": "Powered",
-    "chinese": "Powered",
+    "chinese": "动力",
     "imageURLs": [
       {
         "filename": "Powered.png",
@@ -596,7 +596,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Rail",
     "standardized": "Rail",
-    "chinese": "Rail",
+    "chinese": "铁轨",
     "imageURLs": [
       {
         "filename": "Rail.png",
@@ -608,7 +608,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "golden",
     "standardized": "Golden",
-    "chinese": "Golden",
+    "chinese": "金",
     "imageURLs": [
       {
         "filename": "Golden.png",
@@ -620,7 +620,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Detector",
     "standardized": "Detector",
-    "chinese": "Detector",
+    "chinese": "探测",
     "imageURLs": [
       {
         "filename": "Detector.png",
@@ -632,7 +632,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sticky",
     "standardized": "Sticky",
-    "chinese": "Sticky",
+    "chinese": "粘性",
     "imageURLs": [
       {
         "filename": "Sticky.png",
@@ -644,7 +644,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Piston",
     "standardized": "Piston",
-    "chinese": "Piston",
+    "chinese": "活塞",
     "imageURLs": [
       {
         "filename": "Piston.png",
@@ -656,7 +656,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cobweb",
     "standardized": "Cobweb",
-    "chinese": "Cobweb",
+    "chinese": "蜘蛛网",
     "imageURLs": [
       {
         "filename": "Cobweb.png",
@@ -668,7 +668,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "web",
     "standardized": "Web",
-    "chinese": "Web",
+    "chinese": "网",
     "imageURLs": [
       {
         "filename": "Web.png",
@@ -680,7 +680,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Dead",
     "standardized": "Dead",
-    "chinese": "Dead",
+    "chinese": "枯萎的",
     "imageURLs": [
       {
         "filename": "Dead.png",
@@ -692,7 +692,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Shrub",
     "standardized": "Shrub",
-    "chinese": "Shrub",
+    "chinese": "灌木",
     "imageURLs": [
       {
         "filename": "Shrub.png",
@@ -704,7 +704,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "tallgrass",
     "standardized": "Tallgrass",
-    "chinese": "Tallgrass",
+    "chinese": "草",
     "imageURLs": [
       {
         "filename": "Tallgrass.png",
@@ -716,7 +716,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Fern",
     "standardized": "Fern",
-    "chinese": "Fern",
+    "chinese": "蕨",
     "imageURLs": [
       {
         "filename": "Fern.png",
@@ -728,7 +728,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bush",
     "standardized": "Bush",
-    "chinese": "Bush",
+    "chinese": "灌木丛",
     "imageURLs": [
       {
         "filename": "Bush.png",
@@ -740,7 +740,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Head",
     "standardized": "Head",
-    "chinese": "Head",
+    "chinese": "头",
     "imageURLs": [
       {
         "filename": "Head.png",
@@ -752,7 +752,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "White",
     "standardized": "White",
-    "chinese": "White",
+    "chinese": "白色",
     "imageURLs": [
       {
         "filename": "White.png",
@@ -764,7 +764,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wool",
     "standardized": "Wool",
-    "chinese": "Wool",
+    "chinese": "羊毛",
     "imageURLs": [
       {
         "filename": "Wool.png",
@@ -776,7 +776,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Orange",
     "standardized": "Orange",
-    "chinese": "Orange",
+    "chinese": "橙色",
     "imageURLs": [
       {
         "filename": "Orange.png",
@@ -788,7 +788,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Magenta",
     "standardized": "Magenta",
-    "chinese": "Magenta",
+    "chinese": "品红色",
     "imageURLs": [
       {
         "filename": "Magenta.png",
@@ -800,7 +800,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Light",
     "standardized": "Light",
-    "chinese": "Light",
+    "chinese": "淡",
     "imageURLs": [
       {
         "filename": "Light.png",
@@ -812,7 +812,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Blue",
     "standardized": "Blue",
-    "chinese": "Blue",
+    "chinese": "蓝色",
     "imageURLs": [
       {
         "filename": "Blue.png",
@@ -824,7 +824,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Yellow",
     "standardized": "Yellow",
-    "chinese": "Yellow",
+    "chinese": "黄色",
     "imageURLs": [
       {
         "filename": "Yellow.png",
@@ -836,7 +836,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lime",
     "standardized": "Lime",
-    "chinese": "Lime",
+    "chinese": "黄绿色",
     "imageURLs": [
       {
         "filename": "Lime.png",
@@ -848,7 +848,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pink",
     "standardized": "Pink",
-    "chinese": "Pink",
+    "chinese": "粉红色",
     "imageURLs": [
       {
         "filename": "Pink.png",
@@ -860,7 +860,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Gray",
     "standardized": "Gray",
-    "chinese": "Gray",
+    "chinese": "灰色",
     "imageURLs": [
       {
         "filename": "Gray.png",
@@ -872,7 +872,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cyan",
     "standardized": "Cyan",
-    "chinese": "Cyan",
+    "chinese": "青色",
     "imageURLs": [
       {
         "filename": "Cyan.png",
@@ -884,7 +884,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Purple",
     "standardized": "Purple",
-    "chinese": "Purple",
+    "chinese": "紫色",
     "imageURLs": [
       {
         "filename": "Purple.png",
@@ -896,7 +896,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Brown",
     "standardized": "Brown",
-    "chinese": "Brown",
+    "chinese": "棕色",
     "imageURLs": [
       {
         "filename": "Brown.png",
@@ -908,7 +908,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Green",
     "standardized": "Green",
-    "chinese": "Green",
+    "chinese": "绿色",
     "imageURLs": [
       {
         "filename": "Green.png",
@@ -920,7 +920,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Black",
     "standardized": "Black",
-    "chinese": "Black",
+    "chinese": "黑色",
     "imageURLs": [
       {
         "filename": "Black.png",
@@ -932,7 +932,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Dandelion",
     "standardized": "Dandelion",
-    "chinese": "Dandelion",
+    "chinese": "蒲公英",
     "imageURLs": [
       {
         "filename": "Dandelion.png",
@@ -944,7 +944,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "flower",
     "standardized": "Flower",
-    "chinese": "Flower",
+    "chinese": "花",
     "imageURLs": [
       {
         "filename": "Flower.png",
@@ -956,7 +956,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Poppy",
     "standardized": "Poppy",
-    "chinese": "Poppy",
+    "chinese": "虞美人",
     "imageURLs": [
       {
         "filename": "Poppy.png",
@@ -968,7 +968,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Orchid",
     "standardized": "Orchid",
-    "chinese": "Orchid",
+    "chinese": "兰花",
     "imageURLs": [
       {
         "filename": "Orchid.png",
@@ -980,7 +980,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Allium",
     "standardized": "Allium",
-    "chinese": "Allium",
+    "chinese": "绒球葱",
     "imageURLs": [
       {
         "filename": "Allium.png",
@@ -992,7 +992,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Azure",
     "standardized": "Azure",
-    "chinese": "Azure",
+    "chinese": "蓝色",
     "imageURLs": [
       {
         "filename": "Azure.png",
@@ -1004,7 +1004,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bluet",
     "standardized": "Blue T",
-    "chinese": "Blue T",
+    "chinese": "蓝色郁金香",
     "imageURLs": [
       {
         "filename": "Blue_T.png",
@@ -1016,7 +1016,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Tulip",
     "standardized": "Tulip",
-    "chinese": "Tulip",
+    "chinese": "郁金香",
     "imageURLs": [
       {
         "filename": "Tulip.png",
@@ -1028,7 +1028,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Oxeye",
     "standardized": "Oxeye",
-    "chinese": "Oxeye",
+    "chinese": "滨菊",
     "imageURLs": [
       {
         "filename": "Oxeye.png",
@@ -1040,7 +1040,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Daisy",
     "standardized": "Daisy",
-    "chinese": "Daisy",
+    "chinese": "雏菊",
     "imageURLs": [
       {
         "filename": "Daisy.png",
@@ -1052,7 +1052,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Mushroom",
     "standardized": "Mushroom",
-    "chinese": "Mushroom",
+    "chinese": "蘑菇",
     "imageURLs": [
       {
         "filename": "Mushroom.png",
@@ -1064,7 +1064,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Double",
     "standardized": "Double",
-    "chinese": "Double",
+    "chinese": "双层",
     "imageURLs": [
       {
         "filename": "Double.png",
@@ -1076,7 +1076,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Slab",
     "standardized": "Slab",
-    "chinese": "Slab",
+    "chinese": "台阶",
     "imageURLs": [
       {
         "filename": "Slab.png",
@@ -1088,7 +1088,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wooden",
     "standardized": "Wooden",
-    "chinese": "Wooden",
+    "chinese": "木质",
     "imageURLs": [
       {
         "filename": "Wooden.png",
@@ -1100,7 +1100,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Brick",
     "standardized": "Brick",
-    "chinese": "Brick",
+    "chinese": "砖",
     "imageURLs": [
       {
         "filename": "Brick.png",
@@ -1124,7 +1124,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Quartz",
     "standardized": "Quartz",
-    "chinese": "Quartz",
+    "chinese": "石英",
     "imageURLs": [
       {
         "filename": "Quartz.png",
@@ -1136,7 +1136,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bricks",
     "standardized": "Bricks",
-    "chinese": "Bricks",
+    "chinese": "砖块",
     "imageURLs": [
       {
         "filename": "Bricks.png",
@@ -1148,7 +1148,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "TNT",
     "standardized": "Tnt",
-    "chinese": "Tnt",
+    "chinese": "TNT",
     "imageURLs": [
       {
         "filename": "Tnt.png",
@@ -1160,7 +1160,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bookshelf",
     "standardized": "Bookshelf",
-    "chinese": "Bookshelf",
+    "chinese": "书架",
     "imageURLs": [
       {
         "filename": "Bookshelf.png",
@@ -1172,7 +1172,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Moss",
     "standardized": "Moss",
-    "chinese": "Moss",
+    "chinese": "苔藓",
     "imageURLs": [
       {
         "filename": "Moss.png",
@@ -1184,7 +1184,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mossy",
     "standardized": "Mossy",
-    "chinese": "Mossy",
+    "chinese": "苔藓",
     "imageURLs": [
       {
         "filename": "Mossy.png",
@@ -1196,7 +1196,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Obsidian",
     "standardized": "Obsidian",
-    "chinese": "Obsidian",
+    "chinese": "黑曜石",
     "imageURLs": [
       {
         "filename": "Obsidian.png",
@@ -1208,7 +1208,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Torch",
     "standardized": "Torch",
-    "chinese": "Torch",
+    "chinese": "火把",
     "imageURLs": [
       {
         "filename": "Torch.png",
@@ -1220,7 +1220,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Fire",
     "standardized": "Fire",
-    "chinese": "Fire",
+    "chinese": "火",
     "imageURLs": [
       {
         "filename": "Fire.png",
@@ -1232,7 +1232,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Monster",
     "standardized": "Monster",
-    "chinese": "Monster",
+    "chinese": "怪物",
     "imageURLs": [
       {
         "filename": "Monster.png",
@@ -1244,7 +1244,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Spawn",
     "standardized": "Spawn",
-    "chinese": "Spawn",
+    "chinese": "生成",
     "imageURLs": [
       {
         "filename": "Spawn.png",
@@ -1256,7 +1256,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mob",
     "standardized": "Mob",
-    "chinese": "Mob",
+    "chinese": "生物",
     "imageURLs": [
       {
         "filename": "Mob.png",
@@ -1268,7 +1268,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "spawner",
     "standardized": "Spawner",
-    "chinese": "Spawner",
+    "chinese": "刷怪笼",
     "imageURLs": [
       {
         "filename": "Spawner.png",
@@ -1280,7 +1280,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stairs",
     "standardized": "Stairs",
-    "chinese": "Stairs",
+    "chinese": "楼梯",
     "imageURLs": [
       {
         "filename": "Stairs.png",
@@ -1304,7 +1304,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Redstone",
     "standardized": "Red Stone",
-    "chinese": "Red Stone",
+    "chinese": "红色石头",
     "imageURLs": [
       {
         "filename": "Red_Stone.png",
@@ -1316,7 +1316,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wire",
     "standardized": "Wire",
-    "chinese": "Wire",
+    "chinese": "线",
     "imageURLs": [
       {
         "filename": "Wire.png",
@@ -1364,7 +1364,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wheat",
     "standardized": "Wheat",
-    "chinese": "Wheat",
+    "chinese": "小麦",
     "imageURLs": [
       {
         "filename": "Wheat.png",
@@ -1376,7 +1376,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Crops",
     "standardized": "Crops",
-    "chinese": "Crops",
+    "chinese": "作物",
     "imageURLs": [
       {
         "filename": "Crops.png",
@@ -1388,7 +1388,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Farmland",
     "standardized": "Farmland",
-    "chinese": "Farmland",
+    "chinese": "耕地",
     "imageURLs": [
       {
         "filename": "Farmland.png",
@@ -1412,7 +1412,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Burning",
     "standardized": "Burning",
-    "chinese": "Burning",
+    "chinese": "燃烧的",
     "imageURLs": [
       {
         "filename": "Burning.png",
@@ -1424,7 +1424,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lit",
     "standardized": "Lit",
-    "chinese": "Lit",
+    "chinese": "点燃的",
     "imageURLs": [
       {
         "filename": "Lit.png",
@@ -1436,7 +1436,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Standing",
     "standardized": "Standing",
-    "chinese": "Standing",
+    "chinese": "站立的",
     "imageURLs": [
       {
         "filename": "Standing.png",
@@ -1448,7 +1448,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sign",
     "standardized": "Sign",
-    "chinese": "Sign",
+    "chinese": "告示牌",
     "imageURLs": [
       {
         "filename": "Sign.png",
@@ -1460,7 +1460,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Door",
     "standardized": "Door",
-    "chinese": "Door",
+    "chinese": "门",
     "imageURLs": [
       {
         "filename": "Door.png",
@@ -1472,7 +1472,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ladder",
     "standardized": "Ladder",
-    "chinese": "Ladder",
+    "chinese": "梯子",
     "imageURLs": [
       {
         "filename": "Ladder.png",
@@ -1484,7 +1484,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wall-mounted",
     "standardized": "Wall-mounted",
-    "chinese": "Wall-mounted",
+    "chinese": "墙上的",
     "imageURLs": [
       {
         "filename": "Wall-mounted.png",
@@ -1496,7 +1496,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "wall",
     "standardized": "Wall",
-    "chinese": "Wall",
+    "chinese": "墙",
     "imageURLs": [
       {
         "filename": "Wall.png",
@@ -1508,7 +1508,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lever",
     "standardized": "Lever",
-    "chinese": "Lever",
+    "chinese": "拉杆",
     "imageURLs": [
       {
         "filename": "Lever.png",
@@ -1520,7 +1520,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pressure",
     "standardized": "Pressure",
-    "chinese": "Pressure",
+    "chinese": "压力板",
     "imageURLs": [
       {
         "filename": "Pressure.png",
@@ -1532,7 +1532,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Plate",
     "standardized": "Plate",
-    "chinese": "Plate",
+    "chinese": "板",
     "imageURLs": [
       {
         "filename": "Plate.png",
@@ -1544,7 +1544,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Glowing",
     "standardized": "Glowing",
-    "chinese": "Glowing",
+    "chinese": "发光的",
     "imageURLs": [
       {
         "filename": "Glowing.png",
@@ -1556,7 +1556,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "off",
     "standardized": "Off",
-    "chinese": "Off",
+    "chinese": "关闭",
     "imageURLs": [
       {
         "filename": "Off.png",
@@ -1568,7 +1568,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "unlit",
     "standardized": "Unlit",
-    "chinese": "Unlit",
+    "chinese": "未点燃",
     "imageURLs": [
       {
         "filename": "Unlit.png",
@@ -1580,7 +1580,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "on",
     "standardized": "On",
-    "chinese": "On",
+    "chinese": "开启",
     "imageURLs": [
       {
         "filename": "On.png",
@@ -1592,7 +1592,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Button",
     "standardized": "Button",
-    "chinese": "Button",
+    "chinese": "按钮",
     "imageURLs": [
       {
         "filename": "Button.png",
@@ -1604,7 +1604,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Snow",
     "standardized": "Snow",
-    "chinese": "Snow",
+    "chinese": "雪",
     "imageURLs": [
       {
         "filename": "Snow.png",
@@ -1616,7 +1616,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "layer",
     "standardized": "Layer",
-    "chinese": "Layer",
+    "chinese": "层",
     "imageURLs": [
       {
         "filename": "Layer.png",
@@ -1628,7 +1628,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ice",
     "standardized": "Ice",
-    "chinese": "Ice",
+    "chinese": "冰",
     "imageURLs": [
       {
         "filename": "Ice.png",
@@ -1640,7 +1640,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cactus",
     "standardized": "Cactus",
-    "chinese": "Cactus",
+    "chinese": "仙人掌",
     "imageURLs": [
       {
         "filename": "Cactus.png",
@@ -1652,7 +1652,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Clay",
     "standardized": "Clay",
-    "chinese": "Clay",
+    "chinese": "粘土",
     "imageURLs": [
       {
         "filename": "Clay.png",
@@ -1664,7 +1664,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sugar",
     "standardized": "Sugar",
-    "chinese": "Sugar",
+    "chinese": "甘蔗",
     "imageURLs": [
       {
         "filename": "Sugar.png",
@@ -1676,7 +1676,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Canes",
     "standardized": "Canes",
-    "chinese": "Canes",
+    "chinese": "甘蔗",
     "imageURLs": [
       {
         "filename": "Canes.png",
@@ -1688,7 +1688,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "reeds",
     "standardized": "Reeds",
-    "chinese": "Reeds",
+    "chinese": "芦苇",
     "imageURLs": [
       {
         "filename": "Reeds.png",
@@ -1700,7 +1700,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Jukebox",
     "standardized": "Jukebox",
-    "chinese": "Jukebox",
+    "chinese": "唱片机",
     "imageURLs": [
       {
         "filename": "Jukebox.png",
@@ -1712,7 +1712,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Fence",
     "standardized": "Fence",
-    "chinese": "Fence",
+    "chinese": "栅栏",
     "imageURLs": [
       {
         "filename": "Fence.png",
@@ -1724,7 +1724,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pumpkin",
     "standardized": "Pumpkin",
-    "chinese": "Pumpkin",
+    "chinese": "南瓜",
     "imageURLs": [
       {
         "filename": "Pumpkin.png",
@@ -1736,7 +1736,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Netherrack",
     "standardized": "Nether Rack",
-    "chinese": "Nether Rack",
+    "chinese": "下界岩",
     "imageURLs": [
       {
         "filename": "Nether_Rack.png",
@@ -1748,7 +1748,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Soul",
     "standardized": "Soul",
-    "chinese": "Soul",
+    "chinese": "灵魂",
     "imageURLs": [
       {
         "filename": "Soul.png",
@@ -1760,7 +1760,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Glowstone",
     "standardized": "Glowstone",
-    "chinese": "Glowstone",
+    "chinese": "荧石",
     "imageURLs": [
       {
         "filename": "Glowstone.png",
@@ -1772,7 +1772,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Glow",
     "standardized": "Glow",
-    "chinese": "Glow",
+    "chinese": "发光",
     "imageURLs": [
       {
         "filename": "Glow.png",
@@ -1784,7 +1784,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Portal",
     "standardized": "Portal",
-    "chinese": "Portal",
+    "chinese": "传送门",
     "imageURLs": [
       {
         "filename": "Portal.png",
@@ -1796,7 +1796,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Jack",
     "standardized": "Jack",
-    "chinese": "Jack",
+    "chinese": "南瓜灯",
     "imageURLs": [
       {
         "filename": "Jack.png",
@@ -1808,7 +1808,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lantern",
     "standardized": "Lantern",
-    "chinese": "Lantern",
+    "chinese": "灯笼",
     "imageURLs": [
       {
         "filename": "Lantern.png",
@@ -1820,7 +1820,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cake",
     "standardized": "Cake",
-    "chinese": "Cake",
+    "chinese": "蛋糕",
     "imageURLs": [
       {
         "filename": "Cake.png",
@@ -1832,7 +1832,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Repeater",
     "standardized": "Repeater",
-    "chinese": "Repeater",
+    "chinese": "中继器",
     "imageURLs": [
       {
         "filename": "Repeater.png",
@@ -1844,7 +1844,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "unpowered",
     "standardized": "Unpowered",
-    "chinese": "Unpowered",
+    "chinese": "无动力",
     "imageURLs": [
       {
         "filename": "Unpowered.png",
@@ -1856,7 +1856,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stained",
     "standardized": "Stained",
-    "chinese": "Stained",
+    "chinese": "染色的",
     "imageURLs": [
       {
         "filename": "Stained.png",
@@ -1868,7 +1868,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Trapdoor",
     "standardized": "Trap Door",
-    "chinese": "Trap Door",
+    "chinese": "活板门",
     "imageURLs": [
       {
         "filename": "Trap_Door.png",
@@ -1880,7 +1880,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Egg",
     "standardized": "Egg",
-    "chinese": "Egg",
+    "chinese": "蛋",
     "imageURLs": [
       {
         "filename": "Egg.png",
@@ -1892,7 +1892,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cracked",
     "standardized": "Cracked",
-    "chinese": "Cracked",
+    "chinese": "裂纹的",
     "imageURLs": [
       {
         "filename": "Cracked.png",
@@ -1904,7 +1904,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonebrick",
     "standardized": "Stone Brick",
-    "chinese": "Stone Brick",
+    "chinese": "石砖",
     "imageURLs": [
       {
         "filename": "Stone_Brick.png",
@@ -1916,7 +1916,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bars",
     "standardized": "Bars",
-    "chinese": "Bars",
+    "chinese": "栏杆",
     "imageURLs": [
       {
         "filename": "Bars.png",
@@ -1928,7 +1928,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pane",
     "standardized": "Pane",
-    "chinese": "Pane",
+    "chinese": "板",
     "imageURLs": [
       {
         "filename": "Pane.png",
@@ -1940,7 +1940,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Melon",
     "standardized": "Melon",
-    "chinese": "Melon",
+    "chinese": "西瓜",
     "imageURLs": [
       {
         "filename": "Melon.png",
@@ -1952,7 +1952,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stem",
     "standardized": "Stem",
-    "chinese": "Stem",
+    "chinese": "茎",
     "imageURLs": [
       {
         "filename": "Stem.png",
@@ -1964,7 +1964,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Vines",
     "standardized": "Vines",
-    "chinese": "Vines",
+    "chinese": "藤蔓",
     "imageURLs": [
       {
         "filename": "Vines.png",
@@ -1976,7 +1976,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "vine",
     "standardized": "Vine",
-    "chinese": "Vine",
+    "chinese": "藤蔓",
     "imageURLs": [
       {
         "filename": "Vine.png",
@@ -1988,7 +1988,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Gate",
     "standardized": "Gate",
-    "chinese": "Gate",
+    "chinese": "门",
     "imageURLs": [
       {
         "filename": "Gate.png",
@@ -2000,7 +2000,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Mycelium",
     "standardized": "Mycelium",
-    "chinese": "Mycelium",
+    "chinese": "菌丝",
     "imageURLs": [
       {
         "filename": "Mycelium.png",
@@ -2012,7 +2012,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lily",
     "standardized": "Lily",
-    "chinese": "Lily",
+    "chinese": "睡莲",
     "imageURLs": [
       {
         "filename": "Lily.png",
@@ -2024,7 +2024,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pad",
     "standardized": "Pad",
-    "chinese": "Pad",
+    "chinese": "荷叶",
     "imageURLs": [
       {
         "filename": "Pad.png",
@@ -2036,7 +2036,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "waterlily",
     "standardized": "Waterlily",
-    "chinese": "Waterlily",
+    "chinese": "睡莲",
     "imageURLs": [
       {
         "filename": "Waterlily.png",
@@ -2048,7 +2048,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wart",
     "standardized": "Wart",
-    "chinese": "Wart",
+    "chinese": "疣",
     "imageURLs": [
       {
         "filename": "Wart.png",
@@ -2060,7 +2060,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Enchantment",
     "standardized": "Enchantment",
-    "chinese": "Enchantment",
+    "chinese": "附魔",
     "imageURLs": [
       {
         "filename": "Enchantment.png",
@@ -2072,7 +2072,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "enchanting",
     "standardized": "Enchanting",
-    "chinese": "Enchanting",
+    "chinese": "附魔",
     "imageURLs": [
       {
         "filename": "Enchanting.png",
@@ -2084,7 +2084,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Brewing",
     "standardized": "Brewing",
-    "chinese": "Brewing",
+    "chinese": "酿造",
     "imageURLs": [
       {
         "filename": "Brewing.png",
@@ -2096,7 +2096,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stand",
     "standardized": "Stand",
-    "chinese": "Stand",
+    "chinese": "台",
     "imageURLs": [
       {
         "filename": "Stand.png",
@@ -2108,7 +2108,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cauldron",
     "standardized": "Cauldron",
-    "chinese": "Cauldron",
+    "chinese": "炼药锅",
     "imageURLs": [
       {
         "filename": "Cauldron.png",
@@ -2132,7 +2132,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Frame",
     "standardized": "Frame",
-    "chinese": "Frame",
+    "chinese": "框",
     "imageURLs": [
       {
         "filename": "Frame.png",
@@ -2144,7 +2144,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Dragon",
     "standardized": "Dragon",
-    "chinese": "Dragon",
+    "chinese": "龙",
     "imageURLs": [
       {
         "filename": "Dragon.png",
@@ -2156,7 +2156,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lamp",
     "standardized": "Lamp",
-    "chinese": "Lamp",
+    "chinese": "灯",
     "imageURLs": [
       {
         "filename": "Lamp.png",
@@ -2168,7 +2168,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "inactive",
     "standardized": "Inactive",
-    "chinese": "Inactive",
+    "chinese": "未激活",
     "imageURLs": [
       {
         "filename": "Inactive.png",
@@ -2180,7 +2180,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "active",
     "standardized": "Active",
-    "chinese": "Active",
+    "chinese": "激活的",
     "imageURLs": [
       {
         "filename": "Active.png",
@@ -2192,7 +2192,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cocoa",
     "standardized": "Cocoa",
-    "chinese": "Cocoa",
+    "chinese": "可可豆",
     "imageURLs": [
       {
         "filename": "Cocoa.png",
@@ -2204,7 +2204,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Emerald",
     "standardized": "Emerald",
-    "chinese": "Emerald",
+    "chinese": "绿宝石",
     "imageURLs": [
       {
         "filename": "Emerald.png",
@@ -2216,7 +2216,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ender",
     "standardized": "Ender",
-    "chinese": "Ender",
+    "chinese": "末影",
     "imageURLs": [
       {
         "filename": "Ender.png",
@@ -2228,7 +2228,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Tripwire",
     "standardized": "Tripwire",
-    "chinese": "Tripwire",
+    "chinese": "绊线",
     "imageURLs": [
       {
         "filename": "Tripwire.png",
@@ -2240,7 +2240,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Hook",
     "standardized": "Hook",
-    "chinese": "Hook",
+    "chinese": "钩",
     "imageURLs": [
       {
         "filename": "Hook.png",
@@ -2252,7 +2252,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Command",
     "standardized": "Command",
-    "chinese": "Command",
+    "chinese": "命令",
     "imageURLs": [
       {
         "filename": "Command.png",
@@ -2264,7 +2264,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Beacon",
     "standardized": "Beacon",
-    "chinese": "Beacon",
+    "chinese": "信标",
     "imageURLs": [
       {
         "filename": "Beacon.png",
@@ -2276,7 +2276,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pot",
     "standardized": "Pot",
-    "chinese": "Pot",
+    "chinese": "盆",
     "imageURLs": [
       {
         "filename": "Pot.png",
@@ -2288,7 +2288,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Carrots",
     "standardized": "Carrots",
-    "chinese": "Carrots",
+    "chinese": "胡萝卜",
     "imageURLs": [
       {
         "filename": "Carrots.png",
@@ -2300,7 +2300,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Potatoes",
     "standardized": "Potatoes",
-    "chinese": "Potatoes",
+    "chinese": "马铃薯",
     "imageURLs": [
       {
         "filename": "Potatoes.png",
@@ -2312,7 +2312,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "skull",
     "standardized": "Skull",
-    "chinese": "Skull",
+    "chinese": "头颅",
     "imageURLs": [
       {
         "filename": "Skull.png",
@@ -2324,7 +2324,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Anvil",
     "standardized": "Anvil",
-    "chinese": "Anvil",
+    "chinese": "铁砧",
     "imageURLs": [
       {
         "filename": "Anvil.png",
@@ -2336,7 +2336,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Trapped",
     "standardized": "Trapped",
-    "chinese": "Trapped",
+    "chinese": "陷阱",
     "imageURLs": [
       {
         "filename": "Trapped.png",
@@ -2348,7 +2348,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Weighted",
     "standardized": "Weighted",
-    "chinese": "Weighted",
+    "chinese": "测重",
     "imageURLs": [
       {
         "filename": "Weighted.png",
@@ -2360,7 +2360,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "heavy",
     "standardized": "Heavy",
-    "chinese": "Heavy",
+    "chinese": "重质",
     "imageURLs": [
       {
         "filename": "Heavy.png",
@@ -2372,7 +2372,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Comparator",
     "standardized": "Comparator",
-    "chinese": "Comparator",
+    "chinese": "比较器",
     "imageURLs": [
       {
         "filename": "Comparator.png",
@@ -2384,7 +2384,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Daylight",
     "standardized": "Daylight",
-    "chinese": "Daylight",
+    "chinese": "阳光",
     "imageURLs": [
       {
         "filename": "Daylight.png",
@@ -2396,7 +2396,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sensor",
     "standardized": "Sensor",
-    "chinese": "Sensor",
+    "chinese": "传感器",
     "imageURLs": [
       {
         "filename": "Sensor.png",
@@ -2408,7 +2408,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Hopper",
     "standardized": "Hopper",
-    "chinese": "Hopper",
+    "chinese": "漏斗",
     "imageURLs": [
       {
         "filename": "Hopper.png",
@@ -2420,7 +2420,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pillar",
     "standardized": "Pillar",
-    "chinese": "Pillar",
+    "chinese": "柱",
     "imageURLs": [
       {
         "filename": "Pillar.png",
@@ -2432,7 +2432,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Activator",
     "standardized": "Activator",
-    "chinese": "Activator",
+    "chinese": "激活",
     "imageURLs": [
       {
         "filename": "Activator.png",
@@ -2444,7 +2444,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Dropper",
     "standardized": "Dropper",
-    "chinese": "Dropper",
+    "chinese": "投掷器",
     "imageURLs": [
       {
         "filename": "Dropper.png",
@@ -2456,7 +2456,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Hardened",
     "standardized": "Hardened",
-    "chinese": "Hardened",
+    "chinese": "硬化",
     "imageURLs": [
       {
         "filename": "Hardened.png",
@@ -2468,7 +2468,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Slime",
     "standardized": "Slime",
-    "chinese": "Slime",
+    "chinese": "史莱姆",
     "imageURLs": [
       {
         "filename": "Slime.png",
@@ -2480,7 +2480,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Barrier",
     "standardized": "Barrier",
-    "chinese": "Barrier",
+    "chinese": "屏障",
     "imageURLs": [
       {
         "filename": "Barrier.png",
@@ -2492,7 +2492,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pris",
     "standardized": "Pris",
-    "chinese": "Pris",
+    "chinese": "海晶",
     "imageURLs": [
       {
         "filename": "Pris.png",
@@ -2504,7 +2504,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "marine",
     "standardized": "Marine",
-    "chinese": "Marine",
+    "chinese": "石",
     "imageURLs": [
       {
         "filename": "Marine.png",
@@ -2516,7 +2516,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "prismarine",
     "standardized": "Prismarine",
-    "chinese": "Prismarine",
+    "chinese": "海晶",
     "imageURLs": [
       {
         "filename": "Prismarine.png",
@@ -2528,7 +2528,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sea",
     "standardized": "Sea",
-    "chinese": "Sea",
+    "chinese": "海",
     "imageURLs": [
       {
         "filename": "Sea.png",
@@ -2540,7 +2540,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Hay",
     "standardized": "Hay",
-    "chinese": "Hay",
+    "chinese": "干草",
     "imageURLs": [
       {
         "filename": "Hay.png",
@@ -2552,7 +2552,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bale",
     "standardized": "Bale",
-    "chinese": "Bale",
+    "chinese": "捆",
     "imageURLs": [
       {
         "filename": "Bale.png",
@@ -2564,7 +2564,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Carpet",
     "standardized": "Carpet",
-    "chinese": "Carpet",
+    "chinese": "地毯",
     "imageURLs": [
       {
         "filename": "Carpet.png",
@@ -2588,7 +2588,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Packed",
     "standardized": "Packed",
-    "chinese": "Packed",
+    "chinese": "浮冰",
     "imageURLs": [
       {
         "filename": "Packed.png",
@@ -2600,7 +2600,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sunflower",
     "standardized": "Sunflower",
-    "chinese": "Sunflower",
+    "chinese": "向日葵",
     "imageURLs": [
       {
         "filename": "Sunflower.png",
@@ -2612,7 +2612,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "plant",
     "standardized": "Plant",
-    "chinese": "Plant",
+    "chinese": "植物",
     "imageURLs": [
       {
         "filename": "Plant.png",
@@ -2624,7 +2624,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lilac",
     "standardized": "Lilac",
-    "chinese": "Lilac",
+    "chinese": "丁香",
     "imageURLs": [
       {
         "filename": "Lilac.png",
@@ -2636,7 +2636,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Large",
     "standardized": "Large",
-    "chinese": "Large",
+    "chinese": "大型",
     "imageURLs": [
       {
         "filename": "Large.png",
@@ -2648,7 +2648,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Rose",
     "standardized": "Rose",
-    "chinese": "Rose",
+    "chinese": "玫瑰",
     "imageURLs": [
       {
         "filename": "Rose.png",
@@ -2660,7 +2660,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Peony",
     "standardized": "Peony",
-    "chinese": "Peony",
+    "chinese": "牡丹",
     "imageURLs": [
       {
         "filename": "Peony.png",
@@ -2672,7 +2672,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Free-standing",
     "standardized": "Free-standing",
-    "chinese": "Free-standing",
+    "chinese": "独立的",
     "imageURLs": [
       {
         "filename": "Free-standing.png",
@@ -2684,7 +2684,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Banner",
     "standardized": "Banner",
-    "chinese": "Banner",
+    "chinese": "旗帜",
     "imageURLs": [
       {
         "filename": "Banner.png",
@@ -2696,7 +2696,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Inverted",
     "standardized": "Inverted",
-    "chinese": "Inverted",
+    "chinese": "反向的",
     "imageURLs": [
       {
         "filename": "Inverted.png",
@@ -2708,7 +2708,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Rod",
     "standardized": "Rod",
-    "chinese": "Rod",
+    "chinese": "竿",
     "imageURLs": [
       {
         "filename": "Rod.png",
@@ -2720,7 +2720,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Chorus",
     "standardized": "Chorus",
-    "chinese": "Chorus",
+    "chinese": "紫颂",
     "imageURLs": [
       {
         "filename": "Chorus.png",
@@ -2732,7 +2732,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Purpur",
     "standardized": "Purpur",
-    "chinese": "Purpur",
+    "chinese": "紫珀",
     "imageURLs": [
       {
         "filename": "Purpur.png",
@@ -2744,7 +2744,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Beetroot",
     "standardized": "Beetroot",
-    "chinese": "Beetroot",
+    "chinese": "甜菜根",
     "imageURLs": [
       {
         "filename": "Beetroot.png",
@@ -2756,7 +2756,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "beetroots",
     "standardized": "Beetroots",
-    "chinese": "Beetroots",
+    "chinese": "甜菜根",
     "imageURLs": [
       {
         "filename": "Beetroots.png",
@@ -2768,7 +2768,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Path",
     "standardized": "Path",
-    "chinese": "Path",
+    "chinese": "小径",
     "imageURLs": [
       {
         "filename": "Path.png",
@@ -2780,7 +2780,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Gateway",
     "standardized": "Gateway",
-    "chinese": "Gateway",
+    "chinese": "折跃门",
     "imageURLs": [
       {
         "filename": "Gateway.png",
@@ -2792,7 +2792,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Repeating",
     "standardized": "Repeating",
-    "chinese": "Repeating",
+    "chinese": "循环型",
     "imageURLs": [
       {
         "filename": "Repeating.png",
@@ -2804,7 +2804,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Chain",
     "standardized": "Chain",
-    "chinese": "Chain",
+    "chinese": "锁链",
     "imageURLs": [
       {
         "filename": "Chain.png",
@@ -2816,7 +2816,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Frosted",
     "standardized": "Frosted",
-    "chinese": "Frosted",
+    "chinese": "霜冰",
     "imageURLs": [
       {
         "filename": "Frosted.png",
@@ -2828,7 +2828,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Magma",
     "standardized": "Magma",
-    "chinese": "Magma",
+    "chinese": "岩浆",
     "imageURLs": [
       {
         "filename": "Magma.png",
@@ -2840,7 +2840,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bone",
     "standardized": "Bone",
-    "chinese": "Bone",
+    "chinese": "骨头",
     "imageURLs": [
       {
         "filename": "Bone.png",
@@ -2852,7 +2852,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Structure",
     "standardized": "Structure",
-    "chinese": "Structure",
+    "chinese": "结构",
     "imageURLs": [
       {
         "filename": "Structure.png",
@@ -2864,7 +2864,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Void",
     "standardized": "Void",
-    "chinese": "Void",
+    "chinese": "虚空",
     "imageURLs": [
       {
         "filename": "Void.png",
@@ -2876,7 +2876,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Observer",
     "standardized": "Observer",
-    "chinese": "Observer",
+    "chinese": "侦测器",
     "imageURLs": [
       {
         "filename": "Observer.png",
@@ -2888,7 +2888,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Shulker",
     "standardized": "Shulker",
-    "chinese": "Shulker",
+    "chinese": "潜影",
     "imageURLs": [
       {
         "filename": "Shulker.png",
@@ -2900,7 +2900,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Box",
     "standardized": "Box",
-    "chinese": "Box",
+    "chinese": "盒",
     "imageURLs": [
       {
         "filename": "Box.png",
@@ -2912,7 +2912,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "silver",
     "standardized": "Silver",
-    "chinese": "Silver",
+    "chinese": "银",
     "imageURLs": [
       {
         "filename": "Silver.png",
@@ -2924,7 +2924,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Glazed",
     "standardized": "Glazed",
-    "chinese": "Glazed",
+    "chinese": "带釉的",
     "imageURLs": [
       {
         "filename": "Glazed.png",
@@ -2936,7 +2936,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Terracotta",
     "standardized": "Terracotta",
-    "chinese": "Terracotta",
+    "chinese": "陶瓦",
     "imageURLs": [
       {
         "filename": "Terracotta.png",
@@ -2948,7 +2948,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Concrete",
     "standardized": "Concrete",
-    "chinese": "Concrete",
+    "chinese": "混凝土",
     "imageURLs": [
       {
         "filename": "Concrete.png",
@@ -2960,7 +2960,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Powder",
     "standardized": "Powder",
-    "chinese": "Powder",
+    "chinese": "粉",
     "imageURLs": [
       {
         "filename": "Powder.png",
@@ -2984,7 +2984,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pickaxe",
     "standardized": "Pick Axe",
-    "chinese": "Pick Axe",
+    "chinese": "pick斧",
     "imageURLs": [
       {
         "filename": "Pick_Axe.png",
@@ -3008,7 +3008,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Flint",
     "standardized": "Flint",
-    "chinese": "Flint",
+    "chinese": "打火石",
     "imageURLs": [
       {
         "filename": "Flint.png",
@@ -3032,7 +3032,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Steel",
     "standardized": "Steel",
-    "chinese": "Steel",
+    "chinese": "钢",
     "imageURLs": [
       {
         "filename": "Steel.png",
@@ -3044,7 +3044,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Apple",
     "standardized": "Apple",
-    "chinese": "Apple",
+    "chinese": "苹果",
     "imageURLs": [
       {
         "filename": "Apple.png",
@@ -3080,7 +3080,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Charcoal",
     "standardized": "Charcoal",
-    "chinese": "Charcoal",
+    "chinese": "木炭",
     "imageURLs": [
       {
         "filename": "Charcoal.png",
@@ -3092,7 +3092,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ingot",
     "standardized": "Ingot",
-    "chinese": "Ingot",
+    "chinese": "锭",
     "imageURLs": [
       {
         "filename": "Ingot.png",
@@ -3116,7 +3116,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stick",
     "standardized": "Stick",
-    "chinese": "Stick",
+    "chinese": "钓竿",
     "imageURLs": [
       {
         "filename": "Stick.png",
@@ -3128,7 +3128,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bowl",
     "standardized": "Bowl",
-    "chinese": "Bowl",
+    "chinese": "碗",
     "imageURLs": [
       {
         "filename": "Bowl.png",
@@ -3140,7 +3140,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stew",
     "standardized": "Stew",
-    "chinese": "Stew",
+    "chinese": "煲",
     "imageURLs": [
       {
         "filename": "Stew.png",
@@ -3152,7 +3152,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "String",
     "standardized": "String",
-    "chinese": "String",
+    "chinese": "线",
     "imageURLs": [
       {
         "filename": "String.png",
@@ -3164,7 +3164,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Feather",
     "standardized": "Feather",
-    "chinese": "Feather",
+    "chinese": "摔落",
     "imageURLs": [
       {
         "filename": "Feather.png",
@@ -3176,7 +3176,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Gunpowder",
     "standardized": "Gunpowder",
-    "chinese": "Gunpowder",
+    "chinese": "火药",
     "imageURLs": [
       {
         "filename": "Gunpowder.png",
@@ -3200,7 +3200,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Seeds",
     "standardized": "Seeds",
-    "chinese": "Seeds",
+    "chinese": "种子",
     "imageURLs": [
       {
         "filename": "Seeds.png",
@@ -3212,7 +3212,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bread",
     "standardized": "Bread",
-    "chinese": "Bread",
+    "chinese": "面包",
     "imageURLs": [
       {
         "filename": "Bread.png",
@@ -3224,7 +3224,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Leather",
     "standardized": "Leather",
-    "chinese": "Leather",
+    "chinese": "皮革",
     "imageURLs": [
       {
         "filename": "Leather.png",
@@ -3236,7 +3236,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Helmet",
     "standardized": "Helmet",
-    "chinese": "Helmet",
+    "chinese": "头盔",
     "imageURLs": [
       {
         "filename": "Helmet.png",
@@ -3248,7 +3248,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Tunic",
     "standardized": "Tunic",
-    "chinese": "Tunic",
+    "chinese": "外套",
     "imageURLs": [
       {
         "filename": "Tunic.png",
@@ -3260,7 +3260,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chestplate",
     "standardized": "Chest Plate",
-    "chinese": "Chest Plate",
+    "chinese": "箱子板",
     "imageURLs": [
       {
         "filename": "Chest_Plate.png",
@@ -3272,7 +3272,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pants",
     "standardized": "Pants",
-    "chinese": "Pants",
+    "chinese": "裤子",
     "imageURLs": [
       {
         "filename": "Pants.png",
@@ -3284,7 +3284,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "leggings",
     "standardized": "Leggings",
-    "chinese": "Leggings",
+    "chinese": "护腿",
     "imageURLs": [
       {
         "filename": "Leggings.png",
@@ -3296,7 +3296,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Boots",
     "standardized": "Boots",
-    "chinese": "Boots",
+    "chinese": "靴子",
     "imageURLs": [
       {
         "filename": "Boots.png",
@@ -3308,7 +3308,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Chainmail",
     "standardized": "Chainmail",
-    "chinese": "Chainmail",
+    "chinese": "锁链",
     "imageURLs": [
       {
         "filename": "Chainmail.png",
@@ -3320,7 +3320,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Raw",
     "standardized": "Raw",
-    "chinese": "Raw",
+    "chinese": "生的",
     "imageURLs": [
       {
         "filename": "Raw.png",
@@ -3332,7 +3332,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Porkchop",
     "standardized": "Porkchop",
-    "chinese": "Porkchop",
+    "chinese": "猪排",
     "imageURLs": [
       {
         "filename": "Porkchop.png",
@@ -3344,7 +3344,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cooked",
     "standardized": "Cooked",
-    "chinese": "Cooked",
+    "chinese": "熟的",
     "imageURLs": [
       {
         "filename": "Cooked.png",
@@ -3356,7 +3356,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Painting",
     "standardized": "Painting",
-    "chinese": "Painting",
+    "chinese": "画",
     "imageURLs": [
       {
         "filename": "Painting.png",
@@ -3368,7 +3368,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Enchanted",
     "standardized": "Enchanted",
-    "chinese": "Enchanted",
+    "chinese": "附魔的",
     "imageURLs": [
       {
         "filename": "Enchanted.png",
@@ -3380,7 +3380,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bucket",
     "standardized": "Bucket",
-    "chinese": "Bucket",
+    "chinese": "桶",
     "imageURLs": [
       {
         "filename": "Bucket.png",
@@ -3392,7 +3392,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Minecart",
     "standardized": "Minecart",
-    "chinese": "Minecart",
+    "chinese": "矿车",
     "imageURLs": [
       {
         "filename": "Minecart.png",
@@ -3404,7 +3404,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Saddle",
     "standardized": "Saddle",
-    "chinese": "Saddle",
+    "chinese": "鞍",
     "imageURLs": [
       {
         "filename": "Saddle.png",
@@ -3416,7 +3416,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Snowball",
     "standardized": "Snowball",
-    "chinese": "Snowball",
+    "chinese": "雪球",
     "imageURLs": [
       {
         "filename": "Snowball.png",
@@ -3428,7 +3428,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Boat",
     "standardized": "Boat",
-    "chinese": "Boat",
+    "chinese": "船",
     "imageURLs": [
       {
         "filename": "Boat.png",
@@ -3440,7 +3440,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Milk",
     "standardized": "Milk",
-    "chinese": "Milk",
+    "chinese": "牛奶",
     "imageURLs": [
       {
         "filename": "Milk.png",
@@ -3452,7 +3452,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ball",
     "standardized": "Ball",
-    "chinese": "Ball",
+    "chinese": "球",
     "imageURLs": [
       {
         "filename": "Ball.png",
@@ -3464,7 +3464,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Paper",
     "standardized": "Paper",
-    "chinese": "Paper",
+    "chinese": "纸",
     "imageURLs": [
       {
         "filename": "Paper.png",
@@ -3476,7 +3476,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Book",
     "standardized": "Book",
-    "chinese": "Book",
+    "chinese": "书",
     "imageURLs": [
       {
         "filename": "Book.png",
@@ -3488,7 +3488,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Slimeball",
     "standardized": "Slimeball",
-    "chinese": "Slimeball",
+    "chinese": "粘液球",
     "imageURLs": [
       {
         "filename": "Slimeball.png",
@@ -3512,7 +3512,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Compass",
     "standardized": "Compass",
-    "chinese": "Compass",
+    "chinese": "指南针",
     "imageURLs": [
       {
         "filename": "Compass.png",
@@ -3524,7 +3524,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Fishing",
     "standardized": "Fishing",
-    "chinese": "Fishing",
+    "chinese": "钓鱼",
     "imageURLs": [
       {
         "filename": "Fishing.png",
@@ -3536,7 +3536,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Clock",
     "standardized": "Clock",
-    "chinese": "Clock",
+    "chinese": "钟",
     "imageURLs": [
       {
         "filename": "Clock.png",
@@ -3548,7 +3548,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Dust",
     "standardized": "Dust",
-    "chinese": "Dust",
+    "chinese": "粉",
     "imageURLs": [
       {
         "filename": "Dust.png",
@@ -3560,7 +3560,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Fish",
     "standardized": "Fish",
-    "chinese": "Fish",
+    "chinese": "鱼",
     "imageURLs": [
       {
         "filename": "Fish.png",
@@ -3572,7 +3572,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Salmon",
     "standardized": "Salmon",
-    "chinese": "Salmon",
+    "chinese": "鲑鱼",
     "imageURLs": [
       {
         "filename": "Salmon.png",
@@ -3584,7 +3584,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Clownfish",
     "standardized": "Clownfish",
-    "chinese": "Clownfish",
+    "chinese": "小丑鱼",
     "imageURLs": [
       {
         "filename": "Clownfish.png",
@@ -3596,7 +3596,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pufferfish",
     "standardized": "Pufferfish",
-    "chinese": "Pufferfish",
+    "chinese": "河豚",
     "imageURLs": [
       {
         "filename": "Pufferfish.png",
@@ -3608,7 +3608,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ink",
     "standardized": "Ink",
-    "chinese": "Ink",
+    "chinese": "墨囊",
     "imageURLs": [
       {
         "filename": "Ink.png",
@@ -3620,7 +3620,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Sack",
     "standardized": "Sack",
-    "chinese": "Sack",
+    "chinese": "囊",
     "imageURLs": [
       {
         "filename": "Sack.png",
@@ -3632,7 +3632,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "dye",
     "standardized": " Dye",
-    "chinese": " Dye",
+    "chinese": "染料",
     "imageURLs": [
       {
         "filename": "_Dye.png",
@@ -3644,7 +3644,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Coco",
     "standardized": "Coco",
-    "chinese": "Coco",
+    "chinese": "可可",
     "imageURLs": [
       {
         "filename": "Coco.png",
@@ -3656,7 +3656,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Beans",
     "standardized": "Beans",
-    "chinese": "Beans",
+    "chinese": "豆",
     "imageURLs": [
       {
         "filename": "Beans.png",
@@ -3668,7 +3668,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Meal",
     "standardized": "Meal",
-    "chinese": "Meal",
+    "chinese": "粉",
     "imageURLs": [
       {
         "filename": "Meal.png",
@@ -3680,7 +3680,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cookie",
     "standardized": "Cookie",
-    "chinese": "Cookie",
+    "chinese": "曲奇",
     "imageURLs": [
       {
         "filename": "Cookie.png",
@@ -3692,7 +3692,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Map",
     "standardized": "Map",
-    "chinese": "Map",
+    "chinese": "地图",
     "imageURLs": [
       {
         "filename": "Map.png",
@@ -3704,7 +3704,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "filled",
     "standardized": "Filled",
-    "chinese": "Filled",
+    "chinese": "填充的",
     "imageURLs": [
       {
         "filename": "Filled.png",
@@ -3716,7 +3716,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Shears",
     "standardized": "Shears",
-    "chinese": "Shears",
+    "chinese": "剪刀",
     "imageURLs": [
       {
         "filename": "Shears.png",
@@ -3728,7 +3728,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Beef",
     "standardized": "Beef",
-    "chinese": "Beef",
+    "chinese": "牛肉",
     "imageURLs": [
       {
         "filename": "Beef.png",
@@ -3740,7 +3740,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Steak",
     "standardized": "Steak",
-    "chinese": "Steak",
+    "chinese": "牛排",
     "imageURLs": [
       {
         "filename": "Steak.png",
@@ -3764,7 +3764,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Rotten",
     "standardized": "Rotten",
-    "chinese": "Rotten",
+    "chinese": "腐烂的",
     "imageURLs": [
       {
         "filename": "Rotten.png",
@@ -3776,7 +3776,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Flesh",
     "standardized": "Flesh",
-    "chinese": "Flesh",
+    "chinese": "肉",
     "imageURLs": [
       {
         "filename": "Flesh.png",
@@ -3788,7 +3788,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pearl",
     "standardized": "Pearl",
-    "chinese": "Pearl",
+    "chinese": "珍珠",
     "imageURLs": [
       {
         "filename": "Pearl.png",
@@ -3800,7 +3800,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Blaze",
     "standardized": "Blaze",
-    "chinese": "Blaze",
+    "chinese": "烈焰",
     "imageURLs": [
       {
         "filename": "Blaze.png",
@@ -3812,7 +3812,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ghast",
     "standardized": "Ghast",
-    "chinese": "Ghast",
+    "chinese": "恶魂",
     "imageURLs": [
       {
         "filename": "Ghast.png",
@@ -3824,7 +3824,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Tear",
     "standardized": "Tear",
-    "chinese": "Tear",
+    "chinese": "泪",
     "imageURLs": [
       {
         "filename": "Tear.png",
@@ -3836,7 +3836,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Nugget",
     "standardized": "Nugget",
-    "chinese": "Nugget",
+    "chinese": "粒",
     "imageURLs": [
       {
         "filename": "Nugget.png",
@@ -3848,7 +3848,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Potion",
     "standardized": "Potion",
-    "chinese": "Potion",
+    "chinese": "药水",
     "imageURLs": [
       {
         "filename": "Potion.png",
@@ -3860,7 +3860,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bottle",
     "standardized": "Bottle",
-    "chinese": "Bottle",
+    "chinese": "瓶",
     "imageURLs": [
       {
         "filename": "Bottle.png",
@@ -3884,7 +3884,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Eye",
     "standardized": "Eye",
-    "chinese": "Eye",
+    "chinese": "眼",
     "imageURLs": [
       {
         "filename": "Eye.png",
@@ -3896,7 +3896,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Fermented",
     "standardized": "Fermented",
-    "chinese": "Fermented",
+    "chinese": "发酵的",
     "imageURLs": [
       {
         "filename": "Fermented.png",
@@ -3908,7 +3908,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cream",
     "standardized": "Cream",
-    "chinese": "Cream",
+    "chinese": "奶油",
     "imageURLs": [
       {
         "filename": "Cream.png",
@@ -3920,7 +3920,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Glistering",
     "standardized": "Glistering",
-    "chinese": "Glistering",
+    "chinese": "闪烁的",
     "imageURLs": [
       {
         "filename": "Glistering.png",
@@ -3932,7 +3932,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "speckled",
     "standardized": "Speckled",
-    "chinese": "Speckled",
+    "chinese": "斑点的",
     "imageURLs": [
       {
         "filename": "Speckled.png",
@@ -3944,7 +3944,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Elder",
     "standardized": "Elder",
-    "chinese": "Elder",
+    "chinese": "远古",
     "imageURLs": [
       {
         "filename": "Elder.png",
@@ -3956,7 +3956,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Guardian",
     "standardized": "Guardian",
-    "chinese": "Guardian",
+    "chinese": "守卫者",
     "imageURLs": [
       {
         "filename": "Guardian.png",
@@ -3968,7 +3968,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wither",
     "standardized": "Wither",
-    "chinese": "Wither",
+    "chinese": "凋灵",
     "imageURLs": [
       {
         "filename": "Wither.png",
@@ -3992,7 +3992,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stray",
     "standardized": "Stray",
-    "chinese": "Stray",
+    "chinese": "流浪者",
     "imageURLs": [
       {
         "filename": "Stray.png",
@@ -4004,7 +4004,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Husk",
     "standardized": "Husk",
-    "chinese": "Husk",
+    "chinese": "尸壳",
     "imageURLs": [
       {
         "filename": "Husk.png",
@@ -4040,7 +4040,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Horse",
     "standardized": "Horse",
-    "chinese": "Horse",
+    "chinese": "马",
     "imageURLs": [
       {
         "filename": "Horse.png",
@@ -4052,7 +4052,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Donkey",
     "standardized": "Donkey",
-    "chinese": "Donkey",
+    "chinese": "驴",
     "imageURLs": [
       {
         "filename": "Donkey.png",
@@ -4064,7 +4064,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Mule",
     "standardized": "Mule",
-    "chinese": "Mule",
+    "chinese": "骡",
     "imageURLs": [
       {
         "filename": "Mule.png",
@@ -4076,7 +4076,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Evoker",
     "standardized": "Evoker",
-    "chinese": "Evoker",
+    "chinese": "唤魔者",
     "imageURLs": [
       {
         "filename": "Evoker.png",
@@ -4088,7 +4088,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Vex",
     "standardized": "Vex",
-    "chinese": "Vex",
+    "chinese": "恼鬼",
     "imageURLs": [
       {
         "filename": "Vex.png",
@@ -4100,7 +4100,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Vindicator",
     "standardized": "Vindicator",
-    "chinese": "Vindicator",
+    "chinese": "卫道士",
     "imageURLs": [
       {
         "filename": "Vindicator.png",
@@ -4124,7 +4124,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pigman",
     "standardized": "Pigman",
-    "chinese": "Pigman",
+    "chinese": "猪人",
     "imageURLs": [
       {
         "filename": "Pigman.png",
@@ -4136,7 +4136,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Enderman",
     "standardized": "Ender Man",
-    "chinese": "Ender Man",
+    "chinese": "末影man",
     "imageURLs": [
       {
         "filename": "Ender_Man.png",
@@ -4148,7 +4148,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cave",
     "standardized": "Cave",
-    "chinese": "Cave",
+    "chinese": "洞穴",
     "imageURLs": [
       {
         "filename": "Cave.png",
@@ -4160,7 +4160,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Silverfish",
     "standardized": "Silverfish",
-    "chinese": "Silverfish",
+    "chinese": "蠹虫",
     "imageURLs": [
       {
         "filename": "Silverfish.png",
@@ -4172,7 +4172,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cube",
     "standardized": "Cube",
-    "chinese": "Cube",
+    "chinese": "怪",
     "imageURLs": [
       {
         "filename": "Cube.png",
@@ -4184,7 +4184,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bat",
     "standardized": "Bat",
-    "chinese": "Bat",
+    "chinese": "蝙蝠",
     "imageURLs": [
       {
         "filename": "Bat.png",
@@ -4196,7 +4196,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Witch",
     "standardized": "Witch",
-    "chinese": "Witch",
+    "chinese": "女巫",
     "imageURLs": [
       {
         "filename": "Witch.png",
@@ -4208,7 +4208,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mite",
     "standardized": "Mite",
-    "chinese": "Mite",
+    "chinese": "螨",
     "imageURLs": [
       {
         "filename": "Mite.png",
@@ -4256,7 +4256,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Squid",
     "standardized": "Squid",
-    "chinese": "Squid",
+    "chinese": "鱿鱼",
     "imageURLs": [
       {
         "filename": "Squid.png",
@@ -4280,7 +4280,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ocelot",
     "standardized": "Ocelot",
-    "chinese": "Ocelot",
+    "chinese": "豹猫",
     "imageURLs": [
       {
         "filename": "Ocelot.png",
@@ -4292,7 +4292,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Rabbit",
     "standardized": "Rabbit",
-    "chinese": "Rabbit",
+    "chinese": "兔肉",
     "imageURLs": [
       {
         "filename": "Rabbit.png",
@@ -4304,7 +4304,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Polar",
     "standardized": "Polar",
-    "chinese": "Polar",
+    "chinese": "北极",
     "imageURLs": [
       {
         "filename": "Polar.png",
@@ -4316,7 +4316,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Bear",
     "standardized": "Bear",
-    "chinese": "Bear",
+    "chinese": "熊",
     "imageURLs": [
       {
         "filename": "Bear.png",
@@ -4328,7 +4328,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Llama",
     "standardized": "Llama",
-    "chinese": "Llama",
+    "chinese": "羊驼",
     "imageURLs": [
       {
         "filename": "Llama.png",
@@ -4340,7 +4340,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Parrot",
     "standardized": "Parrot",
-    "chinese": "Parrot",
+    "chinese": "鹦鹉",
     "imageURLs": [
       {
         "filename": "Parrot.png",
@@ -4352,7 +4352,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "experience",
     "standardized": "Experience",
-    "chinese": "Experience",
+    "chinese": "经验",
     "imageURLs": [
       {
         "filename": "Experience.png",
@@ -4364,7 +4364,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Charge",
     "standardized": "Charge",
-    "chinese": "Charge",
+    "chinese": "充能",
     "imageURLs": [
       {
         "filename": "Charge.png",
@@ -4376,7 +4376,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Quill",
     "standardized": "Quill",
-    "chinese": "Quill",
+    "chinese": "羽毛",
     "imageURLs": [
       {
         "filename": "Quill.png",
@@ -4388,7 +4388,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "writable",
     "standardized": "Writable",
-    "chinese": "Writable",
+    "chinese": "可写的",
     "imageURLs": [
       {
         "filename": "Writable.png",
@@ -4400,7 +4400,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Written",
     "standardized": "Written",
-    "chinese": "Written",
+    "chinese": "成书",
     "imageURLs": [
       {
         "filename": "Written.png",
@@ -4412,7 +4412,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Item",
     "standardized": "Item",
-    "chinese": "Item",
+    "chinese": "物品",
     "imageURLs": [
       {
         "filename": "Item.png",
@@ -4424,7 +4424,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Carrot",
     "standardized": "Carrot",
-    "chinese": "Carrot",
+    "chinese": "胡萝卜",
     "imageURLs": [
       {
         "filename": "Carrot.png",
@@ -4436,7 +4436,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Potato",
     "standardized": "Potato",
-    "chinese": "Potato",
+    "chinese": "马铃薯",
     "imageURLs": [
       {
         "filename": "Potato.png",
@@ -4448,7 +4448,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Baked",
     "standardized": "Baked",
-    "chinese": "Baked",
+    "chinese": "烤",
     "imageURLs": [
       {
         "filename": "Baked.png",
@@ -4460,7 +4460,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Poisonous",
     "standardized": "Poisonous",
-    "chinese": "Poisonous",
+    "chinese": "有毒的",
     "imageURLs": [
       {
         "filename": "Poisonous.png",
@@ -4496,7 +4496,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Star",
     "standardized": "Star",
-    "chinese": "Star",
+    "chinese": "星",
     "imageURLs": [
       {
         "filename": "Star.png",
@@ -4508,7 +4508,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pie",
     "standardized": "Pie",
-    "chinese": "Pie",
+    "chinese": "派",
     "imageURLs": [
       {
         "filename": "Pie.png",
@@ -4520,7 +4520,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Firework",
     "standardized": "Firework",
-    "chinese": "Firework",
+    "chinese": "烟花",
     "imageURLs": [
       {
         "filename": "Firework.png",
@@ -4532,7 +4532,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Rocket",
     "standardized": "Rocket",
-    "chinese": "Rocket",
+    "chinese": "火箭",
     "imageURLs": [
       {
         "filename": "Rocket.png",
@@ -4556,7 +4556,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netherbrick",
     "standardized": "Nether Brick",
-    "chinese": "Nether Brick",
+    "chinese": "下界砖",
     "imageURLs": [
       {
         "filename": "Nether_Brick.png",
@@ -4568,7 +4568,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Shard",
     "standardized": "Shard",
-    "chinese": "Shard",
+    "chinese": "碎片",
     "imageURLs": [
       {
         "filename": "Shard.png",
@@ -4628,7 +4628,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Armor",
     "standardized": "Armor",
-    "chinese": "Armor",
+    "chinese": "盔甲",
     "imageURLs": [
       {
         "filename": "Armor.png",
@@ -4640,7 +4640,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lead",
     "standardized": "Lead",
-    "chinese": "Lead",
+    "chinese": "拴绳",
     "imageURLs": [
       {
         "filename": "Lead.png",
@@ -4652,7 +4652,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Name",
     "standardized": "Name",
-    "chinese": "Name",
+    "chinese": "命名",
     "imageURLs": [
       {
         "filename": "Name.png",
@@ -4664,7 +4664,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Tag",
     "standardized": "Tag",
-    "chinese": "Tag",
+    "chinese": "牌",
     "imageURLs": [
       {
         "filename": "Tag.png",
@@ -4676,7 +4676,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Mutton",
     "standardized": "Mutton",
-    "chinese": "Mutton",
+    "chinese": "羊肉",
     "imageURLs": [
       {
         "filename": "Mutton.png",
@@ -4688,7 +4688,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Crystal",
     "standardized": "Crystal",
-    "chinese": "Crystal",
+    "chinese": "水晶",
     "imageURLs": [
       {
         "filename": "Crystal.png",
@@ -4700,7 +4700,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Fruit",
     "standardized": "Fruit",
-    "chinese": "Fruit",
+    "chinese": "果",
     "imageURLs": [
       {
         "filename": "Fruit.png",
@@ -4760,7 +4760,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Splash",
     "standardized": "Splash",
-    "chinese": "Splash",
+    "chinese": "喷溅",
     "imageURLs": [
       {
         "filename": "Splash.png",
@@ -4796,7 +4796,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Lingering",
     "standardized": "Lingering",
-    "chinese": "Lingering",
+    "chinese": "滞留",
     "imageURLs": [
       {
         "filename": "Lingering.png",
@@ -4808,7 +4808,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Shield",
     "standardized": "Shield",
-    "chinese": "Shield",
+    "chinese": "盾",
     "imageURLs": [
       {
         "filename": "Shield.png",
@@ -4820,7 +4820,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Elytra",
     "standardized": "Elytra",
-    "chinese": "Elytra",
+    "chinese": "鞘翅",
     "imageURLs": [
       {
         "filename": "Elytra.png",
@@ -4856,7 +4856,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Shell",
     "standardized": "Shell",
-    "chinese": "Shell",
+    "chinese": "壳",
     "imageURLs": [
       {
         "filename": "Shell.png",
@@ -4868,7 +4868,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Knowledge",
     "standardized": "Knowledge",
-    "chinese": "Knowledge",
+    "chinese": "知识之书",
     "imageURLs": [
       {
         "filename": "Knowledge.png",
@@ -4880,7 +4880,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Disc",
     "standardized": "Disc",
-    "chinese": "Disc",
+    "chinese": "唱片",
     "imageURLs": [
       {
         "filename": "Disc.png",
@@ -4892,7 +4892,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "record",
     "standardized": "Record",
-    "chinese": "Record",
+    "chinese": "唱片",
     "imageURLs": [
       {
         "filename": "Record.png",
@@ -4904,7 +4904,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Cat",
     "standardized": "Cat",
-    "chinese": "Cat",
+    "chinese": "猫",
     "imageURLs": [
       {
         "filename": "Cat.png",
@@ -4916,7 +4916,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Blocks",
     "standardized": "Blocks",
-    "chinese": "Blocks",
+    "chinese": "方块",
     "imageURLs": [
       {
         "filename": "Blocks.png",
@@ -4928,7 +4928,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Chirp",
     "standardized": "Chirp",
-    "chinese": "Chirp",
+    "chinese": "唧唧",
     "imageURLs": [
       {
         "filename": "Chirp.png",
@@ -4940,7 +4940,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Far",
     "standardized": "Far",
-    "chinese": "Far",
+    "chinese": "远",
     "imageURLs": [
       {
         "filename": "Far.png",
@@ -4952,7 +4952,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Mall",
     "standardized": "Mall",
-    "chinese": "Mall",
+    "chinese": "商场",
     "imageURLs": [
       {
         "filename": "Mall.png",
@@ -4964,7 +4964,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Mellohi",
     "standardized": "Mellohi",
-    "chinese": "Mellohi",
+    "chinese": "悠悠",
     "imageURLs": [
       {
         "filename": "Mellohi.png",
@@ -4976,7 +4976,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Stal",
     "standardized": "Stal",
-    "chinese": "Stal",
+    "chinese": "石碑",
     "imageURLs": [
       {
         "filename": "Stal.png",
@@ -4988,7 +4988,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Strad",
     "standardized": "Strad",
-    "chinese": "Strad",
+    "chinese": "弦",
     "imageURLs": [
       {
         "filename": "Strad.png",
@@ -5012,7 +5012,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Ward",
     "standardized": "Ward",
-    "chinese": "Ward",
+    "chinese": "守卫",
     "imageURLs": [
       {
         "filename": "Ward.png",
@@ -5024,7 +5024,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Wait",
     "standardized": "Wait",
-    "chinese": "Wait",
+    "chinese": "等待",
     "imageURLs": [
       {
         "filename": "Wait.png",
@@ -5036,7 +5036,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "fencegate",
     "standardized": "Fence Gate",
-    "chinese": "Fence Gate",
+    "chinese": "栅栏门",
     "imageURLs": [
       {
         "filename": "Fence_Gate.png",
@@ -5048,7 +5048,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pressureplate",
     "standardized": "Pressure Plate",
-    "chinese": "Pressure Plate",
+    "chinese": "压力板板",
     "imageURLs": [
       {
         "filename": "Pressure_Plate.png",
@@ -5096,7 +5096,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ancient",
     "standardized": "Ancient",
-    "chinese": "Ancient",
+    "chinese": "远古",
     "imageURLs": [
       {
         "filename": "Ancient.png",
@@ -5108,7 +5108,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "debris",
     "standardized": "Debris",
-    "chinese": "Debris",
+    "chinese": "残骸",
     "imageURLs": [
       {
         "filename": "Debris.png",
@@ -5132,7 +5132,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "andesitestairs",
     "standardized": "Andesite Stairs",
-    "chinese": "Andesite Stairs",
+    "chinese": "安山岩楼梯",
     "imageURLs": [
       {
         "filename": "Andesite_Stairs.png",
@@ -5348,7 +5348,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "health",
     "standardized": "Health",
-    "chinese": "Health",
+    "chinese": "生命值",
     "imageURLs": [
       {
         "filename": "Health.png",
@@ -5372,7 +5372,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "damage",
     "standardized": "Damage",
-    "chinese": "Damage",
+    "chinese": "伤害",
     "imageURLs": [
       {
         "filename": "Damage.png",
@@ -5456,7 +5456,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "turtle",
     "standardized": "Turtle",
-    "chinese": "Turtle",
+    "chinese": "海龟",
     "imageURLs": [
       {
         "filename": "Turtle.png",
@@ -5492,7 +5492,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "falling",
     "standardized": "Falling",
-    "chinese": "Falling",
+    "chinese": "保护",
     "imageURLs": [
       {
         "filename": "Falling.png",
@@ -5528,7 +5528,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "barrel",
     "standardized": "Barrel",
-    "chinese": "Barrel",
+    "chinese": "桶",
     "imageURLs": [
       {
         "filename": "Barrel.png",
@@ -5540,7 +5540,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "basalt",
     "standardized": "Basalt",
-    "chinese": "Basalt",
+    "chinese": "玄武岩",
     "imageURLs": [
       {
         "filename": "Basalt.png",
@@ -5552,7 +5552,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "batspawnegg",
     "standardized": "Bat Spawn Egg",
-    "chinese": "Bat Spawn Egg",
+    "chinese": "蝙蝠生成蛋",
     "imageURLs": [
       {
         "filename": "Bat_Spawn_Egg.png",
@@ -5636,7 +5636,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "bell",
     "standardized": "Bell",
-    "chinese": "Bell",
+    "chinese": "钟",
     "imageURLs": [
       {
         "filename": "Bell.png",
@@ -5660,7 +5660,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "birchbutton",
     "standardized": "Birch Button",
-    "chinese": "Birch Button",
+    "chinese": "白桦按钮",
     "imageURLs": [
       {
         "filename": "Birch_Button.png",
@@ -5672,7 +5672,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "birchdoor",
     "standardized": "Birch Door",
-    "chinese": "Birch Door",
+    "chinese": "白桦门",
     "imageURLs": [
       {
         "filename": "Birch_Door.png",
@@ -5684,7 +5684,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "birchfencegate",
     "standardized": "Birch Fence Gate",
-    "chinese": "Birch Fence Gate",
+    "chinese": "白桦栅栏门",
     "imageURLs": [
       {
         "filename": "Birch_Fence_Gate.png",
@@ -5696,7 +5696,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "birchpressureplate",
     "standardized": "Birchpressure Plate",
-    "chinese": "Birchpressure Plate",
+    "chinese": "birchpressure板",
     "imageURLs": [
       {
         "filename": "Birchpressure_Plate.png",
@@ -5720,7 +5720,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "birchstairs",
     "standardized": "Birch Stairs",
-    "chinese": "Birch Stairs",
+    "chinese": "白桦楼梯",
     "imageURLs": [
       {
         "filename": "Birch_Stairs.png",
@@ -5732,7 +5732,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "birchtrapdoor",
     "standardized": "Birchtrap Door",
-    "chinese": "Birchtrap Door",
+    "chinese": "birchtrap门",
     "imageURLs": [
       {
         "filename": "Birchtrap_Door.png",
@@ -5744,7 +5744,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blackdye",
     "standardized": "Black Dye",
-    "chinese": "Black Dye",
+    "chinese": "黑色染料",
     "imageURLs": [
       {
         "filename": "Black_Dye.png",
@@ -5756,7 +5756,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blackglazedterracotta",
     "standardized": "Black Glazed Terracotta",
-    "chinese": "Black Glazed Terracotta",
+    "chinese": "黑色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Black_Glazed_Terracotta.png",
@@ -5768,7 +5768,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blackstone",
     "standardized": "Blackstone",
-    "chinese": "Blackstone",
+    "chinese": "黑石",
     "imageURLs": [
       {
         "filename": "Blackstone.png",
@@ -5780,7 +5780,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blackstoneslab",
     "standardized": "Black Stone Slab",
-    "chinese": "Black Stone Slab",
+    "chinese": "黑色石头台阶",
     "imageURLs": [
       {
         "filename": "Black_Stone_Slab.png",
@@ -5792,7 +5792,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blackstonestairs",
     "standardized": "Black Stone Stairs",
-    "chinese": "Black Stone Stairs",
+    "chinese": "黑色石头楼梯",
     "imageURLs": [
       {
         "filename": "Black_Stone_Stairs.png",
@@ -5804,7 +5804,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blackstonewall",
     "standardized": "Black Stone Wall",
-    "chinese": "Black Stone Wall",
+    "chinese": "黑色石头墙",
     "imageURLs": [
       {
         "filename": "Black_Stone_Wall.png",
@@ -5816,7 +5816,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blast",
     "standardized": "Blast",
-    "chinese": "Blast",
+    "chinese": "爆炸",
     "imageURLs": [
       {
         "filename": "Blast.png",
@@ -5864,7 +5864,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blazespawnegg",
     "standardized": "Blaze Spawn Egg",
-    "chinese": "Blaze Spawn Egg",
+    "chinese": "烈焰生成蛋",
     "imageURLs": [
       {
         "filename": "Blaze_Spawn_Egg.png",
@@ -5876,7 +5876,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "bluedye",
     "standardized": "Blue Dye",
-    "chinese": "Blue Dye",
+    "chinese": "蓝色染料",
     "imageURLs": [
       {
         "filename": "Blue_Dye.png",
@@ -5888,7 +5888,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blueglazedterracotta",
     "standardized": "Blue Glazed Terracotta",
-    "chinese": "Blue Glazed Terracotta",
+    "chinese": "蓝色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Blue_Glazed_Terracotta.png",
@@ -5900,7 +5900,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "blueice",
     "standardized": "Blue Ice",
-    "chinese": "Blue Ice",
+    "chinese": "蓝色冰",
     "imageURLs": [
       {
         "filename": "Blue_Ice.png",
@@ -5912,7 +5912,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "boneblock",
     "standardized": "Bone Block",
-    "chinese": "Bone Block",
+    "chinese": "骨头方块",
     "imageURLs": [
       {
         "filename": "Bone_Block.png",
@@ -5948,7 +5948,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "borderblock",
     "standardized": "Border Block",
-    "chinese": "Border Block",
+    "chinese": "border方块",
     "imageURLs": [
       {
         "filename": "Border_Block.png",
@@ -5984,7 +5984,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pattern",
     "standardized": "Pattern",
-    "chinese": "Pattern",
+    "chinese": "图案",
     "imageURLs": [
       {
         "filename": "Pattern.png",
@@ -6020,7 +6020,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "brickblock",
     "standardized": "Brick Block",
-    "chinese": "Brick Block",
+    "chinese": "砖方块",
     "imageURLs": [
       {
         "filename": "Brick_Block.png",
@@ -6032,7 +6032,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "brickstairs",
     "standardized": "Brick Stairs",
-    "chinese": "Brick Stairs",
+    "chinese": "砖楼梯",
     "imageURLs": [
       {
         "filename": "Brick_Stairs.png",
@@ -6044,7 +6044,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "browndye",
     "standardized": "Brown Dye",
-    "chinese": "Brown Dye",
+    "chinese": "棕色染料",
     "imageURLs": [
       {
         "filename": "Brown_Dye.png",
@@ -6056,7 +6056,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "brownglazedterracotta",
     "standardized": "Brown Glazed Terracotta",
-    "chinese": "Brown Glazed Terracotta",
+    "chinese": "棕色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Brown_Glazed_Terracotta.png",
@@ -6068,7 +6068,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "brownmushroom",
     "standardized": "Brown Mushroom",
-    "chinese": "Brown Mushroom",
+    "chinese": "棕色蘑菇",
     "imageURLs": [
       {
         "filename": "Brown_Mushroom.png",
@@ -6080,7 +6080,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "brownmushroomblock",
     "standardized": "Brown Mushroom Block",
-    "chinese": "Brown Mushroom Block",
+    "chinese": "棕色蘑菇方块",
     "imageURLs": [
       {
         "filename": "Brown_Mushroom_Block.png",
@@ -6092,7 +6092,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "campfire",
     "standardized": "Campfire",
-    "chinese": "Campfire",
+    "chinese": "营火",
     "imageURLs": [
       {
         "filename": "Campfire.png",
@@ -6116,7 +6116,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cartography",
     "standardized": "Cartography",
-    "chinese": "Cartography",
+    "chinese": "制图",
     "imageURLs": [
       {
         "filename": "Cartography.png",
@@ -6164,7 +6164,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "catspawnegg",
     "standardized": "Cat Spawn Egg",
-    "chinese": "Cat Spawn Egg",
+    "chinese": "猫生成蛋",
     "imageURLs": [
       {
         "filename": "Cat_Spawn_Egg.png",
@@ -6176,7 +6176,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cavespiderspawnegg",
     "standardized": "Cavespider Spawn Egg",
-    "chinese": "Cavespider Spawn Egg",
+    "chinese": "cavespider生成蛋",
     "imageURLs": [
       {
         "filename": "Cavespider_Spawn_Egg.png",
@@ -6188,7 +6188,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chaincommandblock",
     "standardized": "Chaincommand Block",
-    "chinese": "Chaincommand Block",
+    "chinese": "chaincommand方块",
     "imageURLs": [
       {
         "filename": "Chaincommand_Block.png",
@@ -6200,7 +6200,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chainmailboots",
     "standardized": "Chainmail Boots",
-    "chinese": "Chainmail Boots",
+    "chinese": "锁链靴子",
     "imageURLs": [
       {
         "filename": "Chainmail_Boots.png",
@@ -6212,7 +6212,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chainmailchestplate",
     "standardized": "Chainmail Chestplate",
-    "chinese": "Chainmail Chestplate",
+    "chinese": "锁链胸甲",
     "imageURLs": [
       {
         "filename": "Chainmail_Chestplate.png",
@@ -6224,7 +6224,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chainmailhelmet",
     "standardized": "Chainmail Helmet",
-    "chinese": "Chainmail Helmet",
+    "chinese": "锁链头盔",
     "imageURLs": [
       {
         "filename": "Chainmail_Helmet.png",
@@ -6236,7 +6236,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chainmailleggings",
     "standardized": "Chainmail Leggings",
-    "chinese": "Chainmail Leggings",
+    "chinese": "锁链护腿",
     "imageURLs": [
       {
         "filename": "Chainmail_Leggings.png",
@@ -6260,7 +6260,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chickenspawnegg",
     "standardized": "Chicken Spawn Egg",
-    "chinese": "Chicken Spawn Egg",
+    "chinese": "鸡生成蛋",
     "imageURLs": [
       {
         "filename": "Chicken_Spawn_Egg.png",
@@ -6272,7 +6272,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chiselednetherbricks",
     "standardized": "Chiseled Nether Bricks",
-    "chinese": "Chiseled Nether Bricks",
+    "chinese": "錾制的下界砖",
     "imageURLs": [
       {
         "filename": "Chiseled_Nether_Bricks.png",
@@ -6284,7 +6284,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "chiseledpolishedblackstone",
     "standardized": "Chiseled Polished Black Stone",
-    "chinese": "Chiseled Polished Black Stone",
+    "chinese": "錾制的磨制的黑色石头",
     "imageURLs": [
       {
         "filename": "Chiseled_Polished_Black_Stone.png",
@@ -6344,7 +6344,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "coalblock",
     "standardized": "Coal Block",
-    "chinese": "Coal Block",
+    "chinese": "煤炭块",
     "imageURLs": [
       {
         "filename": "Coal_Block.png",
@@ -6356,7 +6356,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "coalore",
     "standardized": "Coal Ore",
-    "chinese": "Coal Ore",
+    "chinese": "煤炭矿石",
     "imageURLs": [
       {
         "filename": "Coal_Ore.png",
@@ -6368,7 +6368,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cobblestonewall",
     "standardized": "Cobble Stone Wall",
-    "chinese": "Cobble Stone Wall",
+    "chinese": "cobble石头墙",
     "imageURLs": [
       {
         "filename": "Cobble_Stone_Wall.png",
@@ -6392,7 +6392,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cod",
     "standardized": "Cod",
-    "chinese": "Cod",
+    "chinese": "鳕鱼",
     "imageURLs": [
       {
         "filename": "Cod.png",
@@ -6416,7 +6416,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "codspawnegg",
     "standardized": "Cod Spawn Egg",
-    "chinese": "Cod Spawn Egg",
+    "chinese": "鳕鱼生成蛋",
     "imageURLs": [
       {
         "filename": "Cod_Spawn_Egg.png",
@@ -6428,7 +6428,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "commandblock",
     "standardized": "Command Block",
-    "chinese": "Command Block",
+    "chinese": "命令方块",
     "imageURLs": [
       {
         "filename": "Command_Block.png",
@@ -6452,7 +6452,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "composter",
     "standardized": "Composter",
-    "chinese": "Composter",
+    "chinese": "堆肥桶",
     "imageURLs": [
       {
         "filename": "Composter.png",
@@ -6476,7 +6476,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "conduit",
     "standardized": "Conduit",
-    "chinese": "Conduit",
+    "chinese": "潮涌核心",
     "imageURLs": [
       {
         "filename": "Conduit.png",
@@ -6488,7 +6488,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cookedbeef",
     "standardized": "Cooked Beef",
-    "chinese": "Cooked Beef",
+    "chinese": "熟的牛肉",
     "imageURLs": [
       {
         "filename": "Cooked_Beef.png",
@@ -6500,7 +6500,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cookedchicken",
     "standardized": "Cooked Chicken",
-    "chinese": "Cooked Chicken",
+    "chinese": "熟的鸡",
     "imageURLs": [
       {
         "filename": "Cooked_Chicken.png",
@@ -6512,7 +6512,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cookedcod",
     "standardized": "Cooked Cod",
-    "chinese": "Cooked Cod",
+    "chinese": "熟的鳕鱼",
     "imageURLs": [
       {
         "filename": "Cooked_Cod.png",
@@ -6524,7 +6524,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cookedmutton",
     "standardized": "Cooked Mutton",
-    "chinese": "Cooked Mutton",
+    "chinese": "熟的羊肉",
     "imageURLs": [
       {
         "filename": "Cooked_Mutton.png",
@@ -6536,7 +6536,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cookedporkchop",
     "standardized": "Cooked Porkchop",
-    "chinese": "Cooked Porkchop",
+    "chinese": "熟的猪排",
     "imageURLs": [
       {
         "filename": "Cooked_Porkchop.png",
@@ -6548,7 +6548,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cookedrabbit",
     "standardized": "Cooked Rabbit",
-    "chinese": "Cooked Rabbit",
+    "chinese": "熟的兔肉",
     "imageURLs": [
       {
         "filename": "Cooked_Rabbit.png",
@@ -6560,7 +6560,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cookedsalmon",
     "standardized": "Cooked Salmon",
-    "chinese": "Cooked Salmon",
+    "chinese": "熟的鲑鱼",
     "imageURLs": [
       {
         "filename": "Cooked_Salmon.png",
@@ -6632,7 +6632,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "coralblock",
     "standardized": "Coral Block",
-    "chinese": "Coral Block",
+    "chinese": "coral方块",
     "imageURLs": [
       {
         "filename": "Coral_Block.png",
@@ -6680,7 +6680,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cowspawnegg",
     "standardized": "Cow Spawn Egg",
-    "chinese": "Cow Spawn Egg",
+    "chinese": "牛生成蛋",
     "imageURLs": [
       {
         "filename": "Cow_Spawn_Egg.png",
@@ -6692,7 +6692,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crackednetherbricks",
     "standardized": "Cracked Nether Bricks",
-    "chinese": "Cracked Nether Bricks",
+    "chinese": "裂纹的下界砖",
     "imageURLs": [
       {
         "filename": "Cracked_Nether_Bricks.png",
@@ -6704,7 +6704,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crackedpolishedblackstonebricks",
     "standardized": "Cracked Polished Black Stone Bricks",
-    "chinese": "Cracked Polished Black Stone Bricks",
+    "chinese": "裂纹的磨制的黑色石头砖",
     "imageURLs": [
       {
         "filename": "Cracked_Polished_Black_Stone_Bricks.png",
@@ -6728,7 +6728,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "creeperspawnegg",
     "standardized": "Creeper Spawn Egg",
-    "chinese": "Creeper Spawn Egg",
+    "chinese": "苦力怕生成蛋",
     "imageURLs": [
       {
         "filename": "Creeper_Spawn_Egg.png",
@@ -6752,7 +6752,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crimsonbutton",
     "standardized": "Crimson Button",
-    "chinese": "Crimson Button",
+    "chinese": "crimson按钮",
     "imageURLs": [
       {
         "filename": "Crimson_Button.png",
@@ -6764,7 +6764,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crimsondoor",
     "standardized": "Crimson Door",
-    "chinese": "Crimson Door",
+    "chinese": "crimson门",
     "imageURLs": [
       {
         "filename": "Crimson_Door.png",
@@ -6776,7 +6776,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crimsonfence",
     "standardized": "Crimson Fence",
-    "chinese": "Crimson Fence",
+    "chinese": "crimson栅栏",
     "imageURLs": [
       {
         "filename": "Crimson_Fence.png",
@@ -6788,7 +6788,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crimsonfencegate",
     "standardized": "Crimson Fence Gate",
-    "chinese": "Crimson Fence Gate",
+    "chinese": "crimson栅栏门",
     "imageURLs": [
       {
         "filename": "Crimson_Fence_Gate.png",
@@ -6800,7 +6800,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "fungus",
     "standardized": "Fungus",
-    "chinese": "Fungus",
+    "chinese": "菌",
     "imageURLs": [
       {
         "filename": "Fungus.png",
@@ -6872,7 +6872,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crimsonpressureplate",
     "standardized": "Crimson Pressure Plate",
-    "chinese": "Crimson Pressure Plate",
+    "chinese": "crimson压力板板",
     "imageURLs": [
       {
         "filename": "Crimson_Pressure_Plate.png",
@@ -6908,7 +6908,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crimsonsign",
     "standardized": "Crimson Sign",
-    "chinese": "Crimson Sign",
+    "chinese": "crimson告示牌",
     "imageURLs": [
       {
         "filename": "Crimson_Sign.png",
@@ -6920,7 +6920,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crimsonstairs",
     "standardized": "Crimson Stairs",
-    "chinese": "Crimson Stairs",
+    "chinese": "crimson楼梯",
     "imageURLs": [
       {
         "filename": "Crimson_Stairs.png",
@@ -6956,7 +6956,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crying",
     "standardized": "Crying",
-    "chinese": "Crying",
+    "chinese": "哭泣的",
     "imageURLs": [
       {
         "filename": "Crying.png",
@@ -6968,7 +6968,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "crying ",
     "standardized": "Crying ",
-    "chinese": "Crying ",
+    "chinese": "哭泣的",
     "imageURLs": [
       {
         "filename": "Crying_.png",
@@ -6980,7 +6980,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cyan ",
     "standardized": "Cyan ",
-    "chinese": "Cyan ",
+    "chinese": "青色",
     "imageURLs": [
       {
         "filename": "Cyan_.png",
@@ -6992,7 +6992,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "cyanglazedterracotta",
     "standardized": "Cyan Glazed Terracotta",
-    "chinese": "Cyan Glazed Terracotta",
+    "chinese": "青色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Cyan_Glazed_Terracotta.png",
@@ -7004,7 +7004,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "darkoakbutton",
     "standardized": "Dark Oak Button",
-    "chinese": "Dark Oak Button",
+    "chinese": "深色橡木按钮",
     "imageURLs": [
       {
         "filename": "Dark_Oak_Button.png",
@@ -7016,7 +7016,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "darkoakdoor",
     "standardized": "Dark Oak Door",
-    "chinese": "Dark Oak Door",
+    "chinese": "深色橡木门",
     "imageURLs": [
       {
         "filename": "Dark_Oak_Door.png",
@@ -7028,7 +7028,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "fence ",
     "standardized": "Fence ",
-    "chinese": "Fence ",
+    "chinese": "栅栏",
     "imageURLs": [
       {
         "filename": "Fence_.png",
@@ -7040,7 +7040,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "darkoak",
     "standardized": "Dark Oak",
-    "chinese": "Dark Oak",
+    "chinese": "深色橡木",
     "imageURLs": [
       {
         "filename": "Dark_Oak.png",
@@ -7076,7 +7076,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "darkprismarinestairs",
     "standardized": "Dark Prismarine Stairs",
-    "chinese": "Dark Prismarine Stairs",
+    "chinese": "深色海晶石楼梯",
     "imageURLs": [
       {
         "filename": "Dark_Prismarine_Stairs.png",
@@ -7088,7 +7088,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "daylight ",
     "standardized": "Daylight ",
-    "chinese": "Daylight ",
+    "chinese": "阳光",
     "imageURLs": [
       {
         "filename": "Daylight_.png",
@@ -7124,7 +7124,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "diamond ",
     "standardized": "Diamond  ",
-    "chinese": "Diamond  ",
+    "chinese": "钻石",
     "imageURLs": [
       {
         "filename": "Diamond__.png",
@@ -7136,7 +7136,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "diamondboots",
     "standardized": "Diamond Boots",
-    "chinese": "Diamond Boots",
+    "chinese": "钻石靴子",
     "imageURLs": [
       {
         "filename": "Diamond_Boots.png",
@@ -7148,7 +7148,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "diamondhoe",
     "standardized": "Diamond Hoe",
-    "chinese": "Diamond Hoe",
+    "chinese": "钻石锄",
     "imageURLs": [
       {
         "filename": "Diamond_Hoe.png",
@@ -7160,7 +7160,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "diamondore",
     "standardized": "Diamond Ore",
-    "chinese": "Diamond Ore",
+    "chinese": "钻石矿石",
     "imageURLs": [
       {
         "filename": "Diamond_Ore.png",
@@ -7172,7 +7172,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "diamondpickaxe",
     "standardized": "Diamond Pickaxe",
-    "chinese": "Diamond Pickaxe",
+    "chinese": "钻石镐",
     "imageURLs": [
       {
         "filename": "Diamond_Pickaxe.png",
@@ -7184,7 +7184,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "diamondshovel",
     "standardized": "Diamond Shovel",
-    "chinese": "Diamond Shovel",
+    "chinese": "钻石铲",
     "imageURLs": [
       {
         "filename": "Diamond_Shovel.png",
@@ -7196,7 +7196,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "diamondsword",
     "standardized": "Diamond Sword",
-    "chinese": "Diamond Sword",
+    "chinese": "钻石剑",
     "imageURLs": [
       {
         "filename": "Diamond_Sword.png",
@@ -7208,7 +7208,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "dioritestairs",
     "standardized": "Diorite Stairs",
-    "chinese": "Diorite Stairs",
+    "chinese": "闪长岩楼梯",
     "imageURLs": [
       {
         "filename": "Diorite_Stairs.png",
@@ -7220,7 +7220,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "dolphin",
     "standardized": "Dolphin",
-    "chinese": "Dolphin",
+    "chinese": "海豚",
     "imageURLs": [
       {
         "filename": "Dolphin.png",
@@ -7232,7 +7232,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "dolphinspawnegg",
     "standardized": "Dolphin Spawn Egg",
-    "chinese": "Dolphin Spawn Egg",
+    "chinese": "海豚生成蛋",
     "imageURLs": [
       {
         "filename": "Dolphin_Spawn_Egg.png",
@@ -7244,7 +7244,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "donkeyspawnegg",
     "standardized": "Donkey Spawn Egg",
-    "chinese": "Donkey Spawn Egg",
+    "chinese": "驴生成蛋",
     "imageURLs": [
       {
         "filename": "Donkey_Spawn_Egg.png",
@@ -7268,7 +7268,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "tall",
     "standardized": "Tall",
-    "chinese": "Tall",
+    "chinese": "高",
     "imageURLs": [
       {
         "filename": "Tall.png",
@@ -7340,7 +7340,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "driedkelpblock",
     "standardized": "Driedkelp Block",
-    "chinese": "Driedkelp Block",
+    "chinese": "driedkelp方块",
     "imageURLs": [
       {
         "filename": "Driedkelp_Block.png",
@@ -7352,7 +7352,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "drowned",
     "standardized": "Drowned",
-    "chinese": "Drowned",
+    "chinese": "溺尸",
     "imageURLs": [
       {
         "filename": "Drowned.png",
@@ -7364,7 +7364,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "drownedspawnegg",
     "standardized": "Drowned Spawn Egg",
-    "chinese": "Drowned Spawn Egg",
+    "chinese": "溺尸生成蛋",
     "imageURLs": [
       {
         "filename": "Drowned_Spawn_Egg.png",
@@ -7376,7 +7376,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "elderguardianspawnegg",
     "standardized": "Elderguardian Spawn Egg",
-    "chinese": "Elderguardian Spawn Egg",
+    "chinese": "elderguardian生成蛋",
     "imageURLs": [
       {
         "filename": "Elderguardian_Spawn_Egg.png",
@@ -8780,7 +8780,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "emeraldblock",
     "standardized": "Emerald Block",
-    "chinese": "Emerald Block",
+    "chinese": "绿宝石方块",
     "imageURLs": [
       {
         "filename": "Emerald_Block.png",
@@ -8792,7 +8792,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "emeraldore",
     "standardized": "Emerald Ore",
-    "chinese": "Emerald Ore",
+    "chinese": "绿宝石矿石",
     "imageURLs": [
       {
         "filename": "Emerald_Ore.png",
@@ -8828,7 +8828,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "enchantedgoldenapple",
     "standardized": "Enchanted Golden Apple",
-    "chinese": "Enchanted Golden Apple",
+    "chinese": "附魔的金苹果",
     "imageURLs": [
       {
         "filename": "Enchanted_Golden_Apple.png",
@@ -8852,7 +8852,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "endbrickstairs",
     "standardized": "End Brick Stairs",
-    "chinese": "End Brick Stairs",
+    "chinese": "末地砖楼梯",
     "imageURLs": [
       {
         "filename": "End_Brick_Stairs.png",
@@ -8864,7 +8864,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "endbricks",
     "standardized": "End Bricks",
-    "chinese": "End Bricks",
+    "chinese": "末地砖",
     "imageURLs": [
       {
         "filename": "End_Bricks.png",
@@ -8912,7 +8912,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "endstone",
     "standardized": "End Stone",
-    "chinese": "End Stone",
+    "chinese": "末地石头",
     "imageURLs": [
       {
         "filename": "End_Stone.png",
@@ -8924,7 +8924,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "enderchest",
     "standardized": "Ender Chest",
-    "chinese": "Ender Chest",
+    "chinese": "末影箱",
     "imageURLs": [
       {
         "filename": "Ender_Chest.png",
@@ -8936,7 +8936,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "endereye",
     "standardized": "Ender Eye",
-    "chinese": "Ender Eye",
+    "chinese": "末影eye",
     "imageURLs": [
       {
         "filename": "Ender_Eye.png",
@@ -8948,7 +8948,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "enderpearl",
     "standardized": "Ender Pearl",
-    "chinese": "Ender Pearl",
+    "chinese": "末影珍珠",
     "imageURLs": [
       {
         "filename": "Ender_Pearl.png",
@@ -8960,7 +8960,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "endermanspawnegg",
     "standardized": "Enderman Spawn Egg",
-    "chinese": "Enderman Spawn Egg",
+    "chinese": "末影人生成蛋",
     "imageURLs": [
       {
         "filename": "Enderman_Spawn_Egg.png",
@@ -8972,7 +8972,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "endermite",
     "standardized": "Ender Mite",
-    "chinese": "Ender Mite",
+    "chinese": "末影mite",
     "imageURLs": [
       {
         "filename": "Ender_Mite.png",
@@ -8984,7 +8984,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "endermitespawnegg",
     "standardized": "Endermite Spawn Egg",
-    "chinese": "Endermite Spawn Egg",
+    "chinese": "endermite生成蛋",
     "imageURLs": [
       {
         "filename": "Endermite_Spawn_Egg.png",
@@ -8996,7 +8996,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "evokerspawnegg",
     "standardized": "Evoker Spawn Egg",
-    "chinese": "Evoker Spawn Egg",
+    "chinese": "唤魔者生成蛋",
     "imageURLs": [
       {
         "filename": "Evoker_Spawn_Egg.png",
@@ -9200,7 +9200,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "foxspawnegg",
     "standardized": "Fox Spawn Egg",
-    "chinese": "Fox Spawn Egg",
+    "chinese": "fox生成蛋",
     "imageURLs": [
       {
         "filename": "Fox_Spawn_Egg.png",
@@ -9212,7 +9212,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ghastspawnegg",
     "standardized": "Ghast Spawn Egg",
-    "chinese": "Ghast Spawn Egg",
+    "chinese": "恶魂生成蛋",
     "imageURLs": [
       {
         "filename": "Ghast_Spawn_Egg.png",
@@ -9248,7 +9248,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "gildedblackstone",
     "standardized": "Gildedblack Stone",
-    "chinese": "Gildedblack Stone",
+    "chinese": "gildedblack石头",
     "imageURLs": [
       {
         "filename": "Gildedblack_Stone.png",
@@ -9284,7 +9284,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "slice",
     "standardized": "Slice",
-    "chinese": "Slice",
+    "chinese": "片",
     "imageURLs": [
       {
         "filename": "Slice.png",
@@ -9308,7 +9308,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "glowstonedust",
     "standardized": "Glow Stone Dust",
-    "chinese": "Glow Stone Dust",
+    "chinese": "发光石头dust",
     "imageURLs": [
       {
         "filename": "Glow_Stone_Dust.png",
@@ -9320,7 +9320,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldblock",
     "standardized": "Gold Block",
-    "chinese": "Gold Block",
+    "chinese": "金方块",
     "imageURLs": [
       {
         "filename": "Gold_Block.png",
@@ -9356,7 +9356,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldore",
     "standardized": "Gold Ore",
-    "chinese": "Gold Ore",
+    "chinese": "金矿石",
     "imageURLs": [
       {
         "filename": "Gold_Ore.png",
@@ -9368,7 +9368,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenapple",
     "standardized": "Golden Apple",
-    "chinese": "Golden Apple",
+    "chinese": "金苹果",
     "imageURLs": [
       {
         "filename": "Golden_Apple.png",
@@ -9380,7 +9380,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenaxe",
     "standardized": "Golden Axe",
-    "chinese": "Golden Axe",
+    "chinese": "金斧",
     "imageURLs": [
       {
         "filename": "Golden_Axe.png",
@@ -9392,7 +9392,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenboots",
     "standardized": "Golden Boots",
-    "chinese": "Golden Boots",
+    "chinese": "金靴子",
     "imageURLs": [
       {
         "filename": "Golden_Boots.png",
@@ -9404,7 +9404,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldencarrot",
     "standardized": "Golden Carrot",
-    "chinese": "Golden Carrot",
+    "chinese": "金胡萝卜",
     "imageURLs": [
       {
         "filename": "Golden_Carrot.png",
@@ -9416,7 +9416,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenchestplate",
     "standardized": "Golden Chestplate",
-    "chinese": "Golden Chestplate",
+    "chinese": "金胸甲",
     "imageURLs": [
       {
         "filename": "Golden_Chestplate.png",
@@ -9428,7 +9428,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenhelmet",
     "standardized": "Golden Helmet",
-    "chinese": "Golden Helmet",
+    "chinese": "金头盔",
     "imageURLs": [
       {
         "filename": "Golden_Helmet.png",
@@ -9440,7 +9440,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenhoe",
     "standardized": "Golden Hoe",
-    "chinese": "Golden Hoe",
+    "chinese": "金锄",
     "imageURLs": [
       {
         "filename": "Golden_Hoe.png",
@@ -9452,7 +9452,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenhorsearmor",
     "standardized": "Golden Horsearmor",
-    "chinese": "Golden Horsearmor",
+    "chinese": "金horsearmor",
     "imageURLs": [
       {
         "filename": "Golden_Horsearmor.png",
@@ -9464,7 +9464,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenleggings",
     "standardized": "Golden Leggings",
-    "chinese": "Golden Leggings",
+    "chinese": "金护腿",
     "imageURLs": [
       {
         "filename": "Golden_Leggings.png",
@@ -9476,7 +9476,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenpickaxe",
     "standardized": "Golden Pickaxe",
-    "chinese": "Golden Pickaxe",
+    "chinese": "金镐",
     "imageURLs": [
       {
         "filename": "Golden_Pickaxe.png",
@@ -9488,7 +9488,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenrail",
     "standardized": "Golden Rail",
-    "chinese": "Golden Rail",
+    "chinese": "金铁轨",
     "imageURLs": [
       {
         "filename": "Golden_Rail.png",
@@ -9500,7 +9500,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldenshovel",
     "standardized": "Golden Shovel",
-    "chinese": "Golden Shovel",
+    "chinese": "金铲",
     "imageURLs": [
       {
         "filename": "Golden_Shovel.png",
@@ -9512,7 +9512,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "goldensword",
     "standardized": "Golden Sword",
-    "chinese": "Golden Sword",
+    "chinese": "金剑",
     "imageURLs": [
       {
         "filename": "Golden_Sword.png",
@@ -9524,7 +9524,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "granitestairs",
     "standardized": "Granite Stairs",
-    "chinese": "Granite Stairs",
+    "chinese": "花岗岩楼梯",
     "imageURLs": [
       {
         "filename": "Granite_Stairs.png",
@@ -9548,7 +9548,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "graydye",
     "standardized": "Gray Dye",
-    "chinese": "Gray Dye",
+    "chinese": "灰色染料",
     "imageURLs": [
       {
         "filename": "Gray_Dye.png",
@@ -9560,7 +9560,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "grayglazedterracotta",
     "standardized": "Gray Glazed Terracotta",
-    "chinese": "Gray Glazed Terracotta",
+    "chinese": "灰色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Gray_Glazed_Terracotta.png",
@@ -9572,7 +9572,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "greendye",
     "standardized": "Green Dye",
-    "chinese": "Green Dye",
+    "chinese": "绿色染料",
     "imageURLs": [
       {
         "filename": "Green_Dye.png",
@@ -9584,7 +9584,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "greenglazedterracotta",
     "standardized": "Green Glazed Terracotta",
-    "chinese": "Green Glazed Terracotta",
+    "chinese": "绿色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Green_Glazed_Terracotta.png",
@@ -9596,7 +9596,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "grindstone",
     "standardized": "Grind Stone",
-    "chinese": "Grind Stone",
+    "chinese": "grind石头",
     "imageURLs": [
       {
         "filename": "Grind_Stone.png",
@@ -9608,7 +9608,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "guardianspawnegg",
     "standardized": "Guardian Spawn Egg",
-    "chinese": "Guardian Spawn Egg",
+    "chinese": "守卫者生成蛋",
     "imageURLs": [
       {
         "filename": "Guardian_Spawn_Egg.png",
@@ -9632,7 +9632,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "hayblock",
     "standardized": "Hay Block",
-    "chinese": "Hay Block",
+    "chinese": "干草方块",
     "imageURLs": [
       {
         "filename": "Hay_Block.png",
@@ -9644,7 +9644,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "heart",
     "standardized": "Heart",
-    "chinese": "Heart",
+    "chinese": "心",
     "imageURLs": [
       {
         "filename": "Heart.png",
@@ -9668,7 +9668,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "heavyweightedpressureplate",
     "standardized": "Heavyweightedpressure Plate",
-    "chinese": "Heavyweightedpressure Plate",
+    "chinese": "heavyweightedpressure板",
     "imageURLs": [
       {
         "filename": "Heavyweightedpressure_Plate.png",
@@ -9692,7 +9692,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "hoglinspawnegg",
     "standardized": "Hoglin Spawn Egg",
-    "chinese": "Hoglin Spawn Egg",
+    "chinese": "hoglin生成蛋",
     "imageURLs": [
       {
         "filename": "Hoglin_Spawn_Egg.png",
@@ -9716,7 +9716,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "honeyblock",
     "standardized": "Honey Block",
-    "chinese": "Honey Block",
+    "chinese": "honey方块",
     "imageURLs": [
       {
         "filename": "Honey_Block.png",
@@ -9752,7 +9752,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "honeycombblock",
     "standardized": "Honeycomb Block",
-    "chinese": "Honeycomb Block",
+    "chinese": "honeycomb方块",
     "imageURLs": [
       {
         "filename": "Honeycomb_Block.png",
@@ -9776,7 +9776,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "horsespawnegg",
     "standardized": "Horse Spawn Egg",
-    "chinese": "Horse Spawn Egg",
+    "chinese": "马生成蛋",
     "imageURLs": [
       {
         "filename": "Horse_Spawn_Egg.png",
@@ -9788,7 +9788,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "huskspawnegg",
     "standardized": "Husk Spawn Egg",
-    "chinese": "Husk Spawn Egg",
+    "chinese": "尸壳生成蛋",
     "imageURLs": [
       {
         "filename": "Husk_Spawn_Egg.png",
@@ -9800,7 +9800,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "sac",
     "standardized": "Sac",
-    "chinese": "Sac",
+    "chinese": "囊",
     "imageURLs": [
       {
         "filename": "Sac.png",
@@ -9824,7 +9824,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironaxe",
     "standardized": "Iron Axe",
-    "chinese": "Iron Axe",
+    "chinese": "铁斧",
     "imageURLs": [
       {
         "filename": "Iron_Axe.png",
@@ -9836,7 +9836,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironbars",
     "standardized": "Iron Bars",
-    "chinese": "Iron Bars",
+    "chinese": "铁栏杆",
     "imageURLs": [
       {
         "filename": "Iron_Bars.png",
@@ -9848,7 +9848,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironblock",
     "standardized": "Iron Block",
-    "chinese": "Iron Block",
+    "chinese": "铁方块",
     "imageURLs": [
       {
         "filename": "Iron_Block.png",
@@ -9860,7 +9860,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironboots",
     "standardized": "Iron Boots",
-    "chinese": "Iron Boots",
+    "chinese": "铁靴子",
     "imageURLs": [
       {
         "filename": "Iron_Boots.png",
@@ -9872,7 +9872,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironchestplate",
     "standardized": "Iron Chestplate",
-    "chinese": "Iron Chestplate",
+    "chinese": "铁胸甲",
     "imageURLs": [
       {
         "filename": "Iron_Chestplate.png",
@@ -9884,7 +9884,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "irondoor",
     "standardized": "Iron Door",
-    "chinese": "Iron Door",
+    "chinese": "铁门",
     "imageURLs": [
       {
         "filename": "Iron_Door.png",
@@ -9896,7 +9896,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironhelmet",
     "standardized": "Iron Helmet",
-    "chinese": "Iron Helmet",
+    "chinese": "铁头盔",
     "imageURLs": [
       {
         "filename": "Iron_Helmet.png",
@@ -9908,7 +9908,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironhoe",
     "standardized": "Iron Hoe",
-    "chinese": "Iron Hoe",
+    "chinese": "铁锄",
     "imageURLs": [
       {
         "filename": "Iron_Hoe.png",
@@ -9920,7 +9920,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironhorsearmor",
     "standardized": "Iron Horsearmor",
-    "chinese": "Iron Horsearmor",
+    "chinese": "铁horsearmor",
     "imageURLs": [
       {
         "filename": "Iron_Horsearmor.png",
@@ -9932,7 +9932,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironingot",
     "standardized": "Iron Ingot",
-    "chinese": "Iron Ingot",
+    "chinese": "铁ingot",
     "imageURLs": [
       {
         "filename": "Iron_Ingot.png",
@@ -9944,7 +9944,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironleggings",
     "standardized": "Iron Leggings",
-    "chinese": "Iron Leggings",
+    "chinese": "铁护腿",
     "imageURLs": [
       {
         "filename": "Iron_Leggings.png",
@@ -9956,7 +9956,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironnugget",
     "standardized": "Iron Nugget",
-    "chinese": "Iron Nugget",
+    "chinese": "铁nugget",
     "imageURLs": [
       {
         "filename": "Iron_Nugget.png",
@@ -9968,7 +9968,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironore",
     "standardized": "Iron Ore",
-    "chinese": "Iron Ore",
+    "chinese": "铁矿石",
     "imageURLs": [
       {
         "filename": "Iron_Ore.png",
@@ -9980,7 +9980,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironpickaxe",
     "standardized": "Iron Pickaxe",
-    "chinese": "Iron Pickaxe",
+    "chinese": "铁镐",
     "imageURLs": [
       {
         "filename": "Iron_Pickaxe.png",
@@ -9992,7 +9992,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironshovel",
     "standardized": "Iron Shovel",
-    "chinese": "Iron Shovel",
+    "chinese": "铁铲",
     "imageURLs": [
       {
         "filename": "Iron_Shovel.png",
@@ -10004,7 +10004,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ironsword",
     "standardized": "Iron Sword",
-    "chinese": "Iron Sword",
+    "chinese": "铁剑",
     "imageURLs": [
       {
         "filename": "Iron_Sword.png",
@@ -10016,7 +10016,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "irontrapdoor",
     "standardized": "Iron Trap Door",
-    "chinese": "Iron Trap Door",
+    "chinese": "铁trap门",
     "imageURLs": [
       {
         "filename": "Iron_Trap_Door.png",
@@ -10052,7 +10052,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "junglebutton",
     "standardized": "Jungle Button",
-    "chinese": "Jungle Button",
+    "chinese": "丛林按钮",
     "imageURLs": [
       {
         "filename": "Jungle_Button.png",
@@ -10064,7 +10064,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "jungledoor",
     "standardized": "Jungle Door",
-    "chinese": "Jungle Door",
+    "chinese": "丛林门",
     "imageURLs": [
       {
         "filename": "Jungle_Door.png",
@@ -10076,7 +10076,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "junglefencegate",
     "standardized": "Jungle Fence Gate",
-    "chinese": "Jungle Fence Gate",
+    "chinese": "丛林栅栏门",
     "imageURLs": [
       {
         "filename": "Jungle_Fence_Gate.png",
@@ -10088,7 +10088,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "junglepressureplate",
     "standardized": "Junglepressure Plate",
-    "chinese": "Junglepressure Plate",
+    "chinese": "junglepressure板",
     "imageURLs": [
       {
         "filename": "Junglepressure_Plate.png",
@@ -10112,7 +10112,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "junglestairs",
     "standardized": "Jungle Stairs",
-    "chinese": "Jungle Stairs",
+    "chinese": "丛林楼梯",
     "imageURLs": [
       {
         "filename": "Jungle_Stairs.png",
@@ -10124,7 +10124,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "jungletrapdoor",
     "standardized": "Jungletrap Door",
-    "chinese": "Jungletrap Door",
+    "chinese": "jungletrap门",
     "imageURLs": [
       {
         "filename": "Jungletrap_Door.png",
@@ -10136,7 +10136,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lapisblock",
     "standardized": "Lapis Block",
-    "chinese": "Lapis Block",
+    "chinese": "青金石方块",
     "imageURLs": [
       {
         "filename": "Lapis_Block.png",
@@ -10160,7 +10160,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lapisore",
     "standardized": "Lapis Ore",
-    "chinese": "Lapis Ore",
+    "chinese": "青金石矿石",
     "imageURLs": [
       {
         "filename": "Lapis_Ore.png",
@@ -10184,7 +10184,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "leatherboots",
     "standardized": "Leather Boots",
-    "chinese": "Leather Boots",
+    "chinese": "皮革靴子",
     "imageURLs": [
       {
         "filename": "Leather_Boots.png",
@@ -10196,7 +10196,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "leatherchestplate",
     "standardized": "Leather Chestplate",
-    "chinese": "Leather Chestplate",
+    "chinese": "皮革胸甲",
     "imageURLs": [
       {
         "filename": "Leather_Chestplate.png",
@@ -10220,7 +10220,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "leatherhelmet",
     "standardized": "Leather Helmet",
-    "chinese": "Leather Helmet",
+    "chinese": "皮革头盔",
     "imageURLs": [
       {
         "filename": "Leather_Helmet.png",
@@ -10232,7 +10232,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "leatherhorsearmor",
     "standardized": "Leather Horsearmor",
-    "chinese": "Leather Horsearmor",
+    "chinese": "皮革horsearmor",
     "imageURLs": [
       {
         "filename": "Leather_Horsearmor.png",
@@ -10244,7 +10244,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "leatherleggings",
     "standardized": "Leather Leggings",
-    "chinese": "Leather Leggings",
+    "chinese": "皮革护腿",
     "imageURLs": [
       {
         "filename": "Leather_Leggings.png",
@@ -10256,7 +10256,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lectern",
     "standardized": "Lectern",
-    "chinese": "Lectern",
+    "chinese": "讲台",
     "imageURLs": [
       {
         "filename": "Lectern.png",
@@ -10268,7 +10268,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lightbluedye",
     "standardized": "Lightblue Dye",
-    "chinese": "Lightblue Dye",
+    "chinese": "lightblue染料",
     "imageURLs": [
       {
         "filename": "Lightblue_Dye.png",
@@ -10280,7 +10280,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lightblueglazedterracotta",
     "standardized": "Lightblue Glazed Terracotta",
-    "chinese": "Lightblue Glazed Terracotta",
+    "chinese": "lightblue带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Lightblue_Glazed_Terracotta.png",
@@ -10292,7 +10292,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lightgraydye",
     "standardized": "Lightgray Dye",
-    "chinese": "Lightgray Dye",
+    "chinese": "lightgray染料",
     "imageURLs": [
       {
         "filename": "Lightgray_Dye.png",
@@ -10304,7 +10304,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lightweightedpressureplate",
     "standardized": "Light Weightedpressure Plate",
-    "chinese": "Light Weightedpressure Plate",
+    "chinese": "淡weightedpressure板",
     "imageURLs": [
       {
         "filename": "Light_Weightedpressure_Plate.png",
@@ -10316,7 +10316,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "limedye",
     "standardized": "Lime Dye",
-    "chinese": "Lime Dye",
+    "chinese": "黄绿色染料",
     "imageURLs": [
       {
         "filename": "Lime_Dye.png",
@@ -10328,7 +10328,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "limeglazedterracotta",
     "standardized": "Lime Glazed Terracotta",
-    "chinese": "Lime Glazed Terracotta",
+    "chinese": "黄绿色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Lime_Glazed_Terracotta.png",
@@ -10352,7 +10352,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lingering ",
     "standardized": "Lingering ",
-    "chinese": "Lingering ",
+    "chinese": "滞留",
     "imageURLs": [
       {
         "filename": "Lingering_.png",
@@ -10388,7 +10388,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "llamaspawnegg",
     "standardized": "Llama Spawn Egg",
-    "chinese": "Llama Spawn Egg",
+    "chinese": "羊驼生成蛋",
     "imageURLs": [
       {
         "filename": "Llama_Spawn_Egg.png",
@@ -10400,7 +10400,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "lodestone",
     "standardized": "Lode Stone",
-    "chinese": "Lode Stone",
+    "chinese": "lode石头",
     "imageURLs": [
       {
         "filename": "Lode_Stone.png",
@@ -10412,7 +10412,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "loom",
     "standardized": "Loom",
-    "chinese": "Loom",
+    "chinese": "织布机",
     "imageURLs": [
       {
         "filename": "Loom.png",
@@ -10424,7 +10424,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "magentadye",
     "standardized": "Magenta Dye",
-    "chinese": "Magenta Dye",
+    "chinese": "品红色染料",
     "imageURLs": [
       {
         "filename": "Magenta_Dye.png",
@@ -10436,7 +10436,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "magentaglazedterracotta",
     "standardized": "Magenta Glazed Terracotta",
-    "chinese": "Magenta Glazed Terracotta",
+    "chinese": "品红色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Magenta_Glazed_Terracotta.png",
@@ -10460,7 +10460,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "magmacubespawnegg",
     "standardized": "Magmacube Spawn Egg",
-    "chinese": "Magmacube Spawn Egg",
+    "chinese": "magmacube生成蛋",
     "imageURLs": [
       {
         "filename": "Magmacube_Spawn_Egg.png",
@@ -10580,7 +10580,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mooshroomspawnegg",
     "standardized": "Mooshroom Spawn Egg",
-    "chinese": "Mooshroom Spawn Egg",
+    "chinese": "mooshroom生成蛋",
     "imageURLs": [
       {
         "filename": "Mooshroom_Spawn_Egg.png",
@@ -10592,7 +10592,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mossycobblestone",
     "standardized": "Mossy Cobble Stone",
-    "chinese": "Mossy Cobble Stone",
+    "chinese": "苔藓cobble石头",
     "imageURLs": [
       {
         "filename": "Mossy_Cobble_Stone.png",
@@ -10604,7 +10604,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mossycobblestonestairs",
     "standardized": "Mossy Cobble Stone Stairs",
-    "chinese": "Mossy Cobble Stone Stairs",
+    "chinese": "苔藓cobble石头楼梯",
     "imageURLs": [
       {
         "filename": "Mossy_Cobble_Stone_Stairs.png",
@@ -10616,7 +10616,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mossystonebrickstairs",
     "standardized": "Mossy Stone Brick Stairs",
-    "chinese": "Mossy Stone Brick Stairs",
+    "chinese": "苔藓石头砖楼梯",
     "imageURLs": [
       {
         "filename": "Mossy_Stone_Brick_Stairs.png",
@@ -10628,7 +10628,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mulespawnegg",
     "standardized": "Mule Spawn Egg",
-    "chinese": "Mule Spawn Egg",
+    "chinese": "骡生成蛋",
     "imageURLs": [
       {
         "filename": "Mule_Spawn_Egg.png",
@@ -10640,7 +10640,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "mushroom ",
     "standardized": "Mushroom ",
-    "chinese": "Mushroom ",
+    "chinese": "蘑菇",
     "imageURLs": [
       {
         "filename": "Mushroom_.png",
@@ -10652,7 +10652,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "music",
     "standardized": "Music",
-    "chinese": "Music",
+    "chinese": "音乐",
     "imageURLs": [
       {
         "filename": "Music.png",
@@ -10784,7 +10784,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pig ",
     "standardized": "Pig ",
-    "chinese": "Pig ",
+    "chinese": "猪",
     "imageURLs": [
       {
         "filename": "Pig_.png",
@@ -10808,7 +10808,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "Pigstep",
     "standardized": "Pigstep",
-    "chinese": "Pigstep",
+    "chinese": "猪步",
     "imageURLs": [
       {
         "filename": "Pigstep.png",
@@ -10880,7 +10880,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "nautilus",
     "standardized": "Nautilus",
-    "chinese": "Nautilus",
+    "chinese": "鹦鹉螺",
     "imageURLs": [
       {
         "filename": "Nautilus.png",
@@ -10904,7 +10904,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netherbrickfence",
     "standardized": "Nether Brick Fence",
-    "chinese": "Nether Brick Fence",
+    "chinese": "下界砖栅栏",
     "imageURLs": [
       {
         "filename": "Nether_Brick_Fence.png",
@@ -10928,7 +10928,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "nethergoldore",
     "standardized": "Nether Gold Ore",
-    "chinese": "Nether Gold Ore",
+    "chinese": "下界金矿石",
     "imageURLs": [
       {
         "filename": "Nether_Gold_Ore.png",
@@ -10952,7 +10952,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "nethersprouts",
     "standardized": "Nether Sprouts",
-    "chinese": "Nether Sprouts",
+    "chinese": "下界sprouts",
     "imageURLs": [
       {
         "filename": "Nether_Sprouts.png",
@@ -10964,7 +10964,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netherstar",
     "standardized": "Nether Star",
-    "chinese": "Nether Star",
+    "chinese": "下界star",
     "imageURLs": [
       {
         "filename": "Nether_Star.png",
@@ -10976,7 +10976,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netherwart",
     "standardized": "Nether Wart",
-    "chinese": "Nether Wart",
+    "chinese": "下界疣",
     "imageURLs": [
       {
         "filename": "Nether_Wart.png",
@@ -10988,7 +10988,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netherwartblock",
     "standardized": "Nether Wart Block",
-    "chinese": "Nether Wart Block",
+    "chinese": "下界疣方块",
     "imageURLs": [
       {
         "filename": "Nether_Wart_Block.png",
@@ -11000,7 +11000,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netherite",
     "standardized": "Nether Ite",
-    "chinese": "Nether Ite",
+    "chinese": "下界ite",
     "imageURLs": [
       {
         "filename": "Nether_Ite.png",
@@ -11012,7 +11012,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheriteaxe",
     "standardized": "Nether Ite Axe",
-    "chinese": "Nether Ite Axe",
+    "chinese": "下界ite斧",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Axe.png",
@@ -11024,7 +11024,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheriteblock",
     "standardized": "Nether Ite Block",
-    "chinese": "Nether Ite Block",
+    "chinese": "下界ite方块",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Block.png",
@@ -11036,7 +11036,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheriteboots",
     "standardized": "Nether Ite Boots",
-    "chinese": "Nether Ite Boots",
+    "chinese": "下界ite靴子",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Boots.png",
@@ -11048,7 +11048,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheritechestplate",
     "standardized": "Nether Ite Chest Plate",
-    "chinese": "Nether Ite Chest Plate",
+    "chinese": "下界ite箱子板",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Chest_Plate.png",
@@ -11060,7 +11060,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheritehelmet",
     "standardized": "Nether Ite Helmet",
-    "chinese": "Nether Ite Helmet",
+    "chinese": "下界ite头盔",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Helmet.png",
@@ -11072,7 +11072,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheritehoe",
     "standardized": "Nether Ite Hoe",
-    "chinese": "Nether Ite Hoe",
+    "chinese": "下界ite锄",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Hoe.png",
@@ -11084,7 +11084,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheriteingot",
     "standardized": "Nether Iteingot",
-    "chinese": "Nether Iteingot",
+    "chinese": "下界iteingot",
     "imageURLs": [
       {
         "filename": "Nether_Iteingot.png",
@@ -11096,7 +11096,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheriteleggings",
     "standardized": "Nether Ite Leggings",
-    "chinese": "Nether Ite Leggings",
+    "chinese": "下界ite护腿",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Leggings.png",
@@ -11108,7 +11108,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheritepickaxe",
     "standardized": "Nether Ite Pickaxe",
-    "chinese": "Nether Ite Pickaxe",
+    "chinese": "下界ite镐",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Pickaxe.png",
@@ -11120,7 +11120,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "scrap",
     "standardized": "Scrap",
-    "chinese": "Scrap",
+    "chinese": "碎片",
     "imageURLs": [
       {
         "filename": "Scrap.png",
@@ -11132,7 +11132,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheritescrap",
     "standardized": "Nether Itescrap",
-    "chinese": "Nether Itescrap",
+    "chinese": "下界itescrap",
     "imageURLs": [
       {
         "filename": "Nether_Itescrap.png",
@@ -11144,7 +11144,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "netheriteshovel",
     "standardized": "Nether Ite Shovel",
-    "chinese": "Nether Ite Shovel",
+    "chinese": "下界ite铲",
     "imageURLs": [
       {
         "filename": "Nether_Ite_Shovel.png",
@@ -11180,7 +11180,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "nether ",
     "standardized": "Nether  ",
-    "chinese": "Nether  ",
+    "chinese": "下界",
     "imageURLs": [
       {
         "filename": "Nether__.png",
@@ -11204,7 +11204,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "normalstonestairs",
     "standardized": "Normal Stone Stairs",
-    "chinese": "Normal Stone Stairs",
+    "chinese": "normal石头楼梯",
     "imageURLs": [
       {
         "filename": "Normal_Stone_Stairs.png",
@@ -11240,7 +11240,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "oakstairs",
     "standardized": "Oak Stairs",
-    "chinese": "Oak Stairs",
+    "chinese": "橡木楼梯",
     "imageURLs": [
       {
         "filename": "Oak_Stairs.png",
@@ -11252,7 +11252,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ocelotspawnegg",
     "standardized": "Ocelot Spawn Egg",
-    "chinese": "Ocelot Spawn Egg",
+    "chinese": "豹猫生成蛋",
     "imageURLs": [
       {
         "filename": "Ocelot_Spawn_Egg.png",
@@ -11264,7 +11264,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "orangedye",
     "standardized": "Orange Dye",
-    "chinese": "Orange Dye",
+    "chinese": "橙色染料",
     "imageURLs": [
       {
         "filename": "Orange_Dye.png",
@@ -11276,7 +11276,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "orangeglazedterracotta",
     "standardized": "Orange Glazed Terracotta",
-    "chinese": "Orange Glazed Terracotta",
+    "chinese": "橙色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Orange_Glazed_Terracotta.png",
@@ -11312,7 +11312,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pandaspawnegg",
     "standardized": "Panda Spawn Egg",
-    "chinese": "Panda Spawn Egg",
+    "chinese": "panda生成蛋",
     "imageURLs": [
       {
         "filename": "Panda_Spawn_Egg.png",
@@ -11324,7 +11324,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "parrotspawnegg",
     "standardized": "Parrot Spawn Egg",
-    "chinese": "Parrot Spawn Egg",
+    "chinese": "parrot生成蛋",
     "imageURLs": [
       {
         "filename": "Parrot_Spawn_Egg.png",
@@ -11336,7 +11336,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "phantom",
     "standardized": "Phantom",
-    "chinese": "Phantom",
+    "chinese": "幻翼",
     "imageURLs": [
       {
         "filename": "Phantom.png",
@@ -11348,7 +11348,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "membrane",
     "standardized": "Membrane",
-    "chinese": "Membrane",
+    "chinese": "膜",
     "imageURLs": [
       {
         "filename": "Membrane.png",
@@ -11372,7 +11372,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "phantomspawnegg",
     "standardized": "Phantom Spawn Egg",
-    "chinese": "Phantom Spawn Egg",
+    "chinese": "幻翼生成蛋",
     "imageURLs": [
       {
         "filename": "Phantom_Spawn_Egg.png",
@@ -11384,7 +11384,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pigspawnegg",
     "standardized": "Pig Spawn Egg",
-    "chinese": "Pig Spawn Egg",
+    "chinese": "猪生成蛋",
     "imageURLs": [
       {
         "filename": "Pig_Spawn_Egg.png",
@@ -11396,7 +11396,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "snout",
     "standardized": "Snout",
-    "chinese": "Snout",
+    "chinese": "鼻",
     "imageURLs": [
       {
         "filename": "Snout.png",
@@ -11444,7 +11444,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "piglinbrutespawnegg",
     "standardized": "Piglinbrute Spawn Egg",
-    "chinese": "Piglinbrute Spawn Egg",
+    "chinese": "piglinbrute生成蛋",
     "imageURLs": [
       {
         "filename": "Piglinbrute_Spawn_Egg.png",
@@ -11456,7 +11456,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "piglinspawnegg",
     "standardized": "Piglin Spawn Egg",
-    "chinese": "Piglin Spawn Egg",
+    "chinese": "piglin生成蛋",
     "imageURLs": [
       {
         "filename": "Piglin_Spawn_Egg.png",
@@ -11468,7 +11468,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pillager",
     "standardized": "Pillager",
-    "chinese": "Pillager",
+    "chinese": "掠夺者",
     "imageURLs": [
       {
         "filename": "Pillager.png",
@@ -11480,7 +11480,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pillagerspawnegg",
     "standardized": "Pillager Spawn Egg",
-    "chinese": "Pillager Spawn Egg",
+    "chinese": "掠夺者生成蛋",
     "imageURLs": [
       {
         "filename": "Pillager_Spawn_Egg.png",
@@ -11492,7 +11492,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pinkdye",
     "standardized": "Pink Dye",
-    "chinese": "Pink Dye",
+    "chinese": "粉红色染料",
     "imageURLs": [
       {
         "filename": "Pink_Dye.png",
@@ -11504,7 +11504,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pinkglazedterracotta",
     "standardized": "Pink Glazed Terracotta",
-    "chinese": "Pink Glazed Terracotta",
+    "chinese": "粉红色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Pink_Glazed_Terracotta.png",
@@ -11528,7 +11528,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polarbearspawnegg",
     "standardized": "Polarbear Spawn Egg",
-    "chinese": "Polarbear Spawn Egg",
+    "chinese": "polarbear生成蛋",
     "imageURLs": [
       {
         "filename": "Polarbear_Spawn_Egg.png",
@@ -11540,7 +11540,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedandesitestairs",
     "standardized": "Polished Andesite Stairs",
-    "chinese": "Polished Andesite Stairs",
+    "chinese": "磨制的安山岩楼梯",
     "imageURLs": [
       {
         "filename": "Polished_Andesite_Stairs.png",
@@ -11552,7 +11552,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedbasalt",
     "standardized": "Polished Basalt",
-    "chinese": "Polished Basalt",
+    "chinese": "磨制的玄武岩",
     "imageURLs": [
       {
         "filename": "Polished_Basalt.png",
@@ -11564,7 +11564,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstone",
     "standardized": "Polished Black Stone",
-    "chinese": "Polished Black Stone",
+    "chinese": "磨制的黑色石头",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone.png",
@@ -11576,7 +11576,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonebrickslab",
     "standardized": "Polished Black Stone Brick Slab",
-    "chinese": "Polished Black Stone Brick Slab",
+    "chinese": "磨制的黑色石头砖台阶",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Brick_Slab.png",
@@ -11588,7 +11588,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonebrickstairs",
     "standardized": "Polished Black Stone Brick Stairs",
-    "chinese": "Polished Black Stone Brick Stairs",
+    "chinese": "磨制的黑色石头砖楼梯",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Brick_Stairs.png",
@@ -11600,7 +11600,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonebrickwall",
     "standardized": "Polished Black Stone Brick Wall",
-    "chinese": "Polished Black Stone Brick Wall",
+    "chinese": "磨制的黑色石头砖墙",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Brick_Wall.png",
@@ -11612,7 +11612,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonebricks",
     "standardized": "Polished Black Stone Bricks",
-    "chinese": "Polished Black Stone Bricks",
+    "chinese": "磨制的黑色石头砖",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Bricks.png",
@@ -11624,7 +11624,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonebutton",
     "standardized": "Polished Black Stone Button",
-    "chinese": "Polished Black Stone Button",
+    "chinese": "磨制的黑色石头按钮",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Button.png",
@@ -11636,7 +11636,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonepressureplate",
     "standardized": "Polished Black Stone Pressure Plate",
-    "chinese": "Polished Black Stone Pressure Plate",
+    "chinese": "磨制的黑色石头压力板板",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Pressure_Plate.png",
@@ -11648,7 +11648,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstoneslab",
     "standardized": "Polished Black Stone Slab",
-    "chinese": "Polished Black Stone Slab",
+    "chinese": "磨制的黑色石头台阶",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Slab.png",
@@ -11660,7 +11660,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonestairs",
     "standardized": "Polished Black Stone Stairs",
-    "chinese": "Polished Black Stone Stairs",
+    "chinese": "磨制的黑色石头楼梯",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Stairs.png",
@@ -11672,7 +11672,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedblackstonewall",
     "standardized": "Polished Black Stone Wall",
-    "chinese": "Polished Black Stone Wall",
+    "chinese": "磨制的黑色石头墙",
     "imageURLs": [
       {
         "filename": "Polished_Black_Stone_Wall.png",
@@ -11684,7 +11684,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polisheddioritestairs",
     "standardized": "Polished Diorite Stairs",
-    "chinese": "Polished Diorite Stairs",
+    "chinese": "磨制的闪长岩楼梯",
     "imageURLs": [
       {
         "filename": "Polished_Diorite_Stairs.png",
@@ -11696,7 +11696,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "polishedgranitestairs",
     "standardized": "Polished Granite Stairs",
-    "chinese": "Polished Granite Stairs",
+    "chinese": "磨制的花岗岩楼梯",
     "imageURLs": [
       {
         "filename": "Polished_Granite_Stairs.png",
@@ -11720,7 +11720,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "prismarinebricksstairs",
     "standardized": "Prismarine Bricks Stairs",
-    "chinese": "Prismarine Bricks Stairs",
+    "chinese": "海晶石砖楼梯",
     "imageURLs": [
       {
         "filename": "Prismarine_Bricks_Stairs.png",
@@ -11756,7 +11756,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "prismarinestairs",
     "standardized": "Prismarine Stairs",
-    "chinese": "Prismarine Stairs",
+    "chinese": "海晶石楼梯",
     "imageURLs": [
       {
         "filename": "Prismarine_Stairs.png",
@@ -11780,7 +11780,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "pufferfishspawnegg",
     "standardized": "Pufferfish Spawn Egg",
-    "chinese": "Pufferfish Spawn Egg",
+    "chinese": "河豚生成蛋",
     "imageURLs": [
       {
         "filename": "Pufferfish_Spawn_Egg.png",
@@ -11816,7 +11816,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "purpledye",
     "standardized": "Purple Dye",
-    "chinese": "Purple Dye",
+    "chinese": "紫色染料",
     "imageURLs": [
       {
         "filename": "Purple_Dye.png",
@@ -11828,7 +11828,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "purpleglazedterracotta",
     "standardized": "Purple Glazed Terracotta",
-    "chinese": "Purple Glazed Terracotta",
+    "chinese": "紫色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Purple_Glazed_Terracotta.png",
@@ -11840,7 +11840,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "purpurblock",
     "standardized": "Purpur Block",
-    "chinese": "Purpur Block",
+    "chinese": "紫珀方块",
     "imageURLs": [
       {
         "filename": "Purpur_Block.png",
@@ -11852,7 +11852,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "purpurstairs",
     "standardized": "Purpur Stairs",
-    "chinese": "Purpur Stairs",
+    "chinese": "紫珀楼梯",
     "imageURLs": [
       {
         "filename": "Purpur_Stairs.png",
@@ -11864,7 +11864,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "quartzblock",
     "standardized": "Quartz Block",
-    "chinese": "Quartz Block",
+    "chinese": "石英方块",
     "imageURLs": [
       {
         "filename": "Quartz_Block.png",
@@ -11876,7 +11876,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "quartzbricks",
     "standardized": "Quartz Bricks",
-    "chinese": "Quartz Bricks",
+    "chinese": "石英砖",
     "imageURLs": [
       {
         "filename": "Quartz_Bricks.png",
@@ -11888,7 +11888,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "quartzore",
     "standardized": "Quartz Ore",
-    "chinese": "Quartz Ore",
+    "chinese": "石英矿石",
     "imageURLs": [
       {
         "filename": "Quartz_Ore.png",
@@ -11900,7 +11900,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "quartzstairs",
     "standardized": "Quartz Stairs",
-    "chinese": "Quartz Stairs",
+    "chinese": "石英楼梯",
     "imageURLs": [
       {
         "filename": "Quartz_Stairs.png",
@@ -11936,7 +11936,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "rabbitspawnegg",
     "standardized": "Rabbit Spawn Egg",
-    "chinese": "Rabbit Spawn Egg",
+    "chinese": "兔肉生成蛋",
     "imageURLs": [
       {
         "filename": "Rabbit_Spawn_Egg.png",
@@ -11960,7 +11960,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ravager",
     "standardized": "Ravager",
-    "chinese": "Ravager",
+    "chinese": "劫掠兽",
     "imageURLs": [
       {
         "filename": "Ravager.png",
@@ -11972,7 +11972,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "ravagerspawnegg",
     "standardized": "Ravager Spawn Egg",
-    "chinese": "Ravager Spawn Egg",
+    "chinese": "劫掠兽生成蛋",
     "imageURLs": [
       {
         "filename": "Ravager_Spawn_Egg.png",
@@ -11984,7 +11984,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "reddye",
     "standardized": "Red Dye",
-    "chinese": "Red Dye",
+    "chinese": "红色染料",
     "imageURLs": [
       {
         "filename": "Red_Dye.png",
@@ -11996,7 +11996,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redflower",
     "standardized": "Red Flower",
-    "chinese": "Red Flower",
+    "chinese": "红色花",
     "imageURLs": [
       {
         "filename": "Red_Flower.png",
@@ -12032,7 +12032,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redglazedterracotta",
     "standardized": "Red Glazed Terracotta",
-    "chinese": "Red Glazed Terracotta",
+    "chinese": "红色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Red_Glazed_Terracotta.png",
@@ -12044,7 +12044,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redmushroom",
     "standardized": "Red Mushroom",
-    "chinese": "Red Mushroom",
+    "chinese": "红色蘑菇",
     "imageURLs": [
       {
         "filename": "Red_Mushroom.png",
@@ -12056,7 +12056,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redmushroomblock",
     "standardized": "Red Mushroom Block",
-    "chinese": "Red Mushroom Block",
+    "chinese": "红色蘑菇方块",
     "imageURLs": [
       {
         "filename": "Red_Mushroom_Block.png",
@@ -12068,7 +12068,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "rednetherbrick",
     "standardized": "Red Nether Brick",
-    "chinese": "Red Nether Brick",
+    "chinese": "红色下界砖",
     "imageURLs": [
       {
         "filename": "Red_Nether_Brick.png",
@@ -12080,7 +12080,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "rednetherbrickstairs",
     "standardized": "Red Nether Brick Stairs",
-    "chinese": "Red Nether Brick Stairs",
+    "chinese": "红色下界砖楼梯",
     "imageURLs": [
       {
         "filename": "Red_Nether_Brick_Stairs.png",
@@ -12092,7 +12092,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redsandstone",
     "standardized": "Red Sandstone",
-    "chinese": "Red Sandstone",
+    "chinese": "红色砂岩",
     "imageURLs": [
       {
         "filename": "Red_Sandstone.png",
@@ -12116,7 +12116,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redsandstonestairs",
     "standardized": "Red Sand Stone Stairs",
-    "chinese": "Red Sand Stone Stairs",
+    "chinese": "红色沙子石头楼梯",
     "imageURLs": [
       {
         "filename": "Red_Sand_Stone_Stairs.png",
@@ -12128,7 +12128,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redstoneblock",
     "standardized": "Red Stone Block",
-    "chinese": "Red Stone Block",
+    "chinese": "红色石头方块",
     "imageURLs": [
       {
         "filename": "Red_Stone_Block.png",
@@ -12140,7 +12140,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redstonelamp",
     "standardized": "Redstone Lamp",
-    "chinese": "Redstone Lamp",
+    "chinese": "红石灯",
     "imageURLs": [
       {
         "filename": "Redstone_Lamp.png",
@@ -12152,7 +12152,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redstoneore",
     "standardized": "Red Stone Ore",
-    "chinese": "Red Stone Ore",
+    "chinese": "红色石头矿石",
     "imageURLs": [
       {
         "filename": "Red_Stone_Ore.png",
@@ -12164,7 +12164,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "redstonetorch",
     "standardized": "Redstone Torch",
-    "chinese": "Redstone Torch",
+    "chinese": "红石火把",
     "imageURLs": [
       {
         "filename": "Redstone_Torch.png",
@@ -12176,7 +12176,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "repeatingcommandblock",
     "standardized": "Repeatingcommand Block",
-    "chinese": "Repeatingcommand Block",
+    "chinese": "repeatingcommand方块",
     "imageURLs": [
       {
         "filename": "Repeatingcommand_Block.png",
@@ -12188,7 +12188,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "respawn",
     "standardized": "Respawn",
-    "chinese": "Respawn",
+    "chinese": "重生",
     "imageURLs": [
       {
         "filename": "Respawn.png",
@@ -12200,7 +12200,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "anchor",
     "standardized": "Anchor",
-    "chinese": "Anchor",
+    "chinese": "锚",
     "imageURLs": [
       {
         "filename": "Anchor.png",
@@ -12248,7 +12248,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "salmonspawnegg",
     "standardized": "Salmon Spawn Egg",
-    "chinese": "Salmon Spawn Egg",
+    "chinese": "鲑鱼生成蛋",
     "imageURLs": [
       {
         "filename": "Salmon_Spawn_Egg.png",
@@ -12260,7 +12260,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "sandstonestairs",
     "standardized": "Sand Stone Stairs",
-    "chinese": "Sand Stone Stairs",
+    "chinese": "沙子石头楼梯",
     "imageURLs": [
       {
         "filename": "Sand_Stone_Stairs.png",
@@ -12284,7 +12284,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "scute",
     "standardized": "Scute",
-    "chinese": "Scute",
+    "chinese": "鳞甲",
     "imageURLs": [
       {
         "filename": "Scute.png",
@@ -12344,7 +12344,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "sheepspawnegg",
     "standardized": "Sheep Spawn Egg",
-    "chinese": "Sheep Spawn Egg",
+    "chinese": "羊生成蛋",
     "imageURLs": [
       {
         "filename": "Sheep_Spawn_Egg.png",
@@ -12392,7 +12392,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "shulkerspawnegg",
     "standardized": "Shulker Spawn Egg",
-    "chinese": "Shulker Spawn Egg",
+    "chinese": "潜影生成蛋",
     "imageURLs": [
       {
         "filename": "Shulker_Spawn_Egg.png",
@@ -12404,7 +12404,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "silverglazedterracotta",
     "standardized": "Silver Glazed Terracotta",
-    "chinese": "Silver Glazed Terracotta",
+    "chinese": "silver带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Silver_Glazed_Terracotta.png",
@@ -12416,7 +12416,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "silverfishspawnegg",
     "standardized": "Silverfish Spawn Egg",
-    "chinese": "Silverfish Spawn Egg",
+    "chinese": "silverfish生成蛋",
     "imageURLs": [
       {
         "filename": "Silverfish_Spawn_Egg.png",
@@ -12428,7 +12428,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "skeletonhorsespawnegg",
     "standardized": "Skeletonhorse Spawn Egg",
-    "chinese": "Skeletonhorse Spawn Egg",
+    "chinese": "skeletonhorse生成蛋",
     "imageURLs": [
       {
         "filename": "Skeletonhorse_Spawn_Egg.png",
@@ -12440,7 +12440,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "skeletonspawnegg",
     "standardized": "Skeleton Spawn Egg",
-    "chinese": "Skeleton Spawn Egg",
+    "chinese": "骷髅生成蛋",
     "imageURLs": [
       {
         "filename": "Skeleton_Spawn_Egg.png",
@@ -12476,7 +12476,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "slimespawnegg",
     "standardized": "Slime Spawn Egg",
-    "chinese": "Slime Spawn Egg",
+    "chinese": "史莱姆生成蛋",
     "imageURLs": [
       {
         "filename": "Slime_Spawn_Egg.png",
@@ -12488,7 +12488,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "smithing",
     "standardized": "Smithing",
-    "chinese": "Smithing",
+    "chinese": "锻造",
     "imageURLs": [
       {
         "filename": "Smithing.png",
@@ -12512,7 +12512,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "smoker",
     "standardized": "Smoker",
-    "chinese": "Smoker",
+    "chinese": "烟熏炉",
     "imageURLs": [
       {
         "filename": "Smoker.png",
@@ -12524,7 +12524,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "smoothquartzstairs",
     "standardized": "Smooth Quartz Stairs",
-    "chinese": "Smooth Quartz Stairs",
+    "chinese": "平滑的石英楼梯",
     "imageURLs": [
       {
         "filename": "Smooth_Quartz_Stairs.png",
@@ -12536,7 +12536,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "smoothredsandstonestairs",
     "standardized": "Smooth Red Sand Stone Stairs",
-    "chinese": "Smooth Red Sand Stone Stairs",
+    "chinese": "平滑的红色沙子石头楼梯",
     "imageURLs": [
       {
         "filename": "Smooth_Red_Sand_Stone_Stairs.png",
@@ -12548,7 +12548,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "smoothsandstonestairs",
     "standardized": "Smooth Sand Stone Stairs",
-    "chinese": "Smooth Sand Stone Stairs",
+    "chinese": "平滑的沙子石头楼梯",
     "imageURLs": [
       {
         "filename": "Smooth_Sand_Stone_Stairs.png",
@@ -12560,7 +12560,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "smoothstone",
     "standardized": "Smooth Stone",
-    "chinese": "Smooth Stone",
+    "chinese": "平滑的石头",
     "imageURLs": [
       {
         "filename": "Smooth_Stone.png",
@@ -12608,7 +12608,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "soulsand",
     "standardized": "Soul Sand",
-    "chinese": "Soul Sand",
+    "chinese": "灵魂沙子",
     "imageURLs": [
       {
         "filename": "Soul_Sand.png",
@@ -12644,7 +12644,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "soultorch",
     "standardized": "Soul Torch",
-    "chinese": "Soul Torch",
+    "chinese": "灵魂火把",
     "imageURLs": [
       {
         "filename": "Soul_Torch.png",
@@ -12668,7 +12668,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "spawnegg",
     "standardized": "Spawn Egg",
-    "chinese": "Spawn Egg",
+    "chinese": "生成蛋",
     "imageURLs": [
       {
         "filename": "Spawn_Egg.png",
@@ -12692,7 +12692,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "spiderspawnegg",
     "standardized": "Spider Spawn Egg",
-    "chinese": "Spider Spawn Egg",
+    "chinese": "蜘蛛生成蛋",
     "imageURLs": [
       {
         "filename": "Spider_Spawn_Egg.png",
@@ -12728,7 +12728,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "sprucebutton",
     "standardized": "Spruce Button",
-    "chinese": "Spruce Button",
+    "chinese": "云杉按钮",
     "imageURLs": [
       {
         "filename": "Spruce_Button.png",
@@ -12740,7 +12740,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "sprucedoor",
     "standardized": "Spruce Door",
-    "chinese": "Spruce Door",
+    "chinese": "云杉门",
     "imageURLs": [
       {
         "filename": "Spruce_Door.png",
@@ -12752,7 +12752,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "sprucefencegate",
     "standardized": "Spruce Fence Gate",
-    "chinese": "Spruce Fence Gate",
+    "chinese": "云杉栅栏门",
     "imageURLs": [
       {
         "filename": "Spruce_Fence_Gate.png",
@@ -12764,7 +12764,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "sprucepressureplate",
     "standardized": "Sprucepressure Plate",
-    "chinese": "Sprucepressure Plate",
+    "chinese": "sprucepressure板",
     "imageURLs": [
       {
         "filename": "Sprucepressure_Plate.png",
@@ -12788,7 +12788,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "spruce ",
     "standardized": "Spruce ",
-    "chinese": "Spruce ",
+    "chinese": "云杉",
     "imageURLs": [
       {
         "filename": "Spruce_.png",
@@ -12800,7 +12800,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "squidspawnegg",
     "standardized": "Squid Spawn Egg",
-    "chinese": "Squid Spawn Egg",
+    "chinese": "鱿鱼生成蛋",
     "imageURLs": [
       {
         "filename": "Squid_Spawn_Egg.png",
@@ -12860,7 +12860,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stoneaxe",
     "standardized": "Stone Axe",
-    "chinese": "Stone Axe",
+    "chinese": "石头斧",
     "imageURLs": [
       {
         "filename": "Stone_Axe.png",
@@ -12872,7 +12872,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonebrickstairs",
     "standardized": "Stone Brick Stairs",
-    "chinese": "Stone Brick Stairs",
+    "chinese": "石头砖楼梯",
     "imageURLs": [
       {
         "filename": "Stone_Brick_Stairs.png",
@@ -12884,7 +12884,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonebutton",
     "standardized": "Stone Button",
-    "chinese": "Stone Button",
+    "chinese": "石头按钮",
     "imageURLs": [
       {
         "filename": "Stone_Button.png",
@@ -12896,7 +12896,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonehoe",
     "standardized": "Stone Hoe",
-    "chinese": "Stone Hoe",
+    "chinese": "石头锄",
     "imageURLs": [
       {
         "filename": "Stone_Hoe.png",
@@ -12908,7 +12908,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonepickaxe",
     "standardized": "Stone Pickaxe",
-    "chinese": "Stone Pickaxe",
+    "chinese": "石头镐",
     "imageURLs": [
       {
         "filename": "Stone_Pickaxe.png",
@@ -12920,7 +12920,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonepressureplate",
     "standardized": "Stone Pressure Plate",
-    "chinese": "Stone Pressure Plate",
+    "chinese": "石头压力板板",
     "imageURLs": [
       {
         "filename": "Stone_Pressure_Plate.png",
@@ -12932,7 +12932,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stoneshovel",
     "standardized": "Stone Shovel",
-    "chinese": "Stone Shovel",
+    "chinese": "石头铲",
     "imageURLs": [
       {
         "filename": "Stone_Shovel.png",
@@ -12944,7 +12944,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stoneslab",
     "standardized": "Stone Slab",
-    "chinese": "Stone Slab",
+    "chinese": "石头台阶",
     "imageURLs": [
       {
         "filename": "Stone_Slab.png",
@@ -12956,7 +12956,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonestairs",
     "standardized": "Stone Stairs",
-    "chinese": "Stone Stairs",
+    "chinese": "石头楼梯",
     "imageURLs": [
       {
         "filename": "Stone_Stairs.png",
@@ -12968,7 +12968,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonesword",
     "standardized": "Stone Sword",
-    "chinese": "Stone Sword",
+    "chinese": "石头剑",
     "imageURLs": [
       {
         "filename": "Stone_Sword.png",
@@ -12980,7 +12980,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonecutter",
     "standardized": "Stone Cutter",
-    "chinese": "Stone Cutter",
+    "chinese": "石头cutter",
     "imageURLs": [
       {
         "filename": "Stone_Cutter.png",
@@ -12992,7 +12992,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "stonecutterblock",
     "standardized": "Stone Cutter Block",
-    "chinese": "Stone Cutter Block",
+    "chinese": "石头cutter方块",
     "imageURLs": [
       {
         "filename": "Stone_Cutter_Block.png",
@@ -13004,7 +13004,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strayspawnegg",
     "standardized": "Stray Spawn Egg",
-    "chinese": "Stray Spawn Egg",
+    "chinese": "流浪者生成蛋",
     "imageURLs": [
       {
         "filename": "Stray_Spawn_Egg.png",
@@ -13016,7 +13016,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strider",
     "standardized": "Strider",
-    "chinese": "Strider",
+    "chinese": "行者",
     "imageURLs": [
       {
         "filename": "Strider.png",
@@ -13028,7 +13028,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "striderspawnegg",
     "standardized": "Strider Spawn Egg",
-    "chinese": "Strider Spawn Egg",
+    "chinese": "行者生成蛋",
     "imageURLs": [
       {
         "filename": "Strider_Spawn_Egg.png",
@@ -13052,7 +13052,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strippedlog",
     "standardized": "Stripped Log",
-    "chinese": "Stripped Log",
+    "chinese": "stripped原木",
     "imageURLs": [
       {
         "filename": "Stripped_Log.png",
@@ -13064,7 +13064,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strippedbirchlog",
     "standardized": "Strippedbirch Log",
-    "chinese": "Strippedbirch Log",
+    "chinese": "strippedbirch原木",
     "imageURLs": [
       {
         "filename": "Strippedbirch_Log.png",
@@ -13100,7 +13100,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strippeddarkoaklog",
     "standardized": "Strippeddarkoak Log",
-    "chinese": "Strippeddarkoak Log",
+    "chinese": "strippeddarkoak原木",
     "imageURLs": [
       {
         "filename": "Strippeddarkoak_Log.png",
@@ -13112,7 +13112,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strippedjunglelog",
     "standardized": "Strippedjungle Log",
-    "chinese": "Strippedjungle Log",
+    "chinese": "strippedjungle原木",
     "imageURLs": [
       {
         "filename": "Strippedjungle_Log.png",
@@ -13124,7 +13124,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strippedoaklog",
     "standardized": "Strippedoak Log",
-    "chinese": "Strippedoak Log",
+    "chinese": "strippedoak原木",
     "imageURLs": [
       {
         "filename": "Strippedoak_Log.png",
@@ -13136,7 +13136,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "strippedsprucelog",
     "standardized": "Strippedspruce Log",
-    "chinese": "Strippedspruce Log",
+    "chinese": "strippedspruce原木",
     "imageURLs": [
       {
         "filename": "Strippedspruce_Log.png",
@@ -13148,7 +13148,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warped",
     "standardized": "Warped",
-    "chinese": "Warped",
+    "chinese": "诡异",
     "imageURLs": [
       {
         "filename": "Warped.png",
@@ -13184,7 +13184,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "structureblock",
     "standardized": "Structure Block",
-    "chinese": "Structure Block",
+    "chinese": "structure方块",
     "imageURLs": [
       {
         "filename": "Structure_Block.png",
@@ -13304,7 +13304,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "trappedchest",
     "standardized": "Trapped Chest",
-    "chinese": "Trapped Chest",
+    "chinese": "陷阱箱子",
     "imageURLs": [
       {
         "filename": "Trapped_Chest.png",
@@ -13340,7 +13340,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "tropical",
     "standardized": "Tropical",
-    "chinese": "Tropical",
+    "chinese": "热带鱼",
     "imageURLs": [
       {
         "filename": "Tropical.png",
@@ -13376,7 +13376,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "tropicalfishspawnegg",
     "standardized": "Tropicalfish Spawn Egg",
-    "chinese": "Tropicalfish Spawn Egg",
+    "chinese": "tropicalfish生成蛋",
     "imageURLs": [
       {
         "filename": "Tropicalfish_Spawn_Egg.png",
@@ -13400,7 +13400,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "turtlehelmet",
     "standardized": "Turtle Helmet",
-    "chinese": "Turtle Helmet",
+    "chinese": "海龟头盔",
     "imageURLs": [
       {
         "filename": "Turtle_Helmet.png",
@@ -13412,7 +13412,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "turtlespawnegg",
     "standardized": "Turtle Spawn Egg",
-    "chinese": "Turtle Spawn Egg",
+    "chinese": "海龟生成蛋",
     "imageURLs": [
       {
         "filename": "Turtle_Spawn_Egg.png",
@@ -13460,7 +13460,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "vexspawnegg",
     "standardized": "Vex Spawn Egg",
-    "chinese": "Vex Spawn Egg",
+    "chinese": "恼鬼生成蛋",
     "imageURLs": [
       {
         "filename": "Vex_Spawn_Egg.png",
@@ -13472,7 +13472,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "villagerspawnegg",
     "standardized": "Villager Spawn Egg",
-    "chinese": "Villager Spawn Egg",
+    "chinese": "村民生成蛋",
     "imageURLs": [
       {
         "filename": "Villager_Spawn_Egg.png",
@@ -13484,7 +13484,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "vindicatorspawnegg",
     "standardized": "Vindicator Spawn Egg",
-    "chinese": "Vindicator Spawn Egg",
+    "chinese": "卫道士生成蛋",
     "imageURLs": [
       {
         "filename": "Vindicator_Spawn_Egg.png",
@@ -13520,7 +13520,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "wanderingtraderspawnegg",
     "standardized": "Wanderingtrader Spawn Egg",
-    "chinese": "Wanderingtrader Spawn Egg",
+    "chinese": "wanderingtrader生成蛋",
     "imageURLs": [
       {
         "filename": "Wanderingtrader_Spawn_Egg.png",
@@ -13532,7 +13532,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedbutton",
     "standardized": "Warped Button",
-    "chinese": "Warped Button",
+    "chinese": "诡异按钮",
     "imageURLs": [
       {
         "filename": "Warped_Button.png",
@@ -13544,7 +13544,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpeddoor",
     "standardized": "Warped Door",
-    "chinese": "Warped Door",
+    "chinese": "诡异门",
     "imageURLs": [
       {
         "filename": "Warped_Door.png",
@@ -13556,7 +13556,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedfence",
     "standardized": "Warped Fence",
-    "chinese": "Warped Fence",
+    "chinese": "诡异栅栏",
     "imageURLs": [
       {
         "filename": "Warped_Fence.png",
@@ -13568,7 +13568,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedfencegate",
     "standardized": "Warped Fence Gate",
-    "chinese": "Warped Fence Gate",
+    "chinese": "诡异栅栏门",
     "imageURLs": [
       {
         "filename": "Warped_Fence_Gate.png",
@@ -13628,7 +13628,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedplanks",
     "standardized": "Warped Planks",
-    "chinese": "Warped Planks",
+    "chinese": "诡异木板",
     "imageURLs": [
       {
         "filename": "Warped_Planks.png",
@@ -13640,7 +13640,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedpressureplate",
     "standardized": "Warped Pressure Plate",
-    "chinese": "Warped Pressure Plate",
+    "chinese": "诡异压力板板",
     "imageURLs": [
       {
         "filename": "Warped_Pressure_Plate.png",
@@ -13664,7 +13664,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedsign",
     "standardized": "Warped Sign",
-    "chinese": "Warped Sign",
+    "chinese": "诡异告示牌",
     "imageURLs": [
       {
         "filename": "Warped_Sign.png",
@@ -13676,7 +13676,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedslab",
     "standardized": "Warped Slab",
-    "chinese": "Warped Slab",
+    "chinese": "诡异台阶",
     "imageURLs": [
       {
         "filename": "Warped_Slab.png",
@@ -13688,7 +13688,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedstairs",
     "standardized": "Warped Stairs",
-    "chinese": "Warped Stairs",
+    "chinese": "诡异楼梯",
     "imageURLs": [
       {
         "filename": "Warped_Stairs.png",
@@ -13712,7 +13712,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedtrapdoor",
     "standardized": "Warped Trap Door",
-    "chinese": "Warped Trap Door",
+    "chinese": "诡异trap门",
     "imageURLs": [
       {
         "filename": "Warped_Trap_Door.png",
@@ -13724,7 +13724,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "warpedwartblock",
     "standardized": "Warped Wart Block",
-    "chinese": "Warped Wart Block",
+    "chinese": "诡异疣方块",
     "imageURLs": [
       {
         "filename": "Warped_Wart_Block.png",
@@ -13784,7 +13784,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "whitedye",
     "standardized": "White Dye",
-    "chinese": "White Dye",
+    "chinese": "白色染料",
     "imageURLs": [
       {
         "filename": "White_Dye.png",
@@ -13796,7 +13796,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "whiteglazedterracotta",
     "standardized": "White Glazed Terracotta",
-    "chinese": "White Glazed Terracotta",
+    "chinese": "白色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "White_Glazed_Terracotta.png",
@@ -13808,7 +13808,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "witchspawnegg",
     "standardized": "Witch Spawn Egg",
-    "chinese": "Witch Spawn Egg",
+    "chinese": "女巫生成蛋",
     "imageURLs": [
       {
         "filename": "Witch_Spawn_Egg.png",
@@ -13832,7 +13832,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "witherskeletonspawnegg",
     "standardized": "Witherskeleton Spawn Egg",
-    "chinese": "Witherskeleton Spawn Egg",
+    "chinese": "witherskeleton生成蛋",
     "imageURLs": [
       {
         "filename": "Witherskeleton_Spawn_Egg.png",
@@ -13844,7 +13844,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "wolfspawnegg",
     "standardized": "Wolf Spawn Egg",
-    "chinese": "Wolf Spawn Egg",
+    "chinese": "狼生成蛋",
     "imageURLs": [
       {
         "filename": "Wolf_Spawn_Egg.png",
@@ -13868,7 +13868,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodenaxe",
     "standardized": "Wooden Axe",
-    "chinese": "Wooden Axe",
+    "chinese": "木质斧",
     "imageURLs": [
       {
         "filename": "Wooden_Axe.png",
@@ -13880,7 +13880,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodenbutton",
     "standardized": "Wooden Button",
-    "chinese": "Wooden Button",
+    "chinese": "木质按钮",
     "imageURLs": [
       {
         "filename": "Wooden_Button.png",
@@ -13892,7 +13892,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodendoor",
     "standardized": "Wooden Door",
-    "chinese": "Wooden Door",
+    "chinese": "木质门",
     "imageURLs": [
       {
         "filename": "Wooden_Door.png",
@@ -13904,7 +13904,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodenhoe",
     "standardized": "Wooden Hoe",
-    "chinese": "Wooden Hoe",
+    "chinese": "木质锄",
     "imageURLs": [
       {
         "filename": "Wooden_Hoe.png",
@@ -13916,7 +13916,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodenpickaxe",
     "standardized": "Wooden Pickaxe",
-    "chinese": "Wooden Pickaxe",
+    "chinese": "木质镐",
     "imageURLs": [
       {
         "filename": "Wooden_Pickaxe.png",
@@ -13928,7 +13928,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodenpressureplate",
     "standardized": "Wooden Pressure Plate",
-    "chinese": "Wooden Pressure Plate",
+    "chinese": "木质压力板板",
     "imageURLs": [
       {
         "filename": "Wooden_Pressure_Plate.png",
@@ -13940,7 +13940,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodenshovel",
     "standardized": "Wooden Shovel",
-    "chinese": "Wooden Shovel",
+    "chinese": "木质铲",
     "imageURLs": [
       {
         "filename": "Wooden_Shovel.png",
@@ -13952,7 +13952,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodenslab",
     "standardized": "Wooden Slab",
-    "chinese": "Wooden Slab",
+    "chinese": "木质台阶",
     "imageURLs": [
       {
         "filename": "Wooden_Slab.png",
@@ -13964,7 +13964,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "woodensword",
     "standardized": "Wooden Sword",
-    "chinese": "Wooden Sword",
+    "chinese": "木质剑",
     "imageURLs": [
       {
         "filename": "Wooden_Sword.png",
@@ -14000,7 +14000,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "yellowdye",
     "standardized": "Yellow Dye",
-    "chinese": "Yellow Dye",
+    "chinese": "黄色染料",
     "imageURLs": [
       {
         "filename": "Yellow_Dye.png",
@@ -14012,7 +14012,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "yellowflower",
     "standardized": "Yellow Flower",
-    "chinese": "Yellow Flower",
+    "chinese": "黄色花",
     "imageURLs": [
       {
         "filename": "Yellow_Flower.png",
@@ -14024,7 +14024,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "yellowglazedterracotta",
     "standardized": "Yellow Glazed Terracotta",
-    "chinese": "Yellow Glazed Terracotta",
+    "chinese": "黄色带釉的陶瓦",
     "imageURLs": [
       {
         "filename": "Yellow_Glazed_Terracotta.png",
@@ -14048,7 +14048,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "zoglinspawnegg",
     "standardized": "Zoglin Spawn Egg",
-    "chinese": "Zoglin Spawn Egg",
+    "chinese": "zoglin生成蛋",
     "imageURLs": [
       {
         "filename": "Zoglin_Spawn_Egg.png",
@@ -14060,7 +14060,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "zombiehorsespawnegg",
     "standardized": "Zombiehorse Spawn Egg",
-    "chinese": "Zombiehorse Spawn Egg",
+    "chinese": "zombiehorse生成蛋",
     "imageURLs": [
       {
         "filename": "Zombiehorse_Spawn_Egg.png",
@@ -14084,7 +14084,7 @@ const MINECRAFT_3_____ = [
   {
     "word": "zombievillagerspawnegg",
     "standardized": "Zombievillager Spawn Egg",
-    "chinese": "Zombievillager Spawn Egg",
+    "chinese": "zombievillager生成蛋",
     "imageURLs": [
       {
         "filename": "Zombievillager_Spawn_Egg.png",
