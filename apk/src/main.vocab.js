@@ -190,6 +190,12 @@
         return M.loadedVocabFiles[file];
     }
 
+    function loadVocabPackFiles(files) {
+        const list = Array.isArray(files) ? files.filter(Boolean) : (files ? [files] : []);
+        if (!list.length) return Promise.resolve();
+        return list.reduce((chain, file) => chain.then(() => loadVocabPackFile(file)), Promise.resolve());
+    }
+
     function normalizeRawWord(raw) {
         if (!raw || typeof raw !== "object") return null;
         const en = String(raw.standardized || raw.word || "").trim();
@@ -218,12 +224,28 @@
         console.debug("[Vocab] Setting active pack", { selection, pickId, files: pack.files || pack.file });
 
         try {
-            const files = Array.isArray(pack.files) ? [...pack.files] : [];
-            if (pack.file) files.push(pack.file);
-            if (!files.length) throw new Error(`no vocab files defined for pack ${pack.id}`);
-            await Promise.all(files.map(f => loadVocabPackFile(f)));
-            const rawList = typeof pack.getRaw === "function" ? pack.getRaw() : [];
-            console.debug(`[Vocab] Pack ${pack.id} raw list size`, rawList.length);
+            // 按顺序加载词库文件，确保脚本完全执行后再继续
+            if (pack.files && Array.isArray(pack.files)) {
+                console.debug("[Vocab] Loading", pack.files.length, "files sequentially");
+                await loadVocabPackFiles(pack.files);
+            } else if (pack.file) {
+                console.debug("[Vocab] Loading single file:", pack.file);
+                await loadVocabPackFile(pack.file);
+            }
+
+            let rawList = [];
+            if (typeof pack.getRaw === "function") {
+                rawList = pack.getRaw();
+                console.debug("[Vocab] getRaw() returned", rawList.length, "words");
+            } else if (Array.isArray(pack.globals)) {
+                // 支持 globals 属性，从全局变量获取词库数据
+                rawList = pack.globals.flatMap(name => {
+                    const value = window[name];
+                    return Array.isArray(value) ? value : [];
+                });
+                console.debug("[Vocab] globals returned", rawList.length, "words");
+            }
+
             const mapped = [];
             const seen = new Set();
             (Array.isArray(rawList) ? rawList : []).forEach(r => {
@@ -233,21 +255,19 @@
                 seen.add(w.en);
                 mapped.push(w);
             });
-            const fallbackSource = Array.isArray(M.defaultWords) ? M.defaultWords : [];
-            const fallbackWords = fallbackSource.map(w => normalizeRawWord(w)).filter(Boolean);
-            let target = mapped.length ? mapped : fallbackWords;
-            if (!target.length) {
-                console.warn(`[Vocab] Pack ${pack.id} produced no words and no fallback data`);
-            }
-            if (target.length) {
-                M.wordDatabase = target;
+
+            if (mapped.length) {
+                M.wordDatabase = mapped;
                 M.wordPicker = null;
                 const pr = getPackProgress(pack.id);
-                pr.total = target.length;
+                pr.total = mapped.length;
                 M.saveProgress();
+                console.debug("[Vocab] Loaded", mapped.length, "unique words into wordDatabase");
+            } else {
+                console.warn("[Vocab] No words loaded from pack:", pack.id);
             }
-        } catch {
-            console.error(`[Vocab] Failed to load pack ${pack.id}`, arguments.length ? arguments[0] : undefined);
+        } catch (err) {
+            console.error("[Vocab] Failed to load pack", pack.id, err);
         }
 
         renderVocabSelect();
@@ -404,6 +424,7 @@
         filterPacksByStage,
         pickPackAuto,
         loadVocabPackFile,
+        loadVocabPackFiles,
         normalizeRawWord,
         setActiveVocabPack,
         switchToNextPackInOrder,

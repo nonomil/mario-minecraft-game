@@ -1,3 +1,13 @@
+## v1.2.19（发布日期：2026-02-08）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.19，versionCode = 32
+- 主要变更
+  - 修复：横屏全屏显示超出屏幕问题，groundY 计算改为基于 canvas 高度减去物品栏高度
+  - 修复：单词库切换不生效问题，词库文件加载改为顺序加载（避免并行加载时脚本未执行完毕）
+  - 修复：单词图片不显示问题，添加网络安全配置允许加载外部图片资源
+  - 优化：main.core.js 中 applyResponsiveCanvas 函数同步修复 groundY 计算
+  - 新增：network_security_config.xml 配置文件，支持 img.icons8.com、twemoji.maxcdn.com 等图片域名
+
 ## v1.2.18（发布日期：2026-02-08）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.18，versionCode = 31
