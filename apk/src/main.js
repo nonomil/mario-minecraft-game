@@ -1437,7 +1437,6 @@ function remapWorldCoordinates(oldScale, oldGroundY) {
     if (!oldScale || !worldScale) return;
 
     const scaleRatioX = worldScale.x / oldScale.x;
-    const scaleRatioY = worldScale.y / oldScale.y;
     const scaleRatioUnit = worldScale.unit / oldScale.unit;
 
     // 重映射玩家位置
@@ -1448,8 +1447,7 @@ function remapWorldCoordinates(oldScale, oldGroundY) {
         player.y = groundY - oldDistFromGround * scaleRatioUnit;
         player.width = gameConfig.player.width;
         player.height = gameConfig.player.height;
-        player.velX *= scaleRatioX;
-        player.velY *= scaleRatioY;
+        // 速度会由 applyMotionToPlayer 重新计算，不需要手动缩放
         applyMotionToPlayer(player);
     }
 
