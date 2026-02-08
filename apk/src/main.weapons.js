@@ -158,8 +158,8 @@
         if (!el) return;
         const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
         const arrows = getArrowCount();
-        const arrowText = weapon.type === "ranged" ? ` | 🏹 ${arrows}` : "";
-        el.innerText = `武器: ${weapon.emoji} ${weapon.name}${arrowText}`;
+        const arrowText = weapon.type === "ranged" ? ` 🏹${arrows}` : "";
+        el.innerText = `${weapon.emoji} ${weapon.name}${arrowText}`;
     }
 
     // ============================================

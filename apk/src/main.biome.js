@@ -19,6 +19,7 @@
         forest: {
             id: "forest",
             name: "森林",
+            emoji: "🌲",
             color: "#4CAF50",
             groundType: "grass",
             decorations: { tree: 0.3, bush: 0.2, flower: 0.25, mushroom: 0.1, vine: 0.15, cave_entrance: 0.04, vine_ladder: 0.02 },
@@ -29,6 +30,7 @@
         snow: {
             id: "snow",
             name: "雪地",
+            emoji: "❄️",
             color: "#FFFFFF",
             groundType: "snow",
             decorations: { spruce: 0.25, ice_spike: 0.1, snow_pile: 0.3, ice_block: 0.15 },
@@ -39,6 +41,7 @@
         desert: {
             id: "desert",
             name: "沙漠",
+            emoji: "🏜️",
             color: "#FDD835",
             groundType: "sand",
             decorations: { cactus: 0.2, dead_bush: 0.15, rock: 0.1, bones: 0.05 },
@@ -49,6 +52,7 @@
         mountain: {
             id: "mountain",
             name: "山地",
+            emoji: "⛰️",
             color: "#757575",
             groundType: "stone",
             decorations: { ore_coal: 0.15, ore_iron: 0.1, ore_gold: 0.05, ore_diamond: 0.02, stalactite: 0.12, crystal: 0.08, lava_pool: 0.05, cave_entrance: 0.03 },
@@ -58,6 +62,7 @@
         ocean: {
             id: "ocean",
             name: "海滩",
+            emoji: "🏖️",
             color: "#2196F3",
             groundType: "sand",
             decorations: { palm_tree: 0.15, shell: 0.2, starfish: 0.15, seaweed: 0.25, boat: 0.05 },
@@ -68,6 +73,7 @@
         nether: {
             id: "nether",
             name: "地狱",
+            emoji: "🔥",
             color: "#8B0000",
             groundType: "netherrack",
             decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
@@ -77,6 +83,7 @@
         cave: {
             id: "cave",
             name: "矿洞",
+            emoji: "⛏️",
             color: "#3B3B4F",
             groundType: "stone",
             decorations: { ore_coal: 0.25, ore_iron: 0.18, ore_gold: 0.08, ore_diamond: 0.05, stalactite: 0.2, crystal: 0.1, lava_pool: 0.08, cave_exit: 0.08 },
@@ -99,6 +106,7 @@
         sky: {
             id: "sky",
             name: "云端",
+            emoji: "☁️",
             color: "#87CEEB",
             groundType: "cloud",
             decorations: { },
@@ -197,7 +205,7 @@
             M.showToast(`🌍 进入${nextBiome.name}群系`);
             updateWeatherForBiome(nextBiome);
             const info = document.getElementById("level-info");
-            if (info) info.innerText = `生态: ${nextBiome.name}`;
+            if (info) info.innerText = `${nextBiome.emoji || '🌍'} ${nextBiome.name}`;
             if (currentBiome === "nether" && M.netherEntryPenaltyArmed) {
                 M.playerHp = Math.max(0, M.playerHp - 1);
                 M.updateHpUI();

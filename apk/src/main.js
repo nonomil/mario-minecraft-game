@@ -3702,8 +3702,7 @@ function triggerWordGateChallenge(gate) {
 function updateWordUI(wordObj) {
     const el = document.getElementById("word-display");
     if (!el) return;
-    const times = wordObj && wordObj.en && sessionWordCounts[wordObj.en] ? ` ×${sessionWordCounts[wordObj.en]}` : "";
-    el.innerText = wordObj ? `${wordObj.en} ${wordObj.zh}${times}` : "Start!";
+    el.innerText = wordObj ? `${wordObj.en} ${wordObj.zh}` : "Start!";
 }
 
 function speakWord(wordObj) {
@@ -4176,19 +4175,19 @@ function renderInventoryModal() {
         const weapons = getInventoryEntries(["stone_sword", "iron_pickaxe", "bow", "arrow"]);
         const armorHtml = `
             <div class="inventory-equipment">
-                <div>当前护甲：${armorLabel}</div>
-                <div>护甲耐久：${armorDur}</div>
-                <div>护甲库存：${armorList.length ? armorList.join("、") : "无"}</div>
+                <div>🛡️ 护甲：${armorLabel}</div>
+                <div>耐久：${armorDur}</div>
+                <div>库存：${armorList.length ? armorList.join("、") : "无"}</div>
             </div>
         `;
         const weaponHtml = weapons.length
             ? weapons.map(entry => `
-                <div class="inventory-item">
+                <div class="inventory-item" data-item="${entry.key}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
                     <div class="inventory-item-left">
                         <div class="inventory-item-icon">${entry.icon}</div>
                         <div>${entry.label}</div>
                     </div>
-                    <div>x${entry.count}</div>
+                    <div class="inventory-item-count">${entry.count}</div>
                 </div>
             `).join("")
             : `<div class="inventory-empty">暂无装备</div>`;
@@ -4203,12 +4202,12 @@ function renderInventoryModal() {
         return;
     }
     inventoryContentEl.innerHTML = entries.map(entry => `
-        <div class="inventory-item">
+        <div class="inventory-item" data-item="${entry.key}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
             <div class="inventory-item-left">
                 <div class="inventory-item-icon">${entry.icon}</div>
                 <div>${entry.label}</div>
             </div>
-            <div>x${entry.count}</div>
+            <div class="inventory-item-count">${entry.count}</div>
         </div>
     `).join("");
 }
@@ -4243,6 +4242,78 @@ function hideInventoryModal() {
 function updateInventoryModal() {
     if (!inventoryModalEl || !inventoryModalEl.classList.contains("visible")) return;
     renderInventoryModal();
+}
+
+// 背包物品使用函数
+function useInventoryItem(itemKey) {
+    const count = Number(inventory[itemKey]) || 0;
+    if (count <= 0) {
+        showToast("❌ 物品不足");
+        return;
+    }
+
+    const itemName = ITEM_LABELS[itemKey] || itemKey;
+    let used = false;
+
+    // 消耗品使用
+    if (itemKey === "diamond") {
+        if (playerHp >= playerMaxHp) {
+            showToast("❤️ 已满血");
+            return;
+        }
+        inventory.diamond -= 1;
+        healPlayer(1);
+        showFloatingText("+1❤️", player.x, player.y - 60);
+        showToast(`💎 恢复生命`);
+        used = true;
+    } else if (itemKey === "pumpkin") {
+        if (playerHp >= playerMaxHp) {
+            showToast("❤️ 已满血");
+            return;
+        }
+        inventory.pumpkin -= 1;
+        healPlayer(2);
+        showFloatingText("+2❤️", player.x, player.y - 60);
+        showToast(`🎃 恢复2点生命`);
+        used = true;
+    }
+    // 武器切换
+    else if (itemKey === "stone_sword" || itemKey === "iron_pickaxe") {
+        const weaponMap = {
+            stone_sword: "sword",
+            iron_pickaxe: "pickaxe"
+        };
+        const weaponId = weaponMap[itemKey];
+        if (weaponId && playerWeapons.current !== weaponId) {
+            playerWeapons.current = weaponId;
+            playerWeapons.attackCooldown = 0;
+            const weapon = WEAPONS[weaponId];
+            updateWeaponUI();
+            showToast(`⚔️ 切换到 ${weapon.emoji} ${weapon.name}`);
+            used = true;
+        } else {
+            showToast("⚔️ 已装备当前武器");
+        }
+    }
+    // 箭矢
+    else if (itemKey === "arrow") {
+        showToast(`🏹 箭矢数量: ${count}`);
+    }
+    // 其他材料
+    else {
+        showToast(`${itemName}: ${count}个`);
+    }
+
+    if (used) {
+        updateHpUI();
+        updateInventoryUI();
+        updateInventoryModal(); // 刷新背包显示
+    }
+}
+
+// 导出到全局供 HTML onclick 使用
+if (typeof window !== "undefined") {
+    window.useInventoryItem = useInventoryItem;
 }
 
 function addArmorToInventory(armorId) {
@@ -4302,10 +4373,10 @@ function updateArmorUI() {
     if (playerEquipment.armor) {
         const armor = ARMOR_TYPES[playerEquipment.armor];
         const dur = Math.max(0, Math.min(100, playerEquipment.armorDurability));
-        el.innerText = `${armor.name} (${dur}%)`;
+        el.innerText = `🛡️ ${armor.name} ${dur}%`;
         el.classList.add("hud-box-active");
     } else {
-        el.innerText = "盔甲: 无";
+        el.innerText = "🛡️ 无";
         el.classList.remove("hud-box-active");
     }
 }
