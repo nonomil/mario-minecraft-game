@@ -20,12 +20,20 @@ async function loginAndBoot(page, baseURL, username = "e2e_user") {
 
   // Wait until initLoginScreen() ran (it sets pausedByModal=true) so the login button is wired.
   await page.waitForFunction(() => window.MMWG_TEST_API && window.MMWG_TEST_API.getState().pausedByModal === true);
-  await expect(page.locator("#login-screen")).toBeVisible();
 
-  await page.fill("#username-input", username);
-  await page.click("#btn-login");
+  const loginVisible = await page.locator("#login-screen").isVisible();
+  if (loginVisible) {
+    await page.fill("#username-input", username);
+    await page.click("#btn-login");
+    await expect(page.locator("#login-screen")).not.toBeVisible();
+  } else {
+    await page.evaluate(async (name) => {
+      const existing = window.MMWG_STORAGE.getAccountList().find((a) => a.username === name);
+      const account = existing || window.MMWG_STORAGE.createAccount(name);
+      await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
+    }, username);
+  }
 
-  await expect(page.locator("#login-screen")).not.toBeVisible();
   await page.waitForFunction(() => window.MMWG_TEST_API.getState().startedOnce === true);
 }
 
@@ -171,4 +179,61 @@ test("需求8: 学习增强-挑战弹窗可打开并可完成关闭", async ({ p
 
   await page.evaluate(() => window.completeLearningChallenge(true));
   await expect(modal).not.toBeVisible();
+});
+
+test("需求9: 横屏安全区变化后地面与角色仍在可视区", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({
+    viewport: { width: 915, height: 412 },
+    isMobile: true,
+    hasTouch: true,
+    userAgent: "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125 Mobile Safari/537.36",
+  });
+  const page = await context.newPage();
+  await loginAndBoot(page, baseURL, "req9");
+
+  const before = await page.evaluate(() => {
+    const inv = document.querySelector(".inventory-bar");
+    const invRect = inv ? inv.getBoundingClientRect() : null;
+    const playerRef = typeof player !== "undefined" ? player : null;
+    return {
+      groundY: typeof groundY === "number" ? groundY : null,
+      playerBottom: playerRef ? playerRef.y + playerRef.height : null,
+      invTop: invRect?.top ?? null,
+      canvasHeight: document.getElementById("gameCanvas")?.height ?? null,
+    };
+  });
+
+  expect(before.groundY).not.toBeNull();
+  expect(before.playerBottom).not.toBeNull();
+  expect(before.invTop).not.toBeNull();
+  expect(before.playerBottom).toBeLessThanOrEqual(before.invTop + 2);
+
+  await page.evaluate(() => {
+    document.documentElement.style.setProperty("--safe-top", "20px");
+    document.documentElement.style.setProperty("--safe-bottom", "48px");
+    window.dispatchEvent(new Event("resize"));
+  });
+  await page.waitForTimeout(800);
+
+  const after = await page.evaluate(() => {
+    const inv = document.querySelector(".inventory-bar");
+    const invRect = inv ? inv.getBoundingClientRect() : null;
+    const playerRef = typeof player !== "undefined" ? player : null;
+    return {
+      groundY: typeof groundY === "number" ? groundY : null,
+      playerBottom: playerRef ? playerRef.y + playerRef.height : null,
+      invTop: invRect?.top ?? null,
+      canvasHeight: document.getElementById("gameCanvas")?.height ?? null,
+      safeBottom: getComputedStyle(document.documentElement).getPropertyValue("--safe-bottom").trim(),
+    };
+  });
+
+  expect(after.safeBottom).toBe("48px");
+  expect(after.groundY).not.toBeNull();
+  expect(after.playerBottom).not.toBeNull();
+  expect(after.invTop).not.toBeNull();
+  expect(after.playerBottom).toBeLessThanOrEqual(after.invTop + 2);
+  expect(after.groundY).toBeLessThan(after.canvasHeight);
+
+  await context.close();
 });

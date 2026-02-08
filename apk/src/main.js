@@ -1297,10 +1297,7 @@ function scaleGameConfig(viewport) {
         cfg.physics.gravity = (baseGameConfig.physics?.gravity || 0) * scale.unit;
         cfg.physics.jumpStrength = (baseGameConfig.physics?.jumpStrength || 0) * scale.unit;
         cfg.physics.movementSpeed = (baseGameConfig.physics?.movementSpeed || 0) * scale.unit;
-        // 将地面设置为物品栏上边框的高度
-        // 默认 canvas 600px，默认 groundY 530px，所以物品栏高度 = 600 - 530 = 70px
-        const baseInventoryHeight = baseCanvasSize.height - (baseGameConfig.physics?.groundY || 530);
-        const inventoryHeight = baseInventoryHeight * scale.unit;
+        const inventoryHeight = 48 * scale.unit;
         cfg.physics.groundY = cfg.canvas.height - inventoryHeight;
     }
 
@@ -1519,6 +1516,84 @@ function remapWorldCoordinates(oldScale, oldGroundY) {
     // 重映射相机位置
     cameraX *= scaleRatioX;
     lastGenX *= scaleRatioX;
+}
+
+function transformWorldEntityForViewport(entity, scaleX, scaleY, scaleUnit) {
+    if (!entity || typeof entity !== "object") return;
+
+    const posXKeys = ["x", "originX", "baseX", "minX", "maxX", "leftBound", "rightBound", "startX", "endX", "targetX", "lastX"];
+    const posYKeys = ["y", "originY", "baseY", "minY", "maxY", "topBound", "bottomBound", "startY", "endY", "targetY", "lastY"];
+    const sizeXKeys = ["width", "w", "radiusX"];
+    const sizeYKeys = ["height", "h", "radiusY"];
+    const speedXKeys = ["velX", "speedX", "dx"];
+    const speedYKeys = ["velY", "speedY", "dy"];
+    const unitKeys = ["radius", "size", "range", "attackRange", "detectRange", "jumpStrength", "speed", "moveSpeed", "knockback"];
+
+    posXKeys.forEach(key => {
+        if (typeof entity[key] === "number" && isFinite(entity[key])) entity[key] *= scaleX;
+    });
+    posYKeys.forEach(key => {
+        if (typeof entity[key] === "number" && isFinite(entity[key])) entity[key] *= scaleY;
+    });
+    sizeXKeys.forEach(key => {
+        if (typeof entity[key] === "number" && isFinite(entity[key])) entity[key] *= scaleX;
+    });
+    sizeYKeys.forEach(key => {
+        if (typeof entity[key] === "number" && isFinite(entity[key])) entity[key] *= scaleY;
+    });
+    speedXKeys.forEach(key => {
+        if (typeof entity[key] === "number" && isFinite(entity[key])) entity[key] *= scaleX;
+    });
+    speedYKeys.forEach(key => {
+        if (typeof entity[key] === "number" && isFinite(entity[key])) entity[key] *= scaleY;
+    });
+    unitKeys.forEach(key => {
+        if (typeof entity[key] === "number" && isFinite(entity[key])) entity[key] *= scaleUnit;
+    });
+}
+
+function realignWorldForViewport(previousLayout) {
+    if (!previousLayout || !startedOnce) return;
+
+    const oldWidth = Math.max(1, Number(previousLayout.canvasWidth) || 1);
+    const oldHeight = Math.max(1, Number(previousLayout.canvasHeight) || 1);
+    const newWidth = Math.max(1, Number(canvas.width) || 1);
+    const newHeight = Math.max(1, Number(canvas.height) || 1);
+
+    const scaleX = newWidth / oldWidth;
+    const scaleY = newHeight / oldHeight;
+    const scaleUnit = Math.min(scaleX, scaleY);
+
+    if (!isFinite(scaleX) || !isFinite(scaleY) || !isFinite(scaleUnit)) return;
+
+    const collections = [platforms, trees, chests, items, enemies, golems, projectiles, decorations, particles, floatingTexts, wordGates];
+    collections.forEach(list => {
+        if (!Array.isArray(list)) return;
+        list.forEach(entry => transformWorldEntityForViewport(entry, scaleX, scaleY, scaleUnit));
+    });
+
+    if (player) {
+        transformWorldEntityForViewport(player, scaleX, scaleY, scaleUnit);
+        applyMotionToPlayer(player);
+        if (typeof player.height === "number" && isFinite(player.height)) {
+            player.y = Math.min(player.y, groundY - player.height);
+        }
+    }
+
+    if (Array.isArray(playerPositionHistory) && playerPositionHistory.length) {
+        playerPositionHistory = playerPositionHistory.map(point => {
+            if (!point || typeof point !== "object") return point;
+            return {
+                ...point,
+                x: typeof point.x === "number" ? point.x * scaleX : point.x,
+                y: typeof point.y === "number" ? point.y * scaleY : point.y
+            };
+        });
+    }
+
+    if (typeof cameraX === "number" && isFinite(cameraX)) cameraX *= scaleX;
+    if (typeof lastGenX === "number" && isFinite(lastGenX)) lastGenX *= scaleX;
+    if (typeof lastWordItemX === "number" && isFinite(lastWordItemX)) lastWordItemX *= scaleX;
 }
 
 function applySpeedSetting() {
@@ -2357,12 +2432,20 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
+    const previousLayout = {
+        canvasWidth: canvas.width,
+        canvasHeight: canvas.height
+    };
     const visualViewport = getViewportSize();
     // Use the safe-area-adjusted game area for canvas + physics scaling.
     const gameArea = getGameAreaSize();
     applyConfig(gameArea);
     const viewportChanged = gameArea.width !== lastViewport.width || gameArea.height !== lastViewport.height;
     lastViewport = { width: gameArea.width, height: gameArea.height };
+
+    if (viewportChanged && startedOnce) {
+        realignWorldForViewport(previousLayout);
+    }
 
     const baseScale = Number(settings.uiScale) || 1.0;
     const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
@@ -7483,4 +7566,3 @@ function registerTestApi() {
 }
 
 registerTestApi();
-
