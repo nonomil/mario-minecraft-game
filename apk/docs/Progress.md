@@ -1,3 +1,30 @@
+## v1.2.17（发布日期：2026-02-08）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.17，versionCode = 30
+- 主要变更
+  - 修复：单词库文件夹和文件名改为英文，解决 APK 中文路径加载失败问题
+  - 修复：移除 FLAG_LAYOUT_NO_LIMITS 标志，解决全屏模式下内容超出屏幕的问题
+  - 优化：更新 manifest.js 中所有词库文件路径为英文路径
+  - 文档：同步主项目文档到 apk/docs 目录
+
+## v1.2.16（发布日期：2026-02-08）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.16，versionCode = 29
+- 主要变更
+  - 修复：单词库切换问题深度修复，解决 Manifest 加载时序问题
+  - 新增：调试指南文档 `docs/VOCAB_DEBUG_GUIDE.md`
+  - 新增：AI 绘图提示词文档 `docs/AI_ART_PROMPTS.md`
+  - 优化：添加完整的调试日志系统（[Vocab]、[Settings]、[Storage] 标签）
+
+## v1.2.15（发布日期：2026-02-08）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.15，versionCode = 28
+- 主要变更
+  - 修复：单词库切换不生效问题，设置保存函数改为异步
+  - 修复：横屏全屏适配问题，物品栏和触控按钮添加安全区域支持
+  - 优化：Android 端添加刘海屏/挖孔屏支持
+  - 优化：改进不同手机型号的屏幕兼容性
+
 ## v1.2.14（发布日期：2026-02-06）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.14，versionCode = 27

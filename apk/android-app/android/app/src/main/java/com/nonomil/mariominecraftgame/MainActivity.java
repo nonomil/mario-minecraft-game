@@ -32,9 +32,8 @@ public class MainActivity extends BridgeActivity {
       lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
       window.setAttributes(lp);
     }
-    // 设置全屏标志
+    // 设置全屏标志（移除 FLAG_LAYOUT_NO_LIMITS 避免内容超出屏幕）
     window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
   }
 
   private void applyImmersiveMode() {
