@@ -1124,7 +1124,9 @@ function scaleGameConfig(viewport) {
         cfg.physics.gravity = (baseGameConfig.physics?.gravity || 0) * scale.unit;
         cfg.physics.jumpStrength = (baseGameConfig.physics?.jumpStrength || 0) * scale.unit;
         cfg.physics.movementSpeed = (baseGameConfig.physics?.movementSpeed || 0) * scale.unit;
-        cfg.physics.groundY = (baseGameConfig.physics?.groundY || 0) * scale.y;
+        // 将地面设置为物品栏上边框的高度（物品栏高度约 48px）
+        const inventoryHeight = 48 * scale.unit;
+        cfg.physics.groundY = cfg.canvas.height - inventoryHeight;
     }
 
     if (cfg.world) {

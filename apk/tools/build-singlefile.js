@@ -48,7 +48,8 @@ function buildPreludeDataScript(data) {
 
 function extractVocabFilesFromManifest(manifestJs) {
   const files = [];
-  const re = /file:\s*"([^"]+)"/g;
+  // Match both "file:" and strings in "files:" arrays
+  const re = /"(words\/vocabs\/[^"]+\.js)"/g;
   let m;
   while ((m = re.exec(manifestJs))) {
     files.push(m[1]);
