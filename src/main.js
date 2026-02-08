@@ -1277,7 +1277,10 @@ function normalizeSettings(raw) {
 settings = normalizeSettings(settings);
 
 function saveSettings() {
-    if (storage) storage.saveJson("mmwg:settings", settings);
+    if (storage) {
+        storage.saveJson("mmwg:settings", settings);
+        console.log("[Storage] Settings saved:", JSON.stringify(settings, null, 2));
+    }
 }
 
 function saveProgress() {
@@ -1285,7 +1288,10 @@ function saveProgress() {
 }
 
 function saveVocabState() {
-    if (storage) storage.saveJson("mmwg:vocabState", vocabState);
+    if (storage) {
+        storage.saveJson("mmwg:vocabState", vocabState);
+        console.log("[Storage] Vocab state saved:", vocabState);
+    }
 }
 
 function normalizeProgress(raw) {
@@ -1329,8 +1335,17 @@ function updateWordImage(wordObj) {
 }
 
 function ensureVocabEngine() {
+    // 重新检查 manifest 是否已加载
+    if (!vocabManifest && window.MMWG_VOCAB_MANIFEST) {
+        vocabManifest = window.MMWG_VOCAB_MANIFEST;
+        console.log("[Vocab] Manifest loaded:", vocabManifest);
+    }
+
     if (vocabEngine) return vocabEngine;
-    if (!vocabManifest || !vocabManifest.packs) return null;
+    if (!vocabManifest || !vocabManifest.packs) {
+        console.warn("[Vocab] Manifest not available");
+        return null;
+    }
     vocabPackOrder = vocabManifest.packs.map(p => p.id);
     if (vocabManifest.byId) {
         vocabPacks = vocabManifest.byId;
@@ -1339,6 +1354,7 @@ function ensureVocabEngine() {
         vocabManifest.packs.forEach(p => { vocabPacks[p.id] = p; });
     }
     vocabEngine = { version: vocabManifest.version, packIds: vocabPackOrder };
+    console.log("[Vocab] Engine initialized with packs:", vocabPackOrder);
     return vocabEngine;
 }
 
@@ -1354,9 +1370,14 @@ function renderVocabSelect() {
     };
     add("auto", "随机词库（按类别轮换）");
     const engine = ensureVocabEngine();
-    if (!engine) return;
+    if (!engine) {
+        console.warn("[Vocab] Cannot render select - engine not available");
+        return;
+    }
     vocabManifest.packs.forEach(p => add(p.id, p.title));
-    sel.value = settings.vocabSelection || "auto";
+    const currentSelection = settings.vocabSelection || "auto";
+    sel.value = currentSelection;
+    console.log("[Vocab] Rendered select with", vocabManifest.packs.length, "packs, current:", currentSelection);
 }
 
 function getPackProgress(packId) {
@@ -1461,32 +1482,45 @@ function normalizeRawWord(raw) {
 }
 
 async function setActiveVocabPack(selection) {
+    console.log("[Vocab] setActiveVocabPack called with selection:", selection);
     const engine = ensureVocabEngine();
-    if (!engine) return false;
+    if (!engine) {
+        console.error("[Vocab] Engine not available");
+        return false;
+    }
     const pickId = selection === "auto" || !selection ? pickPackAuto() : selection;
+    console.log("[Vocab] Picked pack ID:", pickId);
     const pack = pickId ? vocabPacks[pickId] : null;
-    if (!pack) return false;
+    if (!pack) {
+        console.error("[Vocab] Pack not found:", pickId);
+        return false;
+    }
 
     activeVocabPackId = pack.id;
     vocabState.lastPackId = pack.id;
     if (!vocabState.runCounts) vocabState.runCounts = {};
     vocabState.runCounts[pack.id] = (vocabState.runCounts[pack.id] || 0) + 1;
     saveVocabState();
+    console.log("[Vocab] Activated pack:", pack.id, "title:", pack.title);
 
     try {
         if (pack.files && Array.isArray(pack.files)) {
+            console.log("[Vocab] Loading", pack.files.length, "files");
             await loadVocabPackFiles(pack.files);
         } else if (pack.file) {
+            console.log("[Vocab] Loading single file:", pack.file);
             await loadVocabPackFile(pack.file);
         }
         let rawList = [];
         if (typeof pack.getRaw === "function") {
             rawList = pack.getRaw();
+            console.log("[Vocab] getRaw() returned", rawList.length, "words");
         } else if (Array.isArray(pack.globals)) {
             rawList = pack.globals.flatMap(name => {
                 const value = window[name];
                 return Array.isArray(value) ? value : [];
             });
+            console.log("[Vocab] globals returned", rawList.length, "words");
         }
         const mapped = [];
         const seen = new Set();
@@ -1503,12 +1537,17 @@ async function setActiveVocabPack(selection) {
             const pr = getPackProgress(pack.id);
             pr.total = mapped.length;
             saveProgress();
+            console.log("[Vocab] Loaded", mapped.length, "unique words into wordDatabase");
+        } else {
+            console.warn("[Vocab] No words loaded from pack:", pack.id);
         }
-    } catch {
+    } catch (err) {
+        console.error("[Vocab] Error loading pack:", err);
     }
 
     renderVocabSelect();
     updateVocabProgressUI();
+    console.log("[Vocab] Pack switch complete");
     return true;
 }
 
@@ -5200,6 +5239,7 @@ function wireSettingsModal() {
     }
 
     async function save() {
+        console.log("[Settings] Save started");
         if (optLearningMode) settings.learningMode = !!optLearningMode.checked;
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;
         if (optSpeechEn) settings.speechEnRate = Number(optSpeechEn.value);
@@ -5212,7 +5252,12 @@ function wireSettingsModal() {
         if (optTouch) settings.touchControls = !!optTouch.checked;
         if (optNoRepeat) settings.avoidWordRepeats = !!optNoRepeat.checked;
         if (optShowImage) settings.showWordImage = !!optShowImage.checked;
-        if (optVocab) settings.vocabSelection = String(optVocab.value || "auto");
+        if (optVocab) {
+            const newVocab = String(optVocab.value || "auto");
+            const oldVocab = settings.vocabSelection || "auto";
+            settings.vocabSelection = newVocab;
+            console.log("[Settings] Vocab changed from", oldVocab, "to", newVocab);
+        }
         if (optKeys) settings.keyCodes = String(optKeys.value || "");
 
         settings = normalizeSettings(settings);
@@ -5228,6 +5273,7 @@ function wireSettingsModal() {
         wordPicker = null;
         applyBgmSetting();
         saveSettings();
+        console.log("[Settings] Settings saved to localStorage");
         applySettingsToUI();
         // Apply selected difficulty immediately (even while paused in settings).
         difficultyState = null;
@@ -5236,7 +5282,9 @@ function wireSettingsModal() {
             applyMotionToPlayer(player);
             applyBiomeEffectsToPlayer();
         }
+        console.log("[Settings] Applying vocab pack:", settings.vocabSelection || "auto");
         await setActiveVocabPack(settings.vocabSelection || "auto");
+        console.log("[Settings] Save complete");
         close();
     }
 
