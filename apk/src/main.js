@@ -1410,6 +1410,9 @@ function scaleCloudPlatformConfig() {
 
 function applyConfig(viewport = null) {
     const vp = viewport || getGameAreaSize();
+    const oldScale = worldScale ? { ...worldScale } : null;
+    const oldGroundY = groundY;
+
     gameConfig = scaleGameConfig(vp);
     canvas.width = gameConfig.canvas.width;
     canvas.height = gameConfig.canvas.height;
@@ -1425,6 +1428,97 @@ function applyConfig(viewport = null) {
     scaleWeapons();
     scaleBiomeConfigs();
     applySpeedSetting();
+
+    // 如果缩放比例变化，重映射世界坐标
+    if (oldScale && startedOnce) {
+        remapWorldCoordinates(oldScale, oldGroundY);
+    }
+}
+
+// 视口变化后重映射所有世界实体坐标
+function remapWorldCoordinates(oldScale, oldGroundY) {
+    if (!oldScale || !worldScale) return;
+
+    const scaleRatioX = worldScale.x / oldScale.x;
+    const scaleRatioY = worldScale.y / oldScale.y;
+    const scaleRatioUnit = worldScale.unit / oldScale.unit;
+
+    // 重映射玩家位置
+    if (player) {
+        player.x *= scaleRatioX;
+        // 玩家 y 坐标相对于地面重映射
+        const oldDistFromGround = oldGroundY - player.y;
+        player.y = groundY - oldDistFromGround * scaleRatioUnit;
+        player.width = gameConfig.player.width;
+        player.height = gameConfig.player.height;
+        player.velX *= scaleRatioX;
+        player.velY *= scaleRatioY;
+        applyMotionToPlayer(player);
+    }
+
+    // 重映射平台位置
+    platforms.forEach(p => {
+        p.x *= scaleRatioX;
+        // 地面平台锚定到新的 groundY
+        if (Math.abs(p.y - oldGroundY) < 5) {
+            p.y = groundY;
+        } else {
+            const oldDistFromGround = oldGroundY - p.y;
+            p.y = groundY - oldDistFromGround * scaleRatioUnit;
+        }
+        p.width *= scaleRatioX;
+        p.height = blockSize;
+    });
+
+    // 重映射树木位置
+    trees.forEach(t => {
+        t.x *= scaleRatioX;
+        const oldDistFromGround = oldGroundY - (t.y + t.height);
+        t.y = groundY - t.height - oldDistFromGround * scaleRatioUnit;
+        t.width *= scaleRatioUnit;
+        t.height *= scaleRatioUnit;
+    });
+
+    // 重映射宝箱位置
+    chests.forEach(c => {
+        c.x *= scaleRatioX;
+        const oldDistFromGround = oldGroundY - c.y;
+        c.y = groundY - oldDistFromGround * scaleRatioUnit;
+    });
+
+    // 重映射物品位置
+    items.forEach(i => {
+        i.x *= scaleRatioX;
+        const oldDistFromGround = oldGroundY - i.y;
+        i.y = groundY - oldDistFromGround * scaleRatioUnit;
+    });
+
+    // 重映射敌人位置
+    enemies.forEach(e => {
+        e.x *= scaleRatioX;
+        const oldDistFromGround = oldGroundY - e.y;
+        e.y = groundY - oldDistFromGround * scaleRatioUnit;
+        e.width *= scaleRatioUnit;
+        e.height *= scaleRatioUnit;
+    });
+
+    // 重映射傀儡位置
+    golems.forEach(g => {
+        g.x *= scaleRatioX;
+        const oldDistFromGround = oldGroundY - g.y;
+        g.y = groundY - oldDistFromGround * scaleRatioUnit;
+    });
+
+    // 重映射装饰物位置
+    decorations.forEach(d => {
+        d.x *= scaleRatioX;
+        const oldDistFromGround = oldGroundY - d.y;
+        d.y = groundY - oldDistFromGround * scaleRatioUnit;
+    });
+
+    // 重映射相机位置
+    cameraX *= scaleRatioX;
+    lastGenX *= scaleRatioX;
 }
 
 function applySpeedSetting() {
