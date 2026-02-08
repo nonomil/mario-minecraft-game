@@ -1239,9 +1239,11 @@ function applyResponsiveCanvas(viewport) {
     if (gameConfig.canvas.width !== targetW || gameConfig.canvas.height !== targetH) {
         gameConfig.canvas.width = targetW;
         gameConfig.canvas.height = targetH;
-        // 动态计算 groundY，确保地面在物品栏上方（物品栏高度约 48px）
+        // 动态计算 groundY，确保地面在物品栏上方
+        // 默认 canvas 600px，默认 groundY 530px，所以物品栏高度 = 600 - 530 = 70px
         const scaleUnit = availH / baseCanvasSize.height;
-        const inventoryHeight = 48 * scaleUnit;
+        const baseInventoryHeight = baseCanvasSize.height - (gameConfig.physics?.groundY || 530);
+        const inventoryHeight = baseInventoryHeight * scaleUnit;
         gameConfig.physics.groundY = targetH - inventoryHeight;
         applyConfig();
     }

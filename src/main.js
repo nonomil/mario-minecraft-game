@@ -1124,8 +1124,10 @@ function scaleGameConfig(viewport) {
         cfg.physics.gravity = (baseGameConfig.physics?.gravity || 0) * scale.unit;
         cfg.physics.jumpStrength = (baseGameConfig.physics?.jumpStrength || 0) * scale.unit;
         cfg.physics.movementSpeed = (baseGameConfig.physics?.movementSpeed || 0) * scale.unit;
-        // 将地面设置为物品栏上边框的高度（物品栏高度约 48px）
-        const inventoryHeight = 48 * scale.unit;
+        // 将地面设置为物品栏上边框的高度
+        // 默认 canvas 600px，默认 groundY 530px，所以物品栏高度 = 600 - 530 = 70px
+        const baseInventoryHeight = baseCanvasSize.height - (baseGameConfig.physics?.groundY || 530);
+        const inventoryHeight = baseInventoryHeight * scale.unit;
         cfg.physics.groundY = cfg.canvas.height - inventoryHeight;
     }
 
