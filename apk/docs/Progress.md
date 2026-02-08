@@ -1,3 +1,12 @@
+## v1.2.21（发布日期：2026-02-08）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.21，versionCode = 34
+- 主要变更
+  - 修复：强制横屏模式，避免横竖屏切换导致的全屏显示问题
+  - 修复：groundY 计算使用正确的物品栏高度（70px 而非 48px）
+  - 新增：视口变化时的世界坐标重映射功能（remapWorldCoordinates）
+  - 优化：AndroidManifest.xml 添加 screenOrientation="sensorLandscape"
+
 ## v1.2.19（发布日期：2026-02-08）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.19，versionCode = 32
