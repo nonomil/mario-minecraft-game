@@ -1,4 +1,3 @@
-// Minecraft_Simple - 3.minecraft_é«çº§_advanced.json
 const VOCAB_3_MINECRAFT____ADVANCED = [
   {
     "word": "Enderman",
@@ -63,8 +62,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Elytra.png",
-        "url": "https://minecraft.wiki/w/File:Elytra.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/elytra.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -97,8 +96,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Obsidian.png",
-        "url": "https://minecraft.wiki/w/File:Obsidian.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/obsidian.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -193,8 +192,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Beacon.png",
-        "url": "https://minecraft.wiki/w/File:Beacon.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/beacon.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -207,8 +206,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Conduit.png",
-        "url": "https://minecraft.wiki/w/File:Conduit.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/conduit.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -235,8 +234,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Trident.png",
-        "url": "https://minecraft.wiki/w/File:Trident.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/trident.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -333,8 +332,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Elytra.png",
-        "url": "https://minecraft.wiki/w/File:Elytra.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/elytra.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -347,8 +346,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Trident.png",
-        "url": "https://minecraft.wiki/w/File:Trident.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/trident.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -389,8 +388,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Conduit.png",
-        "url": "https://minecraft.wiki/w/File:Conduit.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/conduit.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -543,8 +542,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Sculk.png",
-        "url": "https://minecraft.wiki/w/File:Sculk.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sculk.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -599,8 +598,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Blackstone.png",
-        "url": "https://minecraft.wiki/w/File:Blackstone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/blackstone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -795,8 +794,8 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     "imageURLs": [
       {
         "filename": "Scute.png",
-        "url": "https://minecraft.wiki/w/File:Scute.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/scute.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -871,10 +870,3 @@ const VOCAB_3_MINECRAFT____ADVANCED = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = VOCAB_3_MINECRAFT____ADVANCED;
-} else if (typeof window !== 'undefined') {
-  window.VOCAB_3_MINECRAFT____ADVANCED = VOCAB_3_MINECRAFT____ADVANCED;
-}

@@ -1,4 +1,3 @@
-// Minecraft_Standard - minecraft_7.é­å (Enchantments).json
 const MINECRAFT_7_____ENCHANTMENTS_ = [
   {
     "word": "Protection",
@@ -1310,10 +1309,3 @@ const MINECRAFT_7_____ENCHANTMENTS_ = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = MINECRAFT_7_____ENCHANTMENTS_;
-} else if (typeof window !== 'undefined') {
-  window.MINECRAFT_7_____ENCHANTMENTS_ = MINECRAFT_7_____ENCHANTMENTS_;
-}

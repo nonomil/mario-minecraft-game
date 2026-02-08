@@ -1,4 +1,3 @@
-// Minecraft_Standard - minecraft_2.items_ç©å.json
 const MINECRAFT_2_ITEMS___ = [
   {
     "word": "old_Nugget",
@@ -1510,11 +1509,6 @@ const MINECRAFT_2_ITEMS___ = [
         "filename": "Acacia_Boat.png",
         "url": "https://minecraft.wiki/w/File:Acacia_Boat.png",
         "type": "Default"
-      },
-      {
-        "filename": "InvIcon_Acacia_Boat.png",
-        "url": "https://minecraft.wiki/w/File:InvIcon_Acacia_Boat.png",
-        "type": "Inventory Icon"
       }
     ]
   },
@@ -3762,8 +3756,6 @@ const MINECRAFT_2_ITEMS___ = [
       }
     ]
   },
-
-  // === æ°çæ¬éè¦ç©å ===
   {
     "word": "Netherite Ingot",
     "standardized": "Netherite Ingot",
@@ -3917,8 +3909,6 @@ const MINECRAFT_2_ITEMS___ = [
       }
     ]
   },
-
-  // === æ´å¤éè¦ç©å ===
   {
     "word": "Sculk Catalyst",
     "standardized": "Sculk Catalyst",
@@ -4038,8 +4028,6 @@ const MINECRAFT_2_ITEMS___ = [
       }
     ]
   },
-
-  // === æ´å¤éè¦ç©å ===
   {
     "word": "Mud",
     "standardized": "Mud",
@@ -4125,8 +4113,6 @@ const MINECRAFT_2_ITEMS___ = [
       }
     ]
   },
-
-  // === é£ç©ç¸å³ ===
   {
     "word": "Cooked Beef",
     "standardized": "Cooked Beef",
@@ -4145,10 +4131,3 @@ const MINECRAFT_2_ITEMS___ = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = MINECRAFT_2_ITEMS___;
-} else if (typeof window !== 'undefined') {
-  window.MINECRAFT_2_ITEMS___ = MINECRAFT_2_ITEMS___;
-}

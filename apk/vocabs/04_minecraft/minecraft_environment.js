@@ -1,4 +1,3 @@
-// Minecraft_Standard - minecraft_4.environment_ç¯å¢.json
 const MINECRAFT_4_ENVIRONMENT___ = [
   {
     "word": "Desert Pyramid",
@@ -896,8 +895,8 @@ const MINECRAFT_4_ENVIRONMENT___ = [
     "imageURLs": [
       {
         "filename": "Nether_Portal.png",
-        "url": "https://minecraft.wiki/w/File:Nether_Portal.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/nether_portal.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2177,10 +2176,3 @@ const MINECRAFT_4_ENVIRONMENT___ = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = MINECRAFT_4_ENVIRONMENT___;
-} else if (typeof window !== 'undefined') {
-  window.MINECRAFT_4_ENVIRONMENT___ = MINECRAFT_4_ENVIRONMENT___;
-}

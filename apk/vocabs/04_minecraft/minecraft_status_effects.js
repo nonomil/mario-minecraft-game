@@ -1,4 +1,3 @@
-// Minecraft_Standard - minecraft_6.ç¶æææ (Status Effects).json
 const MINECRAFT_6_______STATUS_EFFECTS_ = [
   {
     "word": "Speed",
@@ -1471,10 +1470,3 @@ const MINECRAFT_6_______STATUS_EFFECTS_ = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = MINECRAFT_6_______STATUS_EFFECTS_;
-} else if (typeof window !== 'undefined') {
-  window.MINECRAFT_6_______STATUS_EFFECTS_ = MINECRAFT_6_______STATUS_EFFECTS_;
-}

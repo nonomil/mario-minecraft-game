@@ -1,4 +1,3 @@
-// Minecraft_Standard - minecraft_3.entities_å®ä½.json
 const MINECRAFT_3_ENTITIES___ = [
   {
     "word": "Agent",
@@ -63,8 +62,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Armor_Stand.png",
-        "url": "https://minecraft.wiki/w/File:Armor_Stand.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/armor_stand.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -233,8 +232,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Chicken.png",
-        "url": "https://minecraft.wiki/w/File:Chicken.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/chicken.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -250,8 +249,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Cod.png",
-        "url": "https://minecraft.wiki/w/File:Cod.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/cod.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -930,8 +929,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Minecart.png",
-        "url": "https://minecraft.wiki/w/File:Minecart.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/minecart.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1185,8 +1184,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Pufferfish.png",
-        "url": "https://minecraft.wiki/w/File:Pufferfish.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/pufferfish.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1202,8 +1201,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Rabbit.png",
-        "url": "https://minecraft.wiki/w/File:Rabbit.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/rabbit.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1236,8 +1235,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Salmon.png",
-        "url": "https://minecraft.wiki/w/File:Salmon.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/salmon.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1542,8 +1541,8 @@ const MINECRAFT_3_ENTITIES___ = [
     "imageURLs": [
       {
         "filename": "Tropical_Fish.png",
-        "url": "https://minecraft.wiki/w/File:Tropical_Fish.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/tropical_fish.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1820,10 +1819,3 @@ const MINECRAFT_3_ENTITIES___ = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = MINECRAFT_3_ENTITIES___;
-} else if (typeof window !== 'undefined') {
-  window.MINECRAFT_3_ENTITIES___ = MINECRAFT_3_ENTITIES___;
-}

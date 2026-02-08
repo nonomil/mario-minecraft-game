@@ -1,4 +1,3 @@
-// Minecraft_Simple - 1.minecraft_åºç¡_basic.json
 const VOCAB_1_MINECRAFT____BASIC = [
   {
     "word": "Stone",
@@ -12,13 +11,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Stone.png",
-        "url": "https://minecraft.wiki/w/File:Stone.png",
-        "type": "Default"
-      },
-      {
-        "filename": "InvIcon Stone.png",
-        "url": "https://minecraft.wiki/w/File:InvIcon Stone.png",
-        "type": "Inventory Icon"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/stone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -34,8 +28,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Dirt.png",
-        "url": "https://minecraft.wiki/w/File:Dirt.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/dirt.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -51,8 +45,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Grass_Block.png",
-        "url": "https://minecraft.wiki/w/File:Grass_Block.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/grass.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -102,8 +96,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Sand.png",
-        "url": "https://minecraft.wiki/w/File:Sand.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sand.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -221,8 +215,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Apple.png",
-        "url": "https://minecraft.wiki/w/File:Apple.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/apple.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -238,8 +232,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Bread.png",
-        "url": "https://minecraft.wiki/w/File:Bread.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bread.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -340,8 +334,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Chicken.png",
-        "url": "https://minecraft.wiki/w/File:Chicken.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/chicken.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -357,8 +351,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Cobblestone.png",
-        "url": "https://minecraft.wiki/w/File:Cobblestone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/cobblestone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -436,8 +430,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Gravel.png",
-        "url": "https://minecraft.wiki/w/File:Gravel.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/gravel.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -450,8 +444,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Flint.png",
-        "url": "https://minecraft.wiki/w/File:Flint.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/flint.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -464,8 +458,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "String.png",
-        "url": "https://minecraft.wiki/w/File:String.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/string.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -478,8 +472,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Feather.png",
-        "url": "https://minecraft.wiki/w/File:Feather.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/feather.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -492,8 +486,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Stick.png",
-        "url": "https://minecraft.wiki/w/File:Stick.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/stick.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -506,8 +500,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Bowl.png",
-        "url": "https://minecraft.wiki/w/File:Bowl.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bowl.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -534,8 +528,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Wheat.png",
-        "url": "https://minecraft.wiki/w/File:Wheat.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/wheat.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -548,8 +542,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Leather.png",
-        "url": "https://minecraft.wiki/w/File:Leather.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/leather.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -576,8 +570,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Egg.png",
-        "url": "https://minecraft.wiki/w/File:Egg.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/egg.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -652,8 +646,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Sugar.png",
-        "url": "https://minecraft.wiki/w/File:Sugar.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/sugar.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -669,8 +663,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Paper.png",
-        "url": "https://minecraft.wiki/w/File:Paper.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/paper.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -686,8 +680,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Book.png",
-        "url": "https://minecraft.wiki/w/File:Book.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/book.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -700,8 +694,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Granite.png",
-        "url": "https://minecraft.wiki/w/File:Granite.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/granite.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -714,8 +708,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Diorite.png",
-        "url": "https://minecraft.wiki/w/File:Diorite.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/diorite.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -728,8 +722,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Andesite.png",
-        "url": "https://minecraft.wiki/w/File:Andesite.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/andesite.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -742,8 +736,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Bedrock.png",
-        "url": "https://minecraft.wiki/w/File:Bedrock.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/bedrock.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -812,8 +806,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Sponge.png",
-        "url": "https://minecraft.wiki/w/File:Sponge.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sponge.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -826,8 +820,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Poppy.png",
-        "url": "https://minecraft.wiki/w/File:Poppy.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/poppy.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -882,8 +876,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Gunpowder.png",
-        "url": "https://minecraft.wiki/w/File:Gunpowder.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/gunpowder.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -896,8 +890,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Charcoal.png",
-        "url": "https://minecraft.wiki/w/File:Charcoal.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/charcoal.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -910,8 +904,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Painting.png",
-        "url": "https://minecraft.wiki/w/File:Painting.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/painting.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -924,8 +918,8 @@ const VOCAB_1_MINECRAFT____BASIC = [
     "imageURLs": [
       {
         "filename": "Snowball.png",
-        "url": "https://minecraft.wiki/w/File:Snowball.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/snowball.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -972,10 +966,3 @@ const VOCAB_1_MINECRAFT____BASIC = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = VOCAB_1_MINECRAFT____BASIC;
-} else if (typeof window !== 'undefined') {
-  window.VOCAB_1_MINECRAFT____BASIC = VOCAB_1_MINECRAFT____BASIC;
-}

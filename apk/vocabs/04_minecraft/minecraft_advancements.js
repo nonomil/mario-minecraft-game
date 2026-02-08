@@ -1,4 +1,3 @@
-// Minecraft_Standard - minecraft_8.è¿åº¦ (Advancements).json
 const MINECRAFT_8_____ADVANCEMENTS_ = [
   {
     "word": "Minecraft",
@@ -1871,10 +1870,3 @@ const MINECRAFT_8_____ADVANCEMENTS_ = [
     ]
   }
 ];
-
-// Export vocabulary data
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = MINECRAFT_8_____ADVANCEMENTS_;
-} else if (typeof window !== 'undefined') {
-  window.MINECRAFT_8_____ADVANCEMENTS_ = MINECRAFT_8_____ADVANCEMENTS_;
-}
