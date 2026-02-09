@@ -91,6 +91,7 @@ let audioUnlocked = false;
 let speechReady = false;
 let speechVoicesReady = false;
 let speechPendingWord = null;
+let speechPendingUnlockWord = null;
 let speechPendingTimer = null;
 let speechPendingAttempts = 0;
 let ttsAudio = null;
@@ -784,6 +785,16 @@ function unlockAudio() {
         try { ctx.resume(); } catch {}
     }
     ensureSpeechReady();
+
+    // Some browsers/WebViews block TTS until the first user gesture.
+    // If a word was queued before unlock, speak it once unlock happens.
+    if (settings.speechEnabled && speechPendingUnlockWord) {
+        const pending = speechPendingUnlockWord;
+        speechPendingUnlockWord = null;
+        setTimeout(() => {
+            if (pending && settings.speechEnabled) speakWord(pending);
+        }, 0);
+    }
     applyBgmSetting();
 }
 
@@ -2093,6 +2104,7 @@ function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
     if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;
     if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
+    if (typeof merged.speechZhEnabled !== "boolean") merged.speechZhEnabled = defaultSettings.speechZhEnabled ?? false;
     if (typeof merged.musicEnabled !== "boolean") merged.musicEnabled = defaultSettings.musicEnabled ?? true;
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
@@ -3702,7 +3714,7 @@ function triggerWordGateChallenge(gate) {
 function updateWordUI(wordObj) {
     const el = document.getElementById("word-display");
     if (!el) return;
-    el.innerText = wordObj ? `${wordObj.en} ${wordObj.zh}` : "Start!";
+    el.innerText = wordObj ? [wordObj.en, wordObj.zh].filter(Boolean).join(" ") : "Start!";
 }
 
 function speakWord(wordObj) {
@@ -3713,10 +3725,14 @@ function speakWord(wordObj) {
 
     if (!settings.speechEnabled) return;
     const enText = normalizeSpeechText(wordObj?.en, wordObj?.word);
-    const zhText = normalizeSpeechText(wordObj?.zh, wordObj?.en);
+    const zhText = settings.speechZhEnabled ? normalizeSpeechText(wordObj?.zh, "") : "";
     if (!enText && !zhText) return;
 
     const nativeTts = getNativeTts();
+    if (!audioUnlocked && !nativeTts) {
+        speechPendingUnlockWord = wordObj;
+        return;
+    }
     if (nativeTts) {
         const speak = () => {
             const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
@@ -7069,6 +7085,7 @@ function wireSettingsModal() {
     const optSpeech = document.getElementById("opt-speech");
     const optSpeechEn = document.getElementById("opt-speech-en");
     const optSpeechZh = document.getElementById("opt-speech-zh");
+    const optSpeechZhEnabled = document.getElementById("opt-speech-zh-enabled");
     const optBgm = document.getElementById("opt-bgm");
     const optUiScale = document.getElementById("opt-ui-scale");
     const optMotionScale = document.getElementById("opt-motion-scale");
@@ -7079,6 +7096,11 @@ function wireSettingsModal() {
     const optVocab = document.getElementById("opt-vocab");
     if (optVocab) {
         optVocab.addEventListener("change", () => updateVocabPreview(optVocab.value));
+    }
+    if (optSpeechZhEnabled && optSpeechZh) {
+        optSpeechZhEnabled.addEventListener("change", () => {
+            optSpeechZh.disabled = !optSpeechZhEnabled.checked;
+        });
     }
     const optShowImage = document.getElementById("opt-show-image");
     const optWordGate = document.getElementById("opt-word-gate");
@@ -7093,6 +7115,8 @@ function wireSettingsModal() {
         if (optSpeech) optSpeech.checked = !!settings.speechEnabled;
         if (optSpeechEn) optSpeechEn.value = String(settings.speechEnRate ?? 0.8);
         if (optSpeechZh) optSpeechZh.value = String(settings.speechZhRate ?? 0.9);
+        if (optSpeechZhEnabled) optSpeechZhEnabled.checked = !!settings.speechZhEnabled;
+        if (optSpeechZh) optSpeechZh.disabled = !settings.speechZhEnabled;
         if (optBgm) optBgm.checked = !!settings.musicEnabled;
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
@@ -7140,6 +7164,7 @@ function wireSettingsModal() {
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;
         if (optSpeechEn) settings.speechEnRate = Number(optSpeechEn.value);
         if (optSpeechZh) settings.speechZhRate = Number(optSpeechZh.value);
+        if (optSpeechZhEnabled) settings.speechZhEnabled = !!optSpeechZhEnabled.checked;
         if (optBgm) settings.musicEnabled = !!optBgm.checked;
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);

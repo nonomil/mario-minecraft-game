@@ -204,6 +204,7 @@ window.MMWG_DEFAULTS = {
         wordGateEnabled: true,
         wordMatchEnabled: true,
         speechEnabled: true,
+        speechZhEnabled: false,
         speechEnRate: 1.2,
         speechZhRate: 1.1,
         musicEnabled: true,

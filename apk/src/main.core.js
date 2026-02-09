@@ -2562,7 +2562,7 @@ function recordWordProgress(wordObj) {
 function updateWordUI(wordObj) {
     const el = document.getElementById("word-display");
     if (!el) return;
-    el.innerText = wordObj ? `${wordObj.en} ${wordObj.zh}` : "Start!";
+    el.innerText = wordObj ? [wordObj.en, wordObj.zh].filter(Boolean).join(" ") : "Start!";
 }
 
 function speakWord(wordObj) {
@@ -2600,12 +2600,12 @@ function speakWord(wordObj) {
         const enVoice = pickVoice("en");
         if (enVoice) uEn.voice = enVoice;
         uEn.rate = Math.max(1.0, Number(settings.speechEnRate) || 1.0);
-        const uZh = new SpeechSynthesisUtterance(wordObj.zh);
-        uZh.lang = "zh-CN";
-        const zhVoice = pickVoice("zh");
-        if (zhVoice) uZh.voice = zhVoice;
-        uZh.rate = Number(settings.speechZhRate) || 0.9;
-        if (wordObj.zh) {
+        if (settings.speechZhEnabled && wordObj.zh) {
+            const uZh = new SpeechSynthesisUtterance(wordObj.zh);
+            uZh.lang = "zh-CN";
+            const zhVoice = pickVoice("zh");
+            if (zhVoice) uZh.voice = zhVoice;
+            uZh.rate = Number(settings.speechZhRate) || 0.9;
             uEn.onend = () => {
                 try { window.speechSynthesis.speak(uZh); } catch {}
             };

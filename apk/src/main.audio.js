@@ -184,12 +184,12 @@
             const enVoice = pickVoice("en");
             if (enVoice) uEn.voice = enVoice;
             uEn.rate = Math.max(1.0, Number(M.settings.speechEnRate) || 1.0);
-            const uZh = new SpeechSynthesisUtterance(wordObj.zh);
-            uZh.lang = "zh-CN";
-            const zhVoice = pickVoice("zh");
-            if (zhVoice) uZh.voice = zhVoice;
-            uZh.rate = Number(M.settings.speechZhRate) || 0.9;
-            if (wordObj.zh) {
+            if (M.settings.speechZhEnabled && wordObj.zh) {
+                const uZh = new SpeechSynthesisUtterance(wordObj.zh);
+                uZh.lang = "zh-CN";
+                const zhVoice = pickVoice("zh");
+                if (zhVoice) uZh.voice = zhVoice;
+                uZh.rate = Number(M.settings.speechZhRate) || 0.9;
                 uEn.onend = () => {
                     try { window.speechSynthesis.speak(uZh); } catch {}
                 };
