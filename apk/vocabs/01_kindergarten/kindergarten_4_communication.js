@@ -29,8 +29,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "",
-        "url": "",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/iron_shovel.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -97,8 +97,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "demolish.png",
-        "url": "https://img.icons8.com/color/48/demolish.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/cracked_stone_bricks.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -131,8 +131,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "oak-tree.png",
-        "url": "https://img.icons8.com/color/48/oak-tree.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bundle.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -216,8 +216,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "jumping.png",
-        "url": "https://img.icons8.com/color/48/jumping.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/rabbit_foot.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -284,8 +284,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "teleport.png",
-        "url": "https://img.icons8.com/color/48/teleport.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/ender_pearl.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -301,8 +301,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "respawn.png",
-        "url": "https://img.icons8.com/color/48/respawn.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/respawn_anchor_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -318,8 +318,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "health-heart.png",
-        "url": "https://img.icons8.com/color/48/health-heart.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/golden_apple.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -363,8 +363,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "elevator-down.png",
-        "url": "https://img.icons8.com/color/48/elevator-down.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/bedrock.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -380,8 +380,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "water-level.png",
-        "url": "https://img.icons8.com/color/48/water-level.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/water_bucket.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -431,8 +431,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "danger.png",
-        "url": "https://img.icons8.com/color/48/danger.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/tnt_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -601,8 +601,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "broken-tool.png",
-        "url": "https://img.icons8.com/color/48/broken-tool.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/flint.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -635,8 +635,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "vintage.png",
-        "url": "https://img.icons8.com/color/48/vintage.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/mossy_cobblestone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -748,8 +748,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "down-arrow.png",
-        "url": "https://img.icons8.com/color/48/down-arrow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/arrow.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -765,8 +765,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "left-arrow.png",
-        "url": "https://img.icons8.com/color/48/left-arrow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/arrow.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -782,8 +782,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "right-arrow.png",
-        "url": "https://img.icons8.com/color/48/right-arrow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/arrow.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -816,8 +816,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "backward.png",
-        "url": "https://img.icons8.com/color/48/backward.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/arrow.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -884,8 +884,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "floor.png",
-        "url": "https://img.icons8.com/color/48/floor.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/grass_block_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -918,8 +918,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "long-distance.png",
-        "url": "https://img.icons8.com/color/48/long-distance.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/spyglass.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -935,8 +935,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "close.png",
-        "url": "https://img.icons8.com/color/48/close.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/barrier.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1048,8 +1048,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "hammer-and-wrench.png",
-        "url": "https://img.icons8.com/color/48/hammer-and-wrench.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/anvil.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1099,8 +1099,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "location.png",
-        "url": "https://img.icons8.com/color/48/location.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/compass_16.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1144,8 +1144,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "adventure.png",
-        "url": "https://img.icons8.com/color/48/adventure.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/spyglass.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1161,8 +1161,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "cave.png",
-        "url": "https://img.icons8.com/color/48/cave.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sculk_sensor_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1212,8 +1212,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "lost.png",
-        "url": "https://img.icons8.com/color/48/lost.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/recovery_compass_16.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1229,8 +1229,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "follow.png",
-        "url": "https://img.icons8.com/color/48/follow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/lead.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1246,8 +1246,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "waiting.png",
-        "url": "https://img.icons8.com/color/48/waiting.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/clock_00.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1280,8 +1280,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "dead-end.png",
-        "url": "https://img.icons8.com/color/48/dead-end.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/bedrock.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1325,8 +1325,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "house.png",
-        "url": "https://img.icons8.com/color/48/house.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/bricks.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1359,8 +1359,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "raw-material.png",
-        "url": "https://img.icons8.com/color/48/raw-material.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/crafting_table_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1376,8 +1376,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "thumbs-up.png",
-        "url": "https://img.icons8.com/color/48/thumbs-up.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lime_wool.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1444,8 +1444,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "foundation.png",
-        "url": "https://img.icons8.com/color/48/foundation.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/scaffolding_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1523,8 +1523,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "health-decrease.png",
-        "url": "https://img.icons8.com/color/48/health-decrease.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/cactus_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1557,8 +1557,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "damaged-package.png",
-        "url": "https://img.icons8.com/color/48/damaged-package.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/turtle_helmet.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1687,8 +1687,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "gem.png",
-        "url": "https://img.icons8.com/color/48/gem.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/diamond.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1840,8 +1840,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "treasure-chest.png",
-        "url": "https://img.icons8.com/color/48/treasure-chest.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/chest_minecart.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2287,8 +2287,8 @@ const VOCAB_4_____ = [
     "imageURLs": [
       {
         "filename": "snow.png",
-        "url": "https://img.icons8.com/color/48/snow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/snow.png",
+        "type": "Block Texture"
       }
     ]
   },

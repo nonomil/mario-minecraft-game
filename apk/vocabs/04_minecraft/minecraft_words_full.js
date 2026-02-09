@@ -24,8 +24,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Stone.png",
-        "url": "https://minecraft.wiki/w/File:Stone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/stone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -36,8 +36,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Granite.png",
-        "url": "https://minecraft.wiki/w/File:Granite.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/granite.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -60,8 +60,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Diorite.png",
-        "url": "https://minecraft.wiki/w/File:Diorite.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/diorite.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -72,8 +72,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Andesite.png",
-        "url": "https://minecraft.wiki/w/File:Andesite.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/andesite.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -84,8 +84,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Grass.png",
-        "url": "https://minecraft.wiki/w/File:Grass.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/grass.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -96,8 +96,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Dirt.png",
-        "url": "https://minecraft.wiki/w/File:Dirt.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/dirt.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -120,8 +120,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Podzol.png",
-        "url": "https://minecraft.wiki/w/File:Podzol.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/podzol_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -132,8 +132,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cobblestone.png",
-        "url": "https://minecraft.wiki/w/File:Cobblestone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/cobblestone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -180,8 +180,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Planks.png",
-        "url": "https://minecraft.wiki/w/File:Planks.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/oak_planks.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -264,8 +264,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bedrock.png",
-        "url": "https://minecraft.wiki/w/File:Bedrock.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/bedrock.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -324,8 +324,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Sand.png",
-        "url": "https://minecraft.wiki/w/File:Sand.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sand.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -348,8 +348,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Gravel.png",
-        "url": "https://minecraft.wiki/w/File:Gravel.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/gravel.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -396,8 +396,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Coal.png",
-        "url": "https://minecraft.wiki/w/File:Coal.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/coal.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -432,8 +432,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Sponge.png",
-        "url": "https://minecraft.wiki/w/File:Sponge.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sponge.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -456,8 +456,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Glass.png",
-        "url": "https://minecraft.wiki/w/File:Glass.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/glass.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -504,8 +504,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Dispenser.png",
-        "url": "https://minecraft.wiki/w/File:Dispenser.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/dispenser_front.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -516,8 +516,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Sandstone.png",
-        "url": "https://minecraft.wiki/w/File:Sandstone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sandstone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -600,8 +600,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Rail.png",
-        "url": "https://minecraft.wiki/w/File:Rail.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/rail.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -648,8 +648,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Piston.png",
-        "url": "https://minecraft.wiki/w/File:Piston.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/piston_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -660,8 +660,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cobweb.png",
-        "url": "https://minecraft.wiki/w/File:Cobweb.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/cobweb.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -804,8 +804,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Light.png",
-        "url": "https://minecraft.wiki/w/File:Light.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/light.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -936,8 +936,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Dandelion.png",
-        "url": "https://minecraft.wiki/w/File:Dandelion.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/dandelion.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -948,8 +948,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Flower.png",
-        "url": "https://minecraft.wiki/w/File:Flower.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/dandelion.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -960,8 +960,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Poppy.png",
-        "url": "https://minecraft.wiki/w/File:Poppy.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/poppy.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -984,8 +984,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Allium.png",
-        "url": "https://minecraft.wiki/w/File:Allium.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/allium.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1104,8 +1104,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Brick.png",
-        "url": "https://minecraft.wiki/w/File:Brick.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/brick.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1140,8 +1140,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bricks.png",
-        "url": "https://minecraft.wiki/w/File:Bricks.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/bricks.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1152,8 +1152,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Tnt.png",
-        "url": "https://minecraft.wiki/w/File:Tnt.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/tnt_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1164,8 +1164,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bookshelf.png",
-        "url": "https://minecraft.wiki/w/File:Bookshelf.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/bookshelf.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1200,8 +1200,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Obsidian.png",
-        "url": "https://minecraft.wiki/w/File:Obsidian.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/obsidian.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1212,8 +1212,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Torch.png",
-        "url": "https://minecraft.wiki/w/File:Torch.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/torch.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1272,8 +1272,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Spawner.png",
-        "url": "https://minecraft.wiki/w/File:Spawner.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/spawner.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1308,8 +1308,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Red_Stone.png",
-        "url": "https://minecraft.wiki/w/File:Red_Stone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/redstone.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1332,8 +1332,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Diamond.png",
-        "url": "https://minecraft.wiki/w/File:Diamond.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/diamond.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1368,8 +1368,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Wheat.png",
-        "url": "https://minecraft.wiki/w/File:Wheat.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/wheat.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1392,8 +1392,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Farmland.png",
-        "url": "https://minecraft.wiki/w/File:Farmland.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/farmland.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1404,8 +1404,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Furnace.png",
-        "url": "https://minecraft.wiki/w/File:Furnace.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/furnace_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1476,8 +1476,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Ladder.png",
-        "url": "https://minecraft.wiki/w/File:Ladder.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/ladder.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1512,8 +1512,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Lever.png",
-        "url": "https://minecraft.wiki/w/File:Lever.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lever.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1608,8 +1608,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Snow.png",
-        "url": "https://minecraft.wiki/w/File:Snow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/snow.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1632,8 +1632,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Ice.png",
-        "url": "https://minecraft.wiki/w/File:Ice.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/ice.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1644,8 +1644,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cactus.png",
-        "url": "https://minecraft.wiki/w/File:Cactus.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/cactus_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1656,8 +1656,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Clay.png",
-        "url": "https://minecraft.wiki/w/File:Clay.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/clay.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1668,8 +1668,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Sugar.png",
-        "url": "https://minecraft.wiki/w/File:Sugar.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/sugar.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1704,8 +1704,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Jukebox.png",
-        "url": "https://minecraft.wiki/w/File:Jukebox.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/jukebox_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1728,8 +1728,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Pumpkin.png",
-        "url": "https://minecraft.wiki/w/File:Pumpkin.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/pumpkin_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1740,8 +1740,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Nether_Rack.png",
-        "url": "https://minecraft.wiki/w/File:Nether_Rack.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/netherrack.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1764,8 +1764,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Glowstone.png",
-        "url": "https://minecraft.wiki/w/File:Glowstone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/glowstone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1812,8 +1812,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Lantern.png",
-        "url": "https://minecraft.wiki/w/File:Lantern.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lantern.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1824,8 +1824,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cake.png",
-        "url": "https://minecraft.wiki/w/File:Cake.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/cake.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1836,8 +1836,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Repeater.png",
-        "url": "https://minecraft.wiki/w/File:Repeater.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/repeater.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1884,8 +1884,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Egg.png",
-        "url": "https://minecraft.wiki/w/File:Egg.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/egg.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -1944,8 +1944,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Melon.png",
-        "url": "https://minecraft.wiki/w/File:Melon.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/melon_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1968,8 +1968,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Vines.png",
-        "url": "https://minecraft.wiki/w/File:Vines.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/vine.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -1980,8 +1980,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Vine.png",
-        "url": "https://minecraft.wiki/w/File:Vine.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/vine.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2004,8 +2004,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Mycelium.png",
-        "url": "https://minecraft.wiki/w/File:Mycelium.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/mycelium_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2112,8 +2112,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cauldron.png",
-        "url": "https://minecraft.wiki/w/File:Cauldron.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/cauldron.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2208,8 +2208,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Emerald.png",
-        "url": "https://minecraft.wiki/w/File:Emerald.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/emerald.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2232,8 +2232,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Tripwire.png",
-        "url": "https://minecraft.wiki/w/File:Tripwire.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/tripwire.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2268,8 +2268,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Beacon.png",
-        "url": "https://minecraft.wiki/w/File:Beacon.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/beacon.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2292,8 +2292,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Carrots.png",
-        "url": "https://minecraft.wiki/w/File:Carrots.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/carrot.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2328,8 +2328,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Anvil.png",
-        "url": "https://minecraft.wiki/w/File:Anvil.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/anvil.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2376,8 +2376,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Comparator.png",
-        "url": "https://minecraft.wiki/w/File:Comparator.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/comparator.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2412,8 +2412,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Hopper.png",
-        "url": "https://minecraft.wiki/w/File:Hopper.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/hopper.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2448,8 +2448,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Dropper.png",
-        "url": "https://minecraft.wiki/w/File:Dropper.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/dropper_front.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2484,8 +2484,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Barrier.png",
-        "url": "https://minecraft.wiki/w/File:Barrier.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/barrier.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2520,8 +2520,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Prismarine.png",
-        "url": "https://minecraft.wiki/w/File:Prismarine.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/prismarine.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2604,8 +2604,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Sunflower.png",
-        "url": "https://minecraft.wiki/w/File:Sunflower.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/sunflower_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2628,8 +2628,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Lilac.png",
-        "url": "https://minecraft.wiki/w/File:Lilac.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lilac_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2664,8 +2664,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Peony.png",
-        "url": "https://minecraft.wiki/w/File:Peony.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/peony_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2748,8 +2748,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Beetroot.png",
-        "url": "https://minecraft.wiki/w/File:Beetroot.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/beetroot.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2760,8 +2760,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Beetroots.png",
-        "url": "https://minecraft.wiki/w/File:Beetroots.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/beetroot.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2808,8 +2808,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Chain.png",
-        "url": "https://minecraft.wiki/w/File:Chain.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/chain.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2832,8 +2832,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Magma.png",
-        "url": "https://minecraft.wiki/w/File:Magma.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/magma.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2844,8 +2844,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bone.png",
-        "url": "https://minecraft.wiki/w/File:Bone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bone.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -2880,8 +2880,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Observer.png",
-        "url": "https://minecraft.wiki/w/File:Observer.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/observer_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -2940,8 +2940,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Terracotta.png",
-        "url": "https://minecraft.wiki/w/File:Terracotta.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/terracotta.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -3012,8 +3012,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Flint.png",
-        "url": "https://minecraft.wiki/w/File:Flint.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/flint.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3048,8 +3048,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Apple.png",
-        "url": "https://minecraft.wiki/w/File:Apple.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/apple.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3060,8 +3060,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bow.png",
-        "url": "https://minecraft.wiki/w/File:Bow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bow.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3072,8 +3072,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Arrow.png",
-        "url": "https://minecraft.wiki/w/File:Arrow.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/arrow.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3084,8 +3084,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Charcoal.png",
-        "url": "https://minecraft.wiki/w/File:Charcoal.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/charcoal.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3120,8 +3120,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Stick.png",
-        "url": "https://minecraft.wiki/w/File:Stick.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/stick.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3132,8 +3132,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bowl.png",
-        "url": "https://minecraft.wiki/w/File:Bowl.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bowl.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3156,8 +3156,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "String.png",
-        "url": "https://minecraft.wiki/w/File:String.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/string.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3168,8 +3168,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Feather.png",
-        "url": "https://minecraft.wiki/w/File:Feather.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/feather.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3180,8 +3180,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Gunpowder.png",
-        "url": "https://minecraft.wiki/w/File:Gunpowder.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/gunpowder.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3216,8 +3216,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bread.png",
-        "url": "https://minecraft.wiki/w/File:Bread.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bread.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3228,8 +3228,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Leather.png",
-        "url": "https://minecraft.wiki/w/File:Leather.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/leather.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3264,8 +3264,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Chest_Plate.png",
-        "url": "https://minecraft.wiki/w/File:Chest_Plate.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/iron_chestplate.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3288,8 +3288,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Leggings.png",
-        "url": "https://minecraft.wiki/w/File:Leggings.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/iron_leggings.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3360,8 +3360,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Painting.png",
-        "url": "https://minecraft.wiki/w/File:Painting.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/painting.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3396,8 +3396,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Minecart.png",
-        "url": "https://minecraft.wiki/w/File:Minecart.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/minecart.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3408,8 +3408,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Saddle.png",
-        "url": "https://minecraft.wiki/w/File:Saddle.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/saddle.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3420,8 +3420,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Snowball.png",
-        "url": "https://minecraft.wiki/w/File:Snowball.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/snowball.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3468,8 +3468,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Paper.png",
-        "url": "https://minecraft.wiki/w/File:Paper.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/paper.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3480,8 +3480,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Book.png",
-        "url": "https://minecraft.wiki/w/File:Book.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/book.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3576,8 +3576,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Salmon.png",
-        "url": "https://minecraft.wiki/w/File:Salmon.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/salmon.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3600,8 +3600,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Pufferfish.png",
-        "url": "https://minecraft.wiki/w/File:Pufferfish.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/pufferfish.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3684,8 +3684,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cookie.png",
-        "url": "https://minecraft.wiki/w/File:Cookie.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/cookie.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3696,8 +3696,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Map.png",
-        "url": "https://minecraft.wiki/w/File:Map.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/map.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3720,8 +3720,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Shears.png",
-        "url": "https://minecraft.wiki/w/File:Shears.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/shears.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3732,8 +3732,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Beef.png",
-        "url": "https://minecraft.wiki/w/File:Beef.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/beef.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3756,8 +3756,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Chicken.png",
-        "url": "https://minecraft.wiki/w/File:Chicken.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/chicken.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -3852,8 +3852,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Potion.png",
-        "url": "https://minecraft.wiki/w/File:Potion.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/potion.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -4296,8 +4296,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Rabbit.png",
-        "url": "https://minecraft.wiki/w/File:Rabbit.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/rabbit.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -4428,8 +4428,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Carrot.png",
-        "url": "https://minecraft.wiki/w/File:Carrot.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/carrot.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -4440,8 +4440,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Potato.png",
-        "url": "https://minecraft.wiki/w/File:Potato.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/potato.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -4596,8 +4596,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Rabbit's.png",
-        "url": "https://minecraft.wiki/w/File:Rabbit's.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/rabbit.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -4644,8 +4644,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Lead.png",
-        "url": "https://minecraft.wiki/w/File:Lead.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/lead.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -4680,8 +4680,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Mutton.png",
-        "url": "https://minecraft.wiki/w/File:Mutton.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/mutton.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -4824,8 +4824,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Elytra.png",
-        "url": "https://minecraft.wiki/w/File:Elytra.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/elytra.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -5064,8 +5064,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Rails.png",
-        "url": "https://minecraft.wiki/w/File:Rails.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/rail.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -5244,8 +5244,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Jump.png",
-        "url": "https://minecraft.wiki/w/File:Jump.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/rabbit_foot.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -5520,8 +5520,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bamboo.png",
-        "url": "https://minecraft.wiki/w/File:Bamboo.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bamboo.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -5532,8 +5532,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Barrel.png",
-        "url": "https://minecraft.wiki/w/File:Barrel.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/barrel_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -5544,8 +5544,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Basalt.png",
-        "url": "https://minecraft.wiki/w/File:Basalt.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/basalt_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -5604,8 +5604,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Beehive.png",
-        "url": "https://minecraft.wiki/w/File:Beehive.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/beehive_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -5640,8 +5640,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Bell.png",
-        "url": "https://minecraft.wiki/w/File:Bell.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/bell.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -5772,8 +5772,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Blackstone.png",
-        "url": "https://minecraft.wiki/w/File:Blackstone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/blackstone.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -6096,8 +6096,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Campfire.png",
-        "url": "https://minecraft.wiki/w/File:Campfire.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/campfire.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -6396,8 +6396,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cod.png",
-        "url": "https://minecraft.wiki/w/File:Cod.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/cod.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -6456,8 +6456,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Composter.png",
-        "url": "https://minecraft.wiki/w/File:Composter.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/composter_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -6480,8 +6480,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Conduit.png",
-        "url": "https://minecraft.wiki/w/File:Conduit.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/conduit.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -7320,8 +7320,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Kelp.png",
-        "url": "https://minecraft.wiki/w/File:Kelp.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/kelp.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -9600,8 +9600,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Grind_Stone.png",
-        "url": "https://minecraft.wiki/w/File:Grind_Stone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/grindstone_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -9744,8 +9744,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Honeycomb.png",
-        "url": "https://minecraft.wiki/w/File:Honeycomb.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/honeycomb.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -10032,8 +10032,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Jigsaw.png",
-        "url": "https://minecraft.wiki/w/File:Jigsaw.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/jigsaw_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -10260,8 +10260,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Lectern.png",
-        "url": "https://minecraft.wiki/w/File:Lectern.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lectern_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -10404,8 +10404,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Lode_Stone.png",
-        "url": "https://minecraft.wiki/w/File:Lode_Stone.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/lodestone_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -10416,8 +10416,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Loom.png",
-        "url": "https://minecraft.wiki/w/File:Loom.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/loom_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -12012,8 +12012,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Cornflower.png",
-        "url": "https://minecraft.wiki/w/File:Cornflower.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/cornflower.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -12192,8 +12192,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Respawn.png",
-        "url": "https://minecraft.wiki/w/File:Respawn.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/respawn_anchor_top.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -12276,8 +12276,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Scaffolding.png",
-        "url": "https://minecraft.wiki/w/File:Scaffolding.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/scaffolding_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -12288,8 +12288,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Scute.png",
-        "url": "https://minecraft.wiki/w/File:Scute.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/scute.png",
+        "type": "Item Texture"
       }
     ]
   },
@@ -12324,8 +12324,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Seagrass.png",
-        "url": "https://minecraft.wiki/w/File:Seagrass.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/seagrass.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -12360,8 +12360,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Shroomlight.png",
-        "url": "https://minecraft.wiki/w/File:Shroomlight.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/shroomlight.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -12516,8 +12516,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Smoker.png",
-        "url": "https://minecraft.wiki/w/File:Smoker.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/smoker_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -12984,8 +12984,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Stone_Cutter.png",
-        "url": "https://minecraft.wiki/w/File:Stone_Cutter.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/stonecutter_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -13272,8 +13272,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Target.png",
-        "url": "https://minecraft.wiki/w/File:Target.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/block/target_side.png",
+        "type": "Block Texture"
       }
     ]
   },
@@ -13320,8 +13320,8 @@ const MINECRAFT_3_____ = [
     "imageURLs": [
       {
         "filename": "Trident.png",
-        "url": "https://minecraft.wiki/w/File:Trident.png",
-        "type": "Default"
+        "url": "https://assets.mcasset.cloud/1.20.1/assets/minecraft/textures/item/trident.png",
+        "type": "Item Texture"
       }
     ]
   },
