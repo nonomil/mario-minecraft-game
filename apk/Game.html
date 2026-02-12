@@ -319,6 +319,28 @@
 <script src="src/defaults.js"></script>
 <script src="src/storage.js"></script>
 <script src="words/vocabs/manifest.js"></script>
-<script src="src/main.js"></script>
+<!-- main.js 模块化拆分 (原 main.js 按功能拆分为以下模块) -->
+<script src="src/modules/01-config.js"></script>
+<script src="src/modules/02-utils.js"></script>
+<script src="src/modules/03-audio.js"></script>
+<script src="src/modules/04-weapons.js"></script>
+<script src="src/modules/05-difficulty.js"></script>
+<script src="src/modules/06-biome.js"></script>
+<script src="src/modules/07-viewport.js"></script>
+<script src="src/modules/08-account.js"></script>
+<script src="src/modules/09-vocab.js"></script>
+<script src="src/modules/10-ui.js"></script>
+<script src="src/modules/11-game-init.js"></script>
+<script src="src/modules/12-challenges.js"></script>
+<script src="src/modules/13-game-loop.js"></script>
+<script src="src/modules/14-renderer-main.js"></script>
+<script src="src/modules/14-renderer-entities.js"></script>
+<script src="src/modules/14-renderer-decorations.js"></script>
+<script src="src/modules/15-entities-base.js"></script>
+<script src="src/modules/15-entities-decorations.js"></script>
+<script src="src/modules/15-entities-particles.js"></script>
+<script src="src/modules/15-entities-combat.js"></script>
+<script src="src/modules/16-events.js"></script>
+<script src="src/modules/17-bootstrap.js"></script>
 </body>
 </html>

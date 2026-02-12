@@ -1,4 +1,14 @@
-﻿## v1.2.22（发布日期：2026-02-08）
+﻿## v1.2.23（发布日期：2026-02-12）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.23，versionCode = 36
+- 主要变更
+  - 重构：main.js 拆分为 20 个模块文件，单个文件不超过 1000 行
+  - 重构：14-renderer.js 拆分为 main/entities/decorations 三个文件
+  - 重构：15-entities.js 拆分为 base/decorations/particles/combat 四个文件
+  - 清理：删除重复的模块文件，统一使用 src/modules/ 目录结构
+  - 优化：代码组织更清晰，便于维护和协作开发
+
+## v1.2.22（发布日期：2026-02-08）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.22，versionCode = 35
 - 主要变更

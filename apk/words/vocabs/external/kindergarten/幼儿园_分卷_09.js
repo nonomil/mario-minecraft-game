@@ -1,13 +1,6 @@
 // Generated from 幼儿园完整词库.js
 const STAGE_KINDERGARTEN_PART09 = [
   {
-        "filename": "blanket.svg",
-        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f9f9.svg",
-        "type": "Emoji"
-      }
-    ]
-  },
-  {
     "word": "mirror",
     "standardized": "mirror",
     "chinese": "镜子",
@@ -965,5 +958,5 @@ const STAGE_KINDERGARTEN_PART09 = [
         "type": "Concept Image"
       }
     ]
-  },}
+  }
 ];
