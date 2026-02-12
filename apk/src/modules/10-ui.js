@@ -55,6 +55,9 @@ function setOverlay(visible, mode) {
                     ? `积分复活 (${scoreCost}分)`
                     : `积分复活 (需要${scoreCost}分)`;
             }
+            // Show leaderboard button on gameover
+            const btnLeaderboard = document.getElementById("btn-overlay-leaderboard");
+            if (btnLeaderboard) btnLeaderboard.style.display = "block";
         } else {
             if (title) title.innerText = "准备开始";
             if (text) text.innerHTML = START_OVERLAY_HINT_HTML;
@@ -70,6 +73,7 @@ function setOverlay(visible, mode) {
         }
         overlayMode = "start";
         if (btnScoreRevive) btnScoreRevive.style.display = "none";
+        if (btnLeaderboard) btnLeaderboard.style.display = "none";
     }
 }
 function triggerGameOver() {
@@ -102,6 +106,9 @@ class WordMatchGame {
         this.finished = false;
         this.attempts = 0;
         this.maxAttempts = 1;
+        this.hasInteracted = false;
+        this.timerPaused = false;
+        this.pausedAt = 0;
     }
 
     start() {
@@ -112,10 +119,28 @@ class WordMatchGame {
             return;
         }
         this.attempts++;
+        this.hasInteracted = false;
+        this.timerPaused = false;
+        this.pausedAt = 0;
         wordMatchActive = true;
         wordMatchScreenEl.classList.add("visible");
         this.render();
         this.startTimer();
+    }
+
+    pauseTimerOnFirstInteraction() {
+        if (this.hasInteracted || this.timerPaused || this.finished) return;
+        this.hasInteracted = true;
+        this.timerPaused = true;
+        this.pausedAt = Date.now();
+        this.stopTimer();
+        if (matchTimerEl) {
+            matchTimerEl.innerText = "⏸";
+            matchTimerEl.style.color = "#FFA726";
+        }
+        if (matchSubtitleEl) {
+            matchSubtitleEl.innerText = "计时已暂停，请仔细匹配";
+        }
     }
 
     render() {
@@ -149,6 +174,7 @@ class WordMatchGame {
 
     selectLeft(el) {
         if (!el) return;
+        this.pauseTimerOnFirstInteraction();
         this.selectedLeftId = el.dataset.id;
         matchLeftEl.querySelectorAll(".match-item").forEach(item => item.classList.remove("selected"));
         el.classList.add("selected");
@@ -156,6 +182,7 @@ class WordMatchGame {
 
     selectRight(el) {
         if (!el || !this.selectedLeftId) return;
+        this.pauseTimerOnFirstInteraction();
         const leftId = this.selectedLeftId;
         const rightId = el.dataset.id;
         const existingIndex = this.connections.findIndex(conn => conn.left === leftId || conn.right === rightId);
@@ -340,4 +367,81 @@ function keyLabel(code) {
     if (code.startsWith("Key") && code.length === 4) return code.slice(3);
     if (code.startsWith("Arrow")) return code.replace("Arrow", "方向");
     return code;
+}
+
+// Leaderboard functions
+function showLeaderboardModal() {
+    const modal = document.getElementById("leaderboard-modal");
+    if (!modal) return;
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    renderLeaderboard();
+    // Pre-fill name input with current account username
+    const nameInput = document.getElementById("leaderboard-name-input");
+    if (nameInput && currentAccount) {
+        nameInput.value = currentAccount.username || "";
+    }
+}
+
+function hideLeaderboardModal() {
+    const modal = document.getElementById("leaderboard-modal");
+    if (!modal) return;
+    modal.classList.remove("visible");
+    modal.setAttribute("aria-hidden", "true");
+}
+
+function saveToLeaderboard() {
+    const nameInput = document.getElementById("leaderboard-name-input");
+    const name = (nameInput?.value || "匿名玩家").trim().slice(0, 20);
+    const record = {
+        name: name,
+        score: score,
+        wordsLearned: getLearnedWordCount(),
+        enemiesKilled: enemyKillStats.total || 0,
+        date: Date.now()
+    };
+    MMWG_STORAGE.saveToLeaderboard(record);
+    showToast("📝 成绩已保存到排行榜");
+    renderLeaderboard();
+    // Hide the save section after saving
+    const saveSection = document.getElementById("leaderboard-save-section");
+    if (saveSection) saveSection.style.display = "none";
+}
+
+function renderLeaderboard() {
+    const listEl = document.getElementById("leaderboard-list");
+    if (!listEl) return;
+    const leaderboard = MMWG_STORAGE.getLeaderboard();
+    if (leaderboard.length === 0) {
+        listEl.innerHTML = "<div style='text-align:center; padding:20px; color:#888;'>暂无记录</div>";
+        return;
+    }
+    listEl.innerHTML = leaderboard.map((record, index) => {
+        const rank = index + 1;
+        const rankClass = rank <= 3 ? `rank-${rank}` : "";
+        const rankIcon = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : rank;
+        const dateStr = new Date(record.date).toLocaleDateString("zh-CN", {
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+        return `
+            <div class="leaderboard-item ${rankClass}">
+                <div class="leaderboard-rank leaderboard-rank-${rank}">${rankIcon}</div>
+                <div class="leaderboard-name">${escapeHtml(record.name)}</div>
+                <div class="leaderboard-stats">
+                    <span class="leaderboard-score">${record.score}分</span>
+                    <span class="leaderboard-words">📚${record.wordsLearned}</span>
+                </div>
+                <div class="leaderboard-date">${dateStr}</div>
+            </div>
+        `;
+    }).join("");
+}
+
+function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
 }

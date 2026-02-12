@@ -75,6 +75,21 @@ async function start() {
             reviveWithScore();
         });
     }
+    const overlayLeaderboardBtn = document.getElementById("btn-overlay-leaderboard");
+    if (overlayLeaderboardBtn) {
+        overlayLeaderboardBtn.addEventListener("click", () => {
+            showLeaderboardModal();
+        });
+    }
+    // Leaderboard modal event listeners
+    const leaderboardCloseBtn = document.getElementById("btn-leaderboard-close");
+    if (leaderboardCloseBtn) {
+        leaderboardCloseBtn.addEventListener("click", hideLeaderboardModal);
+    }
+    const leaderboardSaveBtn = document.getElementById("btn-leaderboard-save");
+    if (leaderboardSaveBtn) {
+        leaderboardSaveBtn.addEventListener("click", saveToLeaderboard);
+    }
     const overlay = document.getElementById("screen-overlay");
     if (overlay) {
         overlay.addEventListener("click", e => { if (e.target === overlay) resumeGameFromOverlay(); });
@@ -110,12 +125,15 @@ async function start() {
         const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
         const inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
         if (isJump) {
+            keys.jump = true;
             if (!e.repeat) {
                 jumpBuffer = gameConfig.jump.bufferFrames;
             }
         }
         if (isRight) keys.right = true;
         if (isLeft) keys.left = true;
+        if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = true;
+        if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
         if (isAttack) handleAttack("press");
         if (isWeaponSwitch) switchWeapon();
         if (isUseDiamond) useDiamondForHp();
@@ -149,12 +167,16 @@ async function start() {
         const isRight = matchesBinding(e, keyBindings.right) || e.code === "ArrowRight" || e.key === "ArrowRight";
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
+        const isJump = matchesBinding(e, keyBindings.jump) || e.code === "ArrowUp" || e.code === "Space";
         if (isRight) keys.right = false;
         if (isLeft) keys.left = false;
+        if (isJump) keys.jump = false;
+        if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = false;
+        if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = false;
         if (isAttack) handleAttackRelease();
     });
 
-    window.addEventListener("blur", () => { keys.right = false; keys.left = false; });
+    window.addEventListener("blur", () => { keys.right = false; keys.left = false; keys.up = false; keys.down = false; keys.jump = false; });
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
             if (bgmAudio && !bgmAudio.paused) {

@@ -118,5 +118,24 @@ window.MMWG_STORAGE = {
         };
         this.saveAccount(account);
         return account;
+    },
+    // Leaderboard functions
+    getLeaderboard() {
+        return this.loadJson("mmwg_leaderboard", []);
+    },
+    saveToLeaderboard(record) {
+        const leaderboard = this.getLeaderboard();
+        leaderboard.push({
+            ...record,
+            id: `record_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        });
+        // Sort by score descending, keep top 100
+        leaderboard.sort((a, b) => b.score - a.score);
+        const trimmed = leaderboard.slice(0, 100);
+        this.saveJson("mmwg_leaderboard", trimmed);
+        return trimmed;
+    },
+    clearLeaderboard() {
+        this.saveJson("mmwg_leaderboard", []);
     }
 };

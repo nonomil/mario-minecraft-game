@@ -28,16 +28,16 @@
 
 <div id="game-container">
     <canvas id="gameCanvas" width="800" height="600"></canvas>
-    
+
         <div id="ui-layer">
         <div class="hud-top">
             <div class="hud-box">🪙 金币: <span id="score">0</span></div>
+            <div class="hud-box hud-inventory-btn" id="inventory-status">🎒 背包</div>
             <div class="hud-box" id="hp"></div>
             <div class="hud-box" id="word-display">Start!</div>
             <div class="hud-box" id="level-info">🌲 森林</div>
             <div class="hud-box" id="weapon-info">⚔️ 石剑</div>
             <div class="hud-box hud-box-clickable" id="armor-status">🛡️ 无</div>
-            <div class="hud-box hud-box-clickable" id="inventory-status">🎒 背包</div>
         </div>
         
         <div class="btn-group">
@@ -98,6 +98,7 @@
         <div class="overlay-buttons">
             <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
             <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">积分复活</button>
+            <button class="overlay-btn overlay-leaderboard" id="btn-overlay-leaderboard" style="display:none;">🏆 排行榜</button>
         </div>
     </div>
 </div>
@@ -128,7 +129,7 @@
         </div>
         <div class="settings-row">
             <div class="settings-label">挑战频率</div>
-            <input class="settings-range" id="opt-challenge-freq" type="range" min="0.1" max="0.6" step="0.05" value="0.3">
+            <input class="settings-range" id="opt-challenge-freq" type="range" min="0.05" max="0.6" step="0.05" value="0.1">
         </div>
         <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
@@ -255,6 +256,7 @@
             <button class="inventory-tab active" data-tab="items">物品</button>
             <button class="inventory-tab" data-tab="materials">材料</button>
             <button class="inventory-tab" data-tab="equipment">装备</button>
+            <button class="inventory-tab" data-tab="collectibles">收藏品</button>
         </div>
         <div class="inventory-content" id="inventory-content"></div>
     </div>
@@ -284,14 +286,16 @@
             <div class="match-timer" id="match-timer">30</div>
         </div>
         <p class="word-match-subtitle" id="match-subtitle">将英文与中文拉线连对，只有1次机会</p>
-        <div class="match-container">
-            <div class="match-column" id="match-left"></div>
-            <svg class="match-lines" id="match-lines" xmlns="http://www.w3.org/2000/svg"></svg>
-            <div class="match-column" id="match-right"></div>
-        </div>
-        <div class="match-footer">
+        <div class="match-top-actions">
             <div>已连线: <span id="match-count">0</span>/<span id="match-total">0</span></div>
-            <button class="game-btn" id="btn-match-submit">提交复活</button>
+            <button class="game-btn game-btn-small" id="btn-match-submit">提交复活</button>
+        </div>
+        <div class="match-scrollable-wrapper">
+            <div class="match-container">
+                <div class="match-column" id="match-left"></div>
+                <svg class="match-lines" id="match-lines" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="match-column" id="match-right"></div>
+            </div>
         </div>
         <div id="match-result" class="match-result"></div>
     </div>
@@ -312,6 +316,26 @@
         <div class="profile-achievements">
             <h3>成就</h3>
             <div id="achievements-container"></div>
+        </div>
+    </div>
+</div>
+
+<div id="leaderboard-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2 id="leaderboard-title">🏆 排行榜</h2>
+            <button class="game-btn game-btn-small" id="btn-leaderboard-close">关闭</button>
+        </div>
+        <div class="leaderboard-save-section" id="leaderboard-save-section">
+            <h3>保存本次成绩</h3>
+            <div class="leaderboard-input-group">
+                <input type="text" id="leaderboard-name-input" placeholder="输入你的名字" maxlength="20">
+                <button class="game-btn" id="btn-leaderboard-save">保存成绩</button>
+            </div>
+        </div>
+        <div class="leaderboard-list-section">
+            <h3>本地排行榜</h3>
+            <div id="leaderboard-list" class="leaderboard-list"></div>
         </div>
     </div>
 </div>
