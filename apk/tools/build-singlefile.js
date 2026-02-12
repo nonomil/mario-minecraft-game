@@ -72,7 +72,21 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const defaultsJs = readText(path.join(projectRoot, "src", "defaults.js"));
   const storageJs = readText(path.join(projectRoot, "src", "storage.js"));
   const manifestJs = readText(path.join(projectRoot, "words", "vocabs", "manifest.js"));
-  const mainJs = readText(path.join(projectRoot, "src", "main.js"));
+
+  // Read all module files in order
+  const moduleFiles = [
+    "01-config.js", "02-utils.js", "03-audio.js", "04-weapons.js",
+    "05-difficulty.js", "06-biome.js", "07-viewport.js", "08-account.js",
+    "09-vocab.js", "10-ui.js", "11-game-init.js", "12-challenges.js",
+    "13-game-loop.js", "14-renderer-main.js", "14-renderer-entities.js",
+    "14-renderer-decorations.js", "15-entities-base.js", "15-entities-decorations.js",
+    "15-entities-particles.js", "15-entities-combat.js", "16-events.js",
+    "17-bootstrap.js"
+  ];
+  const moduleScripts = moduleFiles.map(f => {
+    const content = readText(path.join(projectRoot, "src", "modules", f));
+    return makeInlineScript(content);
+  }).join("\n");
 
   const vocabFiles = extractVocabFilesFromManifest(manifestJs);
   const vocabScripts = vocabFiles.map((f) => makeInlineScript(readText(path.join(projectRoot, f)))).join("\n");
@@ -112,12 +126,14 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
     `${makeInlineScript(manifestJs)}\n${vocabScripts}\n${makeInlineScript(preludeScript)}`,
     "manifest script"
   );
-  html = replaceOnce(
-    html,
-    `<script src="src/main.js"></script>`,
-    makeInlineScript(mainJs),
-    "main script"
-  );
+
+  // Replace all module script tags with inline scripts
+  moduleFiles.forEach(f => {
+    const pattern = `<script src="src/modules/${f}"></script>`;
+    if (html.indexOf(pattern) !== -1) {
+      html = html.replace(pattern, makeInlineScript(readText(path.join(projectRoot, "src", "modules", f))));
+    }
+  });
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, html, "utf8");

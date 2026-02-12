@@ -5,7 +5,7 @@ window.MMWG_DEFAULTS = {
             gravity: 0.2,
             friction: 0.85,
             jumpStrength: -7.0,
-            movementSpeed: 2.0,
+            movementSpeed: 1.2,
             groundY: 530
         },
         world: {
@@ -22,6 +22,12 @@ window.MMWG_DEFAULTS = {
             hitPenaltyScale: 0.5,
             minHitPenalty: 5,
             maxHitPenalty: 30
+        },
+        revive: {
+            diamondCost: 10,
+            scoreCost: 500,
+            scoreReviveHpPercent: 0.5,
+            invincibleFrames: 180
         },
         jump: {
             bufferFrames: 12,
@@ -102,42 +108,48 @@ window.MMWG_DEFAULTS = {
                 common: [
                     { item: "iron", weight: 18, min: 1, max: 3 },
                     { item: "pumpkin", weight: 12, min: 1, max: 2 },
-                    { item: "stick", weight: 12, min: 1, max: 3 },
-                    { item: "diamond", weight: 4, min: 1, max: 1 },
-                    { item: "coal", weight: 10, min: 1, max: 3 },
-                    { item: "arrow", weight: 10, min: 2, max: 6 },
-                    { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
-                    { item: "flower", weight: 6, min: 1, max: 2 },
-                    { item: "mushroom", weight: 6, min: 1, max: 2 },
-                    { item: "hp", weight: 8, min: 1, max: 1 },
-                    { item: "score", weight: 7, min: 10, max: 25 }
-                ],
-                rare: [
-                    { item: "diamond", weight: 6, min: 1, max: 1 },
-                    { item: "stone_sword", weight: 7, min: 1, max: 1 },
-                    { item: "iron_pickaxe", weight: 5, min: 1, max: 1 },
-                    { item: "bow", weight: 4, min: 1, max: 1 },
-                    { item: "ender_pearl", weight: 4, min: 1, max: 1 },
-                    { item: "iron", weight: 8, min: 2, max: 4 },
-                    { item: "arrow", weight: 8, min: 4, max: 8 },
-                    { item: "hp", weight: 8, min: 1, max: 1 },
-                    { item: "score", weight: 8, min: 20, max: 40 }
-                ],
-                epic: [
-                    { item: "max_hp", weight: 6, min: 1, max: 1 },
-                    { item: "diamond", weight: 6, min: 1, max: 2 },
-                    { item: "ender_pearl", weight: 5, min: 1, max: 2 },
-                    { item: "iron_pickaxe", weight: 6, min: 1, max: 1 },
-                    { item: "bow", weight: 6, min: 1, max: 1 },
-                    { item: "score", weight: 8, min: 40, max: 80 }
-                ],
-                legendary: [
-                    { item: "max_hp", weight: 8, min: 1, max: 2 },
-                    { item: "diamond", weight: 8, min: 2, max: 3 },
-                    { item: "dragon_egg", weight: 4, min: 1, max: 1 },
-                    { item: "ender_pearl", weight: 6, min: 2, max: 3 },
-                    { item: "score", weight: 10, min: 80, max: 150 }
-                ]
+                { item: "stick", weight: 12, min: 1, max: 3 },
+                { item: "diamond", weight: 4, min: 1, max: 1 },
+                { item: "coal", weight: 10, min: 1, max: 3 },
+                { item: "arrow", weight: 10, min: 2, max: 6 },
+                { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
+                { item: "flower", weight: 6, min: 1, max: 2 },
+                { item: "mushroom", weight: 6, min: 1, max: 2 },
+                { item: "hp", weight: 8, min: 1, max: 1 },
+                { item: "armor_leather", weight: 5, min: 1, max: 1 },
+                { item: "score", weight: 7, min: 10, max: 25 }
+            ],
+            rare: [
+                { item: "diamond", weight: 6, min: 1, max: 1 },
+                { item: "stone_sword", weight: 7, min: 1, max: 1 },
+                { item: "iron_pickaxe", weight: 5, min: 1, max: 1 },
+                { item: "bow", weight: 4, min: 1, max: 1 },
+                { item: "ender_pearl", weight: 4, min: 1, max: 1 },
+                { item: "iron", weight: 8, min: 2, max: 4 },
+                { item: "arrow", weight: 8, min: 4, max: 8 },
+                { item: "hp", weight: 8, min: 1, max: 1 },
+                { item: "armor_chainmail", weight: 4, min: 1, max: 1 },
+                { item: "armor_iron", weight: 3, min: 1, max: 1 },
+                { item: "score", weight: 8, min: 20, max: 40 }
+            ],
+            epic: [
+                { item: "max_hp", weight: 6, min: 1, max: 1 },
+                { item: "diamond", weight: 6, min: 1, max: 2 },
+                { item: "ender_pearl", weight: 5, min: 1, max: 2 },
+                { item: "iron_pickaxe", weight: 6, min: 1, max: 1 },
+                { item: "bow", weight: 6, min: 1, max: 1 },
+                { item: "armor_gold", weight: 3, min: 1, max: 1 },
+                { item: "armor_diamond", weight: 2, min: 1, max: 1 },
+                { item: "score", weight: 8, min: 40, max: 80 }
+            ],
+            legendary: [
+                { item: "max_hp", weight: 8, min: 1, max: 2 },
+                { item: "diamond", weight: 8, min: 2, max: 3 },
+                { item: "dragon_egg", weight: 4, min: 1, max: 1 },
+                { item: "ender_pearl", weight: 6, min: 2, max: 3 },
+                { item: "armor_netherite", weight: 3, min: 1, max: 1 },
+                { item: "score", weight: 10, min: 80, max: 150 }
+            ]
             },
             chestRolls: {
                 twoDropChance: 0.45,
@@ -187,7 +199,12 @@ window.MMWG_DEFAULTS = {
     ],
     settings: {
         learningMode: true,
+        challengeEnabled: true,
+        challengeFrequency: 0.3,
+        wordGateEnabled: true,
+        wordMatchEnabled: true,
         speechEnabled: true,
+        speechZhEnabled: false,
         speechEnRate: 1.2,
         speechZhRate: 1.1,
         musicEnabled: true,
@@ -204,6 +221,7 @@ window.MMWG_DEFAULTS = {
         vocabStage: "auto",
         vocabSelection: "vocab.kindergarten",
         vocabDifficulty: "auto",
+        movementSpeedLevel: "normal",
         keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ"
     }
 };
