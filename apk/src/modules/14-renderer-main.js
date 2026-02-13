@@ -12,64 +12,8 @@ function draw() {
     platforms.forEach(p => drawBlock(p.x, p.y, p.width, p.height, p.type));
 
     if (biome.effects?.waterLevel) {
-        const wl = biome.effects.waterLevel;
-        // Gradient water overlay (lighter at surface, darker at bottom)
-        const grad = ctx.createLinearGradient(0, wl, 0, canvas.height);
-        grad.addColorStop(0, "rgba(33, 150, 243, 0.15)");
-        grad.addColorStop(0.4, "rgba(21, 101, 192, 0.30)");
-        grad.addColorStop(1, "rgba(13, 71, 161, 0.45)");
-        ctx.fillStyle = grad;
-        ctx.fillRect(cameraX - 50, wl, canvas.width + 100, canvas.height - wl);
-
-        // Water surface wave line
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        for (let wx = cameraX - 50; wx < cameraX + canvas.width + 50; wx += 8) {
-            const wy = wl + Math.sin((wx + gameFrame * 1.5) * 0.03) * 3;
-            wx === cameraX - 50 ? ctx.moveTo(wx, wy) : ctx.lineTo(wx, wy);
-        }
-        ctx.stroke();
-
-        // Light rays from surface
-        ctx.save();
-        ctx.globalAlpha = 0.06;
-        for (let r = 0; r < 5; r++) {
-            const rx = cameraX + ((r * 197 + gameFrame * 0.3) % (canvas.width + 100)) - 50;
-            const rw = 20 + r * 8;
-            ctx.fillStyle = "#fff";
-            ctx.beginPath();
-            ctx.moveTo(rx, wl);
-            ctx.lineTo(rx - rw, canvas.height);
-            ctx.lineTo(rx + rw, canvas.height);
-            ctx.closePath();
-            ctx.fill();
-        }
-        ctx.restore();
-
-        // Background fish (small, non-interactive, parallax)
-        ctx.save();
-        const fishColors = ["#FF6F00", "#E91E63", "#4CAF50", "#FFEB3B", "#00BCD4"];
-        for (let f = 0; f < 6; f++) {
-            const fishSeed = f * 137;
-            const fishX = cameraX + ((fishSeed + gameFrame * (0.3 + f * 0.1)) % (canvas.width + 200)) - 100;
-            const fishY = wl + 40 + (fishSeed * 7) % (canvas.height - wl - 80);
-            const fishSize = 6 + (f % 3) * 3;
-            const fishDir = f % 2 === 0 ? 1 : -1;
-            ctx.fillStyle = fishColors[f % fishColors.length];
-            // Fish body (ellipse)
-            ctx.beginPath();
-            ctx.ellipse(fishX, fishY, fishSize, fishSize * 0.5, 0, 0, Math.PI * 2);
-            ctx.fill();
-            // Fish tail
-            ctx.beginPath();
-            ctx.moveTo(fishX - fishDir * fishSize, fishY);
-            ctx.lineTo(fishX - fishDir * (fishSize + 5), fishY - 3);
-            ctx.lineTo(fishX - fishDir * (fishSize + 5), fishY + 3);
-            ctx.closePath();
-            ctx.fill();
-        }
-        ctx.restore();
+        ctx.fillStyle = "rgba(33, 150, 243, 0.25)";
+        ctx.fillRect(cameraX - 50, biome.effects.waterLevel, canvas.width + 100, canvas.height - biome.effects.waterLevel);
     }
 
     trees.forEach(t => {
@@ -401,104 +345,16 @@ function drawBackground(biome) {
     ctx.fillStyle = ambient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Ocean biome: underwater gradient background instead of mountains
-    if (biome.id === "ocean") {
-        const wl = biome.effects?.waterLevel || 150;
-        // Sky above water
-        const skyGrad = ctx.createLinearGradient(0, 0, 0, wl);
-        skyGrad.addColorStop(0, "#87CEEB");
-        skyGrad.addColorStop(1, "#B3E5FC");
-        ctx.fillStyle = skyGrad;
-        ctx.fillRect(0, 0, canvas.width, wl);
-        // Deep water below
-        const waterGrad = ctx.createLinearGradient(0, wl, 0, canvas.height);
-        waterGrad.addColorStop(0, "#42A5F5");
-        waterGrad.addColorStop(0.5, "#1E88E5");
-        waterGrad.addColorStop(1, "#0D47A1");
-        ctx.fillStyle = waterGrad;
-        ctx.fillRect(0, wl, canvas.width, canvas.height - wl);
-
-        // Coral reef silhouettes at bottom (background layer)
-        const parallaxX = cameraX * 0.15;
-        ctx.fillStyle = "rgba(0, 77, 64, 0.2)";
-        for (let c = 0; c < 6; c++) {
-            const cx = (c * 160 - parallaxX % 160 + 960) % 960 - 80;
-            const ch = 30 + (c * 17) % 40;
-            ctx.beginPath();
-            ctx.ellipse(cx, canvas.height - 20, 25 + c * 5, ch, 0, Math.PI, 0);
-            ctx.fill();
-        }
-    } else if (biome.id === "sky") {
-        // Sky biome: gradient sky with distant clouds
-        const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        skyGrad.addColorStop(0, "#4FC3F7");
-        skyGrad.addColorStop(0.4, "#81D4FA");
-        skyGrad.addColorStop(1, "#B3E5FC");
-        ctx.fillStyle = skyGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Distant cloud layers (parallax)
-        const parallaxX = cameraX * 0.1;
-        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-        for (let c = 0; c < 5; c++) {
-            const cx = (c * 200 - parallaxX % 200 + 1000) % 1000 - 100;
-            ctx.beginPath();
-            ctx.arc(cx, 120 + c * 30, 40 + c * 10, 0, Math.PI * 2);
-            ctx.arc(cx + 50, 130 + c * 30, 30 + c * 5, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // Rainbow (subtle, background)
-        ctx.save();
-        ctx.globalAlpha = 0.12;
-        const rainbowColors = ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#8B00FF"];
-        for (let r = 0; r < rainbowColors.length; r++) {
-            ctx.strokeStyle = rainbowColors[r];
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, canvas.height + 100, 300 - r * 8, Math.PI, 0);
-            ctx.stroke();
-        }
-        ctx.restore();
-    } else if (biome.id === "cave") {
-        // Cave biome: dark background with stalactites and torch glow
-        ctx.fillStyle = "#1a1a2e";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Ceiling stalactites (background layer)
-        ctx.fillStyle = "rgba(80, 80, 100, 0.5)";
-        for (let s = 0; s < 8; s++) {
-            const sx = (s * 120 + (cameraX * 0.15) % 120 + 960) % 960 - 60;
-            const sh = 20 + (s * 13) % 30;
-            ctx.beginPath();
-            ctx.moveTo(sx, 0);
-            ctx.lineTo(sx + 8, sh);
-            ctx.lineTo(sx + 16, 0);
-            ctx.fill();
-        }
-
-        // Torch light around player (radial gradient)
-        ctx.save();
-        const px = player.x - cameraX;
-        const py = player.y;
-        const torchGrad = ctx.createRadialGradient(px, py, 20, px, py, 200);
-        torchGrad.addColorStop(0, "rgba(255, 200, 100, 0.15)");
-        torchGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
-        ctx.fillStyle = torchGrad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.restore();
-    } else {
-        const parallaxX = cameraX * 0.2;
-        ctx.fillStyle = "rgba(0,0,0,0.15)";
-        for (let i = 0; i < 3; i++) {
-            const mx = -parallaxX + i * 400;
-            ctx.beginPath();
-            ctx.moveTo(mx, canvas.height - 200);
-            ctx.lineTo(mx + 200, canvas.height - 320);
-            ctx.lineTo(mx + 400, canvas.height - 200);
-            ctx.closePath();
-            ctx.fill();
-        }
+    const parallaxX = cameraX * 0.2;
+    ctx.fillStyle = "rgba(0,0,0,0.15)";
+    for (let i = 0; i < 3; i++) {
+        const mx = -parallaxX + i * 400;
+        ctx.beginPath();
+        ctx.moveTo(mx, canvas.height - 200);
+        ctx.lineTo(mx + 200, canvas.height - 320);
+        ctx.lineTo(mx + 400, canvas.height - 200);
+        ctx.closePath();
+        ctx.fill();
     }
 
     ctx.fillStyle = "rgba(255,255,255,0.6)";
@@ -510,6 +366,11 @@ function drawBackground(biome) {
         ctx.arc(cx + 70, 80, 26, 0, Math.PI * 2);
         ctx.fill();
     }
+
+    ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
+    ctx.beginPath();
+    ctx.arc(canvas.width - 80, 60, 24, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
     ctx.beginPath();
