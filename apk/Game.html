@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>我的世界：单词大冒险 (宝箱增强版)</title>
+    <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+
+<div id="login-screen" class="login-screen visible">
+    <div class="login-container">
+        <h1 class="game-title">Minecraft 单词游戏</h1>
+        <div id="login-form" class="login-form">
+            <div class="form-group">
+                <label for="username-input">请输入用户名</label>
+                <input type="text" id="username-input" placeholder="昵称" maxlength="20">
+            </div>
+            <button id="btn-login" class="game-btn">连接</button>
+        </div>
+        <div id="account-list" class="account-list">
+            <h3>已有账号</h3>
+            <div id="accounts-container"></div>
+            <button id="btn-new-account" class="game-btn game-btn-small">创建新账号</button>
+        </div>
+    </div>
+</div>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div id="ui-layer">
+        <div class="hud-top">
+            <div class="hud-box">🪙 金币: <span id="score">0</span></div>
+            <div class="hud-box hud-inventory-btn" id="inventory-status">🎒 背包</div>
+            <div class="hud-box" id="hp"></div>
+            <div class="hud-box" id="word-display">Start!</div>
+            <div class="hud-box" id="level-info">🌲 森林</div>
+            <div class="hud-box" id="weapon-info">⚔️ 石剑</div>
+            <div class="hud-box hud-box-clickable" id="armor-status">🛡️ 无</div>
+        </div>
+        
+        <div class="btn-group">
+            <button class="game-btn" id="btn-settings">⚙️ 设置</button>
+            <button class="game-btn" id="btn-profile">📋 档案</button>
+            <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
+        </div>
+
+        <div class="inventory-bar">
+            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="召唤傀儡 (X)">
+                <span class="inv-icon">🗿</span>
+                <span class="inv-label">召唤</span>
+            </button>
+            <div class="inv-slot" title="钻石"><span class="inv-icon">💎</span><span class="inv-count" id="count-diamond">0</span></div>
+            <div class="inv-slot" title="南瓜"><span class="inv-icon">🎃</span><span class="inv-count" id="count-pumpkin">0</span></div>
+            <div class="inv-slot" title="铁块"><span class="inv-icon">🧱</span><span class="inv-count" id="count-iron">0</span></div>
+            <div class="inv-slot" title="木棍"><span class="inv-icon">🥢</span><span class="inv-count" id="count-stick">0</span></div>
+            <div class="inv-slot" title="石剑"><span class="inv-icon">⚔️</span><span class="inv-count" id="count-stone_sword">0</span></div>
+            <div class="inv-slot" title="铁镐"><span class="inv-icon">⛏️</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
+            <div class="inv-slot" title="弓"><span class="inv-icon">🏹</span><span class="inv-count" id="count-bow">0</span></div>
+            <div class="inv-slot" title="箭矢"><span class="inv-icon">🏹</span><span class="inv-count" id="count-arrow">0</span></div>
+        </div>
+
+        <div id="toast">Level Up!</div>
+        <div id="word-card" aria-hidden="true">
+            <div class="word-card-inner">
+                <div class="word-card-en" id="word-card-en"></div>
+                <div class="word-card-zh" id="word-card-zh"></div>
+                <img class="word-card-image" id="word-card-image" alt="" style="display:none;">
+            </div>
+        </div>
+
+        <div id="touch-controls" aria-hidden="true">
+            <div class="touch-left">
+                <button class="touch-btn" data-action="left">⬅️</button>
+                <button class="touch-btn" data-action="right">➡️</button>
+            </div>
+            <div class="touch-right">
+                <button class="touch-btn" data-action="use-diamond">💎</button>
+                <button class="touch-btn" data-action="interact">🧰</button>
+                <button class="touch-btn" data-action="switch">🔁</button>
+                <span class="touch-spacer"></span>
+                <button class="touch-btn" data-action="jump">⤴️</button>
+                <button class="touch-btn" data-action="attack">🗡️</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="screen-overlay" class="screen-overlay" aria-hidden="true">
+    <div class="overlay-card">
+        <div class="overlay-title" id="overlay-title">准备开始</div>
+                        <div class="overlay-text" id="overlay-text">
+            ⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>
+            ⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>
+            📦 打开宝箱  ⛏️ 采集
+        </div>
+        <div class="overlay-buttons">
+            <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
+            <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">积分复活</button>
+            <button class="overlay-btn overlay-leaderboard" id="btn-overlay-leaderboard" style="display:none;">🏆 排行榜</button>
+        </div>
+    </div>
+</div>
+
+<div id="settings-modal" aria-hidden="true">
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="游戏设置">
+        <div class="settings-title">游戏设置</div>
+
+        <div class="settings-actions settings-actions-top">
+            <button class="game-btn" id="btn-settings-save">保存</button>
+        </div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-label">操作提示</div>
+                                    <div class="settings-hint">
+                ⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>
+            ⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>
+            📦 打开宝箱  ⛏️ 采集
+            </div>
+        </div>
+
+
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-challenge-mode"> 学习挑战(随机弹出)</label>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">挑战频率</div>
+            <input class="settings-range" id="opt-challenge-freq" type="range" min="0.05" max="0.6" step="0.05" value="0.1">
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-speech-zh-enabled"> 朗读中文释义</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">英文语速</div>
+            <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">中文语速</div>
+            <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">界面大小</div>
+            <input class="settings-range" id="opt-ui-scale" type="range" min="0.8" max="1.4" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">显示模式</div>
+            <select class="settings-select" id="opt-device-mode">
+                <option value="auto">自动</option>
+                <option value="phone">手机</option>
+                <option value="tablet">平板</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">屏幕方向</div>
+            <select class="settings-select" id="opt-orientation-lock">
+                <option value="auto">自动</option>
+                <option value="portrait">竖屏</option>
+                <option value="landscape">横屏</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">动作速度</div>
+            <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">移动速度</div>
+            <select class="settings-select" id="opt-speed">
+                <option value="slow">慢（练习）</option>
+                <option value="normal">普通</option>
+                <option value="fast">快（挑战）</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">游戏难度</div>
+            <select class="settings-select" id="opt-difficulty">
+                <option value="auto">自动(随积分)</option>
+                <option value="新手">新手</option>
+                <option value="简单">简单</option>
+                <option value="普通">普通</option>
+                <option value="困难">困难</option>
+                <option value="地狱">地狱</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">环境切换周期(分数)</div>
+            <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重复(轮换)</label>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">词库</div>
+            <select class="settings-select" id="opt-vocab"></select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">词库预览</div>
+            <div id="vocab-preview" class="settings-hint">自动轮换词库</div>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-show-image"> 显示图片</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-word-gate"> 词语闸门(触发额外挑战)</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-word-match"> 词语匹配复活(结束时)</label>
+        </div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互,切换,使用钻石</div>
+            <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
+        </div>
+
+        <div class="settings-row settings-row-progress">
+            <div class="settings-label">词库轮换</div>
+            <div class="settings-progress" id="progress-vocab">未加载</div>
+            <button class="game-btn game-btn-danger" id="btn-reset-progress">重置轮换</button>
+        </div>
+
+        <div class="settings-actions">
+            <button class="game-btn" id="btn-settings-close">关闭</button>
+        </div>
+    </div>
+</div>
+<div id="armor-select-modal" class="armor-modal" aria-hidden="true">
+    <div class="armor-modal-content">
+        <div class="armor-modal-header">
+            <span>盔甲仓库</span>
+            <button class="game-btn game-btn-small" id="btn-armor-close">关闭</button>
+        </div>
+        <div class="armor-list"></div>
+    </div>
+</div>
+
+<div id="inventory-modal" class="inventory-modal" aria-hidden="true">
+    <div class="inventory-panel">
+        <div class="inventory-header">
+            <span>🎒 背包</span>
+            <button class="game-btn game-btn-small" id="btn-inventory-close">关闭</button>
+        </div>
+        <div class="inventory-tabs">
+            <button class="inventory-tab active" data-tab="items">物品</button>
+            <button class="inventory-tab" data-tab="materials">材料</button>
+            <button class="inventory-tab" data-tab="equipment">装备</button>
+            <button class="inventory-tab" data-tab="collectibles">收藏品</button>
+        </div>
+        <div class="inventory-content" id="inventory-content"></div>
+    </div>
+</div>
+
+<div id="challenge-modal" class="learning-modal" aria-hidden="true">
+    <div class="learning-modal-content">
+        <div class="learning-modal-header">
+            <span>学习挑战</span>
+        </div>
+        <div class="learning-modal-question" id="challenge-question"></div>
+        <div class="learning-modal-options" id="challenge-options"></div>
+        <div class="learning-modal-input" id="challenge-input-wrapper">
+            <input type="text" id="challenge-input" placeholder="输入英文或中文" autocomplete="off">
+        </div>
+        <div class="learning-modal-footer">
+            <div class="learning-modal-timer" id="challenge-timer">10</div>
+            <button class="game-btn game-btn-small" id="challenge-repeat">再听一次</button>
+        </div>
+    </div>
+</div>
+
+<div id="word-match-screen" class="learning-modal" aria-hidden="true">
+    <div class="learning-modal-content word-match-content">
+        <div class="word-match-header">
+            <h2>词语匹配复活</h2>
+            <div class="match-timer" id="match-timer">30</div>
+        </div>
+        <p class="word-match-subtitle" id="match-subtitle">将英文与中文拉线连对，只有1次机会</p>
+        <div class="match-top-actions">
+            <div>已连线: <span id="match-count">0</span>/<span id="match-total">0</span></div>
+            <button class="game-btn game-btn-small" id="btn-match-submit">提交复活</button>
+        </div>
+        <div class="match-scrollable-wrapper">
+            <div class="match-container">
+                <div class="match-column" id="match-left"></div>
+                <svg class="match-lines" id="match-lines" xmlns="http://www.w3.org/2000/svg"></svg>
+                <div class="match-column" id="match-right"></div>
+            </div>
+        </div>
+        <div id="match-result" class="match-result"></div>
+    </div>
+</div>
+
+<div id="profile-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2 id="profile-username">玩家档案</h2>
+            <button class="game-btn game-btn-small" id="btn-profile-close">关闭</button>
+        </div>
+        <div class="profile-stats">
+            <div>游戏次数: <span id="profile-games">0</span></div>
+            <div>最高积分: <span id="profile-highscore">0</span></div>
+            <div>已学词数: <span id="profile-words">0</span></div>
+            <div>游玩时长: <span id="profile-playtime">0 分钟</span></div>
+        </div>
+        <div class="profile-achievements">
+            <h3>成就</h3>
+            <div id="achievements-container"></div>
+        </div>
+    </div>
+</div>
+
+<div id="leaderboard-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2 id="leaderboard-title">🏆 排行榜</h2>
+            <button class="game-btn game-btn-small" id="btn-leaderboard-close">关闭</button>
+        </div>
+        <div class="leaderboard-save-section" id="leaderboard-save-section">
+            <h3>保存本次成绩</h3>
+            <div class="leaderboard-input-group">
+                <input type="text" id="leaderboard-name-input" placeholder="输入你的名字" maxlength="20">
+                <button class="game-btn" id="btn-leaderboard-save">保存成绩</button>
+            </div>
+        </div>
+        <div class="leaderboard-list-section">
+            <h3>本地排行榜</h3>
+            <div id="leaderboard-list" class="leaderboard-list"></div>
+        </div>
+    </div>
+</div>
+
+<script src="src/defaults.js"></script>
+<script src="src/storage.js"></script>
+<script src="words/vocabs/manifest.js"></script>
+<!-- main.js 模块化拆分 (原 main.js 按功能拆分为以下模块) -->
+<script src="src/modules/01-config.js"></script>
+<script src="src/modules/02-utils.js"></script>
+<script src="src/modules/03-audio.js"></script>
+<script src="src/modules/04-weapons.js"></script>
+<script src="src/modules/05-difficulty.js"></script>
+<script src="src/modules/06-biome.js"></script>
+<script src="src/modules/07-viewport.js"></script>
+<script src="src/modules/08-account.js"></script>
+<script src="src/modules/09-vocab.js"></script>
+<script src="src/modules/10-ui.js"></script>
+<script src="src/modules/11-game-init.js"></script>
+<script src="src/modules/12-challenges.js"></script>
+<script src="src/modules/13-game-loop.js"></script>
+<script src="src/modules/14-renderer-main.js"></script>
+<script src="src/modules/14-renderer-entities.js"></script>
+<script src="src/modules/14-renderer-decorations.js"></script>
+<script src="src/modules/15-entities-base.js"></script>
+<script src="src/modules/15-entities-decorations.js"></script>
+<script src="src/modules/15-entities-particles.js"></script>
+<script src="src/modules/15-entities-combat.js"></script>
+<script src="src/modules/16-events.js"></script>
+<script src="src/modules/17-bootstrap.js"></script>
+</body>
+</html>

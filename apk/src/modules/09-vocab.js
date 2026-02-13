@@ -1,0 +1,397 @@
+/**
+ * 09-vocab.js - 词汇系统与词库管理
+ * 从 main.js 拆分 (原始行 2103-2495)
+ */
+function normalizeSettings(raw) {
+    const merged = mergeDeep(defaultSettings, raw || {});
+    if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;
+    if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
+    if (typeof merged.speechZhEnabled !== "boolean") merged.speechZhEnabled = defaultSettings.speechZhEnabled ?? false;
+    if (typeof merged.musicEnabled !== "boolean") merged.musicEnabled = defaultSettings.musicEnabled ?? true;
+    if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
+    if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
+    if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
+    if (typeof merged.wordGateEnabled !== "boolean") merged.wordGateEnabled = defaultSettings.wordGateEnabled ?? true;
+    if (typeof merged.wordMatchEnabled !== "boolean") merged.wordMatchEnabled = defaultSettings.wordMatchEnabled ?? true;
+    if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
+    if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
+    merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
+    if (!merged.keyCodes) {
+        merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
+            .filter(Boolean)
+            .join(",");
+    } else {
+        const parsed = parseKeyCodes(merged.keyCodes);
+        if (!parsed) {
+            merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
+                .filter(Boolean)
+                .join(",");
+        }
+    }
+    return merged;
+}
+
+settings = normalizeSettings(settings);
+
+function saveSettings() {
+    if (storage) storage.saveJson("mmwg:settings", settings);
+}
+
+function saveProgress() {
+    if (storage) storage.saveJson("mmwg:progress", progress);
+}
+
+function saveVocabState() {
+    if (storage) storage.saveJson("mmwg:vocabState", vocabState);
+}
+
+function normalizeProgress(raw) {
+    const p = raw && typeof raw === "object" ? raw : {};
+    if (!p.vocab || typeof p.vocab !== "object") p.vocab = {};
+    return p;
+}
+
+progress = normalizeProgress(progress);
+
+function placeholderImageDataUrl(text) {
+    const label = String(text || "").slice(0, 24);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="520" height="320" viewBox="0 0 520 320"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1b1f2a" offset="0"/><stop stop-color="#2b3550" offset="1"/></linearGradient></defs><rect width="520" height="320" rx="22" ry="22" fill="url(#g)"/><rect x="18" y="18" width="484" height="284" rx="18" ry="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)" stroke-width="3"/><text x="260" y="175" text-anchor="middle" font-family="Verdana,Arial" font-size="46" font-weight="900" fill="rgba(255,255,255,0.92)">${label}</text><text x="260" y="220" text-anchor="middle" font-family="Verdana,Arial" font-size="20" font-weight="700" fill="rgba(255,255,255,0.65)">image unavailable</text></svg>`;
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+function updateWordImage(wordObj) {
+    const img = document.getElementById("word-card-image");
+    if (!img) return;
+    if (!settings.showWordImage) {
+        img.style.display = "none";
+        img.removeAttribute("src");
+        img.alt = "";
+        return;
+    }
+    const list = wordObj && (wordObj.imageURLs || wordObj.images || wordObj.imageUrl || wordObj.imageURL) ? (wordObj.imageURLs || wordObj.images || []) : [];
+    const url = Array.isArray(list) && list.length ? (list[0] && list[0].url ? list[0].url : null) : (wordObj && typeof wordObj.imageUrl === "string" ? wordObj.imageUrl : null);
+    if (!url) {
+        img.style.display = "none";
+        img.removeAttribute("src");
+        img.alt = "";
+        return;
+    }
+    img.style.display = "block";
+    img.src = url;
+    img.alt = wordObj && wordObj.en ? String(wordObj.en) : "";
+    img.onerror = () => {
+        img.onerror = null;
+        img.src = placeholderImageDataUrl(wordObj && wordObj.en ? wordObj.en : "");
+    };
+}
+
+function ensureVocabEngine() {
+    if (vocabEngine) return vocabEngine;
+    if (!vocabManifest || !vocabManifest.packs) return null;
+    vocabPackOrder = vocabManifest.packs.map(p => p.id);
+    if (vocabManifest.byId) {
+        vocabPacks = vocabManifest.byId;
+    } else {
+        vocabPacks = Object.create(null);
+        vocabManifest.packs.forEach(p => { vocabPacks[p.id] = p; });
+    }
+    vocabEngine = { version: vocabManifest.version, packIds: vocabPackOrder };
+    return vocabEngine;
+}
+
+function renderVocabSelect() {
+    const sel = document.getElementById("opt-vocab");
+    if (!sel) return;
+    sel.innerHTML = "";
+    const add = (value, text) => {
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.innerText = text;
+        sel.appendChild(opt);
+    };
+    add("auto", "随机词库（按类别轮换）");
+    const engine = ensureVocabEngine();
+    if (!engine) return;
+    vocabManifest.packs.forEach(p => add(p.id, p.title));
+    sel.value = settings.vocabSelection || "auto";
+    updateVocabPreview(sel.value);
+}
+
+function getActivePackTitle() {
+    if (!activeVocabPackId) return "自动词库";
+    const pack = vocabPacks[activeVocabPackId];
+    return pack ? pack.title : activeVocabPackId;
+}
+
+function updateVocabPreview(selection) {
+    const preview = document.getElementById("vocab-preview");
+    if (!preview) return;
+    const key = selection || settings.vocabSelection || "auto";
+    if (key === "auto") {
+        preview.innerHTML = `<strong>自动轮换</strong><br>根据阶段与难度智能匹配`;
+        return;
+    }
+    const pack = vocabPacks[key];
+    if (!pack) {
+        preview.innerText = "词库数据未就绪";
+        return;
+    }
+    const details = [];
+    if (pack.stage) {
+        const stageLabel = (typeof STAGE_LABELS !== "undefined" && STAGE_LABELS && STAGE_LABELS[pack.stage])
+            ? STAGE_LABELS[pack.stage]
+            : pack.stage;
+        details.push(stageLabel);
+    }
+    if (pack.difficulty) details.push(pack.difficulty);
+    preview.innerHTML = `<strong>${pack.title}</strong>${details.length ? `<br>${details.join(" · ")}` : ""}`;
+}
+
+function showVocabSwitchEffect() {
+    const title = getActivePackTitle();
+    const px = player ? player.x : cameraX;
+    const py = player ? player.y - 60 : canvas.height / 2;
+    showFloatingText(`切换词库：${title}`, px, py);
+    showToast(`已切换至 ${title}`);
+}
+
+function getPackProgress(packId) {
+    if (!packId) return null;
+    const v = progress.vocab;
+    if (!v[packId]) v[packId] = { unique: {}, uniqueCount: 0, total: 0, completed: false };
+    const entry = v[packId];
+    if (!entry.unique || typeof entry.unique !== "object") entry.unique = {};
+    if (typeof entry.uniqueCount !== "number") entry.uniqueCount = Object.keys(entry.unique).length;
+    if (typeof entry.total !== "number") entry.total = 0;
+    if (typeof entry.completed !== "boolean") entry.completed = false;
+    return entry;
+}
+
+function updateVocabProgressUI() {
+    const el = document.getElementById("progress-vocab");
+    if (!el) return;
+    const engine = ensureVocabEngine();
+    if (!engine || !activeVocabPackId) {
+        el.innerText = "未加载";
+        return;
+    }
+    const pack = vocabPacks[activeVocabPackId];
+    const pr = getPackProgress(activeVocabPackId);
+    const total = pr.total || 0;
+    const done = pr.uniqueCount || 0;
+    const pct = total ? Math.min(100, Math.floor((done / total) * 100)) : 0;
+    const title = pack && pack.title ? pack.title : activeVocabPackId;
+    el.innerText = `${title}  ${done}/${total}  (${pct}%)`;
+}
+
+function resetVocabRotationAndProgress() {
+    vocabState = { runCounts: {}, lastPackId: null };
+    progress = normalizeProgress({ vocab: {} });
+    saveVocabState();
+    saveProgress();
+    updateVocabProgressUI();
+}
+
+function isPackCompleted(packId) {
+    const pr = getPackProgress(packId);
+    return !!pr?.completed;
+}
+
+function pickPackAuto() {
+    const engine = ensureVocabEngine();
+    if (!engine) return null;
+    let candidates = vocabManifest.packs.filter(p => !isPackCompleted(p.id));
+    if (!candidates.length) {
+        progress.vocab = {};
+        saveProgress();
+        candidates = [...vocabManifest.packs];
+    }
+    const last = vocabState.lastPackId;
+    const scored = candidates.map(p => {
+        const baseW = Math.max(0.05, Number(p.weight) || 1);
+        const count = vocabState.runCounts && typeof vocabState.runCounts[p.id] === "number" ? vocabState.runCounts[p.id] : 0;
+        let w = baseW / (1 + count * 0.75);
+        if (last && p.id === last) w *= 0.2;
+        if (!isFinite(w) || w <= 0) w = 0.05;
+        return { id: p.id, w };
+    });
+    const total = scored.reduce((s, x) => s + x.w, 0);
+    let r = Math.random() * (total || 1);
+    for (const x of scored) {
+        r -= x.w;
+        if (r <= 0) return x.id;
+    }
+    return scored.length ? scored[scored.length - 1].id : null;
+}
+
+function loadVocabPackFile(file) {
+    if (!file) return Promise.reject(new Error("missing vocab file"));
+    if (loadedVocabFiles[file]) return loadedVocabFiles[file];
+    loadedVocabFiles[file] = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = file;
+        script.async = true;
+        script.onload = () => resolve(true);
+        script.onerror = () => reject(new Error(`load failed: ${file}`));
+        document.head.appendChild(script);
+    });
+    return loadedVocabFiles[file];
+}
+
+function loadVocabPackFiles(files) {
+    const list = Array.isArray(files) ? files.filter(Boolean) : (files ? [files] : []);
+    if (!list.length) return Promise.resolve();
+    return list.reduce((chain, file) => chain.then(() => loadVocabPackFile(file)), Promise.resolve());
+}
+
+function normalizeRawWord(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const en = String(raw.standardized || raw.word || "").trim();
+    const zh = String(raw.chinese || raw.zh || raw.translation || "").trim();
+    if (!en) return null;
+    return {
+        en,
+        zh: zh || "",
+        imageURLs: Array.isArray(raw.imageURLs) ? raw.imageURLs : []
+    };
+}
+
+async function setActiveVocabPack(selection) {
+    const engine = ensureVocabEngine();
+    if (!engine) return false;
+    const pickId = selection === "auto" || !selection ? pickPackAuto() : selection;
+    const pack = pickId ? vocabPacks[pickId] : null;
+    if (!pack) return false;
+
+    activeVocabPackId = pack.id;
+    vocabState.lastPackId = pack.id;
+    if (!vocabState.runCounts) vocabState.runCounts = {};
+    vocabState.runCounts[pack.id] = (vocabState.runCounts[pack.id] || 0) + 1;
+    saveVocabState();
+
+    try {
+        if (pack.files && Array.isArray(pack.files)) {
+            await loadVocabPackFiles(pack.files);
+        } else if (pack.file) {
+            await loadVocabPackFile(pack.file);
+        }
+        let rawList = [];
+        if (typeof pack.getRaw === "function") {
+            rawList = pack.getRaw();
+        } else if (Array.isArray(pack.globals)) {
+            rawList = pack.globals.flatMap(name => {
+                const value = window[name];
+                return Array.isArray(value) ? value : [];
+            });
+        }
+        const mapped = [];
+        const seen = new Set();
+        (Array.isArray(rawList) ? rawList : []).forEach(r => {
+            const w = normalizeRawWord(r);
+            if (!w) return;
+            if (seen.has(w.en)) return;
+            seen.add(w.en);
+            mapped.push(w);
+        });
+        const fallbackSource = Array.isArray(defaultWords) ? defaultWords : [];
+        const fallbackWords = fallbackSource.map(w => normalizeRawWord(w)).filter(Boolean);
+        const target = mapped.length ? mapped : fallbackWords;
+        if (!target.length) {
+            console.warn(`[Vocab] Pack ${pack.id} produced no words and no fallback data`);
+        }
+        if (target.length) {
+            wordDatabase = target;
+            wordPicker = null;
+            const pr = getPackProgress(pack.id);
+            pr.total = target.length;
+            saveProgress();
+        }
+    } catch {
+    }
+
+        renderVocabSelect();
+        updateVocabProgressUI();
+        updateVocabPreview(activeVocabPackId || settings.vocabSelection);
+    return true;
+}
+
+function switchToNextPackInOrder() {
+    const engine = ensureVocabEngine();
+    if (!engine) return false;
+    const ids = vocabPackOrder.length ? vocabPackOrder : vocabManifest.packs.map(p => p.id);
+    const idx = activeVocabPackId ? ids.indexOf(activeVocabPackId) : -1;
+    const keepAuto = (settings.vocabSelection || "auto") === "auto";
+    for (let step = 1; step <= ids.length; step++) {
+        const nextId = ids[(idx + step + ids.length) % ids.length];
+        if (!isPackCompleted(nextId)) {
+            if (!keepAuto) {
+                settings.vocabSelection = nextId;
+                saveSettings();
+            }
+            setActiveVocabPack(nextId);
+            return true;
+        }
+    }
+    progress.vocab = {};
+    saveProgress();
+    const first = ids[0] || "auto";
+    if (!keepAuto) {
+        settings.vocabSelection = first;
+        saveSettings();
+    }
+    setActiveVocabPack(first);
+    return true;
+}
+
+function applySettingsToUI() {
+    const previousLayout = {
+        canvasWidth: canvas.width,
+        canvasHeight: canvas.height
+    };
+    const visualViewport = getViewportSize();
+    // Use the safe-area-adjusted game area for canvas + physics scaling.
+    const gameArea = getGameAreaSize();
+    applyConfig(gameArea);
+    const viewportChanged = gameArea.width !== lastViewport.width || gameArea.height !== lastViewport.height;
+    lastViewport = { width: gameArea.width, height: gameArea.height };
+
+    if (viewportChanged && startedOnce) {
+        realignWorldForViewport(previousLayout);
+    }
+
+    const baseScale = Number(settings.uiScale) || 1.0;
+    const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
+    document.documentElement.style.setProperty("--ui-scale", uiScale.toFixed(3));
+    document.documentElement.style.setProperty("--vvw", `${Math.floor(visualViewport.width)}px`);
+    document.documentElement.style.setProperty("--vvh", `${Math.floor(visualViewport.height)}px`);
+
+    const container = document.getElementById("game-container");
+    if (container) {
+        container.style.transform = "none";
+    }
+
+    const touch = document.getElementById("touch-controls");
+    if (touch) {
+        const enabled = !!settings.touchControls;
+        touch.classList.toggle("visible", enabled);
+        touch.setAttribute("aria-hidden", enabled ? "false" : "true");
+    }
+
+    if (viewportChanged && startedOnce) {
+        if (nowMs() < viewportIgnoreUntilMs) return;
+        if (startOverlayActive || pausedByModal) return;
+        paused = true;
+        pausedByModal = true;
+        setOverlay(true, "pause");
+        showToast("已适配屏幕，已暂停游戏");
+    }
+}
+
+let applySettingsRaf = 0;
+function scheduleApplySettingsToUI() {
+    if (applySettingsRaf) return;
+    applySettingsRaf = requestAnimationFrame(() => {
+        applySettingsRaf = 0;
+        applySettingsToUI();
+    });
+}

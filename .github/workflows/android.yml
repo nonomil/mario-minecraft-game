@@ -1,66 +1,63 @@
-name: Android APK
+name: Build Android APK
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [main, master]
+    paths:
+      - 'apk/**'
+      - '.github/workflows/android.yml'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(node -p "require('./apk/android-app/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: android-app/package-lock.json
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apk/android-app/package-lock.json
 
-      - name: Install npm dependencies
-        working-directory: android-app
+      - name: Install dependencies
+        working-directory: apk/android-app
         run: npm ci
 
-      - name: Build web (single file) and sync to Capacitor webDir
-        run: node scripts/sync-web.js
+      - name: Sync web assets
+        working-directory: apk/android-app
+        run: npm run sync-web
 
-      - name: Set up JDK
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
-          java-version: "21"
-          cache: "gradle"
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Set up Android SDK
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
-      - name: Accept SDK licenses
-        run: |
-          yes | sdkmanager --licenses || true
-
-      - name: Sync Capacitor Android
-        working-directory: android-app
-        run: npx cap sync android
-
-      - name: Make gradlew executable
-        run: chmod +x android-app/android/gradlew
-
-      - name: Build Debug APK
-        working-directory: android-app/android
-        run: ./gradlew --no-daemon assembleDebug
 
       - name: Check signing secrets
         id: signing
         shell: bash
         env:
-          # Support both Repository secrets and Repository variables (in case values were saved under Variables tab).
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 || vars.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           enabled=true
           missing=""
@@ -73,180 +70,112 @@ jobs:
           echo "enabled=$enabled" >> "$GITHUB_OUTPUT"
           echo "missing=$missing" >> "$GITHUB_OUTPUT"
 
-      - name: Debug signing availability (no secrets printed)
-        if: ${{ always() }}
-        shell: bash
-        env:
-          HAS_SECRET_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
-          HAS_SECRET_STORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD != '' }}
-          HAS_SECRET_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS != '' }}
-          HAS_SECRET_KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD != '' }}
-          HAS_VAR_BASE64: ${{ vars.ANDROID_KEYSTORE_BASE64 != '' }}
-          HAS_VAR_STORE_PASS: ${{ vars.ANDROID_KEYSTORE_PASSWORD != '' }}
-          HAS_VAR_ALIAS: ${{ vars.ANDROID_KEY_ALIAS != '' }}
-          HAS_VAR_KEY_PASS: ${{ vars.ANDROID_KEY_PASSWORD != '' }}
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 || vars.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
-        run: |
-          echo "from secrets: base64=$HAS_SECRET_BASE64 store_pass=$HAS_SECRET_STORE_PASS alias=$HAS_SECRET_ALIAS key_pass=$HAS_SECRET_KEY_PASS"
-          echo "from vars:    base64=$HAS_VAR_BASE64 store_pass=$HAS_VAR_STORE_PASS alias=$HAS_VAR_ALIAS key_pass=$HAS_VAR_KEY_PASS"
-          echo "combined lens: base64=${#ANDROID_KEYSTORE_BASE64} store_pass=${#ANDROID_KEYSTORE_PASSWORD} alias=${#ANDROID_KEY_ALIAS} key_pass=${#ANDROID_KEY_PASSWORD}"
-
-      - name: Require signing secrets
+      - name: Require signing secrets (release must be installable)
         if: ${{ steps.signing.outputs.enabled != 'true' }}
         shell: bash
         run: |
-          echo "Missing signing secrets. Release APK is required for updates." >&2
-          echo "Set ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD / ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD in GitHub Secrets (or Variables)." >&2
+          echo "Missing signing secrets. Release APK must be signed to be installable." >&2
+          echo "Set ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD / ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD in GitHub Secrets." >&2
           echo "Missing:${{ steps.signing.outputs.missing }}" >&2
           exit 1
 
       - name: Decode Android signing keystore
-        if: ${{ steps.signing.outputs.enabled == 'true' }}
         shell: bash
         env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 || vars.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > android-app/android/app/release.keystore
-          fi
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > apk/android-app/android/app/release.keystore
 
       - name: Verify signing keystore (no secrets printed)
-        if: ${{ steps.signing.outputs.enabled == 'true' }}
         shell: bash
-        working-directory: android-app/android
+        working-directory: apk/android-app/android
         env:
-          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
           test -s app/release.keystore
           keytool -list -keystore app/release.keystore -storepass "$SIGNING_STORE_PASSWORD" -alias "$SIGNING_KEY_ALIAS" >/dev/null
           echo "Keystore OK"
 
-      - name: Verify signing key password (no secrets printed)
-        if: ${{ steps.signing.outputs.enabled == 'true' }}
-        shell: bash
-        working-directory: android-app/android
+      - name: Capacitor sync
+        working-directory: apk/android-app
+        run: npx cap sync android
+
+      - name: Grant execute permission for gradlew
+        working-directory: apk/android-app/android
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        working-directory: apk/android-app/android
         env:
-          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
-        run: |
-          tmpdir="$(mktemp -d)"
-          printf 'Manifest-Version: 1.0\n' > "$tmpdir/MANIFEST.MF"
-          jar cfm "$tmpdir/empty.jar" "$tmpdir/MANIFEST.MF" >/dev/null
-          jarsigner \
-            -keystore app/release.keystore \
-            -storepass "$SIGNING_STORE_PASSWORD" \
-            -keypass "$SIGNING_KEY_PASSWORD" \
-            "$tmpdir/empty.jar" \
-            "$SIGNING_KEY_ALIAS" >/dev/null
-          echo "Key password OK"
+          SIGNING_STORE_FILE: release.keystore
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew assembleDebug
 
       - name: Build Release APK
-        if: ${{ steps.signing.outputs.enabled == 'true' }}
-        id: release_build
-        working-directory: android-app/android
+        working-directory: apk/android-app/android
         env:
-          # app/build.gradle resolves relative paths from the app module directory (android-app/android/app).
-          # So this must be "release.keystore" (NOT "app/release.keystore"), otherwise it becomes app/app/...
+          # build.gradle resolves relative paths from the app module directory (apk/android-app/android/app).
           SIGNING_STORE_FILE: release.keystore
-          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || vars.ANDROID_KEYSTORE_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || vars.ANDROID_KEY_ALIAS }}
-          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD || vars.ANDROID_KEY_PASSWORD }}
-        shell: bash
-        continue-on-error: true
+          SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: ./gradlew assembleRelease
+
+      - name: Rename APK files with version
         run: |
-          set -o pipefail
-          # Release builds may fail on lintVital; we keep lint for local dev but skip the "vital" gate in CI.
-          ./gradlew --no-daemon assembleRelease \
-            -x lintVitalRelease -x lintVitalReportRelease \
-            --stacktrace --info 2>&1 | tee gradle-release.log
+          VERSION=${{ steps.version.outputs.version }}
+          cd apk/android-app/android/app/build/outputs/apk
+          mv debug/app-debug.apk debug/mario-minecraft-game-${VERSION}-debug.apk
+          if [ -f release/app-release.apk ]; then
+            mv release/app-release.apk release/mario-minecraft-game-${VERSION}-release.apk
+          elif [ -f release/app-release-unsigned.apk ]; then
+            echo "ERROR: release APK is unsigned; signing secrets may be missing/misconfigured." >&2
+            exit 1
+          else
+            echo "ERROR: release APK not found." >&2
+            ls -la release || true
+            exit 1
+          fi
 
-      - name: Report Release Build Failure (tail gradle log)
-        if: ${{ steps.release_build.outcome == 'failure' }}
-        shell: bash
-        working-directory: android-app/android
-        run: |
-          # Put the most relevant failure section into an annotation so we can read the cause
-          # without downloading artifacts.
-          python3 - <<'PY'
-          import pathlib
-
-          log = pathlib.Path("gradle-release.log")
-          if not log.exists():
-              text = "(missing gradle-release.log)"
-          else:
-              lines = log.read_text(errors="replace").splitlines(True)
-              markers = (
-                  "FAILURE: Build failed",
-                  "* What went wrong:",
-                  "Execution failed for task",
-                  "A problem occurred",
-                  "Caused by:",
-              )
-              start = None
-              # Prefer the last "real" error section, not the very end of the stack trace.
-              for i in range(len(lines) - 1, -1, -1):
-                  if any(m in lines[i] for m in markers):
-                      start = i
-                      break
-              if start is None:
-                  start = max(0, len(lines) - 180)
-              snippet = "".join(lines[start:])
-              # Keep it reasonably short for the annotation UI.
-              snippet_lines = snippet.splitlines(True)
-              if len(snippet_lines) > 220:
-                  snippet = "".join(snippet_lines[:220])
-              text = snippet
-
-          # Escape for workflow command message:
-          # https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#escaping-data
-          text = text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
-          print(f"::error::assembleRelease failed. Extracted failure section:%0A{text}")
-          PY
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "## assembleRelease failed (tail of gradle-release.log)" >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          tail -n 200 gradle-release.log >> "$GITHUB_STEP_SUMMARY" || true
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          tail -n 120 gradle-release.log || true
-          exit 1
-
-      - name: Upload APK artifacts
-        if: ${{ always() }}
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: apk
-          path: |
-            android-app/android/app/build/outputs/apk/debug/*.apk
-            android-app/android/app/build/outputs/apk/release/*.apk
-          if-no-files-found: ignore
+          name: app-debug-${{ steps.version.outputs.version }}
+          path: apk/android-app/android/app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
-      - name: Upload build logs
-        if: ${{ always() }}
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: build-logs
-          path: |
-            android-app/android/gradle-release.log
-            android-app/android/app/build/reports/**/*
-            android-app/android/app/build/outputs/logs/**/*
-          if-no-files-found: ignore
+          name: app-release-${{ steps.version.outputs.version }}
+          path: apk/android-app/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
 
-      - name: Publish GitHub Release (apk-latest)
-        if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/app-release.apk') != '' }}
+      - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          tag: apk-latest
-          name: Latest APK
-          allowUpdates: true
-          removeArtifacts: true
-          replacesArtifacts: true
-          body: Signed release APK.
-          artifacts: android-app/android/app/build/outputs/apk/release/app-release.apk
+          # Always create a unique release even when the app version stays the same.
+          # Include run_attempt so "Re-run jobs" also produces a new release (no tag collisions).
+          tag: v${{ steps.version.outputs.version }}-run${{ github.run_number }}-a${{ github.run_attempt }}
+          name: Mario Minecraft Game v${{ steps.version.outputs.version }} (run ${{ github.run_number }} attempt ${{ github.run_attempt }})
+          body: |
+            ## Mario Minecraft Game v${{ steps.version.outputs.version }}
 
+            - Build: run ${{ github.run_number }} attempt ${{ github.run_attempt }}
+            - Commit: ${{ github.sha }}
+
+            ### 下载
+            - **Debug APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk` - 用于测试
+            - **Release APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-release.apk` - 用于发布
+
+            ### 安装说明
+            1. 下载对应的 APK 文件
+            2. 在 Android 设备上启用"允许安装未知来源应用"
+            3. 安装 APK 文件
+          artifacts: |
+            apk/android-app/android/app/build/outputs/apk/debug/*.apk,
+            apk/android-app/android/app/build/outputs/apk/release/*.apk
+          makeLatest: true

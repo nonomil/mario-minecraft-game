@@ -1,0 +1,49 @@
+name: Release New Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号 (例如: 1.2.3)'
+        required: true
+        type: string
+      release_notes:
+        description: '更新说明 (可选)'
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update package.json version
+        run: |
+          cd apk/android-app
+          npm version ${{ inputs.version }} --no-git-tag-version
+          echo "Updated version to ${{ inputs.version }}"
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apk/android-app/package.json
+          git commit -m "chore: bump version to v${{ inputs.version }}"
+          git push
+
+  build:
+    needs: bump-version
+    uses: ./.github/workflows/android.yml

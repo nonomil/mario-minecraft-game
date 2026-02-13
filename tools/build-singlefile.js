@@ -71,9 +71,7 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const defaultsJs = readText(path.join(projectRoot, "src", "defaults.js"));
   const storageJs = readText(path.join(projectRoot, "src", "storage.js"));
   const manifestJs = readText(path.join(projectRoot, "words", "vocabs", "manifest.js"));
-  const mainCoreJs = readText(path.join(projectRoot, "src", "main.core.js"));
-  const mainEntitiesJs = readText(path.join(projectRoot, "src", "main.entities.js"));
-  const mainUiJs = readText(path.join(projectRoot, "src", "main.ui.js"));
+  const mainJs = readText(path.join(projectRoot, "src", "main.js"));
 
   const vocabFiles = extractVocabFilesFromManifest(manifestJs);
   const vocabScripts = vocabFiles.map((f) => makeInlineScript(readText(path.join(projectRoot, f)))).join("\n");
@@ -115,21 +113,9 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   );
   html = replaceOnce(
     html,
-    `<script src="src/main.core.js"></script>`,
-    makeInlineScript(mainCoreJs),
-    "main core script"
-  );
-  html = replaceOnce(
-    html,
-    `<script src="src/main.entities.js"></script>`,
-    makeInlineScript(mainEntitiesJs),
-    "main entities script"
-  );
-  html = replaceOnce(
-    html,
-    `<script src="src/main.ui.js"></script>`,
-    makeInlineScript(mainUiJs),
-    "main ui script"
+    `<script src="src/main.js"></script>`,
+    makeInlineScript(mainJs),
+    "main script"
   );
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
@@ -154,4 +140,3 @@ function main() {
 }
 
 main();
-
