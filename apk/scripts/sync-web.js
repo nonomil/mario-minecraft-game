@@ -1,6 +1,11 @@
-const fs = require("fs");
-const path = require("path");
-const { execFileSync } = require("child_process");
+import fs from "fs";
+import path from "path";
+import { execFileSync } from "child_process";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const repoRoot = path.resolve(__dirname, "..");
 execFileSync(process.execPath, [path.join(repoRoot, "tools", "build-singlefile.js")], {
