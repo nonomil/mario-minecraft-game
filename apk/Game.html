@@ -354,16 +354,18 @@
 <script src="src/modules/08-account.js"></script>
 <script src="src/modules/09-vocab.js"></script>
 <script src="src/modules/10-ui.js"></script>
+<!-- 实体类必须在游戏逻辑和渲染之前加载 -->
+<script src="src/modules/15-entities-base.js"></script>
+<script src="src/modules/15-entities-decorations.js"></script>
+<script src="src/modules/15-entities-particles.js"></script>
+<script src="src/modules/15-entities-combat.js"></script>
+<!-- 游戏逻辑和渲染模块 -->
 <script src="src/modules/11-game-init.js"></script>
 <script src="src/modules/12-challenges.js"></script>
 <script src="src/modules/13-game-loop.js"></script>
 <script src="src/modules/14-renderer-main.js"></script>
 <script src="src/modules/14-renderer-entities.js"></script>
 <script src="src/modules/14-renderer-decorations.js"></script>
-<script src="src/modules/15-entities-base.js"></script>
-<script src="src/modules/15-entities-decorations.js"></script>
-<script src="src/modules/15-entities-particles.js"></script>
-<script src="src/modules/15-entities-combat.js"></script>
 <script src="src/modules/16-events.js"></script>
 <script src="src/modules/17-bootstrap.js"></script>
 </body>

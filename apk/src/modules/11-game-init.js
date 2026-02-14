@@ -237,11 +237,13 @@ function estimateMaxJumpHeightPx() {
 }
 
 function generatePlatform(startX, length, groundYValue) {
+    console.log('generatePlatform called:', { startX, length, groundYValue, blockSize });
     const level = levels[currentLevelIdx];
     const biome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     const platformCfg = biome.platform || {};
     const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
+    console.log('Platform config:', { groundType, newWidth, biomeId: biome.id });
     let merged = false;
     for (let i = platforms.length - 1; i >= 0; i--) {
         const p = platforms[i];
@@ -256,6 +258,7 @@ function generatePlatform(startX, length, groundYValue) {
 
     if (!merged) {
         platforms.push(new Platform(startX, groundYValue, newWidth, blockSize, groundType));
+        console.log('Platform created! Total platforms:', platforms.length);
     }
 
     generateBiomeDecorations(startX, groundYValue, newWidth, biome);
