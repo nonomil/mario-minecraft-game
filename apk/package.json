@@ -1,0 +1,16 @@
+{
+  "name": "mario-minecraft-game-v1",
+  "version": "1.2.23",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/serve-apk.mjs --port 4173",
+    "serve": "node tools/serve-apk.mjs --port 4173",
+    "build": "node scripts/sync-web.js",
+    "sync": "cd android-app && npx cap sync android",
+    "build:apk": "cd android-app/android && ./gradlew assembleDebug",
+    "build:apk:release": "cd android-app/android && ./gradlew assembleRelease",
+    "open:android": "cd android-app && npx cap open android"
+  },
+  "description": "Mario Minecraft Game - Educational English vocabulary learning game"
+}
