@@ -205,9 +205,9 @@ function wireHudButtons() {
             showArmorSelectUI();
         });
     }
-    const invBadge = document.getElementById("inventory-status");
-    if (invBadge) {
-        invBadge.addEventListener("click", () => {
+    const btnInventory = document.getElementById("btn-inventory");
+    if (btnInventory) {
+        btnInventory.addEventListener("click", () => {
             showInventoryModal();
         });
     }

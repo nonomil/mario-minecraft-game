@@ -531,23 +531,6 @@ canvas {
     box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
 }
 
-.hud-inventory-btn {
-    cursor: pointer;
-    background: rgba(139, 69, 19, 0.7);
-    border: 2px solid rgba(255, 215, 0, 0.5);
-    transition: all 0.2s;
-}
-
-.hud-inventory-btn:hover {
-    background: rgba(139, 69, 19, 0.9);
-    border-color: #FFD700;
-    transform: scale(1.05);
-}
-
-.hud-inventory-btn:active {
-    transform: scale(0.95);
-}
-
 #hp {
     min-width: 140px;
     text-align: center;
