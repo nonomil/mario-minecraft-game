@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI 布局测试</title>
+    <link rel="stylesheet" href="../../src/styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #87CEEB;
+        }
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+        }
+        .test-info {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div id="ui-layer">
+        <div class="hud-top">
+            <div class="hud-box">🪙 金币: <span id="score">1234</span></div>
+            <div class="hud-box" id="hp">❤️❤️❤️</div>
+            <div class="hud-box" id="word-display">apple - 苹果</div>
+            <div class="hud-box" id="level-info">🌲 森林</div>
+            <div class="hud-box" id="weapon-info">⚔️ 石剑</div>
+            <div class="hud-box hud-box-clickable" id="armor-status">🛡️ 无</div>
+        </div>
+
+        <div class="btn-group-left">
+            <button class="game-btn" id="btn-inventory">🎒 背包</button>
+        </div>
+
+        <div class="btn-group">
+            <button class="game-btn" id="btn-settings">⚙️ 设置</button>
+            <button class="game-btn" id="btn-profile">📋 档案</button>
+            <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
+        </div>
+    </div>
+
+    <div class="test-info">
+        ✅ UI 布局测试 | 左侧：背包按钮 | 右侧：设置/档案/重读按钮
+    </div>
+
+    <script>
+        // 简单的视觉测试
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 绘制地面
+        ctx.fillStyle = '#4CAF50';
+        ctx.fillRect(0, 530, 800, 70);
+
+        // 绘制一些方块
+        ctx.fillStyle = '#8B4513';
+        for (let i = 0; i < 16; i++) {
+            ctx.fillRect(i * 50, 530, 50, 70);
+            ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+            ctx.strokeRect(i * 50, 530, 50, 70);
+        }
+
+        // 绘制玩家
+        ctx.fillStyle = '#00BCD4';
+        ctx.fillRect(100, 480, 30, 50);
+        ctx.fillStyle = '#FFC107';
+        ctx.fillRect(100, 480, 30, 20);
+
+        // 测试按钮点击
+        document.getElementById('btn-inventory').addEventListener('click', () => {
+            alert('背包按钮点击 - 位置：左侧，金币下方');
+        });
+
+        document.getElementById('btn-settings').addEventListener('click', () => {
+            alert('设置按钮点击 - 位置：右侧');
+        });
+
+        console.log('✅ UI 布局测试页面加载完成');
+        console.log('左侧按钮组：背包');
+        console.log('右侧按钮组：设置、档案、重读/暂停');
+    </script>
+</body>
+</html>
