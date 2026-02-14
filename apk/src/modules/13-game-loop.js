@@ -28,6 +28,45 @@ function update() {
     updateCurrentBiome();
     applyBiomeEffectsToPlayer();
     tickWeather();
+
+    const isUnderwater = (currentBiome === 'ocean');
+
+    if (isUnderwater) {
+        // 水下移动
+        if (keys.right) {
+            player.velX = player.speed * WATER_PHYSICS.horizontalSpeedMultiplier;
+            player.facingRight = true;
+        } else if (keys.left) {
+            player.velX = -player.speed * WATER_PHYSICS.horizontalSpeedMultiplier;
+            player.facingRight = false;
+        } else {
+            player.velX *= 0.9;
+        }
+        if (keys.up || keys.jump) {
+            player.velY = -WATER_PHYSICS.verticalSwimSpeed;
+        } else if (keys.down) {
+            player.velY = WATER_PHYSICS.verticalSwimSpeed;
+        } else {
+            player.velY += WATER_PHYSICS.gravity;
+            if (player.velY > WATER_PHYSICS.sinkSpeed) player.velY = WATER_PHYSICS.sinkSpeed;
+        }
+        player.y = Math.max(20, Math.min(player.y, groundY - player.height));
+        player.x += player.velX;
+        player.y += player.velY;
+        player.grounded = (player.y >= groundY - player.height - 1);
+        // 气泡粒子
+        if ((Math.abs(player.velX) > 0.5 || Math.abs(player.velY) > 0.5) && gameFrame % WATER_PHYSICS.bubbleInterval === 0) {
+            particles.push({
+                x: player.x + player.width / 2 + (Math.random() - 0.5) * 10,
+                y: player.y + player.height * 0.3,
+                size: 2 + Math.random() * 4,
+                vy: -1 - Math.random() * 2,
+                vx: (Math.random() - 0.5) * 0.5,
+                life: 1.0,
+                type: 'bubble'
+            });
+        }
+    } else {
     if (keys.right) {
         if (player.velX < player.speed) player.velX++;
         player.facingRight = true;
@@ -103,6 +142,7 @@ function update() {
         if (player.x < 0) player.x = 100;
         player.velY = 0;
     }
+    } // end else (not underwater)
 
     let targetCamX = player.x - cameraOffsetX;
     if (targetCamX < 0) targetCamX = 0;

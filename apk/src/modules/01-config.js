@@ -351,6 +351,15 @@ const playerWeapons = {
 };
 const keys = { right: false, left: false };
 
+// 水下物理常量
+const WATER_PHYSICS = {
+    horizontalSpeedMultiplier: 0.7,
+    verticalSwimSpeed: 3.0,
+    sinkSpeed: 0.8,
+    gravity: 0.15,
+    bubbleInterval: 15,
+};
+
 let jumpBuffer = 0;
 let coyoteTimer = 0;
 

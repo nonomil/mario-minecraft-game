@@ -6,6 +6,7 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const biome = getBiomeById(currentBiome);
     drawBackground(biome);
+    if (typeof renderOceanEnvironment === 'function') renderOceanEnvironment(ctx);
     ctx.save();
     ctx.translate(-cameraX, 0);
 
@@ -40,6 +41,7 @@ function draw() {
     if (particles.length) {
         particles.forEach(p => drawParticle(p));
     }
+    if (typeof renderSwimBubbles === 'function') renderSwimBubbles(ctx, cameraX);
 
     enemies.forEach(e => drawEnemy(e));
 

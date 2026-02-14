@@ -133,6 +133,59 @@ function spawnBiomeParticles() {
     }
 }
 
+// 海洋环境渲染增强
+function renderOceanEnvironment(ctx) {
+    if (currentBiome !== 'ocean') return;
+    // 深蓝色渐变背景
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#1E90FF');
+    gradient.addColorStop(0.3, '#1565C0');
+    gradient.addColorStop(1, '#0D2137');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // 水面波纹
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x < canvas.width; x += 4) {
+        const y = 20 + Math.sin(x / 30 + Date.now() / 500) * 5;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // 光束效果
+    ctx.globalAlpha = 0.05;
+    ctx.fillStyle = '#FFF';
+    for (let i = 0; i < 3; i++) {
+        const lx = canvas.width * (0.2 + i * 0.3) + Math.sin(Date.now() / 2000 + i) * 20;
+        ctx.beginPath();
+        ctx.moveTo(lx - 5, 0);
+        ctx.lineTo(lx + 5, 0);
+        ctx.lineTo(lx + 30, canvas.height);
+        ctx.lineTo(lx - 30, canvas.height);
+        ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+}
+
+// 渲染气泡粒子（水下）
+function renderSwimBubbles(ctx, camX) {
+    if (currentBiome !== 'ocean') return;
+    particles.forEach(p => {
+        if (p.type !== 'bubble') return;
+        p.x += p.vx || 0;
+        p.y += p.vy || 0;
+        p.life -= 0.01;
+        p.size = (p.size || 3) * 1.002;
+        ctx.globalAlpha = p.life * 0.6;
+        ctx.strokeStyle = '#87CEEB';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(p.x - camX, p.y, p.size, 0, Math.PI * 2);
+        ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+}
+
 let baseCanvasSize = null;
 let baseGameConfig = null;
 let baseEnemyStats = null;
