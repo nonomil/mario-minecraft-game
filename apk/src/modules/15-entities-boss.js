@@ -129,8 +129,8 @@ const bossArena = {
     active: false,
     boss: null,
     victoryTimer: 0,
-    bossTypes: ['wither', 'ghast', 'blaze'], // v1.4.3: 'wither_skeleton'
-    bossScores: [2000, 4000, 6000],         // 触发分数阈值
+    bossTypes: ['wither', 'ghast', 'blaze', 'wither_skeleton'],
+    bossScores: [2000, 4000, 6000, 8000],         // 触发分数阈值
     spawned: {},           // 已生成的BOSS记录
 
 // PLACEHOLDER_ARENA_METHODS
@@ -161,6 +161,7 @@ const bossArena = {
             case 'wither': return new WitherBoss(spawnX);
             case 'ghast': return new GhastBoss(spawnX);
             case 'blaze': return new BlazeBoss(spawnX);
+            case 'wither_skeleton': return new WitherSkeletonBoss(spawnX);
             default: return new WitherBoss(spawnX);
         }
     },
@@ -890,6 +891,350 @@ class BlazeBoss extends Boss {
         this.particles.forEach(p => {
             ctx.globalAlpha = p.life;
             ctx.fillStyle = '#FF6600';
+            ctx.fillRect(p.x - camX, p.y, 3, 3);
+        });
+        ctx.globalAlpha = 1;
+    }
+}
+
+// 凋零骷髅 BOSS
+class WitherSkeletonBoss extends Boss {
+    constructor(spawnX) {
+        super({
+            name: '凋零骷髅 Wither Skeleton',
+            maxHp: 40,
+            color: '#1A1A1A',
+            x: spawnX,
+            y: groundY - 96,
+            width: 48,
+            height: 96,
+            phaseThresholds: [0.6, 0.3],
+            damage: 1
+        });
+        this.grounded = true;
+        this.moveSpeed = 2.0;
+        this.facing = -1;
+        this.state = 'patrol';
+        this.comboStep = 0;
+        this.comboTimer = 0;
+        this.blockTimer = 0;
+        this.blockHits = 0;
+        this.jumpAttackPhase = 0;
+        this.minions = [];
+        this.minionsSummoned = false;
+        this.vy = 0;
+        this.gravity = 0.5;
+        this.actionCooldown = 0;
+    }
+
+    updateBehavior(playerRef) {
+        this.facing = playerRef.x > this.x ? 1 : -1;
+        const dist = Math.abs(playerRef.x - this.x);
+
+        // 重力
+        if (this.y < groundY - this.height) {
+            this.vy += this.gravity;
+            this.y += this.vy;
+            if (this.y >= groundY - this.height) {
+                this.y = groundY - this.height;
+                this.vy = 0;
+            }
+        }
+
+        if (this.actionCooldown > 0) this.actionCooldown--;
+
+        switch (this.state) {
+            case 'patrol':
+                this.x += this.facing * this.moveSpeed * (this.phase >= 2 ? 1.3 : 1);
+                if (dist < 64 && this.actionCooldown <= 0) {
+                    this.startCombo();
+                } else if (dist > 96 && this.actionCooldown <= 0 && Math.random() < 0.01) {
+                    this.startJumpAttack();
+                }
+                if (this.actionCooldown <= 0 && Math.random() < 0.003) {
+                    this.startBlocking();
+                }
+                break;
+            case 'combo': this.updateCombo(); break;
+            case 'jump_attack': this.updateJumpAttack(); break;
+            case 'blocking': this.updateBlocking(); break;
+            case 'stunned':
+                this.stunTimer--;
+                if (this.stunTimer <= 0) { this.state = 'patrol'; this.actionCooldown = 60; }
+                break;
+            case 'summoning':
+                this.comboTimer++;
+                if (this.comboTimer >= 60) { this.state = 'patrol'; this.actionCooldown = 60; }
+                break;
+        }
+
+        if (this.hp / this.maxHp < 0.3) this.summonMinions();
+        this.updateMinions();
+    }
+// PLACEHOLDER_WSKEL_CONTINUE
+
+    startCombo() {
+        this.state = 'combo';
+        this.comboStep = 0;
+        this.comboTimer = 0;
+    }
+
+    updateCombo() {
+        this.comboTimer++;
+        const stepDuration = 30;
+        if (this.comboTimer >= stepDuration) {
+            this.comboTimer = 0;
+            this.executeComboStep(this.comboStep);
+            this.comboStep++;
+            if (this.comboStep >= 3) {
+                this.state = 'patrol';
+                this.comboStep = 0;
+                this.actionCooldown = 60;
+            }
+        }
+    }
+
+    executeComboStep(step) {
+        const range = 60;
+        const playerDist = Math.abs(player.x - this.x);
+        switch (step) {
+            case 0: // 横扫
+                if (playerDist < range + 20) {
+                    damagePlayer(1, this.x);
+                    showFloatingText('横扫!', this.x + this.width / 2, this.y - 20, '#FF4444');
+                }
+                break;
+            case 1: // 下劈
+                if (playerDist < range) {
+                    damagePlayer(2, this.x);
+                    showFloatingText('下劈!', this.x + this.width / 2, this.y - 20, '#FF0000');
+                }
+                break;
+            case 2: // 突刺+击退
+                if (playerDist < range + 10) {
+                    damagePlayer(1, this.x, 150);
+                    showFloatingText('突刺!', this.x + this.width / 2, this.y - 20, '#FF6600');
+                }
+                break;
+        }
+    }
+
+    startJumpAttack() {
+        this.state = 'jump_attack';
+        this.jumpAttackPhase = 1;
+        this.comboTimer = 0;
+        showFloatingText('⚠️', this.x + this.width / 2, this.y - 20, '#FF0000');
+    }
+// PLACEHOLDER_WSKEL_CONTINUE2
+
+    updateJumpAttack() {
+        switch (this.jumpAttackPhase) {
+            case 1: // 蓄力
+                this.comboTimer++;
+                if (this.comboTimer >= 30) {
+                    this.jumpAttackPhase = 2;
+                    this.vy = -12;
+                    this.facing = player.x > this.x ? 1 : -1;
+                }
+                break;
+            case 2: // 跃起+下落
+                this.vy += this.gravity;
+                this.y += this.vy;
+                this.x += this.facing * 3;
+                if (this.y >= groundY - this.height) {
+                    this.y = groundY - this.height;
+                    this.vy = 0;
+                    this.jumpAttackPhase = 3;
+                    this.comboTimer = 0;
+                    this.jumpAttackLand();
+                }
+                break;
+            case 3: // 着地硬直
+                this.comboTimer++;
+                if (this.comboTimer >= 30) {
+                    this.state = 'patrol';
+                    this.jumpAttackPhase = 0;
+                    this.actionCooldown = 60;
+                }
+                break;
+        }
+    }
+
+    jumpAttackLand() {
+        const aoeRange = 64;
+        const dist = Math.abs(player.x - this.x);
+        if (dist < aoeRange) {
+            damagePlayer(2, this.x, 120);
+            showFloatingText('💥 跳劈!', this.x + this.width / 2, this.y - 30, '#FF0000');
+        }
+        for (let i = 0; i < 10; i++) {
+            this.particles.push({
+                x: this.x + (Math.random() - 0.5) * aoeRange * 2,
+                y: groundY,
+                vx: (Math.random() - 0.5) * 3,
+                vy: -Math.random() * 4,
+                life: 1.0
+            });
+        }
+    }
+
+    startBlocking() {
+        this.state = 'blocking';
+        this.blockTimer = 180;
+        this.blockHits = 0;
+    }
+
+    updateBlocking() {
+        this.blockTimer--;
+        if (this.blockTimer <= 0) {
+            this.state = 'patrol';
+            this.actionCooldown = 60;
+        }
+    }
+// PLACEHOLDER_WSKEL_CONTINUE3
+
+    takeDamage(amount) {
+        if (this.state === 'blocking') {
+            this.blockHits++;
+            showFloatingText('格挡!', this.x + this.width / 2, this.y - 20, '#AAAAAA');
+            if (this.blockHits >= 7) {
+                this.state = 'stunned';
+                this.stunTimer = 180;
+                showFloatingText('⭐ 破防!', this.x + this.width / 2, this.y - 30, '#FFD700');
+            }
+            return;
+        }
+        if (this.state === 'stunned') amount = Math.ceil(amount * 1.5);
+        super.takeDamage(amount);
+    }
+
+    summonMinions() {
+        if (this.minionsSummoned) return;
+        this.minionsSummoned = true;
+        this.state = 'summoning';
+        this.comboTimer = 0;
+        for (let i = 0; i < 4; i++) {
+            this.minions.push({
+                x: this.x + (i - 1.5) * 50,
+                y: groundY - 48,
+                hp: 5, maxHp: 5,
+                width: 24, height: 48,
+                speed: 2.0,
+                attackTimer: 0,
+                alive: true
+            });
+        }
+        showFloatingText('💀 召唤骷髅小兵!', this.x + this.width / 2, this.y - 30, '#666');
+    }
+
+    updateMinions() {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const dx = player.x - m.x;
+            m.x += Math.sign(dx) * m.speed;
+            m.attackTimer++;
+            if (m.attackTimer >= 120 && Math.abs(player.x - m.x) < 40) {
+                damagePlayer(1, m.x);
+                m.attackTimer = 0;
+                showFloatingText('💀', m.x, m.y - 10, '#666');
+            }
+        });
+    }
+
+    damageMinionAt(ax, ay, range, damage) {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            if (Math.abs(ax - m.x - m.width / 2) < range + m.width / 2 &&
+                Math.abs(ay - m.y - m.height / 2) < range + m.height / 2) {
+                m.hp -= damage;
+                showFloatingText(`-${damage}`, m.x + m.width / 2, m.y - 10, '#FF4444');
+                if (m.hp <= 0) {
+                    m.alive = false;
+                    showFloatingText('💀', m.x + m.width / 2, m.y - 20, '#FFD700');
+                }
+            }
+        });
+    }
+// PLACEHOLDER_WSKEL_CONTINUE4
+
+    onPhaseChange(newPhase) {
+        this.actionCooldown = 0;
+        if (newPhase === 2) {
+            this.moveSpeed = 2.6;
+            showToast('⚠️ 凋零骷髅变得更加凶猛!');
+        } else if (newPhase === 3) {
+            this.moveSpeed = 3.0;
+            showToast('⚠️ 凋零骷髅进入狂暴状态!');
+        }
+        for (let i = 0; i < 15; i++) {
+            this.particles.push({
+                x: this.x + Math.random() * this.width,
+                y: this.y + Math.random() * this.height,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1
+            });
+        }
+    }
+
+    render(ctx, camX) {
+        const drawX = this.x - camX;
+        const drawY = this.y;
+        const squash = this.jumpAttackPhase === 1 ? 0.8 : 1;
+
+        // 身体
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#1A1A1A';
+        ctx.fillRect(drawX, drawY + this.height * (1 - squash), this.width, this.height * squash);
+
+        // 骷髅头
+        ctx.fillStyle = '#2A2A2A';
+        ctx.fillRect(drawX + 8, drawY - 4 + this.height * (1 - squash), 32, 28);
+        // 眼睛
+        ctx.fillStyle = this.phase >= 3 ? '#FF0000' : '#CC0000';
+        ctx.fillRect(drawX + 14, drawY + 4 + this.height * (1 - squash), 6, 6);
+        ctx.fillRect(drawX + 28, drawY + 4 + this.height * (1 - squash), 6, 6);
+
+        // 石剑
+        ctx.fillStyle = '#808080';
+        const swordX = this.facing > 0 ? drawX + this.width : drawX - 12;
+        ctx.fillRect(swordX, drawY + 20, 8, 40);
+        ctx.fillStyle = '#A0A0A0';
+        ctx.fillRect(swordX - 4, drawY + 56, 16, 6);
+// PLACEHOLDER_WSKEL_RENDER_END
+
+        // 格挡状态 - 白色防护罩
+        if (this.state === 'blocking') {
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(drawX + this.width / 2, drawY + this.height / 2, 50, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // 眩晕状态 - 头顶星星
+        if (this.state === 'stunned') {
+            for (let i = 0; i < 3; i++) {
+                const sx = drawX + 10 + i * 14 + Math.sin(Date.now() / 200 + i) * 5;
+                ctx.fillStyle = '#FFD700';
+                ctx.font = '14px Arial';
+                ctx.fillText('⭐', sx, drawY - 20);
+            }
+        }
+
+        // 渲染小兵
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const mx = m.x - camX;
+            ctx.fillStyle = '#333';
+            ctx.fillRect(mx, m.y, m.width, m.height);
+            ctx.fillStyle = '#F44336';
+            ctx.fillRect(mx, m.y - 5, m.width * (m.hp / m.maxHp), 3);
+        });
+
+        // 粒子
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = '#666';
             ctx.fillRect(p.x - camX, p.y, 3, 3);
         });
         ctx.globalAlpha = 1;
