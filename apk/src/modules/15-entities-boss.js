@@ -49,7 +49,8 @@ class Boss {
     updateProjectiles() {
         for (let i = this.bossProjectiles.length - 1; i >= 0; i--) {
             const p = this.bossProjectiles[i];
-            if (p.tracking && p.trackDelay !== undefined) {
+            // 追踪逻辑（反弹后不再追踪玩家）
+            if (p.tracking && !p.reflected && p.trackDelay !== undefined) {
                 if (p.trackDelay > 0) { p.trackDelay--; }
                 else {
                     const dx = player.x + player.width / 2 - p.x;
@@ -66,12 +67,22 @@ class Boss {
             p.x += p.vx;
             p.y += p.vy;
             p.life = (p.life || 300) - 1;
-            // 碰撞玩家
-            if (Math.abs(p.x - player.x - player.width / 2) < p.size + player.width / 2 &&
-                Math.abs(p.y - player.y - player.height / 2) < p.size + player.height / 2) {
-                damagePlayer(p.damage, p.x);
-                this.bossProjectiles.splice(i, 1);
-                continue;
+            // 反弹弹幕碰撞BOSS
+            if (p.reflected) {
+                if (Math.abs(p.x - this.x - this.width / 2) < p.size + this.width / 2 &&
+                    Math.abs(p.y - this.y - this.height / 2) < p.size + this.height / 2) {
+                    this.takeDamage(p.damage);
+                    this.bossProjectiles.splice(i, 1);
+                    continue;
+                }
+            } else {
+                // 碰撞玩家
+                if (Math.abs(p.x - player.x - player.width / 2) < p.size + player.width / 2 &&
+                    Math.abs(p.y - player.y - player.height / 2) < p.size + player.height / 2) {
+                    damagePlayer(p.damage, p.x);
+                    this.bossProjectiles.splice(i, 1);
+                    continue;
+                }
             }
             // 超出范围或生命结束
             if (p.life <= 0 || p.x < cameraX - 200 || p.x > cameraX + canvas.width + 200 ||
@@ -118,8 +129,8 @@ const bossArena = {
     active: false,
     boss: null,
     victoryTimer: 0,
-    bossTypes: ['wither'], // v1.4.1+: 'ghast', 'blaze', 'wither_skeleton'
-    bossScores: [2000],    // 触发分数阈值
+    bossTypes: ['wither', 'ghast'], // v1.4.2+: 'blaze', 'wither_skeleton'
+    bossScores: [2000, 4000],      // 触发分数阈值
     spawned: {},           // 已生成的BOSS记录
 
 // PLACEHOLDER_ARENA_METHODS
@@ -148,6 +159,7 @@ const bossArena = {
         const spawnX = player.x + 300;
         switch (type) {
             case 'wither': return new WitherBoss(spawnX);
+            case 'ghast': return new GhastBoss(spawnX);
             default: return new WitherBoss(spawnX);
         }
     },
@@ -209,6 +221,15 @@ const bossArena = {
             ctx.beginPath();
             ctx.arc(p.x - camX, p.y, p.size, 0, Math.PI * 2);
             ctx.fill();
+            // 反弹火球拖尾
+            if (p.reflected) {
+                ctx.globalAlpha = 0.3;
+                ctx.fillStyle = '#00BFFF';
+                ctx.beginPath();
+                ctx.arc(p.x - camX - p.vx, p.y - p.vy, p.size * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
         });
     },
 
@@ -416,4 +437,189 @@ class WitherBoss extends Boss {
     }
 }
 
+// 恶魂 BOSS
+class GhastBoss extends Boss {
+    constructor(spawnX) {
+        super({
+            name: '恶魂 Ghast',
+            maxHp: 25,
+            color: '#F0F0F0',
+            x: spawnX,
+            y: 80,
+            width: 64,
+            height: 64,
+            phaseThresholds: [0.5, 0.2],
+            damage: 2
+        });
+        this.hitCount = 0;
+        this.crying = false;
+        this.cryTimer = 0;
+        this.moveAngle = 0;
+        this.rushTimer = 0;
+        this.rushing = false;
+        this.rushTarget = null;
+        this.startX = spawnX;
+    }
+// PLACEHOLDER_GHAST_PART1
 
+    updateBehavior(playerRef) {
+        // 哭泣状态更新
+        if (this.crying) {
+            this.cryTimer--;
+            if (this.cryTimer % 10 === 0) {
+                this.particles.push({
+                    x: this.x + this.width / 2 + (Math.random() - 0.5) * 20,
+                    y: this.y + this.height / 2,
+                    vx: 0, vy: 2, life: 1.0
+                });
+            }
+            if (this.cryTimer <= 0) this.crying = false;
+            return; // 哭泣期间不攻击
+        }
+
+        // 突进逻辑
+        if (this.rushing) {
+            this.executeRush(playerRef);
+            return;
+        }
+
+        // 8字形移动
+        const speed = this.phase === 1 ? 0.02 : this.phase === 2 ? 0.03 : 0.04;
+        this.moveAngle += speed;
+        const rangeX = this.phase >= 3 ? 200 : 150;
+        this.x = playerRef.x + Math.sin(this.moveAngle) * rangeX - this.width / 2;
+        this.y = 80 + Math.sin(this.moveAngle * 2) * 60;
+
+        // 攻击
+        const interval = this.phase === 1 ? 150 : this.phase === 2 ? 90 : 60;
+        this.attackTimer++;
+        if (this.attackTimer >= interval) {
+            const count = this.phase === 1 ? 1 : this.phase === 2 ? 2 : 3;
+            this.shootFireball(playerRef, count);
+            this.attackTimer = 0;
+        }
+
+        // 突进计时
+        const rushInterval = this.phase >= 3 ? 360 : 600;
+        this.rushTimer++;
+        if (this.rushTimer >= rushInterval) {
+            this.startRush(playerRef);
+            this.rushTimer = 0;
+        }
+    }
+// PLACEHOLDER_GHAST_PART2
+
+    shootFireball(playerRef, count) {
+        const cx = this.x + this.width / 2;
+        const cy = this.y + this.height / 2;
+        const px = playerRef.x + playerRef.width / 2;
+        const py = playerRef.y + playerRef.height / 2;
+        const angle = Math.atan2(py - cy, px - cx);
+        for (let i = 0; i < count; i++) {
+            const spread = count > 1 ? (i - (count - 1) / 2) * 0.25 : 0;
+            this.bossProjectiles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle + spread) * 3.5,
+                vy: Math.sin(angle + spread) * 3.5,
+                damage: 2, size: 16,
+                color: '#FF4500',
+                reflectable: true,
+                reflected: false,
+                tracking: false, life: 300
+            });
+        }
+    }
+
+    startRush(playerRef) {
+        this.rushing = true;
+        this.rushTarget = { x: playerRef.x, y: playerRef.y - 50 };
+        this.flashTimer = 20;
+        showFloatingText('⚠️', this.x + this.width / 2, this.y - 20, '#FF0000');
+    }
+
+    executeRush(playerRef) {
+        const dx = this.rushTarget.x - this.x;
+        const dy = this.rushTarget.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 20) {
+            this.rushing = false;
+            this.stunTimer = 20;
+            return;
+        }
+        this.x += (dx / dist) * 6;
+        this.y += (dy / dist) * 6;
+        if (Math.abs(this.x - player.x) < this.width &&
+            Math.abs(this.y - player.y) < this.height) {
+            damagePlayer(2, this.x, 100);
+            this.rushing = false;
+            this.stunTimer = 20;
+        }
+    }
+
+    takeDamage(amount) {
+        super.takeDamage(amount);
+        this.hitCount++;
+        if (this.hitCount >= 10 && !this.crying) {
+            this.crying = true;
+            this.cryTimer = 300; // 5秒
+            this.hitCount = 0;
+            showToast('😢 恶魂进入哭泣状态!');
+        }
+    }
+
+    onPhaseChange(newPhase) {
+        this.attackTimer = 0;
+        this.rushTimer = 0;
+        if (newPhase === 2) {
+            showToast('⚠️ 恶魂变得更加狂暴!');
+        } else if (newPhase === 3) {
+            showToast('⚠️ 恶魂进入濒死状态!');
+        }
+        for (let i = 0; i < 15; i++) {
+            this.particles.push({
+                x: this.x + Math.random() * this.width,
+                y: this.y + Math.random() * this.height,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 3,
+                life: 1
+            });
+        }
+    }
+// PLACEHOLDER_GHAST_RENDER
+
+    render(ctx, camX) {
+        const drawX = this.x - camX;
+        const drawY = this.y;
+        // 哭泣时半透明
+        ctx.globalAlpha = this.crying ? 0.5 : 0.9;
+        // 身体
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#F0F0F0';
+        ctx.fillRect(drawX, drawY, this.width, this.height);
+        // 红色眼睛
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(drawX + 16, drawY + 20, 8, 12);
+        ctx.fillRect(drawX + 40, drawY + 20, 8, 12);
+        // 嘴巴
+        ctx.fillStyle = '#333';
+        if (this.crying) {
+            ctx.fillRect(drawX + 20, drawY + 44, 24, 4);
+        } else {
+            ctx.fillRect(drawX + 22, drawY + 40, 20, 8);
+        }
+        // 触手
+        ctx.fillStyle = '#DDD';
+        for (let i = 0; i < 4; i++) {
+            const tx = drawX + 8 + i * 14;
+            const sway = Math.sin(Date.now() / 300 + i) * 3;
+            ctx.fillRect(tx + sway, drawY + this.height, 6, 16);
+        }
+        ctx.globalAlpha = 1;
+        // 哭泣泪水粒子
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = this.crying ? '#4FC3F7' : '#FF8A65';
+            ctx.fillRect(p.x - camX, p.y, 3, 3);
+        });
+        ctx.globalAlpha = 1;
+    }
+}

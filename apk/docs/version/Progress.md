@@ -1,4 +1,21 @@
-﻿## v1.4.0（发布日期：2026-02-14）
+﻿## v1.4.1（发布日期：2026-02-15）
+- 类型：PATCH
+- APK 版本：versionName = 1.4.1，versionCode = 42
+- 构建方式：CI（GitHub Actions）
+- 主要变更
+  - 新增：恶魂BOSS（25血，8字形飘移，火球反弹机制）
+  - 新增：火球反弹 - 玩家近战攻击可将火球打回BOSS
+  - 新增：反弹火球变蓝，命中BOSS造成3点伤害
+  - 新增：哭泣状态 - 累计受击10次后暂停攻击5秒
+  - 新增：随机突进攻击（有预警提示）
+  - 新增：分数达到4000时自动触发恶魂BOSS战
+- 技术改进
+  - 新增 GhastBoss 类（8字形移动、火球、突进、哭泣）
+  - Boss基类 updateProjectiles 支持反弹弹幕→BOSS碰撞
+  - performMeleeAttack 新增火球反弹检测
+  - 反弹火球蓝色拖尾视觉效果
+
+## v1.4.0（发布日期：2026-02-14）
 - 类型：MINOR
 - APK 版本：versionName = 1.4.0，versionCode = 41
 - 构建方式：CI（GitHub Actions）

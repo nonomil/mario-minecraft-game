@@ -146,6 +146,19 @@ function performMeleeAttack(weapon) {
         if (rectIntersect(ax, ay, range, player.height, b.x, b.y, b.width, b.height)) {
             b.takeDamage(dmg);
         }
+        // 火球反弹：攻击范围内的可反弹弹幕
+        b.bossProjectiles.forEach(p => {
+            if (!p.reflectable || p.reflected) return;
+            if (rectIntersect(ax, ay, range, player.height, p.x - p.size, p.y - p.size, p.size * 2, p.size * 2)) {
+                p.reflected = true;
+                p.color = '#00BFFF';
+                const angle = Math.atan2(b.y + b.height / 2 - p.y, b.x + b.width / 2 - p.x);
+                p.vx = Math.cos(angle) * 5;
+                p.vy = Math.sin(angle) * 5;
+                p.damage = 3;
+                showFloatingText('🔄 反弹!', p.x, p.y - 20, '#00BFFF');
+            }
+        });
     }
 
     playerWeapons.attackCooldown = weapon.cooldown;
