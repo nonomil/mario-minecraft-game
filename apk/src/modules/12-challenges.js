@@ -341,14 +341,25 @@ function speakWord(wordObj) {
         const speak = () => {
             const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
             const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-            let ok = false;
+            // 先说英文，英文结束后再说中文
             if (enText) {
-                ok = speakNativeTts(nativeTts, enText, "en-US", enRate, "QUEUE_FLUSH") || ok;
+                const enPromise = speakNativeTts(nativeTts, enText, "en-US", enRate);
+                if (enPromise && zhText) {
+                    enPromise.then(() => {
+                        speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
+                    }).catch(() => {
+                        // 英文失败也尝试说中文
+                        speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
+                    });
+                    return true;
+                } else if (enPromise) {
+                    return true;
+                }
             }
             if (zhText) {
-                ok = speakNativeTts(nativeTts, zhText, "zh-CN", zhRate, "QUEUE_ADD") || ok;
+                return !!speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
             }
-            return ok || false;
+            return false;
         };
         try {
             if (typeof nativeTts.stop === "function") {

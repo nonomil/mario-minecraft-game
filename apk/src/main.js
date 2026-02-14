@@ -674,9 +674,9 @@ function getNativeTts() {
     }
 }
 
-function speakNativeTts(tts, text, lang, rate, queueStrategy) {
-    if (!tts || typeof tts.speak !== "function") return false;
-    if (!text) return false;
+function speakNativeTts(tts, text, lang, rate) {
+    if (!tts || typeof tts.speak !== "function") return null;
+    if (!text) return null;
     try {
         const result = tts.speak({
             text: String(text),
@@ -684,18 +684,12 @@ function speakNativeTts(tts, text, lang, rate, queueStrategy) {
             rate: typeof rate === "number" ? rate : 1.0,
             pitch: 1.0,
             volume: 1.0,
-            category: "ambient",
-            // Ensure EN->ZH does not cancel EN on Android (default may flush).
-            // Capacitor TextToSpeech expects string strategies like QUEUE_ADD/QUEUE_FLUSH.
-            queueStrategy: queueStrategy || "QUEUE_ADD"
+            category: "ambient"
         });
-        // Some implementations return a Promise.
-        if (result && typeof result.catch === "function") {
-            result.catch(() => {});
-        }
-        return true;
+        // speak() returns a Promise that resolves when speech finishes
+        return result && typeof result.then === "function" ? result : Promise.resolve();
     } catch {
-        return false;
+        return null;
     }
 }
 
@@ -3737,14 +3731,24 @@ function speakWord(wordObj) {
         const speak = () => {
             const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
             const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-            let ok = false;
+            // 先说英文，英文结束后再说中文
             if (enText) {
-                ok = speakNativeTts(nativeTts, enText, "en-US", enRate, "QUEUE_FLUSH") || ok;
+                const enPromise = speakNativeTts(nativeTts, enText, "en-US", enRate);
+                if (enPromise && zhText) {
+                    enPromise.then(() => {
+                        speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
+                    }).catch(() => {
+                        speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
+                    });
+                    return true;
+                } else if (enPromise) {
+                    return true;
+                }
             }
             if (zhText) {
-                ok = speakNativeTts(nativeTts, zhText, "zh-CN", zhRate, "QUEUE_ADD") || ok;
+                return !!speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
             }
-            return ok || false;
+            return false;
         };
         try {
             if (typeof nativeTts.stop === "function") {
