@@ -335,7 +335,8 @@ const ARMOR_TYPES = {
 const FOOD_TYPES = {
     beef: { heal: 1, icon: "🥩", name: "牛肉", color: "#8B4513" },
     mutton: { heal: 1, icon: "🍖", name: "羊肉", color: "#DEB887" },
-    mushroom_stew: { heal: 1, icon: "🍲", name: "蘑菇煲", color: "#CD853F" }
+    mushroom_stew: { heal: 1, icon: "🍲", name: "蘑菇煲", color: "#CD853F" },
+    raw_fish: { heal: 1, icon: "🐟", name: "生鱼", color: "#87CEEB" }
 };
 let playerEquipment = { armor: null, armorDurability: 0 };
 let armorInventory = [];

@@ -223,3 +223,159 @@ const ENEMY_STATS = {
         size: { w: 120, h: 60 }
     }
 };
+
+// ============ 海洋生物系统 ============
+let oceanCreatures = [];
+
+class CodFish {
+    constructor(x, y) {
+        this.x = x; this.y = y;
+        this.hp = 1; this.width = 24; this.height = 12;
+        this.speed = 1.5;
+        this.facing = Math.random() > 0.5 ? 1 : -1;
+        this.swimAngle = Math.random() * Math.PI * 2;
+        this.alive = true;
+        this.type = 'cod';
+    }
+    update() {
+        if (!this.alive) return;
+        const distToPlayer = Math.hypot(player.x - this.x, player.y - this.y);
+        if (distToPlayer < 80) {
+            const angle = Math.atan2(this.y - player.y, this.x - player.x);
+            this.x += Math.cos(angle) * this.speed * 2;
+            this.y += Math.sin(angle) * this.speed * 2;
+            this.facing = Math.cos(angle) > 0 ? 1 : -1;
+        } else {
+            this.swimAngle += 0.03;
+            this.x += Math.sin(this.swimAngle) * this.speed * 0.5;
+            this.y += Math.cos(this.swimAngle * 2) * this.speed * 0.3;
+        }
+        this.y = Math.max(30, Math.min(this.y, groundY - 30));
+    }
+    takeDamage() {
+        this.alive = false;
+        inventory['raw_fish'] = (inventory['raw_fish'] || 0) + 1;
+        showFloatingText('+1 🐟', this.x, this.y - 10, '#87CEEB');
+    }
+    render(ctx, camX) {
+        if (!this.alive) return;
+        const dx = this.x - camX;
+        ctx.fillStyle = '#A9A9A9';
+        ctx.fillRect(dx, this.y, this.width, this.height);
+        ctx.fillStyle = '#808080';
+        const tailX = this.facing > 0 ? dx - 6 : dx + this.width;
+        ctx.fillRect(tailX, this.y + 2, 6, 8);
+        ctx.fillStyle = '#000';
+        const eyeX = this.facing > 0 ? dx + this.width - 6 : dx + 2;
+        ctx.fillRect(eyeX, this.y + 3, 3, 3);
+    }
+}
+// PLACEHOLDER_OCEAN_CREATURES_CONTINUE
+
+class Squid {
+    constructor(x, y) {
+        this.x = x; this.y = y;
+        this.hp = 3; this.maxHp = 3;
+        this.width = 28; this.height = 32;
+        this.speed = 1.0;
+        this.alive = true;
+        this.inkCooldown = 0;
+        this.swimAngle = Math.random() * Math.PI * 2;
+        this.type = 'squid';
+    }
+    update() {
+        if (!this.alive) return;
+        this.swimAngle += 0.02;
+        this.x += Math.sin(this.swimAngle) * this.speed * 0.3;
+        this.y += Math.cos(this.swimAngle * 0.7) * this.speed * 0.2;
+        this.y = Math.max(30, Math.min(this.y, groundY - 40));
+        if (this.inkCooldown > 0) this.inkCooldown--;
+    }
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.inkCooldown <= 0) {
+            this.sprayInk();
+            this.inkCooldown = 300;
+        }
+        if (this.hp <= 0) {
+            this.alive = false;
+            score += 10;
+            showFloatingText('+10', this.x, this.y - 10, '#FFD700');
+        }
+    }
+    sprayInk() {
+        if (typeof gameState === 'undefined') window.gameState = {};
+        gameState.inkEffect = { active: true, timer: 120, opacity: 0.9 };
+        showFloatingText('🦑 墨汁!', player.x + player.width / 2, player.y - 20, '#333');
+    }
+    render(ctx, camX) {
+        if (!this.alive) return;
+        const dx = this.x - camX;
+        ctx.fillStyle = '#191970';
+        ctx.fillRect(dx, this.y, this.width, this.height - 8);
+        ctx.fillStyle = '#1A1A6E';
+        for (let i = 0; i < 4; i++) {
+            const tx = dx + 2 + i * 7;
+            const sway = Math.sin(Date.now() / 400 + i) * 2;
+            ctx.fillRect(tx + sway, this.y + this.height - 8, 4, 10);
+        }
+        ctx.fillStyle = '#FF4444';
+        ctx.fillRect(dx + 6, this.y + 8, 5, 5);
+        ctx.fillRect(dx + 17, this.y + 8, 5, 5);
+    }
+}
+
+// 海洋生物生成
+function spawnOceanCreatures() {
+    if (currentBiome !== 'ocean') return;
+    if (oceanCreatures.length > 0) return;
+    const codCount = 3 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < codCount; i++) {
+        oceanCreatures.push(new CodFish(
+            player.x + (Math.random() - 0.3) * 600,
+            100 + Math.random() * (groundY - 200)
+        ));
+    }
+    const squidCount = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < squidCount; i++) {
+        oceanCreatures.push(new Squid(
+            player.x + (Math.random() - 0.3) * 600,
+            80 + Math.random() * (groundY - 180)
+        ));
+    }
+}
+
+// 海洋生物更新
+function updateOceanCreatures() {
+    if (currentBiome === 'ocean') {
+        spawnOceanCreatures();
+    } else {
+        oceanCreatures = [];
+        return;
+    }
+    oceanCreatures.forEach(c => c.update());
+    oceanCreatures = oceanCreatures.filter(c => c.alive);
+}
+
+// 海洋生物渲染
+function renderOceanCreatures(ctx, camX) {
+    oceanCreatures.forEach(c => c.render(ctx, camX));
+}
+
+// 墨汁效果渲染
+function renderInkEffect(ctx) {
+    if (typeof gameState === 'undefined' || !gameState.inkEffect || !gameState.inkEffect.active) return;
+    const ink = gameState.inkEffect;
+    ink.timer--;
+    const progress = ink.timer / 120;
+    ctx.fillStyle = `rgba(0, 0, 0, ${ink.opacity * progress})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (ink.timer > 60) {
+        ctx.fillStyle = '#FFF';
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('被墨汁喷中!', canvas.width / 2, canvas.height / 2);
+        ctx.textAlign = 'left';
+    }
+    if (ink.timer <= 0) ink.active = false;
+}

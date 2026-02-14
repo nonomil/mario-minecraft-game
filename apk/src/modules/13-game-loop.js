@@ -170,6 +170,9 @@ function update() {
         bossArena.update();
     }
 
+    // 海洋生物更新
+    if (typeof updateOceanCreatures === 'function') updateOceanCreatures();
+
     playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();
 

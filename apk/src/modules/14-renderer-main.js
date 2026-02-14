@@ -45,6 +45,9 @@ function draw() {
 
     enemies.forEach(e => drawEnemy(e));
 
+    // 海洋生物渲染
+    if (typeof renderOceanCreatures === 'function') renderOceanCreatures(ctx, cameraX);
+
     golems.forEach(g => drawGolem(g));
 
     if (projectiles.length) {
@@ -83,6 +86,9 @@ function draw() {
     }
 
     ctx.restore();
+
+    // 墨汁效果（全屏遮罩）
+    if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
 
     const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
     if (boss) {
