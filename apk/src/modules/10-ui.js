@@ -73,6 +73,7 @@ function setOverlay(visible, mode) {
         }
         overlayMode = "start";
         if (btnScoreRevive) btnScoreRevive.style.display = "none";
+        const btnLeaderboard = document.getElementById("btn-overlay-leaderboard");
         if (btnLeaderboard) btnLeaderboard.style.display = "none";
     }
 }
