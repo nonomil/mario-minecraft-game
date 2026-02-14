@@ -480,6 +480,19 @@ function useInventoryItem(itemKey) {
         showToast(`🎃 恢复2点生命`);
         used = true;
     }
+    // 食物使用（牛肉、羊肉、蘑菇煲）
+    else if (FOOD_TYPES[itemKey]) {
+        if (playerHp >= playerMaxHp) {
+            showToast("❤️ 已满血");
+            return;
+        }
+        const food = FOOD_TYPES[itemKey];
+        inventory[itemKey] -= 1;
+        healPlayer(food.heal);
+        showFloatingText(`+${food.heal}❤️`, player.x, player.y - 60);
+        showToast(`${food.icon} ${food.name} 恢复${food.heal}点生命`);
+        used = true;
+    }
     // 武器切换
     else if (itemKey === "stone_sword" || itemKey === "iron_pickaxe") {
         const weaponMap = {

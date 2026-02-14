@@ -134,7 +134,10 @@ const INVENTORY_TEMPLATE = {
     coal: 0,
     gold: 0,
     shell: 0,
-    starfish: 0
+    starfish: 0,
+    beef: 0,
+    mutton: 0,
+    mushroom_stew: 0
 };
 let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
@@ -158,7 +161,10 @@ const ITEM_LABELS = {
     coal: "煤矿",
     gold: "黄金",
     shell: "贝壳",
-    starfish: "海星"
+    starfish: "海星",
+    beef: "牛肉",
+    mutton: "羊肉",
+    mushroom_stew: "蘑菇煲"
 };
 const ITEM_ICONS = {
     diamond: "💎",
@@ -180,6 +186,9 @@ const ITEM_ICONS = {
     gold: "🪙",
     shell: "🐚",
     starfish: "⭐",
+    beef: "🥩",
+    mutton: "🍖",
+    mushroom_stew: "🍲",
     hp: "❤️",
     max_hp: "💖",
     score: "🪙",
@@ -193,7 +202,7 @@ const ITEM_ICONS = {
 };
 const INVENTORY_CATEGORIES = {
     items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow"],
-    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom"],
+    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom", "beef", "mutton", "mushroom_stew"],
     equipment: []
 };
 const SPEED_LEVELS = {
@@ -322,6 +331,11 @@ const ARMOR_TYPES = {
         color: "#4A4A4A",
         description: "传说加护"
     }
+};
+const FOOD_TYPES = {
+    beef: { heal: 1, icon: "🥩", name: "牛肉", color: "#8B4513" },
+    mutton: { heal: 1, icon: "🍖", name: "羊肉", color: "#DEB887" },
+    mushroom_stew: { heal: 1, icon: "🍲", name: "蘑菇煲", color: "#CD853F" }
 };
 let playerEquipment = { armor: null, armorDurability: 0 };
 let armorInventory = [];
@@ -527,6 +541,8 @@ const DEFAULT_CHEST_TABLES = {
         { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
         { item: "flower", weight: 6, min: 1, max: 2 },
         { item: "mushroom", weight: 6, min: 1, max: 2 },
+        { item: "beef", weight: 8, min: 1, max: 2 },
+        { item: "mutton", weight: 8, min: 1, max: 2 },
         { item: "hp", weight: 8, min: 1, max: 1 },
         { item: "score", weight: 7, min: 10, max: 25 }
     ],
@@ -537,6 +553,7 @@ const DEFAULT_CHEST_TABLES = {
         { item: "ender_pearl", weight: 4, min: 1, max: 1 },
         { item: "iron", weight: 8, min: 2, max: 4 },
         { item: "arrow", weight: 8, min: 4, max: 8 },
+        { item: "mushroom_stew", weight: 6, min: 1, max: 2 },
         { item: "hp", weight: 8, min: 1, max: 1 },
         { item: "score", weight: 8, min: 20, max: 40 }
     ],
