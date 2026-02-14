@@ -129,8 +129,8 @@ const bossArena = {
     active: false,
     boss: null,
     victoryTimer: 0,
-    bossTypes: ['wither', 'ghast'], // v1.4.2+: 'blaze', 'wither_skeleton'
-    bossScores: [2000, 4000],      // 触发分数阈值
+    bossTypes: ['wither', 'ghast', 'blaze'], // v1.4.3: 'wither_skeleton'
+    bossScores: [2000, 4000, 6000],         // 触发分数阈值
     spawned: {},           // 已生成的BOSS记录
 
 // PLACEHOLDER_ARENA_METHODS
@@ -160,6 +160,7 @@ const bossArena = {
         switch (type) {
             case 'wither': return new WitherBoss(spawnX);
             case 'ghast': return new GhastBoss(spawnX);
+            case 'blaze': return new BlazeBoss(spawnX);
             default: return new WitherBoss(spawnX);
         }
     },
@@ -618,6 +619,277 @@ class GhastBoss extends Boss {
         this.particles.forEach(p => {
             ctx.globalAlpha = p.life;
             ctx.fillStyle = this.crying ? '#4FC3F7' : '#FF8A65';
+            ctx.fillRect(p.x - camX, p.y, 3, 3);
+        });
+        ctx.globalAlpha = 1;
+    }
+}
+
+// 烈焰人 BOSS
+class BlazeBoss extends Boss {
+    constructor(spawnX) {
+        super({
+            name: '烈焰人 Blaze',
+            maxHp: 28,
+            color: '#FFD700',
+            x: spawnX,
+            y: 100,
+            width: 48,
+            height: 64,
+            phaseThresholds: [0.7, 0.5],
+            damage: 1
+        });
+        this.rotationAngle = 0;
+        this.floatY = 100;
+        this.floatDir = 1;
+        this.fireColumns = [];
+        this.minions = [];
+        this.minionsSummoned = false;
+        this.burstQueue = [];
+        this.burstTimer = 0;
+        this.fireColumnTimer = 0;
+    }
+
+    updateBehavior(playerRef) {
+        this.updateFloat();
+        this.updateBurstQueue(playerRef);
+        this.updateFireColumns(playerRef);
+        this.updateMinions(playerRef);
+
+        // 三连火球（始终激活）
+        const burstInterval = this.phase === 1 ? 240 : this.phase === 2 ? 180 : 120;
+        this.attackTimer++;
+        if (this.attackTimer >= burstInterval) {
+            this.fireballBurst(playerRef, 3, 18);
+            this.attackTimer = 0;
+        }
+
+        // 火焰旋风（阶段2+）
+        if (this.phase >= 2) {
+            this.fireColumnTimer++;
+            if (this.fireColumnTimer >= 600) {
+                this.spawnFireColumns();
+                this.fireColumnTimer = 0;
+            }
+        }
+
+        // 召唤小烈焰人（阶段3，仅一次）
+        if (this.phase >= 3 && !this.minionsSummoned) {
+            this.summonMinions();
+        }
+    }
+// PLACEHOLDER_BLAZE_CONTINUE
+
+    updateFloat() {
+        this.floatY += this.floatDir * 0.5;
+        if (this.floatY <= 60 || this.floatY >= 180) this.floatDir *= -1;
+        this.y = this.floatY;
+        // 水平缓慢追踪玩家
+        const dx = player.x - this.x;
+        this.x += Math.sign(dx) * 0.5;
+    }
+
+    fireballBurst(playerRef, count, interval) {
+        for (let i = 0; i < count; i++) {
+            this.burstQueue.push({ delay: i * interval, playerRef });
+        }
+    }
+
+    updateBurstQueue(playerRef) {
+        if (this.burstQueue.length === 0) return;
+        this.burstTimer++;
+        while (this.burstQueue.length > 0 && this.burstTimer >= this.burstQueue[0].delay) {
+            const burst = this.burstQueue.shift();
+            const cx = this.x + this.width / 2;
+            const cy = this.y + this.height / 2;
+            const px = player.x + player.width / 2;
+            const py = player.y + player.height / 2;
+            const angle = Math.atan2(py - cy, px - cx);
+            this.bossProjectiles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle) * 4,
+                vy: Math.sin(angle) * 4,
+                damage: 1, size: 10,
+                color: '#FF4500',
+                tracking: false, life: 300
+            });
+        }
+        if (this.burstQueue.length === 0) this.burstTimer = 0;
+    }
+
+    spawnFireColumns() {
+        for (let i = 0; i < 3; i++) {
+            this.fireColumns.push({
+                x: player.x + (Math.random() - 0.5) * 300,
+                y: groundY,
+                width: 20, height: 60,
+                life: 480,
+                trackSpeed: 0.8,
+                dmgTimer: 0
+            });
+        }
+        showFloatingText('🔥 火焰旋风!', this.x + this.width / 2, this.y - 20, '#FF4500');
+    }
+// PLACEHOLDER_BLAZE_CONTINUE2
+
+    updateFireColumns(playerRef) {
+        for (let i = this.fireColumns.length - 1; i >= 0; i--) {
+            const col = this.fireColumns[i];
+            const dx = player.x - col.x;
+            col.x += Math.sign(dx) * col.trackSpeed;
+            col.life--;
+            col.dmgTimer++;
+            // 每秒1心伤害
+            if (col.dmgTimer >= 60) {
+                col.dmgTimer = 0;
+                if (Math.abs(player.x + player.width / 2 - col.x - col.width / 2) < col.width / 2 + player.width / 2 &&
+                    player.y + player.height > col.y - col.height && player.y < col.y) {
+                    damagePlayer(1, col.x);
+                }
+            }
+            if (col.life <= 0) this.fireColumns.splice(i, 1);
+        }
+    }
+
+    summonMinions() {
+        this.minionsSummoned = true;
+        for (let i = 0; i < 2; i++) {
+            this.minions.push({
+                x: this.x + (i === 0 ? -80 : 80),
+                y: this.y,
+                hp: 8, maxHp: 8,
+                width: 24, height: 32,
+                speed: 2.5,
+                attackTimer: 0,
+                alive: true
+            });
+        }
+        showFloatingText('🔥 召唤小烈焰人!', this.x + this.width / 2, this.y - 20, '#FF4500');
+    }
+
+    updateMinions(playerRef) {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const dx = player.x - m.x;
+            m.x += Math.sign(dx) * m.speed;
+            // 浮空
+            m.y = this.floatY + 30;
+            m.attackTimer++;
+            if (m.attackTimer >= 180) {
+                this.bossProjectiles.push({
+                    x: m.x + m.width / 2, y: m.y + m.height / 2,
+                    vx: Math.sign(dx) * 3, vy: 0,
+                    damage: 1, size: 8, color: '#FF6600',
+                    tracking: false, life: 300
+                });
+                m.attackTimer = 0;
+            }
+        });
+    }
+// PLACEHOLDER_BLAZE_CONTINUE3
+
+    // 小烈焰人受伤（近战攻击检测）
+    damageMinionAt(ax, ay, range, damage) {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            if (Math.abs(ax - m.x - m.width / 2) < range + m.width / 2 &&
+                Math.abs(ay - m.y - m.height / 2) < range + m.height / 2) {
+                m.hp -= damage;
+                showFloatingText(`-${damage}`, m.x + m.width / 2, m.y - 10, '#FF4444');
+                if (m.hp <= 0) {
+                    m.alive = false;
+                    showFloatingText('💀', m.x + m.width / 2, m.y - 20, '#FFD700');
+                }
+            }
+        });
+    }
+
+    // 小怪存活时BOSS防御+50%
+    takeDamage(amount) {
+        const aliveMinions = this.minions.filter(m => m.alive).length;
+        if (aliveMinions > 0) amount = Math.ceil(amount * 0.5);
+        super.takeDamage(amount);
+    }
+
+    onPhaseChange(newPhase) {
+        this.attackTimer = 0;
+        this.fireColumnTimer = 0;
+        if (newPhase === 2) {
+            showToast('⚠️ 烈焰人释放火焰旋风!');
+        } else if (newPhase === 3) {
+            showToast('⚠️ 烈焰人召唤援军!');
+        }
+        for (let i = 0; i < 15; i++) {
+            this.particles.push({
+                x: this.x + Math.random() * this.width,
+                y: this.y + Math.random() * this.height,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1
+            });
+        }
+    }
+
+    render(ctx, camX) {
+        const drawX = this.x - camX;
+        const drawY = this.y;
+        this.rotationAngle += 0.05;
+        const cx = drawX + this.width / 2;
+        const cy = drawY + this.height / 2;
+
+        // 中心核心
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#FFD700';
+        ctx.fillRect(drawX + 8, drawY + 8, this.width - 16, this.height - 16);
+
+        // 旋转烈焰棒（4根）
+        ctx.fillStyle = '#FF8C00';
+        for (let i = 0; i < 4; i++) {
+            const angle = this.rotationAngle + (Math.PI / 2) * i;
+            const bx = cx + Math.cos(angle) * 28 - 4;
+            const by = cy + Math.sin(angle) * 28 - 12;
+            ctx.fillRect(bx, by, 8, 24);
+        }
+
+        // 眼睛
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(drawX + 14, drawY + 20, 6, 6);
+        ctx.fillRect(drawX + 28, drawY + 20, 6, 6);
+// PLACEHOLDER_BLAZE_RENDER_END
+
+        // 火焰粒子环绕
+        for (let i = 0; i < 3; i++) {
+            const px = cx + Math.cos(Date.now() / 200 + i * 2) * 20;
+            const py = cy + Math.sin(Date.now() / 200 + i * 2) * 20;
+            ctx.fillStyle = `rgba(255, ${100 + Math.random() * 100 | 0}, 0, 0.6)`;
+            ctx.fillRect(px - 2, py - 2, 4, 4);
+        }
+
+        // 渲染火焰柱
+        this.fireColumns.forEach(col => {
+            const colX = col.x - camX;
+            const alpha = col.life > 60 ? 0.8 : (col.life / 60) * 0.8;
+            ctx.fillStyle = `rgba(255, 69, 0, ${alpha})`;
+            ctx.fillRect(colX, col.y - col.height, col.width, col.height);
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(colX - 2, col.y - col.height - 8, col.width + 4, 8);
+        });
+
+        // 渲染小烈焰人
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const mx = m.x - camX;
+            ctx.fillStyle = '#FF8C00';
+            ctx.fillRect(mx, m.y, m.width, m.height);
+            // 小血条
+            const hpPct = m.hp / m.maxHp;
+            ctx.fillStyle = '#F44336';
+            ctx.fillRect(mx, m.y - 6, m.width * hpPct, 3);
+        });
+
+        // 粒子
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = '#FF6600';
             ctx.fillRect(p.x - camX, p.y, 3, 3);
         });
         ctx.globalAlpha = 1;

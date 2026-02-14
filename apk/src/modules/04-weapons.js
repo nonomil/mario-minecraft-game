@@ -159,6 +159,10 @@ function performMeleeAttack(weapon) {
                 showFloatingText('🔄 反弹!', p.x, p.y - 20, '#00BFFF');
             }
         });
+        // 小烈焰人受伤
+        if (typeof b.damageMinionAt === 'function') {
+            b.damageMinionAt(ax + range / 2, ay + player.height / 2, range, dmg);
+        }
     }
 
     playerWeapons.attackCooldown = weapon.cooldown;
