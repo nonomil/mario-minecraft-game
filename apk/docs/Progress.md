@@ -1,4 +1,24 @@
-﻿## v1.2.23（发布日期：2026-02-12）
+﻿## v1.2.24（发布日期：2025-02-14）
+- 类型：PATCH
+- APK 版本：versionName = 1.2.24，versionCode = 37
+- 构建方式：CI（GitHub Actions）
+- 主要变更
+  - 修复：地面不显示问题（调整脚本加载顺序，实体类在游戏逻辑模块之前加载）
+  - 重构：背包 UI 改为弹出式按钮，移到左侧金币下方
+  - 优化：开发环境配置（添加 npm 脚本、dev.bat 启动脚本）
+  - 优化：项目结构整理（测试文件移到 tests/debug-pages/ 目录）
+  - 文档：新增开发指南、快速参考、版本更新记录（CHANGELOG.md）
+- 技术改进
+  - 调整 Game.html 脚本加载顺序（15-entities-*.js 移到 11-game-init.js 之前）
+  - 添加 .btn-group-left 样式类，支持左侧按钮布局
+  - 清理不再使用的 .hud-inventory-btn CSS 样式
+  - 添加 ui-layout-test.html 测试页面
+- 开发体验
+  - 推荐使用浏览器直接测试（npm run dev），90% 功能可验证
+  - 仅在需要时构建 APK（测试 Android 特定功能、设备兼容性、发布版本）
+  - 完善调试工具和测试页面
+
+## v1.2.23（发布日期：2026-02-12）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.23，versionCode = 36
 - 主要变更
