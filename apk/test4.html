@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>完整模块加载测试（模拟Game.html）</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f0f0f0; }
+        .result { padding: 10px 10px; margin: 10px 0; border: 2px solid #333; }
+        .pass { color: #0f0; }
+        .fail { color: #f00; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>完整模块加载测试</h1>
+    <p>模拟真实 Game.html 的脚本加载顺序</p>
+    <div class="result" id="result"></div>
+
+    <!-- 按照 Game.html 的顺序加载脚本 -->
+    <script src="src/defaults.js"></script>
+    <script>
+        addResult('✓ defaults.js 已加载');
+    </script>
+    <script src="src/storage.js"></script>
+    <script>
+        addResult('✓ storage.js 已加载');
+    </script>
+    <script src="words/vocabs/manifest.js"></script>
+    <script>
+        addResult('✓ words/vocabs/manifest.js 已加载');
+    </script>
+    <script src="src/modules/01-config.js"></script>
+    <script>
+        addResult('检查 01-config.js 加载后...');
+        try {
+            // 检查关键变量是否定义
+            const checks = [];
+
+            // platforms
+            if (typeof platforms !== 'undefined') {
+                checks.push('✓ platforms 已定义');
+            } else {
+                checks.push('✗ platforms 未定义');
+            }
+
+            // trees
+            if (typeof trees !== 'undefined') {
+                checks.push('✓ trees 已定义');
+            } else {
+                checks.push('✗ trees 未定义');
+            }
+
+            // chests
+            if (typeof chests !== 'undefined') {
+                checks.push('✓ chests 已定义');
+            } else {
+                checks.push('✗ chests 未定义');
+            }
+
+            // items
+            if (typeof items !== 'undefined') {
+                checks.push('✓ items 已定义');
+            } else {
+                checks.push('✗ items 未定义');
+            }
+
+            // enemies
+            if (typeof enemies !== 'undefined') {
+                checks.push('✓ enemies 已定义');
+            } else {
+                checks.push('✗ enemies 未定义');
+            }
+
+            // drawBlock
+            if (typeof drawBlock !== 'undefined') {
+                checks.push('✓ drawBlock 已定义');
+            } else {
+                checks.push('✗ drawBlock 未定义');
+            }
+
+            // drawBackground
+            if (typeof drawBackground !== 'undefined') {
+                checks.push('✓ drawBackground 已定义');
+            } else {
+                checks.push('✗ drawBackground 未定义');
+            }
+
+            // initGame
+            if (typeof initGame !== 'undefined') {
+                checks.push('✓ initGame 已定义');
+            } else {
+                checks.push('✗ initGame 未定义');
+            }
+
+            addResult('<strong>01-config.js 加载后的状态：</strong><br>' + checks.join('<br>'));
+
+        } catch(e) {
+            addResult('❌ 错误: ' + e.message);
+        }
+    </script>
+
+    <script src="src/modules/02-utils.js"></script>
+    <script>
+        addResult('✓ 02-utils.js 已加载');
+    </script>
+
+    <script src="src/modules/03-audio.js"></script>
+    <script>
+        addResult('✓ 03-audio.js 已加载');
+    </script>
+
+    <script src="src/modules/04-weapons.js"></script>
+    <script>
+        addResult('✓ 04-weapons.js 已加载');
+    </script>
+
+    <script src="src/modules/05-difficulty.js"></script>
+    <script>
+        addResult('✓ 05-difficulty.js 已加载');
+    </script>
+
+    <script src="src/modules/06-biome.js"></script>
+    <script>
+        addResult('✓ 06-biome.js 已加载');
+    </script>
+
+    <script src="src/modules/07-viewport.js"></script>
+    <script>
+        addResult('✓ 07-viewport.js 已加载');
+    </script>
+
+    <script src="src/modules/08-account.js"></script>
+    <script>
+        addResult('✓ 08-account.js 已加载');
+    </script>
+
+    <script src="src/modules/09-vocab.js"></script>
+    <script>
+        addResult('✓ 09-vocab.js 已加载');
+    </script>
+
+    <script src="src/modules/10-ui.js"></script>
+    <script>
+        addResult('✓ 10-ui.js 已加载');
+    </script>
+
+    <script src="src/modules/11-game-init.js"></script>
+    <script>
+        addResult('✓ 11-game-init.js 已加载');
+    </script>
+
+    <script src="src/modules/12-challenges.js"></script>
+    <script>
+        addResult('✓ 12-challenges.js 已加载');
+    </script>
+
+    <script src="src/modules/13-game-loop.js"></script>
+    <script>
+        addResult('✓ 13-game-loop.js 已加载');
+    </script>
+
+    <script src="src/modules/14-renderer-main.js"></script>
+    <script>
+        addResult('✓ 14-renderer-main.js 已加载');
+    </script>
+
+    <script src="src/modules/14-renderer-entities.js"></script>
+    <script>
+        addResult('✓ 14-renderer-entities.js 已加载');
+    </script>
+
+    <script src="src/modules/14-renderer-decorations.js"></script>
+    <script>
+        addResult('✓ 14-renderer-decorations.js 已加载');
+    </script>
+
+    <script src="src/modules/15-entities-base.js"></script>
+    <script>
+        addResult('✓ 15-entities-base.js 已加载');
+    </script>
+
+    <script src="src/modules/15-entities-decorations.js"></script>
+    <script>
+        addResult('✓ 15-entities-decorations.js 已加载');
+    </script>
+
+    <script src="src/modules/15-entities-particles.js"></script>
+    <script>
+        addResult('✓ 15-entities-particles.js 已加载');
+    </script>
+
+    <script src="src/modules/15-entities-combat.js"></script>
+    <script>
+        addResult('✓ 15-entities-combat.js 已加载');
+    </script>
+
+    <script src="src/modules/16-events.js"></script>
+    <script>
+        addResult('✓ 16-events.js 已加载');
+    </script>
+
+    <script src="src/modules/17-bootstrap.js"></script>
+    <script>
+        addResult('<strong style="color:green">所有模块加载完成！</strong>');
+        addResult('<hr>');
+        addResult('<p>这个测试完全模拟了 Game.html 的脚本加载顺序。</p>');
+        addResult('<p>请打开 <strong>file:///G:/UserCode/Mario_Minecraft/mario-minecraft-game_V1/apk/test4.html</strong></p>');
+        addResult('<p>然后告诉我所有变量是否显示为"已定义"（绿色）。</p>');
+    </script>
+</body>
+</html>
