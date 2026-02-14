@@ -9,6 +9,11 @@ function draw() {
     ctx.save();
     ctx.translate(-cameraX, 0);
 
+    // Debug: 检查 platforms 数组
+    if (gameFrame % 60 === 0) {
+        console.log('Platforms count:', platforms.length, 'Camera X:', cameraX);
+    }
+
     platforms.forEach(p => drawBlock(p.x, p.y, p.width, p.height, p.type));
 
     if (biome.effects?.waterLevel) {

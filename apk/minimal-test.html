@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>最小化测试</title>
+</head>
+<body>
+    <h1>最小化模块测试</h1>
+    <canvas id="gameCanvas" width="800" height="600" style="border:1px solid black;"></canvas>
+    <div id="result" style="margin-top:20px; font-family:monospace;"></div>
+
+    <script src="src/defaults.js"></script>
+    <script src="src/storage.js"></script>
+    <script src="words/vocabs/manifest.js"></script>
+    <script src="src/modules/01-config.js"></script>
+    <script>
+        const result = document.getElementById('result');
+        result.innerHTML = '<h2>测试结果：</h2>';
+
+        // 检查关键变量
+        if (typeof platforms !== 'undefined') {
+            result.innerHTML += '✅ platforms 已定义: ' + JSON.stringify(platforms) + '<br>';
+        } else {
+            result.innerHTML += '❌ platforms 未定义<br>';
+        }
+
+        if (typeof canvas !== 'undefined' && canvas) {
+            result.innerHTML += '✅ canvas 已定义<br>';
+        } else {
+            result.innerHTML += '❌ canvas 未定义<br>';
+        }
+
+        if (typeof ctx !== 'undefined' && ctx) {
+            result.innerHTML += '✅ ctx 已定义<br>';
+        } else {
+            result.innerHTML += '❌ ctx 未定义<br>';
+        }
+
+        // 尝试在 canvas 上绘制
+        if (typeof ctx !== 'undefined' && ctx) {
+            try {
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(0, 0, 800, 600);
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(0, 530, 800, 70);
+                result.innerHTML += '✅ Canvas 绘制成功（应该看到蓝天绿地）<br>';
+            } catch(e) {
+                result.innerHTML += '❌ Canvas 绘制失败: ' + e.message + '<br>';
+            }
+        }
+
+        result.innerHTML += '<hr><strong>如果看到蓝天绿地，说明渲染正常。</strong>';
+    </script>
+</body>
+</html>
