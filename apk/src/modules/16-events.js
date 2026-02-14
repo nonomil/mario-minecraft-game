@@ -183,18 +183,6 @@ function wireHudButtons() {
         });
     }
 
-    const btnSummon = document.getElementById("btn-summon-golem");
-    if (btnSummon) {
-        btnSummon.addEventListener("click", () => {
-            if (inventory.iron >= 10) {
-                tryCraft("iron_golem");
-            } else if (inventory.pumpkin >= 10) {
-                tryCraft("snow_golem");
-            } else {
-                showToast("材料不足！需要 10 个铁块或南瓜");
-            }
-        });
-    }
     const btnProfile = document.getElementById("btn-profile");
     if (btnProfile) {
         btnProfile.addEventListener("click", showProfileModal);

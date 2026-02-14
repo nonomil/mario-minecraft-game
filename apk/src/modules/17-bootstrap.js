@@ -145,15 +145,6 @@ async function start() {
             const itemKey = HOTBAR_ITEMS[selectedSlot];
             showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "空"}`);
         }
-        if (!inInput && String(e.key || "").toLowerCase() === "x" && !paused) {
-            if (inventory.iron >= 10) {
-                tryCraft("iron_golem");
-            } else if (inventory.pumpkin >= 10) {
-                tryCraft("snow_golem");
-            } else {
-                showToast("材料不足！需要 10 个铁块或南瓜");
-            }
-        }
         if (isPause && startedOnce) {
             paused = !paused;
             const btnPause = document.getElementById("btn-pause");

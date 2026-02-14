@@ -416,15 +416,20 @@ function renderInventoryModal() {
     }
     inventoryContentEl.innerHTML = entries.map(entry => {
         const isFood = !!FOOD_TYPES[entry.key];
-        const isHealItem = isFood || entry.key === "diamond" || entry.key === "pumpkin";
+        const isHealItem = isFood || entry.key === "diamond";
+        const isSummon = entry.key === "pumpkin" || entry.key === "iron";
         const fullHp = playerHp >= playerMaxHp;
         const onCooldown = isFood && foodCooldown > 0;
         const disabled = (isHealItem && fullHp) || onCooldown;
         const style = disabled ? 'opacity:0.4;pointer-events:none' : '';
+        let hint = '';
+        if (entry.key === "pumpkin") hint = ' (→⛄)';
+        else if (entry.key === "iron" && entry.count >= 3) hint = ' (×3→🗿)';
+        else if (entry.key === "iron") hint = ` (${entry.count}/3→🗿)`;
         return `<div class="inventory-item" data-item="${entry.key}" style="${style}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
             <div class="inventory-item-left">
                 <div class="inventory-item-icon">${entry.icon}</div>
-                <div>${entry.label}${onCooldown ? ' ⏳' : ''}</div>
+                <div>${entry.label}${hint}${onCooldown ? ' ⏳' : ''}</div>
             </div>
             <div class="inventory-item-count">${entry.count}</div>
         </div>`;
@@ -486,15 +491,19 @@ function useInventoryItem(itemKey) {
         showToast(`💎 恢复生命`);
         used = true;
     } else if (itemKey === "pumpkin") {
-        if (playerHp >= playerMaxHp) {
-            showToast("❤️ 已满血");
-            return;
+        // 南瓜 → 召唤雪傀儡（×1）
+        if (tryCraft("snow_golem")) {
+            used = true;
         }
-        inventory.pumpkin -= 1;
-        healPlayer(2);
-        showFloatingText("+2❤️", player.x, player.y - 60);
-        showToast(`🎃 恢复2点生命`);
-        used = true;
+        renderInventoryModal();
+        return;
+    } else if (itemKey === "iron") {
+        // 铁块 → 召唤铁傀儡（×3）
+        if (tryCraft("iron_golem")) {
+            used = true;
+        }
+        renderInventoryModal();
+        return;
     }
     // 食物使用（牛肉、羊肉、蘑菇煲）
     else if (FOOD_TYPES[itemKey]) {
@@ -695,8 +704,8 @@ function hideArmorSelectUI() {
 }
 
 const RECIPES = {
-    iron_golem: { iron: 10 },
-    snow_golem: { pumpkin: 10 }
+    iron_golem: { iron: 3 },
+    snow_golem: { pumpkin: 1 }
 };
 
 function tryCraft(recipeKey) {
