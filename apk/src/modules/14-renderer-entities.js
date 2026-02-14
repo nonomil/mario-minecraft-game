@@ -313,3 +313,10 @@ function drawProjectile(proj) {
         ctx.stroke();
     }
 }
+
+// 渲染新BOSS系统
+function renderBossSystem() {
+    if (typeof bossArena === 'undefined' || !bossArena.active) return;
+    bossArena.renderBoss(ctx, cameraX);
+    bossArena.renderProjectiles(ctx, cameraX);
+}

@@ -62,6 +62,15 @@ class Projectile extends Entity {
                     return;
                 }
             }
+            // BOSS碰撞
+            if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
+                const b = bossArena.boss;
+                if (rectIntersect(this.x, this.y, this.width, this.height, b.x, b.y, b.width, b.height)) {
+                    b.takeDamage(this.damage);
+                    this.remove = true;
+                    return;
+                }
+            }
         }
 
         if (this.lifetime <= 0) this.remove = true;

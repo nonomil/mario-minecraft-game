@@ -125,6 +125,10 @@ function update() {
     spawnBiomeParticles();
 
     checkBossSpawn();
+    if (typeof bossArena !== 'undefined') {
+        bossArena.checkSpawn();
+        bossArena.update();
+    }
 
     playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();

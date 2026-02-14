@@ -1,17 +1,17 @@
-# v1.3.2 版本发布状态
+# v1.4.0 版本发布状态
 
 ## ✅ 已完成
 
 ### 1. 版本号更新
-- `package.json`: 1.3.1 → 1.3.2
-- `android-app/package.json`: 1.3.1 → 1.3.2
+- `package.json`: 1.3.2 → 1.4.0
+- `android-app/package.json`: 1.3.2 → 1.4.0
 
 ### 2. 功能实现
-- 移除旧的独立召唤按钮（🗿）
-- 背包点击南瓜(×1)召唤雪傀儡
-- 背包点击铁块(×3)召唤铁傀儡
-- 背包中显示召唤提示
-- 南瓜改为纯召唤材料（不再回血）
+- BOSS战系统框架
+- 凋零BOSS三阶段战斗
+- BOSS血条UI显示当前阶段
+- 近战/弓箭可对BOSS造成伤害
+- BOSS击败奖励系统
 
 ### 3. 版本记录
 - 更新 `CHANGELOG.md`
@@ -29,7 +29,7 @@ git push origin main
 
 1. **推送代码** - `git push origin main`
 2. **验证自动构建** - GitHub Actions
-3. **下一版本** - v1.4.0 BOSS框架与凋零
+3. **下一版本** - v1.4.1 恶魂BOSS
 
 ---
 

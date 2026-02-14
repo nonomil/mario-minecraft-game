@@ -49,6 +49,9 @@ function draw() {
         projectiles.forEach(p => drawProjectile(p));
     }
 
+    // 新BOSS系统渲染
+    if (typeof renderBossSystem === 'function') renderBossSystem();
+
     drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
 
     ctx.fillStyle = "#FFF";
@@ -97,6 +100,10 @@ function draw() {
         ctx.textAlign = "center";
         ctx.fillText("末影龙", canvas.width / 2, by - 6);
         ctx.textAlign = "left";
+    }
+    // 新BOSS血条
+    if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
+        bossArena.renderBossHpBar(ctx);
     }
 
     requestAnimationFrame(() => { update(); draw(); });

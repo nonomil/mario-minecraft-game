@@ -140,5 +140,13 @@ function performMeleeAttack(weapon) {
         }
     });
 
+    // BOSS伤害
+    if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
+        const b = bossArena.boss;
+        if (rectIntersect(ax, ay, range, player.height, b.x, b.y, b.width, b.height)) {
+            b.takeDamage(dmg);
+        }
+    }
+
     playerWeapons.attackCooldown = weapon.cooldown;
 }

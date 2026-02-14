@@ -1,4 +1,20 @@
-﻿## v1.3.2（发布日期：2026-02-14）
+﻿## v1.4.0（发布日期：2026-02-14）
+- 类型：MINOR
+- APK 版本：versionName = 1.4.0，versionCode = 41
+- 构建方式：CI（GitHub Actions）
+- 主要变更
+  - 新增：BOSS战系统框架 + 凋零BOSS
+  - 新增：BOSS基类支持三阶段切换、血条UI、奖励结算
+  - 新增：凋零BOSS三阶段战斗（黑球→扇形弹幕+冲刺→追踪弹）
+  - 新增：分数达到2000时自动触发BOSS战
+  - 新增：近战攻击、弓箭可对BOSS造成伤害
+  - 新增：BOSS击败奖励（500分+5铁块+钻石盔甲）
+- 技术改进
+  - 新增 `15-entities-boss.js` 模块
+  - BossArena 管理器：checkSpawn、enter、exit、onVictory
+  - WitherBoss：updateBehavior、shootBlackBall、shootTrackingBalls、startCharge
+
+## v1.3.2（发布日期：2026-02-14）
 - 类型：PATCH
 - APK 版本：versionName = 1.3.2，versionCode = 40
 - 构建方式：CI（GitHub Actions）
