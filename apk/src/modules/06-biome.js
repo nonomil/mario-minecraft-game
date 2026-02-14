@@ -96,6 +96,111 @@ function applyBiomeEffectsToPlayer() {
             damagePlayer(biome.effects.damage, player.x, 30);
         }
     }
+    // 地狱环境效果
+    if (currentBiome === 'nether') updateNetherEnvironment();
+    // 灵魂沙减速
+    if (currentBiome === 'nether') checkSoulSandEffect();
+}
+
+// ============ 地狱环境增强 ============
+let netherHeatTimer = 0;
+let netherMushrooms = [];
+let fragilePlatforms = [];
+
+function updateNetherEnvironment() {
+    // 持续高温伤害（每10秒-0.5心）
+    // 穿下界合金盔甲免疫
+    if (playerEquipment && playerEquipment.armor === 'netherite') {
+        netherHeatTimer = 0;
+        return;
+    }
+    netherHeatTimer++;
+    if (netherHeatTimer >= 600) {
+        netherHeatTimer = 0;
+        damagePlayer(0.5, player.x, 30);
+        showFloatingText('🔥 环境太热了!', player.x + player.width / 2, player.y - 30, '#FF4500');
+    }
+}
+
+function checkSoulSandEffect() {
+    // 灵魂沙装饰物减速
+    decorations.forEach(d => {
+        if (d.type !== 'soul_sand') return;
+        if (rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
+            player.velX *= 0.5;
+        }
+    });
+}
+
+function renderNetherHeatEffect(ctx) {
+    if (currentBiome !== 'nether') return;
+    // 屏幕边缘红色渐变
+    const gradient = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.3,
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.7
+    );
+    gradient.addColorStop(0, 'rgba(255,0,0,0)');
+    gradient.addColorStop(1, 'rgba(255,0,0,0.15)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+// 岩浆池碰撞检测（掉落即死）
+function checkLavaCollision() {
+    if (currentBiome !== 'nether') return;
+    decorations.forEach(d => {
+        if (d.type !== 'lava_pool') return;
+        if (rectIntersect(player.x, player.y + player.height - 5, player.width, 5, d.x, d.y, d.width, d.height)) {
+            playerHp = 0;
+            updateHpUI();
+            showFloatingText('💀 掉进了岩浆!', player.x + player.width / 2, player.y - 30, '#FF0000');
+            paused = true;
+            showToast('💀 生命耗尽');
+            setOverlay(true, 'pause');
+        }
+    });
+}
+
+// 红色蘑菇生成与采集
+function spawnNetherMushrooms() {
+    if (currentBiome !== 'nether' || netherMushrooms.length > 0) return;
+    const count = 2 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < count; i++) {
+        netherMushrooms.push({
+            x: player.x + (Math.random() - 0.3) * 500,
+            y: groundY - 16,
+            width: 16, height: 16,
+            collected: false
+        });
+    }
+}
+
+function updateNetherMushrooms() {
+    if (currentBiome !== 'nether') { netherMushrooms = []; return; }
+    spawnNetherMushrooms();
+    netherMushrooms.forEach(m => {
+        if (m.collected) return;
+        if (rectIntersect(player.x, player.y, player.width, player.height, m.x, m.y, m.width, m.height)) {
+            m.collected = true;
+            playerHp = Math.min(playerHp + 1, playerMaxHp);
+            updateHpUI();
+            showFloatingText('+1 ❤️ 🍄', m.x, m.y - 10, '#FF4444');
+        }
+    });
+}
+
+function renderNetherMushrooms(ctx, camX) {
+    netherMushrooms.forEach(m => {
+        if (m.collected) return;
+        const dx = m.x - camX;
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(dx, m.y, m.width, m.height * 0.6);
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(dx + 3, m.y + 2, 4, 4);
+        ctx.fillRect(dx + 9, m.y + 4, 3, 3);
+        ctx.fillStyle = '#DEB887';
+        ctx.fillRect(dx + 5, m.y + m.height * 0.6, 6, m.height * 0.4);
+    });
 }
 
 function tickWeather() {

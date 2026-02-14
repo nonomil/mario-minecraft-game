@@ -57,6 +57,9 @@ function draw() {
     // 新BOSS系统渲染
     if (typeof renderBossSystem === 'function') renderBossSystem();
 
+    // 地狱蘑菇渲染
+    if (typeof renderNetherMushrooms === 'function') renderNetherMushrooms(ctx, cameraX);
+
     drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
 
     ctx.fillStyle = "#FFF";
@@ -89,6 +92,8 @@ function draw() {
 
     // 墨汁效果（全屏遮罩）
     if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
+    // 地狱热浪效果
+    if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
 
     const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
     if (boss) {
