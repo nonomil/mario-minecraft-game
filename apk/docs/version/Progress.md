@@ -1,4 +1,19 @@
-﻿## v1.2.24（发布日期：2025-02-14）
+﻿## v1.3.1（发布日期：2026-02-14）
+- 类型：PATCH
+- APK 版本：versionName = 1.3.1，versionCode = 39
+- 构建方式：CI（GitHub Actions）
+- 主要变更
+  - 新增：背包物品点击交互 - 食物回血与盔甲装备
+  - 新增：点击食物回血1点生命，3秒冷却防误点
+  - 新增：满血时食物/回血物品灰显不可用，冷却时显示⏳
+  - 新增：点击盔甲从背包直接装备穿戴，支持卸下护甲
+  - 优化：背包装备区重构，支持点击装备/卸下操作
+- 技术改进
+  - 食物冷却计时器（foodCooldown）集成到游戏主循环
+  - 新增 equipArmorFromBackpack、unequipArmorFromBackpack 全局函数
+  - 背包渲染增加物品状态视觉反馈（灰显/半透明）
+
+## v1.2.24（发布日期：2025-02-14）
 - 类型：PATCH
 - APK 版本：versionName = 1.2.24，versionCode = 37
 - 构建方式：CI（GitHub Actions）
