@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>详细模块测试</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .pass { color: green; }
+        .fail { color: red; font-weight: bold; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>模块加载测试</h1>
+    <div id="output"></div>
+    <script>
+        const output = document.getElementById('output');
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type || 'info';
+            div.textContent = msg;
+            output.appendChild(div);
+            console.log(msg);
+        }
+
+        log('开始加载测试...');
+    </script>
+    <script src="src/defaults.js"></script>
+    <script>
+        log('✓ defaults.js 已加载');
+    </script>
+    <script src="src/modules/01-config.js"></script>
+    <script>
+        try {
+            log('检查 01-config.js 变量...');
+
+            // 检查关键变量
+            if (typeof platforms === 'undefined') {
+                log('✗ platforms 是 undefined');
+            } else {
+                log('✓ platforms 已定义: ' + platforms);
+            }
+
+            if (typeof trees === 'undefined') {
+                log('✗ trees 是 undefined');
+            } else {
+                log('✓ trees 已定义: ' + trees);
+            }
+
+            if (typeof chests === 'undefined') {
+                log('✗ chests 是 undefined');
+            } else {
+                log('✓ chests 已定义: ' + chests);
+            }
+
+            if (typeof items === 'undefined') {
+                log('✗ items 是 undefined');
+            } else {
+                log('✓ items 已定义: ' + items);
+            }
+
+            if (typeof enemies === 'undefined') {
+                log('✗ enemies 是 undefined');
+            } else {
+                log('✓ enemies 已定义: ' + enemies);
+            }
+
+            if (typeof drawBlock === 'undefined') {
+                log('✗ drawBlock 是 undefined');
+            } else {
+                log('✓ drawBlock 已定义: ' + typeof drawBlock);
+            }
+
+            if (typeof drawBackground === 'undefined') {
+                log('✗ drawBackground 是 undefined');
+            } else {
+                log('✓ drawBackground 已定义: ' + typeof drawBackground);
+            }
+
+            if (typeof initGame === 'undefined') {
+                log('✗ initGame 是 undefined');
+            } else {
+                log('✓ initGame 已定义');
+            }
+
+            log('所有核心变量检查完成');
+        } catch(e) {
+            log('❌ 错误: ' + e.message);
+            log('错误堆栈: ' + (e.stack || '无堆栈信息'));
+        }
+    </script>
+</body>
+</html>

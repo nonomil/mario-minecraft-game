@@ -32,7 +32,7 @@ echo [启动] 开发服务器在端口 4173...
 echo.
 echo ========================================
 echo   游戏地址: http://localhost:4173/Game.html
-echo   调试页面: http://localhost:4173/debug-full.html
+echo   调试页面: http://localhost:4173/tests/debug-pages/
 echo ========================================
 echo.
 echo [提示] 按 Ctrl+C 停止服务器
