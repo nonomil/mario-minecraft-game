@@ -643,6 +643,16 @@ canvas {
     pointer-events: auto;
 }
 
+.btn-group-left {
+    position: absolute;
+    top: 60px;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: auto;
+}
+
 .game-btn {
     background: #4CAF50;
     color: white;
