@@ -598,6 +598,7 @@ const LEARNING_CONFIG = {
         bonusPerMatch: 10
     }
 };
+let foodCooldown = 0;
 let floatingTexts = [];
 let lastGenX = 0;
 let difficultyState = null;

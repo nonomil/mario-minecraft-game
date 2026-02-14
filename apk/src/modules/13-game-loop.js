@@ -187,6 +187,7 @@ function update() {
     });
 
     if (playerInvincibleTimer > 0) playerInvincibleTimer--;
+    if (foodCooldown > 0) foodCooldown--;
     if (playerWeapons.attackCooldown > 0) playerWeapons.attackCooldown--;
     if (playerWeapons.isCharging) {
         const weapon = WEAPONS.bow;
@@ -371,18 +372,27 @@ function renderInventoryModal() {
     if (inventoryTab === "equipment") {
         const armorLabel = playerEquipment.armor ? (ARMOR_TYPES[playerEquipment.armor]?.name || playerEquipment.armor) : "无";
         const armorDur = playerEquipment.armor ? `${playerEquipment.armorDurability}%` : "--";
-        const armorList = (armorInventory || []).map(entry => {
-            const name = ARMOR_TYPES[entry.id]?.name || entry.id;
-            return `${name} (${entry.durability}%)`;
-        });
+        const armorListHtml = (armorInventory || []).map((entry, idx) => {
+            const armor = ARMOR_TYPES[entry.id];
+            const name = armor?.name || entry.id;
+            const icon = ITEM_ICONS["armor_" + entry.id] || "🛡️";
+            return `<div class="inventory-item" onclick="window.equipArmorFromBackpack && window.equipArmorFromBackpack('${entry.id}')">
+                <div class="inventory-item-left">
+                    <div class="inventory-item-icon">${icon}</div>
+                    <div>${name} (${entry.durability}%)</div>
+                </div>
+                <div class="inventory-item-count">装备</div>
+            </div>`;
+        }).join("");
         const weapons = getInventoryEntries(["stone_sword", "iron_pickaxe", "bow", "arrow"]);
-        const armorHtml = `
+        const currentArmorHtml = `
             <div class="inventory-equipment">
-                <div>🛡️ 护甲：${armorLabel}</div>
+                <div>🛡️ 当前护甲：${armorLabel}</div>
                 <div>耐久：${armorDur}</div>
-                <div>库存：${armorList.length ? armorList.join("、") : "无"}</div>
+                ${playerEquipment.armor ? `<div class="inventory-item" onclick="window.unequipArmorFromBackpack && window.unequipArmorFromBackpack()" style="cursor:pointer;margin-top:4px"><div class="inventory-item-left"><div>卸下护甲</div></div></div>` : ""}
             </div>
         `;
+        const armorSectionHtml = armorListHtml || `<div class="inventory-empty">无库存护甲</div>`;
         const weaponHtml = weapons.length
             ? weapons.map(entry => `
                 <div class="inventory-item" data-item="${entry.key}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
@@ -394,7 +404,7 @@ function renderInventoryModal() {
                 </div>
             `).join("")
             : `<div class="inventory-empty">暂无装备</div>`;
-        inventoryContentEl.innerHTML = `${armorHtml}${weaponHtml}`;
+        inventoryContentEl.innerHTML = `${currentArmorHtml}${armorSectionHtml}${weaponHtml}`;
         return;
     }
 
@@ -404,15 +414,21 @@ function renderInventoryModal() {
         inventoryContentEl.innerHTML = `<div class="inventory-empty">暂无物品</div>`;
         return;
     }
-    inventoryContentEl.innerHTML = entries.map(entry => `
-        <div class="inventory-item" data-item="${entry.key}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
+    inventoryContentEl.innerHTML = entries.map(entry => {
+        const isFood = !!FOOD_TYPES[entry.key];
+        const isHealItem = isFood || entry.key === "diamond" || entry.key === "pumpkin";
+        const fullHp = playerHp >= playerMaxHp;
+        const onCooldown = isFood && foodCooldown > 0;
+        const disabled = (isHealItem && fullHp) || onCooldown;
+        const style = disabled ? 'opacity:0.4;pointer-events:none' : '';
+        return `<div class="inventory-item" data-item="${entry.key}" style="${style}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
             <div class="inventory-item-left">
                 <div class="inventory-item-icon">${entry.icon}</div>
-                <div>${entry.label}</div>
+                <div>${entry.label}${onCooldown ? ' ⏳' : ''}</div>
             </div>
             <div class="inventory-item-count">${entry.count}</div>
-        </div>
-    `).join("");
+        </div>`;
+    }).join("");
 }
 
 function setInventoryTab(tab) {
@@ -486,9 +502,14 @@ function useInventoryItem(itemKey) {
             showToast("❤️ 已满血");
             return;
         }
+        if (foodCooldown > 0) {
+            showToast("⏳ 冷却中");
+            return;
+        }
         const food = FOOD_TYPES[itemKey];
         inventory[itemKey] -= 1;
         healPlayer(food.heal);
+        foodCooldown = 180; // 3秒冷却 @60fps
         showFloatingText(`+${food.heal}❤️`, player.x, player.y - 60);
         showToast(`${food.icon} ${food.name} 恢复${food.heal}点生命`);
         used = true;
@@ -530,6 +551,15 @@ function useInventoryItem(itemKey) {
 // 导出到全局供 HTML onclick 使用
 if (typeof window !== "undefined") {
     window.useInventoryItem = useInventoryItem;
+    window.equipArmorFromBackpack = function(armorId) {
+        if (equipArmor(armorId)) {
+            updateInventoryModal();
+        }
+    };
+    window.unequipArmorFromBackpack = function() {
+        unequipArmor();
+        updateInventoryModal();
+    };
 }
 
 function addArmorToInventory(armorId) {
