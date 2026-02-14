@@ -7,6 +7,7 @@ function draw() {
     const biome = getBiomeById(currentBiome);
     drawBackground(biome);
     if (typeof renderOceanEnvironment === 'function') renderOceanEnvironment(ctx);
+    if (typeof renderEndEnvironment === 'function') renderEndEnvironment(ctx);
     ctx.save();
     ctx.translate(-cameraX, 0);
 
@@ -60,6 +61,9 @@ function draw() {
     // 地狱蘑菇渲染
     if (typeof renderNetherMushrooms === 'function') renderNetherMushrooms(ctx, cameraX);
 
+    // 末地实体渲染
+    if (typeof renderEndEntities === 'function') renderEndEntities(ctx, cameraX);
+
     drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
 
     ctx.fillStyle = "#FFF";
@@ -94,6 +98,8 @@ function draw() {
     if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
     // 地狱热浪效果
     if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
+    // 末地速度buff
+    if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
 
     const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
     if (boss) {
@@ -159,6 +165,12 @@ function drawBlock(x, y, w, h, type) {
             ctx.beginPath();
             ctx.ellipse(cx + blockSize / 2 - 4, y + h / 2 - 3, blockSize / 3, h / 3, 0, 0, Math.PI * 2);
             ctx.fill();
+        } else if (type === "end_stone") {
+            ctx.fillStyle = "#D4C99E";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#BDB76B";
+            ctx.fillRect(cx + 6, y + 4, 8, 8);
+            ctx.fillRect(cx + 18, y + 14, 6, 6);
         } else {
             ctx.fillStyle = "#5d4037";
             ctx.fillRect(cx, y, blockSize, h);
@@ -177,6 +189,7 @@ function drawBlock(x, y, w, h, type) {
                 else if (type === "stone") ctx.fillStyle = "#757575";
                 else if (type === "sand") ctx.fillStyle = "#FDD835";
                 else if (type === "netherrack") ctx.fillStyle = "#3E1010";
+                else if (type === "end_stone") ctx.fillStyle = "#B8AD82";
                 else ctx.fillStyle = "#5d4037";
                 ctx.fillRect(cx, y + h, blockSize, fillHeight);
                 ctx.fillStyle = "rgba(0,0,0,0.05)";
@@ -362,6 +375,11 @@ function drawParticle(p) {
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(p.x + p.velX, p.y + p.size);
         ctx.stroke();
+    } else if (p.type === "end_particle") {
+        ctx.globalAlpha = Math.min(1, p.life / 60);
+        ctx.fillStyle = p.color || "#CE93D8";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.globalAlpha = 1;
     }
 }
 

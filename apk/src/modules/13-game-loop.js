@@ -79,6 +79,9 @@ function update() {
     player.velX *= gameConfig.physics.friction;
     let currentGravity = gameConfig.physics.gravity;
     if (Math.abs(player.velY) < 1.0) currentGravity = gameConfig.physics.gravity * 0.4;
+    // 末地低重力
+    const endBiomeCfg = (currentBiome === 'end') ? getBiomeById('end') : null;
+    if (endBiomeCfg) currentGravity *= (endBiomeCfg.effects?.gravityMultiplier || 0.65);
     player.velY += currentGravity;
     player.grounded = false;
 
@@ -118,14 +121,15 @@ function update() {
     }
 
     if (jumpBuffer > 0) {
+        const endJumpMult = endBiomeCfg ? (endBiomeCfg.effects?.jumpMultiplier || 1.5) : 1;
         if (coyoteTimer > 0) {
-            player.velY = player.jumpStrength;
+            player.velY = player.jumpStrength * endJumpMult;
             player.grounded = false;
             player.jumpCount = 1;
             coyoteTimer = 0;
             jumpBuffer = 0;
         } else if (player.jumpCount < player.maxJumps) {
-            player.velY = player.jumpStrength * 0.8;
+            player.velY = player.jumpStrength * 0.8 * endJumpMult;
             player.jumpCount++;
             jumpBuffer = 0;
         }
@@ -176,6 +180,9 @@ function update() {
     // 地狱环境更新
     if (typeof checkLavaCollision === 'function') checkLavaCollision();
     if (typeof updateNetherMushrooms === 'function') updateNetherMushrooms();
+
+    // 末地实体清理（离开末地时）
+    if (currentBiome !== 'end' && typeof clearEndEntities === 'function') clearEndEntities();
 
     playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();

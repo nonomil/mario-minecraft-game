@@ -487,6 +487,16 @@ const DEFAULT_BIOME_CONFIGS = {
         decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
         effects: { particles: "flames", ambient: "#CC3333", damage: 1, onEnterOnly: true, speedMultiplier: 0.7 },
         spawnWeight: { min: 3500, max: 5000 }
+    },
+    end: {
+        id: "end",
+        name: "末地",
+        color: "#1A0A2E",
+        groundType: "end_stone",
+        decorations: { end_stone_pillar: 0.15, obsidian_platform: 0.08, chorus_plant: 0.12, purple_crystal: 0.1 },
+        treeTypes: {},
+        effects: { particles: "end_particles", ambient: "#2D1B4E", gravityMultiplier: 0.65, jumpMultiplier: 1.5 },
+        spawnWeight: { min: 4000, max: 6000 }
     }
 };
 
@@ -500,14 +510,15 @@ let netherEntryPenaltyArmed = true;
 const MAX_DECORATIONS_ONSCREEN = 60;
 const DEFAULT_BIOME_SWITCH = {
     stepScore: 200,
-    order: ["forest", "snow", "desert", "mountain", "ocean", "nether"],
+    order: ["forest", "snow", "desert", "mountain", "ocean", "nether", "end"],
     unlockScore: {
         forest: 0,
         snow: 200,
         desert: 400,
         mountain: 600,
         ocean: 800,
-        nether: 2000
+        nether: 2000,
+        end: 4000
     }
 };
 let biomeSwitchConfig = JSON.parse(JSON.stringify(DEFAULT_BIOME_SWITCH));

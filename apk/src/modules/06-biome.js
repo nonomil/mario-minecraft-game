@@ -100,6 +100,8 @@ function applyBiomeEffectsToPlayer() {
     if (currentBiome === 'nether') updateNetherEnvironment();
     // 灵魂沙减速
     if (currentBiome === 'nether') checkSoulSandEffect();
+    // 末地低重力
+    if (currentBiome === 'end') updateEndEnvironment();
 }
 
 // ============ 地狱环境增强 ============
@@ -225,6 +227,8 @@ function spawnBiomeParticles() {
         particles.push(new BubbleParticle(baseX, canvas.height - 20));
     } else if (biome.effects?.particles === "sparkle" && Math.random() < 0.15) {
         particles.push(new SparkleParticle(baseX, Math.random() * canvas.height));
+    } else if (biome.effects?.particles === "end_particles" && Math.random() < 0.18) {
+        particles.push(new EndParticle(baseX, Math.random() * canvas.height));
     }
 
     if (weatherState.type === "rain" && Math.random() < 0.4) {
@@ -289,6 +293,208 @@ function renderSwimBubbles(ctx, camX) {
         ctx.stroke();
     });
     ctx.globalAlpha = 1;
+}
+
+// ============ 末地环境 ============
+let endPortals = [];
+let endCrystals = [];
+let endCreatures = [];
+let endSpeedBuff = { active: false, timer: 0, multiplier: 1.4 };
+
+function updateEndEnvironment() {
+    // 低重力效果
+    const biome = getBiomeById('end');
+    const gravMult = biome.effects?.gravityMultiplier || 0.65;
+    const jumpMult = biome.effects?.jumpMultiplier || 1.5;
+    player.velY *= gravMult + (1 - gravMult) * 0.5; // 缓降
+    // 速度buff
+    if (endSpeedBuff.active) {
+        endSpeedBuff.timer--;
+        player.speed = player.baseSpeed * endSpeedBuff.multiplier;
+        if (endSpeedBuff.timer <= 0) {
+            endSpeedBuff.active = false;
+            player.speed = player.baseSpeed;
+        }
+    }
+    // 生成末地实体
+    spawnEndEntities();
+    updateEndPortals();
+    updateEndCreatures();
+    updateEndCrystals();
+}
+
+function spawnEndEntities() {
+    // 传送门
+    if (endPortals.length === 0) {
+        for (let i = 0; i < 2; i++) {
+            endPortals.push({
+                x: player.x + 200 + Math.random() * 400,
+                y: groundY - 60,
+                width: 40, height: 60,
+                cooldown: 0, animFrame: 0
+            });
+        }
+    }
+    // 紫水晶
+    if (endCrystals.length === 0) {
+        const count = 2 + Math.floor(Math.random() * 2);
+        for (let i = 0; i < count; i++) {
+            endCrystals.push({
+                x: player.x + 100 + Math.random() * 500,
+                y: groundY - 20,
+                width: 16, height: 20,
+                collected: false
+            });
+        }
+    }
+    // 末地生物
+    if (endCreatures.length === 0) {
+        // 末影螨
+        for (let i = 0; i < 2; i++) {
+            endCreatures.push(new Endermite(
+                player.x + 150 + Math.random() * 400,
+                groundY - 80 - Math.random() * 100
+            ));
+        }
+        // 潜影贝
+        endCreatures.push(new ShulkerTurret(
+            player.x + 300 + Math.random() * 300,
+            groundY - 40
+        ));
+    }
+}
+
+// 传送门
+function updateEndPortals() {
+    endPortals.forEach(p => {
+        p.animFrame++;
+        if (p.cooldown > 0) { p.cooldown--; return; }
+        if (rectIntersect(player.x, player.y, player.width, player.height, p.x, p.y, p.width, p.height)) {
+            // 传送到随机安全平台
+            const safePlatforms = platforms.filter(pl => pl.x > cameraX && pl.x < cameraX + canvas.width * 2);
+            if (safePlatforms.length > 0) {
+                const target = safePlatforms[Math.floor(Math.random() * safePlatforms.length)];
+                player.x = target.x + target.width / 2;
+                player.y = target.y - player.height - 10;
+                player.velY = 0;
+                showFloatingText('🌀 传送!', player.x, player.y - 20, '#9C27B0');
+            }
+            p.cooldown = 180; // 3秒冷却
+        }
+    });
+}
+
+// 紫水晶采集
+function updateEndCrystals() {
+    endCrystals.forEach(c => {
+        if (c.collected) return;
+        if (rectIntersect(player.x, player.y, player.width, player.height, c.x, c.y, c.width, c.height)) {
+            c.collected = true;
+            endSpeedBuff.active = true;
+            endSpeedBuff.timer = 300; // 5秒
+            showFloatingText('⚡ 加速!', c.x, c.y - 15, '#E040FB');
+        }
+    });
+}
+
+// 末地生物更新
+function updateEndCreatures() {
+    endCreatures.forEach(c => c.update());
+    endCreatures = endCreatures.filter(c => c.alive);
+}
+
+// 末地环境渲染
+function renderEndEnvironment(ctx) {
+    if (currentBiome !== 'end') return;
+    // 深紫色虚空背景
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#0D0015');
+    gradient.addColorStop(0.5, '#1A0A2E');
+    gradient.addColorStop(1, '#2D1B4E');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // 星星
+    ctx.fillStyle = 'rgba(200,180,255,0.6)';
+    for (let i = 0; i < 30; i++) {
+        const sx = (i * 137 + Math.sin(Date.now() / 3000 + i) * 5) % canvas.width;
+        const sy = (i * 89 + Math.cos(Date.now() / 4000 + i) * 3) % (canvas.height * 0.6);
+        ctx.fillRect(sx, sy, 2, 2);
+    }
+}
+
+// 末地实体渲染（世界坐标内）
+function renderEndEntities(ctx, camX) {
+    if (currentBiome !== 'end') return;
+    // 传送门
+    endPortals.forEach(p => {
+        const dx = p.x - camX;
+        const pulse = Math.sin(p.animFrame * 0.05) * 0.2 + 0.8;
+        ctx.globalAlpha = p.cooldown > 0 ? 0.3 : pulse;
+        // 外框
+        ctx.fillStyle = '#4A148C';
+        ctx.fillRect(dx - 2, p.y - 2, p.width + 4, p.height + 4);
+        // 内部漩涡
+        const grad = ctx.createLinearGradient(dx, p.y, dx + p.width, p.y + p.height);
+        grad.addColorStop(0, '#7B1FA2');
+        grad.addColorStop(0.5, '#E040FB');
+        grad.addColorStop(1, '#7B1FA2');
+        ctx.fillStyle = grad;
+        ctx.fillRect(dx, p.y, p.width, p.height);
+        // 漩涡纹理
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 3; i++) {
+            const cy = p.y + p.height / 2 + Math.sin(p.animFrame * 0.08 + i * 2) * (p.height * 0.3);
+            ctx.beginPath();
+            ctx.arc(dx + p.width / 2, cy, 8 + i * 4, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+    });
+    // 紫水晶
+    endCrystals.forEach(c => {
+        if (c.collected) return;
+        const dx = c.x - camX;
+        const bob = Math.sin(Date.now() / 400) * 3;
+        ctx.fillStyle = '#CE93D8';
+        // 菱形
+        ctx.beginPath();
+        ctx.moveTo(dx + c.width / 2, c.y - 4 + bob);
+        ctx.lineTo(dx + c.width, c.y + c.height / 2 + bob);
+        ctx.lineTo(dx + c.width / 2, c.y + c.height + bob);
+        ctx.lineTo(dx, c.y + c.height / 2 + bob);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.beginPath();
+        ctx.moveTo(dx + c.width / 2, c.y - 2 + bob);
+        ctx.lineTo(dx + c.width * 0.7, c.y + c.height * 0.3 + bob);
+        ctx.lineTo(dx + c.width / 2, c.y + c.height * 0.5 + bob);
+        ctx.closePath();
+        ctx.fill();
+    });
+    // 末地生物
+    endCreatures.forEach(c => c.render(ctx, camX));
+}
+
+// 末地速度buff UI
+function renderEndSpeedBuff(ctx) {
+    if (!endSpeedBuff.active) return;
+    ctx.fillStyle = 'rgba(156,39,176,0.3)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#E040FB';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`⚡ 加速中 ${Math.ceil(endSpeedBuff.timer / 60)}s`, canvas.width / 2, canvas.height - 30);
+    ctx.textAlign = 'left';
+}
+
+// 离开末地时清理
+function clearEndEntities() {
+    endPortals = [];
+    endCrystals = [];
+    endCreatures = [];
+    endSpeedBuff.active = false;
 }
 
 let baseCanvasSize = null;

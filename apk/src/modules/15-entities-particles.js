@@ -379,3 +379,180 @@ function renderInkEffect(ctx) {
     }
     if (ink.timer <= 0) ink.active = false;
 }
+
+// ============ 末地粒子 ============
+class EndParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "end_particle");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        this.velX = (Math.random() - 0.5) * 0.3;
+        this.velY = -0.3 + Math.random() * 0.6;
+        this.size = 2 + Math.random() * 2;
+        this.life = 140;
+        this.color = Math.random() > 0.5 ? '#CE93D8' : '#7B1FA2';
+    }
+}
+
+// ============ 末影螨 ============
+class Endermite {
+    constructor(x, y) {
+        this.x = x; this.y = y;
+        this.hp = 3; this.maxHp = 3;
+        this.width = 16; this.height = 10;
+        this.speed = 1.8;
+        this.alive = true;
+        this.damage = 5;
+        this.attackCooldown = 0;
+        this.floatAngle = Math.random() * Math.PI * 2;
+    }
+    update() {
+        if (!this.alive) return;
+        this.floatAngle += 0.05;
+        // 追踪玩家
+        const dx = player.x - this.x;
+        const dy = player.y - this.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > 10) {
+            this.x += (dx / dist) * this.speed;
+            this.y += (dy / dist) * this.speed + Math.sin(this.floatAngle) * 0.5;
+        }
+        // 攻击
+        if (this.attackCooldown > 0) this.attackCooldown--;
+        if (this.attackCooldown <= 0 && rectIntersect(player.x, player.y, player.width, player.height, this.x, this.y, this.width, this.height)) {
+            damagePlayer(this.damage, this.x);
+            this.attackCooldown = 60;
+        }
+    }
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.alive = false;
+            score += 8;
+            showFloatingText('+8', this.x, this.y - 10, '#CE93D8');
+        }
+    }
+    render(ctx, camX) {
+        if (!this.alive) return;
+        const dx = this.x - camX;
+        // 身体 - 紫色小虫
+        ctx.fillStyle = '#4A148C';
+        ctx.fillRect(dx, this.y, this.width, this.height);
+        // 节段
+        ctx.fillStyle = '#7B1FA2';
+        ctx.fillRect(dx + 2, this.y + 1, 4, this.height - 2);
+        ctx.fillRect(dx + 8, this.y + 1, 4, this.height - 2);
+        // 眼睛
+        ctx.fillStyle = '#E040FB';
+        ctx.fillRect(dx + this.width - 4, this.y + 2, 2, 2);
+    }
+}
+
+// ============ 潜影贝 ============
+class ShulkerTurret {
+    constructor(x, y) {
+        this.x = x; this.y = y;
+        this.hp = 5; this.maxHp = 5;
+        this.width = 28; this.height = 28;
+        this.alive = true;
+        this.isOpen = false;
+        this.openTimer = 0;
+        this.cycleTimer = 0;
+        this.shootCooldown = 0;
+        this.projectiles = [];
+    }
+    update() {
+        if (!this.alive) return;
+        this.cycleTimer++;
+        // 开合循环: 关闭120帧 → 打开180帧
+        if (!this.isOpen && this.cycleTimer >= 120) {
+            this.isOpen = true;
+            this.cycleTimer = 0;
+        } else if (this.isOpen && this.cycleTimer >= 180) {
+            this.isOpen = false;
+            this.cycleTimer = 0;
+        }
+        // 打开时射击
+        if (this.isOpen) {
+            this.shootCooldown--;
+            if (this.shootCooldown <= 0) {
+                this.shoot();
+                this.shootCooldown = 60;
+            }
+        }
+        // 更新弹幕
+        this.projectiles.forEach(p => {
+            const dx = player.x + player.width / 2 - p.x;
+            const dy = player.y + player.height / 2 - p.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 5) {
+                p.x += (dx / dist) * p.speed;
+                p.y += (dy / dist) * p.speed;
+            }
+            p.life--;
+            if (rectIntersect(player.x, player.y, player.width, player.height, p.x - 4, p.y - 4, 8, 8)) {
+                damagePlayer(8, p.x);
+                p.life = 0;
+            }
+        });
+        this.projectiles = this.projectiles.filter(p => p.life > 0);
+    }
+    shoot() {
+        this.projectiles.push({
+            x: this.x + this.width / 2,
+            y: this.y,
+            speed: 1.5,
+            life: 180
+        });
+    }
+    takeDamage(amount) {
+        if (!this.isOpen) {
+            showFloatingText('🛡️', this.x, this.y - 10, '#9E9E9E');
+            return; // 关闭时无敌
+        }
+        this.hp -= amount;
+        if (this.hp <= 0) {
+            this.alive = false;
+            score += 15;
+            showFloatingText('+15', this.x, this.y - 10, '#CE93D8');
+        }
+    }
+    render(ctx, camX) {
+        if (!this.alive) return;
+        const dx = this.x - camX;
+        // 底座
+        ctx.fillStyle = '#4A148C';
+        ctx.fillRect(dx, this.y + this.height * 0.6, this.width, this.height * 0.4);
+        if (this.isOpen) {
+            // 打开 - 显示内部
+            ctx.fillStyle = '#7B1FA2';
+            ctx.fillRect(dx + 2, this.y + 4, this.width - 4, this.height * 0.6);
+            // 头部
+            ctx.fillStyle = '#E040FB';
+            ctx.fillRect(dx + 6, this.y + 8, this.width - 12, 10);
+            // 眼睛
+            ctx.fillStyle = '#FFF';
+            ctx.fillRect(dx + 10, this.y + 10, 3, 3);
+            ctx.fillRect(dx + 16, this.y + 10, 3, 3);
+        } else {
+            // 关闭 - 壳
+            ctx.fillStyle = '#6A1B9A';
+            ctx.fillRect(dx, this.y, this.width, this.height);
+            ctx.fillStyle = '#4A148C';
+            ctx.fillRect(dx + 2, this.y + this.height / 2 - 1, this.width - 4, 2);
+        }
+        // 弹幕
+        this.projectiles.forEach(p => {
+            ctx.fillStyle = '#E040FB';
+            ctx.beginPath();
+            ctx.arc(p.x - camX, p.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(224,64,251,0.3)';
+            ctx.beginPath();
+            ctx.arc(p.x - camX, p.y, 7, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+}

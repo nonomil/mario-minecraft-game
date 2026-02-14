@@ -150,6 +150,16 @@ function performMeleeAttack(weapon) {
         });
     }
 
+    // 末地生物伤害
+    if (typeof endCreatures !== 'undefined') {
+        endCreatures.forEach(c => {
+            if (!c.alive) return;
+            if (rectIntersect(ax, ay, range, player.height, c.x, c.y, c.width, c.height)) {
+                if (c.takeDamage) c.takeDamage(dmg);
+            }
+        });
+    }
+
     // BOSS伤害
     if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
         const b = bossArena.boss;
