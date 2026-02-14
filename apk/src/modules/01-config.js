@@ -182,7 +182,14 @@ const ITEM_ICONS = {
     starfish: "⭐",
     hp: "❤️",
     max_hp: "💖",
-    score: "🪙"
+    score: "🪙",
+    // 装备图标
+    armor_leather: "🟤",
+    armor_chainmail: "⛓️",
+    armor_iron: "🛡️",
+    armor_gold: "🟡",
+    armor_diamond: "💠",
+    armor_netherite: "⬛"
 };
 const INVENTORY_CATEGORIES = {
     items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow"],
