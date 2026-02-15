@@ -1,4 +1,22 @@
-﻿## v1.6.0（发布日期：2026-02-15）
+﻿## v1.6.1（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.1，versionCode = 54
+- 主要变更
+  - 新增：学习系统 - 宝箱绑定学习
+  - 宝箱开启前触发答题，消除随机弹窗打断心流
+  - 答对提升宝箱稀有度（common→rare→epic→legendary）
+  - 答错也能开箱，降低学习压力
+  - 关闭随机 Challenge 触发，保留 WordGate 机制
+  - 新增 chestLearningEnabled 配置项
+- 技术改进
+  - 13-game-loop.js：handleInteraction() 中拦截宝箱开启
+  - 12-challenges.js：completeLearningChallenge() 新增 Chest 分支处理
+  - 12-challenges.js：maybeTriggerLearningChallenge() 跳过随机触发
+  - 15-entities-base.js：Chest.open() 支持稀有度提升逻辑
+  - 09-vocab.js：新增 pickNextWord() 随机取词函数
+  - defaults.js：新增 chestLearningEnabled 配置项
+
+## v1.6.0（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.0，versionCode = 53
 - 主要变更

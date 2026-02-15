@@ -1,5 +1,24 @@
 # 版本更新记录
 
+## v1.6.1 (2026-02-15)
+
+### ✨ 新功能
+- **宝箱绑定学习** - 将学习融入游戏自然节奏
+  - 宝箱开启前触发答题，消除随机弹窗
+  - 答对提升宝箱稀有度（common→rare→epic→legendary）
+  - 答错也能开箱，降低学习压力
+  - 关闭随机 Challenge 触发，避免双重打断
+  - 新增 chestLearningEnabled 配置项
+
+### 🔧 技术改进
+- 修改 `handleInteraction()` 拦截宝箱开启
+- `completeLearningChallenge()` 新增 Chest 分支处理
+- `Chest.open()` 支持稀有度提升逻辑
+- `maybeTriggerLearningChallenge()` 跳过随机触发
+- 新增 `pickNextWord()` 随机取词函数
+
+---
+
 ## v1.6.0 (2026-02-15)
 
 ### ✨ 新功能
