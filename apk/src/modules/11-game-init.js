@@ -87,10 +87,14 @@ function startLevel(idx) {
     sessionCollectedWords = [];
     updateHpUI();
     player.x = 100;
-    player.y = 300;
+    player.y = Math.min(300, groundY - player.height - 10);
     player.velX = 0;
     player.velY = 0;
     generatePlatform(0, 12, groundY);
+    // Safety: ensure ground platform exists and is within canvas
+    if (!platforms.length || groundY <= 0 || groundY >= canvas.height) {
+        console.warn('startLevel: groundY invalid or no platforms', { groundY, canvasHeight: canvas.height, platforms: platforms.length });
+    }
 }
 
 function shuffle(arr) {

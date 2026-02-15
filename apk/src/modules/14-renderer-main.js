@@ -209,28 +209,32 @@ function drawBlock(x, y, w, h, type) {
 }
 
 function drawPixelTree(ctx2d, x, y, type, hp) {
-    const trunkW = 20;
-    const trunkH = 100;
-    const trunkX = x + (80 - trunkW) / 2;
-    const trunkY = y + 140 - trunkH;
+    // Scale all dimensions relative to blockSize (base blockSize=50)
+    const s = blockSize / 50;
+    const treeW = 80 * s;
+    const trunkW = 20 * s;
+    const trunkH = 100 * s;
+    const totalH = 140 * s;
+    const trunkX = x + (treeW - trunkW) / 2;
+    const trunkY = y + totalH - trunkH;
     if (type === "cactus") {
         ctx2d.fillStyle = "#2E7D32";
         ctx2d.fillRect(trunkX, trunkY, trunkW, trunkH);
-        ctx2d.fillRect(trunkX - 15, trunkY + 10, 15, 10);
-        ctx2d.fillRect(trunkX - 15, trunkY - 10, 10, 20);
-        ctx2d.fillRect(trunkX + 20, trunkY + 20, 15, 10);
-        ctx2d.fillRect(trunkX + 25, trunkY + 5, 10, 15);
+        ctx2d.fillRect(trunkX - 15 * s, trunkY + 10 * s, 15 * s, 10 * s);
+        ctx2d.fillRect(trunkX - 15 * s, trunkY - 10 * s, 10 * s, 20 * s);
+        ctx2d.fillRect(trunkX + trunkW, trunkY + 20 * s, 15 * s, 10 * s);
+        ctx2d.fillRect(trunkX + trunkW + 5 * s, trunkY + 5 * s, 10 * s, 15 * s);
         return;
     }
 
     if (type === "palm") {
         ctx2d.fillStyle = "#8D6E63";
-        ctx2d.fillRect(trunkX + 6, trunkY - 20, 8, trunkH + 20);
+        ctx2d.fillRect(trunkX + 6 * s, trunkY - 20 * s, 8 * s, trunkH + 20 * s);
         ctx2d.fillStyle = "#2E7D32";
         ctx2d.beginPath();
-        ctx2d.moveTo(trunkX + 10, trunkY - 30);
-        ctx2d.lineTo(trunkX - 10, trunkY - 10);
-        ctx2d.lineTo(trunkX + 30, trunkY - 10);
+        ctx2d.moveTo(trunkX + 10 * s, trunkY - 30 * s);
+        ctx2d.lineTo(trunkX - 10 * s, trunkY - 10 * s);
+        ctx2d.lineTo(trunkX + 30 * s, trunkY - 10 * s);
         ctx2d.closePath();
         ctx2d.fill();
         return;
@@ -238,16 +242,16 @@ function drawPixelTree(ctx2d, x, y, type, hp) {
 
     if (type === "spruce" || type === "pine") {
         ctx2d.fillStyle = "#5D4037";
-        ctx2d.fillRect(trunkX + 4, trunkY, trunkW - 8, trunkH);
+        ctx2d.fillRect(trunkX + 4 * s, trunkY, trunkW - 8 * s, trunkH);
         ctx2d.fillStyle = type === "spruce" ? "#1B5E20" : "#2E7D32";
         ctx2d.beginPath();
-        ctx2d.moveTo(x + 40, y + 10);
-        ctx2d.lineTo(x + 10, y + 70);
-        ctx2d.lineTo(x + 70, y + 70);
+        ctx2d.moveTo(x + 40 * s, y + 10 * s);
+        ctx2d.lineTo(x + 10 * s, y + 70 * s);
+        ctx2d.lineTo(x + 70 * s, y + 70 * s);
         ctx2d.closePath();
         ctx2d.fill();
         ctx2d.fillStyle = "rgba(255,255,255,0.5)";
-        ctx2d.fillRect(x + 20, y + 40, 40, 6);
+        ctx2d.fillRect(x + 20 * s, y + 40 * s, 40 * s, 6 * s);
         return;
     }
 
@@ -266,20 +270,20 @@ function drawPixelTree(ctx2d, x, y, type, hp) {
     ctx2d.fillRect(trunkX, trunkY, trunkW, trunkH);
 
     ctx2d.fillStyle = leafColor;
-    ctx2d.fillRect(x, y + 40, 80, 40);
-    ctx2d.fillRect(x + 10, y + 20, 60, 20);
-    ctx2d.fillRect(x + 20, y, 40, 20);
+    ctx2d.fillRect(x, y + 40 * s, treeW, 40 * s);
+    ctx2d.fillRect(x + 10 * s, y + 20 * s, 60 * s, 20 * s);
+    ctx2d.fillRect(x + 20 * s, y, 40 * s, 20 * s);
 
     if (type === "birch") {
         ctx2d.fillStyle = "#424242";
-        ctx2d.fillRect(trunkX + 4, trunkY + 10, 4, 6);
-        ctx2d.fillRect(trunkX + 12, trunkY + 28, 4, 6);
+        ctx2d.fillRect(trunkX + 4 * s, trunkY + 10 * s, 4 * s, 6 * s);
+        ctx2d.fillRect(trunkX + 12 * s, trunkY + 28 * s, 4 * s, 6 * s);
     }
 
     if (hp < 5) {
         ctx2d.fillStyle = "rgba(0,0,0,0.3)";
-        const crackH = (5 - hp) * 10;
-        ctx2d.fillRect(trunkX + 5, trunkY + trunkH - crackH, 10, crackH);
+        const crackH = (5 - hp) * 10 * s;
+        ctx2d.fillRect(trunkX + 5 * s, trunkY + trunkH - crackH, 10 * s, crackH);
     }
 }
 

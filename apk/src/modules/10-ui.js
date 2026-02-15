@@ -301,6 +301,7 @@ function resumeGameFromOverlay() {
             bootGameLoopIfNeeded();
         } else {
             paused = false;
+            pausedByModal = false;
             setOverlay(false);
         }
     } else if (overlayMode === "gameover") {
@@ -310,16 +311,19 @@ function resumeGameFromOverlay() {
             updateHpUI();
             updateDiamondUI();
             paused = false;
+            pausedByModal = false;
             startedOnce = true;
             setOverlay(false);
         } else {
             initGame();
             paused = false;
+            pausedByModal = false;
             startedOnce = true;
             setOverlay(false);
         }
     } else {
         paused = false;
+        pausedByModal = false;
         startedOnce = true;
         setOverlay(false);
     }

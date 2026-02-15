@@ -256,10 +256,24 @@ function bootGameLoopIfNeeded() {
     initGame();
     updateWordUI(null);
     paused = false;
+    pausedByModal = false;
     startedOnce = true;
     viewportIgnoreUntilMs = nowMs() + 3000;
     setOverlay(false);
     showToast("冒险开始！");
+
+    // Guard: if groundY is off-screen (viewport not ready), defer start
+    if (groundY <= 0 || groundY >= canvas.height) {
+        console.warn('bootGameLoopIfNeeded: groundY out of bounds, scheduling retry', { groundY, canvasHeight: canvas.height });
+        startedOnce = false;
+        paused = true;
+        requestAnimationFrame(() => {
+            applySettingsToUI();
+            bootGameLoopIfNeeded();
+        });
+        return;
+    }
+
     update();
     draw();
 }
