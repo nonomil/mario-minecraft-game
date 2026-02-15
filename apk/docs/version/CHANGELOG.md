@@ -1,5 +1,16 @@
 # 版本更新记录
 
+## v1.8.11 (2026-02-15)
+
+### 🐛 Bug 修复
+- 修复 Android APK 启动 1 秒后地面消失的问题
+  - `applySettingsToUI()` 中存在双重重映射：`applyConfig()` 已调用 `remapWorldCoordinates()` 正确锚定平台到新 groundY，但 `realignWorldForViewport()` 再次按画布尺寸比例缩放所有实体，导致平台被推出屏幕
+  - Android WebView 在启动约 1 秒后隐藏系统栏触发视口变化，双重重映射导致地面消失
+  - 移除 `applySettingsToUI()` 中的 `realignWorldForViewport()` 调用，保留 `applyConfig()` 内部的正确重映射逻辑
+  - 修复文件：`apk/src/modules/09-vocab.js`
+
+---
+
 ## v1.8.10 (2026-02-15)
 
 ### 🐛 Bug 修复

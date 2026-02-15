@@ -344,20 +344,12 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
-    const previousLayout = {
-        canvasWidth: canvas.width,
-        canvasHeight: canvas.height
-    };
     const visualViewport = getViewportSize();
     // Use the safe-area-adjusted game area for canvas + physics scaling.
     const gameArea = getGameAreaSize();
     applyConfig(gameArea);
     const viewportChanged = gameArea.width !== lastViewport.width || gameArea.height !== lastViewport.height;
     lastViewport = { width: gameArea.width, height: gameArea.height };
-
-    if (viewportChanged && startedOnce) {
-        realignWorldForViewport(previousLayout);
-    }
 
     const baseScale = Number(settings.uiScale) || 1.0;
     const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
