@@ -201,6 +201,7 @@ window.MMWG_DEFAULTS = {
         learningMode: true,
         challengeEnabled: true,
         challengeFrequency: 0.3,
+        chestLearningEnabled: true,        // 宝箱学习：开箱前答题 (v1.6.1)
         wordGateEnabled: true,
         wordMatchEnabled: true,
         speechEnabled: true,

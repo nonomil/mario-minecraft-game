@@ -77,7 +77,22 @@ class Chest extends Entity {
         this.opened = true;
         const diff = getDifficultyState();
         const lootCfg = getLootConfig();
-        const rarity = pickChestRarity(lootCfg.chestRarities, diff.chestRareBoost);
+
+        // === v1.6.1 新增：答对后提升稀有度 ===
+        let rarity = pickChestRarity(lootCfg.chestRarities, diff.chestRareBoost);
+        if (this._rarityBoost) {
+            const levels = ['common', 'rare', 'epic', 'legendary'];
+            const idx = levels.indexOf(rarity);
+
+            if (idx >= 0 && idx < levels.length - 1) {
+                rarity = levels[idx + 1];  // 提升一级
+                console.log(`[v1.6.1] 宝箱稀有度提升：${levels[idx]} → ${rarity}`);
+            }
+
+            this._rarityBoost = false;  // 清除标记
+        }
+        // === v1.6.1 结束 ===
+
         const lootTable = lootCfg.chestTables[rarity] || lootCfg.chestTables.common || [];
         const baseTwo = Number(lootCfg.chestRolls.twoDropChance ?? 0.45);
         const baseThree = Number(lootCfg.chestRolls.threeDropChance ?? 0.15);

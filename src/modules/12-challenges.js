@@ -188,6 +188,14 @@ function shouldTriggerLearningChallenge(wordObj) {
 function maybeTriggerLearningChallenge(wordObj) {
     if (!wordObj || !wordObj.en) return;
     registerCollectedWord(wordObj);
+
+    // === v1.6.1 新增：如果宝箱学习已开启，不再随机弹出 Challenge ===
+    // 避免双重打断心流，保留 WordGate 触发不受影响
+    if (settings.chestLearningEnabled) {
+        return;
+    }
+    // === v1.6.1 结束 ===
+
     if (!shouldTriggerLearningChallenge(wordObj)) return;
     startLearningChallenge(wordObj);
 }
@@ -314,17 +322,39 @@ function completeLearningChallenge(correct) {
         inventory.diamond = (inventory.diamond || 0) + (reward.correct.diamond || 0);
         updateInventoryUI();
         showFloatingText("🎉 挑战成功", player.x, player.y - 40);
+
+        // === WordGate 分支 ===
         if (challengeOrigin && challengeOrigin instanceof WordGate) {
             challengeOrigin.locked = false;
             challengeOrigin.remove = true;
             showToast("💠 词语闸门已解锁！");
         }
+
+        // === v1.6.1 新增：Chest 分支 ===
+        if (challengeOrigin && challengeOrigin instanceof Chest) {
+            // 答对：标记提升稀有度
+            challengeOrigin._rarityBoost = true;
+            challengeOrigin.open();
+            showToast("🎁 答对了！宝箱奖励升级！", 2000);
+        }
+        // === v1.6.1 结束 ===
+
     } else {
         addScore(-reward.wrong.scorePenalty);
         showFloatingText("❌ 挑战失败", player.x, player.y - 40);
+
+        // === WordGate 分支 ===
         if (challengeOrigin && challengeOrigin instanceof WordGate) {
             challengeOrigin.cooldown = 180;
         }
+
+        // === v1.6.1 新增：Chest 分支 ===
+        if (challengeOrigin && challengeOrigin instanceof Chest) {
+            // 答错也开箱，只是不提升稀有度
+            challengeOrigin.open();
+            showToast("💼 答错了，但还是可以开箱", 2000);
+        }
+        // === v1.6.1 结束 ===
     }
     paused = challengePausedBefore;
     currentLearningChallenge = null;

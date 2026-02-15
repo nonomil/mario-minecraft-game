@@ -704,7 +704,26 @@ function handleInteraction() {
             nearestChest.onDoubleClick();
         }
     } else {
-        nearestChest.open();
+        // === v1.6.1 宝箱学习模式：开箱前先答题 ===
+        if (settings.learningMode &&
+            settings.chestLearningEnabled &&
+            !currentLearningChallenge) {
+
+            // 从当前词库随机取一个单词
+            const wordObj = pickNextWord();
+
+            if (wordObj) {
+                // 触发 Challenge，origin 传入 chest 实例
+                startLearningChallenge(wordObj, null, nearestChest);
+            } else {
+                // 无可用单词时直接开箱
+                nearestChest.open();
+            }
+        } else {
+            // 学习模式关闭时直接开箱
+            nearestChest.open();
+        }
+        // === v1.6.1 结束 ===
     }
     nearestChest.lastClickTime = now;
 }

@@ -425,3 +425,15 @@ function getChallengeStats() {
         details: stats                     // 详细数据
     };
 }
+
+/**
+ * 从当前词库随机取一个单词 (v1.6.1 新增)
+ * @returns {Object|null} 单词对象或null
+ */
+function pickNextWord() {
+    if (!wordDatabase || !wordDatabase.length) return null;
+
+    // 从已加载的 wordDatabase 中随机取一个
+    const idx = Math.floor(Math.random() * wordDatabase.length);
+    return wordDatabase[idx];
+}
