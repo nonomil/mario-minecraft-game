@@ -1,4 +1,144 @@
-﻿## v1.4.1（发布日期：2026-02-15）
+﻿## v1.5.7（发布日期：2026-02-15）
+- 类型：PATCH
+- APK 版本：versionName = 1.5.7，versionCode = 52
+- 主要变更
+  - 修复：傀儡生命周期优化 - 只持续一个环境周期
+  - 新增：雪傀儡在沙漠环境3秒后融化（气泡粒子效果）
+  - 新增：离开召唤群系时傀儡自动消失（显示👋告别动画）
+- 技术改进
+  - Golem构造函数：添加spawnBiome和meltTimer属性
+  - update方法：群系检测逻辑
+  - 雪傀儡沙漠融化机制
+
+## v1.5.6（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.5.6，versionCode = 51
+- 主要变更
+  - 新增：🐉 龙蛋龙息 - 全屏50伤害，冷却12秒
+  - 新增：⭐ 海星幸运星 - 30秒宝箱稀有度+1，冷却90秒
+  - 新增：🪙 黄金交易 - 猪灵交易（铁×2/箭×4/末影珍珠×1）
+- 技术改进
+  - 龙蛋：遍历屏幕内敌人造成伤害，30个ember粒子
+  - 海星：gameState全局状态管理，宝箱rarityBoost提升
+  - 黄金：随机交易逻辑，无冷却
+
+## v1.5.5（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.5.5，versionCode = 50
+- 主要变更
+  - 新增：🥩 腐肉诱饵 - 吸引敌人200px范围3秒，冷却4秒
+  - 新增：🐚 贝壳护盾 - 2秒无敌，消耗3个，冷却20秒（平衡性调整）
+  - 新增：🪨 煤矿火把 - 照亮150px范围8秒，冷却3秒
+- 技术改进
+  - FleshBait类：吸引敌人逻辑
+  - Torch类：光源渲染+闪烁效果
+  - 贝壳护盾复用playerInvincibleTimer
+
+## v1.5.4（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.5.4，versionCode = 49
+- 主要变更
+  - 物品栏UI优化：自适应高度calc(60vh-120px)、触摸滚动优化、48px触控区域
+  - 物品冷却系统：全局计时器管理、统一冷却配置
+  - 新增：💥 火药炸弹 - 投掷爆炸，120px范围30伤害，破坏树木，冷却5秒
+  - 新增：🟣 末影珍珠传送 - 传送200px穿越障碍，冷却8秒
+  - 新增：🕸️ 蜘蛛丝陷阱 - 减速敌人80%持续5秒，消耗2个，冷却6秒
+- 技术改进
+  - ITEM_COOLDOWNS配置、itemCooldownTimers全局计时器
+  - Bomb、WebTrap、ExplosionParticle实体类
+  - 敌人webbed计时器、减速机制
+  - ITEM_DESCRIPTIONS物品描述数据
+
+## v1.5.3（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.5.3，versionCode = 48
+- 主要变更
+  - 新增：末地（The End）环境 - 低重力、传送门、末影螨、潜影贝炮台、紫水晶加速buff
+  - 新增：低重力物理（0.65x重力、1.5x跳跃）
+  - 新增：🟣 末地传送门 - 紫色漩涡，传送至随机安全平台，3秒冷却
+  - 新增：末影螨（3HP飞行追踪敌人）
+  - 新增：潜影贝炮台（5HP固定炮台，开合循环，追踪弹幕，关闭时无敌）
+  - 新增：⚡ 紫水晶 - 5秒速度buff
+  - 新增：EndParticle粒子、末地环境渲染（深紫色虚空+星星）
+- 技术改进
+  - updateEndEnvironment、renderEndEnvironment
+  - EndPortal、Endermite、ShulkerTurret类
+  - 末地石方块渲染、低重力应用
+
+## v1.5.2（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.5.2，versionCode = 47
+- 主要变更
+  - 新增：地狱环境升级 - 高温伤害、岩浆即死、灵魂沙减速、红蘑菇回血
+  - 新增：地狱高温伤害 - 每10秒0.5心，下界合金护甲免疫
+  - 新增：岩浆池（lava_pool）- 瞬间死亡
+  - 新增：灵魂沙减速 - 50%移动速度+下沉视觉
+  - 新增：红蘑菇自动采集 - 回复1心
+  - 新增：热浪视觉效果 - 屏幕边缘红色渐变
+- 技术改进
+  - updateNetherEnvironment、checkSoulSandEffect
+  - renderNetherHeatEffect、checkLavaCollision
+  - spawnNetherMushrooms、updateNetherMushrooms、renderNetherMushrooms
+
+## v1.5.1（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.5.1，versionCode = 46
+- 主要变更
+  - 新增：海洋生物 - 鳕鱼（友好）、乌贼（中性墨汁喷射）
+  - 新增：CodFish - 8字形游泳，逃离玩家，掉落生鱼
+  - 新增：Squid - 墨汁喷射（2秒屏幕黑屏），3HP
+  - 新增：生鱼食物 - 回复1心
+  - 新增：海洋生物近战攻击支持
+- 技术改进
+  - CodFish、Squid类
+  - spawnOceanCreatures、updateOceanCreatures、renderOceanCreatures
+  - renderInkEffect全屏遮罩
+
+## v1.5.0（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.5.0，versionCode = 45
+- 主要变更
+  - 新增：海洋游泳系统 - 水下垂直移动
+  - 新增：水下物理 - 70%水平速度、慢速下沉、水阻力
+  - 新增：海洋环境渲染 - 深蓝渐变背景、光束效果、波浪表面
+  - 新增：气泡粒子系统 - 游泳时产生气泡
+- 技术改进
+  - WATER_PHYSICS常量配置
+  - isUnderwater分支移动逻辑
+  - renderOceanEnvironment、renderSwimBubbles
+
+## v1.4.3（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.4.3，versionCode = 44
+- 主要变更
+  - 新增：凋零骷髅BOSS（40HP，近战肉搏，格挡破防）
+  - 新增：三连击系统 - 横扫→下劈→突刺
+  - 新增：跳斩AOE - 冲刺→跳跃→落地AOE伤害
+  - 新增：格挡机制 - 7次攻击破防，3秒眩晕
+  - 新增：眩晕状态 - 受到1.5倍伤害
+  - 新增：召唤骷髅 - HP<30%时召唤4个骷髅
+- 技术改进
+  - WitherSkeletonBoss类（状态机AI）
+  - startCombo、executeComboStep、startJumpAttack
+  - takeDamage覆盖（格挡逻辑）
+  - summonMinions、updateMinions、damageMinionAt
+
+## v1.4.2（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.4.2，versionCode = 43
+- 主要变更
+  - 新增：烈焰人BOSS（28HP，火球三连射，召唤小烈焰人）
+  - 新增：火焰旋风 - Phase2+连续发射3连发火球
+  - 新增：火柱追踪 - Phase2+地面升起3个追踪火柱
+  - 新增：召唤小烈焰人 - Phase3召唤2个mini-blaze
+  - 新增：50%伤害减免 - 小烈焰人存活时
+- 技术改进
+  - BlazeBoss类（浮空移动）
+  - fireballBurst队列系统
+  - spawnFireColumns、updateFireColumns
+  - summonMinions、updateMinions、damageMinionAt
+
+## v1.4.1（发布日期：2026-02-15）
 - 类型：PATCH
 - APK 版本：versionName = 1.4.1，versionCode = 42
 - 构建方式：CI（GitHub Actions）
