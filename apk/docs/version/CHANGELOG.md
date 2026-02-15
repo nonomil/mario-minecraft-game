@@ -1,5 +1,24 @@
 # 版本更新记录
 
+## v1.6.3 (2026-02-15)
+
+### ✨ 新功能
+- **Biome 切换复习** - 利用 biome 切换触发快速复习
+  - Biome 切换时触发快速复习（3题）
+  - 基于间隔重复算法选择复习单词
+  - 优先复习错误率高和久未复习的单词
+  - 全对奖励：+90分 +1💎
+  - 新增 reviewOnBiomeSwitch 配置项
+
+### 🔧 技术改进
+- 新增 `getWordsForReview()` 函数，基于间隔重复算法选择单词
+- `updateCurrentBiome()` 中延迟触发复习（1.5秒）
+- 新增复习流程控制：`maybeShowReview()`, `showReviewWord()`, `finishReview()`
+- `completeLearningChallenge()` 新增复习分支处理
+- 复习过程保持游戏暂停，不受伤害
+
+---
+
 ## v1.6.2 (2026-02-15)
 
 ### ✨ 新功能

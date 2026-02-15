@@ -1,4 +1,22 @@
-﻿## v1.6.2（发布日期：2026-02-15）
+﻿## v1.6.3（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.3，versionCode = 56
+- 主要变更
+  - 新增：学习系统 - Biome 切换复习
+  - Biome 切换时触发快速复习（3题）
+  - 基于间隔重复算法选择复习单词
+  - 优先复习错误率高和久未复习的单词
+  - 全对奖励：+90分 +1💎
+  - 新增 reviewOnBiomeSwitch 配置项
+  - 复习过程游戏暂停，不受干扰
+- 技术改进
+  - 09-vocab.js：新增 getWordsForReview() 函数
+  - 06-biome.js：updateCurrentBiome() 中触发复习
+  - 12-challenges.js：新增复习流程控制函数（maybeShowReview、showReviewWord、finishReview）
+  - 12-challenges.js：completeLearningChallenge() 中处理复习来源
+  - defaults.js：新增 reviewOnBiomeSwitch 配置项
+
+## v1.6.2（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.2，versionCode = 55
 - 主要变更
