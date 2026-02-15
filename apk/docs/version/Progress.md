@@ -1,4 +1,26 @@
-﻿## v1.6.8（发布日期：2026-02-15）
+﻿## v1.6.9（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.9，versionCode = 62
+- 主要变更
+  - 新增：群系视觉效果规范 (v1.6.9) - 步骤4完整实现
+  - 新增：粒子效果量化规范（12个群系，每个群系定义粒子类型、颜色、透明度、生命周期）
+  - 新增：天空渲染规范（单色/双色/三色渐变）
+  - 新增：特殊视觉效果系统
+  - 深暗之域幽匿脉冲波（每3秒一次，半径150px，蓝绿渐变）
+  - 火山热浪扭曲效果（5条波浪线，模拟热浪）
+  - 海洋光束效果（3条垂直光柱，缓慢移动）
+  - 末地星空效果（30颗星星，闪烁动画）
+- 技术改进
+  - 新建 src/modules/19-biome-visuals.js 视觉系统模块
+  - BiomeParticle 粒子类（支持7种粒子类型渲染）
+  - biomeParticlePool 粒子池管理（最大200个粒子）
+  - renderBiomeSky() 天空渲染函数
+  - 专属特效：spawnSculkPulseWave/updateSculkPulseWaves/renderSculkPulseWaves
+  - 专属特效：renderHeatWave() 火山热浪
+  - 专属特效：updateOceanLightBeams/renderOceanLightBeams 海洋光束
+  - 专属特效：initEndStars/renderEndStars 末地星空
+
+## v1.6.8（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.8，versionCode = 61
 - 主要变更
