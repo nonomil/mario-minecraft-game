@@ -135,6 +135,58 @@ function drawVillageBuilding(ctx, building, style) {
   ctx.textAlign = 'center';
   ctx.fillText(icon, sx + building.w / 2, sy - 30);
   ctx.textAlign = 'left';
+
+  // v1.8.4 特色建筑额外渲染
+  switch (building.type) {
+    case 'library':
+      // 图书馆：书本堆
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(sx + 10 + i * 8, sy - 60 + i * 8, 8, 12);
+      }
+      // 书脊
+      ctx.fillStyle = '#5D4037';
+      ctx.fillRect(sx + 14, sy - 64, 4, 24);
+      break;
+    case 'hot_spring':
+      // 温泉：蒸汽效果
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.beginPath();
+      ctx.arc(sx + building.w / 2, sy - 30, 10, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'water_station':
+      // 水站：水桶
+      ctx.fillStyle = '#4FC3F7';
+      ctx.fillRect(sx + 8, sy - 40, 16, 20);
+      ctx.fillStyle = '#0277BD';
+      ctx.fillRect(sx + 10, sy - 40, 12, 12);
+      break;
+    case 'blacksmith':
+      // 铁匠铺：砧板
+      ctx.fillStyle = '#795548';
+      ctx.fillRect(sx + 6, sy - 30, building.w - 12, 8);
+      ctx.fillStyle = '#3E2723';
+      ctx.fillRect(sx + 16, sy - 24, 16, 12);
+      break;
+    case 'lighthouse':
+      // 灯塔：灯光
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = `rgba(255, 255, ${200 + i * 55}, ${Math.random() * 0.3 + 0.2})`;
+        ctx.fillRect(sx + 12 + i * 4, sy - 50 - 20 - i * 6, 8, 8);
+      }
+      // 灯塔顶
+      ctx.fillStyle = '#FFEB3B';
+      ctx.fillRect(sx + 12, sy - 58, building.w - 20, 8);
+      break;
+    case 'brewing_stand':
+      // 酿造台：瓶子
+      ctx.fillStyle = '#880E4F';
+      ctx.fillRect(sx + 10, sy - 35, 12, 20);
+      ctx.fillStyle = '#A52A2A';
+      ctx.fillRect(sx + 26, sy - 35, 8, 12);
+      break;
+  }
 }
 
 function drawVillageDecorations(ctx, village) {
@@ -172,5 +224,90 @@ function drawVillageDecorations(ctx, village) {
         ctx.fillText(deco.type.charAt(0).toUpperCase(), sx + 2, sy - 3);
         break;
     }
+  }
+}
+
+}
+
+// v1.8.4 存档石碑渲染 (v1.8.4)
+function drawVillageSaveStone(ctx, building, village) {
+  const sx = building.x - cameraX;
+  const sy = groundY - building.h;
+
+  // 石碑主体
+  ctx.fillStyle = '#708090';
+  ctx.fillRect(sx, sy, building.w, building.h);
+
+  // 石碑顶部装饰
+  ctx.fillStyle = '#9E9E9E';
+  ctx.fillRect(sx, sy, building.w, 8);
+
+  // 存档符号
+  ctx.fillStyle = village.saved ? '#4CAF50' : '#AAA';
+  ctx.font = 'bold 20px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(village.saved ? '💾' : '?', sx + building.w / 2, sy + 20);
+
+  // 装饰边框
+  ctx.strokeStyle = village.saved ? '#66BB6A' : '#888';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(sx + 2, sy + 2, building.w - 4, building.h - 4);
+}
+
+}
+
+// v1.8.4 特色建筑额外渲染 (v1.8.4)
+function drawVillageSpecialBuilding(ctx, building, style) {
+  const sx = building.x - cameraX;
+  const sy = groundY - building.h;
+
+  // 根据建筑类型渲染不同特色建筑
+  switch (building.type) {
+    case 'library':
+      // 图书馆：书本堆
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(sx + 8 + i * 8, sy - 60 - i * 12, 8, 16);
+      }
+      // 书脊
+      ctx.fillStyle = '#5D4037';
+      ctx.fillRect(sx + 12, sy - 64, 10, 24);
+      break;
+    case 'hot_spring':
+      // 温泉：蒸汽效果
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.beginPath();
+      ctx.arc(sx + 12, sy - 30, 8, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'water_station':
+      // 水站：水桶
+      ctx.fillStyle = '#4FC3F7';
+      ctx.fillRect(sx + 10, sy - 30, 12, 20);
+      break;
+    case 'blacksmith':
+      // 铁匠铺：砧板
+      ctx.fillStyle = '#795548';
+      ctx.fillRect(sx + 8, sy - 24, 16, 12);
+      break;
+    case 'lighthouse':
+      // 灯塔：灯光
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = i === 0 ? 'rgba(255, 255, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)';
+        ctx.fillRect(sx + 8 + i * 6, sy - 50 + i * 10, 4, 10);
+      }
+      break;
+    case 'brewing_stand':
+      // 酿造台：瓶子
+      ctx.fillStyle = '#880E4F';
+      ctx.fillRect(sx + 8, sy - 20, 8, 16);
+      break;
+    default:
+      // 默认：书本堆
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(sx + 8 + i * 8, sy - 60 - i * 12, 8, 16);
+      }
+  }
   }
 }
