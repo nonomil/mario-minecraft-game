@@ -389,9 +389,10 @@ const keys = { right: false, left: false };
 
 // 水下物理常量
 const WATER_PHYSICS = {
-    horizontalSpeedMultiplier: 0.7,
-    verticalSwimSpeed: 3.0,
-    sinkSpeed: 0.8,
+    horizontalSpeedMultiplier: 0.45,
+    verticalSwimSpeed: 1.2,
+    swimJumpImpulse: 1.8,
+    sinkSpeed: 0.5,
     gravity: 0.15,
     bubbleInterval: 15,
 };

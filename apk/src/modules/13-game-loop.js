@@ -44,8 +44,15 @@ function update() {
         } else {
             player.velX *= 0.9;
         }
-        if (keys.up || keys.jump) {
-            player.velY = -WATER_PHYSICS.verticalSwimSpeed;
+        // 兼容移动端：跳跃按钮主要写入 jumpBuffer，水下也要消费
+        const swimJumpTriggered = jumpBuffer > 0;
+        if (swimJumpTriggered) jumpBuffer = 0;
+        if (keys.up || keys.jump || swimJumpTriggered) {
+            player.velY = -(
+                swimJumpTriggered
+                    ? (WATER_PHYSICS.swimJumpImpulse || WATER_PHYSICS.verticalSwimSpeed)
+                    : WATER_PHYSICS.verticalSwimSpeed
+            );
         } else if (keys.down) {
             player.velY = WATER_PHYSICS.verticalSwimSpeed;
         } else {

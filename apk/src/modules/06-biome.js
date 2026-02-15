@@ -91,36 +91,42 @@ function applyBiomeEffectsToPlayer() {
         nextSpeed *= 0.65;
     }
     player.speed = nextSpeed;
-    if (biome.effects?.damage && !biome.effects.onEnterOnly) {
+    const useSlowHeatDot = currentBiome === "nether" || currentBiome === "volcano";
+    if (!useSlowHeatDot && biome.effects?.damage && !biome.effects.onEnterOnly) {
         if (gameFrame % 90 === 0) {
             damagePlayer(biome.effects.damage, player.x, 30);
         }
     }
-    // 地狱环境效果
-    if (currentBiome === 'nether') updateNetherEnvironment();
+    // 火山/地狱统一环境掉血：每分钟掉半格
+    updateExtremeHeatEnvironment();
     // 灵魂沙减速
     if (currentBiome === 'nether') checkSoulSandEffect();
     // 末地低重力
     if (currentBiome === 'end') updateEndEnvironment();
 }
 
-// ============ 地狱环境增强 ============
-let netherHeatTimer = 0;
+// ============ 高温环境（火山/地狱） ============
+let biomeHeatDotTimer = 0;
 let netherMushrooms = [];
 let fragilePlatforms = [];
 
-function updateNetherEnvironment() {
-    // 持续高温伤害（每10秒-0.5心）
-    // 穿下界合金盔甲免疫
-    if (playerEquipment && playerEquipment.armor === 'netherite') {
-        netherHeatTimer = 0;
+function updateExtremeHeatEnvironment() {
+    const inHeatBiome = currentBiome === "nether" || currentBiome === "volcano";
+    if (!inHeatBiome) {
+        biomeHeatDotTimer = 0;
         return;
     }
-    netherHeatTimer++;
-    if (netherHeatTimer >= 600) {
-        netherHeatTimer = 0;
+    // 穿下界合金盔甲免疫高温环境伤害
+    if (playerEquipment && playerEquipment.armor === 'netherite') {
+        biomeHeatDotTimer = 0;
+        return;
+    }
+    biomeHeatDotTimer++;
+    // 60fps 下 3600 帧约等于 60 秒
+    if (biomeHeatDotTimer >= 3600) {
+        biomeHeatDotTimer = 0;
         damagePlayer(0.5, player.x, 30);
-        showFloatingText('🔥 环境太热了!', player.x + player.width / 2, player.y - 30, '#FF4500');
+        showFloatingText('🔥 高温灼伤', player.x + player.width / 2, player.y - 30, '#FF4500');
     }
 }
 
