@@ -239,29 +239,50 @@ function wireTouchControls() {
     function bindHold(action, onDown, onUp) {
         const btn = root.querySelector(`[data-action="${action}"]`);
         if (!btn) return;
-        btn.addEventListener("pointerdown", e => {
-            e.preventDefault();
-            btn.setPointerCapture(e.pointerId);
-            onDown();
-        }, { passive: false });
-        btn.addEventListener("pointerup", e => {
-            e.preventDefault();
-            onUp();
-        }, { passive: false });
-        btn.addEventListener("pointercancel", e => {
-            e.preventDefault();
-            onUp();
-        }, { passive: false });
-        btn.addEventListener("lostpointercapture", () => onUp());
+
+        const supportsPointer = (typeof window !== "undefined") && ("PointerEvent" in window);
+        if (supportsPointer) {
+            btn.addEventListener("pointerdown", e => {
+                e.preventDefault();
+                try { btn.setPointerCapture(e.pointerId); } catch {}
+                onDown();
+            }, { passive: false });
+            btn.addEventListener("pointerup", e => {
+                e.preventDefault();
+                onUp();
+            }, { passive: false });
+            btn.addEventListener("pointercancel", e => {
+                e.preventDefault();
+                onUp();
+            }, { passive: false });
+            btn.addEventListener("lostpointercapture", () => onUp());
+            return;
+        }
+
+        // Fallback for older Android WebViews without Pointer Events.
+        btn.addEventListener("touchstart", e => { e.preventDefault(); onDown(); }, { passive: false });
+        btn.addEventListener("touchend", e => { e.preventDefault(); onUp(); }, { passive: false });
+        btn.addEventListener("touchcancel", e => { e.preventDefault(); onUp(); }, { passive: false });
+        btn.addEventListener("mousedown", e => { e.preventDefault(); onDown(); }, { passive: false });
+        btn.addEventListener("mouseup", e => { e.preventDefault(); onUp(); }, { passive: false });
+        btn.addEventListener("mouseleave", () => onUp());
     }
 
     function bindTap(action, fn) {
         const btn = root.querySelector(`[data-action="${action}"]`);
         if (!btn) return;
-        btn.addEventListener("pointerdown", e => {
-            e.preventDefault();
-            fn();
-        }, { passive: false });
+        const supportsPointer = (typeof window !== "undefined") && ("PointerEvent" in window);
+        if (supportsPointer) {
+            btn.addEventListener("pointerdown", e => {
+                e.preventDefault();
+                fn();
+            }, { passive: false });
+            return;
+        }
+
+        btn.addEventListener("touchstart", e => { e.preventDefault(); fn(); }, { passive: false });
+        btn.addEventListener("mousedown", e => { e.preventDefault(); fn(); }, { passive: false });
+        btn.addEventListener("click", e => { e.preventDefault(); fn(); }, { passive: false });
     }
 
     bindHold("left", () => { keys.left = true; }, () => { keys.left = false; });

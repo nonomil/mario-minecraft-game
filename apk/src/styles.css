@@ -494,9 +494,23 @@ canvas {
     left: 0;
     width: calc(100% / var(--ui-scale));
     height: calc(100% / var(--ui-scale));
-    pointer-events: none;
+    /* Some Android WebViews treat `pointer-events:none` on a transformed container as
+       disabling interactions for descendants. Keep the UI interactive. */
+    pointer-events: auto;
     transform: scale(var(--ui-scale));
     transform-origin: top left;
+}
+
+/* Improve touch responsiveness in WebView (avoid delayed clicks). */
+.game-btn,
+.overlay-btn,
+.touch-btn,
+.inv-slot,
+.inventory-tab,
+.account-item,
+.inventory-item,
+.btn-delete-account {
+    touch-action: manipulation;
 }
 
 .hud-top {
