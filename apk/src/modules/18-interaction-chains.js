@@ -621,12 +621,77 @@ function clearInteractionChains() {
     invincibilityBuff = { active: false, timer: 0, cooldownTimer: 0 };
 }
 
+// ============ 蘑菇岛停留惩罚机制 (v1.6.8) ============
+let mushroomIslandStayTime = 0;
+let mushroomIslandPenaltyLevel = 0;
+
+const MUSHROOM_ISLAND_PENALTY = {
+    stayTimers: [
+        { duration: 180000, enemyMultiplier: 1.0, splitSpeed: 1.0 },   // 0-3分钟
+        { duration: 300000, enemyMultiplier: 1.5, splitSpeed: 1.3 },   // 3-5分钟
+        { duration: Infinity, enemyMultiplier: 2.0, splitSpeed: 1.6 }  // >5分钟
+    ],
+    visualWarning: {
+        level1: { color: 'rgba(138, 43, 226, 0.1)', effect: 'edge_glow' },
+        level2: { color: 'rgba(138, 43, 226, 0.3)', effect: 'spore_rain' }
+    }
+};
+
+function updateMushroomIslandPenalty() {
+    if (currentBiome === 'mushroom_island') {
+        mushroomIslandStayTime += 16.67; // 约60fps的delta
+
+        // 确定当前惩罚等级
+        if (mushroomIslandStayTime > 300000) {
+            mushroomIslandPenaltyLevel = 2;
+        } else if (mushroomIslandStayTime > 180000) {
+            mushroomIslandPenaltyLevel = 1;
+        } else {
+            mushroomIslandPenaltyLevel = 0;
+        }
+
+        // 离开时重置
+        if (currentBiome !== 'mushroom_island') {
+            mushroomIslandStayTime = 0;
+            mushroomIslandPenaltyLevel = 0;
+        }
+    }
+}
+
+function getMushroomIslandPenaltyMultiplier() {
+    if (currentBiome !== 'mushroom_island') return 1.0;
+    return MUSHROOM_ISLAND_PENALTY.stayTimers[mushroomIslandPenaltyLevel].enemyMultiplier;
+}
+
+function renderMushroomIslandPenaltyWarning(ctx) {
+    if (mushroomIslandPenaltyLevel === 0) return;
+
+    const warning = MUSHROOM_ISLAND_PENALTY.visualWarning[`level${mushroomIslandPenaltyLevel}`];
+
+    // 屏幕边缘警告
+    ctx.fillStyle = warning.color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 孢子雨效果
+    if (warning.effect === 'spore_rain') {
+        ctx.fillStyle = 'rgba(186, 85, 211, 0.3)';
+        for (let i = 0; i < 5; i++) {
+            const x = (Date.now() / 50 + i * 200) % canvas.width;
+            const y = (Date.now() / 30 + i * 100) % canvas.height;
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+}
+
 // ============ 每帧更新 ============
 function updateAllInteractionChains() {
     updateForestShelter();
     updateDesertSystems();
     updateSnowIceSystem();
     updateCherryPetalSystem();
+    updateMushroomIslandPenalty();
 
     // 离开地面时重置蘑菇连击
     if (!player.grounded) {

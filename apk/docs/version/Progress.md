@@ -1,4 +1,20 @@
-﻿## v1.6.7（发布日期：2026-02-15）
+﻿## v1.6.8（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.8，versionCode = 61
+- 主要变更
+  - 新增：群系解锁分数重平衡 (v1.6.8) - 步骤3完整实现
+  - 重平衡：12个群系解锁分数更线性渐进 (已在v1.6.7中完成)
+  - 新增：蘑菇岛停留惩罚机制
+  - 停留时间分级：0-3分钟正常，3-5分钟+50%敌人密度，>5分钟+100%敌人密度+孢子雨
+  - 视觉警告：屏幕边缘紫色渐变 (3-5分钟淡紫，>5分钟深紫+孢子雨)
+  - 自动清理：离开蘑菇岛时重置计时器和惩罚等级
+- 技术改进
+  - src/modules/18-interaction-chains.js：添加蘑菇岛停留惩罚系统
+  - updateMushroomIslandPenalty()：每帧更新停留时间并计算惩罚等级
+  - getMushroomIslandPenaltyMultiplier()：获取当前敌人密度倍率
+  - renderMushroomIslandPenaltyWarning()：渲染视觉警告效果
+
+## v1.6.7（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.7，versionCode = 60
 - 主要变更
