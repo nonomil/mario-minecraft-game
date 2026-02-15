@@ -344,20 +344,15 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
-    const previousLayout = {
-        canvasWidth: canvas.width,
-        canvasHeight: canvas.height
-    };
     const visualViewport = getViewportSize();
     // Use the safe-area-adjusted game area for canvas + physics scaling.
     const gameArea = getGameAreaSize();
     applyConfig(gameArea);
-    const viewportChanged = gameArea.width !== lastViewport.width || gameArea.height !== lastViewport.height;
+    const prevViewport = lastViewport || { width: 0, height: 0 };
+    const deltaW = Math.abs(gameArea.width - prevViewport.width);
+    const deltaH = Math.abs(gameArea.height - prevViewport.height);
+    const viewportChanged = deltaW > 0 || deltaH > 0;
     lastViewport = { width: gameArea.width, height: gameArea.height };
-
-    if (viewportChanged && startedOnce) {
-        realignWorldForViewport(previousLayout);
-    }
 
     const baseScale = Number(settings.uiScale) || 1.0;
     const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
@@ -378,6 +373,10 @@ function applySettingsToUI() {
     }
 
     if (viewportChanged && startedOnce) {
+        const relW = prevViewport.width ? (deltaW / prevViewport.width) : 1;
+        const relH = prevViewport.height ? (deltaH / prevViewport.height) : 1;
+        const significant = deltaW >= 80 || deltaH >= 80 || relW >= 0.12 || relH >= 0.12;
+        if (!significant) return;
         if (nowMs() < viewportIgnoreUntilMs) return;
         if (startOverlayActive || pausedByModal) return;
         paused = true;

@@ -257,6 +257,7 @@ function bootGameLoopIfNeeded() {
     updateWordUI(null);
     paused = false;
     startedOnce = true;
+    viewportIgnoreUntilMs = nowMs() + 3000;
     setOverlay(false);
     showToast("冒险开始！");
     update();
