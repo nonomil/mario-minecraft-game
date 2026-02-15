@@ -1,14 +1,13 @@
-# v1.8.9 版本发布状态
+# v1.8.10 版本发布状态
 
 ## ✅ 已完成
 
 ### 1. 版本号更新
-- 版本: 1.8.8 → 1.8.9
+- 版本: 1.8.9 → 1.8.10
 
 ### 2. Bug 修复
-- 修复树木悬浮在空中的渲染问题
-- `drawPixelTree` 函数改为使用动态缩放尺寸
-- 所有树木类型（oak、birch、spruce、pine、palm、cactus）渲染正确
+- 修复部分 Android WebView 上触控按钮无响应
+- 触控层调整为底部控制带，启用 `pointer-events`
 
 ### 3. 版本记录
 - 更新 `CHANGELOG.md`
@@ -20,7 +19,7 @@
 ### 提交并推送到 Git
 ```bash
 git add .
-git commit -m "fix(renderer): fix floating trees by scaling drawPixelTree dimensions"
+git commit -m "fix(touch): enable touch controls on Android WebView"
 git push
 ```
 
@@ -28,7 +27,7 @@ git push
 
 1. **提交代码** - 提交修复到 git
 2. **推送代码** - 推送到远程仓库
-3. **测试验证** - 在不同视口大小下验证树木渲染
+3. **测试验证** - 在 Android 设备上验证触控按钮可用
 
 ---
 

@@ -494,9 +494,7 @@ canvas {
     left: 0;
     width: calc(100% / var(--ui-scale));
     height: calc(100% / var(--ui-scale));
-    /* Some Android WebViews treat `pointer-events:none` on a transformed container as
-       disabling interactions for descendants. Keep the UI interactive. */
-    pointer-events: auto;
+    pointer-events: none;
     transform: scale(var(--ui-scale));
     transform-origin: top left;
 }

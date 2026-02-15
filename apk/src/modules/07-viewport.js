@@ -87,9 +87,7 @@ function scaleGameConfig(viewport) {
         cfg.physics.movementSpeed = (baseGameConfig.physics?.movementSpeed || 0) * scale.unit;
         const baseInventoryHeight = Number(baseCanvasSize?.height) - Number(baseGameConfig.physics?.groundY ?? 530);
         const inventoryBase = Number.isFinite(baseInventoryHeight) ? baseInventoryHeight : 70;
-        const baseScale = Number(settings?.uiScale) || 1.0;
-        const uiScale = Math.max(0.6, Math.min(2.2, scale.unit * baseScale));
-        const inventoryHeight = inventoryBase * uiScale;
+        const inventoryHeight = inventoryBase * scale.unit;
         cfg.physics.groundY = cfg.canvas.height - inventoryHeight;
     }
 

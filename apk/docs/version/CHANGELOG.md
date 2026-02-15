@@ -1,5 +1,15 @@
 # 版本更新记录
 
+## v1.8.10 (2026-02-15)
+
+### 🐛 Bug 修复
+- 修复部分 Android WebView 上触控按钮无响应
+  - `#touch-controls` 使用 `pointer-events: none` 在部分 WebView 下会导致子按钮无法响应
+  - 调整触控层为底部控制带，并启用 `pointer-events`
+  - 修复文件：`apk/src/styles.css`、`apk/android-app/web/index.html`、`apk/android-app/android/app/src/main/assets/public/index.html`
+
+---
+
 ## v1.8.9 (2026-02-15)
 
 ### 🐛 Bug 修复

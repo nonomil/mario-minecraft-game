@@ -184,7 +184,9 @@ async function start() {
         if (!startedOnce) return;
         if (document.hidden) {
             paused = true;
-            setOverlay(true, "pause");
+            const btnPause = document.getElementById("btn-pause");
+            if (btnPause) btnPause.innerText = "▶️ 继续";
+            if (!pausedByModal) setOverlay(true, "pause");
         }
     });
 
