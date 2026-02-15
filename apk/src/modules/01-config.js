@@ -141,6 +141,41 @@ const INVENTORY_TEMPLATE = {
 };
 let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
+
+// 物品冷却系统
+const ITEM_COOLDOWNS = {
+    gunpowder: 300,      // 5秒 (火药炸弹)
+    ender_pearl: 480,    // 8秒 (末影珍珠传送)
+    string: 360,         // 6秒 (蜘蛛丝陷阱)
+    rotten_flesh: 240,   // 4秒 (腐肉诱饵)
+    shell: 1200,         // 20秒 (贝壳护盾)
+    coal: 180,           // 3秒 (煤矿火把)
+    flower: 600,         // 10秒 (花朵治愈)
+    dragon_egg: 720,     // 12秒 (龙蛋龙息)
+    starfish: 5400,      // 90秒 (海星幸运)
+    gold: 0              // 无冷却 (黄金交易)
+};
+let itemCooldownTimers = {}; // { itemKey: remainingFrames }
+
+// 物品描述（用于Tooltip）
+const ITEM_DESCRIPTIONS = {
+    gunpowder: { desc: "投掷炸弹，爆炸范围120px，造成30伤害", cost: "消耗: 1个", cd: "冷却: 5秒" },
+    ender_pearl: { desc: "向前方传送200px，穿越障碍物", cost: "消耗: 1个", cd: "冷却: 8秒" },
+    string: { desc: "放置蛛网陷阱，减速敌人80%持续5秒", cost: "消耗: 2个", cd: "冷却: 6秒" },
+    dragon_egg: { desc: "释放全屏龙息，对所有敌人造成50伤害", cost: "消耗: 1个", cd: "冷却: 12秒" },
+    shell: { desc: "激活2秒无敌护盾，抵挡所有伤害", cost: "消耗: 3个", cd: "冷却: 20秒" },
+    starfish: { desc: "30秒内宝箱稀有度提升一级", cost: "消耗: 1个", cd: "冷却: 90秒" },
+    coal: { desc: "放置光源，照亮周围区域8秒", cost: "消耗: 1个", cd: "冷却: 3秒" },
+    rotten_flesh: { desc: "投掷腐肉吸引附近敌人", cost: "消耗: 1个", cd: "冷却: 4秒" },
+    flower: { desc: "5秒内持续回血，共回复2❤️", cost: "消耗: 2个", cd: "冷却: 10秒" },
+    gold: { desc: "猪灵交易，获得随机物品", cost: "消耗: 1个", cd: "无冷却" },
+    diamond: { desc: "立即回复1❤️生命值", cost: "消耗: 1个", cd: "无冷却" },
+    pumpkin: { desc: "召唤雪傀儡辅助战斗", cost: "消耗: 1个", cd: "无冷却" },
+    iron: { desc: "召唤铁傀儡强力护卫", cost: "消耗: 3个", cd: "无冷却" },
+    mushroom: { desc: "合成蘑菇煲回血食物", cost: "消耗: 2个", cd: "无冷却" },
+    stick: { desc: "修复当前护甲20%耐久", cost: "消耗: 3个", cd: "无冷却" }
+};
+
 const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "stone_sword", "iron_pickaxe", "bow", "arrow"];
 const ITEM_LABELS = {
     diamond: "钻石",

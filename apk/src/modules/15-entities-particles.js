@@ -556,3 +556,138 @@ class ShulkerTurret {
         });
     }
 }
+
+// ============ 技能物品实体 ============
+
+// 炸弹类
+class Bomb {
+    constructor(x, y, direction) {
+        this.x = x;
+        this.y = y;
+        this.vx = direction * 4;
+        this.vy = -6;
+        this.width = 16;
+        this.height = 16;
+        this.life = 90; // 1.5秒后爆炸
+        this.exploded = false;
+        this.remove = false;
+    }
+    update() {
+        if (this.exploded) return;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.3; // 重力
+        // 地面碰撞
+        if (this.y >= groundY - this.height) {
+            this.y = groundY - this.height;
+            this.vy = 0;
+            this.vx *= 0.8;
+        }
+        this.life--;
+        if (this.life <= 0) {
+            this.explode();
+        }
+    }
+    explode() {
+        this.exploded = true;
+        this.remove = true;
+        const explosionRadius = 120;
+        // 伤害敌人
+        enemies.forEach(e => {
+            const dist = Math.hypot(e.x - this.x, e.y - this.y);
+            if (dist < explosionRadius) {
+                e.takeDamage(30);
+            }
+        });
+        // 破坏树木
+        trees.forEach(t => {
+            const dist = Math.hypot(t.x - this.x, t.y - this.y);
+            if (dist < explosionRadius) {
+                t.takeDamage(999);
+            }
+        });
+        // 爆炸粒子
+        for (let i = 0; i < 20; i++) {
+            particles.push(new ExplosionParticle(this.x, this.y));
+        }
+        showFloatingText('💥', this.x, this.y - 20, '#FF4500');
+    }
+    render(ctx, camX) {
+        if (this.exploded) return;
+        const dx = this.x - camX;
+        const flash = Math.floor(this.life / 10) % 2 === 0;
+        ctx.fillStyle = flash ? '#FF0000' : '#333';
+        ctx.fillRect(dx, this.y, this.width, this.height);
+        ctx.fillStyle = '#FFF';
+        ctx.fillRect(dx + 6, this.y + 2, 4, 6);
+    }
+}
+
+// 爆炸粒子
+class ExplosionParticle extends Particle {
+    constructor(x, y) {
+        super(x, y, "explosion");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        super.reset(x, y);
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 4;
+        this.velX = Math.cos(angle) * speed;
+        this.velY = Math.sin(angle) * speed;
+        this.size = 3 + Math.random() * 4;
+        this.life = 30;
+        this.color = Math.random() > 0.5 ? '#FF4500' : '#FFA500';
+    }
+}
+
+// 蛛网陷阱类
+class WebTrap {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 80;
+        this.height = 60;
+        this.duration = 300; // 5秒
+        this.slowFactor = 0.2; // 减速80%
+        this.remove = false;
+    }
+    update() {
+        this.duration--;
+        if (this.duration <= 0) {
+            this.remove = true;
+            return;
+        }
+        // 减速经过的敌人
+        enemies.forEach(e => {
+            if (rectIntersect(e.x, e.y, e.width, e.height, this.x, this.y, this.width, this.height)) {
+                e.webbed = 60; // 标记被蛛网减速
+            }
+        });
+    }
+    render(ctx, camX) {
+        const dx = this.x - camX;
+        ctx.globalAlpha = 0.6;
+        ctx.fillStyle = '#DDD';
+        ctx.fillRect(dx, this.y, this.width, this.height);
+        // 蛛网纹理
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath();
+            ctx.moveTo(dx, this.y + i * 15);
+            ctx.lineTo(dx + this.width, this.y + i * 15);
+            ctx.stroke();
+        }
+        for (let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(dx + i * 20, this.y);
+            ctx.lineTo(dx + i * 20, this.y + this.height);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+    }
+}
+
+let bombs = [];
+let webTraps = [];

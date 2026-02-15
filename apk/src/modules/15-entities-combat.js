@@ -127,6 +127,7 @@ class Enemy extends Entity {
         this.phaseChanged = false;
         this.velY = 0;
         this.grounded = false;
+        this.webbed = 0; // 蛛网减速计时器
     }
 
     takeDamage(amount) {
@@ -174,6 +175,7 @@ class Enemy extends Entity {
         this.applyGravity();
         if (this.attackCooldown > 0) this.attackCooldown--;
         if (this.teleportCooldown > 0) this.teleportCooldown--;
+        if (this.webbed > 0) this.webbed--;
     }
 
     applyGravity() {
@@ -199,15 +201,17 @@ class Enemy extends Entity {
     }
 
     updateBasic() {
-        this.x += this.speed * this.dir;
+        const speedMult = this.webbed > 0 ? 0.2 : 1; // 蛛网减速80%
+        this.x += this.speed * this.dir * speedMult;
         if (this.x > this.startX + this.range || this.x < this.startX) this.dir *= -1;
     }
 
     updateZombie(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
+        const speedMult = this.webbed > 0 ? 0.2 : 1;
         if (dist < 200) {
             this.state = "chase";
-            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
         } else {
             this.state = "patrol";
             this.updateBasic();
@@ -216,9 +220,10 @@ class Enemy extends Entity {
 
     updateSpider(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
+        const speedMult = this.webbed > 0 ? 0.2 : 1;
         if (dist < 240) {
             this.state = "chase";
-            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
         } else {
             this.state = "patrol";
             this.updateBasic();

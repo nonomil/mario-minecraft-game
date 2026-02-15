@@ -64,6 +64,10 @@ function draw() {
     // 末地实体渲染
     if (typeof renderEndEntities === 'function') renderEndEntities(ctx, cameraX);
 
+    // 技能物品实体渲染
+    if (typeof bombs !== 'undefined') bombs.forEach(b => b.render(ctx, cameraX));
+    if (typeof webTraps !== 'undefined') webTraps.forEach(w => w.render(ctx, cameraX));
+
     drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
 
     ctx.fillStyle = "#FFF";

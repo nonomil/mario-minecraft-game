@@ -184,6 +184,16 @@ function update() {
     // 末地实体清理（离开末地时）
     if (currentBiome !== 'end' && typeof clearEndEntities === 'function') clearEndEntities();
 
+    // 技能物品实体更新
+    if (typeof bombs !== 'undefined') {
+        bombs.forEach(b => b.update());
+        bombs = bombs.filter(b => !b.remove);
+    }
+    if (typeof webTraps !== 'undefined') {
+        webTraps.forEach(w => w.update());
+        webTraps = webTraps.filter(w => !w.remove);
+    }
+
     playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();
 
@@ -250,6 +260,15 @@ function update() {
     if (playerWeapons.isCharging) {
         const weapon = WEAPONS.bow;
         playerWeapons.chargeTime = Math.min(weapon.chargeMax, playerWeapons.chargeTime + 1);
+    }
+
+    // 物品冷却计时器更新
+    for (const itemKey in itemCooldownTimers) {
+        if (itemCooldownTimers[itemKey] > 0) {
+            itemCooldownTimers[itemKey]--;
+        } else {
+            delete itemCooldownTimers[itemKey];
+        }
     }
 
     // Biomes are score-driven now; the old "next level / scene switch" caused conflicts.
@@ -537,8 +556,55 @@ function useInventoryItem(itemKey) {
     const itemName = ITEM_LABELS[itemKey] || itemKey;
     let used = false;
 
+    // 检查冷却
+    if (ITEM_COOLDOWNS[itemKey] && itemCooldownTimers[itemKey] > 0) {
+        const remainingSec = Math.ceil(itemCooldownTimers[itemKey] / 60);
+        showToast(`⏳ 冷却中 (${remainingSec}秒)`);
+        return;
+    }
+
+    // 技能物品使用
+    if (itemKey === "gunpowder") {
+        // 火药炸弹
+        inventory.gunpowder -= 1;
+        const direction = player.facingRight ? 1 : -1;
+        if (typeof bombs !== 'undefined') {
+            bombs.push(new Bomb(player.x + player.width / 2, player.y, direction));
+        }
+        itemCooldownTimers.gunpowder = ITEM_COOLDOWNS.gunpowder;
+        showToast(`💥 投掷炸弹`);
+        used = true;
+    } else if (itemKey === "ender_pearl") {
+        // 末影珍珠传送
+        inventory.ender_pearl -= 1;
+        const direction = player.facingRight ? 1 : -1;
+        const teleportDist = 200;
+        player.x += direction * teleportDist;
+        player.velY = 0;
+        // 粒子效果
+        for (let i = 0; i < 15; i++) {
+            particles.push(new EndParticle(player.x, player.y + Math.random() * player.height));
+        }
+        itemCooldownTimers.ender_pearl = ITEM_COOLDOWNS.ender_pearl;
+        showFloatingText('🟣 传送!', player.x, player.y - 30, '#9C27B0');
+        showToast(`🟣 末影传送`);
+        used = true;
+    } else if (itemKey === "string") {
+        // 蜘蛛丝陷阱
+        if (count < 2) {
+            showToast("❌ 需要2个蜘蛛丝");
+            return;
+        }
+        inventory.string -= 2;
+        if (typeof webTraps !== 'undefined') {
+            webTraps.push(new WebTrap(player.x - 20, groundY - 60));
+        }
+        itemCooldownTimers.string = ITEM_COOLDOWNS.string;
+        showToast(`🕸️ 放置蛛网陷阱`);
+        used = true;
+    }
     // 消耗品使用
-    if (itemKey === "diamond") {
+    else if (itemKey === "diamond") {
         if (playerHp >= playerMaxHp) {
             showToast("❤️ 已满血");
             return;
