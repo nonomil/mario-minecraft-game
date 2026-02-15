@@ -67,6 +67,8 @@ function draw() {
     // 技能物品实体渲染
     if (typeof bombs !== 'undefined') bombs.forEach(b => b.render(ctx, cameraX));
     if (typeof webTraps !== 'undefined') webTraps.forEach(w => w.render(ctx, cameraX));
+    if (typeof fleshBaits !== 'undefined') fleshBaits.forEach(f => f.render(ctx, cameraX));
+    if (typeof torches !== 'undefined') torches.forEach(t => t.render(ctx, cameraX));
 
     drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
 

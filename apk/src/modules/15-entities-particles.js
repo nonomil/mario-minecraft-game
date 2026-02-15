@@ -689,5 +689,102 @@ class WebTrap {
     }
 }
 
+// 腐肉诱饵类
+class FleshBait {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 20;
+        this.height = 20;
+        this.duration = 180; // 3秒
+        this.attractRadius = 200;
+        this.remove = false;
+    }
+    update() {
+        this.duration--;
+        if (this.duration <= 0) {
+            this.remove = true;
+            return;
+        }
+        // 吸引附近敌人
+        enemies.forEach(e => {
+            const dist = Math.hypot(e.x - this.x, e.y - this.y);
+            if (dist < this.attractRadius && dist > 10) {
+                const dx = this.x - e.x;
+                const dy = this.y - e.y;
+                const angle = Math.atan2(dy, dx);
+                e.x += Math.cos(angle) * (e.speed || 1) * 1.5;
+                e.y += Math.sin(angle) * (e.speed || 1) * 0.5;
+            }
+        });
+    }
+    render(ctx, camX) {
+        const dx = this.x - camX;
+        const pulse = Math.sin(Date.now() / 200) * 0.3 + 0.7;
+        ctx.globalAlpha = pulse;
+        // 腐肉
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(dx - 10, this.y - 10, this.width, this.height);
+        // 吸引光环
+        ctx.strokeStyle = '#FF6B6B';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(dx, this.y, this.attractRadius * (1 - this.duration / 180), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+    }
+}
+
+// 火把类
+class Torch {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.width = 12;
+        this.height = 30;
+        this.duration = 480; // 8秒
+        this.lightRadius = 150;
+        this.remove = false;
+        this.flicker = 0;
+    }
+    update() {
+        this.duration--;
+        this.flicker = Math.sin(Date.now() / 100) * 5;
+        if (this.duration <= 0) {
+            this.remove = true;
+        }
+    }
+    render(ctx, camX) {
+        const dx = this.x - camX;
+        // 光晕
+        const grad = ctx.createRadialGradient(dx, this.y, 0, dx, this.y, this.lightRadius + this.flicker);
+        grad.addColorStop(0, 'rgba(255, 200, 100, 0.4)');
+        grad.addColorStop(0.5, 'rgba(255, 150, 50, 0.2)');
+        grad.addColorStop(1, 'rgba(255, 100, 0, 0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(dx - this.lightRadius, this.y - this.lightRadius, this.lightRadius * 2, this.lightRadius * 2);
+        // 火把杆
+        ctx.fillStyle = '#8B4513';
+        ctx.fillRect(dx - 3, this.y, 6, this.height);
+        // 火焰
+        ctx.fillStyle = '#FFA500';
+        ctx.beginPath();
+        ctx.moveTo(dx, this.y - 10 + this.flicker);
+        ctx.lineTo(dx - 6, this.y + 5);
+        ctx.lineTo(dx + 6, this.y + 5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#FF4500';
+        ctx.beginPath();
+        ctx.moveTo(dx, this.y - 5 + this.flicker);
+        ctx.lineTo(dx - 3, this.y + 2);
+        ctx.lineTo(dx + 3, this.y + 2);
+        ctx.closePath();
+        ctx.fill();
+    }
+}
+
 let bombs = [];
 let webTraps = [];
+let fleshBaits = [];
+let torches = [];

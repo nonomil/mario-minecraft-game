@@ -193,6 +193,14 @@ function update() {
         webTraps.forEach(w => w.update());
         webTraps = webTraps.filter(w => !w.remove);
     }
+    if (typeof fleshBaits !== 'undefined') {
+        fleshBaits.forEach(f => f.update());
+        fleshBaits = fleshBaits.filter(f => !f.remove);
+    }
+    if (typeof torches !== 'undefined') {
+        torches.forEach(t => t.update());
+        torches = torches.filter(t => !t.remove);
+    }
 
     playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();
@@ -601,6 +609,36 @@ function useInventoryItem(itemKey) {
         }
         itemCooldownTimers.string = ITEM_COOLDOWNS.string;
         showToast(`🕸️ 放置蛛网陷阱`);
+        used = true;
+    } else if (itemKey === "rotten_flesh") {
+        // 腐肉诱饵
+        inventory.rotten_flesh -= 1;
+        if (typeof fleshBaits !== 'undefined') {
+            fleshBaits.push(new FleshBait(player.x + player.width / 2, groundY - 20));
+        }
+        itemCooldownTimers.rotten_flesh = ITEM_COOLDOWNS.rotten_flesh;
+        showToast(`🥩 投掷腐肉诱饵`);
+        used = true;
+    } else if (itemKey === "shell") {
+        // 贝壳护盾
+        if (count < 3) {
+            showToast("❌ 需要3个贝壳");
+            return;
+        }
+        inventory.shell -= 3;
+        playerInvincibleTimer = 120; // 2秒无敌
+        itemCooldownTimers.shell = ITEM_COOLDOWNS.shell;
+        showFloatingText('🛡️ 无敌!', player.x, player.y - 30, '#00BFFF');
+        showToast(`🐚 激活护盾`);
+        used = true;
+    } else if (itemKey === "coal") {
+        // 煤矿火把
+        inventory.coal -= 1;
+        if (typeof torches !== 'undefined') {
+            torches.push(new Torch(player.x, groundY - 30));
+        }
+        itemCooldownTimers.coal = ITEM_COOLDOWNS.coal;
+        showToast(`🪨 放置火把`);
         used = true;
     }
     // 消耗品使用
