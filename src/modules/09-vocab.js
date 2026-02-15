@@ -437,3 +437,56 @@ function pickNextWord() {
     const idx = Math.floor(Math.random() * wordDatabase.length);
     return wordDatabase[idx];
 }
+
+/**
+ * 获取需要复习的单词列表（基于间隔重复算法）(v1.6.3 新增)
+ * @param {number} count - 需要复习的单词数量（默认3个）
+ * @returns {Array} 单词对象数组
+ */
+function getWordsForReview(count) {
+    count = count || 3;
+    const stats = progress.challengeStats || {};
+    const now = Date.now();
+    const candidates = [];
+
+    // 从答题记录中找出"该复习"的单词
+    for (const word in stats) {
+        const s = stats[word];
+        const total = (s.correct || 0) + (s.wrong || 0);
+        if (total === 0) continue;
+
+        // 间隔策略：答对越多，复习间隔越长
+        const level = Math.min(s.correct || 0, 5);
+        const intervals = [
+            0,           // level 0: 立即
+            60000,       // level 1: 1分钟
+            300000,      // level 2: 5分钟
+            900000,      // level 3: 15分钟
+            3600000,     // level 4: 1小时
+            86400000     // level 5: 1天
+        ];
+
+        const nextReview = (s.lastSeen || 0) + (intervals[level] || 0);
+
+        if (now >= nextReview) {
+            // 计算优先级：错误率高的 + 久未复习的优先
+            const errorRate = (s.wrong || 0) / total;
+            const timeSince = now - (s.lastSeen || 0);
+
+            candidates.push({
+                word: word,
+                priority: errorRate * 100 + timeSince / 60000  // 归一化优先级
+            });
+        }
+    }
+
+    // 按优先级排序，取前N个
+    candidates.sort((a, b) => b.priority - a.priority);
+
+    // 返回完整的 wordObj
+    return candidates.slice(0, count).map(c => {
+        const found = wordDatabase.find(w => w.en === c.word);
+        return found || { en: c.word, zh: stats[c.word]?.zh || "" };
+    });
+}
+

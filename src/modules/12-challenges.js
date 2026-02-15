@@ -316,6 +316,28 @@ function completeLearningChallenge(correct) {
     }
     // === 记录结束 ===
 
+    // === v1.6.3 新增：处理复习来源（必须在 paused 恢复之前） ===
+    if (challengeOrigin && challengeOrigin._isReview) {
+        // 记录复习结果
+        reviewResults.push({
+            word: currentLearningChallenge.wordObj.en,
+            correct: correct
+        });
+
+        // 移到下一个单词
+        reviewIndex++;
+
+        // 清理状态
+        currentLearningChallenge = null;
+        challengeOrigin = null;
+
+        // 短暂延迟后显示下一个（不恢复 paused）
+        setTimeout(() => showReviewWord(), 600);
+
+        return;  // 提前返回，不执行后面的逻辑
+    }
+    // === v1.6.3 复习处理结束 ===
+
     const reward = LEARNING_CONFIG.challenge.rewards;
     if (correct) {
         addScore(reward.correct.score);
@@ -471,3 +493,80 @@ function speakWord(wordObj) {
         zhText ? { text: zhText, lang: "zh-CN" } : null
     ]);
 }
+
+// ==================== v1.6.3 复习系统 ====================
+
+// 复习系统全局状态
+let reviewActive = false;
+let reviewWords = [];
+let reviewIndex = 0;
+let reviewResults = [];
+
+/**
+ * 检查并启动复习流程
+ */
+function maybeShowReview() {
+    // 安全检查：不与其他系统冲突
+    if (reviewActive || currentLearningChallenge || paused) return;
+
+    // 获取需要复习的单词
+    const words = getWordsForReview(3);
+    if (words.length === 0) return;
+
+    // 初始化复习状态
+    reviewActive = true;
+    reviewWords = words;
+    reviewIndex = 0;
+    reviewResults = [];
+    paused = true;
+
+    showToast("📚 快速复习！", 1000);
+    setTimeout(() => showReviewWord(), 500);
+}
+
+/**
+ * 显示当前复习单词
+ */
+function showReviewWord() {
+    if (reviewIndex >= reviewWords.length) {
+        finishReview();
+        return;
+    }
+
+    const wordObj = reviewWords[reviewIndex];
+
+    // 复用现有的 Challenge 系统来显示题目
+    // origin 传入特殊标记对象
+    startLearningChallenge(wordObj, "translate", {
+        _isReview: true,
+        _reviewIndex: reviewIndex
+    });
+}
+
+/**
+ * 完成复习流程，显示结果和奖励
+ */
+function finishReview() {
+    reviewActive = false;
+
+    const correct = reviewResults.filter(r => r.correct).length;
+    const total = reviewResults.length;
+
+    // 更新统计（已在 completeLearningChallenge 中记录）
+
+    // 计算奖励
+    addScore(correct * 30);
+
+    if (correct === total && total > 0) {
+        // 全对奖励
+        inventory.diamond = (inventory.diamond || 0) + 1;
+        updateInventoryUI();
+        showToast(`📚 复习完成！全对！+${correct * 30}分 +1💎`, 2500);
+    } else {
+        showToast(`📚 复习完成！${correct}/${total} +${correct * 30}分`, 2000);
+    }
+
+    // 恢复游戏状态
+    paused = false;
+}
+

@@ -60,6 +60,13 @@ function updateCurrentBiome() {
         updateWeatherForBiome(nextBiome);
         const info = document.getElementById("level-info");
         if (info) info.innerText = `生态: ${nextBiome.name}`;
+
+        // === v1.6.3 新增：延迟触发复习 ===
+        if (settings.reviewOnBiomeSwitch) {
+            // 延迟1.5秒，让 biome 切换动画完成
+            setTimeout(() => maybeShowReview(), 1500);
+        }
+
         if (currentBiome === "nether" && netherEntryPenaltyArmed) {
             playerHp = Math.max(0, playerHp - 1);
             updateHpUI();
