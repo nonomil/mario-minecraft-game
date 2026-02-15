@@ -960,6 +960,17 @@ function spawnGolem(type) {
 }
 
 function handleInteraction() {
+    // v1.8.3 村庄建筑交互优先
+    if (playerInVillage && currentVillage && typeof checkVillageBuildings === 'function') {
+      checkVillageBuildings(currentVillage);
+      return;
+    }
+    // v1.8.2 村庄休息系统
+    if (playerInVillage && currentVillage && restPromptVisible) {
+        performRest(currentVillage);
+        return;
+    }
+
     let nearestChest = null;
     let minDist = 60;
     const now = Date.now();

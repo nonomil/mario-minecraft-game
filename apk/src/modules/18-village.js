@@ -259,11 +259,125 @@ function updateVillages() {
       }
       // v1.8.1 更新村民 (v1.8.1)
       updateVillageNPCs(v);
+
+      // v1.8.2 检测休息屋 (v1.8.2)
+      checkVillageRest(v);
       break;
     }
   }
   if (wasInVillage && !playerInVillage) {
     showToast('👋 离开村庄');
+    // v1.8.2 清除休息提示
+    hideRestPrompt();
+  }
+}
+
+// ========== 休息系统 (v1.8.2) ==========
+let restPromptVisible = false;
+let restPromptVillage = null;
+
+function checkVillageRest(village) {
+  if (!village) return;
+  if (village.restUsed) return; // 已使用过
+
+  // 查找 bed_house 建筑
+  const bedHouse = village.buildings.find(b => b.type === 'bed_house');
+  if (!bedHouse) return;
+
+  // 检测玩家是否在床屋区域内
+  const inBedHouse = player.x >= bedHouse.x && player.x <= bedHouse.x + bedHouse.w;
+  if (inBedHouse && !restPromptVisible) {
+    showRestPrompt(village);
+  } else if (!inBedHouse && restPromptVisible) {
+    hideRestPrompt();
+  }
+}
+
+function checkVillageBuildings(village) {
+  if (!village) return;
+
+  for (const building of village.buildings) {
+    const buildingLeft = building.x;
+    const buildingRight = building.x + building.w;
+
+    // 检测玩家是否在建筑区域内
+    if (player.x + player.width / 2 >= buildingLeft &&
+        player.x + player.width / 2 <= buildingRight) {
+      handleVillageInteraction(building, village);
+    }
+  }
+}
+
+function showRestPrompt(village) {
+  restPromptVisible = true;
+  restPromptVillage = village;
+  const restPromptEl = document.getElementById('rest-prompt');
+  if (restPromptEl) {
+    restPromptEl.style.display = 'block';
+    return;
+  }
+
+  // 动态创建休息提示
+  const prompt = document.createElement('div');
+  prompt.id = 'rest-prompt';
+  prompt.className = 'rest-prompt';
+  prompt.innerHTML = `
+    <div class="rest-prompt-content">
+      <div>💤 休息回血</div>
+      <button id="btn-rest" class="game-btn">休息 (Y)</button>
+    </div>
+  `;
+  document.getElementById('game-container').appendChild(prompt);
+
+  const btnRest = document.getElementById('btn-rest');
+  if (btnRest) {
+    btnRest.addEventListener('click', () => {
+      performRest(restPromptVillage);
+    });
+  }
+}
+
+function hideRestPrompt() {
+  restPromptVisible = false;
+  restPromptVillage = null;
+  const restPromptEl = document.getElementById('rest-prompt');
+  if (restPromptEl) {
+    restPromptEl.style.display = 'none';
+  }
+}
+
+function performRest(village) {
+  if (!village) return;
+  if (village.restUsed) {
+    showToast('💤 已经休息过了');
+    return;
+  }
+
+  // 检查满血条件
+  const isFullHp = playerHp >= playerMaxHp;
+  if (isFullHp && villageConfig.restHealFull) {
+    showToast('❤️ 已满血，无需休息');
+    return;
+  }
+
+  // 执行休息回血
+  if (villageConfig.restHealFull) {
+    playerHp = playerMaxHp;
+  } else {
+    playerHp = Math.min(playerMaxHp, playerHp + 5);
+  }
+
+  updateHpUI();
+  village.restUsed = true;
+  hideRestPrompt();
+
+  const healAmount = villageConfig.restHealFull ? '全满' : '+5';
+  showToast(`💤 休息成功！生命${healAmount}`);
+  showFloatingText('❤️ +休息', player.x, player.y - 60);
+
+  // 保存进度
+  if (typeof saveCurrentProgress === 'function') {
+    saveCurrentProgress();
   }
 }
 
@@ -285,4 +399,49 @@ function getVillageAt(x) {
 function getBiomeName(biomeId) {
   const biome = biomeConfigs[biomeId];
   return biome ? biome.name : biomeId;
+}
+
+// ========== v1.8.3 村庄单词系统 ==========
+function getVillageWords(biomeId) {
+  if (!villageConfig || !villageConfig.biomeWords) return [];
+  return villageConfig.biomeWords[biomeId] || villageConfig.biomeWords.forest || [];
+}
+
+function handleVillageInteraction(building, village) {
+  if (!building || !village) return false;
+
+  switch (building.type) {
+    case 'bed_house':
+      // v1.8.2 休息系统已在 checkVillageRest 中处理
+      return true;
+    case 'word_house':
+      // v1.8.3 单词学习屋
+      if (village.questCompleted) {
+        showToast('📚 已完成学习任务');
+        return false;
+      }
+      if (typeof startVillageChallenge === 'function') {
+        startVillageChallenge(village, () => {
+          village.questCompleted = true;
+        });
+      }
+      return true;
+    case 'save_stone':
+      // v1.8.4 存档石碑
+      if (typeof saveVillageProgress === 'function') {
+        saveVillageProgress(village);
+      }
+      return true;
+    case 'special':
+      // v1.8.4 特色建筑
+      showToast('🏗 特色建筑暂未开放');
+      return true;
+  }
+  return false;
+}
+
+function saveVillageProgress(village) {
+  village.saved = true;
+  showToast('💾 游戏进度已保存');
+  // 这里可以添加实际的存档逻辑
 }
