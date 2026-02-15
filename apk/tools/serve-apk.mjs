@@ -1,12 +1,12 @@
 import { createServer } from 'http';
 import { readFile } from 'fs/promises';
-import { extname, join } from 'path';
+import { extname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const rootDir = join(__dirname, '..');
+const rootDir = resolve(__dirname, '..');
 
 const mimeTypes = {
   '.html': 'text/html',
@@ -31,11 +31,22 @@ const port = process.argv.includes('--port')
   : 4173;
 
 const server = createServer(async (req, res) => {
-  let filePath = req.url === '/' ? '/Game.html' : req.url;
-  filePath = filePath.split('?')[0]; // Remove query params
+  let urlPath = req.url === '/' ? '/Game.html' : (req.url || '/Game.html');
+  urlPath = urlPath.split('?')[0]; // Remove query params
+  try {
+    urlPath = decodeURIComponent(urlPath);
+  } catch {
+  }
 
-  const fullPath = join(rootDir, filePath);
-  const ext = extname(filePath);
+  const fullPath = resolve(rootDir, `.${urlPath}`);
+  if (!fullPath.startsWith(rootDir)) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    res.end('403 Forbidden');
+    console.log(`✗ ${req.method} ${req.url} - 403`);
+    return;
+  }
+
+  const ext = extname(urlPath);
   const contentType = mimeTypes[ext] || 'application/octet-stream';
 
   try {

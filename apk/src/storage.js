@@ -76,13 +76,21 @@ window.MMWG_STORAGE = {
         this.saveJson("mmwg_accounts", accounts);
     },
     getCurrentAccountId() {
-        return window.localStorage.getItem("mmwg_current_account") || null;
+        try {
+            return window.localStorage.getItem("mmwg_current_account") || null;
+        } catch {
+            return null;
+        }
     },
     setCurrentAccountId(id) {
-        if (id) {
-            window.localStorage.setItem("mmwg_current_account", id);
-        } else {
-            window.localStorage.removeItem("mmwg_current_account");
+        try {
+            if (id) {
+                window.localStorage.setItem("mmwg_current_account", id);
+            } else {
+                window.localStorage.removeItem("mmwg_current_account");
+            }
+        } catch {
+            console.warn("Storage save failed: mmwg_current_account");
         }
     },
     getAccount(id) {

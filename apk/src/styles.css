@@ -1213,6 +1213,10 @@ canvas {
     display: flex;
 }
 
+.login-screen.visible ~ #game-container canvas {
+    pointer-events: none;
+}
+
 .login-container {
     background: rgba(0, 0, 0, 0.9);
     border-radius: 18px;

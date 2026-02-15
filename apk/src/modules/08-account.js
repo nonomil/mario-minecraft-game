@@ -252,6 +252,7 @@ async function loginWithAccount(account, options) {
 
 function bootGameLoopIfNeeded() {
     if (startedOnce) return;
+    applySettingsToUI();
     initGame();
     updateWordUI(null);
     paused = false;
