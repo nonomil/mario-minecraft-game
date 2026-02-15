@@ -304,6 +304,28 @@ function wireLearningModals() {
     matchTimerEl = document.getElementById("match-timer");
     matchSubmitBtn = document.getElementById("btn-match-submit");
 
+    // === v1.6.4 新增：单词本按钮事件绑定 ===
+    const btnVocabBook = document.getElementById("btn-vocab-book");
+    if (btnVocabBook) {
+        btnVocabBook.addEventListener("click", () => {
+            showVocabBook();
+        });
+    }
+
+    const btnCloseVocabBook = document.getElementById("btn-close-vocab-book");
+    if (btnCloseVocabBook) {
+        btnCloseVocabBook.addEventListener("click", () => {
+            hideVocabBook();
+        });
+    }
+
+    const vocabBookModal = document.getElementById("vocab-book-modal");
+    if (vocabBookModal) {
+        vocabBookModal.addEventListener("click", e => {
+            if (e.target === vocabBookModal) hideVocabBook();
+        });
+    }
+
     if (challengeRepeatBtn) {
         challengeRepeatBtn.addEventListener("click", () => {
             if (currentLearningChallenge?.wordObj) {

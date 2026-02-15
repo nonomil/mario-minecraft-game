@@ -1276,3 +1276,58 @@ canvas {
 .achievement-content {
     flex: 1;
 }
+
+/* ==================== v1.6.4 单词本样式 ==================== */
+.vocab-book {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.vocab-book-list {
+    margin: 20px 0;
+}
+
+.vocab-book-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.vocab-book-item:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.vocab-status {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+.vocab-word {
+    font-weight: bold;
+    min-width: 100px;
+    font-family: 'Courier New', monospace;
+}
+
+.vocab-zh {
+    color: #ccc;
+    min-width: 80px;
+}
+
+.vocab-rate {
+    font-weight: bold;
+    min-width: 40px;
+    text-align: right;
+}
+
+.vocab-count {
+    min-width: 80px;
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+}
+

@@ -427,6 +427,23 @@ function showProfileModal() {
     if (profileHighscoreEl) profileHighscoreEl.innerText = currentAccount.progress?.highScore || 0;
     if (profileWordsEl) profileWordsEl.innerText = currentAccount.vocabulary?.learnedWords?.length || 0;
     if (profileGamesEl) profileGamesEl.innerText = currentAccount.stats?.gamesPlayed || 0;
+
+    // === v1.6.4 新增：答题统计 ===
+    const challengeStatsEl = document.getElementById("profile-challenge-stats");
+    if (challengeStatsEl) {
+        const cs = getChallengeStats();
+
+        if (cs.totalCorrect + cs.totalWrong > 0) {
+            challengeStatsEl.innerHTML =
+                `答题 ${cs.totalCorrect + cs.totalWrong} 次，` +
+                `正确率 <strong>${cs.accuracy}%</strong>，` +
+                `涉及 ${cs.wordCount} 个单词`;
+        } else {
+            challengeStatsEl.innerHTML = '还没有答题记录';
+            challengeStatsEl.style.color = '#888';
+        }
+    }
+
     renderAchievements();
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
@@ -472,6 +489,98 @@ function formatPlayTime(seconds) {
     }
     return `${minutes} 分钟`;
 }
+
+// ==================== v1.6.4 单词本功能 ====================
+
+/**
+ * 显示单词本
+ */
+function showVocabBook() {
+    const modal = document.getElementById("vocab-book-modal");
+    const list = document.getElementById("vocab-book-list");
+    if (!modal || !list) return;
+
+    const stats = progress.challengeStats || {};
+    const words = Object.keys(stats);
+
+    if (words.length === 0) {
+        list.innerHTML = `
+            <div style="text-align:center;padding:40px;color:#888;">
+                <p style="font-size:48px;margin:0;">📚</p>
+                <p style="margin:10px 0;">还没有答题记录</p>
+                <p style="font-size:12px;margin-top:10px;color:#666;">
+                    收集单词或开宝箱后会有答题机会
+                </p>
+            </div>
+        `;
+    } else {
+        // 按掌握程度排序：需复习的在前
+        words.sort((a, b) => {
+            const aS = stats[a];
+            const bS = stats[b];
+            const aTotal = (aS.correct || 0) + (aS.wrong || 0) || 1;
+            const bTotal = (bS.correct || 0) + (bS.wrong || 0) || 1;
+            const aRate = (aS.correct || 0) / aTotal;
+            const bRate = (bS.correct || 0) / bTotal;
+            return aRate - bRate;  // 正确率低的在前
+        });
+
+        list.innerHTML = words.map(word => {
+            const s = stats[word];
+            const total = (s.correct || 0) + (s.wrong || 0);
+            const rate = total > 0 ? Math.round((s.correct || 0) / total * 100) : 0;
+
+            // 找中文翻译
+            const found = wordDatabase && wordDatabase.find ? wordDatabase.find(w => w.en === word) : null;
+            const zh = found?.zh || "";
+
+            // 掌握程度颜色
+            let color, status;
+            if (rate >= 80) {
+                color = "#4CAF50";  // 绿色 = 已掌握
+                status = "✓";
+            } else if (rate >= 50) {
+                color = "#FFC107";  // 黄色 = 学习中
+                status = "◐";
+            } else {
+                color = "#F44336";  // 红色 = 需复习
+                status = "✗";
+            }
+
+            return `
+                <div class="vocab-book-item">
+                    <span class="vocab-status" style="color:${color}">${status}</span>
+                    <span class="vocab-word">${word.toUpperCase()}</span>
+                    <span class="vocab-zh">${zh}</span>
+                    <span class="vocab-rate" style="color:${color}">${rate}%</span>
+                    <span class="vocab-count">✓${s.correct || 0} ✗${s.wrong || 0}</span>
+                </div>
+            `;
+        }).join("");
+    }
+
+    // 显示模态框
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    pausedByModal = true;
+    paused = true;
+}
+
+/**
+ * 隐藏单词本
+ */
+function hideVocabBook() {
+    const modal = document.getElementById("vocab-book-modal");
+    if (modal) {
+        modal.classList.remove("visible");
+        modal.setAttribute("aria-hidden", "true");
+        if (pausedByModal) {
+            pausedByModal = false;
+            paused = false;
+        }
+    }
+}
+
 
 function wireProfileModal() {
     const modal = document.getElementById("profile-modal");

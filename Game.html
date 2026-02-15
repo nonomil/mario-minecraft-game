@@ -308,11 +308,28 @@
             <div>最高积分: <span id="profile-highscore">0</span></div>
             <div>已学词数: <span id="profile-words">0</span></div>
             <div>游玩时长: <span id="profile-playtime">0 分钟</span></div>
+            <!-- v1.6.4 新增：答题统计 -->
+            <div>📝 答题统计: <span id="profile-challenge-stats">-</span></div>
+        </div>
+        <!-- v1.6.4 新增：单词本按钮 -->
+        <div style="text-align:center;margin:15px 0;">
+            <button id="btn-vocab-book" class="game-btn">📖 我的单词本</button>
         </div>
         <div class="profile-achievements">
             <h3>成就</h3>
             <div id="achievements-container"></div>
         </div>
+    </div>
+</div>
+
+<!-- v1.6.4 新增：单词本模态框 -->
+<div id="vocab-book-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content vocab-book">
+        <div class="profile-header">
+            <h2>📖 我的单词本</h2>
+            <button class="game-btn game-btn-small" id="btn-close-vocab-book">关闭</button>
+        </div>
+        <div id="vocab-book-list" class="vocab-book-list"></div>
     </div>
 </div>
 
