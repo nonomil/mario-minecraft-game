@@ -24,7 +24,15 @@ function draw() {
 
     decorations.forEach(d => drawDecoration(d));
 
-    chests.forEach(c => drawChest(c.x, c.y, c.opened));
+    chests.forEach(c => {
+        drawChest(c.x, c.y, c.opened);
+
+        // === v1.6.2 新增：未开启的宝箱显示英文名 ===
+        if (!c.opened) {
+            const width = c.width || blockSize * 0.8;
+            drawEntityLabel(c.x, c.y, width, "chest");
+        }
+    });
 
     items.forEach(i => {
         if (!i.collected) drawItem(i.x, i.y + i.floatY, i.wordObj.en);

@@ -3,6 +3,41 @@
  * 从 14-renderer.js 拆分
  */
 
+/**
+ * 绘制实体上方的英文名标签 (v1.6.2 新增)
+ * @param {number} x - 实体X坐标
+ * @param {number} y - 实体Y坐标
+ * @param {number} width - 实体宽度
+ * @param {string} type - 实体类型（如 "zombie", "chest"）
+ */
+function drawEntityLabel(x, y, width, type) {
+    // 检查配置开关
+    if (!settings.showEnvironmentWords) return;
+
+    // 查找映射表
+    const entry = ENTITY_NAMES[type];
+    if (!entry) return;
+
+    const centerX = x + width / 2;
+    const labelY = y - 14;  // 在实体上方14像素
+
+    ctx.save();
+    ctx.font = "bold 11px Arial";
+    ctx.textAlign = "center";
+
+    // 黑色描边（确保在任何背景下可见）
+    ctx.strokeStyle = "rgba(0,0,0,0.7)";
+    ctx.lineWidth = 3;
+    ctx.strokeText(entry.en, centerX, labelY);
+
+    // 白色文字
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.fillText(entry.en, centerX, labelY);
+
+    ctx.restore();
+}
+
+
 function drawSteve(x, y, facingRight, attacking) {
     const s = player.width / 26;
     ctx.fillStyle = "#00AAAA";
@@ -99,6 +134,11 @@ function drawEnemy(enemy) {
     if (enemy.hp < enemy.maxHp) {
         drawHealthBar(enemy.x, enemy.y - 8, enemy.width, enemy.hp, enemy.maxHp);
     }
+
+    // === v1.6.2 新增：绘制英文名标签 ===
+    // 如果有血条，标签位置上移避免重叠
+    const labelOffset = enemy.hp < enemy.maxHp ? 16 : 0;
+    drawEntityLabel(enemy.x, enemy.y - labelOffset, enemy.width, enemy.type);
 }
 
 function drawZombie(enemy) {
@@ -274,6 +314,10 @@ function drawGolem(golem) {
         ctx.fillRect(x + 15, y + 6, 4, 2);
     }
     drawHealthBar(x, y - 8, golem.width, golem.hp, golem.maxHp);
+
+    // === v1.6.2 新增：绘制英文名标签 ===
+    const golemType = golem.type === "iron" ? "iron_golem" : "snow_golem";
+    drawEntityLabel(x, y - 16, golem.width, golemType);
 }
 
 function drawHealthBar(x, y, width, hp, maxHp) {
