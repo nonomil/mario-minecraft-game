@@ -68,7 +68,8 @@ function scaleGameConfig(viewport) {
         cfg.physics.gravity = (baseGameConfig.physics?.gravity || 0) * scale.unit;
         cfg.physics.jumpStrength = (baseGameConfig.physics?.jumpStrength || 0) * scale.unit;
         cfg.physics.movementSpeed = (baseGameConfig.physics?.movementSpeed || 0) * scale.unit;
-        const inventoryHeight = 48 * scale.unit;
+        const baseInventoryHeight = baseCanvasSize.height - (baseGameConfig.physics?.groundY || 530);
+        const inventoryHeight = baseInventoryHeight * scale.unit;
         cfg.physics.groundY = cfg.canvas.height - inventoryHeight;
     }
 

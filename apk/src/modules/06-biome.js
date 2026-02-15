@@ -281,15 +281,12 @@ function renderSwimBubbles(ctx, camX) {
     if (currentBiome !== 'ocean') return;
     particles.forEach(p => {
         if (p.type !== 'bubble') return;
-        p.x += p.vx || 0;
-        p.y += p.vy || 0;
-        p.life -= 0.01;
-        p.size = (p.size || 3) * 1.002;
-        ctx.globalAlpha = p.life * 0.6;
+        const alpha = (typeof p.life === "number" ? p.life : 0) * 0.6;
+        ctx.globalAlpha = Math.max(0, Math.min(alpha, 1));
         ctx.strokeStyle = '#87CEEB';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(p.x - camX, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(p.x - camX, p.y, p.size || 3, 0, Math.PI * 2);
         ctx.stroke();
     });
     ctx.globalAlpha = 1;

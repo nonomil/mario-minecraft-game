@@ -165,8 +165,21 @@ function update() {
     decorations = decorations.filter(d => d.x + d.width > cameraX - removeThreshold && !d.remove);
 
     if (particles.length) {
-        particles.forEach(p => p.update());
-        particles = particles.filter(p => !p.remove);
+        particles.forEach(p => {
+            if (!p) return;
+            if (typeof p.update === "function") {
+                p.update();
+                return;
+            }
+            if (p.type === "bubble") {
+                p.x += p.vx || 0;
+                p.y += p.vy || 0;
+                p.life -= 0.01;
+                p.size = (p.size || 3) * 1.002;
+                if (p.life <= 0) p.remove = true;
+            }
+        });
+        particles = particles.filter(p => !p?.remove);
     }
     spawnBiomeParticles();
 
