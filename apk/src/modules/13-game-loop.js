@@ -30,6 +30,7 @@ function update() {
     if (typeof updateVillages === 'function') updateVillages();
     applyBiomeEffectsToPlayer();
     if (typeof updateAllInteractionChains === 'function') updateAllInteractionChains();
+    if (typeof updateBiomeVisuals === 'function') updateBiomeVisuals();
     tickWeather();
 
     const isUnderwater = (currentBiome === 'ocean');
