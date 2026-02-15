@@ -378,7 +378,7 @@ function generatePlatform(startX, length, groundYValue) {
 
 function spawnEnemyByDifficulty(x, y) {
     // 村庄安全区不刷怪 (v1.8.0)
-    if (isInVillageArea(x)) return;
+    if (typeof isInVillageArea === 'function' && isInVillageArea(x)) return;
     const enemyConfig = getEnemyConfig();
     const step = Number(getBiomeSwitchConfig().stepScore) || 200;
     const tier = Math.max(0, Math.floor((Number(getProgressScore()) || 0) / Math.max(1, step)));

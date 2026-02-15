@@ -78,14 +78,19 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const storageJs = readText(path.join(projectRoot, "src", "storage.js"));
   const manifestJs = readText(path.join(projectRoot, "words", "vocabs", "manifest.js"));
 
-  // Read all module files in order
+  // Read all module files in order (must match Game.html script tag order)
   const moduleFiles = [
     "01-config.js", "02-utils.js", "03-audio.js", "04-weapons.js",
     "05-difficulty.js", "06-biome.js", "07-viewport.js", "08-account.js",
-    "09-vocab.js", "10-ui.js", "11-game-init.js", "12-challenges.js",
+    "09-vocab.js", "10-ui.js",
+    "15-entities-base.js", "15-entities-decorations.js",
+    "15-entities-particles.js", "15-entities-combat.js",
+    "18-village.js", "18-village-render.js",
+    "20-enemies-new.js",
+    "21-decorations-new.js",
+    "11-game-init.js", "12-challenges.js", "12-village-challenges.js",
     "13-game-loop.js", "14-renderer-main.js", "14-renderer-entities.js",
-    "14-renderer-decorations.js", "15-entities-base.js", "15-entities-decorations.js",
-    "15-entities-particles.js", "15-entities-combat.js", "16-events.js",
+    "14-renderer-decorations.js", "16-events.js",
     "17-bootstrap.js"
   ];
   const moduleScripts = moduleFiles.map(f => {
@@ -102,6 +107,7 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
     "config/levels.json": readJson(path.join(projectRoot, "config", "levels.json")),
     "config/biomes.json": readJson(path.join(projectRoot, "config", "biomes.json")),
     "words/words-base.json": readJson(path.join(projectRoot, "words", "words-base.json")),
+    "config/village.json": readJson(path.join(projectRoot, "config", "village.json")),
   };
 
   const preludeScript = buildPreludeDataScript(embeddedJson);
@@ -139,6 +145,11 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
       html = html.replace(pattern, makeInlineScript(readText(path.join(projectRoot, "src", "modules", f))));
     }
   });
+
+  // Hard check: fail build if any module script src remains un-inlined
+  if (/<script[^>]+src="src\/modules\/[^"]+"/i.test(html)) {
+    throw new Error("build-singlefile: unresolved module script src remains in output HTML");
+  }
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, html, "utf8");
