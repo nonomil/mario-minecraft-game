@@ -57,34 +57,25 @@ function startVillageChallenge(village, onComplete) {
 
   // 显示挑战开始界面
   showVillageChallengeIntro(village.biomeId, selectedWords.length, () => {
+    // 统一答题回调，所有题目复用
+    function handleAnswer(isCorrect) {
+      if (isCorrect) progress.correctCount++;
+      progress.currentQuestion++;
+      if (progress.currentWord && !progress.wordsSeen.includes(progress.currentWord.en)) {
+        progress.wordsSeen.push(progress.currentWord.en);
+      }
+      if (progress.currentQuestion >= selectedWords.length) {
+        finishVillageChallenge(village, progress.correctCount, selectedWords.length, onComplete);
+      } else {
+        setTimeout(() => {
+          showVillageQuestion(village, selectedWords, progress, handleAnswer);
+        }, 500);
+      }
+    }
+
     // 延迟后显示第一题
     setTimeout(() => {
-      showVillageQuestion(village, selectedWords, progress, (isCorrect) => {
-        if (isCorrect) {
-          progress.correctCount++;
-        }
-        progress.currentQuestion++;
-
-        // 检查是否完成所有题目
-        if (progress.currentQuestion >= selectedWords.length) {
-          // 全部完成
-          finishVillageChallenge(village, progress.correctCount, selectedWords.length, onComplete);
-        } else {
-          // 显示下一题或结束
-          setTimeout(() => {
-            if (progress.currentQuestion < selectedWords.length) {
-              showVillageQuestion(village, selectedWords, progress, null);
-            } else {
-              finishVillageChallenge(village, progress.correctCount, selectedWords.length, onComplete);
-            }
-          }, 500);
-        }
-
-        // 记录已见单词
-        if (!progress.wordsSeen.includes(progress.currentWord.en)) {
-          progress.wordsSeen.push(progress.currentWord.en);
-        }
-      });
+      showVillageQuestion(village, selectedWords, progress, handleAnswer);
     }, 300);
   });
 }
@@ -286,11 +277,10 @@ function finishVillageChallenge(village, correct, total, onComplete) {
       // 发放奖励
       if (isPerfect) {
         score += reward.perfect?.score || 100;
-        diamonds += reward.perfect?.diamonds || 1;
+        inventory.diamond += reward.perfect?.diamonds || 1;
       } else {
         score += reward.partial?.score || 50;
       }
-      updateScoreUI();
       updateDiamondUI();
 
       // 群系专属道具奖励

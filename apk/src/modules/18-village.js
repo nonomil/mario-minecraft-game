@@ -111,7 +111,7 @@ function maybeSpawnVillage(playerScore, playerX) {
 function createVillage(startX, biomeId, index) {
   const style = VILLAGE_STYLES[biomeId] || VILLAGE_STYLES.forest;
   const cfg = villageConfig.buildings || {};
-  return {
+  const village = {
     id: index,
     x: startX,
     width: villageConfig.villageWidth || 800,
@@ -123,7 +123,7 @@ function createVillage(startX, biomeId, index) {
       { type: 'save_stone', x: startX + (cfg.save_stone?.offset || 550), w: cfg.save_stone?.w || 40,  h: cfg.save_stone?.h || 50 },
       { type: style.specialBuilding, x: startX + (cfg.special?.offset || 700), w: cfg.special?.w || 80, h: cfg.special?.h || 60 }
     ],
-    npcs: [],       // v1.8.1 实现
+    npcs: [],
     decorations: style.decorations.map((d, i) => ({
       type: d, x: startX + 50 + i * 150
     })),
@@ -134,11 +134,13 @@ function createVillage(startX, biomeId, index) {
   };
 
   // v1.8.1 添加 NPC
-  const roles = ['greeter', 'teacher', 'trader'];
-  const baseX = startX + 200;
-  village.npcs = roles.map((role, i) =>
-    createVillageNPC(baseX + i * 200, role, village.x, village.width)
-  );
+  if (typeof createVillageNPC === 'function') {
+    const roles = ['greeter', 'teacher', 'trader'];
+    const baseX = startX + 200;
+    village.npcs = roles.map((role, i) =>
+      createVillageNPC(baseX + i * 200, role, village.x, village.width)
+    );
+  }
 
   return village;
 }

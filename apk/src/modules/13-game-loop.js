@@ -979,7 +979,7 @@ function handleInteraction() {
       return;
     }
     // v1.8.2 村庄休息系统
-    if (playerInVillage && currentVillage && restPromptVisible) {
+    if (playerInVillage && currentVillage && typeof restPromptVisible !== 'undefined' && restPromptVisible && typeof performRest === 'function') {
         performRest(currentVillage);
         return;
     }
