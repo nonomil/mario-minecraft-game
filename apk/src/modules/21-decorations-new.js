@@ -19,6 +19,10 @@ class CherryTree extends Tree {
         this.biome = "cherry_grove";
         this.petals = 0;
         this.maxPetals = 5 + Math.floor(Math.random() * 6);
+        this.blossomOffsets = Array.from({ length: 5 }, () => ({
+            x: (Math.random() - 0.5) * this.width * 0.6,
+            y: (Math.random() - 0.5) * this.height * 0.4
+        }));
     }
 
     hit() {
@@ -132,6 +136,10 @@ class GiantMushroom extends Tree {
         this.biome = "mushroom_island";
         this.mushroomType = Math.random() < 0.5 ? "brown" : "red";
         this.bounceFactor = 1.5;
+        this.capSpots = Array.from({ length: 4 }, () => ({
+            x: (Math.random() - 0.5) * this.width * 0.5,
+            y: (Math.random() - 0.5) * this.height * 0.3
+        }));
     }
 
     hit() {
@@ -375,7 +383,7 @@ class SoulLantern extends Decoration {
 class CloudPlatform extends Platform {
     constructor(x, y, width) {
         super(x, y, width || (80 + Math.random() * 60), 20);
-        this.type = "cloud_platform";
+        this.type = "cloud";
         this.biome = "sky_dimension";
         this.animated = true;
         this.driftOffset = Math.random() * Math.PI * 2;
@@ -504,7 +512,7 @@ function spawnSkyDimensionDecoration(x, y, groundY) {
     if (Math.random() < 0.4) {
         const cloudY = groundY - 80 - Math.random() * 60;
         const cloud = new CloudPlatform(x, cloudY, 80 + Math.random() * 60);
-        if (!platforms.includes(cloud)) platforms.push(cloud);
+        platforms.push(cloud);
     }
 }
 
@@ -572,9 +580,10 @@ function renderCherryTree(ctx, d, camX) {
     ctx.fill();
     // 深粉色点缀
     ctx.fillStyle = "#FFC0CB";
-    for (let i = 0; i < 5; i++) {
-        const ox = (Math.random() - 0.5) * d.width * 0.6;
-        const oy = (Math.random() - 0.5) * d.height * 0.4;
+    const blossomOffsets = Array.isArray(d.blossomOffsets) ? d.blossomOffsets : [];
+    for (const spot of blossomOffsets) {
+        const ox = spot.x;
+        const oy = spot.y;
         ctx.beginPath();
         ctx.arc(dx + d.width / 2 + ox, d.y + d.height * 0.3 + oy, 4, 0, Math.PI * 2);
         ctx.fill();
@@ -636,9 +645,10 @@ function renderGiantMushroom(ctx, d, camX) {
     ctx.fill();
     // 斑点
     ctx.fillStyle = d.mushroomType === "brown" ? "#F5F5DC" : "#FFFFFF";
-    for (let i = 0; i < 4; i++) {
-        const ox = (Math.random() - 0.5) * d.width * 0.5;
-        const oy = (Math.random() - 0.5) * d.height * 0.3;
+    const capSpots = Array.isArray(d.capSpots) ? d.capSpots : [];
+    for (const spot of capSpots) {
+        const ox = spot.x;
+        const oy = spot.y;
         ctx.beginPath();
         ctx.arc(dx + d.width / 2 + ox, d.y + d.height * 0.35 + oy, 3, 0, Math.PI * 2);
         ctx.fill();

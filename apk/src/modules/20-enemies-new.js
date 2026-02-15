@@ -178,7 +178,7 @@ class FoxEnemy extends Enemy {
         if (this.fleeTimer > 0) {
             // 逃跑模式
             this.state = "fleeing";
-            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * 1.5 * speedMult;
+            this.x += (playerRef.x > this.x ? -1 : 1) * this.speed * 1.5 * speedMult;
             this.fleeTimer--;
             if (this.fleeTimer === 0) this.state = "patrol";
             return;
@@ -189,7 +189,6 @@ class FoxEnemy extends Enemy {
                 // 偷窃攻击
                 if (score >= 50) {
                     score = Math.max(0, score - 50);
-                    updateScoreUI();
                     showFloatingText("🦊 偷走了50分!", playerRef.x, playerRef.y - 40, "#FF8C00");
                 }
                 this.stealCooldown = 300;
@@ -376,7 +375,7 @@ class MagmaCubeEnemy extends Enemy {
         }
 
         // 碰撞伤害
-        if (rectIntersect(this.x, this.y, this.width, this.height, player.x, player.y, player.width, player.height)) {
+        if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
             damagePlayer(this.damage, this.x);
         }
     }
@@ -621,7 +620,7 @@ class VexEnemy extends Enemy {
         this.summoned = false;
     }
 
-    update(playerRef) {
+    updateVexAI(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
@@ -667,14 +666,10 @@ class VexEnemy extends Enemy {
         // 恼鬼不受重力影响
     }
 
-    // 恼鬼可以穿墙
     update(playerRef) {
         if (this.remove || this.y > 900) return;
-
-        // 调用专用更新逻辑
-        if (this.type === "vex") {
-            this.update(playerRef);
-        }
+        this.updateVexAI(playerRef);
+        this.applyGravity();
 
         if (this.attackCooldown > 0) this.attackCooldown--;
         if (this.teleportCooldown > 0) this.teleportCooldown--;
