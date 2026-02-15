@@ -1,4 +1,20 @@
-﻿## v1.6.4（发布日期：2026-02-15）
+﻿## v1.6.5（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.5，versionCode = 58
+- 主要变更
+  - 新增：学习系统 - 集成测试与优化
+  - 完成学习系统全功能集成测试
+  - 确认所有功能正常运行
+  - 验证数据持久化机制
+  - 确认配置开关正常工作
+  - 测试各功能间的集成效果
+- 技术改进
+  - 验证 challengeStats 数据结构正确初始化
+  - 验证宝箱学习、环境单词标签、Biome 复习、单词本功能
+  - 验证所有配置开关：chestLearningEnabled、showEnvironmentWords、reviewOnBiomeSwitch
+  - 性能测试通过，无卡顿
+
+## v1.6.4（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.4，versionCode = 57
 - 主要变更
