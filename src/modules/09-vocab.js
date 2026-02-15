@@ -48,6 +48,11 @@ function saveVocabState() {
 function normalizeProgress(raw) {
     const p = raw && typeof raw === "object" ? raw : {};
     if (!p.vocab || typeof p.vocab !== "object") p.vocab = {};
+
+    // === 新增：答题统计数据 (v1.6.0) ===
+    if (!p.challengeStats || typeof p.challengeStats !== "object") p.challengeStats = {};
+    // 结构：p.challengeStats["apple"] = { correct: 3, wrong: 1, lastSeen: 1707900000000 }
+
     return p;
 }
 
@@ -394,4 +399,29 @@ function scheduleApplySettingsToUI() {
         applySettingsRaf = 0;
         applySettingsToUI();
     });
+}
+
+/**
+ * 获取答题统计数据 (v1.6.0 新增)
+ * @returns {Object} 统计对象
+ */
+function getChallengeStats() {
+    const stats = progress.challengeStats || {};
+    const words = Object.keys(stats);
+
+    let totalCorrect = 0, totalWrong = 0;
+    words.forEach(w => {
+        totalCorrect += stats[w].correct || 0;
+        totalWrong += stats[w].wrong || 0;
+    });
+
+    const total = totalCorrect + totalWrong;
+
+    return {
+        wordCount: words.length,           // 答题涉及单词数
+        totalCorrect: totalCorrect,        // 总答对次数
+        totalWrong: totalWrong,            // 总答错次数
+        accuracy: total > 0 ? Math.round(totalCorrect / total * 100) : 0,  // 正确率
+        details: stats                     // 详细数据
+    };
 }

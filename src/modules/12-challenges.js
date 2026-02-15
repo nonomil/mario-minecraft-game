@@ -285,6 +285,29 @@ function completeLearningChallenge(correct) {
     if (!currentLearningChallenge) return;
     clearLearningChallengeTimer();
     hideLearningChallenge();
+
+    // === 新增：记录答题统计 (v1.6.0) ===
+    const wordEn = currentLearningChallenge?.wordObj?.en;
+    if (wordEn) {
+        if (!progress.challengeStats) progress.challengeStats = {};
+        const stat = progress.challengeStats[wordEn] || {
+            correct: 0,
+            wrong: 0,
+            lastSeen: 0
+        };
+
+        if (correct) {
+            stat.correct++;
+        } else {
+            stat.wrong++;
+        }
+        stat.lastSeen = Date.now();
+
+        progress.challengeStats[wordEn] = stat;
+        saveProgress();
+    }
+    // === 记录结束 ===
+
     const reward = LEARNING_CONFIG.challenge.rewards;
     if (correct) {
         addScore(reward.correct.score);
