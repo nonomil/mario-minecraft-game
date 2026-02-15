@@ -339,6 +339,8 @@ class Golem extends Entity {
         this.facingRight = true;
         this.stuckCounter = 0;
         this.lastX = x;
+        this.spawnBiome = currentBiome; // 记录召唤时的群系
+        this.meltTimer = 0; // 沙漠融化计时器
     }
 
     updateFollow(playerHistory, platformsRef, playerRef) {
@@ -474,6 +476,33 @@ class Golem extends Entity {
     }
 
     update(playerRef, playerHistory, enemyList, platformsRef) {
+        // 检查群系变化：离开召唤群系时消失
+        if (typeof currentBiome !== 'undefined' && this.spawnBiome !== currentBiome) {
+            this.remove = true;
+            showFloatingText('👋', this.x, this.y - 20, '#888');
+            return;
+        }
+
+        // 雪傀儡在沙漠融化
+        if (this.type === 'snow' && currentBiome === 'desert') {
+            this.meltTimer++;
+            if (this.meltTimer > 180) { // 3秒后融化
+                this.remove = true;
+                // 融化粒子效果
+                for (let i = 0; i < 10; i++) {
+                    if (typeof particles !== 'undefined') {
+                        particles.push(new Particle(
+                            this.x + Math.random() * this.width,
+                            this.y + Math.random() * this.height,
+                            "bubble"
+                        ));
+                    }
+                }
+                showFloatingText('💧 融化了!', this.x, this.y - 20, '#87CEEB');
+                return;
+            }
+        }
+
         this.updateFollow(playerHistory, platformsRef, playerRef);
         this.velY += gameConfig.physics.gravity;
         this.grounded = false;
