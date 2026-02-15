@@ -1,4 +1,39 @@
-﻿## v1.6.9（发布日期：2026-02-15）
+﻿## v1.7.0（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.7.0，versionCode = 63
+- 主要变更
+  - 新增：群系敌人与装饰设计 (v1.7.0) - 步骤5完整实现
+  - 新增：5个新群系专用敌人系统（9种敌人类型）
+  - 樱花丛林敌人：蜜蜂（悬停+中毒）、狐狸（偷窃+逃跑）、女巫（投掷药水）
+  - 蘑菇岛敌人：孢子虫（死亡分裂）
+  - 火山敌人：岩浆怪（跳跃+分裂）、火焰精灵（传送+冲刺）
+  - 深暗之域敌人：幽匿虫（地下潜行）、暗影潜行者（隐身+背刺）
+  - 天空之城敌人：幻翼（飞行+俯冲）、恼鬼（穿墙+穿地板）
+  - 新增：5个新群系专用装饰系统（14种装饰类型）
+  - 樱花丛林装饰：樱花树、花簇（掉落花瓣）、蝴蝶、小溪
+  - 蘑菇岛装饰：巨型蘑菇（弹跳+连击）、发光蘑菇、蘑菇牛
+  - 火山装饰：岩浆裂缝、温泉、黑曜石柱
+  - 深暗之域装饰：幽匿传感器、灵魂灯笼
+  - 天空之城装饰：云端平台（漂浮+漂移）
+- 技术改进
+  - 新建 src/modules/20-enemies-new.js 新群系敌人模块
+  - 新建 src/modules/21-decorations-new.js 新群系装饰模块
+  - BeeEnemy: 悬停飞行机制、中毒攻击
+  - FoxEnemy: 偷窃机制、逃跑AI
+  - WitchEnemy: 药水投掷、保持距离AI
+  - SporeBugEnemy: 死亡分裂机制
+  - MagmaCubeEnemy: 跳跃攻击、分裂机制
+  - FireSpiritEnemy: 传送+冲刺攻击
+  - SculkWormEnemy: 地下潜行、浮现攻击
+  - ShadowStalkerEnemy: 隐身机制、背刺加成
+  - PhantomEnemy: 飞行、盘旋、俯冲攻击
+  - VexEnemy: 穿墙穿地、冲刺攻击
+  - PotionProjectile: 女巫药水投射物（毒药/减速药水）
+  - spawnBiomeEnemy() / createBiomeEnemy() 敌人工厂函数
+  - spawnBiomeDecoration() 装饰工厂函数
+  - renderNewBiomeDecorations() 装饰渲染扩展
+
+## v1.6.9（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.9，versionCode = 62
 - 主要变更
