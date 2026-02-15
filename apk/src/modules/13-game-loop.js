@@ -26,6 +26,8 @@ function checkBossSpawn() {
 function update() {
     if (paused) return;
     updateCurrentBiome();
+    // 村庄系统更新 (v1.8.0)
+    if (typeof updateVillages === 'function') updateVillages();
     applyBiomeEffectsToPlayer();
     tickWeather();
 

@@ -1,0 +1,193 @@
+/**
+ * 18-village.js - 村庄系统核心逻辑
+ * v1.8.0 实现村庄基础框架
+ */
+
+// ========== 村庄风格定义 ==========
+const VILLAGE_STYLES = {
+  forest: {
+    buildingColors: { wall: '#8B6914', roof: '#2E7D32', door: '#5D4037' },
+    groundColor: '#6D4C41',
+    decorations: ['well', 'farm', 'fence', 'flower_pot'],
+    specialBuilding: 'library'
+  },
+  snow: {
+    buildingColors: { wall: '#ECEFF1', roof: '#1565C0', door: '#37474F' },
+    groundColor: '#B0BEC5',
+    decorations: ['snowman', 'ice_lamp', 'pine_fence'],
+    specialBuilding: 'hot_spring'
+  },
+  desert: {
+    buildingColors: { wall: '#D7CCC8', roof: '#FF8F00', door: '#4E342E' },
+    groundColor: '#BCAAA4',
+    decorations: ['cactus_pot', 'sand_lamp', 'oasis'],
+    specialBuilding: 'water_station'
+  },
+  mountain: {
+    buildingColors: { wall: '#78909C', roof: '#455A64', door: '#37474F' },
+    groundColor: '#607D8B',
+    decorations: ['anvil', 'stone_lamp', 'mine_cart'],
+    specialBuilding: 'blacksmith'
+  },
+  ocean: {
+    buildingColors: { wall: '#4FC3F7', roof: '#0277BD', door: '#01579B' },
+    groundColor: '#4DB6AC',
+    decorations: ['anchor', 'barrel', 'fishing_rod'],
+    specialBuilding: 'lighthouse'
+  },
+  nether: {
+    buildingColors: { wall: '#4A148C', roof: '#880E4F', door: '#311B92' },
+    groundColor: '#6A1B9A',
+    decorations: ['soul_lantern', 'nether_wart_pot', 'chain'],
+    specialBuilding: 'brewing_stand'
+  }
+};
+
+// ========== 加载配置 ==========
+function loadVillageConfig() {
+  // 从 config/village.json 加载，失败时用默认值
+  // 在 17-bootstrap.js 的 loadAllConfigs() 中调用
+  const defaultVillageConfig = {
+    enabled: true,
+    spawnScoreInterval: 500,
+    villageWidth: 800,
+    safeZone: true,
+    restHealFull: true,
+    challengeQuestionCount: 3,
+    challengeReward: {
+      perfect: { score: 100, diamonds: 1 },
+      partial: { score: 50, diamonds: 0 }
+    },
+    npcSpeed: 0.3,
+    npcGreetDistance: 80,
+    maxActiveVillages: 3,
+    buildings: {
+      bed_house: { w: 80, h: 60, offset: 100 },
+      word_house: { w: 100, h: 80, offset: 300 },
+      save_stone: { w: 40, h: 50, offset: 550 },
+      special: { w: 80, h: 60, offset: 700 }
+    },
+    biomeWords: {
+      forest: ["tree", "leaf", "bird", "flower", "grass", "wood", "deer", "owl"],
+      snow: ["snow", "ice", "cold", "coat", "hat", "scarf", "ski", "sled"],
+      desert: ["sand", "sun", "hot", "water", "cactus", "camel", "oasis", "dry"],
+      mountain: ["rock", "iron", "gold", "pick", "cave", "stone", "gem", "ore"],
+      ocean: ["fish", "wave", "boat", "shell", "whale", "coral", "swim", "sea"],
+      nether: ["fire", "red", "lava", "dark", "flame", "ash", "smoke", "glow"]
+    }
+  };
+
+  fetch('config/village.json')
+    .then(r => r.json())
+    .then(data => {
+      villageConfig = data;
+      console.log('[Village] 配置加载成功');
+    })
+    .catch(() => {
+      villageConfig = defaultVillageConfig;
+      console.warn('[Village] 使用默认配置');
+    });
+}
+
+// ========== 村庄生成 ==========
+function maybeSpawnVillage(playerScore, playerX) {
+  if (!settings.villageEnabled || !villageConfig.enabled) return;
+  const interval = villageConfig.spawnScoreInterval || 500;
+  // 计算当前分数应该生成的村庄编号
+  const villageIndex = Math.floor(playerScore / interval);
+  if (villageIndex < 1) return; // 0分不生成
+  if (villageSpawnedForScore[villageIndex]) return; // 已生成
+
+  const biomeId = currentBiome || 'forest';
+  const village = createVillage(playerX + 600, biomeId, villageIndex);
+  activeVillages.push(village);
+  villageSpawnedForScore[villageIndex] = true;
+
+  // 回收远离的村庄
+  cleanupVillages(playerX);
+  console.log(`[Village] 生成村庄 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
+}
+
+function createVillage(startX, biomeId, index) {
+  const style = VILLAGE_STYLES[biomeId] || VILLAGE_STYLES.forest;
+  const cfg = villageConfig.buildings || {};
+  return {
+    id: index,
+    x: startX,
+    width: villageConfig.villageWidth || 800,
+    biomeId: biomeId,
+    style: style,
+    buildings: [
+      { type: 'bed_house',  x: startX + (cfg.bed_house?.offset || 100),  w: cfg.bed_house?.w || 80,  h: cfg.bed_house?.h || 60 },
+      { type: 'word_house', x: startX + (cfg.word_house?.offset || 300), w: cfg.word_house?.w || 100, h: cfg.word_house?.h || 80 },
+      { type: 'save_stone', x: startX + (cfg.save_stone?.offset || 550), w: cfg.save_stone?.w || 40,  h: cfg.save_stone?.h || 50 },
+      { type: style.specialBuilding, x: startX + (cfg.special?.offset || 700), w: cfg.special?.w || 80, h: cfg.special?.h || 60 }
+    ],
+    npcs: [],       // v1.8.1 实现
+    decorations: style.decorations.map((d, i) => ({
+      type: d, x: startX + 50 + i * 150
+    })),
+    visited: false,
+    restUsed: false,
+    questCompleted: false,
+    saved: false
+  };
+}
+
+function cleanupVillages(playerX) {
+  const max = villageConfig.maxActiveVillages || 3;
+  // 移除玩家身后超过 2000px 的村庄
+  activeVillages = activeVillages.filter(v => {
+    return (v.x + v.width) > playerX - 2000;
+  });
+  // 如果仍超过上限，移除最远的
+  while (activeVillages.length > max) {
+    activeVillages.shift();
+  }
+}
+
+// ========== 村庄状态更新 ==========
+function updateVillages() {
+  if (!settings.villageEnabled) return;
+  // 检查是否需要生成新村庄
+  maybeSpawnVillage(score, player.x);
+  // 检测玩家是否在村庄内
+  const wasInVillage = playerInVillage;
+  playerInVillage = false;
+  currentVillage = null;
+  for (const v of activeVillages) {
+    if (player.x >= v.x && player.x <= v.x + v.width) {
+      playerInVillage = true;
+      currentVillage = v;
+      if (!v.visited) {
+        v.visited = true;
+        const biomeName = getBiomeName(v.biomeId);
+        showToast(`🏘️ 进入${biomeName}村庄`);
+      }
+      break;
+    }
+  }
+  if (wasInVillage && !playerInVillage) {
+    showToast('👋 离开村庄');
+  }
+}
+
+// ========== 辅助函数 ==========
+function isInVillageArea(x) {
+  for (const v of activeVillages) {
+    if (x >= v.x && x <= v.x + v.width) return true;
+  }
+  return false;
+}
+
+function getVillageAt(x) {
+  for (const v of activeVillages) {
+    if (x >= v.x && x <= v.x + v.width) return v;
+  }
+  return null;
+}
+
+function getBiomeName(biomeId) {
+  const biome = biomeConfigs[biomeId];
+  return biome ? biome.name : biomeId;
+}

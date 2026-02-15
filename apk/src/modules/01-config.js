@@ -428,6 +428,14 @@ let startOverlayReady = false;
 let startOverlayActive = false;
 let enemyKillStats = { total: 0 };
 let repeatPauseState = "repeat";
+
+// ===== 村庄系统 =====
+let villageConfig = {};
+let activeVillages = [];
+let villageSpawnedForScore = {};
+let playerInVillage = false;
+let currentVillage = null;
+
 const projectilePool = {
     arrows: [],
     snowballs: [],

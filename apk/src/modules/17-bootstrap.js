@@ -3,12 +3,13 @@
  * 从 main.js 拆分 (原始行 7402-7663)
  */
 async function start() {
-    const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes] = await Promise.all([
+    const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes, loadedVillage] = await Promise.all([
         loadJsonWithFallback("config/game.json", defaultGameConfig),
         loadJsonWithFallback("config/controls.json", defaultControls),
         loadJsonWithFallback("config/levels.json", defaultLevels),
         loadJsonWithFallback("words/words-base.json", defaultWords),
-        loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS })
+        loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS }),
+        loadJsonWithFallback("config/village.json", { enabled: true }).catch(() => ({ enabled: true }))
     ]);
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
@@ -17,6 +18,7 @@ async function start() {
     keyBindings = { ...defaultControls, ...(loadedControls || {}) };
     levels = Array.isArray(loadedLevels) && loadedLevels.length ? loadedLevels : defaultLevels;
     wordDatabase = Array.isArray(loadedWords) && loadedWords.length ? loadedWords : defaultWords;
+    villageConfig = loadedVillage || { enabled: true };
     const bundle = normalizeBiomeBundle(loadedBiomes);
     biomeConfigs = bundle.biomes;
     biomeSwitchConfig = bundle.switch;

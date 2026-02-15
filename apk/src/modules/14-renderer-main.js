@@ -39,6 +39,9 @@ function draw() {
 
     wordGates.forEach(gate => drawWordGate(gate));
 
+    // 村庄系统渲染 (v1.8.0)
+    if (typeof drawVillages === 'function') drawVillages(ctx);
+
     if (particles.length) {
         particles.forEach(p => drawParticle(p));
     }
