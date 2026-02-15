@@ -1,5 +1,25 @@
 # 版本更新记录
 
+## v1.6.2 (2026-02-15)
+
+### ✨ 新功能
+- **环境单词标签** - 零压力的被动浸入式学习
+  - 敌人/物品上方显示英文名标签
+  - 新增 ENTITY_NAMES 映射表（30+实体）
+  - 新增 drawEntityLabel() 通用渲染函数
+  - 支持敌人、傀儡、宝箱等实体
+  - 新增 showEnvironmentWords 配置项
+
+### 🔧 技术改进
+- 新建 `entity-names.js` 定义实体英文名映射表
+- `14-renderer-entities.js`：新增 drawEntityLabel() 函数
+- `drawEnemy()` 和 `drawGolem()` 调用标签绘制
+- `14-renderer-main.js`：宝箱渲染处调用标签绘制
+- 标签带黑色描边，确保在任何背景下清晰可见
+- 标签位置避开血条，避免视觉重叠
+
+---
+
 ## v1.6.1 (2026-02-15)
 
 ### ✨ 新功能

@@ -1,4 +1,24 @@
-﻿## v1.6.1（发布日期：2026-02-15）
+﻿## v1.6.2（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.2，versionCode = 55
+- 主要变更
+  - 新增：学习系统 - 环境单词标签
+  - 敌人/物品上方显示英文名标签
+  - 实现零压力的被动浸入式学习
+  - 新增 ENTITY_NAMES 映射表（30+实体）
+  - 新增 drawEntityLabel() 通用渲染函数
+  - 支持敌人、傀儡、宝箱等实体
+  - 新增 showEnvironmentWords 配置项
+- 技术改进
+  - 新建 entity-names.js 定义实体英文名映射表
+  - 14-renderer-entities.js：新增 drawEntityLabel() 函数
+  - 14-renderer-entities.js：drawEnemy() 末尾调用标签绘制
+  - 14-renderer-entities.js：drawGolem() 末尾调用标签绘制
+  - 14-renderer-main.js：宝箱渲染处调用标签绘制
+  - defaults.js：新增 showEnvironmentWords 配置项
+  - Game.html：引入 entity-names.js 脚本
+
+## v1.6.1（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.1，versionCode = 54
 - 主要变更
