@@ -187,6 +187,15 @@ function spawnDesertCamel(x, y, nearOasis) {
 }
 
 function updateDesertSystems() {
+    if (currentBiome === 'desert') {
+        if (desertOases.length < 1 && Math.random() < 0.004) {
+            spawnDesertOasis(player.x + 300 + Math.random() * 400, groundY - 20);
+        }
+        if (desertCamels.length < 2 && Math.random() < 0.006) {
+            spawnDesertCamel(player.x + 260 + Math.random() * 420, groundY - 25, true);
+        }
+    }
+
     // 绿洲回血
     desertOases.forEach(oasis => {
         if (oasis.used) return;
@@ -316,6 +325,10 @@ function craftFrostArmor() {
 }
 
 function updateSnowIceSystem() {
+    if (currentBiome === 'snow' && iceSculptures.length < 2 && Math.random() < 0.005) {
+        spawnIceSculpture(player.x + 240 + Math.random() * 420, groundY - 30);
+    }
+
     // 冰镐计时
     if (icePickaxeActive.active) {
         icePickaxeActive.timer -= 16.67;
@@ -449,6 +462,10 @@ function feedCherryRabbit(rabbit) {
 }
 
 function updateCherryPetalSystem() {
+    if (currentBiome === 'cherry_grove' && cherryRabbits.length < 2 && Math.random() < 0.004) {
+        spawnCherryRabbit(player.x + 220 + Math.random() * 420, groundY - 16);
+    }
+
     // 无敌buff计时
     if (invincibilityBuff.active) {
         invincibilityBuff.timer -= 16.67;
@@ -650,11 +667,10 @@ function updateMushroomIslandPenalty() {
             mushroomIslandPenaltyLevel = 0;
         }
 
+    } else {
         // 离开时重置
-        if (currentBiome !== 'mushroom_island') {
-            mushroomIslandStayTime = 0;
-            mushroomIslandPenaltyLevel = 0;
-        }
+        mushroomIslandStayTime = 0;
+        mushroomIslandPenaltyLevel = 0;
     }
 }
 
@@ -697,4 +713,15 @@ function updateAllInteractionChains() {
     if (!player.grounded) {
         resetMushroomCombo(false);
     }
+}
+
+// ============ 对外兼容接口（供其他模块调用） ============
+function incrementChainProgress(biomeId, key) {
+    if (biomeId === 'cherry_grove' && key === 'petal') {
+        onFlowerCollected();
+    }
+}
+
+function incrementMushroomBounce(mushroomY) {
+    return onMushroomBounce(mushroomY != null ? mushroomY : player.y);
 }

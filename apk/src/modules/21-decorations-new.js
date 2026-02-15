@@ -162,7 +162,10 @@ class GiantMushroom extends Tree {
 
                 // 触发蘑菇岛弹跳连击交互链
                 if (typeof incrementMushroomBounce === 'function') {
-                    incrementMushroomBounce();
+                    const bounceChain = incrementMushroomBounce(this.y);
+                    if (bounceChain && bounceChain.bounceMultiplier) {
+                        entity.velY = bounceVelocity * bounceChain.bounceMultiplier;
+                    }
                 }
             }
         }

@@ -29,17 +29,21 @@ function update() {
     // 村庄系统更新 (v1.8.0)
     if (typeof updateVillages === 'function') updateVillages();
     applyBiomeEffectsToPlayer();
+    if (typeof updateAllInteractionChains === 'function') updateAllInteractionChains();
     tickWeather();
 
     const isUnderwater = (currentBiome === 'ocean');
+    const camelRideEffect = typeof getCamelRideEffect === 'function' ? getCamelRideEffect() : null;
+    const camelSpeedMult = camelRideEffect?.speedMultiplier || 1;
+    const camelJumpMult = camelRideEffect?.jumpBoost || 1;
 
     if (isUnderwater) {
         // 水下移动
         if (keys.right) {
-            player.velX = player.speed * WATER_PHYSICS.horizontalSpeedMultiplier;
+            player.velX = player.speed * WATER_PHYSICS.horizontalSpeedMultiplier * camelSpeedMult;
             player.facingRight = true;
         } else if (keys.left) {
-            player.velX = -player.speed * WATER_PHYSICS.horizontalSpeedMultiplier;
+            player.velX = -player.speed * WATER_PHYSICS.horizontalSpeedMultiplier * camelSpeedMult;
             player.facingRight = false;
         } else {
             player.velX *= 0.9;
@@ -52,7 +56,7 @@ function update() {
                 swimJumpTriggered
                     ? (WATER_PHYSICS.swimJumpImpulse || WATER_PHYSICS.verticalSwimSpeed)
                     : WATER_PHYSICS.verticalSwimSpeed
-            );
+            ) * camelJumpMult;
         } else if (keys.down) {
             player.velY = WATER_PHYSICS.verticalSwimSpeed;
         } else {
@@ -77,11 +81,11 @@ function update() {
         }
     } else {
     if (keys.right) {
-        if (player.velX < player.speed) player.velX++;
+        if (player.velX < player.speed * camelSpeedMult) player.velX++;
         player.facingRight = true;
     }
     if (keys.left) {
-        if (player.velX > -player.speed) player.velX--;
+        if (player.velX > -player.speed * camelSpeedMult) player.velX--;
         player.facingRight = false;
     }
 
@@ -131,14 +135,15 @@ function update() {
 
     if (jumpBuffer > 0) {
         const endJumpMult = endBiomeCfg ? (endBiomeCfg.effects?.jumpMultiplier || 1.5) : 1;
+        const totalJumpMult = endJumpMult * camelJumpMult;
         if (coyoteTimer > 0) {
-            player.velY = player.jumpStrength * endJumpMult;
+            player.velY = player.jumpStrength * totalJumpMult;
             player.grounded = false;
             player.jumpCount = 1;
             coyoteTimer = 0;
             jumpBuffer = 0;
         } else if (player.jumpCount < player.maxJumps) {
-            player.velY = player.jumpStrength * 0.8 * endJumpMult;
+            player.velY = player.jumpStrength * 0.8 * totalJumpMult;
             player.jumpCount++;
             jumpBuffer = 0;
         }
@@ -398,6 +403,10 @@ function scorePenaltyForDamage(amount) {
 }
 
 function damagePlayer(amount, sourceX, knockback = 90) {
+    if (typeof getInvincibilityEffect === 'function') {
+        const inv = getInvincibilityEffect();
+        if (inv?.invincible) return;
+    }
     if (playerInvincibleTimer > 0) return;
     const invFrames = Number(getDifficultyConfig().invincibleFrames ?? 30) || 30;
     playerInvincibleTimer = Math.max(10, invFrames);

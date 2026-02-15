@@ -398,7 +398,11 @@ function spawnEnemyByDifficulty(x, y) {
     }
 
     const aliveEnemies = enemies.filter(e => !e.remove && e.y < 900).length;
-    if (aliveEnemies >= (enemyConfig.maxOnScreen || 8)) return;
+    const penaltyMult = typeof getMushroomIslandPenaltyMultiplier === 'function'
+        ? Math.max(1, Number(getMushroomIslandPenaltyMultiplier()) || 1)
+        : 1;
+    const maxOnScreen = Math.round((enemyConfig.maxOnScreen || 8) * penaltyMult);
+    if (aliveEnemies >= maxOnScreen) return;
 
     const type = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "zombie";
     enemies.push(new Enemy(x, y, type));

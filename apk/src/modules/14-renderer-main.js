@@ -30,6 +30,7 @@ function draw() {
     });
 
     decorations.forEach(d => drawDecoration(d));
+    if (typeof renderInteractionChains === 'function') renderInteractionChains(ctx, cameraX);
 
     chests.forEach(c => drawChest(c.x, c.y, c.opened));
 
@@ -109,6 +110,7 @@ function draw() {
     if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
     // 末地速度buff
     if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
+    if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
 
     const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
     if (boss) {

@@ -85,7 +85,7 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
     "09-vocab.js", "10-ui.js",
     "15-entities-base.js", "15-entities-decorations.js",
     "15-entities-particles.js", "15-entities-combat.js",
-    "18-village.js", "18-village-render.js",
+    "18-village.js", "18-village-render.js", "18-interaction-chains.js",
     "20-enemies-new.js",
     "21-decorations-new.js",
     "11-game-init.js", "12-challenges.js", "12-village-challenges.js",
