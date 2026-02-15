@@ -1243,11 +1243,28 @@ function nowMs() {
 }
 
 function getViewportSize() {
-    // Prefer visual viewport for more accurate sizing on mobile (URL bar / keyboard / zoom).
+    // Prefer visual viewport for more accurate sizing on mobile (URL bar / keyboard / zoom),
+    // but fall back to layout viewport when the values look suspiciously small.
     const vv = typeof window !== "undefined" ? window.visualViewport : null;
-    const w = Math.max(1, (vv && vv.width) ? vv.width : (window.innerWidth || document.documentElement.clientWidth || 0));
-    const h = Math.max(1, (vv && vv.height) ? vv.height : (window.innerHeight || document.documentElement.clientHeight || 0));
-    return { width: w, height: h };
+    const doc = document.documentElement;
+    const innerW = window.innerWidth || doc.clientWidth || 0;
+    const innerH = window.innerHeight || doc.clientHeight || 0;
+    let w = (vv && typeof vv.width === "number") ? vv.width : 0;
+    let h = (vv && typeof vv.height === "number") ? vv.height : 0;
+
+    const fallbackW = innerW || doc.clientWidth || 0;
+    const fallbackH = innerH || doc.clientHeight || 0;
+    const minOkW = fallbackW ? Math.max(120, fallbackW * 0.6) : 120;
+    const minOkH = fallbackH ? Math.max(120, fallbackH * 0.6) : 120;
+
+    if (!(w >= minOkW && h >= minOkH)) {
+        w = fallbackW;
+        h = fallbackH;
+    }
+
+    if (!(w > 0)) w = fallbackW || 1;
+    if (!(h > 0)) h = fallbackH || 1;
+    return { width: Math.max(1, w), height: Math.max(1, h) };
 }
 
 function getSafeInsetsPx() {
