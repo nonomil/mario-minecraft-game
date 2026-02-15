@@ -132,6 +132,15 @@ function createVillage(startX, biomeId, index) {
     questCompleted: false,
     saved: false
   };
+
+  // v1.8.1 添加 NPC
+  const roles = ['greeter', 'teacher', 'trader'];
+  const baseX = startX + 200;
+  village.npcs = roles.map((role, i) =>
+    createVillageNPC(baseX + i * 200, role, village.x, village.width)
+  );
+
+  return village;
 }
 
 function cleanupVillages(playerX) {
@@ -143,6 +152,90 @@ function cleanupVillages(playerX) {
   // 如果仍超过上限，移除最远的
   while (activeVillages.length > max) {
     activeVillages.shift();
+  }
+}
+
+// ========== NPC 村民系统 (v1.8.1) ==========
+
+const NPC_ROLES = {
+  greeter: {
+    greeting: 'Welcome! 欢迎!',
+    speed: 0.3,
+    patrolRange: 120
+  },
+  teacher: {
+    greeting: 'Come learn! 来学习!',
+    speed: 0.2,
+    patrolRange: 80
+  },
+  trader: {
+    greeting: 'Trade? 交易吗?',
+    speed: 0.15,
+    patrolRange: 60
+  }
+};
+
+function createVillageNPC(baseX, role, villageX, villageWidth) {
+  const cfg = NPC_ROLES[role] || NPC_ROLES.greeter;
+  const minX = Math.max(villageX + 20, baseX - cfg.patrolRange);
+  const maxX = Math.min(villageX + villageWidth - 20, baseX + cfg.patrolRange);
+  return {
+    x: baseX,
+    y: 0,
+    role: role,
+    direction: 1,
+    speed: cfg.speed,
+    minX: minX,
+    maxX: maxX,
+    showBubble: false,
+    bubbleText: cfg.greeting,
+    bubbleTimer: 0,
+    facingRight: true,
+    animFrame: 0,
+    animTimer: 0
+  };
+}
+
+function updateVillageNPCs(village) {
+  for (const npc of village.npcs) {
+    // 来回走动
+    npc.x += npc.direction * npc.speed;
+    if (npc.x <= npc.minX) {
+      npc.x = npc.minX;
+      npc.direction = 1;
+      npc.facingRight = true;
+    } else if (npc.x >= npc.maxX) {
+      npc.x = npc.maxX;
+      npc.direction = -1;
+      npc.facingRight = false;
+    }
+
+    // 走路动画帧
+    npc.animTimer++;
+    if (npc.animTimer >= 15) {
+      npc.animTimer = 0;
+      npc.animFrame = (npc.animFrame + 1) % 2;
+    }
+
+    // 玩家靠近时显示气泡
+    const dist = Math.abs(player.x - npc.x);
+    const greetDist = villageConfig.npcGreetDistance || 80;
+    if (dist < greetDist) {
+      npc.showBubble = true;
+      // 面向玩家
+      npc.facingRight = player.x > npc.x;
+      npc.direction = 0; // 停下来
+      npc.bubbleTimer = 120; // 气泡持续 2 秒
+    } else if (npc.bubbleTimer > 0) {
+      npc.bubbleTimer--;
+      if (npc.bubbleTimer <= 0) {
+        npc.showBubble = false;
+        // 恢复巡逻
+        npc.direction = npc.facingRight ? 1 : -1;
+      }
+    } else {
+      npc.showBubble = false;
+    }
   }
 }
 
@@ -164,6 +257,8 @@ function updateVillages() {
         const biomeName = getBiomeName(v.biomeId);
         showToast(`🏘️ 进入${biomeName}村庄`);
       }
+      // v1.8.1 更新村民 (v1.8.1)
+      updateVillageNPCs(v);
       break;
     }
   }

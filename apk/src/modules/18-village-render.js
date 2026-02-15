@@ -14,6 +14,52 @@ function drawVillages(ctx) {
     for (const b of village.buildings) {
       drawVillageBuilding(ctx, b, village.style);
     }
+    // v1.8.1 渲染 NPC (v1.8.1)
+    for (const npc of village.npcs) {
+      drawVillageNPC(ctx, npc);
+    }
+  }
+}
+
+// v1.8.1 NPC 渲染 (v1.8.1)
+function drawVillageNPC(ctx, npc) {
+  const sx = npc.x - cameraX;
+  const sy = groundY - 24;
+  const facing = npc.facingRight ? 1 : -1;
+
+  // 身体
+  ctx.fillStyle = '#8B4513';
+  ctx.fillRect(sx, sy, 16, 24);
+
+  // 眼睛
+  ctx.fillStyle = '#FFF';
+  const eyeX = npc.facingRight ? sx + 10 : sx + 3;
+  ctx.fillRect(eyeX, sy + 4, 4, 4);
+
+  // 腿动画
+  const legOffset = npc.animFrame === 0 ? 0 : 2;
+  ctx.fillStyle = '#5D4037';
+  ctx.fillRect(sx + 2 + legOffset, sy + 20, 5, 4);
+  ctx.fillRect(sx + 9 + legOffset, sy + 20, 5, 4);
+
+  // 对话气泡
+  if (npc.showBubble) {
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 1;
+    const bubbleW = 80;
+    const bubbleH = 20;
+    const bubbleX = sx + 8 - bubbleW / 2;
+    const bubbleY = sy - bubbleH - 8;
+    ctx.beginPath();
+    ctx.roundRect(bubbleX, bubbleY, bubbleW, bubbleH, 4);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#000';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(npc.bubbleText, sx + 8, bubbleY + 14);
+    ctx.textAlign = 'left';
   }
 }
 

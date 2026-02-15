@@ -219,6 +219,7 @@ window.MMWG_DEFAULTS = {
         showWordImage: true,
         showEnvironmentLabels: true,
         biomeSwitchStepScore: 200,
+        villageEnabled: true,                 // 村庄系统开关 (v1.8.0)
         gameDifficulty: "medium",
         vocabStage: "auto",
         vocabSelection: "vocab.kindergarten",

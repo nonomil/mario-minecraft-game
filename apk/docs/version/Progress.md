@@ -574,6 +574,46 @@
   - 14-renderer-main.js：渲染循环集成村庄绘制
   - Game.html：引入村庄模块脚本
 
+## v1.8.1（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.8.1，versionCode = 60
+- 主要变更
+  - 新增：NPC 村民系统 - 基础 AI 与对话气泡
+  - 3 种村民角色：欢迎者、教师、商人
+  - 村民巡逻 AI：区域内来回走动
+  - 靠近玩家触发对话气泡（欢迎/学习/交易提示）
+  - 村民转向跟随玩家
+  - 行走动画（双腿交替）
+  - 对话气泡持久时间控制（2秒）
+- 技术改进
+  - 新增 NPC_ROLES 常量（3种角色配置）
+  - 新增 createVillageNPC() 工厂函数
+  - 新增 updateVillageNPCs() 更新循环
+  - 新增 drawVillageNPC() 渲染函数
+  - createVillage()：生成 3 个 NPC 添加到村庄
+
+## v1.8.0（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.8.0，versionCode = 59
+- 主要变更
+  - 新增：村庄系统 - 基础框架与区域生成
+  - 分数驱动村庄生成（每 500 分出现一个村庄）
+  - 6 种群系风格村庄（森林/雪地/沙漠/山地/海洋/地狱）
+  - 像素风格建筑渲染（休息屋、单词屋、存档石碑、特色建筑）
+  - 村庄装饰物渲染（水井、农田、栅栏等）
+  - 村庄安全区（区域内不刷怪）
+  - 进入/离开村庄 Toast 提示
+- 技术改进
+  - 新增 config/village.json 村庄配置文件
+  - 新增 18-village.js 村庄核心逻辑模块
+  - 新增 18-village-render.js 村庄渲染模块
+  - 01-config.js：新增村庄全局变量
+  - defaults.js：新增 villageEnabled 配置项
+  - 11-game-init.js：敌人生成跳过村庄安全区
+  - 13-game-loop.js：update 循环集成村庄更新
+  - 14-renderer-main.js：渲染循环集成村庄绘制
+  - Game.html：引入村庄模块脚本
+
 # 版本修订记录（Progress）
 
 > 目的：记录每个版本的变更摘要与版本信息，确保与 APK 版本号保持一致
