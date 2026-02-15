@@ -77,7 +77,14 @@ class Chest extends Entity {
         this.opened = true;
         const diff = getDifficultyState();
         const lootCfg = getLootConfig();
-        const rarity = pickChestRarity(lootCfg.chestRarities, diff.chestRareBoost);
+
+        // 幸运星效果：提升稀有度
+        let rarityBoost = diff.chestRareBoost;
+        if (typeof gameState !== 'undefined' && gameState.luckyStarActive) {
+            rarityBoost += 0.5; // 提升稀有度
+        }
+
+        const rarity = pickChestRarity(lootCfg.chestRarities, rarityBoost);
         const lootTable = lootCfg.chestTables[rarity] || lootCfg.chestTables.common || [];
         const baseTwo = Number(lootCfg.chestRolls.twoDropChance ?? 0.45);
         const baseThree = Number(lootCfg.chestRolls.threeDropChance ?? 0.15);

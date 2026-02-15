@@ -279,6 +279,15 @@ function update() {
         }
     }
 
+    // 幸运星计时器
+    if (typeof gameState !== 'undefined' && gameState.luckyStarActive) {
+        gameState.luckyStarTimer--;
+        if (gameState.luckyStarTimer <= 0) {
+            gameState.luckyStarActive = false;
+            showToast('⭐ 幸运星效果结束');
+        }
+    }
+
     // Biomes are score-driven now; the old "next level / scene switch" caused conflicts.
     updateDifficultyState();
     gameFrame++;
@@ -639,6 +648,53 @@ function useInventoryItem(itemKey) {
         }
         itemCooldownTimers.coal = ITEM_COOLDOWNS.coal;
         showToast(`🪨 放置火把`);
+        used = true;
+    } else if (itemKey === "dragon_egg") {
+        // 龙蛋龙息
+        inventory.dragon_egg -= 1;
+        let hitCount = 0;
+        enemies.forEach(e => {
+            if (!e.remove && e.x > cameraX - 100 && e.x < cameraX + canvas.width + 100) {
+                e.takeDamage(50);
+                hitCount++;
+            }
+        });
+        // 龙息粒子效果
+        for (let i = 0; i < 30; i++) {
+            particles.push(new Particle(
+                cameraX + Math.random() * canvas.width,
+                Math.random() * canvas.height,
+                "ember"
+            ));
+        }
+        itemCooldownTimers.dragon_egg = ITEM_COOLDOWNS.dragon_egg;
+        showFloatingText(`🐉 龙息! (${hitCount}个敌人)`, player.x, player.y - 40, '#FF4500');
+        showToast(`🐉 释放龙息`);
+        used = true;
+    } else if (itemKey === "starfish") {
+        // 海星幸运星
+        inventory.starfish -= 1;
+        if (typeof gameState === 'undefined') window.gameState = {};
+        gameState.luckyStarActive = true;
+        gameState.luckyStarTimer = 1800; // 30秒
+        itemCooldownTimers.starfish = ITEM_COOLDOWNS.starfish;
+        showFloatingText('⭐ 幸运加持!', player.x, player.y - 30, '#FFD700');
+        showToast(`⭐ 幸运星激活 (30秒)`);
+        used = true;
+    } else if (itemKey === "gold") {
+        // 黄金交易
+        inventory.gold -= 1;
+        const trades = [
+            { item: 'iron', count: 2 },
+            { item: 'arrow', count: 4 },
+            { item: 'ender_pearl', count: 1 }
+        ];
+        const trade = trades[Math.floor(Math.random() * trades.length)];
+        if (!inventory[trade.item]) inventory[trade.item] = 0;
+        inventory[trade.item] += trade.count;
+        const icon = ITEM_ICONS[trade.item] || '✨';
+        showFloatingText(`${icon} +${trade.count}`, player.x, player.y - 30, '#FFD700');
+        showToast(`🪙 猪灵交易: ${ITEM_LABELS[trade.item]} ×${trade.count}`);
         used = true;
     }
     // 消耗品使用
