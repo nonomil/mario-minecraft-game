@@ -1,5 +1,21 @@
 # 版本更新记录
 
+## v1.6.0 (2026-02-15)
+
+### ✨ 新功能
+- **学习系统优化 - 答题数据结构扩展** - 为后续学习系统优化提供数据基础
+  - 新增 `challengeStats` 数据结构，记录每个单词的答题统计
+  - 记录答对次数、答错次数、最后答题时间
+  - 新增 `getChallengeStats()` 函数，返回总体统计数据
+  - 数据持久化到 LocalStorage
+
+### 🔧 技术改进
+- `src/modules/09-vocab.js`：normalizeProgress() 中初始化 challengeStats 结构
+- `src/modules/09-vocab.js`：新增 getChallengeStats() 统计查询函数
+- `src/modules/12-challenges.js`：completeLearningChallenge() 中记录答题统计
+
+---
+
 ## v1.4.1 (2026-02-15)
 
 ### ✨ 新功能

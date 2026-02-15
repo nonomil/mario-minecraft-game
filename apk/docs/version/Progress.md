@@ -1,4 +1,17 @@
-﻿## v1.5.7（发布日期：2026-02-15）
+﻿## v1.6.0（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.0，versionCode = 53
+- 主要变更
+  - 新增：学习系统优化 - 答题数据结构扩展
+  - 新增：challengeStats 数据结构记录答题统计（答对/答错次数、最后答题时间）
+  - 新增：getChallengeStats() 统计查询函数
+  - 为后续学习系统优化提供数据基础
+- 技术改进
+  - 09-vocab.js：normalizeProgress() 中初始化 challengeStats
+  - 09-vocab.js：新增 getChallengeStats() 函数返回答题统计数据
+  - 12-challenges.js：completeLearningChallenge() 中记录答题统计
+
+## v1.5.7（发布日期：2026-02-15）
 - 类型：PATCH
 - APK 版本：versionName = 1.5.7，versionCode = 52
 - 主要变更
