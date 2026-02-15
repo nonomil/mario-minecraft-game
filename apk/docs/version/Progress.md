@@ -1,4 +1,22 @@
-﻿## v1.6.3（发布日期：2026-02-15）
+﻿## v1.6.4（发布日期：2026-02-15）
+- 类型：MINOR
+- APK 版本：versionName = 1.6.4，versionCode = 57
+- 主要变更
+  - 新增：学习系统 - 个人资料面板扩展
+  - 个人资料面板显示答题统计（次数、正确率、单词数）
+  - 新增单词本功能，查看所有答题单词
+  - 单词按掌握程度排序（需复习的在前）
+  - 颜色标记：红色（<50%）、黄色（50-79%）、绿色（≥80%）
+  - 显示每个单词的答对/答错次数
+  - 可视化学习成长，提升长期动力
+- 技术改进
+  - 08-account.js：showProfileModal() 中显示答题统计
+  - 08-account.js：新增 showVocabBook() 和 hideVocabBook() 函数
+  - 16-events.js：wireLearningModals() 中绑定单词本按钮事件
+  - Game.html：添加答题统计 DOM 和单词本模态框
+  - styles.css：添加单词本样式
+
+## v1.6.3（发布日期：2026-02-15）
 - 类型：MINOR
 - APK 版本：versionName = 1.6.3，versionCode = 56
 - 主要变更
