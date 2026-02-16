@@ -258,10 +258,27 @@ function drawPixelTree(ctx2d, x, y, type, hp) {
         return;
     }
 
+    if (type === "brown_mushroom" || type === "red_mushroom") {
+        const capColor = type === "red_mushroom" ? "#D32F2F" : "#8D6E63";
+        ctx2d.fillStyle = "#E8D8B0";
+        ctx2d.fillRect(trunkX + 3 * s, trunkY + 20 * s, trunkW - 6 * s, trunkH - 20 * s);
+        ctx2d.fillStyle = capColor;
+        ctx2d.fillRect(x + 6 * s, y + 30 * s, treeW - 12 * s, 34 * s);
+        ctx2d.fillRect(x + 14 * s, y + 12 * s, treeW - 28 * s, 22 * s);
+        if (type === "red_mushroom") {
+            ctx2d.fillStyle = "#FFFFFF";
+            ctx2d.fillRect(x + 20 * s, y + 22 * s, 7 * s, 7 * s);
+            ctx2d.fillRect(x + 44 * s, y + 26 * s, 6 * s, 6 * s);
+            ctx2d.fillRect(x + 56 * s, y + 20 * s, 5 * s, 5 * s);
+        }
+        return;
+    }
+
     let leafColor = "#2E7D32";
     if (type === "birch") leafColor = "#7CB342";
     if (type === "dark_oak") leafColor = "#1B5E20";
     if (type === "mushroom") leafColor = "#D32F2F";
+    if (type === "cherry") leafColor = "#FFB7C5";
 
     if (type === "birch") {
         ctx2d.fillStyle = "#F5F5F5";

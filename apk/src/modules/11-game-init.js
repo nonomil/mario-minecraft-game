@@ -558,6 +558,23 @@ function generateBiomeDecorations(x, yPos, width, biome) {
             case "basalt":
                 spawnDecoration("basalt", obj => obj.reset(decorX, yPos - 40), () => new Basalt(decorX, yPos - 40));
                 break;
+            case "cherry_tree":
+            case "flower_cluster":
+            case "butterfly":
+            case "small_stream":
+            case "giant_mushroom":
+            case "glow_mushroom":
+            case "mushroom_cow":
+            case "magma_crack":
+            case "hot_spring":
+            case "obsidian_pillar":
+            case "sculk_sensor":
+            case "soul_lantern":
+            case "cloud_platform":
+                if (typeof spawnBiomeDecoration === "function") {
+                    spawnBiomeDecoration(biome?.id || currentBiome, decorX, yPos, yPos);
+                }
+                break;
             default:
                 break;
         }

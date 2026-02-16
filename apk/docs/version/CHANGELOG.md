@@ -1,5 +1,13 @@
 # 版本更新记录
 
+## v1.9.1 (2026-02-16)
+
+### 功能修复
+- 打通新装饰生成链路：在 `generateBiomeDecorations()` 接入 `spawnBiomeDecoration()`。
+- 补充 `drawPixelTree()` 对 `brown_mushroom/red_mushroom/cherry` 的渲染支持。
+
+---
+
 ## v1.9.0 (2026-02-16)
 
 ### Bug 修复
