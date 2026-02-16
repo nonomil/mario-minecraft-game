@@ -1,5 +1,13 @@
 # 版本更新记录
 
+## v1.9.2 (2026-02-16)
+
+### 功能修复
+- 打通新敌人生成链路：`spawnEnemyByDifficulty()` 优先接入 `spawnBiomeEnemy()`。
+- 打通新敌人渲染链路：`drawEnemy()` 新增 piglin/bee/fox/spore_bug/magma_cube/fire_spirit/sculk_worm/shadow_stalker 分支。
+
+---
+
 ## v1.9.1 (2026-02-16)
 
 ### 功能修复

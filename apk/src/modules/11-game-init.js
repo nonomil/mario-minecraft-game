@@ -404,6 +404,14 @@ function spawnEnemyByDifficulty(x, y) {
     const maxOnScreen = Math.round((enemyConfig.maxOnScreen || 8) * penaltyMult);
     if (aliveEnemies >= maxOnScreen) return;
 
+    if (typeof spawnBiomeEnemy === "function") {
+        const biomeEnemy = spawnBiomeEnemy(currentBiome, x, y);
+        if (biomeEnemy) {
+            enemies.push(biomeEnemy);
+            return;
+        }
+    }
+
     const type = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "zombie";
     enemies.push(new Enemy(x, y, type));
 }

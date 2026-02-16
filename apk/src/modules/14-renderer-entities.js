@@ -94,10 +94,51 @@ function drawEnemy(enemy) {
         case "ender_dragon":
             drawEnderDragon(enemy.x, enemy.y);
             break;
+        case "piglin":
+            drawSimpleBiomeEnemy(enemy, "#C68642", "#8B4513", true);
+            break;
+        case "bee":
+            drawSimpleBiomeEnemy(enemy, "#FFD54F", "#212121", false);
+            break;
+        case "fox":
+            drawSimpleBiomeEnemy(enemy, "#FB8C00", "#F5F5F5", false);
+            break;
+        case "spore_bug":
+            drawSimpleBiomeEnemy(enemy, "#8E24AA", "#4A148C", false);
+            break;
+        case "magma_cube":
+            drawSimpleBiomeEnemy(enemy, "#FF5722", "#BF360C", false);
+            break;
+        case "fire_spirit":
+            drawSimpleBiomeEnemy(enemy, "#FFB300", "#F57C00", false);
+            break;
+        case "sculk_worm":
+            drawSimpleBiomeEnemy(enemy, "#00838F", "#80DEEA", false);
+            break;
+        case "shadow_stalker":
+            drawSimpleBiomeEnemy(enemy, "#1B1B2F", "#E53935", true);
+            break;
     }
 
     if (enemy.hp < enemy.maxHp) {
         drawHealthBar(enemy.x, enemy.y - 8, enemy.width, enemy.hp, enemy.maxHp);
+    }
+}
+
+function drawSimpleBiomeEnemy(enemy, bodyColor, detailColor, humanoid) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.fillStyle = bodyColor;
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = detailColor;
+    if (humanoid) {
+        ctx.fillRect(x + w * 0.2, y + h * 0.25, w * 0.15, h * 0.12);
+        ctx.fillRect(x + w * 0.65, y + h * 0.25, w * 0.15, h * 0.12);
+        ctx.fillRect(x + w * 0.35, y + h * 0.65, w * 0.3, h * 0.1);
+    } else {
+        ctx.fillRect(x + w * 0.2, y + h * 0.4, w * 0.6, h * 0.18);
     }
 }
 
