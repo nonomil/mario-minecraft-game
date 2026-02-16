@@ -91,7 +91,8 @@ function loadVillageConfig() {
 
 // ========== 村庄生成 ==========
 function maybeSpawnVillage(playerScore, playerX) {
-  if (!settings.villageEnabled || !villageConfig.enabled) return;
+  if (!settings || !settings.villageEnabled) return;
+  if (!villageConfig || !villageConfig.enabled) return;
   const interval = villageConfig.spawnScoreInterval || 500;
   // 计算当前分数应该生成的村庄编号
   const villageIndex = Math.floor(playerScore / interval);
@@ -243,7 +244,8 @@ function updateVillageNPCs(village) {
 
 // ========== 村庄状态更新 ==========
 function updateVillages() {
-  if (!settings.villageEnabled) return;
+  if (!settings || !settings.villageEnabled) return;
+  if (!player) return;
   // 检查是否需要生成新村庄
   maybeSpawnVillage(score, player.x);
   // 检测玩家是否在村庄内
@@ -399,6 +401,7 @@ function getVillageAt(x) {
 }
 
 function getBiomeName(biomeId) {
+  if (typeof biomeConfigs === 'undefined' || !biomeConfigs) return biomeId || 'forest';
   const biome = biomeConfigs[biomeId];
   return biome ? biome.name : biomeId;
 }

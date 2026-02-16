@@ -1,4 +1,17 @@
-﻿## v1.11.0 (2026-02-16)
+﻿## v1.11.1 (2026-02-16)
+
+### Bug 修复
+- 修复游戏重启时 BOSS 竞技场和村庄系统状态未重置，导致残留数据影响新一局
+- 修复 18-village.js 中 villageConfig/settings/player/biomeConfigs 空值检查缺失
+- 修复 showFloatingText() 第4个颜色参数被忽略，浮动文字全部显示白色
+- 修复 14-renderer-main.js 渲染浮动文字时未读取 color 属性
+
+### 代码同步
+- 统一 apk 与 root 目录的 BOSS/村庄模块代码（以 apk 完善版为准反向同步）
+- 复制 GameDebug.html 调试工具到 root/tests/debug-pages/
+
+---
+## v1.11.0 (2026-02-16)
 
 ### 新功能
 - 新增 BOSS 竞技场系统（15-entities-boss.js）

@@ -1,4 +1,13 @@
-﻿## v1.11.0（发布日期：2026-02-16）
+﻿## v1.11.1（发布日期：2026-02-16）
+- 类型：PATCH
+- APK 版本：versionName = 1.11.1，versionCode = 87
+- 主要变更
+  - 修复 BOSS/村庄状态在游戏重启时未重置的问题
+  - 修复 villageConfig/settings/biomeConfigs 空值检查缺失导致的崩溃
+  - 修复 showFloatingText() 缺少颜色参数支持，浮动文字现在支持彩色显示
+  - 统一 apk 与 root 目录的 BOSS/村庄代码（以 apk 完善版为准）
+  - 复制 GameDebug.html 调试工具到 root 目录
+## v1.11.0（发布日期：2026-02-16）
 - 类型：MINOR
 - APK 版本：versionName = 1.11.0，versionCode = 86
 - 主要变更

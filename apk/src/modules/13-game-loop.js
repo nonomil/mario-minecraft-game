@@ -459,8 +459,8 @@ function showToast(msg) {
     setTimeout(() => t.style.display = "none", 2000);
 }
 
-function showFloatingText(text, x, y) {
-    floatingTexts.push({ text, x, y, life: 60 });
+function showFloatingText(text, x, y, color) {
+    floatingTexts.push({ text, x, y, life: 60, color: color || '#FFF' });
 }
 
 function updateInventoryUI() {
@@ -960,12 +960,17 @@ function hideArmorSelectUI() {
 
 const RECIPES = {
     iron_golem: { iron: 3 },
-    snow_golem: { pumpkin: 1 }
+    snow_golem: { pumpkin: 1, snow_block: 2 }
 };
 
 function tryCraft(recipeKey) {
     const recipe = RECIPES[recipeKey];
     if (!recipe) return false;
+    const isGolemRecipe = recipeKey === "snow_golem" || recipeKey === "iron_golem";
+    if (isGolemRecipe && currentBiome === "ocean") {
+        showToast("⚠️ 海滨环境无法召唤傀儡！");
+        return false;
+    }
     for (const [item, count] of Object.entries(recipe)) {
         if ((inventory[item] || 0) < count) {
             showToast(`材料不足: 需要 ${ITEM_LABELS[item] || item} x${count}`);

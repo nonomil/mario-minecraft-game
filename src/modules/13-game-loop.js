@@ -347,8 +347,8 @@ function showToast(msg) {
     setTimeout(() => t.style.display = "none", 2000);
 }
 
-function showFloatingText(text, x, y) {
-    floatingTexts.push({ text, x, y, life: 60 });
+function showFloatingText(text, x, y, color) {
+    floatingTexts.push({ text, x, y, life: 60, color: color || '#FFF' });
 }
 
 function updateInventoryUI() {

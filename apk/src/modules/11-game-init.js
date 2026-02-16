@@ -58,6 +58,22 @@ function initGame() {
     updateInventoryUI();
     player = createPlayer();
     bossSpawned = false;
+    // Reset BOSS arena state
+    if (typeof bossArena !== 'undefined' && bossArena) {
+        bossArena.active = false;
+        bossArena.boss = null;
+        bossArena.victoryTimer = 0;
+        if (bossArena.spawned) {
+            for (const k in bossArena.spawned) delete bossArena.spawned[k];
+        }
+    }
+    // Reset village state
+    if (typeof activeVillages !== 'undefined') activeVillages = [];
+    if (typeof villageSpawnedForScore !== 'undefined') {
+        for (const k in villageSpawnedForScore) delete villageSpawnedForScore[k];
+    }
+    if (typeof playerInVillage !== 'undefined') playerInVillage = false;
+    if (typeof currentVillage !== 'undefined') currentVillage = null;
     startLevel(0);
     updateDifficultyState(true);
 }
@@ -403,6 +419,27 @@ function spawnEnemyByDifficulty(x, y) {
         : 1;
     const maxOnScreen = Math.round((enemyConfig.maxOnScreen || 8) * penaltyMult);
     if (aliveEnemies >= maxOnScreen) return;
+
+    if (currentBiome === "nether") {
+        const weightedPool = [
+            { type: "zombie", weight: 0.2 },
+            { type: "piglin", weight: 0.3 },
+            { type: "skeleton", weight: 0.2 },
+            { type: "creeper", weight: 0.15 },
+            { type: "enderman", weight: 0.15 }
+        ];
+        let randomValue = Math.random();
+        let selectedType = "piglin";
+        for (const entry of weightedPool) {
+            randomValue -= entry.weight;
+            if (randomValue <= 0) {
+                selectedType = entry.type;
+                break;
+            }
+        }
+        enemies.push(new Enemy(x, y, selectedType));
+        return;
+    }
 
     if (typeof spawnBiomeEnemy === "function") {
         const biomeEnemy = spawnBiomeEnemy(currentBiome, x, y);

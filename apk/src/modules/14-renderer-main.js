@@ -31,6 +31,7 @@ function draw() {
     });
 
     decorations.forEach(d => drawDecoration(d));
+    if (typeof renderNewBiomeDecorations === "function") renderNewBiomeDecorations(ctx, cameraX, 0);
     if (typeof renderInteractionChains === 'function') renderInteractionChains(ctx, cameraX);
 
     chests.forEach(c => drawChest(c.x, c.y, c.opened));
@@ -83,6 +84,7 @@ function draw() {
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 3;
     floatingTexts.forEach(t => {
+        ctx.fillStyle = t.color || '#FFF';
         ctx.strokeText(t.text, t.x + 10, t.y);
         ctx.fillText(t.text, t.x + 10, t.y);
     });
@@ -423,9 +425,7 @@ function drawBackground(biome) {
     ctx.fillStyle = ambient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (currentBiome === "volcano" && typeof renderVolcanoSilhouette === "function") {
-        renderVolcanoSilhouette(ctx);
-    } else {
+    if (currentBiome !== "volcano") {
         const parallaxX = cameraX * 0.2;
         ctx.fillStyle = "rgba(0,0,0,0.15)";
         for (let i = 0; i < 3; i++) {
@@ -449,17 +449,11 @@ function drawBackground(biome) {
             ctx.arc(cx + 70, 80, 26, 0, Math.PI * 2);
             ctx.fill();
         }
+        ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
+        ctx.beginPath();
+        ctx.arc(canvas.width - 80, 60, 24, 0, Math.PI * 2);
+        ctx.fill();
     }
-
-    ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
-    ctx.beginPath();
-    ctx.arc(canvas.width - 80, 60, 24, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
-    ctx.beginPath();
-    ctx.arc(canvas.width - 80, 60, 24, 0, Math.PI * 2);
-    ctx.fill();
 
     if (biome.effects?.darkness) {
         ctx.fillStyle = `rgba(0,0,0,${biome.effects.darkness})`;

@@ -62,6 +62,7 @@ function draw() {
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 3;
     floatingTexts.forEach(t => {
+        ctx.fillStyle = t.color || '#FFF';
         ctx.strokeText(t.text, t.x + 10, t.y);
         ctx.fillText(t.text, t.x + 10, t.y);
     });

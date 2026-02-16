@@ -2,19 +2,28 @@
   "enabled": true,
   "spawnScoreInterval": 500,
   "villageWidth": 800,
+  "safeZone": true,
   "restHealFull": true,
   "challengeQuestionCount": 3,
   "challengeReward": {
     "perfect": { "score": 100, "diamonds": 1 },
-    "partial": { "score": 50 }
+    "partial": { "score": 50, "diamonds": 0 }
   },
-  "buildings": ["bed_house", "word_house", "save_stone", "special"],
+  "npcSpeed": 0.3,
+  "npcGreetDistance": 80,
+  "maxActiveVillages": 3,
+  "buildings": {
+    "bed_house": { "w": 80, "h": 60, "offset": 100 },
+    "word_house": { "w": 100, "h": 80, "offset": 300 },
+    "save_stone": { "w": 40, "h": 50, "offset": 550 },
+    "special": { "w": 80, "h": 60, "offset": 700 }
+  },
   "biomeWords": {
-    "forest": ["tree", "flower", "grass", "leaf", "bird", "green"],
-    "snow": ["ice", "cold", "snow", "white", "freeze", "winter"],
-    "desert": ["sand", "hot", "sun", "dry", "cactus", "dust"],
-    "mountain": ["rock", "high", "climb", "peak", "stone", "cloud"],
-    "ocean": ["water", "fish", "wave", "swim", "shell", "blue"],
-    "nether": ["fire", "lava", "dark", "red", "flame", "ash"]
+    "forest": ["tree", "leaf", "bird", "flower", "grass", "wood", "deer", "owl"],
+    "snow": ["snow", "ice", "cold", "coat", "hat", "scarf", "ski", "sled"],
+    "desert": ["sand", "sun", "hot", "water", "cactus", "camel", "oasis", "dry"],
+    "mountain": ["rock", "iron", "gold", "pick", "cave", "stone", "gem", "ore"],
+    "ocean": ["fish", "wave", "boat", "shell", "whale", "coral", "swim", "sea"],
+    "nether": ["fire", "red", "lava", "dark", "flame", "ash", "smoke", "glow"]
   }
 }
