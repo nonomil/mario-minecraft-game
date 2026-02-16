@@ -50,6 +50,7 @@ function draw() {
     if (typeof renderSwimBubbles === 'function') renderSwimBubbles(ctx, cameraX);
 
     enemies.forEach(e => drawEnemy(e));
+    if (typeof renderDeepDarkEnemyEffects === "function") renderDeepDarkEnemyEffects(ctx, cameraX);
 
     // 海洋生物渲染
     if (typeof renderOceanCreatures === 'function') renderOceanCreatures(ctx, cameraX);
@@ -112,6 +113,7 @@ function draw() {
     // 末地速度buff
     if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
     if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
+    if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
 
     const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
     if (boss) {

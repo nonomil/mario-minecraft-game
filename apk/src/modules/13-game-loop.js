@@ -31,6 +31,7 @@ function update() {
     applyBiomeEffectsToPlayer();
     if (typeof updateAllInteractionChains === 'function') updateAllInteractionChains();
     if (typeof updateBiomeVisuals === 'function') updateBiomeVisuals();
+    if (typeof updateDeepDarkNoiseSystem === 'function') updateDeepDarkNoiseSystem();
     tickWeather();
 
     const isUnderwater = (currentBiome === 'ocean');
@@ -58,6 +59,7 @@ function update() {
                     ? (WATER_PHYSICS.swimJumpImpulse || WATER_PHYSICS.verticalSwimSpeed)
                     : WATER_PHYSICS.verticalSwimSpeed
             ) * camelJumpMult;
+            if (swimJumpTriggered && typeof addDeepDarkNoise === "function") addDeepDarkNoise(15);
         } else if (keys.down) {
             player.velY = WATER_PHYSICS.verticalSwimSpeed;
         } else {
@@ -143,10 +145,12 @@ function update() {
             player.jumpCount = 1;
             coyoteTimer = 0;
             jumpBuffer = 0;
+            if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(15);
         } else if (player.jumpCount < player.maxJumps) {
             player.velY = player.jumpStrength * 0.8 * totalJumpMult;
             player.jumpCount++;
             jumpBuffer = 0;
+            if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(15);
         }
     }
 
@@ -435,6 +439,7 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     }
     updateArmorUI();
     playerHp = Math.max(0, playerHp - actualDamage);
+    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(8);
     updateHpUI();
     showFloatingText(`-${penalty}分`, player.x, player.y);
     if (playerHp <= 0 || score <= 0) {
@@ -1034,6 +1039,7 @@ function handleDecorationInteract() {
 
 function handleAttack(mode = "press") {
     if (playerWeapons.attackCooldown > 0) return;
+    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10);
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
 
     if (weapon.type === "ranged") {

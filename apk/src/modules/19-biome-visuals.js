@@ -561,6 +561,41 @@ function renderEndStars(ctx) {
     ctx.globalAlpha = 1;
 }
 
+function renderDeepDarkVisionMask(ctx, camX) {
+    if (currentBiome !== "deep_dark") return;
+    const noise = typeof getDeepDarkNoiseLevel === "function" ? getDeepDarkNoiseLevel() : 0;
+    const playerRadius = Math.max(95, 140 - noise * 0.4);
+    ctx.save();
+    ctx.fillStyle = "rgba(0, 0, 0, 0.78)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.globalCompositeOperation = "destination-out";
+
+    const px = (player?.x || cameraX) - camX + (player?.width || 32) * 0.5;
+    const py = (player?.y || (canvas.height * 0.6)) + (player?.height || 40) * 0.45;
+    const core = ctx.createRadialGradient(px, py, 14, px, py, playerRadius);
+    core.addColorStop(0, "rgba(0,0,0,0.95)");
+    core.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(px, py, playerRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    for (const d of decorations) {
+        if (!d || d.remove || d.type !== "soul_lantern") continue;
+        const lx = d.x - camX + d.width * 0.5;
+        const ly = d.y + d.height * 0.45;
+        const glow = ctx.createRadialGradient(lx, ly, 10, lx, ly, 80);
+        glow.addColorStop(0, "rgba(0,0,0,0.85)");
+        glow.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(lx, ly, 80, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.restore();
+}
+
 // ============ 生成群系粒子 ============
 function spawnBiomeParticles() {
     const config = BIOME_PARTICLE_CONFIG[currentBiome];
@@ -602,6 +637,7 @@ function renderBiomeVisuals(ctx, camX) {
     renderLavaPools(ctx);
     renderOceanLightBeams(ctx);
     renderEndStars(ctx);
+    renderDeepDarkVisionMask(ctx, camX);
 }
 
 // ============ 清理函数 ============

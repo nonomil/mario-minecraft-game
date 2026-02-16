@@ -118,6 +118,9 @@ function drawEnemy(enemy) {
         case "shadow_stalker":
             drawSimpleBiomeEnemy(enemy, "#1B1B2F", "#E53935", true);
             break;
+        case "warden":
+            drawWardenEnemy(enemy);
+            break;
     }
 
     if (enemy.hp < enemy.maxHp) {
@@ -140,6 +143,24 @@ function drawSimpleBiomeEnemy(enemy, bodyColor, detailColor, humanoid) {
     } else {
         ctx.fillRect(x + w * 0.2, y + h * 0.4, w * 0.6, h * 0.18);
     }
+}
+
+function drawWardenEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.fillStyle = "#0D1F2B";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "#173748";
+    ctx.fillRect(x + w * 0.1, y + h * 0.1, w * 0.8, h * 0.75);
+    ctx.fillStyle = "#63D8D1";
+    ctx.beginPath();
+    ctx.arc(x + w * 0.5, y + h * 0.48, Math.max(4, w * 0.14), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#87E5FF";
+    ctx.fillRect(x + w * 0.18, y + h * 0.18, w * 0.12, h * 0.08);
+    ctx.fillRect(x + w * 0.7, y + h * 0.18, w * 0.12, h * 0.08);
 }
 
 function drawZombie(enemy) {

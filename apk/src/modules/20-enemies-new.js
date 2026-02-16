@@ -100,6 +100,17 @@ const BIOME_ENEMY_STATS = {
         scoreValue: 50,
         biome: "deep_dark"
     },
+    warden: {
+        hp: 100,
+        speed: 0.8,
+        damage: 50,
+        size: { w: 32, h: 48 },
+        color: "#0E2230",
+        attackType: "melee",
+        drops: ["echo_shard", "sculk_vein"],
+        scoreValue: 120,
+        biome: "deep_dark"
+    },
 
     // 天空之城敌人
     phantom: {
@@ -125,6 +136,101 @@ const BIOME_ENEMY_STATS = {
         biome: "sky_dimension"
     }
 };
+
+const deepDarkNoiseState = {
+    value: 0,
+    max: 100,
+    wardenCooldown: 0,
+    lastActionFrame: -999
+};
+let deepDarkSonicWaves = [];
+
+function addDeepDarkNoise(amount, source = "") {
+    if (currentBiome !== "deep_dark") return;
+    const inc = Math.max(0, Number(amount) || 0);
+    if (!inc) return;
+    deepDarkNoiseState.value = Math.min(deepDarkNoiseState.max, deepDarkNoiseState.value + inc);
+    deepDarkNoiseState.lastActionFrame = gameFrame;
+    if (source) {
+        showFloatingText(`Noise +${Math.round(inc)}`, player.x, player.y - 56, "#66E0E0");
+    }
+}
+
+function getDeepDarkNoiseLevel() {
+    return deepDarkNoiseState.value;
+}
+
+function spawnDeepDarkWarden() {
+    if (currentBiome !== "deep_dark") return false;
+    const hasWarden = enemies.some(e => !e.remove && e.type === "warden");
+    if (hasWarden) return false;
+    const spawnX = player.x + (player.facingRight ? 260 : -260);
+    const spawnY = Math.max(40, groundY - 60);
+    const warden = new WardenEnemy(spawnX, spawnY);
+    enemies.push(warden);
+    deepDarkNoiseState.wardenCooldown = 900;
+    deepDarkNoiseState.value = 40;
+    showToast("Warden has awakened!");
+    return true;
+}
+
+function updateDeepDarkNoiseSystem() {
+    if (currentBiome !== "deep_dark") {
+        deepDarkNoiseState.value = Math.max(0, deepDarkNoiseState.value - 4);
+        deepDarkSonicWaves = [];
+        return;
+    }
+    deepDarkNoiseState.value = Math.max(0, deepDarkNoiseState.value - 0.033);
+    if (deepDarkNoiseState.wardenCooldown > 0) deepDarkNoiseState.wardenCooldown--;
+    if (deepDarkNoiseState.value >= deepDarkNoiseState.max && deepDarkNoiseState.wardenCooldown <= 0) {
+        spawnDeepDarkWarden();
+    }
+
+    deepDarkSonicWaves = deepDarkSonicWaves.filter(w => {
+        w.x += w.speed * w.dir;
+        w.life--;
+        if (!w.hit && rectIntersect(w.x - w.radius, w.y - w.radius, w.radius * 2, w.radius * 2, player.x, player.y, player.width, player.height)) {
+            w.hit = true;
+            damagePlayer(w.damage, w.x, 60);
+        }
+        return w.life > 0;
+    });
+}
+
+function renderDeepDarkEnemyEffects(ctx, camX) {
+    if (!deepDarkSonicWaves.length) return;
+    ctx.save();
+    deepDarkSonicWaves.forEach(w => {
+        const dx = w.x - camX;
+        const alpha = Math.max(0.2, w.life / w.maxLife);
+        ctx.strokeStyle = `rgba(110, 220, 255, ${alpha})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(dx, w.y, w.radius, 0, Math.PI * 2);
+        ctx.stroke();
+    });
+    ctx.restore();
+}
+
+function renderDeepDarkNoiseHud(ctx) {
+    if (currentBiome !== "deep_dark") return;
+    const width = 180;
+    const height = 10;
+    const x = canvas.width - width - 20;
+    const y = 14;
+    const pct = Math.max(0, Math.min(1, deepDarkNoiseState.value / deepDarkNoiseState.max));
+    ctx.save();
+    ctx.fillStyle = "rgba(10, 20, 28, 0.7)";
+    ctx.fillRect(x - 6, y - 6, width + 12, height + 22);
+    ctx.fillStyle = "rgba(12, 45, 60, 0.9)";
+    ctx.fillRect(x, y, width, height);
+    ctx.fillStyle = pct > 0.85 ? "#FF6B6B" : "#5ED6D6";
+    ctx.fillRect(x, y, width * pct, height);
+    ctx.fillStyle = "#D2F8FF";
+    ctx.font = "bold 11px Verdana";
+    ctx.fillText(`Noise ${Math.round(deepDarkNoiseState.value)}/100`, x, y + 21);
+    ctx.restore();
+}
 
 // ============ 新敌人AI类 ============
 
@@ -547,6 +653,50 @@ class ShadowStalkerEnemy extends Enemy {
     }
 }
 
+class WardenEnemy extends Enemy {
+    constructor(x, y) {
+        super(x, y, "warden", 220);
+        this.sonicCooldown = 120;
+    }
+
+    update(playerRef) {
+        const dist = Math.abs(this.x - playerRef.x);
+        const speedMult = this.webbed > 0 ? 0.2 : 1;
+
+        if (dist < 68 && this.attackCooldown === 0) {
+            damagePlayer(this.damage, this.x, 110);
+            this.attackCooldown = 90;
+            showFloatingText("Warden slam!", this.x, this.y - 24, "#6EC8E8");
+        } else if (dist < 280 && this.sonicCooldown === 0) {
+            const dir = playerRef.x >= this.x ? 1 : -1;
+            deepDarkSonicWaves.push({
+                x: this.x + this.width * 0.5,
+                y: this.y + this.height * 0.45,
+                radius: 16,
+                dir,
+                speed: 5,
+                damage: Math.max(10, Math.round(this.damage * 0.5)),
+                life: 36,
+                maxLife: 36,
+                hit: false
+            });
+            this.sonicCooldown = 150;
+            showFloatingText("Sonic wave!", this.x, this.y - 24, "#7FDBFF");
+        } else if (dist < 220) {
+            this.state = "chase";
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
+        } else {
+            this.state = "patrol";
+            this.updateBasic();
+        }
+
+        this.applyGravity();
+        if (this.attackCooldown > 0) this.attackCooldown--;
+        if (this.sonicCooldown > 0) this.sonicCooldown--;
+        if (this.webbed > 0) this.webbed--;
+    }
+}
+
 class PhantomEnemy extends Enemy {
     constructor(x, y) {
         super(x, y, "phantom", 200);
@@ -755,6 +905,7 @@ function spawnBiomeEnemy(biomeId, x, y) {
         case "deep_dark":
             enemyTypes.push("sculk_worm", "shadow_stalker");
             if (score > 800) enemyTypes.push("shadow_stalker");
+            if (score > 1200 || getDeepDarkNoiseLevel() > 75) enemyTypes.push("warden");
             break;
         case "sky_dimension":
             enemyTypes.push("phantom", "vex");
@@ -778,6 +929,7 @@ function createBiomeEnemy(type, x, y) {
         case "fire_spirit": return new FireSpiritEnemy(x, y);
         case "sculk_worm": return new SculkWormEnemy(x, y);
         case "shadow_stalker": return new ShadowStalkerEnemy(x, y);
+        case "warden": return new WardenEnemy(x, y);
         case "phantom": return new PhantomEnemy(x, y);
         case "vex": return new VexEnemy(x, y);
         default: return null;

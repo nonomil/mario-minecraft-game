@@ -356,6 +356,7 @@ class SculkSensor extends Decoration {
 
             if (!wasActivated && this.activated) {
                 showFloatingText("👁️ 幽匿感知", this.x, this.y - 20, "#008080");
+                if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(20);
             }
         }
     }
@@ -382,6 +383,32 @@ class SoulLantern extends Decoration {
 }
 
 // ============ 天空之城装饰 ============
+
+class AncientPillarDecor extends Decoration {
+    constructor(x, y) {
+        super(x, y, "ancient_pillar", "deep_dark");
+        this.reset(x, y);
+    }
+
+    reset(x, y) {
+        this.resetBase(x, y, "ancient_pillar", "deep_dark");
+        this.width = 20;
+        this.height = 60;
+    }
+}
+
+class SculkVeinDecor extends Decoration {
+    constructor(x, y) {
+        super(x, y, "sculk_vein_patch", "deep_dark");
+        this.reset(x, y);
+    }
+
+    reset(x, y) {
+        this.resetBase(x, y, "sculk_vein_patch", "deep_dark");
+        this.width = 48 + Math.random() * 34;
+        this.height = 10 + Math.random() * 8;
+    }
+}
 
 class CloudPlatform extends Platform {
     constructor(x, y, width) {
@@ -497,15 +524,25 @@ function spawnVolcanoDecoration(x, y, groundY) {
 function spawnDeepDarkDecoration(x, y, groundY) {
     const roll = Math.random();
 
-    if (roll < 0.4) {
+    if (roll < 0.32) {
         spawnDecoration("sculk_sensor",
             (d) => d.reset(x, groundY - 24),
             () => new SculkSensor(x, groundY - 24)
         );
-    } else if (roll < 0.8) {
+    } else if (roll < 0.56) {
         spawnDecoration("soul_lantern",
             (d) => d.reset(x, groundY - 18),
             () => new SoulLantern(x, groundY - 18)
+        );
+    } else if (roll < 0.78) {
+        spawnDecoration("ancient_pillar",
+            (d) => d.reset(x, groundY - 60),
+            () => new AncientPillarDecor(x, groundY - 60)
+        );
+    } else if (roll < 0.98) {
+        spawnDecoration("sculk_vein_patch",
+            (d) => d.reset(x, groundY - 8),
+            () => new SculkVeinDecor(x, groundY - 8)
         );
     }
 }
@@ -562,6 +599,12 @@ function renderNewBiomeDecorations(ctx, camX) {
                 break;
             case "soul_lantern":
                 renderSoulLantern(ctx, d, camX);
+                break;
+            case "ancient_pillar":
+                renderAncientPillar(ctx, d, camX);
+                break;
+            case "sculk_vein_patch":
+                renderSculkVeinPatch(ctx, d, camX);
                 break;
             case "cloud_platform":
                 renderCloudPlatform(ctx, d, camX);
@@ -766,6 +809,33 @@ function renderSoulLantern(ctx, d, camX) {
     ctx.strokeStyle = "#4a4a4a";
     ctx.lineWidth = 2;
     ctx.strokeRect(dx + 2, d.y, d.width - 4, d.height);
+}
+
+function renderAncientPillar(ctx, d, camX) {
+    const dx = d.x - camX;
+    const gradient = ctx.createLinearGradient(dx, d.y, dx + d.width, d.y);
+    gradient.addColorStop(0, "#1B1F2C");
+    gradient.addColorStop(0.5, "#24354A");
+    gradient.addColorStop(1, "#1B1F2C");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(dx, d.y, d.width, d.height);
+    ctx.fillStyle = "rgba(120, 220, 210, 0.35)";
+    for (let i = 0; i < 3; i++) {
+        ctx.fillRect(dx + 4 + i * 5, d.y + 10 + i * 13, 6, 3);
+    }
+}
+
+function renderSculkVeinPatch(ctx, d, camX) {
+    const dx = d.x - camX;
+    ctx.fillStyle = "rgba(25, 80, 96, 0.85)";
+    ctx.fillRect(dx, d.y, d.width, d.height);
+    ctx.strokeStyle = "rgba(110, 225, 220, 0.6)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(dx + 4, d.y + d.height * 0.5);
+    ctx.lineTo(dx + d.width * 0.45, d.y + d.height * 0.25);
+    ctx.lineTo(dx + d.width - 6, d.y + d.height * 0.6);
+    ctx.stroke();
 }
 
 function renderCloudPlatform(ctx, d, camX) {
