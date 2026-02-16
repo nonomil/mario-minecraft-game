@@ -33,12 +33,22 @@ function setOverlay(visible, mode) {
             if (title) title.innerText = "💀 游戏结束";
             if (text) {
                 const level = Math.max(1, Math.floor(score / 1000) + 1);
+                const uniqueWords = getUniqueSessionWords();
+                const wordListHtml = uniqueWords.length
+                    ? uniqueWords.slice(0, 8).map(w =>
+                        `<span style="display:inline-block;background:rgba(255,255,255,0.1);padding:2px 6px;margin:2px;border-radius:4px;font-size:12px;">${w.en}</span>`
+                    ).join("")
+                    : "无";
+                const moreText = uniqueWords.length > 8
+                    ? `<span style="color:#888;font-size:11px;"> +${uniqueWords.length - 8}个</span>`
+                    : "";
                 text.innerHTML =
                     `📚 学习单词: ${getLearnedWordCount()}<br>` +
                     `💎 钻石: ${diamonds}<br>` +
                     `⭐ 当前积分: ${score}<br>` +
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
-                    `🏅 玩家等级: ${level}`;
+                    `🏅 玩家等级: ${level}<br>` +
+                    `<div style="margin-top:8px;font-size:13px;color:#FFD54F;">本局单词: ${wordListHtml}${moreText}</div>`;
             }
             if (btn) {
                 const cfg = getReviveConfig();

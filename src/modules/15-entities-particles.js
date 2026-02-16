@@ -131,6 +131,35 @@ class RainParticle extends Particle {
     }
 }
 
+class ParticlePool {
+    constructor(ParticleClass, size = 50) {
+        this._pool = [];
+        this._Class = ParticleClass;
+        for (let i = 0; i < size; i++) {
+            this._pool.push(new ParticleClass(0, 0));
+        }
+    }
+    acquire(x, y) {
+        const p = this._pool.length > 0 ? this._pool.pop() : new this._Class(x, y);
+        if (typeof p.reset === "function") p.reset(x, y);
+        else {
+            p.x = x;
+            p.y = y;
+            p.remove = false;
+            p.life = 1;
+        }
+        return p;
+    }
+    release(p) {
+        if (!p) return;
+        if (this._pool.length < 100) this._pool.push(p);
+    }
+}
+
+const snowflakePool = new ParticlePool(Snowflake, 40);
+const leafPool = new ParticlePool(LeafParticle, 30);
+const dustPool = new ParticlePool(DustParticle, 30);
+
 const ENEMY_STATS = {
     zombie: {
         hp: 20,

@@ -371,28 +371,79 @@ function drawLavaPool(pool) {
 function drawShell(shell) {
     const x = shell.x;
     const y = shell.y;
+    const w = shell.width || 28;
+    const h = shell.height || 18;
+    const variant = shell.variant || "scallop";
+
+    if (variant === "spiral") {
+        ctx.fillStyle = "#F8BBD0";
+        ctx.beginPath();
+        ctx.ellipse(x + w * 0.45, y + h * 0.6, w * 0.42, h * 0.38, -0.25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#EC407A";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x + w * 0.48, y + h * 0.62, h * 0.28, 0.3, Math.PI * 1.9);
+        ctx.stroke();
+        return;
+    }
+
+    if (variant === "conch") {
+        ctx.fillStyle = "#FFE082";
+        ctx.beginPath();
+        ctx.moveTo(x + 2, y + h - 2);
+        ctx.lineTo(x + w - 4, y + h * 0.55);
+        ctx.lineTo(x + w * 0.6, y + 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = "#A1887F";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x + 5, y + h - 4);
+        ctx.lineTo(x + w * 0.7, y + h * 0.58);
+        ctx.stroke();
+        return;
+    }
+
     ctx.fillStyle = "#FFE0B2";
     ctx.beginPath();
-    ctx.arc(x + 8, y + 6, 6, Math.PI, 0);
+    ctx.ellipse(x + w * 0.5, y + h * 0.7, w * 0.48, h * 0.42, 0, Math.PI, 0);
     ctx.fill();
+    ctx.strokeStyle = "#FFCC80";
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 4; i++) {
+        const sx = x + w * (0.2 + i * 0.2);
+        ctx.beginPath();
+        ctx.moveTo(sx, y + h * 0.72);
+        ctx.lineTo(sx, y + h * 0.45);
+        ctx.stroke();
+    }
 }
 
 function drawStarfish(star) {
     const x = star.x;
     const y = star.y;
+    const w = star.width || 30;
+    const h = star.height || 30;
+    const cx = x + w * 0.5;
+    const cy = y + h * 0.48;
+    const outerRadius = Math.min(w, h) * 0.5;
+    const innerRadius = outerRadius * 0.45;
     ctx.fillStyle = "#FF9800";
     ctx.beginPath();
-    ctx.moveTo(x + 9, y);
-    ctx.lineTo(x + 12, y + 6);
-    ctx.lineTo(x + 18, y + 7);
-    ctx.lineTo(x + 13, y + 11);
-    ctx.lineTo(x + 15, y + 18);
-    ctx.lineTo(x + 9, y + 14);
-    ctx.lineTo(x + 3, y + 18);
-    ctx.lineTo(x + 5, y + 11);
-    ctx.lineTo(x, y + 7);
-    ctx.lineTo(x + 6, y + 6);
+    for (let index = 0; index < 10; index++) {
+        const angle = -Math.PI / 2 + index * (Math.PI / 5);
+        const radius = index % 2 === 0 ? outerRadius : innerRadius;
+        const pointX = cx + Math.cos(angle) * radius;
+        const pointY = cy + Math.sin(angle) * radius;
+        if (index === 0) ctx.moveTo(pointX, pointY);
+        else ctx.lineTo(pointX, pointY);
+    }
     ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "#FFB74D";
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerRadius * 0.55, 0, Math.PI * 2);
     ctx.fill();
 }
 

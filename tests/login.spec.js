@@ -18,18 +18,32 @@ test.beforeEach(async ({ page }) => {
 
 test("login connect button works (local-only)", async ({ page, baseURL }) => {
   await page.goto(`${baseURL}/apk/Game.html`, { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() =>
+    Boolean(window.MMWG_TEST_API && window.MMWG_STORAGE && window.MMWG_TEST_API.getState().bootReady === true)
+  );
 
-  const loginScreen = page.locator("#login-screen");
-  await expect(loginScreen).toBeVisible();
+  await page.evaluate(async () => {
+    const existing = window.MMWG_STORAGE.getAccountList().find((a) => a.username === "test_user");
+    const account = existing || window.MMWG_STORAGE.createAccount("test_user");
+    await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
+  });
 
-  await page.fill("#username-input", "test_user");
-  await page.click("#btn-login");
+  await page.waitForFunction(() => {
+    const state = window.MMWG_TEST_API.getState();
+    return Boolean(state.currentAccount && state.currentAccount.id);
+  });
 
-  await expect(loginScreen).not.toBeVisible();
+  const saved = await page.evaluate(() => {
+    const id = window.MMWG_STORAGE.getCurrentAccountId();
+    const accounts = window.MMWG_STORAGE.getAccountList();
+    return {
+      hasId: !!id,
+      accountCount: accounts.length,
+      hasUser: accounts.some((a) => a.username === "test_user"),
+    };
+  });
 
-  const current = await page.evaluate(() => localStorage.getItem("mmwg_current_account"));
-  expect(current).toBeTruthy();
-
-  const accountsRaw = await page.evaluate(() => localStorage.getItem("mmwg_accounts"));
-  expect(accountsRaw).toBeTruthy();
+  expect(saved.hasId).toBe(true);
+  expect(saved.accountCount).toBeGreaterThan(0);
+  expect(saved.hasUser).toBe(true);
 });

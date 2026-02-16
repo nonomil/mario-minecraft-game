@@ -64,6 +64,15 @@ function makeInlineStyle(css) {
   return `<style>\n${css}\n</style>`;
 }
 
+function inlineLocalScripts(html, projectRoot) {
+  return html.replace(/<script src="([^"]+)"><\/script>/g, (full, src) => {
+    if (/^https?:\/\//i.test(src)) return full;
+    const localPath = path.join(projectRoot, src);
+    if (!fs.existsSync(localPath)) return full;
+    return makeInlineScript(readText(localPath));
+  });
+}
+
 function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const templateHtml = readText(templateHtmlPath);
 
@@ -71,7 +80,6 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const defaultsJs = readText(path.join(projectRoot, "src", "defaults.js"));
   const storageJs = readText(path.join(projectRoot, "src", "storage.js"));
   const manifestJs = readText(path.join(projectRoot, "words", "vocabs", "manifest.js"));
-  const mainJs = readText(path.join(projectRoot, "src", "main.js"));
 
   const vocabFiles = extractVocabFilesFromManifest(manifestJs);
   const vocabScripts = vocabFiles.map((f) => makeInlineScript(readText(path.join(projectRoot, f)))).join("\n");
@@ -111,12 +119,7 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
     `${makeInlineScript(manifestJs)}\n${vocabScripts}\n${makeInlineScript(preludeScript)}`,
     "manifest script"
   );
-  html = replaceOnce(
-    html,
-    `<script src="src/main.js"></script>`,
-    makeInlineScript(mainJs),
-    "main script"
-  );
+  html = inlineLocalScripts(html, projectRoot);
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, html, "utf8");

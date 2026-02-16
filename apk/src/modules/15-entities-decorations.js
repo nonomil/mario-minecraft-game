@@ -125,11 +125,19 @@ class SnowPile extends Decoration {
         this.width = size === "small" ? 20 : size === "medium" ? 35 : 50;
         this.height = size === "small" ? 10 : size === "medium" ? 18 : 25;
         this.interactive = true;
+        this.collectible = true;
     }
     onCollision(entity) {
         if (entity === player && entity.grounded) {
             entity.velX *= 0.9;
         }
+    }
+
+    interact() {
+        inventory.snow_block = (inventory.snow_block || 0) + 1;
+        this.remove = true;
+        showFloatingText("🧊 +1", this.x, this.y, "#B3E5FC");
+        updateInventoryUI();
     }
 }
 
@@ -291,9 +299,10 @@ class Shell extends Decoration {
     }
     reset(x, y) {
         this.resetBase(x, y, "shell", "ocean");
-        this.width = 16;
-        this.height = 10;
+        this.width = 28;
+        this.height = 18;
         this.collectible = true;
+        this.variant = ["scallop", "spiral", "conch"][Math.floor(Math.random() * 3)];
     }
     interact() {
         inventory.shell = (inventory.shell || 0) + 1;
@@ -310,8 +319,8 @@ class Starfish extends Decoration {
     }
     reset(x, y) {
         this.resetBase(x, y, "starfish", "ocean");
-        this.width = 18;
-        this.height = 18;
+        this.width = 30;
+        this.height = 30;
         this.collectible = true;
     }
     interact() {

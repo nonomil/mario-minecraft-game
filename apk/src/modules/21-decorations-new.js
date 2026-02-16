@@ -19,9 +19,17 @@ class CherryTree extends Tree {
         this.biome = "cherry_grove";
         this.petals = 0;
         this.maxPetals = 5 + Math.floor(Math.random() * 6);
-        this.blossomOffsets = Array.from({ length: 5 }, () => ({
+        const blossomCount = 15 + Math.floor(Math.random() * 6);
+        this.blossomOffsets = Array.from({ length: blossomCount }, () => ({
             x: (Math.random() - 0.5) * this.width * 0.6,
-            y: (Math.random() - 0.5) * this.height * 0.4
+            y: (Math.random() - 0.5) * this.height * 0.42,
+            size: 5 + Math.random() * 2,
+            color: ["#FF69B4", "#FFB7C5", "#FFC0CB"][Math.floor(Math.random() * 3)]
+        }));
+        this.branchOffsets = Array.from({ length: 3 }, (_, idx) => ({
+            x: (idx - 1) * (this.width * 0.18),
+            y: this.height * (0.58 - idx * 0.05),
+            len: 10 + Math.random() * 6
         }));
     }
 
@@ -130,16 +138,18 @@ class GiantMushroom extends Tree {
 
     reset(x, y) {
         this.resetBase(x, y, "giant_mushroom", "mushroom_island");
-        this.width = blockSize * 2.5;
-        this.height = blockSize * 2.2;
+        this.width = blockSize * 3.0;
+        this.height = blockSize * 2.8;
         this.hp = 8;
         this.biome = "mushroom_island";
         this.mushroomType = Math.random() < 0.5 ? "brown" : "red";
         this.bounceFactor = 1.5;
-        this.capSpots = Array.from({ length: 4 }, () => ({
+        this.capSpots = Array.from({ length: 5 + Math.floor(Math.random() * 4) }, () => ({
             x: (Math.random() - 0.5) * this.width * 0.5,
-            y: (Math.random() - 0.5) * this.height * 0.3
+            y: (Math.random() - 0.5) * this.height * 0.28,
+            r: 2.5 + Math.random() * 2
         }));
+        this.capFloatPhase = Math.random() * Math.PI * 2;
     }
 
     hit() {
@@ -556,8 +566,52 @@ function spawnSkyDimensionDecoration(x, y, groundY) {
     }
 }
 
+const cherryPetalParticles = [];
+const mushroomSporeParticles = [];
+
+function updateAndRenderCherryPetals(ctx, camX) {
+    for (const petal of cherryPetalParticles) {
+        petal.life--;
+        petal.x += petal.vx + Math.sin((gameFrame + petal.phase) * 0.05) * 0.22;
+        petal.y += petal.vy;
+        if (petal.life <= 0 || petal.y > groundY + 90) {
+            petal.remove = true;
+            continue;
+        }
+        const alpha = Math.max(0.12, petal.life / petal.maxLife);
+        ctx.fillStyle = `rgba(255, 184, 197, ${alpha})`;
+        ctx.beginPath();
+        ctx.ellipse(petal.x - camX, petal.y, petal.size, petal.size * 0.68, petal.rot, 0, Math.PI * 2);
+        ctx.fill();
+        petal.rot += 0.03;
+    }
+    for (let idx = cherryPetalParticles.length - 1; idx >= 0; idx--) {
+        if (cherryPetalParticles[idx].remove) cherryPetalParticles.splice(idx, 1);
+    }
+}
+
+function updateAndRenderMushroomSpores(ctx, camX) {
+    for (const spore of mushroomSporeParticles) {
+        spore.life--;
+        spore.x += spore.vx;
+        spore.y += spore.vy;
+        if (spore.life <= 0 || spore.y < -20) {
+            spore.remove = true;
+            continue;
+        }
+        const alpha = Math.max(0.1, spore.life / spore.maxLife);
+        ctx.fillStyle = `rgba(216, 198, 250, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(spore.x - camX, spore.y, spore.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    for (let idx = mushroomSporeParticles.length - 1; idx >= 0; idx--) {
+        if (mushroomSporeParticles[idx].remove) mushroomSporeParticles.splice(idx, 1);
+    }
+}
+
 // ============ 渲染扩展 ============
-function renderNewBiomeDecorations(ctx, camX) {
+function renderNewBiomeDecorations(ctx, camX, renderCamX = camX) {
     decorations.forEach(d => {
         if (d.remove) return;
         if (d.x + d.width < camX || d.x > camX + canvas.width) return;
@@ -565,52 +619,54 @@ function renderNewBiomeDecorations(ctx, camX) {
         // 渲染新装饰类型
         switch (d.type) {
             case "cherry":
-                renderCherryTree(ctx, d, camX);
+                renderCherryTree(ctx, d, renderCamX);
                 break;
             case "flower_cluster":
-                renderFlowerCluster(ctx, d, camX);
+                renderFlowerCluster(ctx, d, renderCamX);
                 break;
             case "butterfly":
-                renderButterfly(ctx, d, camX);
+                renderButterfly(ctx, d, renderCamX);
                 break;
             case "small_stream":
-                renderSmallStream(ctx, d, camX);
+                renderSmallStream(ctx, d, renderCamX);
                 break;
             case "giant_mushroom":
-                renderGiantMushroom(ctx, d, camX);
+                renderGiantMushroom(ctx, d, renderCamX);
                 break;
             case "glow_mushroom":
-                renderGlowMushroom(ctx, d, camX);
+                renderGlowMushroom(ctx, d, renderCamX);
                 break;
             case "mushroom_cow":
-                renderMushroomCow(ctx, d, camX);
+                renderMushroomCow(ctx, d, renderCamX);
                 break;
             case "magma_crack":
-                renderMagmaCrack(ctx, d, camX);
+                renderMagmaCrack(ctx, d, renderCamX);
                 break;
             case "hot_spring":
-                renderHotSpring(ctx, d, camX);
+                renderHotSpring(ctx, d, renderCamX);
                 break;
             case "obsidian_pillar":
-                renderObsidianPillar(ctx, d, camX);
+                renderObsidianPillar(ctx, d, renderCamX);
                 break;
             case "sculk_sensor":
-                renderSculkSensor(ctx, d, camX);
+                renderSculkSensor(ctx, d, renderCamX);
                 break;
             case "soul_lantern":
-                renderSoulLantern(ctx, d, camX);
+                renderSoulLantern(ctx, d, renderCamX);
                 break;
             case "ancient_pillar":
-                renderAncientPillar(ctx, d, camX);
+                renderAncientPillar(ctx, d, renderCamX);
                 break;
             case "sculk_vein_patch":
-                renderSculkVeinPatch(ctx, d, camX);
+                renderSculkVeinPatch(ctx, d, renderCamX);
                 break;
             case "cloud_platform":
-                renderCloudPlatform(ctx, d, camX);
+                renderCloudPlatform(ctx, d, renderCamX);
                 break;
         }
     });
+    updateAndRenderCherryPetals(ctx, renderCamX);
+    updateAndRenderMushroomSpores(ctx, renderCamX);
 }
 
 // ============ 装饰渲染函数 ============
@@ -619,20 +675,65 @@ function renderCherryTree(ctx, d, camX) {
     // 树干
     ctx.fillStyle = "#8B4513";
     ctx.fillRect(dx + d.width * 0.4, d.y + d.height * 0.5, d.width * 0.2, d.height * 0.5);
-    // 树冠（粉色圆形）
-    ctx.fillStyle = "#FFB7C5";
+
+    // 树冠基底（绿色）
+    ctx.fillStyle = "#5A8F3C";
     ctx.beginPath();
     ctx.arc(dx + d.width / 2, d.y + d.height * 0.3, d.width * 0.4, 0, Math.PI * 2);
     ctx.fill();
-    // 深粉色点缀
-    ctx.fillStyle = "#FFC0CB";
+
+    // 樱花覆盖层（半透明）
+    ctx.globalAlpha = 0.82;
+    ctx.fillStyle = "#FFB7C5";
+    ctx.beginPath();
+    ctx.arc(dx + d.width / 2, d.y + d.height * 0.3, d.width * 0.36, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // 树干花枝细节
+    ctx.strokeStyle = "#8D6E63";
+    ctx.lineWidth = 2;
+    const branchOffsets = Array.isArray(d.branchOffsets) ? d.branchOffsets : [];
+    for (const branch of branchOffsets) {
+        const startX = dx + d.width * 0.5;
+        const startY = d.y + branch.y;
+        const endX = startX + branch.x;
+        const endY = startY - branch.len * 0.55;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        ctx.fillStyle = "#FFC0CB";
+        ctx.beginPath();
+        ctx.arc(endX, endY, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // 多色花瓣点缀
     const blossomOffsets = Array.isArray(d.blossomOffsets) ? d.blossomOffsets : [];
     for (const spot of blossomOffsets) {
         const ox = spot.x;
         const oy = spot.y;
+        const size = spot.size || 4;
+        ctx.fillStyle = spot.color || "#FFC0CB";
         ctx.beginPath();
-        ctx.arc(dx + d.width / 2 + ox, d.y + d.height * 0.3 + oy, 4, 0, Math.PI * 2);
+        ctx.arc(dx + d.width / 2 + ox, d.y + d.height * 0.3 + oy, size, 0, Math.PI * 2);
         ctx.fill();
+    }
+
+    // 花瓣飘落
+    if (Math.random() < 0.02 && cherryPetalParticles.length < 120) {
+        cherryPetalParticles.push({
+            x: d.x + d.width * (0.25 + Math.random() * 0.5),
+            y: d.y + d.height * (0.15 + Math.random() * 0.25),
+            vx: (Math.random() - 0.5) * 0.45,
+            vy: 0.35 + Math.random() * 0.3,
+            phase: Math.random() * Math.PI * 2,
+            size: 2.5 + Math.random() * 1.8,
+            rot: Math.random() * Math.PI,
+            life: 150 + Math.floor(Math.random() * 80),
+            maxLife: 220
+        });
     }
 }
 
@@ -681,13 +782,19 @@ function renderSmallStream(ctx, d, camX) {
 
 function renderGiantMushroom(ctx, d, camX) {
     const dx = d.x - camX;
+    const capYOffset = Math.sin(gameFrame * 0.02 + (d.capFloatPhase || 0)) * 2;
     // 菌柄
     ctx.fillStyle = d.mushroomType === "brown" ? "#8B4513" : "#F5F5DC";
-    ctx.fillRect(dx + d.width * 0.35, d.y + d.height * 0.6, d.width * 0.3, d.height * 0.4);
+    ctx.fillRect(dx + d.width * 0.36, d.y + d.height * 0.56, d.width * 0.28, d.height * 0.44);
+    ctx.fillStyle = "rgba(120, 95, 75, 0.28)";
+    for (let line = 0; line < 3; line++) {
+        const lineX = dx + d.width * (0.4 + line * 0.08);
+        ctx.fillRect(lineX, d.y + d.height * 0.58, 1.5, d.height * 0.4);
+    }
     // 菌盖
     ctx.fillStyle = d.mushroomType === "brown" ? "#D2691E" : "#FF6347";
     ctx.beginPath();
-    ctx.ellipse(dx + d.width / 2, d.y + d.height * 0.35, d.width * 0.45, d.height * 0.35, 0, 0, Math.PI * 2);
+    ctx.ellipse(dx + d.width / 2, d.y + d.height * 0.35 + capYOffset, d.width * 0.47, d.height * 0.33, 0, 0, Math.PI * 2);
     ctx.fill();
     // 斑点
     ctx.fillStyle = d.mushroomType === "brown" ? "#F5F5DC" : "#FFFFFF";
@@ -695,9 +802,23 @@ function renderGiantMushroom(ctx, d, camX) {
     for (const spot of capSpots) {
         const ox = spot.x;
         const oy = spot.y;
+        const radius = spot.r || 3;
         ctx.beginPath();
-        ctx.arc(dx + d.width / 2 + ox, d.y + d.height * 0.35 + oy, 3, 0, Math.PI * 2);
+        ctx.arc(dx + d.width / 2 + ox, d.y + d.height * 0.35 + capYOffset + oy, radius, 0, Math.PI * 2);
         ctx.fill();
+    }
+
+    // 伞盖下孢子粒子
+    if (Math.random() < 0.06 && mushroomSporeParticles.length < 160) {
+        mushroomSporeParticles.push({
+            x: d.x + d.width * (0.3 + Math.random() * 0.4),
+            y: d.y + d.height * 0.48 + capYOffset,
+            vx: (Math.random() - 0.5) * 0.25,
+            vy: -(0.25 + Math.random() * 0.3),
+            size: 1.2 + Math.random() * 1.4,
+            life: 90 + Math.floor(Math.random() * 60),
+            maxLife: 150
+        });
     }
 }
 

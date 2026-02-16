@@ -11,6 +11,9 @@ function wireSettingsModal() {
     const progressVocab = document.getElementById("progress-vocab");
 
     const optLearningMode = document.getElementById("opt-learning-mode");
+    const optChallengeMode = document.getElementById("opt-challenge-mode");
+    const optChallengeFrequency = document.getElementById("opt-challenge-frequency");
+    const optWordCardDuration = document.getElementById("opt-word-card-duration");
     const optSpeech = document.getElementById("opt-speech");
     const optSpeechEn = document.getElementById("opt-speech-en");
     const optSpeechZh = document.getElementById("opt-speech-zh");
@@ -41,6 +44,16 @@ function wireSettingsModal() {
 
     function fill() {
         if (optLearningMode) optLearningMode.checked = !!settings.learningMode;
+        if (optChallengeMode) optChallengeMode.checked = !!settings.challengeEnabled;
+        if (optChallengeFrequency) {
+            const currentFreq = Number(settings.challengeFrequency ?? 0.3);
+            const options = [0.15, 0.3, 0.5];
+            const closest = options.reduce((a, b) =>
+                Math.abs(b - currentFreq) < Math.abs(a - currentFreq) ? b : a
+            );
+            optChallengeFrequency.value = String(closest);
+        }
+        if (optWordCardDuration) optWordCardDuration.value = String(settings.wordCardDuration || 900);
         if (optSpeech) optSpeech.checked = !!settings.speechEnabled;
         if (optSpeechEn) optSpeechEn.value = String(settings.speechEnRate ?? 0.8);
         if (optSpeechZh) optSpeechZh.value = String(settings.speechZhRate ?? 0.9);
@@ -90,6 +103,9 @@ function wireSettingsModal() {
 
     async function save() {
         if (optLearningMode) settings.learningMode = !!optLearningMode.checked;
+        if (optChallengeMode) settings.challengeEnabled = !!optChallengeMode.checked;
+        if (optChallengeFrequency) settings.challengeFrequency = Number(optChallengeFrequency.value) || 0.3;
+        if (optWordCardDuration) settings.wordCardDuration = Number(optWordCardDuration.value) || 900;
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;
         if (optSpeechEn) settings.speechEnRate = Number(optSpeechEn.value);
         if (optSpeechZh) settings.speechZhRate = Number(optSpeechZh.value);

@@ -135,6 +135,7 @@ const INVENTORY_TEMPLATE = {
     gold: 0,
     shell: 0,
     starfish: 0,
+    snow_block: 0,
     beef: 0,
     mutton: 0,
     mushroom_stew: 0
@@ -173,7 +174,8 @@ const ITEM_DESCRIPTIONS = {
     pumpkin: { desc: "召唤雪傀儡辅助战斗", cost: "消耗: 1个", cd: "无冷却" },
     iron: { desc: "召唤铁傀儡强力护卫", cost: "消耗: 3个", cd: "无冷却" },
     mushroom: { desc: "合成蘑菇煲回血食物", cost: "消耗: 2个", cd: "无冷却" },
-    stick: { desc: "修复当前护甲20%耐久", cost: "消耗: 3个", cd: "无冷却" }
+    stick: { desc: "修复当前护甲20%耐久", cost: "消耗: 3个", cd: "无冷却" },
+    snow_block: { desc: "召唤雪傀儡的材料之一", cost: "合成材料", cd: "无冷却" }
 };
 
 const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "stone_sword", "iron_pickaxe", "bow", "arrow"];
@@ -197,6 +199,7 @@ const ITEM_LABELS = {
     gold: "黄金",
     shell: "贝壳",
     starfish: "海星",
+    snow_block: "雪块",
     beef: "牛肉",
     mutton: "羊肉",
     mushroom_stew: "蘑菇煲"
@@ -221,6 +224,7 @@ const ITEM_ICONS = {
     gold: "🪙",
     shell: "🐚",
     starfish: "⭐",
+    snow_block: "🧊",
     beef: "🥩",
     mutton: "🍖",
     mushroom_stew: "🍲",

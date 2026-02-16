@@ -626,6 +626,7 @@ function updateBiomeVisuals() {
 function renderBiomeVisuals(ctx, camX) {
     // 天空渲染
     renderBiomeSky(ctx, currentBiome);
+    if (currentBiome === "volcano") renderVolcanoSilhouette(ctx);
 
     // 粒子效果
     biomeParticlePool.render(ctx, camX);

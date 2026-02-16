@@ -52,7 +52,7 @@
       <input id="count" type="number" value="1" min="1">
       <button id="btnItem">给予物品</button>
     </div>
-    <div id="status" class="status">status: waiting game iframe...</div>
+    <div id="status" class="status">status: game iframe loading...</div>
   </div>
   <div class="game-wrap">
     <iframe id="game" src="../../Game.html"></iframe>
@@ -63,15 +63,56 @@
     const statusEl = document.getElementById("status");
     let debugGodMode = false;
     let patched = false;
+    let iframeLoaded = false;
+    let iframeAccessError = "";
 
     function gw() {
-      return gameFrame && gameFrame.contentWindow ? gameFrame.contentWindow : null;
+      const w = gameFrame && gameFrame.contentWindow ? gameFrame.contentWindow : null;
+      if (!w) return null;
+      try {
+        void w.document;
+      } catch (e) {
+        iframeAccessError = String(e && e.message ? e.message : e);
+        return null;
+      }
+      iframeAccessError = "";
+      return w;
+    }
+
+    function renderStatus(w) {
+      if (!w) {
+        if (!iframeLoaded) {
+          statusEl.innerText = "status: game iframe loading...";
+          return;
+        }
+        if (iframeAccessError) {
+          statusEl.innerText =
+            "status: iframe loaded but inaccessible (cross-origin/preview sandbox).\n" +
+            "请用本地 HTTP 打开: http://localhost:8080/apk/tests/debug-pages/GameDebug.html";
+          return;
+        }
+        statusEl.innerText =
+          "status: iframe loaded, waiting game globals...\n" +
+          "如果长时间不变，请用本地 HTTP 打开（不要用 IDE 预览/file://）。";
+        return;
+      }
+      statusEl.innerText =
+        "biome=" + (w.currentBiome || "n/a") +
+        "  score=" + (Number(w.score) || 0) +
+        "  runBestScore=" + (Number(w.runBestScore) || 0) +
+        "  villageEnabled=" + (w.settings?.villageEnabled) +
+        "  enemies=" + (Array.isArray(w.enemies) ? w.enemies.length : 0) +
+        "  bossActive=" + Boolean(w.bossArena?.active);
     }
 
     function withGame(fn) {
       const w = gw();
-      if (!w) return;
+      if (!w) {
+        renderStatus(null);
+        return;
+      }
       try { fn(w); } catch (e) { console.error(e); }
+      renderStatus(w);
     }
 
     function patchGodMode(w) {
@@ -164,17 +205,17 @@
       this.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
     });
 
+    gameFrame.addEventListener("load", () => {
+      iframeLoaded = true;
+      const w = gw();
+      if (w) patchGodMode(w);
+      renderStatus(w);
+    });
+
     setInterval(() => {
       const w = gw();
-      if (!w) return;
-      patchGodMode(w);
-      statusEl.innerText =
-        "biome=" + (w.currentBiome || "n/a") +
-        "  score=" + (Number(w.score) || 0) +
-        "  runBestScore=" + (Number(w.runBestScore) || 0) +
-        "  villageEnabled=" + (w.settings?.villageEnabled) +
-        "  enemies=" + (Array.isArray(w.enemies) ? w.enemies.length : 0) +
-        "  bossActive=" + Boolean(w.bossArena?.active);
+      if (w) patchGodMode(w);
+      renderStatus(w);
     }, 500);
   </script>
 </body>

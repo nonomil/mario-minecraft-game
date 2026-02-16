@@ -6,7 +6,7 @@ function dropItem(type, x, y) {
     if (!inventory[type] && inventory[type] !== 0) inventory[type] = 0;
     inventory[type]++;
     updateInventoryUI();
-    const icon = ITEM_ICONS[type] || "✨";
+    const icon = ITEM_ICONS[type] || "+";
     showFloatingText(`${icon} +1`, x, y);
 }
 

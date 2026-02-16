@@ -234,8 +234,8 @@
             "color": "#2196F3",
             "groundType": "sand",
             "decorations": {
-                "shell": 0.2,
-                "starfish": 0.15,
+                "shell": 0.28,
+                "starfish": 0.22,
                 "seaweed": 0.35,
                 "boat": 0.05
             },
@@ -314,8 +314,8 @@
             "color": "#FFB7C5",
             "groundType": "grass",
             "decorations": {
-                "cherry_tree": 0.35,
-                "flower_cluster": 0.25,
+                "cherry_tree": 0.6,
+                "flower_cluster": 0.15,
                 "butterfly": 0.15,
                 "small_stream": 0.08
             },

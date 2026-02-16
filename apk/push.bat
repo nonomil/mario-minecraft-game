@@ -1,84 +1,101 @@
 @echo off
-setlocal enabledextensions
-chcp 65001 >nul
-title Git 推送
+setlocal EnableExtensions
+chcp 65001 >nul 2>&1
 
-echo.
-echo ========================================
-echo   推送代码到 GitHub
-echo ========================================
-echo.
+set "REMOTE=origin"
+set "BRANCH=main"
 
 cd /d "%~dp0"
 
+echo.
+echo ========================================
+echo   Push Code To GitHub
+echo ========================================
+echo.
+
 for /f "delims=" %%A in ('git rev-parse --show-toplevel 2^>nul') do set "REPO_ROOT=%%A"
 if not defined REPO_ROOT (
-    echo [错误] 当前目录不是 Git 仓库，无法推送。
+    echo [ERROR] Current folder is not a git repository.
     echo.
     pause
     exit /b 1
 )
 
-for /f "delims=" %%A in ('git remote get-url origin 2^>nul') do set "ORIGIN_URL_RAW=%%A"
+for /f "delims=" %%A in ('git remote get-url %REMOTE% 2^>nul') do set "ORIGIN_URL_RAW=%%A"
 if not defined ORIGIN_URL_RAW (
-    echo [修复] 未找到 origin 远程，正在设置为官方仓库地址...
-    git remote add origin https://github.com/nonomil/mario-minecraft-game.git
+    echo [FIX] Missing %REMOTE% remote. Adding default repository URL...
+    git remote add %REMOTE% https://github.com/nonomil/mario-minecraft-game.git
+    if errorlevel 1 (
+        echo [ERROR] Failed to add remote.
+        echo.
+        pause
+        exit /b 1
+    )
     set "ORIGIN_URL_RAW=https://github.com/nonomil/mario-minecraft-game.git"
 )
 
 set "ORIGIN_URL=%ORIGIN_URL_RAW%"
 set "ORIGIN_URL=%ORIGIN_URL:`=%"
-set "ORIGIN_URL=%ORIGIN_URL:\"=%"
 
 if not "%ORIGIN_URL%"=="%ORIGIN_URL_RAW%" (
-    echo [修复] 检测到 origin URL 含有多余字符，已自动清理：
-    echo   原始: %ORIGIN_URL_RAW%
-    echo   修复: %ORIGIN_URL%
-    git remote set-url origin "%ORIGIN_URL%"
-) else (
-    echo [信息] origin: %ORIGIN_URL%
+    echo [FIX] Sanitizing remote URL...
+    echo   Raw:   %ORIGIN_URL_RAW%
+    echo   Fixed: %ORIGIN_URL%
+    git remote set-url %REMOTE% "%ORIGIN_URL%"
+    if errorlevel 1 (
+        echo [ERROR] Failed to update remote URL.
+        echo.
+        pause
+        exit /b 1
+    )
+)
+
+echo [INFO] %REMOTE%: %ORIGIN_URL%
+echo.
+
+echo [CHECK] Commits waiting to push:
+git log %REMOTE%/%BRANCH%..HEAD --oneline 2>nul
+if errorlevel 1 (
+    echo [INFO] Unable to diff against %REMOTE%/%BRANCH%.
+    echo [INFO] This can happen on first push or when network is unavailable.
 )
 echo.
 
-echo [检查] 查看待推送的提交...
-git log origin/main..HEAD --oneline
+echo [PUSH] Pushing to GitHub...
+git -c http.version=HTTP/1.1 push %REMOTE% %BRANCH%
+if not errorlevel 1 goto :push_success
+
 echo.
+echo [RETRY] First push failed. Retrying with schannel backend...
+git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% %BRANCH%
+if not errorlevel 1 goto :push_success
 
-echo [推送] 正在推送到 GitHub...
-git -c http.version=HTTP/1.1 push origin main
-if %errorlevel% neq 0 (
-    echo.
-    echo [重试] 推送失败，使用备用方式重试一次...
-    git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push origin main
-)
-
-if %errorlevel% equ 0 (
-    echo.
-    echo ========================================
-    echo   ✅ 推送成功！
-    echo ========================================
-    echo.
-    echo GitHub Actions 将自动构建 APK
-    echo 查看构建状态: https://github.com/nonomil/mario-minecraft-game/actions
-    echo.
-) else (
-    echo.
-    echo ========================================
-    echo   ❌ 推送失败
-    echo ========================================
-    echo.
-    echo 可能的原因：
-    echo 1. 网络连接问题
-    echo 2. GitHub 服务不可用
-    echo 3. 认证失败
-    echo.
-    echo 建议排查：
-    echo - 检查是否能打开 https://github.com
-    echo - 如使用代理/VPN，尝试切换节点或暂时关闭后重试
-    echo - 运行: git remote -v  确认远程地址无反引号或空格
-    echo.
-    echo 请检查网络后重试
-    echo.
-)
-
+echo.
+echo ========================================
+echo   Push Failed
+echo ========================================
+echo.
+echo Possible causes:
+echo 1. Terminal network path cannot reach github.com:443
+echo 2. Proxy/VPN not applied to cmd/powershell
+echo 3. Authentication issue
+echo.
+echo Quick checks:
+echo - Test browser and terminal separately
+echo - Run: Test-NetConnection github.com -Port 443
+echo - Run: git remote -v
+echo.
 pause
+exit /b 1
+
+:push_success
+echo.
+echo ========================================
+echo   Push Succeeded
+echo ========================================
+echo.
+echo GitHub Actions should start automatically.
+echo Actions URL: https://github.com/nonomil/mario-minecraft-game/actions
+echo.
+pause
+exit /b 0

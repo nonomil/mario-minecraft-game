@@ -18,21 +18,25 @@ async function loginAndBoot(page, baseURL, username = "e2e_user") {
 
   await page.goto(`${baseURL}/apk/Game.html`, { waitUntil: "domcontentloaded" });
 
-  // Wait until initLoginScreen() ran (it sets pausedByModal=true) so the login button is wired.
-  await page.waitForFunction(() => window.MMWG_TEST_API && window.MMWG_TEST_API.getState().pausedByModal === true);
+  // Wait until core test hooks are ready. New bootstrap flow may already enter gameplay.
+  await page.waitForFunction(() => Boolean(window.MMWG_TEST_API && window.MMWG_STORAGE));
 
-  const loginVisible = await page.locator("#login-screen").isVisible();
-  if (loginVisible) {
-    await page.fill("#username-input", username);
-    await page.click("#btn-login");
-    await expect(page.locator("#login-screen")).not.toBeVisible();
-  } else {
-    await page.evaluate(async (name) => {
+  await page.evaluate(async (name) => {
+    const state = window.MMWG_TEST_API.getState();
+    if (!state.currentAccount) {
       const existing = window.MMWG_STORAGE.getAccountList().find((a) => a.username === name);
       const account = existing || window.MMWG_STORAGE.createAccount(name);
       await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
-    }, username);
-  }
+    }
+    if (!window.MMWG_TEST_API.getState().startedOnce) {
+      if (window.MMWG_TEST_API.actions.bootGameLoopIfNeeded) {
+        window.MMWG_TEST_API.actions.bootGameLoopIfNeeded();
+      } else {
+        const btn = document.getElementById("btn-overlay-action");
+        if (btn) btn.click();
+      }
+    }
+  }, username);
 
   await page.waitForFunction(() => window.MMWG_TEST_API.getState().startedOnce === true);
 }
