@@ -1,35 +1,27 @@
-# v1.8.11 版本发布状态
+﻿# v1.8.17 版本发布状态
 
-## ✅ 已完成
+## 已完成
 
-### 1. 版本号更新
-- 版本: 1.8.10 → 1.8.11
+### 1. 版本号统一
+- `apk/package.json`: `1.8.10` -> `1.8.17`
+- `apk/android-app/package.json`: `1.8.10` -> `1.8.17`
+- `apk/android-app/package-lock.json`: `1.8.10` -> `1.8.17`
+- `apk/android-app/android/app/build.gradle`: `versionName "1.8.17"`, `versionCode 77`
 
-### 2. Bug 修复
-- 修复 Android APK 启动 1 秒后地面消失的问题
-- 移除 `applySettingsToUI()` 中的双重重映射逻辑
-- `applyConfig()` 已正确处理实体重映射，无需再调用 `realignWorldForViewport()`
+### 2. 版本日志补齐
+- 更新 `apk/docs/version/CHANGELOG.md`，补入 `v1.8.12 ~ v1.8.17`
+- 更新 `apk/docs/version/Progress.md`，补入 `v1.8.12 ~ v1.8.17`
 
-### 3. 版本记录
-- 更新 `apk/docs/version/CHANGELOG.md`
-- 更新 `VERSION-STATUS.md`
+### 3. Release 显示对齐说明
+- GitHub Actions `android.yml` 的 release 标题读取 `apk/android-app/package.json`。
+- 已更新该文件后，后续 release 页面将显示 `Mario Minecraft Game v1.8.17`。
 
-## ⏳ 待完成
+## 待执行
 
-### 提交到 Git
-```bash
-git add .
-git commit -m "fix(viewport): remove double remapping causing ground disappear after 1s in APK"
-git push
-```
-
-## 🔄 下一步
-
-1. **提交代码** - 提交修复到 git
-2. **推送代码** - 推送到远程仓库
-3. **测试验证** - 在 Android 设备上验证地面不再消失
+1. 触发一次新的 Android 构建工作流，验证 release 页面版本显示。
+2. 安装新 APK，确认 App 内版本与 Release 版本一致。
 
 ---
 
-**创建时间**: 2026-02-15
-**状态**: 等待提交到 Git
+**更新日期**: 2026-02-16
+**状态**: 版本号与日志已同步到 v1.8.17

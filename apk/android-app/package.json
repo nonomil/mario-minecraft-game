@@ -1,6 +1,6 @@
 {
   "name": "android-app",
-  "version": "1.8.10",
+  "version": "1.8.17",
   "private": true,
   "scripts": {
     "sync-web": "node ../scripts/sync-web.js"
