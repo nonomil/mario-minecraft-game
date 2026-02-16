@@ -42,6 +42,38 @@ class Platform extends Entity {
     constructor(x, y, w, h, type) {
         super(x, y, w, h);
         this.type = type;
+        this.fragile = false;
+        this.stepCount = 0;
+        this.maxSteps = 3;
+        this.breaking = false;
+        this.breakTimer = 0;
+    }
+
+    makeFragile(maxSteps = 3) {
+        this.fragile = true;
+        this.stepCount = 0;
+        this.maxSteps = Math.max(1, Number(maxSteps) || 3);
+        this.breaking = false;
+        this.breakTimer = 0;
+        return this;
+    }
+
+    onPlayerStep() {
+        if (!this.fragile || this.breaking || this.remove) return;
+        this.stepCount++;
+        if (this.stepCount >= this.maxSteps) {
+            this.breaking = true;
+            this.breakTimer = 0;
+        }
+    }
+
+    updateFragile() {
+        if (!this.fragile || !this.breaking || this.remove) return;
+        this.breakTimer++;
+        // Break after a short warning window.
+        if (this.breakTimer > 30) {
+            this.remove = true;
+        }
     }
 }
 

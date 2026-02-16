@@ -1,23 +1,33 @@
-# v1.11.1 版本发布状态
+# v1.15.1 版本状态
 
 ## 已完成
 
-### 1. 版本号统一
-- `apk/package.json`: `1.11.0` -> `1.11.1`
-- `apk/android-app/package.json`: `1.11.0` -> `1.11.1`
-- `apk/android-app/android/app/build.gradle`: `versionName "1.11.1"`, `versionCode 87`
+### 1) 版本号统一
+- `apk/package.json`: `1.15.1`
+- `apk/android-app/package.json`: `1.15.1`
+- `apk/android-app/android/app/build.gradle`: `versionName "1.15.1"`, `versionCode 92`
 
-### 2. Bug 修复
-- `apk/src/modules/11-game-init.js`: 添加 BOSS 竞技场和村庄系统状态重置
-- `apk/src/modules/18-village.js`: 添加 villageConfig/settings/player/biomeConfigs 空值检查
-- `apk/src/modules/13-game-loop.js`: showFloatingText() 增加第4个颜色参数
-- `apk/src/modules/14-renderer-main.js`: 渲染浮动文字时使用 color 属性
+### 2) 地狱环境升级（v1.5.2 收尾）
+- `apk/src/modules/15-entities-base.js`
+  - `Platform` 新增易碎平台状态字段与逻辑（`makeFragile` / `onPlayerStep` / `updateFragile`）
+- `apk/src/modules/11-game-init.js`
+  - 地狱浮空平台与微平台按概率标记为易碎平台
+  - 平台移除后进行清理过滤
+- `apk/src/modules/13-game-loop.js`
+  - 每帧更新易碎平台状态
+  - 玩家踩踏时触发易碎计数与破裂预警
+- `apk/src/modules/14-renderer-main.js`
+  - 易碎平台新增裂纹渲染反馈
 
-### 3. 代码同步
-- apk 完善版 BOSS/村庄模块反向同步到 root 目录
-- GameDebug.html 调试工具复制到 root/tests/debug-pages/
+### 3) 文档同步
+- 更新版本计划文档中的实现状态：
+  - `apk/docs/development/版本计划/11-v1.11.2-雪傀儡与猪灵.md`
+  - `apk/docs/development/版本计划/12-v1.11.3-海洋手感与高温掉血节奏.md`
+- 更新路线图文档：
+  - `apk/docs/development/BOSS设计和海洋地域环境/00-总览-版本路线图.md`
+  - `apk/docs/development/BOSS设计和海洋地域环境/10-v1.5.2-地狱环境升级.md`
 
 ---
 
-**更新日期**: 2026-02-16
-**状态**: Bug 修复与代码同步完成，版本号同步到 v1.11.1
+更新时间：2026-02-16  
+状态：已完成并进入提测

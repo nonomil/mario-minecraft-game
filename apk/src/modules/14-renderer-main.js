@@ -17,7 +17,11 @@ function draw() {
         console.log('Platforms count:', platforms.length, 'Camera X:', cameraX);
     }
 
-    platforms.forEach(p => drawBlock(p.x, p.y, p.width, p.height, p.type));
+    platforms.forEach(p => {
+        if (!p || p.remove) return;
+        drawBlock(p.x, p.y, p.width, p.height, p.type);
+        if (p.fragile) drawFragilePlatformOverlay(p);
+    });
 
     if (biome.effects?.waterLevel) {
         ctx.fillStyle = "rgba(33, 150, 243, 0.25)";
@@ -212,6 +216,29 @@ function drawBlock(x, y, w, h, type) {
                 ctx.fillRect(cx + 10, y + h + 10, 20, 20);
             }
         }
+    }
+}
+
+function drawFragilePlatformOverlay(p) {
+    const ratio = Math.max(0, Math.min(1, (p.stepCount || 0) / Math.max(1, p.maxSteps || 3)));
+    const alpha = p.breaking ? (0.45 + Math.sin(gameFrame * 0.7) * 0.2) : (0.2 + ratio * 0.35);
+    const crackColor = p.breaking ? `rgba(255,80,80,${Math.max(0.2, alpha)})` : `rgba(255,170,90,${alpha})`;
+    ctx.strokeStyle = crackColor;
+    ctx.lineWidth = 2;
+
+    const cx = p.x + p.width * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - p.width * 0.25, p.y + 2);
+    ctx.lineTo(cx - p.width * 0.1, p.y + p.height * 0.45);
+    ctx.lineTo(cx - p.width * 0.2, p.y + p.height - 2);
+    ctx.moveTo(cx + p.width * 0.2, p.y + 3);
+    ctx.lineTo(cx + p.width * 0.05, p.y + p.height * 0.5);
+    ctx.lineTo(cx + p.width * 0.15, p.y + p.height - 2);
+    ctx.stroke();
+
+    if (p.breaking) {
+        ctx.fillStyle = "rgba(255,110,110,0.25)";
+        ctx.fillRect(p.x, p.y, p.width, p.height);
     }
 }
 

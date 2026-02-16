@@ -105,18 +105,35 @@ function update() {
     if (endBiomeCfg) currentGravity *= (endBiomeCfg.effects?.gravityMultiplier || 0.65);
     player.velY += currentGravity;
     player.grounded = false;
+    let currentFragilePlatform = null;
+
+    for (let i = 0; i < platforms.length; i++) {
+        const p = platforms[i];
+        if (p && typeof p.updateFragile === "function") p.updateFragile();
+    }
 
     for (let p of platforms) {
+        if (!p || p.remove) continue;
         const dir = colCheck(player, p);
         if (dir === "l" || dir === "r") player.velX = 0;
         else if (dir === "b") {
             player.grounded = true;
             player.jumpCount = 0;
             coyoteTimer = gameConfig.jump.coyoteFrames;
+            if (p.fragile && !p.breaking && typeof p.onPlayerStep === "function") {
+                currentFragilePlatform = p;
+                if (player.lastFragilePlatform !== p) {
+                    p.onPlayerStep();
+                    if (p.breaking) {
+                        showFloatingText("⚠️ 平台将破裂", p.x + p.width / 2, p.y - 12, "#FF7043");
+                    }
+                }
+            }
         } else if (dir === "t") {
             player.velY *= -1;
         }
     }
+    player.lastFragilePlatform = currentFragilePlatform;
 
     for (let t of trees) {
         const trunkX = t.x + (t.width - 30) / 2;

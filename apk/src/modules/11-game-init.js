@@ -27,7 +27,8 @@ function createPlayer() {
         jumpCount: 0,
         maxJumps: gameConfig.player.maxJumps,
         isAttacking: false,
-        attackTimer: 0
+        attackTimer: 0,
+        lastFragilePlatform: null
     };
     applyMotionToPlayer(p);
     return p;
@@ -313,7 +314,11 @@ function generatePlatform(startX, length, groundYValue) {
         const floatX = startX + blockSize + Math.floor(Math.random() * (length - floatLen) * blockSize);
         const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
         const floatType = floatTypes[Math.floor(Math.random() * floatTypes.length)] || groundType;
-        platforms.push(new Platform(floatX, floatY, floatLen * blockSize, blockSize, floatType));
+        const floatPlatform = new Platform(floatX, floatY, floatLen * blockSize, blockSize, floatType);
+        if (biome.id === "nether" && Math.random() < 0.45 && typeof floatPlatform.makeFragile === "function") {
+            floatPlatform.makeFragile(3);
+        }
+        platforms.push(floatPlatform);
         const floatItemX = floatX + blockSize / 2;
         if (Math.random() < floatItemChance && canSpawnWordItemAt(floatItemX)) {
             const word = pickWordForSpawn();
@@ -344,7 +349,11 @@ function generatePlatform(startX, length, groundYValue) {
                 for (let i = 0; i < steps; i++) {
                     const mx = stairX0 + i * blockSize;
                     const my = groundYValue - (i + 1) * blockSize;
-                    platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
+                    const microPlatform = new Platform(mx, my, blockSize, blockSize, microType);
+                    if (biome.id === "nether" && Math.random() < 0.5 && typeof microPlatform.makeFragile === "function") {
+                        microPlatform.makeFragile(3);
+                    }
+                    platforms.push(microPlatform);
                 }
                 const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(topX)) {
@@ -366,7 +375,11 @@ function generatePlatform(startX, length, groundYValue) {
                 let mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
                 mx = Math.floor(mx / blockSize) * blockSize;
                 const my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
-                platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
+                const microPlatform = new Platform(mx, my, blockSize, blockSize, microType);
+                if (biome.id === "nether" && Math.random() < 0.5 && typeof microPlatform.makeFragile === "function") {
+                    microPlatform.makeFragile(3);
+                }
+                platforms.push(microPlatform);
                 const spawnX = mx + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(spawnX)) {
                     const word = pickWordForSpawn();
@@ -650,7 +663,7 @@ function updateMapGeneration() {
         const length = Math.floor(4 + Math.random() * 7);
         generatePlatform(lastGenX, length, groundY);
     }
-    platforms = platforms.filter(p => p.x + p.width > cameraX - removeThreshold);
+    platforms = platforms.filter(p => !p.remove && p.x + p.width > cameraX - removeThreshold);
     trees = trees.filter(t => t.x + t.width > cameraX - removeThreshold && !t.remove);
     chests = chests.filter(c => c.x + 40 > cameraX - removeThreshold);
     items = items.filter(i => i.x + 30 > cameraX - removeThreshold && !i.collected);
