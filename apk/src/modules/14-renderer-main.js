@@ -421,26 +421,32 @@ function drawBackground(biome) {
     ctx.fillStyle = ambient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const parallaxX = cameraX * 0.2;
-    ctx.fillStyle = "rgba(0,0,0,0.15)";
-    for (let i = 0; i < 3; i++) {
-        const mx = -parallaxX + i * 400;
-        ctx.beginPath();
-        ctx.moveTo(mx, canvas.height - 200);
-        ctx.lineTo(mx + 200, canvas.height - 320);
-        ctx.lineTo(mx + 400, canvas.height - 200);
-        ctx.closePath();
-        ctx.fill();
+    if (currentBiome === "volcano" && typeof renderVolcanoSilhouette === "function") {
+        renderVolcanoSilhouette(ctx);
+    } else {
+        const parallaxX = cameraX * 0.2;
+        ctx.fillStyle = "rgba(0,0,0,0.15)";
+        for (let i = 0; i < 3; i++) {
+            const mx = -parallaxX + i * 400;
+            ctx.beginPath();
+            ctx.moveTo(mx, canvas.height - 200);
+            ctx.lineTo(mx + 200, canvas.height - 320);
+            ctx.lineTo(mx + 400, canvas.height - 200);
+            ctx.closePath();
+            ctx.fill();
+        }
     }
 
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
-    for (let i = 0; i < 4; i++) {
-        const cx = (i * 220 + (cameraX * 0.4) % 220) - 100;
-        ctx.beginPath();
-        ctx.arc(cx, 80, 30, 0, Math.PI * 2);
-        ctx.arc(cx + 40, 90, 20, 0, Math.PI * 2);
-        ctx.arc(cx + 70, 80, 26, 0, Math.PI * 2);
-        ctx.fill();
+    if (currentBiome !== "volcano") {
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        for (let i = 0; i < 4; i++) {
+            const cx = (i * 220 + (cameraX * 0.4) % 220) - 100;
+            ctx.beginPath();
+            ctx.arc(cx, 80, 30, 0, Math.PI * 2);
+            ctx.arc(cx + 40, 90, 20, 0, Math.PI * 2);
+            ctx.arc(cx + 70, 80, 26, 0, Math.PI * 2);
+            ctx.fill();
+        }
     }
 
     ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
@@ -475,7 +481,7 @@ function drawBackground(biome) {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    if (biome.effects?.heatWave) {
+    if (biome.effects?.heatWave && currentBiome !== "volcano") {
         ctx.strokeStyle = "rgba(255, 200, 120, 0.25)";
         for (let y = 120; y < canvas.height; y += 40) {
             ctx.beginPath();
