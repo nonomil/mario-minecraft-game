@@ -1,4 +1,10 @@
-﻿## v1.10.2（发布日期：2026-02-16）
+﻿## v1.10.3（发布日期：2026-02-16）
+- 类型：PATCH
+- APK 版本：versionName = 1.10.3，versionCode = 85
+- 主要变更
+  - 同步版本号到 1.10.3
+  - 更新版本记录（CHANGELOG / Progress）
+## v1.10.2（发布日期：2026-02-16）
 - 类型：PATCH
 - APK 版本：versionName = 1.10.2，versionCode = 84
 - 主要变更
@@ -458,11 +464,4 @@ b11ef12 chore: 更新 apk/android-app/package.json 版本至 v1.6.5
 - **主版本**：重大功能更新或架构变更
 - **次版本**：新功能添加或重要改进
 - **修订号**：Bug 修复和小改进
-
-
-
-
-
-
-
 
