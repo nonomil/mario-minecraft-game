@@ -13,6 +13,9 @@ function normalizeSettings(raw) {
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
     if (typeof merged.wordGateEnabled !== "boolean") merged.wordGateEnabled = defaultSettings.wordGateEnabled ?? true;
     if (typeof merged.wordMatchEnabled !== "boolean") merged.wordMatchEnabled = defaultSettings.wordMatchEnabled ?? true;
+    if (typeof merged.villageEnabled !== "boolean") merged.villageEnabled = defaultSettings.villageEnabled ?? true;
+    if (typeof merged.villageFrequency !== "number") merged.villageFrequency = defaultSettings.villageFrequency ?? 500;
+    if (typeof merged.villageAutoSave !== "boolean") merged.villageAutoSave = defaultSettings.villageAutoSave ?? true;
     if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));

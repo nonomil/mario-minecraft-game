@@ -222,6 +222,9 @@ window.MMWG_DEFAULTS = {
         vocabSelection: "vocab.kindergarten",
         vocabDifficulty: "auto",
         movementSpeedLevel: "normal",
-        keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ"
+        keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ",
+        villageEnabled: true,
+        villageFrequency: 500,
+        villageAutoSave: true
     }
 };

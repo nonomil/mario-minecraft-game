@@ -1,4 +1,11 @@
-﻿## v1.8.17（发布日期：2026-02-16）
+﻿## v1.9.0（发布日期：2026-02-16）
+- 类型：MINOR
+- APK 版本：versionName = 1.9.0，versionCode = 78
+- 主要变更
+  - 接入 15-entities-boss.js 到页面与离线打包链路，恢复 BOSS 触发能力
+  - 补齐村庄默认配置：villageEnabled/villageFrequency/villageAutoSave
+  - 旧存档兼容：normalizeSettings() 自动回填村庄设置字段
+## v1.8.17（发布日期：2026-02-16）
 - 类型：PATCH
 - APK 版本：versionName = 1.8.17，versionCode = 77
 - 主要变更
@@ -408,3 +415,5 @@ b11ef12 chore: 更新 apk/android-app/package.json 版本至 v1.6.5
 - **主版本**：重大功能更新或架构变更
 - **次版本**：新功能添加或重要改进
 - **修订号**：Bug 修复和小改进
+
+

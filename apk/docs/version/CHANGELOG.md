@@ -1,5 +1,14 @@
 # 版本更新记录
 
+## v1.9.0 (2026-02-16)
+
+### Bug 修复
+- 修复 BOSS 战系统不触发：将 `15-entities-boss.js` 接入 `Game.html` 与打包白名单。
+- 修复村庄系统默认关闭：在 `defaults.js` 中补充 `villageEnabled/villageFrequency/villageAutoSave` 默认值。
+- 修复旧存档缺少村庄字段：`normalizeSettings()` 增加村庄设置回填。
+
+---
+
 ## v1.8.17 (2026-02-16)
 
 ### Bug 修复
