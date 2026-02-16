@@ -3,12 +3,13 @@
  * 从 main.js 拆分 (原始行 7402-7663)
  */
 async function start() {
-    const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes] = await Promise.all([
+    const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes, loadedVillage] = await Promise.all([
         loadJsonWithFallback("config/game.json", defaultGameConfig),
         loadJsonWithFallback("config/controls.json", defaultControls),
         loadJsonWithFallback("config/levels.json", defaultLevels),
         loadJsonWithFallback("words/words-base.json", defaultWords),
-        loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS })
+        loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS }),
+        loadJsonWithFallback("config/village.json", { enabled: true, spawnScoreInterval: 500 })
     ]);
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
@@ -20,6 +21,7 @@ async function start() {
     const bundle = normalizeBiomeBundle(loadedBiomes);
     biomeConfigs = bundle.biomes;
     biomeSwitchConfig = bundle.switch;
+    if (typeof villageConfig !== 'undefined') villageConfig = loadedVillage || {};
     baseGameConfig = JSON.parse(JSON.stringify(gameConfig));
     baseCanvasSize = { width: baseGameConfig.canvas.width, height: baseGameConfig.canvas.height };
     baseEnemyStats = JSON.parse(JSON.stringify(ENEMY_STATS));

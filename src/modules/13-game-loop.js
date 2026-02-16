@@ -111,7 +111,9 @@ function update() {
     updateMapGeneration();
 
     decorations.forEach(d => {
-        d.update();
+        if (d.update) {
+            optimizedUpdate(d, () => d.update());
+        }
         if ((d.interactive || d.harmful) && rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
             d.onCollision(player);
         }
@@ -119,12 +121,30 @@ function update() {
     decorations = decorations.filter(d => d.x + d.width > cameraX - removeThreshold && !d.remove);
 
     if (particles.length) {
-        particles.forEach(p => p.update());
-        particles = particles.filter(p => !p.remove);
+        particles.forEach(p => {
+            if (!p) return;
+            if (typeof p.update === "function") {
+                optimizedUpdate(p, () => p.update());
+            }
+        });
+        particles = particles.filter(p => {
+            if (!p || p.remove || p.life <= 0) {
+                if (typeof snowflakePool !== "undefined" && p instanceof Snowflake) snowflakePool.release(p);
+                else if (typeof leafPool !== "undefined" && p instanceof LeafParticle) leafPool.release(p);
+                else if (typeof dustPool !== "undefined" && p instanceof DustParticle) dustPool.release(p);
+                return false;
+            }
+            return true;
+        });
     }
     spawnBiomeParticles();
 
     checkBossSpawn();
+    if (typeof bossArena !== 'undefined' && bossArena) {
+        bossArena.checkSpawn(getProgressScore());
+        bossArena.update(player);
+    }
+    if (typeof updateVillages === 'function') updateVillages();
 
     playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();
@@ -688,6 +708,9 @@ function spawnGolem(type) {
 }
 
 function handleInteraction() {
+    // 村庄建筑交互优先
+    if (typeof tryVillageInteraction === 'function' && tryVillageInteraction()) return;
+
     let nearestChest = null;
     let minDist = 60;
     const now = Date.now();

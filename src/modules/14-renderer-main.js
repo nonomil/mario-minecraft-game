@@ -40,6 +40,9 @@ function draw() {
 
     wordGates.forEach(gate => drawWordGate(gate));
 
+    // 村庄渲染（在敌人之前）
+    if (typeof drawVillages === 'function') drawVillages(ctx);
+
     if (particles.length) {
         particles.forEach(p => drawParticle(p));
     }
@@ -81,6 +84,16 @@ function draw() {
     }
 
     ctx.restore();
+
+    // BOSS竞技场渲染
+    if (typeof bossArena !== 'undefined' && bossArena && bossArena.active) {
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+        bossArena.renderBoss(ctx);
+        bossArena.renderProjectiles(ctx);
+        ctx.restore();
+        bossArena.renderBossHpBar(ctx);
+    }
 
     const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
     if (boss) {

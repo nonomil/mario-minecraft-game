@@ -58,6 +58,13 @@ function initGame() {
     updateInventoryUI();
     player = createPlayer();
     bossSpawned = false;
+    if (typeof bossArena !== 'undefined' && bossArena) {
+        bossArena.active = false; bossArena.boss = null; bossArena.spawned = {};
+    }
+    if (typeof activeVillages !== 'undefined') activeVillages = [];
+    if (typeof villageSpawnedForScore !== 'undefined') villageSpawnedForScore = {};
+    if (typeof playerInVillage !== 'undefined') playerInVillage = false;
+    if (typeof currentVillage !== 'undefined') currentVillage = null;
     startLevel(0);
     updateDifficultyState(true);
 }

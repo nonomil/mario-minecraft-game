@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "spawnScoreInterval": 500,
+  "villageWidth": 800,
+  "restHealFull": true,
+  "challengeQuestionCount": 3,
+  "challengeReward": {
+    "perfect": { "score": 100, "diamonds": 1 },
+    "partial": { "score": 50 }
+  },
+  "buildings": ["bed_house", "word_house", "save_stone", "special"],
+  "biomeWords": {
+    "forest": ["tree", "flower", "grass", "leaf", "bird", "green"],
+    "snow": ["ice", "cold", "snow", "white", "freeze", "winter"],
+    "desert": ["sand", "hot", "sun", "dry", "cactus", "dust"],
+    "mountain": ["rock", "high", "climb", "peak", "stone", "cloud"],
+    "ocean": ["water", "fish", "wave", "swim", "shell", "blue"],
+    "nether": ["fire", "lava", "dark", "red", "flame", "ash"]
+  }
+}

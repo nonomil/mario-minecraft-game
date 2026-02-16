@@ -22,6 +22,9 @@ const ENTITY_NAMES = {
     blaze:           { en: "BLAZE",           zh: "烈焰人" },
     wither_skeleton: { en: "WITHER SKELETON", zh: "凋零骷髅" },
 
+    // 村庄
+    villager:        { en: "VILLAGER",        zh: "村民" },
+
     // 友方
     iron_golem:      { en: "IRON GOLEM",      zh: "铁傀儡" },
     snow_golem:      { en: "SNOW GOLEM",      zh: "雪傀儡" },
