@@ -136,10 +136,19 @@ function update() {
     for (let p of platforms) {
         if (!p || p.remove) continue;
         const dir = colCheck(player, p);
-        if (dir === "l") {
-            player.velX = Math.max(0, player.velX);
-        } else if (dir === "r") {
-            player.velX = Math.min(0, player.velX);
+        if (dir === "l" || dir === "r") {
+            // 如果玩家脚底接近平台顶部，视为踩上平台而非撞墙
+            const feetY = player.y + player.height;
+            const stepUpThreshold = blockSize * 0.6;
+            if (feetY > p.y && feetY - p.y < stepUpThreshold) {
+                player.y = p.y - player.height;
+                player.grounded = true;
+                player.jumpCount = 0;
+                player.velY = 0;
+                coyoteTimer = gameConfig.jump.coyoteFrames;
+            } else {
+                player.velX = 0;
+            }
         } else if (dir === "b") {
             player.grounded = true;
             player.y = p.y - player.height;
@@ -207,6 +216,12 @@ function update() {
     player.x += player.velX;
     player.y += player.velY;
 
+    // 上边界保护：跳出屏幕顶部时弹回
+    if (player.y < -player.height * 2) {
+        player.y = -player.height * 2;
+        if (player.velY < 0) player.velY = 0;
+    }
+
     if (player.y > fallResetY) {
         player.y = 0;
         player.x -= 200;
@@ -214,6 +229,23 @@ function update() {
         player.velY = 0;
     }
     } // end else (not underwater)
+
+    // 卡住检测：如果玩家有输入但位置长时间不变，强制解除
+    if (typeof player._stuckFrames === "undefined") player._stuckFrames = 0;
+    if (typeof player._lastStuckX === "undefined") player._lastStuckX = player.x;
+    const hasInput = keys.right || keys.left || keys.up || keys.jump;
+    if (hasInput && Math.abs(player.x - player._lastStuckX) < 0.5 && player.grounded) {
+        player._stuckFrames++;
+        if (player._stuckFrames > 45) {
+            // 强制向前推一下
+            player.y = player.y - blockSize * 0.8;
+            player.velY = -2;
+            player._stuckFrames = 0;
+        }
+    } else {
+        player._stuckFrames = 0;
+    }
+    player._lastStuckX = player.x;
 
     let targetCamX = player.x - cameraOffsetX;
     if (targetCamX < 0) targetCamX = 0;

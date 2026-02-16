@@ -45,8 +45,20 @@ function update() {
 
     for (let p of platforms) {
         const dir = colCheck(player, p);
-        if (dir === "l" || dir === "r") player.velX = 0;
-        else if (dir === "b") {
+        if (dir === "l" || dir === "r") {
+            // 如果玩家脚底接近平台顶部，视为踩上平台而非撞墙
+            const feetY = player.y + player.height;
+            const stepUpThreshold = blockSize * 0.6;
+            if (feetY > p.y && feetY - p.y < stepUpThreshold) {
+                player.y = p.y - player.height;
+                player.grounded = true;
+                player.jumpCount = 0;
+                player.velY = 0;
+                coyoteTimer = gameConfig.jump.coyoteFrames;
+            } else {
+                player.velX = 0;
+            }
+        } else if (dir === "b") {
             player.grounded = true;
             player.y = p.y - player.height;
             player.jumpCount = 0;
@@ -98,12 +110,34 @@ function update() {
     player.x += player.velX;
     player.y += player.velY;
 
+    // 上边界保护
+    if (player.y < -player.height * 2) {
+        player.y = -player.height * 2;
+        if (player.velY < 0) player.velY = 0;
+    }
+
     if (player.y > fallResetY) {
         player.y = 0;
         player.x -= 200;
         if (player.x < 0) player.x = 100;
         player.velY = 0;
     }
+
+    // 卡住检测
+    if (typeof player._stuckFrames === "undefined") player._stuckFrames = 0;
+    if (typeof player._lastStuckX === "undefined") player._lastStuckX = player.x;
+    const hasInput = keys.right || keys.left || keys.up || keys.jump;
+    if (hasInput && Math.abs(player.x - player._lastStuckX) < 0.5 && player.grounded) {
+        player._stuckFrames++;
+        if (player._stuckFrames > 45) {
+            player.y = player.y - blockSize * 0.8;
+            player.velY = -2;
+            player._stuckFrames = 0;
+        }
+    } else {
+        player._stuckFrames = 0;
+    }
+    player._lastStuckX = player.x;
 
     let targetCamX = player.x - cameraOffsetX;
     if (targetCamX < 0) targetCamX = 0;
