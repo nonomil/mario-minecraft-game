@@ -114,6 +114,22 @@ class Chest extends Entity {
                 addScore(d.count);
                 return;
             }
+            if (d.item === "word_card") {
+                const learnedWord = typeof pickWordForSpawn === "function" ? pickWordForSpawn() : null;
+                addScore(d.count);
+                if (learnedWord && learnedWord.en) {
+                    const zh = learnedWord.zh ? ` (${learnedWord.zh})` : "";
+                    showFloatingText(`📘 ${learnedWord.en}${zh} +${d.count}`, this.x, this.y - 20, "#7FB3FF");
+                    if (typeof speakWord === "function") speakWord(learnedWord);
+                } else {
+                    showFloatingText(`📘 +${d.count}`, this.x, this.y - 20, "#7FB3FF");
+                }
+                return;
+            }
+            if (d.item === "empty") {
+                showToast("宝箱是空的");
+                return;
+            }
             if (d.item && d.item.startsWith("armor_")) {
                 const armorId = d.item.replace("armor_", "");
                 this.pendingArmor = armorId;
