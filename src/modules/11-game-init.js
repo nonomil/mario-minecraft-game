@@ -106,13 +106,21 @@ function buildWordPicker() {
     const base = Array.isArray(wordDatabase) ? wordDatabase.filter(w => w && w.en) : [];
     let bag = shuffle(base);
     let cursor = 0;
-    const intervals = [0, 3, 10, 28, 80, 220];
+    const INTERVALS = {
+        correct_fast: [0, 5, 15, 40, 120, 300],
+        correct_slow: [0, 3, 10, 28, 80, 220],
+        wrong: [0, 1, 3, 8, 20, 60]
+    };
     const stats = Object.create(null);
     const due = Object.create(null);
     const unseen = shuffle(base.map(w => w.en));
     let tick = 0;
     const byEn = Object.create(null);
     base.forEach(w => { byEn[w.en] = w; });
+    function ensureStat(en) {
+        if (!stats[en]) stats[en] = { count: 0, quality: "correct_slow" };
+        return stats[en];
+    }
     return {
         next(excludeSet) {
             if (!base.length) return { en: "word", zh: "单词" };
@@ -124,8 +132,10 @@ function buildWordPicker() {
                 if (!en) break;
                 if (!excludes.has(en) && !stats[en]) {
                     unseen.shift();
-                    stats[en] = 1;
-                    due[en] = tick + intervals[Math.min(stats[en], intervals.length - 1)];
+                    const stat = ensureStat(en);
+                    stat.count++;
+                    const ivl = INTERVALS[stat.quality] || INTERVALS.correct_slow;
+                    due[en] = tick + ivl[Math.min(stat.count, ivl.length - 1)];
                     return byEn[en] || base[0];
                 }
                 unseen.shift();
@@ -139,7 +149,7 @@ function buildWordPicker() {
                 if (!w || excludes.has(w.en)) continue;
                 const nextDue = typeof due[w.en] === "number" ? due[w.en] : 0;
                 if (nextDue > tick) continue;
-                const c = stats[w.en] || 0;
+                const c = stats[w.en]?.count || 0;
                 if (c < bestCount) {
                     best = w;
                     bestCount = c;
@@ -149,9 +159,19 @@ function buildWordPicker() {
                 }
             }
             const chosen = best || base[Math.floor(Math.random() * base.length)];
-            stats[chosen.en] = (stats[chosen.en] || 0) + 1;
-            due[chosen.en] = tick + intervals[Math.min(stats[chosen.en], intervals.length - 1)];
+            const stat = ensureStat(chosen.en);
+            stat.count++;
+            const ivl = INTERVALS[stat.quality] || INTERVALS.correct_slow;
+            due[chosen.en] = tick + ivl[Math.min(stat.count, ivl.length - 1)];
             return chosen;
+        },
+        updateWordQuality(en, quality) {
+            if (!en) return;
+            const stat = ensureStat(en);
+            if (quality === "correct_fast" || quality === "correct_slow" || quality === "wrong") {
+                stat.quality = quality;
+            }
+            if (quality === "wrong") due[en] = tick;
         }
     };
 }

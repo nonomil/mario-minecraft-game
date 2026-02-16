@@ -30,15 +30,40 @@ function getDifficultyTier(scoreValue) {
 
 function computeDifficultyState() {
     const cfg = getDifficultyConfig();
-    const tier = getDifficultyTier(getProgressScore());
+    const tiers = Array.isArray(cfg.tiers) ? cfg.tiers : [];
+    const score = getProgressScore();
+    const tier = getDifficultyTier(score);
     const dda = cfg.dda || {};
-    let enemyDamageMult = Number(tier.enemyDamage) || 1;
-    let enemyHpMult = Number(tier.enemyHp) || 1;
-    let enemySpawnMult = Number(tier.enemySpawn) || 1;
-    let chestSpawnMult = Number(tier.chestSpawn) || 1;
+    let enemyDamageMult;
+    let enemyHpMult;
+    let enemySpawnMult;
+    let chestSpawnMult;
     let chestRareBoost = Number(tier.chestRareBoost) || 0;
     let chestRollBonus = Number(tier.chestRollBonus) || 0;
     const scoreMultiplier = Number(tier.scoreMultiplier) || 1;
+    const selected = String(settings?.difficultySelection || "auto");
+    const tierIdx = tiers.indexOf(tier);
+    const nextTier = tierIdx >= 0 ? tiers[tierIdx + 1] : null;
+
+    if (selected === "auto" && nextTier && (tier.maxScore ?? 999999) < 999999) {
+        const minScore = Number(tier.minScore ?? 0);
+        const maxScore = Number(tier.maxScore ?? 999999);
+        const range = maxScore - minScore;
+        const t = range > 0 ? clamp((score - minScore) / range, 0, 1) : 0;
+        enemyDamageMult = (Number(tier.enemyDamage) || 1) +
+            ((Number(nextTier.enemyDamage) || 1) - (Number(tier.enemyDamage) || 1)) * t;
+        enemyHpMult = (Number(tier.enemyHp) || 1) +
+            ((Number(nextTier.enemyHp) || 1) - (Number(tier.enemyHp) || 1)) * t;
+        enemySpawnMult = (Number(tier.enemySpawn) || 1) +
+            ((Number(nextTier.enemySpawn) || 1) - (Number(tier.enemySpawn) || 1)) * t;
+        chestSpawnMult = (Number(tier.chestSpawn) || 1) +
+            ((Number(nextTier.chestSpawn) || 1) - (Number(tier.chestSpawn) || 1)) * t;
+    } else {
+        enemyDamageMult = Number(tier.enemyDamage) || 1;
+        enemyHpMult = Number(tier.enemyHp) || 1;
+        enemySpawnMult = Number(tier.enemySpawn) || 1;
+        chestSpawnMult = Number(tier.chestSpawn) || 1;
+    }
 
     if (settings.learningMode) {
         enemyDamageMult *= 0.85;
