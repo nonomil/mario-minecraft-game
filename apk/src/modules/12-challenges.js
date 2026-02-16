@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 12-challenges.js - 单词收集与学习挑战
  * 从 main.js 拆分 (原始行 3401-3817)
  */
@@ -22,15 +22,28 @@ function showWordCard(wordObj) {
     if (!card) return;
     const en = document.getElementById("word-card-en");
     const zh = document.getElementById("word-card-zh");
+    const phrase = document.getElementById("word-card-phrase");
     if (en) en.innerText = wordObj.en;
     if (zh) zh.innerText = wordObj.zh;
+    if (phrase) {
+        const phraseText = String(wordObj?.phrase || "").trim();
+        const phraseZh = String(wordObj?.phraseZh || "").trim();
+        if (phraseText) {
+            phrase.innerText = phraseZh ? `${phraseText} · ${phraseZh}` : phraseText;
+            phrase.style.display = "block";
+        } else {
+            phrase.innerText = "";
+            phrase.style.display = "none";
+        }
+    }
     updateWordImage(wordObj);
     card.classList.add("visible");
     card.setAttribute("aria-hidden", "false");
+    const cardDuration = Math.max(300, Number(settings?.wordCardDuration) || 900);
     setTimeout(() => {
         card.classList.remove("visible");
         card.setAttribute("aria-hidden", "true");
-    }, 900);
+    }, cardDuration);
 }
 
 function recordWordProgress(wordObj) {
@@ -132,6 +145,89 @@ function generateFillBlankChallenge(wordObj) {
     };
 }
 
+
+function generateMultiBlankChallenge(wordObj) {
+    const enRaw = String(wordObj?.en || "").toLowerCase();
+    const en = enRaw.replace(/[^a-z]/g, "");
+    if (en.length < 4) return generateFillBlankChallenge(wordObj);
+
+    const blankCount = Math.min(2, Math.floor(en.length / 3));
+    const available = [];
+    for (let i = 1; i < en.length - 1; i++) available.push(i);
+    const positions = [];
+    while (positions.length < blankCount && available.length) {
+        const idx = Math.floor(Math.random() * available.length);
+        const pos = available[idx];
+        positions.push(pos);
+        for (let j = available.length - 1; j >= 0; j--) {
+            if (Math.abs(available[j] - pos) <= 1) available.splice(j, 1);
+        }
+    }
+    positions.sort((a, b) => a - b);
+    const missing = positions.map(i => en[i]).join("");
+    const display = en.split("").map((ch, idx) => (positions.includes(idx) ? "_" : ch)).join(" ");
+    const options = [missing];
+    while (options.length < 4) {
+        const fake = positions.map(() => "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]).join("");
+        if (!options.includes(fake)) options.push(fake);
+    }
+
+    return {
+        mode: "fill_blank",
+        questionHtml:
+            `<div class="challenge-fill">` +
+            `<div class="challenge-fill-word">${display}</div>` +
+            `<div class="challenge-fill-hint">填入缺少的 ${positions.length} 个字母</div>` +
+            `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
+            `</div>`,
+        options: shuffle(options).map(opt => ({ text: opt, value: opt, correct: opt === missing })),
+        answer: missing
+    };
+}
+
+function generateScrambleDistractors(en, count) {
+    const out = [];
+    const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
+    const candidates = shuffle(pool.filter(w => w?.en && w.en.toLowerCase() !== en && Math.abs(w.en.length - en.length) <= 2));
+    for (const c of candidates) {
+        if (out.length >= count) break;
+        const v = String(c.en || "").toLowerCase();
+        if (!out.some(x => x.value === v)) out.push({ text: v, value: v, correct: false });
+    }
+    while (out.length < count) {
+        const fake = shuffle(en.split("")).join("");
+        if (fake !== en && !out.some(x => x.value === fake)) out.push({ text: fake, value: fake, correct: false });
+    }
+    return out;
+}
+
+function generateUnscrambleChallenge(wordObj) {
+    const enRaw = String(wordObj?.en || "").toLowerCase();
+    const en = enRaw.replace(/[^a-z]/g, "");
+    if (en.length < 3) return generateFillBlankChallenge(wordObj);
+
+    let scrambled = shuffle(en.split(""));
+    let tries = 0;
+    while (scrambled.join("") === en && tries < 8) {
+        scrambled = shuffle(en.split(""));
+        tries++;
+    }
+
+    return {
+        mode: "fill_blank",
+        questionHtml:
+            `<div class="challenge-fill">` +
+            `<div class="challenge-fill-word" style="letter-spacing:8px;color:#FFD54F;">${scrambled.join(" ")}</div>` +
+            `<div class="challenge-fill-hint">重新排列字母，拼出正确单词</div>` +
+            `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
+            `</div>`,
+        options: shuffle([
+            { text: en, value: en, correct: true },
+            ...generateScrambleDistractors(en, 3)
+        ]),
+        answer: en
+    };
+}
 const CHALLENGE_TYPES = {
     translate(wordObj) {
         const options = generateChallengeOptions(wordObj, "zh", LEARNING_CONFIG.challenge.baseOptions);
@@ -153,10 +249,16 @@ const CHALLENGE_TYPES = {
     },
     fill_blank(wordObj) {
         return generateFillBlankChallenge(wordObj);
+    },
+    multi_blank(wordObj) {
+        return generateMultiBlankChallenge(wordObj);
+    },
+    unscramble(wordObj) {
+        return generateUnscrambleChallenge(wordObj);
     }
 };
 
-const CHALLENGE_TYPE_KEYS = ["translate", "listen", "fill_blank"];
+const CHALLENGE_TYPE_KEYS = ["translate", "listen", "fill_blank", "multi_blank", "unscramble"];
 
 function generateChallengeOptions(wordObj, key, count) {
     const distinct = pickDistinctWords(wordObj, count);
@@ -281,12 +383,49 @@ function hideLearningChallenge() {
     if (challengeInputEl) challengeInputEl.value = "";
 }
 
+function showChallengeCorrection(wordObj) {
+    if (!challengeQuestionEl || !wordObj) return;
+    const existing = challengeQuestionEl.querySelector(".challenge-correction");
+    if (existing) existing.remove();
+    const correctionDiv = document.createElement("div");
+    correctionDiv.className = "challenge-correction";
+    correctionDiv.style.marginTop = "12px";
+    correctionDiv.style.padding = "8px";
+    correctionDiv.style.borderRadius = "8px";
+    correctionDiv.style.background = "rgba(76,175,80,0.2)";
+
+    const en = String(wordObj.en || "").trim();
+    const zh = String(wordObj.zh || "").trim();
+    const phrase = String(wordObj.phrase || "").trim();
+    const phraseZh = String(wordObj.phraseZh || "").trim();
+
+    correctionDiv.innerHTML =
+        `<div style="color:#4CAF50;font-size:14px;">正确答案</div>` +
+        `<div style="color:#FFF;font-size:18px;font-weight:bold;margin-top:4px;">${en}${zh ? ` = ${zh}` : ""}</div>` +
+        (phrase ? `<div style="color:#FFD54F;font-size:12px;margin-top:4px;">${phrase}${phraseZh ? ` · ${phraseZh}` : ""}</div>` : "");
+    challengeQuestionEl.appendChild(correctionDiv);
+
+    if (challengeOptionsEl) {
+        challengeOptionsEl.querySelectorAll("button").forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+        });
+    }
+    if (typeof speakWord === "function") speakWord(wordObj);
+}
+
 function completeLearningChallenge(correct) {
     if (!currentLearningChallenge) return;
     clearLearningChallengeTimer();
-    hideLearningChallenge();
     const reward = LEARNING_CONFIG.challenge.rewards;
+    const wordObj = currentLearningChallenge.wordObj;
+    const timeLimit = LEARNING_CONFIG.challenge.timeLimit || 10000;
+    const elapsed = Math.max(0, timeLimit - Math.max(0, challengeDeadline - Date.now()));
     if (correct) {
+        if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
+            wordPicker.updateWordQuality(wordObj.en, elapsed < 3000 ? "correct_fast" : "correct_slow");
+        }
+        hideLearningChallenge();
         addScore(reward.correct.score);
         inventory.diamond = (inventory.diamond || 0) + (reward.correct.diamond || 0);
         updateInventoryUI();
@@ -296,16 +435,42 @@ function completeLearningChallenge(correct) {
             challengeOrigin.remove = true;
             showToast("💠 词语闸门已解锁！");
         }
+        paused = challengePausedBefore;
+        currentLearningChallenge = null;
+        challengeOrigin = null;
     } else {
+        if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
+            wordPicker.updateWordQuality(wordObj.en, "wrong");
+        }
+        if (settings.learningMode) {
+            const retryWord = wordObj;
+            const resumePausedState = challengePausedBefore;
+            const savedOrigin = challengeOrigin;
+            showChallengeCorrection(retryWord);
+            showFloatingText("📕 再试一次", player.x, player.y - 40);
+            setTimeout(() => {
+                hideLearningChallenge();
+                currentLearningChallenge = null;
+                challengeOrigin = null;
+                paused = resumePausedState;
+                startLearningChallenge(retryWord, null, savedOrigin);
+            }, 2500);
+            return;
+        }
         addScore(-reward.wrong.scorePenalty);
         showFloatingText("❌ 挑战失败", player.x, player.y - 40);
         if (challengeOrigin && challengeOrigin instanceof WordGate) {
             challengeOrigin.cooldown = 180;
         }
+        showChallengeCorrection(wordObj);
+        setTimeout(() => {
+            hideLearningChallenge();
+            paused = challengePausedBefore;
+            currentLearningChallenge = null;
+            challengeOrigin = null;
+        }, 2000);
+        return;
     }
-    paused = challengePausedBefore;
-    currentLearningChallenge = null;
-    challengeOrigin = null;
 }
 
 function triggerWordGateChallenge(gate) {
@@ -429,3 +594,4 @@ function speakWord(wordObj) {
         zhText ? { text: zhText, lang: "zh-CN" } : null
     ]);
 }
+

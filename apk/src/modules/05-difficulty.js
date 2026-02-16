@@ -24,8 +24,29 @@ function getDifficultyTier(scoreValue) {
         if (fixed) return fixed;
     }
     const s = Number(scoreValue) || 0;
-    const found = tiers.find(t => s >= (t.minScore ?? 0) && s < (t.maxScore ?? Number.MAX_SAFE_INTEGER));
-    return found || tiers[tiers.length - 1];
+    const index = tiers.findIndex(t => s >= (t.minScore ?? 0) && s < (t.maxScore ?? Number.MAX_SAFE_INTEGER));
+    const curIdx = index >= 0 ? index : Math.max(0, tiers.length - 1);
+    const current = tiers[curIdx] || tiers[tiers.length - 1];
+    const next = tiers[curIdx + 1];
+    if (!next) return current;
+
+    const minScore = Number(current.minScore ?? 0);
+    const maxScore = Number(current.maxScore ?? minScore + 1);
+    const span = Math.max(1, maxScore - minScore);
+    const t = clamp((s - minScore) / span, 0, 1);
+    const lerp = (a, b) => (Number(a) || 0) + ((Number(b) || 0) - (Number(a) || 0)) * t;
+
+    return {
+        ...current,
+        name: current.name || "普通",
+        enemyDamage: lerp(current.enemyDamage ?? 1, next.enemyDamage ?? current.enemyDamage ?? 1),
+        enemyHp: lerp(current.enemyHp ?? 1, next.enemyHp ?? current.enemyHp ?? 1),
+        enemySpawn: lerp(current.enemySpawn ?? 1, next.enemySpawn ?? current.enemySpawn ?? 1),
+        chestSpawn: lerp(current.chestSpawn ?? 1, next.chestSpawn ?? current.chestSpawn ?? 1),
+        chestRareBoost: lerp(current.chestRareBoost ?? 0, next.chestRareBoost ?? current.chestRareBoost ?? 0),
+        chestRollBonus: lerp(current.chestRollBonus ?? 0, next.chestRollBonus ?? current.chestRollBonus ?? 0),
+        scoreMultiplier: lerp(current.scoreMultiplier ?? 1, next.scoreMultiplier ?? current.scoreMultiplier ?? 1)
+    };
 }
 
 function computeDifficultyState() {

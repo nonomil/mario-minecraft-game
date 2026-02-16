@@ -12,6 +12,11 @@ function optimizedUpdate(entity, updateFn) {
     }
 }
 
+function isEntityNearCamera(entity, margin = blockSize * 2) {
+    if (!entity || typeof entity.x !== "number") return true;
+    return entity.x > cameraX - margin && entity.x < cameraX + canvas.width + margin;
+}
+
 function checkBossSpawn() {
     if (bossSpawned) return;
     const enemyConfig = getEnemyConfig();
@@ -174,8 +179,10 @@ function update() {
     updateMapGeneration();
 
     decorations.forEach(d => {
-        d.update();
-        if ((d.interactive || d.harmful) && rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
+        optimizedUpdate(d, () => d.update());
+        if ((d.interactive || d.harmful) &&
+            isEntityNearCamera(d, blockSize * 3) &&
+            rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
             d.onCollision(player);
         }
     });
@@ -184,17 +191,19 @@ function update() {
     if (particles.length) {
         particles.forEach(p => {
             if (!p) return;
-            if (typeof p.update === "function") {
-                p.update();
-                return;
-            }
-            if (p.type === "bubble") {
-                p.x += p.vx || 0;
-                p.y += p.vy || 0;
-                p.life -= 0.01;
-                p.size = (p.size || 3) * 1.002;
-                if (p.life <= 0) p.remove = true;
-            }
+            optimizedUpdate(p, () => {
+                if (typeof p.update === "function") {
+                    p.update();
+                    return;
+                }
+                if (p.type === "bubble") {
+                    p.x += p.vx || 0;
+                    p.y += p.vy || 0;
+                    p.life -= 0.01;
+                    p.size = (p.size || 3) * 1.002;
+                    if (p.life <= 0) p.remove = true;
+                }
+            });
         });
         particles = particles.filter(p => !p?.remove);
     }

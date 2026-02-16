@@ -65,6 +65,7 @@
             <div class="word-card-inner">
                 <div class="word-card-en" id="word-card-en"></div>
                 <div class="word-card-zh" id="word-card-zh"></div>
+                <div class="word-card-phrase" id="word-card-phrase" style="display:none;"></div>
                 <img class="word-card-image" id="word-card-image" alt="" style="display:none;">
             </div>
         </div>
@@ -128,7 +129,20 @@
         </div>
         <div class="settings-row">
             <div class="settings-label">挑战频率</div>
-            <input class="settings-range" id="opt-challenge-freq" type="range" min="0.05" max="0.6" step="0.05" value="0.1">
+            <select class="settings-select" id="opt-challenge-freq">
+                <option value="0.15">低</option>
+                <option value="0.3">中</option>
+                <option value="0.45">高</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">单词卡停留时长</div>
+            <select class="settings-select" id="opt-word-card-duration">
+                <option value="700">短(0.7秒)</option>
+                <option value="900">标准(0.9秒)</option>
+                <option value="1200">长(1.2秒)</option>
+                <option value="1500">更长(1.5秒)</option>
+            </select>
         </div>
         <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>

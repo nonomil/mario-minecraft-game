@@ -2,6 +2,27 @@
  * 10-ui.js - UI覆盖层、游戏结束、复活
  * 从 main.js 拆分 (原始行 2497-2836)
  */
+function getSessionWordSummaryHtml(limit = 6) {
+    const counts = sessionWordCounts && typeof sessionWordCounts === "object" ? sessionWordCounts : {};
+    const entries = Object.entries(counts)
+        .filter(([, c]) => Number(c) > 0)
+        .sort((a, b) => Number(b[1]) - Number(a[1]))
+        .slice(0, Math.max(1, limit));
+    if (!entries.length) return "";
+
+    const wordMap = new Map();
+    const uniqueWords = typeof getUniqueSessionWords === "function" ? getUniqueSessionWords() : [];
+    uniqueWords.forEach(w => {
+        if (!w?.en) return;
+        wordMap.set(String(w.en), String(w.zh || "").trim());
+    });
+    const parts = entries.map(([en, cnt]) => {
+        const zh = wordMap.get(en);
+        return `${en}${zh ? `(${zh})` : ""} x${cnt}`;
+    });
+    return `<br><br>🧠 本局高频词: ${parts.join(" · ")}`;
+}
+
 function setOverlay(visible, mode) {
     const overlay = document.getElementById("screen-overlay");
     if (!overlay) return;
@@ -38,7 +59,8 @@ function setOverlay(visible, mode) {
                     `💎 钻石: ${diamonds}<br>` +
                     `⭐ 当前积分: ${score}<br>` +
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
-                    `🏅 玩家等级: ${level}`;
+                    `🏅 玩家等级: ${level}` +
+                    getSessionWordSummaryHtml();
             }
             if (btn) {
                 const cfg = getReviveConfig();

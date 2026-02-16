@@ -106,25 +106,35 @@ function applyBiomeEffectsToPlayer() {
 }
 
 // ============ 高温环境（火山/地狱） ============
-let biomeHeatDotTimer = 0;
+let biomeHeatDotTimerMs = 0;
+let biomeHeatLastTickMs = 0;
 let netherMushrooms = [];
 let fragilePlatforms = [];
 
 function updateExtremeHeatEnvironment() {
+    const now = Date.now();
     const inHeatBiome = currentBiome === "nether" || currentBiome === "volcano";
     if (!inHeatBiome) {
-        biomeHeatDotTimer = 0;
+        biomeHeatDotTimerMs = 0;
+        biomeHeatLastTickMs = now;
         return;
     }
     // 穿下界合金盔甲免疫高温环境伤害
     if (playerEquipment && playerEquipment.armor === 'netherite') {
-        biomeHeatDotTimer = 0;
+        biomeHeatDotTimerMs = 0;
+        biomeHeatLastTickMs = now;
         return;
     }
-    biomeHeatDotTimer++;
-    // 60fps 下 3600 帧约等于 60 秒
-    if (biomeHeatDotTimer >= 3600) {
-        biomeHeatDotTimer = 0;
+    if (!biomeHeatLastTickMs) {
+        biomeHeatLastTickMs = now;
+        return;
+    }
+    const deltaMs = Math.max(0, Math.min(250, now - biomeHeatLastTickMs));
+    biomeHeatLastTickMs = now;
+    biomeHeatDotTimerMs += deltaMs;
+    // 真实时间每 60 秒掉 0.5 血，避免 FPS 波动影响。
+    if (biomeHeatDotTimerMs >= 60000) {
+        biomeHeatDotTimerMs -= 60000;
         damagePlayer(0.5, player.x, 30);
         showFloatingText('🔥 高温灼伤', player.x + player.width / 2, player.y - 30, '#FF4500');
     }
