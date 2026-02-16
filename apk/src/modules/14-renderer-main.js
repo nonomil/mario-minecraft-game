@@ -9,6 +9,7 @@ function draw() {
     if (typeof renderBiomeVisuals === 'function') renderBiomeVisuals(ctx, cameraX);
     if (typeof renderOceanEnvironment === 'function') renderOceanEnvironment(ctx);
     if (typeof renderEndEnvironment === 'function') renderEndEnvironment(ctx);
+    if (typeof renderSkyWindZones === 'function') renderSkyWindZones(ctx, cameraX);
     ctx.save();
     ctx.translate(-cameraX, 0);
 

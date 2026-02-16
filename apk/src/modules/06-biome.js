@@ -104,6 +104,8 @@ function applyBiomeEffectsToPlayer() {
     if (currentBiome === 'nether') checkSoulSandEffect();
     // 末地低重力
     if (currentBiome === 'end') updateEndEnvironment();
+    // 天空之城风场
+    if (typeof updateSkyWindSystem === "function") updateSkyWindSystem();
 }
 
 // ============ 高温环境（火山/地狱） ============
@@ -112,6 +114,188 @@ let biomeHeatLastTickMs = 0;
 let netherMushrooms = [];
 let fragilePlatforms = [];
 const biomeParticlePools = Object.create(null);
+let skyWindZones = [];
+let skyWindZoneCounter = 0;
+let nextSkyWindTypeIndex = 0;
+let lastSkyWindHintFrame = -999;
+
+const SKY_WIND_TYPES = ["left", "up", "right"];
+const SKY_WIND_FORCE = {
+    left: { vx: -0.2, vy: 0 },
+    right: { vx: 0.2, vy: 0 },
+    up: { vx: 0, vy: -0.38 }
+};
+
+function buildSkyWindZone(baseX, overrideType = null) {
+    const type = overrideType || SKY_WIND_TYPES[nextSkyWindTypeIndex++ % SKY_WIND_TYPES.length];
+    const zone = {
+        id: `wind_zone_${skyWindZoneCounter++}`,
+        type,
+        x: baseX,
+        y: type === "up" ? 130 : 190,
+        width: 210,
+        height: type === "up" ? 320 : 240,
+        particles: [],
+        rewardPlatformId: null
+    };
+    return zone;
+}
+
+function clearSkyWindPlatforms() {
+    platforms = platforms.filter(p => !p?.windReward);
+}
+
+function resetSkyWindZones() {
+    skyWindZones = [];
+    nextSkyWindTypeIndex = 0;
+    clearSkyWindPlatforms();
+}
+
+function spawnSkyWindRewardPlatform(zone) {
+    if (!zone || zone.type !== "up" || zone.rewardPlatformId) return;
+    const px = zone.x + zone.width * 0.5 - 70;
+    const py = Math.max(40, zone.y - 56);
+    const p = new Platform(px, py, 140, 20, "cloud");
+    p.windReward = true;
+    p.windZoneId = zone.id;
+    platforms.push(p);
+    zone.rewardPlatformId = zone.id;
+
+    if (Math.random() < 0.8) {
+        const chestX = px + 46;
+        chests.push(new Chest(chestX, py - 34));
+    }
+}
+
+function ensureSkyWindZones() {
+    if (currentBiome !== "sky_dimension") {
+        resetSkyWindZones();
+        return;
+    }
+    if (skyWindZones.length) return;
+
+    const startX = Math.max(500, Math.floor((cameraX + 260) / 420) * 420);
+    skyWindZones = [
+        buildSkyWindZone(startX, "left"),
+        buildSkyWindZone(startX + 480, "up"),
+        buildSkyWindZone(startX + 960, "right")
+    ];
+    skyWindZones.forEach(zone => spawnSkyWindRewardPlatform(zone));
+}
+
+function recycleSkyWindZones() {
+    if (currentBiome !== "sky_dimension") return;
+    if (!skyWindZones.length) return;
+
+    const leftBound = cameraX - 340;
+    let farthestX = Math.max(...skyWindZones.map(z => z.x));
+    for (const zone of skyWindZones) {
+        if (zone.x + zone.width >= leftBound) continue;
+
+        platforms = platforms.filter(p => !(p?.windReward && p.windZoneId === zone.id));
+        zone.particles = [];
+        zone.type = SKY_WIND_TYPES[nextSkyWindTypeIndex++ % SKY_WIND_TYPES.length];
+        zone.x = farthestX + 430;
+        zone.y = zone.type === "up" ? 130 : 190;
+        zone.width = 210;
+        zone.height = zone.type === "up" ? 320 : 240;
+        zone.rewardPlatformId = null;
+        spawnSkyWindRewardPlatform(zone);
+        farthestX = zone.x;
+    }
+}
+
+function updateSkyWindZoneParticles(zone) {
+    if (!zone) return;
+    if (zone.particles.length < 28 && Math.random() < 0.45) {
+        zone.particles.push({
+            x: zone.x + Math.random() * zone.width,
+            y: zone.y + Math.random() * zone.height,
+            life: 36 + Math.floor(Math.random() * 20),
+            maxLife: 56
+        });
+    }
+
+    zone.particles = zone.particles.filter(p => {
+        const force = SKY_WIND_FORCE[zone.type] || SKY_WIND_FORCE.left;
+        p.x += force.vx * 8;
+        p.y += force.vy * 8;
+        if (zone.type === "up") p.x += Math.sin((gameFrame + p.life) * 0.06) * 0.8;
+        p.life--;
+        const inX = p.x >= zone.x - 15 && p.x <= zone.x + zone.width + 15;
+        const inY = p.y >= zone.y - 15 && p.y <= zone.y + zone.height + 15;
+        return p.life > 0 && inX && inY;
+    });
+}
+
+function applySkyWindForceToPlayer(zone) {
+    if (!zone || !player) return false;
+    if (!rectIntersect(player.x, player.y, player.width, player.height, zone.x, zone.y, zone.width, zone.height)) {
+        return false;
+    }
+    const force = SKY_WIND_FORCE[zone.type] || SKY_WIND_FORCE.left;
+    if (zone.type === "left" || zone.type === "right") {
+        player.velX = Math.max(-6, Math.min(6, player.velX + force.vx));
+    } else if (zone.type === "up") {
+        player.velY = Math.max(-8, player.velY + force.vy);
+        if (player.velY > -1) player.velY *= 0.95;
+    }
+    return true;
+}
+
+function updateSkyWindSystem() {
+    if (currentBiome !== "sky_dimension") {
+        if (skyWindZones.length) resetSkyWindZones();
+        return;
+    }
+
+    ensureSkyWindZones();
+    recycleSkyWindZones();
+
+    let touched = null;
+    for (const zone of skyWindZones) {
+        updateSkyWindZoneParticles(zone);
+        if (!touched && applySkyWindForceToPlayer(zone)) touched = zone;
+    }
+
+    if (touched && gameFrame - lastSkyWindHintFrame > 90) {
+        lastSkyWindHintFrame = gameFrame;
+        const text = touched.type === "left" ? "⬅️ 左风区" : touched.type === "right" ? "➡️ 右风区" : "⬆️ 上升气流";
+        showFloatingText(text, player.x + 10, player.y - 24, "#FFD54F");
+    }
+}
+
+function renderSkyWindZones(ctx, camX) {
+    if (currentBiome !== "sky_dimension" || !skyWindZones.length) return;
+    ctx.save();
+    ctx.setLineDash([8, 5]);
+    for (const zone of skyWindZones) {
+        const dx = zone.x - camX;
+        if (dx + zone.width < -20 || dx > canvas.width + 20) continue;
+
+        ctx.strokeStyle = "rgba(255, 215, 0, 0.68)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(dx, zone.y, zone.width, zone.height);
+
+        ctx.fillStyle = "rgba(255, 215, 0, 0.14)";
+        ctx.fillRect(dx, zone.y, zone.width, zone.height);
+
+        const arrow = zone.type === "left" ? "⬅" : zone.type === "right" ? "➡" : "⬆";
+        ctx.fillStyle = "rgba(255, 240, 170, 0.95)";
+        ctx.font = "bold 18px Verdana";
+        ctx.fillText(arrow, dx + zone.width * 0.5 - 8, zone.y + 26);
+
+        for (const p of zone.particles) {
+            const alpha = Math.max(0.2, p.life / p.maxLife);
+            ctx.fillStyle = `rgba(255, 215, 80, ${alpha})`;
+            ctx.beginPath();
+            ctx.arc(p.x - camX, p.y, 2.2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+    ctx.setLineDash([]);
+    ctx.restore();
+}
 
 function acquireBiomeParticle(type, x, y) {
     const pool = biomeParticlePools[type] || (biomeParticlePools[type] = []);

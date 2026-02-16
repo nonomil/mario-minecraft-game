@@ -145,9 +145,36 @@ const deepDarkNoiseState = {
 };
 let deepDarkSonicWaves = [];
 
-function addDeepDarkNoise(amount, source = "") {
+function hasSilentBootsEquipped() {
+    return !!(silentBootsState && silentBootsState.equipped && Number(silentBootsState.durability) > 0);
+}
+
+function consumeSilentBootsDurability(cost = 1) {
+    if (!hasSilentBootsEquipped()) return;
+    const useCost = Math.max(1, Number(cost) || 1);
+    silentBootsState.durability = Math.max(0, Number(silentBootsState.durability) - useCost);
+    if (silentBootsState.durability <= 0) {
+        silentBootsState.equipped = false;
+        silentBootsState.durability = 0;
+        showToast("静音鞋已损坏");
+    }
+}
+
+function adjustDeepDarkNoiseByEquipment(amount, actionType = "generic") {
+    if (currentBiome !== "deep_dark") return Math.max(0, Number(amount) || 0);
+    const base = Math.max(0, Number(amount) || 0);
+    if (!base || !hasSilentBootsEquipped()) return base;
+
+    if (actionType === "jump" || actionType === "attack" || actionType === "use_item") {
+        consumeSilentBootsDurability(1);
+        return Math.max(3, Math.round(base * 0.55));
+    }
+    return base;
+}
+
+function addDeepDarkNoise(amount, source = "", actionType = "generic") {
     if (currentBiome !== "deep_dark") return;
-    const inc = Math.max(0, Number(amount) || 0);
+    const inc = adjustDeepDarkNoiseByEquipment(amount, actionType);
     if (!inc) return;
     deepDarkNoiseState.value = Math.min(deepDarkNoiseState.max, deepDarkNoiseState.value + inc);
     deepDarkNoiseState.lastActionFrame = gameFrame;

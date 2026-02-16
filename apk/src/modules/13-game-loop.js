@@ -89,7 +89,7 @@ function update() {
                     ? (WATER_PHYSICS.swimJumpImpulse || WATER_PHYSICS.verticalSwimSpeed)
                     : WATER_PHYSICS.verticalSwimSpeed
             ) * camelJumpMult;
-            if (swimJumpTriggered && typeof addDeepDarkNoise === "function") addDeepDarkNoise(15);
+            if (swimJumpTriggered && typeof addDeepDarkNoise === "function") addDeepDarkNoise(15, "", "jump");
         } else if (keys.down) {
             player.velY = WATER_PHYSICS.verticalSwimSpeed;
         } else {
@@ -188,12 +188,12 @@ function update() {
             player.jumpCount = 1;
             coyoteTimer = 0;
             jumpBuffer = 0;
-            if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(15);
+            if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(15, "", "jump");
         } else if (player.jumpCount < player.maxJumps) {
             player.velY = player.jumpStrength * 0.8 * totalJumpMult;
             player.jumpCount++;
             jumpBuffer = 0;
-            if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(15);
+            if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(15, "", "jump");
         }
     }
 
@@ -486,7 +486,7 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     }
     updateArmorUI();
     playerHp = Math.max(0, playerHp - actualDamage);
-    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(8);
+    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(8, "", "hurt");
     updateHpUI();
     showFloatingText(`-${penalty}分`, player.x, player.y);
     if (playerHp <= 0 || score <= 0) {
@@ -802,6 +802,13 @@ function useInventoryItem(itemKey) {
         }
         renderInventoryModal();
         return;
+    } else if (itemKey === "sculk_vein") {
+        // 幽匿碎片 → 制作静音鞋（×5）
+        if (tryCraft("silent_boots")) {
+            used = true;
+        }
+        renderInventoryModal();
+        return;
     }
     // 食物使用（牛肉、羊肉、蘑菇煲）
     else if (FOOD_TYPES[itemKey]) {
@@ -849,6 +856,7 @@ function useInventoryItem(itemKey) {
     }
 
     if (used) {
+        if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "use_item");
         updateHpUI();
         updateInventoryUI();
         updateInventoryModal(); // 刷新背包显示
@@ -1003,12 +1011,17 @@ function hideArmorSelectUI() {
 
 const RECIPES = {
     iron_golem: { iron: 3 },
-    snow_golem: { pumpkin: 1, snow_block: 2 }
+    snow_golem: { pumpkin: 1, snow_block: 2 },
+    silent_boots: { sculk_vein: 5 }
 };
 
 function tryCraft(recipeKey) {
     const recipe = RECIPES[recipeKey];
     if (!recipe) return false;
+    if (recipeKey === "silent_boots" && silentBootsState?.equipped && Number(silentBootsState.durability) > 0) {
+        showToast("静音鞋已装备");
+        return false;
+    }
     const isGolemRecipe = recipeKey === "snow_golem" || recipeKey === "iron_golem";
     if (isGolemRecipe && currentBiome === "ocean") {
         showToast("⚠️ 海滨环境无法召唤傀儡！");
@@ -1022,6 +1035,15 @@ function tryCraft(recipeKey) {
     }
     for (const [item, count] of Object.entries(recipe)) {
         inventory[item] -= count;
+    }
+    if (recipeKey === "silent_boots") {
+        silentBootsState.equipped = true;
+        silentBootsState.maxDurability = 30;
+        silentBootsState.durability = 30;
+        showToast("👢 静音鞋已装备（耐久30）");
+        showFloatingText("👢 静音鞋", player.x, player.y - 40, "#7FDBFF");
+        updateInventoryUI();
+        return true;
     }
     spawnGolem(recipeKey === "iron_golem" ? "iron" : "snow");
     updateInventoryUI();
@@ -1087,7 +1109,7 @@ function handleDecorationInteract() {
 
 function handleAttack(mode = "press") {
     if (playerWeapons.attackCooldown > 0) return;
-    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10);
+    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "attack");
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
 
     if (weapon.type === "ranged") {

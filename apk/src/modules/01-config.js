@@ -136,6 +136,8 @@ const INVENTORY_TEMPLATE = {
     shell: 0,
     starfish: 0,
     snow_block: 0,
+    sculk_vein: 0,
+    echo_shard: 0,
     beef: 0,
     mutton: 0,
     mushroom_stew: 0
@@ -175,7 +177,8 @@ const ITEM_DESCRIPTIONS = {
     iron: { desc: "召唤铁傀儡强力护卫", cost: "消耗: 3个", cd: "无冷却" },
     mushroom: { desc: "合成蘑菇煲回血食物", cost: "消耗: 2个", cd: "无冷却" },
     stick: { desc: "修复当前护甲20%耐久", cost: "消耗: 3个", cd: "无冷却" },
-    snow_block: { desc: "召唤雪傀儡的材料之一", cost: "合成材料", cd: "无冷却" }
+    snow_block: { desc: "召唤雪傀儡的材料之一", cost: "合成材料", cd: "无冷却" },
+    sculk_vein: { desc: "幽匿碎片，可制作静音鞋", cost: "合成材料", cd: "无冷却" }
 };
 
 const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "stone_sword", "iron_pickaxe", "bow", "arrow"];
@@ -200,6 +203,8 @@ const ITEM_LABELS = {
     shell: "贝壳",
     starfish: "海星",
     snow_block: "雪块",
+    sculk_vein: "幽匿碎片",
+    echo_shard: "回响碎片",
     beef: "牛肉",
     mutton: "羊肉",
     mushroom_stew: "蘑菇煲"
@@ -225,6 +230,8 @@ const ITEM_ICONS = {
     shell: "🐚",
     starfish: "⭐",
     snow_block: "🧊",
+    sculk_vein: "🧩",
+    echo_shard: "🔷",
     beef: "🥩",
     mutton: "🍖",
     mushroom_stew: "🍲",
@@ -241,7 +248,7 @@ const ITEM_ICONS = {
 };
 const INVENTORY_CATEGORIES = {
     items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow"],
-    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom", "beef", "mutton", "mushroom_stew"],
+    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom", "sculk_vein", "echo_shard", "beef", "mutton", "mushroom_stew"],
     equipment: []
 };
 const SPEED_LEVELS = {
@@ -378,6 +385,7 @@ const FOOD_TYPES = {
     raw_fish: { heal: 1, icon: "🐟", name: "生鱼", color: "#87CEEB" }
 };
 let playerEquipment = { armor: null, armorDurability: 0 };
+let silentBootsState = { equipped: false, durability: 0, maxDurability: 30 };
 let armorInventory = [];
 
 const playerWeapons = {
