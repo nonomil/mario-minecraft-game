@@ -144,7 +144,7 @@ class BiomeParticle {
             case 'leaf':
             // 树叶形状
                 ctx.beginPath();
-                ctx.ellipse(dx, this.y, this.size, this.size / 2, 0, Math.PI * 2);
+                ctx.ellipse(dx, this.y, this.size, this.size / 2, 0, 0, Math.PI * 2);
                 ctx.fill();
                 break;
             case 'petal':
