@@ -17,6 +17,31 @@ function isEntityNearCamera(entity, margin = blockSize * 2) {
     return entity.x > cameraX - margin && entity.x < cameraX + canvas.width + margin;
 }
 
+function emitGameParticle(type, x, y) {
+    if (typeof emitBiomeParticle === "function") {
+        const pooled = emitBiomeParticle(type, x, y);
+        if (pooled) return pooled;
+    }
+
+    let created = null;
+    switch (type) {
+        case "bubble":
+            created = new BubbleParticle(x, y);
+            break;
+        case "end_particle":
+            created = new EndParticle(x, y);
+            break;
+        case "ember":
+            created = new EmberParticle(x, y);
+            break;
+        default:
+            break;
+    }
+    if (!created) return null;
+    particles.push(created);
+    return created;
+}
+
 function checkBossSpawn() {
     if (bossSpawned) return;
     const enemyConfig = getEnemyConfig();
@@ -77,15 +102,11 @@ function update() {
         player.grounded = (player.y >= groundY - player.height - 1);
         // 气泡粒子
         if ((Math.abs(player.velX) > 0.5 || Math.abs(player.velY) > 0.5) && gameFrame % WATER_PHYSICS.bubbleInterval === 0) {
-            particles.push({
-                x: player.x + player.width / 2 + (Math.random() - 0.5) * 10,
-                y: player.y + player.height * 0.3,
-                size: 2 + Math.random() * 4,
-                vy: -1 - Math.random() * 2,
-                vx: (Math.random() - 0.5) * 0.5,
-                life: 1.0,
-                type: 'bubble'
-            });
+            emitGameParticle(
+                "bubble",
+                player.x + player.width / 2 + (Math.random() - 0.5) * 10,
+                player.y + player.height * 0.3
+            );
         }
     } else {
     if (keys.right) {
@@ -663,7 +684,7 @@ function useInventoryItem(itemKey) {
         player.velY = 0;
         // 粒子效果
         for (let i = 0; i < 15; i++) {
-            particles.push(new EndParticle(player.x, player.y + Math.random() * player.height));
+            emitGameParticle("end_particle", player.x, player.y + Math.random() * player.height);
         }
         itemCooldownTimers.ender_pearl = ITEM_COOLDOWNS.ender_pearl;
         showFloatingText('🟣 传送!', player.x, player.y - 30, '#9C27B0');
@@ -724,11 +745,7 @@ function useInventoryItem(itemKey) {
         });
         // 龙息粒子效果
         for (let i = 0; i < 30; i++) {
-            particles.push(new Particle(
-                cameraX + Math.random() * canvas.width,
-                Math.random() * canvas.height,
-                "ember"
-            ));
+            emitGameParticle("ember", cameraX + Math.random() * canvas.width, Math.random() * canvas.height);
         }
         itemCooldownTimers.dragon_egg = ITEM_COOLDOWNS.dragon_egg;
         showFloatingText(`🐉 龙息! (${hitCount}个敌人)`, player.x, player.y - 40, '#FF4500');

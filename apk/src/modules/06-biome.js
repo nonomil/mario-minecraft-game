@@ -110,6 +110,58 @@ let biomeHeatDotTimerMs = 0;
 let biomeHeatLastTickMs = 0;
 let netherMushrooms = [];
 let fragilePlatforms = [];
+const biomeParticlePools = Object.create(null);
+
+function acquireBiomeParticle(type, x, y) {
+    const pool = biomeParticlePools[type] || (biomeParticlePools[type] = []);
+    const reused = pool.find(p => p && p.remove && typeof p.reset === "function");
+    if (reused) {
+        reused.reset(x, y);
+        reused.remove = false;
+        return reused;
+    }
+
+    let created = null;
+    switch (type) {
+        case "snowflake":
+            created = new Snowflake(x, y);
+            break;
+        case "leaf":
+            created = new LeafParticle(x, y);
+            break;
+        case "dust":
+            created = new DustParticle(x, y);
+            break;
+        case "ember":
+            created = new EmberParticle(x, y);
+            break;
+        case "bubble":
+            created = new BubbleParticle(x, y);
+            break;
+        case "sparkle":
+            created = new SparkleParticle(x, y);
+            break;
+        case "end_particle":
+            created = new EndParticle(x, y);
+            break;
+        case "rain":
+            created = new RainParticle(x, y);
+            break;
+        default:
+            break;
+    }
+
+    if (!created) return null;
+    pool.push(created);
+    return created;
+}
+
+function emitBiomeParticle(type, x, y) {
+    const particle = acquireBiomeParticle(type, x, y);
+    if (!particle) return null;
+    particles.push(particle);
+    return particle;
+}
 
 function updateExtremeHeatEnvironment() {
     const now = Date.now();
@@ -232,29 +284,29 @@ function spawnBiomeParticles() {
     const biome = getBiomeById(currentBiome);
     const baseX = cameraX + Math.random() * canvas.width;
     if (biome.effects?.particles === "snowflakes" && Math.random() < 0.2) {
-        particles.push(new Snowflake(baseX, -10));
+        emitBiomeParticle("snowflake", baseX, -10);
     } else if (biome.effects?.particles === "leaves" && Math.random() < 0.15) {
-        particles.push(new LeafParticle(baseX, -10));
+        emitBiomeParticle("leaf", baseX, -10);
     } else if (biome.effects?.particles === "dust" && Math.random() < 0.2) {
-        particles.push(new DustParticle(baseX, Math.random() * canvas.height));
+        emitBiomeParticle("dust", baseX, Math.random() * canvas.height);
     } else if (biome.effects?.particles === "flames" && Math.random() < 0.2) {
-        particles.push(new EmberParticle(baseX, canvas.height - 50));
+        emitBiomeParticle("ember", baseX, canvas.height - 50);
     } else if (biome.effects?.particles === "bubbles" && Math.random() < 0.2) {
-        particles.push(new BubbleParticle(baseX, canvas.height - 20));
+        emitBiomeParticle("bubble", baseX, canvas.height - 20);
     } else if (biome.effects?.particles === "sparkle" && Math.random() < 0.15) {
-        particles.push(new SparkleParticle(baseX, Math.random() * canvas.height));
+        emitBiomeParticle("sparkle", baseX, Math.random() * canvas.height);
     } else if (biome.effects?.particles === "end_particles" && Math.random() < 0.18) {
-        particles.push(new EndParticle(baseX, Math.random() * canvas.height));
+        emitBiomeParticle("end_particle", baseX, Math.random() * canvas.height);
     }
 
     if (weatherState.type === "rain" && Math.random() < 0.4) {
-        particles.push(new RainParticle(baseX, -10));
+        emitBiomeParticle("rain", baseX, -10);
     }
     if (weatherState.type === "snow" && Math.random() < 0.3) {
-        particles.push(new Snowflake(baseX, -10));
+        emitBiomeParticle("snowflake", baseX, -10);
     }
     if (weatherState.type === "sandstorm" && Math.random() < 0.35) {
-        particles.push(new DustParticle(baseX, Math.random() * canvas.height));
+        emitBiomeParticle("dust", baseX, Math.random() * canvas.height);
     }
 }
 

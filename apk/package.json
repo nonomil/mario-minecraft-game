@@ -1,6 +1,6 @@
 ﻿{
   "name": "mario-minecraft-game-v1",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,4 +14,3 @@
   },
   "description": "Mario Minecraft Game - Educational English vocabulary learning game"
 }
-
