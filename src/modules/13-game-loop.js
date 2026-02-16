@@ -48,6 +48,7 @@ function update() {
         if (dir === "l" || dir === "r") player.velX = 0;
         else if (dir === "b") {
             player.grounded = true;
+            player.y = p.y - player.height;
             player.jumpCount = 0;
             coyoteTimer = gameConfig.jump.coyoteFrames;
         } else if (dir === "t") {

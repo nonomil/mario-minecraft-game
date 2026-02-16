@@ -136,9 +136,13 @@ function update() {
     for (let p of platforms) {
         if (!p || p.remove) continue;
         const dir = colCheck(player, p);
-        if (dir === "l" || dir === "r") player.velX = 0;
-        else if (dir === "b") {
+        if (dir === "l") {
+            player.velX = Math.max(0, player.velX);
+        } else if (dir === "r") {
+            player.velX = Math.min(0, player.velX);
+        } else if (dir === "b") {
             player.grounded = true;
+            player.y = p.y - player.height;
             player.jumpCount = 0;
             coyoteTimer = gameConfig.jump.coyoteFrames;
             if (p.fragile && !p.breaking && typeof p.onPlayerStep === "function") {
@@ -161,8 +165,9 @@ function update() {
         const trunkY = t.y + t.height - 60;
         const dir = colCheckRect(player.x, player.y, player.width, player.height, trunkX, trunkY, 30, 60);
         if (dir) {
-            if (dir === "l" || dir === "r") player.velX = 0;
-            else if (dir === "b") {
+            if (dir === "l" || dir === "r") {
+                player.velX = 0;
+            } else if (dir === "b") {
                 player.grounded = true;
                 player.jumpCount = 0;
                 player.y = trunkY - player.height;

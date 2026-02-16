@@ -14,7 +14,8 @@ function colCheckRect(x1, y1, w1, h1, x2, y2, w2, h2) {
     if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
         const oX = hWidths - Math.abs(vX);
         const oY = hHeights - Math.abs(vY);
-        if (oX >= oY || oY < 15) {
+        // 垂直重叠较小时优先判断为垂直碰撞（站在平台边缘不会被当成撞墙）
+        if (oX >= oY || oY < 8) {
             if (vY > 0) return "t";
             return "b";
         }
