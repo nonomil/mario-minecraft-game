@@ -111,16 +111,74 @@ function renderVocabSelect() {
     const sel = document.getElementById("opt-vocab");
     if (!sel) return;
     sel.innerHTML = "";
-    const add = (value, text) => {
+    const add = (value, text, isOptgroup = false) => {
+        if (isOptgroup) {
+            const optgroup = document.createElement("optgroup");
+            optgroup.label = text;
+            sel.appendChild(optgroup);
+            return optgroup;
+        }
         const opt = document.createElement("option");
         opt.value = value;
         opt.innerText = text;
         sel.appendChild(opt);
     };
+    const addToGroup = (group, value, text) => {
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.innerText = text;
+        group.appendChild(opt);
+    };
+
     add("auto", "随机词库（按类别轮换）");
     const engine = ensureVocabEngine();
     if (!engine) return;
-    vocabManifest.packs.forEach(p => add(p.id, p.title));
+
+    // Group packs by stage
+    const grouped = {};
+    vocabManifest.packs.forEach(p => {
+        const stage = p.stage || "other";
+        if (!grouped[stage]) grouped[stage] = [];
+        grouped[stage].push(p);
+    });
+
+    // Define stage order and labels
+    const stageOrder = ["kindergarten", "elementary_lower", "elementary_upper", "minecraft"];
+    const stageLabels = {
+        "kindergarten": "幼儿园",
+        "elementary_lower": "小学低年级",
+        "elementary_upper": "小学高年级",
+        "minecraft": "我的世界"
+    };
+
+    // Define level order
+    const levelOrder = ["basic", "intermediate", "advanced", "full"];
+    const levelLabels = {
+        "basic": "初级",
+        "intermediate": "中级",
+        "advanced": "高级",
+        "full": "完整"
+    };
+
+    // Render grouped options
+    stageOrder.forEach(stage => {
+        if (!grouped[stage]) return;
+        const group = add(null, stageLabels[stage] || stage, true);
+
+        // Sort packs by level
+        const packs = grouped[stage].sort((a, b) => {
+            const aLevel = a.level || "full";
+            const bLevel = b.level || "full";
+            return levelOrder.indexOf(aLevel) - levelOrder.indexOf(bLevel);
+        });
+
+        packs.forEach(p => {
+            const levelLabel = levelLabels[p.level] || p.level || "";
+            const title = levelLabel ? `${levelLabel}` : p.title;
+            addToGroup(group, p.id, title);
+        });
+    });
+
     sel.value = settings.vocabSelection || "auto";
     updateVocabPreview(sel.value);
 }

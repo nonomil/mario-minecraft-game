@@ -1,4 +1,12 @@
-﻿## v1.15.4（发布日期：2026-02-16）
+﻿## v1.15.5（发布日期：2026-02-16）
+- 类型：PATCH
+- APK 版本：versionName = 1.15.5，versionCode = 96
+- 主要变更
+  - 单词库选择增加难度分级：每个词库类别拆分为初级/中级/高级/完整四个选项
+  - 设置界面词库下拉菜单改为 optgroup 分组显示，按类别归类
+  - manifest.js 从 4 个 pack 扩展为 16 个 pack（4 类别 × 4 级别）
+  - renderVocabSelect() 重构为分组渲染逻辑
+## v1.15.4（发布日期：2026-02-16）
 - 类型：PATCH
 - APK 版本：versionName = 1.15.4，versionCode = 95
 - 主要变更

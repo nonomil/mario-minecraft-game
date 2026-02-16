@@ -4,6 +4,9 @@
  */
 function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
+    if (typeof merged.challengeEnabled !== "boolean") merged.challengeEnabled = defaultSettings.challengeEnabled ?? true;
+    if (typeof merged.challengeFrequency !== "number") merged.challengeFrequency = defaultSettings.challengeFrequency ?? 0.3;
+    if (typeof merged.wordCardDuration !== "number") merged.wordCardDuration = defaultSettings.wordCardDuration ?? 900;
     if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;
     if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
     if (typeof merged.speechZhEnabled !== "boolean") merged.speechZhEnabled = defaultSettings.speechZhEnabled ?? false;
@@ -14,11 +17,13 @@ function normalizeSettings(raw) {
     if (typeof merged.wordGateEnabled !== "boolean") merged.wordGateEnabled = defaultSettings.wordGateEnabled ?? true;
     if (typeof merged.wordMatchEnabled !== "boolean") merged.wordMatchEnabled = defaultSettings.wordMatchEnabled ?? true;
     if (typeof merged.villageEnabled !== "boolean") merged.villageEnabled = defaultSettings.villageEnabled ?? true;
-    if (typeof merged.wordCardDuration !== "number") merged.wordCardDuration = defaultSettings.wordCardDuration ?? 900;
+    if (typeof merged.villageFrequency !== "number") merged.villageFrequency = defaultSettings.villageFrequency ?? 500;
+    if (typeof merged.villageAutoSave !== "boolean") merged.villageAutoSave = defaultSettings.villageAutoSave ?? true;
     if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
-    merged.wordCardDuration = Math.max(600, Math.min(3000, Number(merged.wordCardDuration) || 900));
+    merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
+    merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 900));
     if (!merged.keyCodes) {
         merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
             .filter(Boolean)
@@ -51,11 +56,6 @@ function saveVocabState() {
 function normalizeProgress(raw) {
     const p = raw && typeof raw === "object" ? raw : {};
     if (!p.vocab || typeof p.vocab !== "object") p.vocab = {};
-
-    // === 新增：答题统计数据 (v1.6.0) ===
-    if (!p.challengeStats || typeof p.challengeStats !== "object") p.challengeStats = {};
-    // 结构：p.challengeStats["apple"] = { correct: 3, wrong: 1, lastSeen: 1707900000000 }
-
     return p;
 }
 
@@ -111,16 +111,74 @@ function renderVocabSelect() {
     const sel = document.getElementById("opt-vocab");
     if (!sel) return;
     sel.innerHTML = "";
-    const add = (value, text) => {
+    const add = (value, text, isOptgroup = false) => {
+        if (isOptgroup) {
+            const optgroup = document.createElement("optgroup");
+            optgroup.label = text;
+            sel.appendChild(optgroup);
+            return optgroup;
+        }
         const opt = document.createElement("option");
         opt.value = value;
         opt.innerText = text;
         sel.appendChild(opt);
     };
+    const addToGroup = (group, value, text) => {
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.innerText = text;
+        group.appendChild(opt);
+    };
+
     add("auto", "随机词库（按类别轮换）");
     const engine = ensureVocabEngine();
     if (!engine) return;
-    vocabManifest.packs.forEach(p => add(p.id, p.title));
+
+    // Group packs by stage
+    const grouped = {};
+    vocabManifest.packs.forEach(p => {
+        const stage = p.stage || "other";
+        if (!grouped[stage]) grouped[stage] = [];
+        grouped[stage].push(p);
+    });
+
+    // Define stage order and labels
+    const stageOrder = ["kindergarten", "elementary_lower", "elementary_upper", "minecraft"];
+    const stageLabels = {
+        "kindergarten": "幼儿园",
+        "elementary_lower": "小学低年级",
+        "elementary_upper": "小学高年级",
+        "minecraft": "我的世界"
+    };
+
+    // Define level order
+    const levelOrder = ["basic", "intermediate", "advanced", "full"];
+    const levelLabels = {
+        "basic": "初级",
+        "intermediate": "中级",
+        "advanced": "高级",
+        "full": "完整"
+    };
+
+    // Render grouped options
+    stageOrder.forEach(stage => {
+        if (!grouped[stage]) return;
+        const group = add(null, stageLabels[stage] || stage, true);
+
+        // Sort packs by level
+        const packs = grouped[stage].sort((a, b) => {
+            const aLevel = a.level || "full";
+            const bLevel = b.level || "full";
+            return levelOrder.indexOf(aLevel) - levelOrder.indexOf(bLevel);
+        });
+
+        packs.forEach(p => {
+            const levelLabel = levelLabels[p.level] || p.level || "";
+            const title = levelLabel ? `${levelLabel}` : p.title;
+            addToGroup(group, p.id, title);
+        });
+    });
+
     sel.value = settings.vocabSelection || "auto";
     updateVocabPreview(sel.value);
 }
@@ -354,20 +412,12 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
-    const previousLayout = {
-        canvasWidth: canvas.width,
-        canvasHeight: canvas.height
-    };
     const visualViewport = getViewportSize();
     // Use the safe-area-adjusted game area for canvas + physics scaling.
     const gameArea = getGameAreaSize();
     applyConfig(gameArea);
     const viewportChanged = gameArea.width !== lastViewport.width || gameArea.height !== lastViewport.height;
     lastViewport = { width: gameArea.width, height: gameArea.height };
-
-    if (viewportChanged && startedOnce) {
-        realignWorldForViewport(previousLayout);
-    }
 
     const baseScale = Number(settings.uiScale) || 1.0;
     const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
@@ -405,93 +455,3 @@ function scheduleApplySettingsToUI() {
         applySettingsToUI();
     });
 }
-
-/**
- * 获取答题统计数据 (v1.6.0 新增)
- * @returns {Object} 统计对象
- */
-function getChallengeStats() {
-    const stats = progress.challengeStats || {};
-    const words = Object.keys(stats);
-
-    let totalCorrect = 0, totalWrong = 0;
-    words.forEach(w => {
-        totalCorrect += stats[w].correct || 0;
-        totalWrong += stats[w].wrong || 0;
-    });
-
-    const total = totalCorrect + totalWrong;
-
-    return {
-        wordCount: words.length,           // 答题涉及单词数
-        totalCorrect: totalCorrect,        // 总答对次数
-        totalWrong: totalWrong,            // 总答错次数
-        accuracy: total > 0 ? Math.round(totalCorrect / total * 100) : 0,  // 正确率
-        details: stats                     // 详细数据
-    };
-}
-
-/**
- * 从当前词库随机取一个单词 (v1.6.1 新增)
- * @returns {Object|null} 单词对象或null
- */
-function pickNextWord() {
-    if (!wordDatabase || !wordDatabase.length) return null;
-
-    // 从已加载的 wordDatabase 中随机取一个
-    const idx = Math.floor(Math.random() * wordDatabase.length);
-    return wordDatabase[idx];
-}
-
-/**
- * 获取需要复习的单词列表（基于间隔重复算法）(v1.6.3 新增)
- * @param {number} count - 需要复习的单词数量（默认3个）
- * @returns {Array} 单词对象数组
- */
-function getWordsForReview(count) {
-    count = count || 3;
-    const stats = progress.challengeStats || {};
-    const now = Date.now();
-    const candidates = [];
-
-    // 从答题记录中找出"该复习"的单词
-    for (const word in stats) {
-        const s = stats[word];
-        const total = (s.correct || 0) + (s.wrong || 0);
-        if (total === 0) continue;
-
-        // 间隔策略：答对越多，复习间隔越长
-        const level = Math.min(s.correct || 0, 5);
-        const intervals = [
-            0,           // level 0: 立即
-            60000,       // level 1: 1分钟
-            300000,      // level 2: 5分钟
-            900000,      // level 3: 15分钟
-            3600000,     // level 4: 1小时
-            86400000     // level 5: 1天
-        ];
-
-        const nextReview = (s.lastSeen || 0) + (intervals[level] || 0);
-
-        if (now >= nextReview) {
-            // 计算优先级：错误率高的 + 久未复习的优先
-            const errorRate = (s.wrong || 0) / total;
-            const timeSince = now - (s.lastSeen || 0);
-
-            candidates.push({
-                word: word,
-                priority: errorRate * 100 + timeSince / 60000  // 归一化优先级
-            });
-        }
-    }
-
-    // 按优先级排序，取前N个
-    candidates.sort((a, b) => b.priority - a.priority);
-
-    // 返回完整的 wordObj
-    return candidates.slice(0, count).map(c => {
-        const found = wordDatabase.find(w => w.en === c.word);
-        return found || { en: c.word, zh: stats[c.word]?.zh || "" };
-    });
-}
-
