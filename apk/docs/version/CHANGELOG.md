@@ -1,4 +1,20 @@
-﻿## v1.15.2 (2026-02-16)
+﻿## v1.15.3 (2026-02-16)
+
+### 村庄系统补齐（v1.8.4）
+- 补齐存档石碑交互：支持保存账号进度并写入 `mmwg:villageCheckpoint`
+- 补齐特色建筑交互：library/hot_spring/water_station/blacksmith/lighthouse/brewing_stand
+- 特色建筑增加一次性使用限制（单村庄仅触发一次）
+- 存档石碑新增已存档发光反馈
+
+### 集成测试完善（v1.8.5）
+- 新增 `tests/village-integration.spec.js`
+- 覆盖存档石碑落盘与特色建筑一次性规则
+
+### 兼容修复
+- 地狱入场扣血与高温持续伤害接入 `fireResistance` buff 豁免
+
+---
+## v1.15.2 (2026-02-16)
 
 ### 性能优化（粒子对象池）
 - 为群系与天气粒子引入对象池：snowflake/leaf/dust/ember/bubble/sparkle/end_particle/rain
@@ -487,6 +503,7 @@
 - **涓荤増鏈?*锛氶噸澶у姛鑳芥洿鏂版垨鏋舵瀯鍙樻洿
 - **娆＄増鏈?*锛氭柊鍔熻兘娣诲姞鎴栭噸瑕佹敼杩?
 - **淇鍙?*锛欱ug 淇鍜屽皬鏀硅繘
+
 
 
 

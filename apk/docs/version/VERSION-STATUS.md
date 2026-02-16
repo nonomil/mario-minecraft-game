@@ -1,28 +1,33 @@
-# v1.15.2 版本状态
+# v1.15.3 版本状态
 
 ## 已完成
 
-### 1) 版本号统一
-- `apk/package.json`: `1.15.2`
-- `apk/android-app/package.json`: `1.15.2`
-- `apk/android-app/android/app/build.gradle`: `versionName "1.15.2"`, `versionCode 93`
+### 1) 版本号同步
+- `apk/package.json`: `1.15.3`
+- `apk/android-app/package.json`: `1.15.3`
+- `apk/android-app/android/app/build.gradle`: `versionName "1.15.3"`, `versionCode 94`
 
-### 2) 粒子对象池优化
+### 2) 村庄功能补齐（v1.8.4）
+- `apk/src/modules/18-village.js`
+  - 存档石碑完整交互与检查点写入
+  - 特色建筑完整交互（6 类）与一次性限制
+  - 新增村庄 Buff 存储/判定/过期更新
+- `apk/src/modules/18-village-render.js`
+  - 存档石碑已存档状态高亮反馈
 - `apk/src/modules/06-biome.js`
-  - 新增 `biomeParticlePools` / `acquireBiomeParticle()` / `emitBiomeParticle()`
-  - 群系粒子与天气粒子切换为池化发射
-- `apk/src/modules/13-game-loop.js`
-  - 新增 `emitGameParticle()` 作为统一入口
-  - 水下气泡、末影珍珠、龙息效果接入池化粒子
+  - `fireResistance` 接入地狱入场与高温伤害豁免
 
-### 3) 回归验证
-- 语法检查通过：
-  - `apk/src/modules/06-biome.js`
-  - `apk/src/modules/13-game-loop.js`
-- Playwright 结果：
-  - `tests/debug-actions.spec.js` 出现浏览器进程崩溃/超时，非确定性失败（环境相关，需本机复测）
+### 3) 集成测试完善（v1.8.5）
+- 新增 `tests/village-integration.spec.js`
+  - `village save stone: persists checkpoint`
+  - `village special building: one-time use`
+
+### 4) 文档同步
+- 更新村庄设计文档实施状态：
+  - `apk/docs/development/村庄设计/v1.8.4-存档石碑与特色建筑.md`
+  - `apk/docs/development/村庄设计/v1.8.5-集成测试与完善.md`
 
 ---
 
 更新时间：2026-02-16  
-状态：已完成代码与文档更新，待稳定环境下完整回归
+状态：已完成并提交

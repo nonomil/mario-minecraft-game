@@ -1,4 +1,13 @@
-﻿## v1.15.2（发布日期：2026-02-16）
+﻿## v1.15.3（发布日期：2026-02-16）
+- 类型：PATCH
+- APK 版本：versionName = 1.15.3，versionCode = 94
+- 主要变更
+  - 补齐存档石碑交互与村庄检查点落盘
+  - 补齐 6 类特色建筑交互与单次触发限制
+  - 存档石碑增加已存档高亮渲染反馈
+  - 新增村庄专项集成测试（save stone / special building）
+  - 地狱高温与入场伤害接入 fireResistance buff 免伤
+## v1.15.2（发布日期：2026-02-16）
 - 类型：PATCH
 - APK 版本：versionName = 1.15.2，versionCode = 93
 - 主要变更
@@ -514,6 +523,7 @@ b11ef12 chore: 更新 apk/android-app/package.json 版本至 v1.6.5
 - **主版本**：重大功能更新或架构变更
 - **次版本**：新功能添加或重要改进
 - **修订号**：Bug 修复和小改进
+
 
 
 

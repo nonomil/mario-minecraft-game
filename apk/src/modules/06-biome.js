@@ -53,6 +53,7 @@ function selectBiome(x, scoreValue) {
 
 function updateCurrentBiome() {
     const nextBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
+    const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
     if (nextBiome.id !== currentBiome) {
         currentBiome = nextBiome.id;
         biomeTransitionX = player.x;
@@ -60,7 +61,7 @@ function updateCurrentBiome() {
         updateWeatherForBiome(nextBiome);
         const info = document.getElementById("level-info");
         if (info) info.innerText = `生态: ${nextBiome.name}`;
-        if (currentBiome === "nether" && netherEntryPenaltyArmed) {
+        if (currentBiome === "nether" && netherEntryPenaltyArmed && !hasFireResistance) {
             playerHp = Math.max(0, playerHp - 1);
             updateHpUI();
             showFloatingText("🔥 -1❤️", player.x, player.y - 20);
@@ -166,7 +167,13 @@ function emitBiomeParticle(type, x, y) {
 function updateExtremeHeatEnvironment() {
     const now = Date.now();
     const inHeatBiome = currentBiome === "nether" || currentBiome === "volcano";
+    const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
     if (!inHeatBiome) {
+        biomeHeatDotTimerMs = 0;
+        biomeHeatLastTickMs = now;
+        return;
+    }
+    if (hasFireResistance) {
         biomeHeatDotTimerMs = 0;
         biomeHeatLastTickMs = now;
         return;

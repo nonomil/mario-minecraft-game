@@ -14,7 +14,7 @@ function drawVillages(ctx) {
     drawVillageDecorations(ctx, village);
     if (Array.isArray(village.buildings)) {
       for (const building of village.buildings) {
-        drawVillageBuilding(ctx, building, village.style || {});
+        drawVillageBuilding(ctx, building, village.style || {}, village);
       }
     }
     if (Array.isArray(village.npcs)) {
@@ -83,7 +83,7 @@ function drawVillageGround(ctx, village) {
   ctx.fillRect(sx + w - 4, groundY - 300, 4, 300);
 }
 
-function drawVillageBuilding(ctx, building, style) {
+function drawVillageBuilding(ctx, building, style, village) {
   if (!building) return;
   const sx = building.x - cameraX;
   const sy = groundY - building.h;
@@ -186,6 +186,18 @@ function drawVillageBuilding(ctx, building, style) {
       ctx.fillStyle = "#A52A2A";
       ctx.fillRect(sx + 26, sy - 35, 8, 12);
       break;
+  }
+
+  if (building.type === "save_stone" && village?.saved) {
+    ctx.save();
+    ctx.fillStyle = "rgba(102, 187, 106, 0.25)";
+    ctx.beginPath();
+    ctx.arc(sx + building.w / 2, sy + building.h / 2, 22, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(129, 199, 132, 0.7)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(sx - 2, sy - 2, building.w + 4, building.h + 4);
+    ctx.restore();
   }
 }
 
