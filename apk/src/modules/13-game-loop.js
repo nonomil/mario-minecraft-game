@@ -136,7 +136,14 @@ function update() {
                 player.velY = 0;
                 coyoteTimer = gameConfig.jump.coyoteFrames;
             } else {
-                player.velX = 0;
+                // 侧向碰撞仅阻挡“朝平台方向”的移动，避免反向也被锁死
+                if (dir === "l" && player.velX < 0) {
+                    player.velX = 0;
+                    player.x = p.x + p.width;
+                } else if (dir === "r" && player.velX > 0) {
+                    player.velX = 0;
+                    player.x = p.x - player.width;
+                }
             }
         } else if (dir === "b") {
             player.grounded = true;
@@ -1138,13 +1145,8 @@ function spawnGolem(type) {
 function handleInteraction() {
     // v1.8.3 村庄建筑交互优先
     if (playerInVillage && currentVillage && typeof checkVillageBuildings === 'function') {
-      checkVillageBuildings(currentVillage);
-      return;
-    }
-    // v1.8.2 村庄休息系统
-    if (playerInVillage && currentVillage && typeof restPromptVisible !== 'undefined' && restPromptVisible && typeof performRest === 'function') {
-        performRest(currentVillage);
-        return;
+      const handled = checkVillageBuildings(currentVillage);
+      if (handled) return;
     }
 
     let nearestChest = null;

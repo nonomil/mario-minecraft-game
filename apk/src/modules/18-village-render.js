@@ -145,6 +145,26 @@ function drawVillageBuilding(ctx, building, style, village) {
   ctx.fillText(icon, sx + building.w / 2, sy - 30);
   ctx.textAlign = "left";
 
+  if (playerInVillage && currentVillage === village && typeof getNearbyBuilding === "function") {
+    const nearby = getNearbyBuilding(village);
+    if (nearby === building) {
+      const hintMap = {
+        bed_house: "按 Y 休息",
+        word_house: "按 Y 学习",
+        save_stone: "按 Y 存档"
+      };
+      const hint = hintMap[building.type] || "按 Y 交互";
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.font = "bold 12px Verdana";
+      ctx.fillStyle = "rgba(0,0,0,0.65)";
+      ctx.fillRect(sx + building.w / 2 - 44, sy - 54, 88, 16);
+      ctx.fillStyle = "#FFE082";
+      ctx.fillText(hint, sx + building.w / 2, sy - 42);
+      ctx.restore();
+    }
+  }
+
   switch (building.type) {
     case "library":
       for (let i = 0; i < 3; i++) {

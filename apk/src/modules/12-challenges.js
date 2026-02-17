@@ -201,8 +201,71 @@ function generateScrambleDistractors(en, count) {
     return out;
 }
 
+function generatePhraseUnscrambleDistractors(correctPhrase, count) {
+    const out = [];
+    const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
+    const candidates = shuffle(
+        pool.filter(w => {
+            const text = String(w?.en || "").toLowerCase().trim();
+            return text && text !== correctPhrase && text.includes(" ");
+        })
+    );
+    for (const c of candidates) {
+        if (out.length >= count) break;
+        const v = String(c.en || "").toLowerCase().trim();
+        if (!out.some(x => x.value === v)) out.push({ text: v, value: v, correct: false });
+    }
+
+    const tokens = correctPhrase.split(/\s+/).filter(Boolean);
+    const tokenPool = pool
+        .map(w => String(w?.en || "").toLowerCase().trim())
+        .filter(Boolean)
+        .flatMap(text => text.split(/\s+/))
+        .filter(t => /^[a-z]+$/.test(t));
+    let guard = 0;
+    while (out.length < count && guard < 40) {
+        guard++;
+        const fakeTokens = shuffle([...tokens]);
+        if (fakeTokens.length && tokenPool.length && Math.random() < 0.5) {
+            const idx = Math.floor(Math.random() * fakeTokens.length);
+            fakeTokens[idx] = tokenPool[Math.floor(Math.random() * tokenPool.length)];
+        }
+        const fake = fakeTokens.join(" ").trim();
+        if (!fake || fake === correctPhrase || out.some(x => x.value === fake)) continue;
+        out.push({ text: fake, value: fake, correct: false });
+    }
+    return out;
+}
+
 function generateUnscrambleChallenge(wordObj) {
-    const enRaw = String(wordObj?.en || "").toLowerCase();
+    const enRaw = String(wordObj?.en || "").toLowerCase().trim();
+    const isPhrase = /\s+/.test(enRaw);
+
+    if (isPhrase) {
+        const tokens = enRaw.split(/\s+/).filter(Boolean);
+        if (tokens.length < 2) return generateFillBlankChallenge(wordObj);
+        let scrambledTokens = shuffle([...tokens]);
+        let tries = 0;
+        while (scrambledTokens.join(" ") === enRaw && tries < 8) {
+            scrambledTokens = shuffle([...tokens]);
+            tries++;
+        }
+        return {
+            mode: "fill_blank",
+            questionHtml:
+                `<div class="challenge-fill">` +
+                `<div class="challenge-fill-word phrase" style="color:#FFD54F;">${scrambledTokens.join(" ")}</div>` +
+                `<div class="challenge-fill-hint">重新排列单词顺序，拼出正确词组</div>` +
+                `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
+                `</div>`,
+            options: shuffle([
+                { text: enRaw, value: enRaw, correct: true },
+                ...generatePhraseUnscrambleDistractors(enRaw, 3)
+            ]),
+            answer: enRaw
+        };
+    }
+
     const en = enRaw.replace(/[^a-z]/g, "");
     if (en.length < 3) return generateFillBlankChallenge(wordObj);
 

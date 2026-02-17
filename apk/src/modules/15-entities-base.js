@@ -132,6 +132,11 @@ class Chest extends Entity {
             const count = picked.min + Math.floor(Math.random() * (picked.max - picked.min + 1));
             drops.push({ item: picked.item, count });
         }
+        // 新需求：若本次宝箱掉出南瓜，则同箱补齐雪块材料（2个）
+        const hasPumpkinDrop = drops.some(d => d.item === "pumpkin" && d.count > 0);
+        if (hasPumpkinDrop) {
+            drops.push({ item: "snow_block", count: 2 });
+        }
         drops.forEach(d => {
             if (d.item === "hp") {
                 healPlayer(d.count);

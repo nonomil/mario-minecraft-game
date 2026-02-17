@@ -282,7 +282,9 @@ class BeeEnemy extends Enemy {
             // 中毒攻击
             if (dist < 30 && this.attackCooldown === 0) {
                 damagePlayer(this.damage, this.x);
-                showFloatingText("☠️ 中毒!", this.x, this.y - 20, "#9370DB");
+                if (canApplyPoisonEffect()) {
+                    showFloatingText("☠️ 中毒!", this.x, this.y - 20, "#9370DB");
+                }
                 this.attackCooldown = 90;
                 this.poisonCooldown = 120;
             }
@@ -362,7 +364,8 @@ class WitchEnemy extends Enemy {
 
             // 投掷药水
             if (this.potionCooldown === 0 && dist < 200) {
-                this.potionType = Math.random() < 0.6 ? "poison" : "slow";
+                const allowPoison = canApplyPoisonEffect();
+                this.potionType = allowPoison && Math.random() < 0.6 ? "poison" : "slow";
                 const potion = potionPool.getPotion(this.x, this.y, playerRef.x, playerRef.y, this.potionType);
                 if (!projectiles.includes(potion)) projectiles.push(potion);
                 this.potionCooldown = 150;
@@ -873,7 +876,7 @@ class PotionProjectile extends Projectile {
 
         // 检测碰撞
         if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
-            if (this.potionType === "poison") {
+            if (this.potionType === "poison" && canApplyPoisonEffect()) {
                 damagePlayer(this.damage, this.x);
                 showFloatingText("☠️ 中毒!", this.x, this.y - 20, "#9370DB");
             } else if (this.potionType === "slow") {
@@ -911,6 +914,12 @@ const potionPool = {
         return fresh;
     }
 };
+
+function canApplyPoisonEffect() {
+    // Cherry Grove low-score phase should not trigger poison.
+    const minScoreForPoison = 600;
+    return (Number(score) || 0) >= minScoreForPoison;
+}
 
 // ============ 敌人工厂扩展 ============
 function spawnBiomeEnemy(biomeId, x, y) {

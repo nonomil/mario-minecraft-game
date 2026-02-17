@@ -265,8 +265,6 @@ function updateVillages() {
       // v1.8.1 更新村民
       updateVillageNPCs(v);
 
-      // v1.8.2 检测休息屋
-      checkVillageRest(v);
       break;
     }
   }
@@ -284,71 +282,37 @@ let restPromptVillage = null;
 function checkVillageRest(village) {
   if (!village) return;
   if (village.restUsed) return; // 已使用过
-
-  // 查找 bed_house 建筑
-  const bedHouse = village.buildings.find(b => b.type === 'bed_house');
-  if (!bedHouse) return;
-
-  // 检测玩家是否在床屋区域内
-  const inBedHouse = player.x >= bedHouse.x && player.x <= bedHouse.x + bedHouse.w;
-  if (inBedHouse && !restPromptVisible) {
-    showRestPrompt(village);
-  } else if (!inBedHouse && restPromptVisible) {
-    hideRestPrompt();
-  }
+  const nearby = getNearbyBuilding(village);
+  if (nearby && nearby.type === 'bed_house') showRestPrompt(village);
+  else hideRestPrompt();
 }
 
 function checkVillageBuildings(village) {
-  if (!village) return;
+  if (!village) return false;
+  const nearby = getNearbyBuilding(village);
+  if (!nearby) return false;
+  return !!handleVillageInteraction(nearby, village);
+}
 
+function getNearbyBuilding(village, margin = 4) {
+  if (!village || !Array.isArray(village.buildings) || !player) return null;
+  const centerX = player.x + player.width / 2;
   for (const building of village.buildings) {
-    const buildingLeft = building.x;
-    const buildingRight = building.x + building.w;
-
-    // 检测玩家是否在建筑区域内
-    if (player.x + player.width / 2 >= buildingLeft &&
-        player.x + player.width / 2 <= buildingRight) {
-      handleVillageInteraction(building, village);
-    }
+    const left = building.x - margin;
+    const right = building.x + building.w + margin;
+    if (centerX >= left && centerX <= right) return building;
   }
+  return null;
 }
 
 function showRestPrompt(village) {
   restPromptVisible = true;
   restPromptVillage = village;
-  const restPromptEl = document.getElementById('rest-prompt');
-  if (restPromptEl) {
-    restPromptEl.style.display = 'block';
-    return;
-  }
-
-  // 动态创建休息提示
-  const prompt = document.createElement('div');
-  prompt.id = 'rest-prompt';
-  prompt.className = 'rest-prompt';
-  prompt.innerHTML = `
-    <div class="rest-prompt-content">
-      <div>💤 休息回血</div>
-      <button id="btn-rest" class="game-btn">休息 (Y)</button>
-    </div>
-  `;
-  document.getElementById('game-container').appendChild(prompt);
-
-  const btnRest = document.getElementById('btn-rest');
-  if (btnRest) {
-    btnRest.addEventListener('click', () => {
-      performRest(restPromptVillage);
-    });
-  }
 }
 
 function hideRestPrompt() {
   restPromptVisible = false;
   restPromptVillage = null;
-  const restPromptEl = document.getElementById('rest-prompt');
-  if (restPromptEl) {
-    restPromptEl.style.display = 'none';
-  }
 }
 
 function performRest(village) {
@@ -421,6 +385,7 @@ function handleVillageInteraction(building, village) {
 
   switch (building.type) {
     case 'bed_house':
+      performRest(village);
       return true;
     case 'word_house':
       if (village.questCompleted) {

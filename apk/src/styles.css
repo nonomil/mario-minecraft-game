@@ -284,6 +284,11 @@ body {
     text-shadow: 1px 1px 0 #000;
 }
 
+.challenge-fill-word.phrase {
+    font-size: clamp(18px, 3.2vw, 28px);
+    letter-spacing: 2px;
+}
+
 .challenge-fill-hint {
     font-size: 16px;
     opacity: 0.9;
