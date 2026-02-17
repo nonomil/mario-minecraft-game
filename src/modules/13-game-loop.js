@@ -49,7 +49,7 @@ function update() {
             // 如果玩家脚底接近平台顶部，视为踩上平台而非撞墙
             const feetY = player.y + player.height;
             const stepUpThreshold = blockSize * 0.6;
-            if (feetY > p.y && feetY - p.y < stepUpThreshold) {
+            if (feetY >= p.y && feetY - p.y < stepUpThreshold) {
                 player.y = p.y - player.height;
                 player.grounded = true;
                 player.jumpCount = 0;
