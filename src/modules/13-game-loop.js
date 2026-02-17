@@ -74,8 +74,20 @@ function update() {
         const trunkY = t.y + t.height - 60;
         const dir = colCheckRect(player.x, player.y, player.width, player.height, trunkX, trunkY, 30, 60);
         if (dir) {
-            if (dir === "l" || dir === "r") player.velX = 0;
-            else if (dir === "b") {
+            if (dir === "l" || dir === "r") {
+                // 树干也需要 step-up 逻辑
+                const feetY = player.y + player.height;
+                const stepUpThreshold = blockSize * 0.6;
+                if (feetY >= trunkY && feetY - trunkY < stepUpThreshold) {
+                    player.y = trunkY - player.height;
+                    player.grounded = true;
+                    player.jumpCount = 0;
+                    player.velY = 0;
+                    coyoteTimer = gameConfig.jump.coyoteFrames;
+                } else {
+                    player.velX = 0;
+                }
+            } else if (dir === "b") {
                 player.grounded = true;
                 player.jumpCount = 0;
                 player.y = trunkY - player.height;
