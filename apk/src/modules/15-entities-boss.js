@@ -22,10 +22,12 @@ class Boss {
         this.particles = [];
         this.damage = config.damage || 1;
         this.type = 'boss';
+        this.phaseInvulnerableTimer = 0;
     }
 
     update(playerRef) {
         if (!this.alive) return;
+        if (this.phaseInvulnerableTimer > 0) this.phaseInvulnerableTimer--;
         this.updatePhase();
         this.updateProjectiles();
         this.updateParticles();
@@ -103,6 +105,7 @@ class Boss {
     }
 
     takeDamage(amount) {
+        if (this.phaseInvulnerableTimer > 0) return;
         if (this.stunTimer > 0) amount = Math.ceil(amount * 1.5);
         this.hp -= amount;
         this.flashTimer = 10;
@@ -120,7 +123,13 @@ class Boss {
     }
 
     updateBehavior(playerRef) {}
-    onPhaseChange(newPhase) {}
+    onPhaseChange(newPhase) {
+        this.phaseInvulnerableTimer = 30;
+        this.flashTimer = 15;
+        if (typeof bossArena !== 'undefined' && typeof bossArena.triggerPhaseFlash === 'function') {
+            bossArena.triggerPhaseFlash(`${this.name} 进入阶段 ${newPhase}`);
+        }
+    }
     render(ctx) {}
 }
 
@@ -129,6 +138,8 @@ const bossArena = {
     active: false,
     boss: null,
     victoryTimer: 0,
+    phaseFlashTimer: 0,
+    phaseBannerText: '',
     bossTypes: ['wither', 'ghast', 'blaze', 'wither_skeleton'],
     bossScores: [2000, 4000, 6000, 8000],         // 触发分数阈值
     spawned: {},           // 已生成的BOSS记录
@@ -150,6 +161,8 @@ const bossArena = {
     enter(bossType) {
         this.active = true;
         this.victoryTimer = 0;
+        this.phaseFlashTimer = 0;
+        this.phaseBannerText = '';
         this.spawned[bossType] = true;
         this.boss = this.createBoss(bossType);
         // 视口锁定 + 边界墙
@@ -175,6 +188,8 @@ const bossArena = {
         this.active = false;
         this.boss = null;
         this.viewportLocked = false;
+        this.phaseFlashTimer = 0;
+        this.phaseBannerText = '';
     },
 
     onVictory() {
@@ -191,6 +206,7 @@ const bossArena = {
 
     update() {
         if (!this.active || !this.boss) return;
+        if (this.phaseFlashTimer > 0) this.phaseFlashTimer--;
         if (!this.boss.alive) {
             this.victoryTimer++;
             if (this.victoryTimer > 180) this.exit();
@@ -220,12 +236,29 @@ const bossArena = {
         ctx.font = 'bold 14px Verdana';
         ctx.textAlign = 'center';
         ctx.fillText(`${this.boss.name} (阶段${this.boss.phase})`, canvas.width / 2, by - 6);
+        if (this.phaseFlashTimer > 0 && this.phaseBannerText) {
+            const bannerAlpha = Math.min(1, this.phaseFlashTimer / 20);
+            ctx.fillStyle = `rgba(255, 255, 255, ${bannerAlpha * 0.85})`;
+            ctx.fillRect(canvas.width * 0.2, by + 24, canvas.width * 0.6, 28);
+            ctx.fillStyle = '#111';
+            ctx.font = 'bold 16px Verdana';
+            ctx.fillText(this.phaseBannerText, canvas.width / 2, by + 43);
+        }
+        if (this.phaseFlashTimer > 0) {
+            const flashAlpha = Math.min(0.35, this.phaseFlashTimer / 50);
+            ctx.fillStyle = `rgba(255,255,255,${flashAlpha})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
         ctx.textAlign = 'left';
     },
 
     renderProjectiles(ctx, camX) {
         if (!this.active || !this.boss) return;
         this.boss.bossProjectiles.forEach(p => {
+            if (typeof this.boss.renderProjectile === 'function') {
+                this.boss.renderProjectile(ctx, p, camX);
+                return;
+            }
             ctx.fillStyle = p.color || '#1A1A1A';
             ctx.beginPath();
             ctx.arc(p.x - camX, p.y, p.size, 0, Math.PI * 2);
@@ -245,6 +278,11 @@ const bossArena = {
     renderBoss(ctx, camX) {
         if (!this.active || !this.boss) return;
         this.boss.render(ctx, camX);
+    },
+
+    triggerPhaseFlash(text) {
+        this.phaseBannerText = text || '';
+        this.phaseFlashTimer = 18;
     }
 };
 
@@ -269,20 +307,24 @@ class WitherBoss extends Boss {
         this.chargeTarget = null;
         this.chargeTimer = 0;
         this.startX = spawnX;
+        this.shockwave = null;
     }
 
     updateBehavior(playerRef) {
-        this.floatOffset = Math.sin(Date.now() / 500) * 10;
+        this.floatOffset = Math.sin(Date.now() / 420) * 8;
         // 跟随玩家水平位置
         const targetX = playerRef.x;
         if (Math.abs(this.x - targetX) > 150) {
             this.x += (targetX > this.x ? 1 : -1) * this.moveSpeed * (this.phase === 2 ? 1.5 : 1);
         }
+        const baseY = canvas.height * 0.2;
+        this.y += (baseY - this.y) * 0.06;
         switch (this.phase) {
             case 1: this.phaseOne(playerRef); break;
             case 2: this.phaseTwo(playerRef); break;
             case 3: this.phaseThree(playerRef); break;
         }
+        this.updateShockwave();
     }
 
     // 阶段一：每3秒1个黑球
@@ -314,7 +356,8 @@ class WitherBoss extends Boss {
         const centerX = playerRef.x;
         this.x += (centerX - this.x) * 0.03;
         this.x += (Math.random() - 0.5) * 4;
-        this.y = 80 + (Math.random() - 0.5) * 4;
+        const frenzyY = canvas.height * 0.2 + Math.sin(Date.now() / 140) * 6;
+        this.y += (frenzyY - this.y) * 0.2;
         this.attackTimer++;
         if (this.attackTimer >= 60) {
             this.shootTrackingBalls(5);
@@ -371,7 +414,7 @@ class WitherBoss extends Boss {
         if (dist < 20) {
             this.charging = false;
             this.stunTimer = 30;
-            this.y = 80;
+            this.shockwave = { x: this.x + this.width / 2, y: this.y + this.height / 2, radius: 12, maxRadius: 96, alpha: 0.85 };
             return;
         }
         this.x += (dx / dist) * 8;
@@ -382,11 +425,12 @@ class WitherBoss extends Boss {
             damagePlayer(2, this.x, 120);
             this.charging = false;
             this.stunTimer = 30;
-            this.y = 80;
+            this.shockwave = { x: this.x + this.width / 2, y: this.y + this.height / 2, radius: 12, maxRadius: 96, alpha: 0.85 };
         }
     }
 
     onPhaseChange(newPhase) {
+        super.onPhaseChange(newPhase);
         this.attackTimer = 0;
         this.chargeTimer = 0;
         if (newPhase === 2) {
@@ -407,35 +451,90 @@ class WitherBoss extends Boss {
         }
     }
 
+    updateShockwave() {
+        if (!this.shockwave) return;
+        this.shockwave.radius += 4;
+        this.shockwave.alpha -= 0.04;
+        if (this.shockwave.radius >= this.shockwave.maxRadius || this.shockwave.alpha <= 0) {
+            this.shockwave = null;
+        }
+    }
+
+    renderProjectile(ctx, proj, camX) {
+        const px = proj.x - camX;
+        const py = proj.y;
+        const s = Math.max(10, proj.size || 10);
+        const fillColor = proj.tracking ? '#5E3AA5' : '#1A1A1A';
+        const eyeColor = proj.tracking ? '#C7A8FF' : '#666';
+
+        ctx.fillStyle = fillColor;
+        ctx.fillRect(px - s / 2, py - s / 2, s, s);
+        ctx.fillStyle = eyeColor;
+        ctx.fillRect(px - s * 0.22, py - s * 0.12, 3, 3);
+        ctx.fillRect(px + s * 0.04, py - s * 0.12, 3, 3);
+
+        // 拖尾
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = proj.tracking ? '#9D7BDF' : '#444';
+        ctx.fillRect(px - (proj.vx || 0) * 2 - s * 0.3, py - (proj.vy || 0) * 2 - s * 0.3, s * 0.55, s * 0.55);
+        ctx.globalAlpha = 0.25;
+        ctx.fillRect(px - (proj.vx || 0) * 4 - s * 0.2, py - (proj.vy || 0) * 4 - s * 0.2, s * 0.4, s * 0.4);
+        ctx.globalAlpha = 1;
+    }
+
     render(ctx, camX) {
-        const drawX = this.x - camX;
-        const drawY = this.y + this.floatOffset;
-        // 受击闪白
-        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : this.color;
-        // 身体
-        ctx.fillRect(drawX, drawY, this.width, this.height);
-        // 三个头
-        const hs = 24;
-        ctx.fillStyle = '#0D0D0D';
-        ctx.fillRect(drawX + 8, drawY - hs, hs, hs);
-        ctx.fillRect(drawX + this.width / 2 - hs / 2, drawY - hs - 8, hs, hs);
-        ctx.fillRect(drawX + this.width - hs - 8, drawY - hs, hs, hs);
-        // 眼睛
-        ctx.fillStyle = this.phase === 3 ? '#FF0000' : '#FFF';
-        [drawX + 14, drawX + this.width / 2 - 4, drawX + this.width - 22].forEach(ex => {
-            ctx.fillRect(ex, drawY - hs + 6, 4, 4);
-            ctx.fillRect(ex + 8, drawY - hs + 6, 4, 4);
-        });
-        // 阶段三裂痕
-        if (this.phase === 3) {
-            ctx.strokeStyle = '#FFF';
-            ctx.lineWidth = 2;
+        const x = this.x - camX;
+        const y = this.y + this.floatOffset;
+        const bodyColor = this.flashTimer > 0 ? '#FFFFFF' : (this.phase >= 2 ? '#2A0A0A' : '#1A1A1A');
+        const headColor = this.phase >= 2 ? '#3A0D0D' : '#0D0D0D';
+        const eyeColor = this.phase >= 3 ? '#FF0000' : (this.phase >= 2 ? '#FF4444' : '#4488FF');
+
+        // T 形主体
+        ctx.fillStyle = bodyColor;
+        ctx.fillRect(x + 36, y + 30, 24, 50);
+        ctx.fillRect(x + 8, y + 32, 80, 16);
+        ctx.fillStyle = '#333';
+        for (let i = 0; i < 4; i++) ctx.fillRect(x + 38, y + 40 + i * 10, 20, 2);
+
+        // 主头
+        ctx.fillStyle = headColor;
+        ctx.fillRect(x + 30, y, 36, 32);
+        ctx.fillStyle = '#2A2A2A';
+        ctx.fillRect(x + 34, y + 8, 28, 20);
+        ctx.fillStyle = eyeColor;
+        ctx.fillRect(x + 38, y + 12, 6, 6);
+        ctx.fillRect(x + 52, y + 12, 6, 6);
+        ctx.fillStyle = '#1A1A1A';
+        ctx.fillRect(x + 42, y + 22, 12, 4);
+
+        // 左右副头
+        ctx.fillStyle = headColor;
+        ctx.fillRect(x, y + 10, 24, 22);
+        ctx.fillRect(x + 72, y + 10, 24, 22);
+        ctx.fillStyle = eyeColor;
+        ctx.fillRect(x + 4, y + 16, 4, 4);
+        ctx.fillRect(x + 14, y + 16, 4, 4);
+        ctx.fillRect(x + 76, y + 16, 4, 4);
+        ctx.fillRect(x + 86, y + 16, 4, 4);
+
+        if (this.phase >= 3) {
+            ctx.strokeStyle = '#FF6600';
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(drawX + 20, drawY + 10);
-            ctx.lineTo(drawX + 50, drawY + 50);
-            ctx.lineTo(drawX + 30, drawY + 80);
+            ctx.moveTo(x + 40, y + 35);
+            ctx.lineTo(x + 50, y + 55);
+            ctx.lineTo(x + 45, y + 70);
             ctx.stroke();
         }
+
+        if (this.shockwave) {
+            ctx.strokeStyle = `rgba(100, 0, 200, ${Math.max(0, this.shockwave.alpha)})`;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(this.shockwave.x - camX, this.shockwave.y, this.shockwave.radius, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
         // 粒子
         this.particles.forEach(p => {
             ctx.globalAlpha = p.life;
@@ -577,6 +676,7 @@ class GhastBoss extends Boss {
     }
 
     onPhaseChange(newPhase) {
+        super.onPhaseChange(newPhase);
         this.attackTimer = 0;
         this.rushTimer = 0;
         if (newPhase === 2) {
@@ -596,31 +696,63 @@ class GhastBoss extends Boss {
     }
 // PLACEHOLDER_GHAST_RENDER
 
+    renderProjectile(ctx, proj, camX) {
+        const x = proj.x - camX;
+        const y = proj.y;
+        const r = Math.max(8, proj.size || 10);
+        const grad = ctx.createRadialGradient(x, y, 2, x, y, r);
+        grad.addColorStop(0, '#FFE0B2');
+        grad.addColorStop(1, '#E65100');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = '#FF8A65';
+        ctx.beginPath();
+        ctx.arc(x - (proj.vx || 0) * 2, y - (proj.vy || 0) * 2, r * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+
     render(ctx, camX) {
         const drawX = this.x - camX;
         const drawY = this.y;
-        // 哭泣时半透明
-        ctx.globalAlpha = this.crying ? 0.5 : 0.9;
-        // 身体
-        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#F0F0F0';
+        const attacking = this.rushing || this.attackTimer > 0 && this.attackTimer < 18;
+        ctx.globalAlpha = this.crying ? 0.6 : 0.95;
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFFFFF' : '#F0F0F0';
         ctx.fillRect(drawX, drawY, this.width, this.height);
-        // 红色眼睛
-        ctx.fillStyle = '#FF0000';
-        ctx.fillRect(drawX + 16, drawY + 20, 8, 12);
-        ctx.fillRect(drawX + 40, drawY + 20, 8, 12);
-        // 嘴巴
-        ctx.fillStyle = '#333';
+
+        // 面部
+        const eyeY = drawY + 20;
         if (this.crying) {
-            ctx.fillRect(drawX + 20, drawY + 44, 24, 4);
+            ctx.fillStyle = '#4FC3F7';
+            ctx.fillRect(drawX + 16, eyeY + 4, 8, 4);
+            ctx.fillRect(drawX + 40, eyeY + 4, 8, 4);
+            ctx.fillStyle = '#1A1A1A';
+            ctx.fillRect(drawX + 22, drawY + 42, 20, 4);
+        } else if (attacking) {
+            ctx.fillStyle = '#C62828';
+            ctx.fillRect(drawX + 14, eyeY, 10, 10);
+            ctx.fillRect(drawX + 40, eyeY, 10, 10);
+            ctx.fillStyle = '#D84315';
+            ctx.fillRect(drawX + 20, drawY + 40, 24, 12);
         } else {
+            ctx.fillStyle = '#212121';
+            ctx.fillRect(drawX + 16, eyeY + 6, 8, 3);
+            ctx.fillRect(drawX + 40, eyeY + 6, 8, 3);
+            ctx.fillStyle = '#333';
             ctx.fillRect(drawX + 22, drawY + 40, 20, 8);
         }
-        // 触手
+
+        // 9 条触手
         ctx.fillStyle = '#DDD';
-        for (let i = 0; i < 4; i++) {
-            const tx = drawX + 8 + i * 14;
-            const sway = Math.sin(Date.now() / 300 + i) * 3;
-            ctx.fillRect(tx + sway, drawY + this.height, 6, 16);
+        for (let i = 0; i < 9; i++) {
+            const tx = drawX + 4 + i * 7;
+            const baseLen = 12 + (i % 3) * 5;
+            const sway = Math.sin(Date.now() / 240 + i * 0.7) * 3;
+            ctx.fillRect(tx + sway, drawY + this.height, 4, baseLen);
         }
         ctx.globalAlpha = 1;
         // 哭泣泪水粒子
@@ -820,6 +952,7 @@ class BlazeBoss extends Boss {
     }
 
     onPhaseChange(newPhase) {
+        super.onPhaseChange(newPhase);
         this.attackTimer = 0;
         this.fireColumnTimer = 0;
         if (newPhase === 2) {
@@ -841,33 +974,36 @@ class BlazeBoss extends Boss {
     render(ctx, camX) {
         const drawX = this.x - camX;
         const drawY = this.y;
-        this.rotationAngle += 0.05;
+        const rotationSpeed = this.phase >= 3 ? 0.12 : this.phase === 2 ? 0.09 : 0.07;
+        this.rotationAngle += rotationSpeed;
         const cx = drawX + this.width / 2;
         const cy = drawY + this.height / 2;
 
-        // 中心核心
-        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#FFD700';
-        ctx.fillRect(drawX + 8, drawY + 8, this.width - 16, this.height - 16);
+        // 中心发光核心
+        const coreGradient = ctx.createRadialGradient(cx, cy, 4, cx, cy, 18);
+        coreGradient.addColorStop(0, this.flashTimer > 0 ? '#FFFFFF' : '#FFF59D');
+        coreGradient.addColorStop(1, this.phase >= 3 ? '#FF8F00' : '#FFD54F');
+        ctx.fillStyle = coreGradient;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+        ctx.fill();
 
-        // 旋转烈焰棒（4根）
-        ctx.fillStyle = '#FF8C00';
-        for (let i = 0; i < 4; i++) {
-            const angle = this.rotationAngle + (Math.PI / 2) * i;
-            const bx = cx + Math.cos(angle) * 28 - 4;
-            const by = cy + Math.sin(angle) * 28 - 12;
-            ctx.fillRect(bx, by, 8, 24);
+        // 12 根环绕烈焰棒
+        for (let i = 0; i < 12; i++) {
+            const angle = this.rotationAngle + (Math.PI * 2 / 12) * i;
+            const radius = 24 + ((i % 3) - 1) * 5;
+            const rodHeight = 14 + (i % 4) * 4;
+            const bx = cx + Math.cos(angle) * radius - 3;
+            const by = cy + Math.sin(angle) * radius - rodHeight / 2;
+            ctx.fillStyle = i % 2 === 0 ? '#FFC107' : '#FFB300';
+            ctx.fillRect(bx, by, 6, rodHeight);
         }
 
-        // 眼睛
-        ctx.fillStyle = '#FF0000';
-        ctx.fillRect(drawX + 14, drawY + 20, 6, 6);
-        ctx.fillRect(drawX + 28, drawY + 20, 6, 6);
-// PLACEHOLDER_BLAZE_RENDER_END
-
         // 火焰粒子环绕
-        for (let i = 0; i < 3; i++) {
-            const px = cx + Math.cos(Date.now() / 200 + i * 2) * 20;
-            const py = cy + Math.sin(Date.now() / 200 + i * 2) * 20;
+        const particleCount = this.phase >= 3 ? 6 : 4;
+        for (let i = 0; i < particleCount; i++) {
+            const px = cx + Math.cos(Date.now() / 180 + i * 1.4) * (18 + i * 2);
+            const py = cy + Math.sin(Date.now() / 180 + i * 1.4) * 18;
             ctx.fillStyle = `rgba(255, ${100 + Math.random() * 100 | 0}, 0, 0.6)`;
             ctx.fillRect(px - 2, py - 2, 4, 4);
         }
@@ -1165,6 +1301,7 @@ class WitherSkeletonBoss extends Boss {
 // PLACEHOLDER_WSKEL_CONTINUE4
 
     onPhaseChange(newPhase) {
+        super.onPhaseChange(newPhase);
         this.actionCooldown = 0;
         if (newPhase === 2) {
             this.moveSpeed = 2.6;
@@ -1187,31 +1324,41 @@ class WitherSkeletonBoss extends Boss {
     render(ctx, camX) {
         const drawX = this.x - camX;
         const drawY = this.y;
-        const squash = this.jumpAttackPhase === 1 ? 0.8 : 1;
+        const squat = this.jumpAttackPhase === 1 ? 0.85 : 1;
+        const swing = this.state === 'combo' ? Math.sin(Date.now() / 90) * 10 : 0;
 
-        // 身体
+        // 身体（高瘦骨架）
         ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#1A1A1A';
-        ctx.fillRect(drawX, drawY + this.height * (1 - squash), this.width, this.height * squash);
+        ctx.fillRect(drawX + 8, drawY + this.height * (1 - squat), 32, this.height * squat);
+        ctx.fillStyle = '#242424';
+        ctx.fillRect(drawX + 14, drawY + 28 + this.height * (1 - squat), 20, 44 * squat);
 
         // 骷髅头
         ctx.fillStyle = '#2A2A2A';
-        ctx.fillRect(drawX + 8, drawY - 4 + this.height * (1 - squash), 32, 28);
+        ctx.fillRect(drawX + 8, drawY - 4 + this.height * (1 - squat), 32, 28);
         // 眼睛
         ctx.fillStyle = this.phase >= 3 ? '#FF0000' : '#CC0000';
-        ctx.fillRect(drawX + 14, drawY + 4 + this.height * (1 - squash), 6, 6);
-        ctx.fillRect(drawX + 28, drawY + 4 + this.height * (1 - squash), 6, 6);
+        ctx.fillRect(drawX + 14, drawY + 4 + this.height * (1 - squat), 6, 6);
+        ctx.fillRect(drawX + 28, drawY + 4 + this.height * (1 - squat), 6, 6);
 
         // 石剑
         ctx.fillStyle = '#808080';
         const swordX = this.facing > 0 ? drawX + this.width : drawX - 12;
-        ctx.fillRect(swordX, drawY + 20, 8, 40);
+        ctx.fillRect(swordX, drawY + 20 + swing, 8, 40);
         ctx.fillStyle = '#A0A0A0';
-        ctx.fillRect(swordX - 4, drawY + 56, 16, 6);
-// PLACEHOLDER_WSKEL_RENDER_END
+        ctx.fillRect(swordX - 4, drawY + 56 + swing, 16, 6);
 
-        // 格挡状态 - 白色防护罩
+        // 煤灰粒子（环境态）
+        for (let i = 0; i < 3; i++) {
+            const ashX = drawX + 8 + ((Date.now() / 9 + i * 17) % 32);
+            const ashY = drawY + ((Date.now() / 22 + i * 21) % this.height);
+            ctx.fillStyle = 'rgba(90,90,90,0.45)';
+            ctx.fillRect(ashX, ashY, 2, 2);
+        }
+
+        // 格挡状态 - 蓝色防护罩
         if (this.state === 'blocking') {
-            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.strokeStyle = 'rgba(66,165,245,0.75)';
             ctx.lineWidth = 3;
             ctx.beginPath();
             ctx.arc(drawX + this.width / 2, drawY + this.height / 2, 50, 0, Math.PI * 2);

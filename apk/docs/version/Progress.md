@@ -1,4 +1,12 @@
-﻿## v1.17.0（发布日期：2026-02-17）
+﻿## v1.18.0（发布日期：2026-02-17）
+- 类型：MINOR
+- APK 版本：versionName = 1.18.0，versionCode = 101
+- 主要变更
+  - 凋零重绘：T 形三头骨架、阶段演出、凋零之首弹幕、冲撞冲击波
+  - 恶魂/烈焰人/凋零骷髅视觉重绘：外观、动作和状态反馈统一增强
+  - 阶段反馈统一：阶段切换短暂无敌 + 阶段提示条 + 屏幕闪白
+  - 新增 Playwright P2 测试：`tests/p2-wither-boss.spec.js`、`tests/p2-boss-visual.spec.js`
+## v1.17.0（发布日期：2026-02-17）
 - 类型：MINOR
 - APK 版本：versionName = 1.17.0，versionCode = 100
 - 主要变更
@@ -571,6 +579,7 @@ b11ef12 chore: 更新 apk/android-app/package.json 版本至 v1.6.5
 - **主版本**：重大功能更新或架构变更
 - **次版本**：新功能添加或重要改进
 - **修订号**：Bug 修复和小改进
+
 
 
 
