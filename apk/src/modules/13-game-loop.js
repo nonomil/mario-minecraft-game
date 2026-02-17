@@ -164,7 +164,8 @@ function update() {
                 }
             }
         } else if (dir === "t") {
-            player.velY *= -1;
+            player.y = p.y + p.height;
+            if (player.velY < 0) player.velY = 0;
         }
     }
     player.lastFragilePlatform = currentFragilePlatform;
