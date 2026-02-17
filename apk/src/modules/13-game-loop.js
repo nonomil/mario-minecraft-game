@@ -42,17 +42,6 @@ function emitGameParticle(type, x, y) {
     return created;
 }
 
-function checkBossSpawn() {
-    if (bossSpawned) return;
-    const enemyConfig = getEnemyConfig();
-    if (getProgressScore() >= (enemyConfig.bossSpawnScore || 5000)) {
-        bossSpawned = true;
-        const dragon = new Enemy(player.x + 300, 100, "ender_dragon");
-        enemies.push(dragon);
-        showToast("⚠️ 末影龙降临！");
-    }
-}
-
 function update() {
     if (paused) return;
     updateCurrentBiome();
@@ -186,7 +175,14 @@ function update() {
                     player.velY = 0;
                     coyoteTimer = gameConfig.jump.coyoteFrames;
                 } else {
-                    player.velX = 0;
+                    // 方向判定：只阻止朝树方向的移动，允许反向脱困
+                    if (dir === "l" && player.velX < 0) {
+                        player.velX = 0;
+                        player.x = trunkX + 30; // 推离到树右侧
+                    } else if (dir === "r" && player.velX > 0) {
+                        player.velX = 0;
+                        player.x = trunkX - player.width; // 推离到树左侧
+                    }
                 }
             } else if (dir === "b") {
                 player.grounded = true;
@@ -261,7 +257,23 @@ function update() {
 
     let targetCamX = player.x - cameraOffsetX;
     if (targetCamX < 0) targetCamX = 0;
-    if (targetCamX > cameraX) cameraX = targetCamX;
+    // BOSS战视口锁定
+    if (typeof bossArena !== 'undefined' && bossArena.viewportLocked) {
+        cameraX = bossArena.lockedCamX;
+    } else {
+        if (targetCamX > cameraX) cameraX = targetCamX;
+    }
+
+    // BOSS战边界墙限制玩家移动
+    if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.viewportLocked) {
+        if (player.x < bossArena.leftWall) {
+            player.x = bossArena.leftWall;
+            player.velX = 0;
+        } else if (player.x + player.width > bossArena.rightWall) {
+            player.x = bossArena.rightWall - player.width;
+            player.velX = 0;
+        }
+    }
 
     updateMapGeneration();
 
@@ -296,7 +308,6 @@ function update() {
     }
     spawnBiomeParticles();
 
-    checkBossSpawn();
     if (typeof bossArena !== 'undefined') {
         bossArena.checkSpawn();
         bossArena.update();

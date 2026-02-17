@@ -1,4 +1,44 @@
-﻿## v1.15.7 (2026-02-17)
+﻿## v1.17.0 (2026-02-17)
+
+### 群系体验优化
+- 群系难度分级：轮次追踪 + enemyTiers 配置，6 个群系支持分层敌人
+- 群系最小停留：双阈值守卫（分数+时间），12 个群系独立配置
+
+### 海洋生态
+- 海洋禁爆：creeper 在海洋中不爆炸，生成时排除 creeper
+- 新增 LargeSeaweed 和 CoralDecor 装饰类及渲染
+
+### 火山修正
+- 黑曜石柱锚点修正：y = groundY - height，底部对齐地面向上延伸
+
+### 单词挑战 UI
+- 选项按钮自适应字号（>20字符缩至10px）
+- CSS 增加 word-break/overflow-wrap 防溢出
+
+### 测试
+- 新增 p1-experience.spec.js 覆盖群系分级/停留/海洋/挑战UI
+
+---
+
+## v1.16.0 (2026-02-17)
+
+### 稳定性修复
+- 修复 18-village.js 全量中文乱码（注释 + UI 字符串）
+- 建立中文文案集中管理规则（BIOME_MESSAGES / UI_TEXTS）
+
+### BOSS 系统
+- 下线旧 ender_dragon 自动触发链，统一为 bossArena 单链路
+- BOSS 战进入时锁定视口，设置左右边界墙
+
+### 碰撞修复
+- 树干碰撞加入方向判定与推离修正，解决碰树后双向卡死
+
+### 测试
+- 新增 p0-stability.spec.js 覆盖乱码/碰撞/BOSS 场景
+
+---
+
+## v1.15.7 (2026-02-17)
 
 ### 樱花丛林/蘑菇岛卡死修复
 - GiantMushroom.onCollision() gravity 取值加完整类型检查（fallback 0.2）和 NaN 防护

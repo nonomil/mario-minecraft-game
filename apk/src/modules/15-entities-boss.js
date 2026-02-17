@@ -152,6 +152,11 @@ const bossArena = {
         this.victoryTimer = 0;
         this.spawned[bossType] = true;
         this.boss = this.createBoss(bossType);
+        // 视口锁定 + 边界墙
+        this.viewportLocked = true;
+        this.lockedCamX = cameraX;
+        this.leftWall = cameraX;
+        this.rightWall = cameraX + canvas.width;
         showToast(`⚠️ BOSS战: ${this.boss.name}!`);
     },
 
@@ -169,11 +174,13 @@ const bossArena = {
     exit() {
         this.active = false;
         this.boss = null;
+        this.viewportLocked = false;
     },
 
     onVictory() {
         if (this.victoryTimer > 0) return;
         this.victoryTimer = 1;
+        this.viewportLocked = false;
         // 奖励
         score += 500;
         inventory.iron = (inventory.iron || 0) + 5;

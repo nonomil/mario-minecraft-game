@@ -62,6 +62,12 @@ function drawDecoration(decor) {
         case "seaweed":
             drawSeaweed(decor);
             break;
+        case "large_seaweed":
+            drawLargeSeaweed(decor);
+            break;
+        case "coral":
+            drawCoralDecor(decor);
+            break;
         case "boat":
             drawBoatDecor(decor);
             break;
@@ -457,6 +463,45 @@ function drawSeaweed(seaweed) {
     ctx.moveTo(x + 5, y + seaweed.height);
     ctx.lineTo(x + 5 + sway, y);
     ctx.stroke();
+}
+
+function drawLargeSeaweed(seaweed) {
+    const x = seaweed.x;
+    const y = seaweed.y;
+    const h = seaweed.height;
+    const sway = Math.sin(seaweed.animFrame * 0.04 + seaweed.swayOffset) * 6;
+    ctx.globalAlpha = 0.7;
+    ctx.strokeStyle = "#1B5E20";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(x + 8, y + h);
+    ctx.quadraticCurveTo(x + 8 + sway * 0.5, y + h * 0.5, x + 8 + sway, y);
+    ctx.stroke();
+    ctx.strokeStyle = "#388E3C";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x + 8 + sway * 0.3, y + h * 0.6);
+    ctx.lineTo(x + 18 + sway * 0.5, y + h * 0.4);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+}
+
+function drawCoralDecor(coral) {
+    const x = coral.x;
+    const y = coral.y;
+    const w = coral.width;
+    const h = coral.height;
+    const color = coral.coralColor || '#FF69B4';
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h, w / 2, h, 0, Math.PI, 0);
+    ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h - 2, w / 3, h * 0.5, 0, Math.PI, 0);
+    ctx.fill();
+    ctx.globalAlpha = 1;
 }
 
 function drawBoatDecor(boat) {

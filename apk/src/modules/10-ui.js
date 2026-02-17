@@ -149,7 +149,7 @@ class WordMatchGame {
     start() {
         if (!wordMatchScreenEl) return;
         if (this.attempts >= this.maxAttempts) {
-            showToast("复活机会已用完");
+            showToast(UI_TEXTS.reviveUsed);
             setOverlay(true, "gameover");
             return;
         }
@@ -298,7 +298,7 @@ class WordMatchGame {
             playerHp = Math.min(playerMaxHp, LEARNING_CONFIG.wordMatch.reviveHp || 3);
             addScore(correctCount * (LEARNING_CONFIG.wordMatch.bonusPerMatch || 10));
             updateHpUI();
-            showToast("✨ 词语匹配复活成功！");
+            showToast(UI_TEXTS.reviveSuccess);
             setTimeout(() => this.cleanup(true), 1200);
         } else {
             setTimeout(() => {

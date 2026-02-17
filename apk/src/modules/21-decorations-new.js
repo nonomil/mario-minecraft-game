@@ -527,19 +527,23 @@ function spawnVolcanoDecoration(x, y, groundY) {
     const roll = Math.random();
 
     if (roll < 0.3) {
+        // 岩浆裂缝：与地面平齐
         spawnDecoration("magma_crack",
             (d) => d.reset(x, groundY - 4, 30 + Math.random() * 50),
             () => new MagmaCrack(x, groundY - 4, 30 + Math.random() * 50)
         );
     } else if (roll < 0.5) {
+        // 热泉：嵌入地面，顶部与地面平齐
         spawnDecoration("hot_spring",
             (d) => d.reset(x, groundY - 8),
             () => new HotSpring(x, groundY - 8)
         );
     } else if (roll < 0.7) {
+        // 黑曜石柱：底部对齐地面，向上延伸
+        const pillarH = 60 + Math.random() * 80;
         spawnDecoration("obsidian_pillar",
-            (d) => d.reset(x, groundY, 60 + Math.random() * 80),
-            () => new ObsidianPillar(x, groundY, 60 + Math.random() * 80)
+            (d) => d.reset(x, groundY - pillarH, pillarH),
+            () => new ObsidianPillar(x, groundY - pillarH, pillarH)
         );
     }
 }

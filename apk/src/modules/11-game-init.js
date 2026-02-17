@@ -437,10 +437,30 @@ function spawnEnemyByDifficulty(x, y) {
         nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
-    const take = Math.max(2, Math.min(basePool.length, 2 + tier));
-    let pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
+
+    // P1-1: 群系敌人分层 - 根据轮次覆盖敌人池
+    const biomeCfg = biomeConfigs[currentBiome];
+    const tiers = biomeCfg && biomeCfg.enemyTiers;
+    let pool;
+    let tierSpawnRate = 1.0;
+    if (tiers && tiers.length > 0 && typeof getBiomeVisitRound === 'function') {
+        const round = getBiomeVisitRound(currentBiome);
+        const tierIdx = Math.min(round, tiers.length) - 1;
+        const tier = tiers[tierIdx];
+        const tierTypes = (tier.types || []).filter(t => ENEMY_STATS[t]);
+        pool = tierTypes.length > 0 ? tierTypes : basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
+        tierSpawnRate = tier.spawnRate || 1.0;
+        if (Math.random() > tierSpawnRate) return; // 按 spawnRate 概率跳过生成
+    } else {
+        const take = Math.max(2, Math.min(basePool.length, 2 + tier));
+        pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
+    }
     if (getProgressScore() < 3000) {
         pool = pool.filter(t => t !== "enderman");
+    }
+    // P1-3: 海洋群系排除 creeper
+    if (currentBiome === 'ocean') {
+        pool = pool.filter(t => t !== "creeper");
     }
 
     const aliveEnemies = enemies.filter(e => !e.remove && e.y < 900).length;
@@ -612,6 +632,12 @@ function generateBiomeDecorations(x, yPos, width, biome) {
                 break;
             case "seaweed":
                 spawnDecoration("seaweed", obj => obj.reset(decorX, yPos - 30), () => new Seaweed(decorX, yPos - 30));
+                break;
+            case "large_seaweed":
+                spawnDecoration("large_seaweed", obj => obj.reset(decorX, yPos - 70), () => new LargeSeaweed(decorX, yPos - 70));
+                break;
+            case "coral":
+                spawnDecoration("coral", obj => obj.reset(decorX, yPos - 15), () => new CoralDecor(decorX, yPos - 15));
                 break;
             case "boat":
                 spawnDecoration("boat", obj => obj.reset(decorX, yPos - 18), () => new BoatDecor(decorX, yPos - 18));

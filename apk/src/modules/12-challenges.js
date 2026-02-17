@@ -353,6 +353,11 @@ function showLearningChallenge(challenge) {
                 btn.className = challenge.mode === "fill_blank"
                     ? "challenge-option letter-option"
                     : "challenge-option";
+                // P1-5: 自适应字体缩放
+                const len = option.text.length;
+                if (len > 20) btn.style.fontSize = '10px';
+                else if (len > 15) btn.style.fontSize = '12px';
+                else if (len > 10) btn.style.fontSize = '14px';
                 btn.addEventListener("click", () => {
                     completeLearningChallenge(option.correct);
                 });

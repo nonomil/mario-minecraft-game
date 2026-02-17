@@ -166,9 +166,6 @@ class Enemy extends Entity {
             case "enderman":
                 this.updateEnderman(playerRef);
                 break;
-            case "ender_dragon":
-                this.updateEnderDragon(playerRef);
-                break;
             default:
                 this.updateBasic();
         }
@@ -180,7 +177,6 @@ class Enemy extends Entity {
     }
 
     applyGravity() {
-        if (this.type === "ender_dragon") return;
         this.velY += gameConfig.physics.gravity;
         this.y += this.velY;
         this.grounded = false;
@@ -232,6 +228,11 @@ class Enemy extends Entity {
     }
 
     updateCreeper(playerRef) {
+        // P1-3: 海洋中苦力怕不爆炸，直接消失
+        if (currentBiome === 'ocean') {
+            this.die();
+            return;
+        }
         const dist = Math.abs(this.x - playerRef.x);
         if (dist < 60) {
             this.state = "exploding";
@@ -281,41 +282,6 @@ class Enemy extends Entity {
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed;
         } else {
             this.updateBasic();
-        }
-    }
-
-    updateEnderDragon(playerRef) {
-        const phase = this.hp > this.maxHp * 0.5 ? 1 : 2;
-        if (phase === 2 && !this.phaseChanged) {
-            this.phaseChanged = true;
-            this.speed *= 1.5;
-            showToast("⚠️ 末影龙进入狂暴状态！");
-        }
-
-        this.x += this.speed * this.dir;
-        this.y = 100 + Math.sin(gameFrame * 0.02) * 50;
-        if (this.x > this.startX + 400 || this.x < this.startX - 200) this.dir *= -1;
-
-        if (this.attackCooldown === 0 && Math.random() < 0.02) {
-            const fireball = projectilePool.getFireball(this.x + 40, this.y + 20, playerRef.x, playerRef.y);
-            if (!projectiles.includes(fireball)) projectiles.push(fireball);
-            this.attackCooldown = phase === 1 ? 120 : 60;
-        }
-
-        if (phase === 2 && Math.random() < 0.005) {
-            this.state = "diving";
-            this.targetDiveY = 400;
-        }
-
-        if (this.state === "diving") {
-            this.y += 5;
-            if (this.y >= this.targetDiveY) {
-                this.state = "patrol";
-                if (Math.abs(this.x - playerRef.x) < 150) {
-                    damagePlayer(this.damage, this.x, 150);
-                    showFloatingText("💥 龙息冲击!", playerRef.x, playerRef.y);
-                }
-            }
         }
     }
 }

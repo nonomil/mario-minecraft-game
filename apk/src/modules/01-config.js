@@ -277,6 +277,50 @@ const ACHIEVEMENT_MAP = {
     chests: ["chests_50"],
     score: ["score_1000", "score_5000"]
 };
+
+// ========== 文案集中管理 ==========
+const BIOME_MESSAGES = {
+    enter: (biomeName) => `🌍 进入${biomeName}群系`,
+    heatDamage: '🔥 高温灼伤',
+    heatDeath: '💀 生命耗尽',
+    lavaFall: '💀 掉进了岩浆!',
+    lavaDeath: '💀 生命耗尽',
+    mushroomHeal: '+1 ❤️ 🍄',
+    portalTeleport: '🌀 传送!',
+    speedBoost: '⚡ 加速!',
+    hpDrain: '🔥 -1❤️',
+    enterVillage: (biomeName) => `🏘️ 进入${biomeName}村庄`,
+    leaveVillage: '👋 离开村庄'
+};
+
+const UI_TEXTS = {
+    dragonAppear: '⚠️ 末影龙降临！',
+    platformBreak: '⚠️ 平台将破裂',
+    luckyStarEnd: '⭐ 幸运星效果结束',
+    fullHp: '❤️ 已满血',
+    diamondInsufficient: '💎 不足',
+    diamondHeal: '💎 换取 +1❤️',
+    armorBroken: (name) => `${name || "盔甲"} 已破损`,
+    itemInsufficient: '❌ 物品不足',
+    cooldown: (sec) => `⏳ 冷却中 (${sec}秒)`,
+    cooldownShort: '⏳ 冷却中',
+    reviveUsed: '复活机会已用完',
+    reviveSuccess: '✨ 词语匹配复活成功！',
+    selectAccount: '请先选择或创建档案',
+    scoreSaved: '📝 成绩已保存到排行榜',
+    restAlready: '💤 已经休息过了',
+    restFullHp: '❤️ 已满血，无需休息',
+    restSuccess: (amount) => `💤 休息成功！生命+${amount}`,
+    restHeal: '❤️ +休息',
+    restPrompt: '💤 休息回血',
+    restButton: '休息 (Y)',
+    villageSaved: '💾 游戏进度已保存',
+    villageAlreadySaved: '💾 本村庄已存档',
+    questDone: '📚 已完成学习任务',
+    specialUsed: '🏗 该特色建筑已使用',
+    specialNoFunc: '🏗 特色建筑暂无功能'
+};
+
 let currentAccount = null;
 let autoSaveInterval = null;
 let lastSaveTime = Date.now();
@@ -431,7 +475,6 @@ const MAX_GOLEMS = 3;
 let playerPositionHistory = [];
 let projectiles = [];
 let digHits = new Map();
-let bossSpawned = false;
 let playerInvincibleTimer = 0;
 let overlayMode = "start";
 const START_OVERLAY_INTRO_MS = 1600;

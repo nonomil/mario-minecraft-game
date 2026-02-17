@@ -122,26 +122,7 @@ function draw() {
     if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
     if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
 
-    const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
-    if (boss) {
-        const barW = 360;
-        const barH = 14;
-        const bx = (canvas.width - barW) / 2;
-        const by = 20;
-        ctx.fillStyle = "rgba(0,0,0,0.6)";
-        ctx.fillRect(bx - 4, by - 4, barW + 8, barH + 8);
-        ctx.fillStyle = "#111";
-        ctx.fillRect(bx, by, barW, barH);
-        const pct = Math.max(0, boss.hp / boss.maxHp);
-        ctx.fillStyle = "#8E24AA";
-        ctx.fillRect(bx, by, barW * pct, barH);
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 14px Verdana";
-        ctx.textAlign = "center";
-        ctx.fillText("末影龙", canvas.width / 2, by - 6);
-        ctx.textAlign = "left";
-    }
-    // 新BOSS血条
+    // BOSS血条
     if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
         bossArena.renderBossHpBar(ctx);
     }

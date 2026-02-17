@@ -1,9 +1,9 @@
-﻿/**
- * 18-village.js - 鏉戝簞绯荤粺鏍稿績閫昏緫
- * v1.8.0 瀹炵幇鏉戝簞鍩虹妗嗘灦
+/**
+ * 18-village.js - 村庄系统核心逻辑
+ * v1.8.0 实现村庄基础框架
  */
 
-// ========== 鏉戝簞椋庢牸瀹氫箟 ==========
+// ========== 村庄风格定义 ==========
 const VILLAGE_STYLES = {
   forest: {
     buildingColors: { wall: '#8B6914', roof: '#2E7D32', door: '#5D4037' },
@@ -43,10 +43,10 @@ const VILLAGE_STYLES = {
   }
 };
 
-// ========== 鍔犺浇閰嶇疆 ==========
+// ========== 加载配置 ==========
 function loadVillageConfig() {
-  // 浠?config/village.json 鍔犺浇锛屽け璐ユ椂鐢ㄩ粯璁ゅ€?
-  // 鍦?17-bootstrap.js 鐨?loadAllConfigs() 涓皟鐢?
+  // 从 config/village.json 加载，失败时用默认值
+  // 在 17-bootstrap.js 的 loadAllConfigs() 中调用
   const defaultVillageConfig = {
     enabled: true,
     spawnScoreInterval: 500,
@@ -81,32 +81,32 @@ function loadVillageConfig() {
     .then(r => r.json())
     .then(data => {
       villageConfig = data;
-      console.log('[Village] 閰嶇疆鍔犺浇鎴愬姛');
+      console.log('[Village] 配置加载成功');
     })
     .catch(() => {
       villageConfig = defaultVillageConfig;
-      console.warn('[Village] 浣跨敤榛樿閰嶇疆');
+      console.warn('[Village] 使用默认配置');
     });
 }
 
-// ========== 鏉戝簞鐢熸垚 ==========
+// ========== 村庄生成 ==========
 function maybeSpawnVillage(playerScore, playerX) {
   if (!settings || !settings.villageEnabled) return;
   if (!villageConfig || !villageConfig.enabled) return;
   const interval = villageConfig.spawnScoreInterval || 500;
-  // 璁＄畻褰撳墠鍒嗘暟搴旇鐢熸垚鐨勬潙搴勭紪鍙?
+  // 计算当前分数应该生成的村庄编号
   const villageIndex = Math.floor(playerScore / interval);
-  if (villageIndex < 1) return; // 0鍒嗕笉鐢熸垚
-  if (villageSpawnedForScore[villageIndex]) return; // 宸茬敓鎴?
+  if (villageIndex < 1) return; // 0分不生成
+  if (villageSpawnedForScore[villageIndex]) return; // 已生成
 
   const biomeId = currentBiome || 'forest';
   const village = createVillage(playerX + 600, biomeId, villageIndex);
   activeVillages.push(village);
   villageSpawnedForScore[villageIndex] = true;
 
-  // 鍥炴敹杩滅鐨勬潙搴?
+  // 回收远处的村庄
   cleanupVillages(playerX);
-  console.log(`[Village] 鐢熸垚鏉戝簞 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
+  console.log(`[Village] 生成村庄 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
 }
 
 function createVillage(startX, biomeId, index) {
@@ -134,7 +134,7 @@ function createVillage(startX, biomeId, index) {
     saved: false
   };
 
-  // v1.8.1 娣诲姞 NPC
+  // v1.8.1 添加 NPC
   if (typeof createVillageNPC === 'function') {
     const roles = ['greeter', 'teacher', 'trader'];
     const baseX = startX + 200;
@@ -148,31 +148,31 @@ function createVillage(startX, biomeId, index) {
 
 function cleanupVillages(playerX) {
   const max = villageConfig.maxActiveVillages || 3;
-  // 绉婚櫎鐜╁韬悗瓒呰繃 2000px 鐨勬潙搴?
+  // 移除玩家身后超过 2000px 的村庄
   activeVillages = activeVillages.filter(v => {
     return (v.x + v.width) > playerX - 2000;
   });
-  // 濡傛灉浠嶈秴杩囦笂闄愶紝绉婚櫎鏈€杩滅殑
+  // 如果仍超过上限，移除最远的
   while (activeVillages.length > max) {
     activeVillages.shift();
   }
 }
 
-// ========== NPC 鏉戞皯绯荤粺 (v1.8.1) ==========
+// ========== NPC 村民系统 (v1.8.1) ==========
 
 const NPC_ROLES = {
   greeter: {
-    greeting: 'Welcome! 娆㈣繋!',
+    greeting: 'Welcome! 欢迎!',
     speed: 0.3,
     patrolRange: 120
   },
   teacher: {
-    greeting: 'Come learn! 鏉ュ涔?',
+    greeting: 'Come learn! 来学习!',
     speed: 0.2,
     patrolRange: 80
   },
   trader: {
-    greeting: 'Trade? 浜ゆ槗鍚?',
+    greeting: 'Trade? 交易吗?',
     speed: 0.15,
     patrolRange: 60
   }
@@ -201,7 +201,7 @@ function createVillageNPC(baseX, role, villageX, villageWidth) {
 
 function updateVillageNPCs(village) {
   for (const npc of village.npcs) {
-    // 鏉ュ洖璧板姩
+    // 来回走动
     npc.x += npc.direction * npc.speed;
     if (npc.x <= npc.minX) {
       npc.x = npc.minX;
@@ -213,27 +213,27 @@ function updateVillageNPCs(village) {
       npc.facingRight = false;
     }
 
-    // 璧拌矾鍔ㄧ敾甯?
+    // 走路动画帧
     npc.animTimer++;
     if (npc.animTimer >= 15) {
       npc.animTimer = 0;
       npc.animFrame = (npc.animFrame + 1) % 2;
     }
 
-    // 鐜╁闈犺繎鏃舵樉绀烘皵娉?
+    // 玩家靠近时显示气泡
     const dist = Math.abs(player.x - npc.x);
     const greetDist = villageConfig.npcGreetDistance || 80;
     if (dist < greetDist) {
       npc.showBubble = true;
-      // 闈㈠悜鐜╁
+      // 面向玩家
       npc.facingRight = player.x > npc.x;
-      npc.direction = 0; // 鍋滀笅鏉?
-      npc.bubbleTimer = 120; // 姘旀场鎸佺画 2 绉?
+      npc.direction = 0; // 停下来
+      npc.bubbleTimer = 120; // 气泡持续 2 秒
     } else if (npc.bubbleTimer > 0) {
       npc.bubbleTimer--;
       if (npc.bubbleTimer <= 0) {
         npc.showBubble = false;
-        // 鎭㈠宸￠€?
+        // 恢复巡逻
         npc.direction = npc.facingRight ? 1 : -1;
       }
     } else {
@@ -242,14 +242,14 @@ function updateVillageNPCs(village) {
   }
 }
 
-// ========== 鏉戝簞鐘舵€佹洿鏂?==========
+// ========== 村庄状态更新 ==========
 function updateVillages() {
   if (!settings || !settings.villageEnabled) return;
   if (!player) return;
   if (typeof updateVillageBuffs === 'function') updateVillageBuffs();
-  // 妫€鏌ユ槸鍚﹂渶瑕佺敓鎴愭柊鏉戝簞
+  // 检查是否需要生成新村庄
   maybeSpawnVillage(score, player.x);
-  // 妫€娴嬬帺瀹舵槸鍚﹀湪鏉戝簞鍐?
+  // 检测玩家是否在村庄内
   const wasInVillage = playerInVillage;
   playerInVillage = false;
   currentVillage = null;
@@ -260,36 +260,36 @@ function updateVillages() {
       if (!v.visited) {
         v.visited = true;
         const biomeName = getBiomeName(v.biomeId);
-        showToast(`馃彉锔?杩涘叆${biomeName}鏉戝簞`);
+        showToast(BIOME_MESSAGES.enterVillage(biomeName));
       }
-      // v1.8.1 鏇存柊鏉戞皯 (v1.8.1)
+      // v1.8.1 更新村民
       updateVillageNPCs(v);
 
-      // v1.8.2 妫€娴嬩紤鎭眿 (v1.8.2)
+      // v1.8.2 检测休息屋
       checkVillageRest(v);
       break;
     }
   }
   if (wasInVillage && !playerInVillage) {
-    showToast('馃憢 绂诲紑鏉戝簞');
-    // v1.8.2 娓呴櫎浼戞伅鎻愮ず
+    showToast(BIOME_MESSAGES.leaveVillage);
+    // v1.8.2 清除休息提示
     hideRestPrompt();
   }
 }
 
-// ========== 浼戞伅绯荤粺 (v1.8.2) ==========
+// ========== 休息系统 (v1.8.2) ==========
 let restPromptVisible = false;
 let restPromptVillage = null;
 
 function checkVillageRest(village) {
   if (!village) return;
-  if (village.restUsed) return; // 宸蹭娇鐢ㄨ繃
+  if (village.restUsed) return; // 已使用过
 
-  // 鏌ユ壘 bed_house 寤虹瓚
+  // 查找 bed_house 建筑
   const bedHouse = village.buildings.find(b => b.type === 'bed_house');
   if (!bedHouse) return;
 
-  // 妫€娴嬬帺瀹舵槸鍚﹀湪搴婂眿鍖哄煙鍐?
+  // 检测玩家是否在床屋区域内
   const inBedHouse = player.x >= bedHouse.x && player.x <= bedHouse.x + bedHouse.w;
   if (inBedHouse && !restPromptVisible) {
     showRestPrompt(village);
@@ -305,7 +305,7 @@ function checkVillageBuildings(village) {
     const buildingLeft = building.x;
     const buildingRight = building.x + building.w;
 
-    // 妫€娴嬬帺瀹舵槸鍚﹀湪寤虹瓚鍖哄煙鍐?
+    // 检测玩家是否在建筑区域内
     if (player.x + player.width / 2 >= buildingLeft &&
         player.x + player.width / 2 <= buildingRight) {
       handleVillageInteraction(building, village);
@@ -322,14 +322,14 @@ function showRestPrompt(village) {
     return;
   }
 
-  // 鍔ㄦ€佸垱寤轰紤鎭彁绀?
+  // 动态创建休息提示
   const prompt = document.createElement('div');
   prompt.id = 'rest-prompt';
   prompt.className = 'rest-prompt';
   prompt.innerHTML = `
     <div class="rest-prompt-content">
-      <div>馃挙 浼戞伅鍥炶</div>
-      <button id="btn-rest" class="game-btn">浼戞伅 (Y)</button>
+      <div>💤 休息回血</div>
+      <button id="btn-rest" class="game-btn">休息 (Y)</button>
     </div>
   `;
   document.getElementById('game-container').appendChild(prompt);
@@ -354,18 +354,18 @@ function hideRestPrompt() {
 function performRest(village) {
   if (!village) return;
   if (village.restUsed) {
-    showToast('馃挙 宸茬粡浼戞伅杩囦簡');
+    showToast(UI_TEXTS.restAlready);
     return;
   }
 
-  // 妫€鏌ユ弧琛€鏉′欢
+  // 检查满血条件
   const isFullHp = playerHp >= playerMaxHp;
   if (isFullHp && villageConfig.restHealFull) {
-    showToast('鉂わ笍 宸叉弧琛€锛屾棤闇€浼戞伅');
+    showToast(UI_TEXTS.restFullHp);
     return;
   }
 
-  // 鎵ц浼戞伅鍥炶
+  // 执行休息回血
   if (villageConfig.restHealFull) {
     playerHp = playerMaxHp;
   } else {
@@ -376,17 +376,17 @@ function performRest(village) {
   village.restUsed = true;
   hideRestPrompt();
 
-  const healAmount = villageConfig.restHealFull ? '鍏ㄦ弧' : '+5';
-  showToast(`馃挙 浼戞伅鎴愬姛锛佺敓鍛?{healAmount}`);
-  showFloatingText('鉂わ笍 +浼戞伅', player.x, player.y - 60);
+  const healAmount = villageConfig.restHealFull ? '全满' : '+5';
+  showToast(UI_TEXTS.restSuccess(healAmount));
+  showFloatingText(UI_TEXTS.restHeal, player.x, player.y - 60);
 
-  // 淇濆瓨杩涘害
+  // 保存进度
   if (typeof saveCurrentProgress === 'function') {
     saveCurrentProgress();
   }
 }
 
-// ========== 杈呭姪鍑芥暟 ==========
+// ========== 辅助函数 ==========
 function isInVillageArea(x) {
   for (const v of activeVillages) {
     if (x >= v.x && x <= v.x + v.width) return true;
@@ -407,7 +407,7 @@ function getBiomeName(biomeId) {
   return biome ? biome.name : biomeId;
 }
 
-// ========== v1.8.3 鏉戝簞鍗曡瘝绯荤粺 ==========
+// ========== v1.8.3 村庄单词系统 ==========
 function getVillageWords(biomeId) {
   if (!villageConfig || !villageConfig.biomeWords) return [];
   return villageConfig.biomeWords[biomeId] || villageConfig.biomeWords.forest || [];
@@ -424,7 +424,7 @@ function handleVillageInteraction(building, village) {
       return true;
     case 'word_house':
       if (village.questCompleted) {
-        showToast('📚 已完成学习任务');
+        showToast(UI_TEXTS.questDone);
         return false;
       }
       if (typeof startVillageChallenge === 'function') {
@@ -448,7 +448,7 @@ function handleVillageInteraction(building, village) {
 function saveVillageProgress(village) {
   if (!village) return false;
   if (village.saved) {
-    showToast('💾 本村庄已存档');
+    showToast(UI_TEXTS.villageAlreadySaved);
     return false;
   }
 
@@ -478,7 +478,7 @@ function saveVillageProgress(village) {
   if (typeof saveCurrentProgress === 'function') {
     saveCurrentProgress();
   }
-  showToast('💾 游戏进度已保存');
+  showToast(UI_TEXTS.villageSaved);
   showFloatingText('💾 Save', player.x, player.y - 40, '#66BB6A');
   return true;
 }
@@ -585,13 +585,13 @@ const SPECIAL_BUILDING_EFFECTS = {
 function interactSpecialBuilding(village, buildingType) {
   if (!village || !buildingType) return false;
   if (village.specialUsed) {
-    showToast('🏗 该特色建筑已使用');
+    showToast(UI_TEXTS.specialUsed);
     return false;
   }
 
   const effect = SPECIAL_BUILDING_EFFECTS[buildingType];
   if (!effect) {
-    showToast('🏗 特色建筑暂无功能');
+    showToast(UI_TEXTS.specialNoFunc);
     return false;
   }
 

@@ -52,23 +52,29 @@ function selectBiome(x, scoreValue) {
 }
 
 function updateCurrentBiome() {
-    const nextBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
+    const progressScore = getProgressScore();
+    const nextBiome = getBiomeById(getBiomeIdForScore(progressScore));
     const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
     if (nextBiome.id !== currentBiome) {
+        // P1-2: 最小停留守卫
+        if (currentBiome && !canLeaveBiome(progressScore)) return;
         currentBiome = nextBiome.id;
+        biomeVisitCount[currentBiome] = (biomeVisitCount[currentBiome] || 0) + 1;
+        biomeEntryScore = progressScore;
+        biomeEntryTime = Date.now();
         biomeTransitionX = player.x;
-        showToast(`🌍 进入${nextBiome.name}群系`);
+        showToast(BIOME_MESSAGES.enter(nextBiome.name));
         updateWeatherForBiome(nextBiome);
         const info = document.getElementById("level-info");
         if (info) info.innerText = `生态: ${nextBiome.name}`;
         if (currentBiome === "nether" && netherEntryPenaltyArmed && !hasFireResistance) {
             playerHp = Math.max(0, playerHp - 1);
             updateHpUI();
-            showFloatingText("🔥 -1❤️", player.x, player.y - 20);
+            showFloatingText(BIOME_MESSAGES.hpDrain, player.x, player.y - 20);
             netherEntryPenaltyArmed = false;
             if (playerHp <= 0) {
                 paused = true;
-                showToast("💀 生命耗尽");
+                showToast(BIOME_MESSAGES.heatDeath);
                 setOverlay(true, "pause");
             }
         }
@@ -106,6 +112,32 @@ function applyBiomeEffectsToPlayer() {
     if (currentBiome === 'end') updateEndEnvironment();
     // 天空之城风场
     if (typeof updateSkyWindSystem === "function") updateSkyWindSystem();
+}
+
+// ============ 群系轮次追踪（P1-1） ============
+let biomeVisitCount = {};
+
+function getBiomeVisitRound(biomeId) {
+    return biomeVisitCount[biomeId] || 1;
+}
+
+function resetBiomeVisitCount() {
+    biomeVisitCount = {};
+}
+
+// ============ 群系最小停留追踪（P1-2） ============
+let biomeEntryScore = 0;
+let biomeEntryTime = 0;
+
+function canLeaveBiome(currentScore) {
+    const cfg = getBiomeSwitchConfig();
+    const minStay = cfg.minStay && cfg.minStay[currentBiome];
+    if (!minStay) return true;
+    const scoreInBiome = currentScore - biomeEntryScore;
+    const timeInBiome = (Date.now() - biomeEntryTime) / 1000;
+    const minScore = minStay.score || 100;
+    const minTime = minStay.timeSec || 20;
+    return scoreInBiome >= minScore && timeInBiome >= minTime;
 }
 
 // ============ 高温环境（火山/地狱） ============
@@ -379,7 +411,7 @@ function updateExtremeHeatEnvironment() {
     if (biomeHeatDotTimerMs >= 60000) {
         biomeHeatDotTimerMs -= 60000;
         damagePlayer(0.5, player.x, 30);
-        showFloatingText('🔥 高温灼伤', player.x + player.width / 2, player.y - 30, '#FF4500');
+        showFloatingText(BIOME_MESSAGES.heatDamage, player.x + player.width / 2, player.y - 30, '#FF4500');
     }
 }
 
@@ -414,9 +446,9 @@ function checkLavaCollision() {
         if (rectIntersect(player.x, player.y + player.height - 5, player.width, 5, d.x, d.y, d.width, d.height)) {
             playerHp = 0;
             updateHpUI();
-            showFloatingText('💀 掉进了岩浆!', player.x + player.width / 2, player.y - 30, '#FF0000');
+            showFloatingText(BIOME_MESSAGES.lavaFall, player.x + player.width / 2, player.y - 30, '#FF0000');
             paused = true;
-            showToast('💀 生命耗尽');
+            showToast(BIOME_MESSAGES.lavaDeath);
             setOverlay(true, 'pause');
         }
     });

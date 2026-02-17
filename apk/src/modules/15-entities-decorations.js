@@ -345,6 +345,33 @@ class Seaweed extends Decoration {
     }
 }
 
+class LargeSeaweed extends Decoration {
+    constructor(x, y) {
+        super(x, y, "large_seaweed", "ocean");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "large_seaweed", "ocean");
+        this.width = 16;
+        this.height = 60 + Math.random() * 40;
+        this.animated = true;
+        this.swayOffset = Math.random() * Math.PI * 2;
+    }
+}
+
+class CoralDecor extends Decoration {
+    constructor(x, y) {
+        super(x, y, "coral", "ocean");
+        this.reset(x, y);
+    }
+    reset(x, y) {
+        this.resetBase(x, y, "coral", "ocean");
+        this.width = 20 + Math.random() * 15;
+        this.height = 15 + Math.random() * 10;
+        this.coralColor = ['#FF69B4', '#FF8C00', '#9370DB'][Math.floor(Math.random() * 3)];
+    }
+}
+
 class BoatDecor extends Decoration {
     constructor(x, y) {
         super(x, y, "boat", "ocean");

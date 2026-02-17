@@ -211,16 +211,6 @@ const ENEMY_STATS = {
         drops: ["diamond"],
         scoreValue: 28,
         size: { w: 32, h: 52 }
-    },
-    ender_dragon: {
-        hp: 200,
-        speed: 1.5,
-        damage: 30,
-        attackType: "boss",
-        color: "#000000",
-        drops: ["dragon_egg"],
-        scoreValue: 200,
-        size: { w: 120, h: 60 }
     }
 };
 

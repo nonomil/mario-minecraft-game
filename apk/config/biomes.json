@@ -28,6 +28,20 @@
             "deep_dark": 2800,
             "end": 3800,
             "sky_dimension": 5000
+        },
+        "minStay": {
+            "forest": { "score": 100, "timeSec": 20 },
+            "cherry_grove": { "score": 150, "timeSec": 30 },
+            "snow": { "score": 150, "timeSec": 30 },
+            "desert": { "score": 150, "timeSec": 30 },
+            "mushroom_island": { "score": 200, "timeSec": 40 },
+            "mountain": { "score": 200, "timeSec": 35 },
+            "ocean": { "score": 200, "timeSec": 40 },
+            "volcano": { "score": 200, "timeSec": 40 },
+            "nether": { "score": 250, "timeSec": 45 },
+            "deep_dark": { "score": 250, "timeSec": 45 },
+            "end": { "score": 300, "timeSec": 50 },
+            "sky_dimension": { "score": 300, "timeSec": 50 }
         }
     },
     "biomes": {
@@ -236,7 +250,9 @@
             "decorations": {
                 "shell": 0.28,
                 "starfish": 0.22,
-                "seaweed": 0.35,
+                "seaweed": 0.25,
+                "large_seaweed": 0.2,
+                "coral": 0.2,
                 "boat": 0.05
             },
             "treeTypes": {},
@@ -255,7 +271,12 @@
                     "sand",
                     "grass"
                 ]
-            }
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["drowned"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["drowned", "pufferfish"], "spawnRate": 0.8, "poison": true, "eliteChance": 0.1 },
+                { "round": 3, "types": ["drowned", "pufferfish", "guardian"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.2 }
+            ]
         },
         "nether": {
             "id": "nether",
@@ -287,7 +308,12 @@
                     "netherrack",
                     "stone"
                 ]
-            }
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["zombie_pigman"], "spawnRate": 0.6, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["zombie_pigman", "blaze"], "spawnRate": 0.8, "poison": false, "eliteChance": 0.15 },
+                { "round": 3, "types": ["zombie_pigman", "blaze", "ghast"], "spawnRate": 1.0, "poison": false, "eliteChance": 0.25 }
+            ]
         },
         "sky": {
             "id": "sky",
@@ -349,7 +375,12 @@
                 "microPlatformMaxCount": 3,
                 "microMaxRiseBlocks": 3,
                 "microItemChance": 0.12
-            }
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["bee"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["bee", "spore_bug"], "spawnRate": 0.8, "poison": true, "eliteChance": 0.1 },
+                { "round": 3, "types": ["bee", "spore_bug", "fox"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.2 }
+            ]
         },
         "mushroom_island": {
             "id": "mushroom_island",
@@ -385,7 +416,12 @@
                 "floatingGroundTypes": [
                     "mycelium"
                 ]
-            }
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["mooshroom"], "spawnRate": 0.4, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["mooshroom", "spore_bug"], "spawnRate": 0.7, "poison": true, "eliteChance": 0.1 },
+                { "round": 3, "types": ["mooshroom", "spore_bug", "witch"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.2 }
+            ]
         },
         "volcano": {
             "id": "volcano",
@@ -419,7 +455,12 @@
                     "basalt",
                     "stone"
                 ]
-            }
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["magma_cube"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["magma_cube", "blaze"], "spawnRate": 0.8, "poison": false, "eliteChance": 0.1 },
+                { "round": 3, "types": ["magma_cube", "blaze", "wither_skeleton"], "spawnRate": 1.0, "poison": false, "eliteChance": 0.25 }
+            ]
         },
         "deep_dark": {
             "id": "deep_dark",
@@ -450,7 +491,12 @@
                 "floatingGroundTypes": [
                     "sculk"
                 ]
-            }
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["warden_scout"], "spawnRate": 0.4, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["warden_scout", "sculk_crawler"], "spawnRate": 0.7, "poison": true, "eliteChance": 0.15 },
+                { "round": 3, "types": ["warden_scout", "sculk_crawler", "warden"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.3 }
+            ]
         },
         "sky_dimension": {
             "id": "sky_dimension",

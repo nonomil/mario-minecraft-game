@@ -91,9 +91,6 @@ function drawEnemy(enemy) {
         case "enderman":
             drawEnderman(enemy);
             break;
-        case "ender_dragon":
-            drawEnderDragon(enemy.x, enemy.y);
-            break;
         case "piglin":
             drawSimpleBiomeEnemy(enemy, "#C68642", "#8B4513", true);
             break;
@@ -292,26 +289,6 @@ function drawEnderman(enemy) {
     ctx.fillStyle = "#E1BEE7";
     drawMobRect(x, y, s, 5, 3, 1, 1);
     drawMobRect(x, y, s, 10, 3, 1, 1);
-}
-
-function drawEnderDragon(x, y) {
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(x, y + 20, 80, 30);
-    ctx.fillRect(x + 60, y + 30, 40, 15);
-    ctx.fillStyle = "#AA00FF";
-    ctx.fillRect(x + 85, y + 35, 4, 4);
-    const wingFlap = Math.sin(gameFrame * 0.1) * 10;
-    ctx.fillStyle = "#1A0033";
-    ctx.beginPath();
-    ctx.moveTo(x + 20, y + 25);
-    ctx.lineTo(x - 20, y + 10 + wingFlap);
-    ctx.lineTo(x + 10, y + 35);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(x + 60, y + 25);
-    ctx.lineTo(x + 100, y + 10 + wingFlap);
-    ctx.lineTo(x + 70, y + 35);
-    ctx.fill();
 }
 
 function drawGolem(golem) {
