@@ -5,33 +5,33 @@
 
 // ============ 樱花丛林装饰 ============
 
-class CherryTree extends Tree {
-    constructor(x, y) {
-        super(x, y, "cherry");
-        this.reset(x, y);
-    }
-
-    reset(x, y) {
-        this.resetBase(x, y, "cherry", "cherry_grove");
-        this.width = blockSize * 1.8;
-        this.height = blockSize * 3.0;
-        this.hp = 6;
-        this.biome = "cherry_grove";
-        this.petals = 0;
-        this.maxPetals = 5 + Math.floor(Math.random() * 6);
-        const blossomCount = 15 + Math.floor(Math.random() * 6);
-        this.blossomOffsets = Array.from({ length: blossomCount }, () => ({
-            x: (Math.random() - 0.5) * this.width * 0.6,
-            y: (Math.random() - 0.5) * this.height * 0.42,
-            size: 5 + Math.random() * 2,
-            color: ["#FF69B4", "#FFB7C5", "#FFC0CB"][Math.floor(Math.random() * 3)]
-        }));
-        this.branchOffsets = Array.from({ length: 3 }, (_, idx) => ({
-            x: (idx - 1) * (this.width * 0.18),
-            y: this.height * (0.58 - idx * 0.05),
-            len: 10 + Math.random() * 6
-        }));
-    }
+ class CherryTree extends Decoration {
+     constructor(x, groundY) {
+         super(x, groundY, "cherry", "cherry_grove");
+         this.reset(x, groundY);
+     }
+ 
+     reset(x, groundY) {
+         this.width = blockSize * 1.8;
+         this.height = blockSize * 3.0;
+         this.resetBase(x, groundY - this.height, "cherry", "cherry_grove");
+         this.hp = 6;
+         this.shake = 0;
+         this.petals = 0;
+         this.maxPetals = 5 + Math.floor(Math.random() * 6);
+         const blossomCount = 15 + Math.floor(Math.random() * 6);
+         this.blossomOffsets = Array.from({ length: blossomCount }, () => ({
+             x: (Math.random() - 0.5) * this.width * 0.6,
+             y: (Math.random() - 0.5) * this.height * 0.42,
+             size: 5 + Math.random() * 2,
+             color: ["#FF69B4", "#FFB7C5", "#FFC0CB"][Math.floor(Math.random() * 3)]
+         }));
+         this.branchOffsets = Array.from({ length: 3 }, (_, idx) => ({
+             x: (idx - 1) * (this.width * 0.18),
+             y: this.height * (0.58 - idx * 0.05),
+             len: 10 + Math.random() * 6
+         }));
+     }
 
     hit() {
         this.hp--;
@@ -134,27 +134,28 @@ class SmallStreamDecor extends Decoration {
 
 // ============ 蘑菇岛装饰 ============
 
-class GiantMushroom extends Tree {
-    constructor(x, y) {
-        super(x, y, "giant_mushroom");
-        this.reset(x, y);
-    }
-
-    reset(x, y) {
-        this.resetBase(x, y, "giant_mushroom", "mushroom_island");
-        this.width = blockSize * 3.0;
-        this.height = blockSize * 2.8;
-        this.hp = 8;
-        this.biome = "mushroom_island";
-        this.mushroomType = Math.random() < 0.5 ? "brown" : "red";
-        this.bounceFactor = 1.5;
-        this.capSpots = Array.from({ length: 5 + Math.floor(Math.random() * 4) }, () => ({
-            x: (Math.random() - 0.5) * this.width * 0.5,
-            y: (Math.random() - 0.5) * this.height * 0.28,
-            r: 2.5 + Math.random() * 2
-        }));
-        this.capFloatPhase = Math.random() * Math.PI * 2;
-    }
+ class GiantMushroom extends Decoration {
+     constructor(x, groundY) {
+         super(x, groundY, "giant_mushroom", "mushroom_island");
+         this.reset(x, groundY);
+     }
+ 
+     reset(x, groundY) {
+         this.width = blockSize * 3.0;
+         this.height = blockSize * 2.8;
+         this.resetBase(x, groundY - this.height, "giant_mushroom", "mushroom_island");
+         this.hp = 8;
+         this.shake = 0;
+         this.interactive = true;
+         this.mushroomType = Math.random() < 0.5 ? "brown" : "red";
+         this.bounceFactor = 1.5;
+         this.capSpots = Array.from({ length: 5 + Math.floor(Math.random() * 4) }, () => ({
+             x: (Math.random() - 0.5) * this.width * 0.5,
+             y: (Math.random() - 0.5) * this.height * 0.28,
+             r: 2.5 + Math.random() * 2
+         }));
+         this.capFloatPhase = Math.random() * Math.PI * 2;
+     }
 
     hit() {
         this.hp--;
@@ -169,16 +170,23 @@ class GiantMushroom extends Tree {
     onCollision(entity) {
         if (entity === player) {
             // 蘑菇岛弹跳效果
-            const bounceVelocity = -8 * (typeof gameConfig !== 'undefined' ? gameConfig.physics.gravity * 20 : 0.8);
+            const g = (typeof gameConfig !== 'undefined' && gameConfig.physics && typeof gameConfig.physics.gravity === 'number')
+                ? gameConfig.physics.gravity : 0.2;
+            const bounceVelocity = -8 * (g * 20);
+            if (isNaN(bounceVelocity)) return; // 防止 NaN 传播导致卡死
             if (entity.velY > 0 && entity.y + entity.height > this.y + this.height * 0.7) {
                 entity.velY = bounceVelocity * this.bounceFactor;
                 showFloatingText("🍄 弹跳!", entity.x, entity.y - 30, "#BA55D3");
 
                 // 触发蘑菇岛弹跳连击交互链
                 if (typeof incrementMushroomBounce === 'function') {
-                    const bounceChain = incrementMushroomBounce(this.y);
-                    if (bounceChain && bounceChain.bounceMultiplier) {
-                        entity.velY = bounceVelocity * bounceChain.bounceMultiplier;
+                    try {
+                        const bounceChain = incrementMushroomBounce(this.y);
+                        if (bounceChain && typeof bounceChain.bounceMultiplier === 'number') {
+                            entity.velY = bounceVelocity * bounceChain.bounceMultiplier;
+                        }
+                    } catch (e) {
+                        console.warn('[GiantMushroom] incrementMushroomBounce error:', e);
                     }
                 }
             }
@@ -291,6 +299,7 @@ class HotSpring extends Decoration {
     update() {
         super.update();
         if (this.healCooldown > 0) this.healCooldown--;
+        if (!this.steamParticles) this.steamParticles = [];
 
         // 生成蒸汽粒子
         if (Math.random() < 0.1) {
@@ -876,7 +885,7 @@ function renderHotSpring(ctx, d, camX) {
     ctx.fillRect(dx, d.y, d.width, d.height);
     // 蒸汽粒子
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    d.steamParticles.forEach(p => {
+    (d.steamParticles || []).forEach(p => {
         const alpha = p.life / p.maxLife * 0.5;
         ctx.globalAlpha = alpha;
         ctx.beginPath();

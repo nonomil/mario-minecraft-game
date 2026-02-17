@@ -1,4 +1,14 @@
-﻿## v1.15.5（发布日期：2026-02-16）
+﻿## v1.15.7（发布日期：2026-02-17）
+- 类型：PATCH
+- APK 版本：versionName = 1.15.7，versionCode = 98
+- 主要变更
+  - 修复樱花丛林/蘑菇岛卡死根因：GiantMushroom.onCollision() gravity 取值加完整类型检查和 NaN 防护
+  - incrementMushroomBounce 调用加 try-catch 保护，防止交互链异常中断主循环
+  - HotSpring steamParticles 加防御性初始化和 null 安全访问
+  - RAF 循环加顶层 try-catch 护栏：异常时暂停游戏 + 显示错误覆盖层，不再无声卡死
+  - 新增 Playwright 全流程遍历测试：cherry_grove 和 mushroom_island 各 8 秒持续行走 + 群系切换验证
+  - 19/19 测试全部通过
+## v1.15.5（发布日期：2026-02-16）
 - 类型：PATCH
 - APK 版本：versionName = 1.15.5，versionCode = 96
 - 主要变更

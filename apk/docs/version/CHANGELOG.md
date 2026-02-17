@@ -1,4 +1,21 @@
-﻿## v1.15.5 (2026-02-16)
+﻿## v1.15.7 (2026-02-17)
+
+### 樱花丛林/蘑菇岛卡死修复
+- GiantMushroom.onCollision() gravity 取值加完整类型检查（fallback 0.2）和 NaN 防护
+- incrementMushroomBounce 调用加 try-catch，防止交互链异常中断 RAF 主循环
+- HotSpring.update()/renderHotSpring() steamParticles 加防御性初始化和 null 安全访问
+
+### 架构层护栏
+- RAF 循环（14-renderer-main.js）加顶层 try-catch：异常时 paused=true + setOverlay("error")，不重试
+- 确保任何未预见异常不会导致游戏"无声卡死"
+
+### 测试
+- 新增 biomes-fullrun.spec.js：cherry_grove 和 mushroom_island 全流程遍历（8 秒持续行走 + 群系切换）
+- 19/19 测试全部通过
+
+---
+
+## v1.15.5 (2026-02-16)
 
 ### 单词库难度分级
 - 每个词库类别（幼儿园/小学低年级/小学高年级/我的世界）拆分为初级/中级/高级/完整四个选项

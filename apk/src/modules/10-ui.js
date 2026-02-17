@@ -49,6 +49,18 @@ function setOverlay(visible, mode) {
             if (text) text.innerHTML = START_OVERLAY_HINT_HTML;
             if (btn) btn.innerText = "继续";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+        } else if (mode === "error") {
+            if (title) title.innerText = "Error";
+            if (text) {
+                const raw = (typeof window !== "undefined" && window.__MMWG_LAST_ERROR) ? String(window.__MMWG_LAST_ERROR) : "";
+                const safe = raw ? raw.replace(/&/g, "&amp;").replace(/</g, "&lt;") : "";
+                const detail = safe
+                    ? `<pre style="text-align:left;white-space:pre-wrap;max-height:40vh;overflow:auto;margin:10px 0 0;padding:10px;border:1px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.25)">${safe}</pre>`
+                    : "";
+                text.innerHTML = "A fatal error occurred. The game is paused. Please reload." + detail;
+            }
+            if (btn) btn.innerText = "Reload";
+            if (btnScoreRevive) btnScoreRevive.style.display = "none";
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
             if (title) title.innerText = "💀 游戏结束";
@@ -337,6 +349,16 @@ function resumeGameFromOverlay() {
             startedOnce = true;
             setOverlay(false);
         } else {
+            initGame();
+            paused = false;
+            pausedByModal = false;
+            startedOnce = true;
+            setOverlay(false);
+        }
+    } else if (overlayMode === "error") {
+        try {
+            location.reload();
+        } catch {
             initGame();
             paused = false;
             pausedByModal = false;

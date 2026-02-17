@@ -146,7 +146,24 @@ function draw() {
         bossArena.renderBossHpBar(ctx);
     }
 
-    requestAnimationFrame(() => { update(); draw(); });
+    requestAnimationFrame(() => {
+        try {
+            update();
+            draw();
+        } catch (e) {
+            // Single-shot fatal guard: avoid freezing on an uncaught exception.
+            // Do not attempt retries here; pause and surface an error overlay instead.
+            try { console.error('[gameLoop] fatal:', e); } catch {}
+            try {
+                if (typeof window !== "undefined") {
+                    window.__MMWG_LAST_ERROR = (e && e.stack) ? String(e.stack) : String(e && e.message ? e.message : e);
+                }
+            } catch {}
+            paused = true;
+            pausedByModal = true;
+            try { setOverlay(true, "error"); } catch {}
+        }
+    });
 }
 
 function drawBlock(x, y, w, h, type) {
