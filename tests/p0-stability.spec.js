@@ -122,8 +122,8 @@ test("旧ender_dragon触发链已移除", async ({ page, baseURL }) => {
     // 验证 ender_dragon 不在敌人属性表中
     const hasEnderDragonStats = window.ENEMY_STATS && 'ender_dragon' in window.ENEMY_STATS;
     // 验证 bossArena 存在且有 4 个 BOSS 类型
-    const hasBossArena = typeof window.bossArena !== 'undefined';
-    const bossTypes = hasBossArena ? window.bossArena.bossTypes : [];
+    const hasBossArena = typeof bossArena !== 'undefined';
+    const bossTypes = hasBossArena ? bossArena.bossTypes : [];
 
     return {
       hasBossSpawned,

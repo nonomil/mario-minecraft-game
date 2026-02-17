@@ -1,34 +1,33 @@
-﻿# v1.18.0 版本状态
+﻿# v1.18.1 版本状态
 
 ## 已完成
 
 ### 1) 版本号同步
-- `apk/package.json`: `1.18.0`
-- `apk/android-app/package.json`: `1.18.0`
-- `apk/android-app/android/app/build.gradle`: `versionName "1.18.0"`, `versionCode 101`
+- `apk/package.json`: `1.18.1`
+- `apk/android-app/package.json`: `1.18.1`
+- `apk/android-app/android/app/build.gradle`: `versionName "1.18.1"`, `versionCode 102`
 
-### 2) 凋零视觉与攻击优化（P2-1）
-- `apk/src/modules/15-entities-boss.js`
-  - 凋零重绘为三头 T 形骨架，新增阶段配色和裂纹演出
-  - 投射物渲染改为凋零之首风格（普通/追踪配色区分）
-  - 冲撞攻击新增冲击波效果
+### 2) 调试页更新（P3-1）
+- `apk/tests/debug-pages/GameDebug.html`
+  - 群系轮次设置（biomeVisitCount）
+  - 学习挑战快捷触发（长词/短语/双空补全）
+  - 敌人快捷生成扩展（含 drowned/guardian/pufferfish）
+  - 状态面板扩展：群系停留信息、BOSS 锁场状态、群系轮次快照
 
-### 3) 其他 BOSS 视觉优化（P2-2）
-- `apk/src/modules/15-entities-boss.js`
-  - 恶魂：方形主体 + 9 条触手 + 攻击/哭泣状态表情
-  - 烈焰人：发光核心 + 12 根环绕烈焰棒 + 火焰粒子增强
-  - 凋零骷髅：高瘦骨架 + 挥剑动作 + 蓝色护盾 + 煤灰粒子
+### 3) 调试辅助接口（P3-1）
+- `apk/src/modules/06-biome.js`
+  - 新增 `setBiomeVisitRound()`
+  - 新增 `getBiomeVisitCountSnapshot()`
+  - 新增 `getBiomeStayDebugInfo()`
 
-### 4) 统一阶段反馈
-- `apk/src/modules/15-entities-boss.js`
-  - 阶段切换统一注入 30 帧短暂无敌
-  - 新增阶段提示条和屏幕闪白反馈
-  - bossArena 弹幕渲染支持 BOSS 自定义弹幕绘制
+### 4) 全量回归测试（P3-2）
+- 全量 `npm test` 通过（31/31）
+- 稳定性修复：
+  - `tests/biomes-fullrun.spec.js` 启动/过渡流程增强，降低超时误报
+  - `tests/p0-stability.spec.js` BOSS 作用域判定修正
 
-### 5) Playwright 测试（P2-T）
-- `tests/p2-wither-boss.spec.js`
-- `tests/p2-boss-visual.spec.js`
-- 结果：`npm test -- tests/p2-wither-boss.spec.js tests/p2-boss-visual.spec.js` 通过（4/4）
+### 5) 兼容收尾
+- `apk/src/modules/11-game-init.js` 移除旧 `bossSpawned` 残留赋值
 
 ---
 

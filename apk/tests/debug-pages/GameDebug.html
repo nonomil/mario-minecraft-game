@@ -15,7 +15,7 @@
     button { background: #1c2a47; cursor: pointer; }
     button:hover { border-color: var(--accent); }
     .status { font-size: 12px; color: #a9bee6; white-space: pre-wrap; }
-    .game-wrap { height: calc(100vh - 132px); }
+    .game-wrap { height: calc(100vh - 190px); }
     iframe { width: 100%; height: 100%; border: 0; background: #000; }
   </style>
 </head>
@@ -29,6 +29,9 @@
         <option>nether</option><option>deep_dark</option><option>end</option><option>sky_dimension</option>
       </select>
       <button id="btnBiome">切换群系</button>
+      <label>轮次</label>
+      <input id="biomeRound" type="number" value="1" min="1" step="1">
+      <button id="btnBiomeRound">设置轮次</button>
       <label>分数</label>
       <input id="score" type="number" value="0" min="0" step="100">
       <button id="btnScore">设置分数</button>
@@ -42,10 +45,18 @@
       <label>敌人</label>
       <select id="enemy">
         <option>zombie</option><option>skeleton</option><option>creeper</option><option>spider</option><option>enderman</option>
+        <option>drowned</option><option>guardian</option><option>pufferfish</option>
         <option>piglin</option><option>bee</option><option>fox</option><option>spore_bug</option>
         <option>magma_cube</option><option>fire_spirit</option><option>sculk_worm</option><option>shadow_stalker</option>
       </select>
       <button id="btnEnemy">生成敌人</button>
+      <label>挑战</label>
+      <select id="challengeMode">
+        <option value="long_word">长词</option>
+        <option value="phrase">短语</option>
+        <option value="multi_blank">双空补全</option>
+      </select>
+      <button id="btnChallenge">触发挑战</button>
       <label>物品</label>
       <input id="item" type="text" value="diamond">
       <label>数量</label>
@@ -97,12 +108,32 @@
         return;
       }
       statusEl.innerText =
-        "biome=" + (w.currentBiome || "n/a") +
+      const biomeId = w.currentBiome || "n/a";
+      const stay = typeof w.getBiomeStayDebugInfo === "function"
+        ? w.getBiomeStayDebugInfo(Number(w.score) || 0)
+        : null;
+      const rounds = typeof w.getBiomeVisitCountSnapshot === "function"
+        ? w.getBiomeVisitCountSnapshot()
+        : null;
+      const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+      const bossName = boss && boss.name ? boss.name : "-";
+      const bossPhase = boss && boss.phase ? boss.phase : "-";
+
+      statusEl.innerText =
+        "biome=" + biomeId +
         "  score=" + (Number(w.score) || 0) +
         "  runBestScore=" + (Number(w.runBestScore) || 0) +
-        "  villageEnabled=" + (w.settings?.villageEnabled) +
-        "  enemies=" + (Array.isArray(w.enemies) ? w.enemies.length : 0) +
-        "  bossActive=" + Boolean(w.bossArena?.active);
+        "  enemies=" + (Array.isArray(w.enemies) ? w.enemies.length : 0) + "\n" +
+        "stay: scoreInBiome=" + (stay ? Math.floor(stay.scoreInBiome) : "n/a") +
+        "  timeInBiomeSec=" + (stay ? Math.floor(stay.timeInBiomeSec) : "n/a") +
+        "  minScore=" + (stay ? stay.minScore : "n/a") +
+        "  minTimeSec=" + (stay ? stay.minTimeSec : "n/a") +
+        "  canLeave=" + (stay ? stay.canLeave : "n/a") + "\n" +
+        "boss: active=" + Boolean(w.bossArena && w.bossArena.active) +
+        "  locked=" + Boolean(w.bossArena && w.bossArena.viewportLocked) +
+        "  name=" + bossName +
+        "  phase=" + bossPhase + "\n" +
+        "biomeVisitCount=" + (rounds ? JSON.stringify(rounds) : "n/a");
     }
 
     function withGame(fn) {
@@ -135,6 +166,20 @@
         w.currentBiome = biomeId;
         if (typeof w.updateWeatherForBiome === "function" && typeof w.getBiomeById === "function") {
           w.updateWeatherForBiome(w.getBiomeById(biomeId));
+        }
+      });
+    }
+
+    function setBiomeRound() {
+      const biomeId = document.getElementById("biome").value;
+      const roundValue = Math.max(1, Number(document.getElementById("biomeRound").value) || 1);
+      withGame(w => {
+        if (typeof w.setBiomeVisitRound === "function") {
+          w.setBiomeVisitRound(biomeId, roundValue);
+        } else if (typeof w.getBiomeVisitCountSnapshot === "function") {
+          // fallback: 尝试通过切换多次群系累积轮次
+          const rounds = w.getBiomeVisitCountSnapshot();
+          if (!rounds[biomeId]) rounds[biomeId] = 1;
         }
       });
     }
@@ -182,6 +227,35 @@
       });
     }
 
+    function triggerChallenge() {
+      const mode = document.getElementById("challengeMode").value;
+      withGame(w => {
+        patchGodMode(w);
+        if (typeof w.startLearningChallenge !== "function") return;
+
+        const db = Array.isArray(w.wordDatabase) ? w.wordDatabase : [];
+        const fallback = { en: "adventure", zh: "冒险" };
+        let wordObj = fallback;
+        let forcedType = "fill_blank";
+
+        if (mode === "long_word") {
+          wordObj = db.find(item => item && item.en && item.en.length >= 12) || { en: "environment", zh: "环境" };
+          forcedType = "fill_blank";
+        } else if (mode === "phrase") {
+          wordObj = db.find(item => item && item.phrase && item.phraseZh) || { en: "keep going", zh: "继续前进", phrase: "keep going", phraseZh: "继续前进" };
+          forcedType = "listen";
+        } else if (mode === "multi_blank") {
+          wordObj = db.find(item => item && item.en && item.en.length >= 6) || { en: "minecraft", zh: "我的世界" };
+          forcedType = "multi_blank";
+        }
+
+        if (!w.settings) w.settings = {};
+        w.settings.learningMode = true;
+        w.settings.challengeEnabled = true;
+        w.startLearningChallenge(wordObj, forcedType, null);
+      });
+    }
+
     function giveItem() {
       const item = (document.getElementById("item").value || "").trim();
       const count = Math.max(1, Number(document.getElementById("count").value) || 1);
@@ -195,10 +269,12 @@
     }
 
     document.getElementById("btnBiome").addEventListener("click", setBiome);
+    document.getElementById("btnBiomeRound").addEventListener("click", setBiomeRound);
     document.getElementById("btnScore").addEventListener("click", setScore);
     document.getElementById("btnBoss").addEventListener("click", spawnBoss);
     document.getElementById("btnVillage").addEventListener("click", spawnVillage);
     document.getElementById("btnEnemy").addEventListener("click", spawnEnemy);
+    document.getElementById("btnChallenge").addEventListener("click", triggerChallenge);
     document.getElementById("btnItem").addEventListener("click", giveItem);
     document.getElementById("btnGod").addEventListener("click", function () {
       debugGodMode = !debugGodMode;

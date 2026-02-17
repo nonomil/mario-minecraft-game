@@ -125,6 +125,16 @@ function resetBiomeVisitCount() {
     biomeVisitCount = {};
 }
 
+function setBiomeVisitRound(biomeId, roundValue) {
+    if (!biomeId) return;
+    const normalized = Math.max(1, Math.floor(Number(roundValue) || 1));
+    biomeVisitCount[biomeId] = normalized;
+}
+
+function getBiomeVisitCountSnapshot() {
+    return { ...biomeVisitCount };
+}
+
 // ============ 群系最小停留追踪（P1-2） ============
 let biomeEntryScore = 0;
 let biomeEntryTime = 0;
@@ -138,6 +148,23 @@ function canLeaveBiome(currentScore) {
     const minScore = minStay.score || 100;
     const minTime = minStay.timeSec || 20;
     return scoreInBiome >= minScore && timeInBiome >= minTime;
+}
+
+function getBiomeStayDebugInfo(scoreValue = getProgressScore()) {
+    const cfg = getBiomeSwitchConfig();
+    const minStay = cfg.minStay && currentBiome ? cfg.minStay[currentBiome] : null;
+    const scoreInBiome = (Number(scoreValue) || 0) - biomeEntryScore;
+    const timeInBiomeSec = biomeEntryTime > 0 ? Math.max(0, (Date.now() - biomeEntryTime) / 1000) : 0;
+    return {
+        biomeId: currentBiome || null,
+        biomeEntryScore,
+        biomeEntryTime,
+        scoreInBiome,
+        timeInBiomeSec,
+        minScore: Number(minStay?.score || 0),
+        minTimeSec: Number(minStay?.timeSec || 0),
+        canLeave: canLeaveBiome(Number(scoreValue) || 0)
+    };
 }
 
 // ============ 高温环境（火山/地狱） ============

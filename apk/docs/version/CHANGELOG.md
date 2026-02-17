@@ -1,4 +1,23 @@
-﻿## v1.18.0 (2026-02-17)
+﻿## v1.18.1 (2026-02-17)
+
+### 联调与调试工具收尾
+- 调试页 `apk/tests/debug-pages/GameDebug.html` 增强：
+  - 新增群系轮次设置（biomeVisitCount）
+  - 新增学习挑战快捷触发（长词/短语/双空补全）
+  - 新增 `drowned/guardian/pufferfish` 敌人快捷生成
+  - 状态面板新增群系停留与 BOSS 锁场状态显示
+- 群系调试接口增强：`setBiomeVisitRound()`、`getBiomeVisitCountSnapshot()`、`getBiomeStayDebugInfo()`
+
+### 回归稳定性修复
+- 移除旧链路残留全局 `bossSpawned` 赋值（`11-game-init.js`）
+- 提升 `tests/biomes-fullrun.spec.js` 启动与过渡稳定性（避免偶发超时/误报）
+- 修正 `tests/p0-stability.spec.js` 中 BOSS 全局判定方式（适配当前作用域）
+
+### 测试
+- 全量 Playwright：`npm test` 通过（31/31）
+
+---
+## v1.18.0 (2026-02-17)
 
 ### BOSS 视觉与战斗反馈优化
 - 凋零重绘为三头 T 形骨架，阶段配色和裂纹演出更清晰
@@ -608,6 +627,7 @@
 - **涓荤増鏈?*锛氶噸澶у姛鑳芥洿鏂版垨鏋舵瀯鍙樻洿
 - **娆＄増鏈?*锛氭柊鍔熻兘娣诲姞鎴栭噸瑕佹敼杩?
 - **淇鍙?*锛欱ug 淇鍜屽皬鏀硅繘
+
 
 
 

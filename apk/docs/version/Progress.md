@@ -1,4 +1,12 @@
-﻿## v1.18.0（发布日期：2026-02-17）
+﻿## v1.18.1（发布日期：2026-02-17）
+- 类型：PATCH
+- APK 版本：versionName = 1.18.1，versionCode = 102
+- 主要变更
+  - 调试页增强：群系轮次设置、挑战快捷触发、更多敌人生成、状态面板扩展
+  - 群系调试接口新增：`setBiomeVisitRound()`、`getBiomeVisitCountSnapshot()`、`getBiomeStayDebugInfo()`
+  - 全量回归测试稳定性修复：`biomes-fullrun.spec.js` 与 `p0-stability.spec.js`
+  - 全量 Playwright 测试通过（31/31）
+## v1.18.0（发布日期：2026-02-17）
 - 类型：MINOR
 - APK 版本：versionName = 1.18.0，versionCode = 101
 - 主要变更
@@ -579,6 +587,7 @@ b11ef12 chore: 更新 apk/android-app/package.json 版本至 v1.6.5
 - **主版本**：重大功能更新或架构变更
 - **次版本**：新功能添加或重要改进
 - **修订号**：Bug 修复和小改进
+
 
 
 

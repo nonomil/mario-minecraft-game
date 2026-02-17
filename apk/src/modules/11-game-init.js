@@ -58,7 +58,6 @@ function initGame() {
     resetInventory();
     updateInventoryUI();
     player = createPlayer();
-    bossSpawned = false;
     // Reset BOSS arena state
     if (typeof bossArena !== 'undefined' && bossArena) {
         bossArena.active = false;
