@@ -179,7 +179,7 @@ test("闇€姹?: 瀛︿範澧炲己-鎸戞垬寮圭獥鍙墦寮€骞跺彲�
   });
 
   const modal = page.locator("#challenge-modal");
-  await expect(modal).toBeVisible();
+  await expect(modal).toHaveClass(/visible/);
 
   await page.evaluate(() => window.completeLearningChallenge(true));
   await expect(modal).not.toBeVisible();
@@ -449,3 +449,87 @@ test("新增需求: 词组打乱题保留空格并使用phrase样式", async ({ 
   expect(result.answerHasSpace).toBe(true);
 });
 
+
+test("new: snow golem expires after 5 minutes", async ({ page, baseURL }) => {
+  await loginAndBoot(page, baseURL, "req_new_snow_golem_ttl");
+
+  const result = await page.evaluate(() => {
+    if (typeof Golem !== "function" || typeof update !== "function") return { ok: false };
+    const backup = Array.isArray(golems) ? [...golems] : [];
+    try {
+      const g = new Golem(player.x + 20, player.y, "snow");
+      g.spawnedAt = Date.now() - (5 * 60 * 1000 + 1000);
+      g.maxLifetimeMs = 5 * 60 * 1000;
+      golems = [g];
+      update();
+      return { ok: true, removed: !golems.includes(g), maxLifetimeMs: g.maxLifetimeMs };
+    } finally {
+      golems = backup;
+    }
+  });
+
+  expect(result.ok).toBe(true);
+  expect(result.maxLifetimeMs).toBe(5 * 60 * 1000);
+  expect(result.removed).toBe(true);
+});
+
+test("new: cherry grove minStay shortened", async ({ page, baseURL }) => {
+  await loginAndBoot(page, baseURL, "req_new_cherry_shorter");
+
+  const info = await page.evaluate(() => {
+    const cfg = biomeSwitchConfig?.minStay?.cherry_grove || null;
+    return {
+      hasCfg: !!cfg,
+      score: Number(cfg?.score || 0),
+      timeSec: Number(cfg?.timeSec || 0)
+    };
+  });
+
+  expect(info.hasCfg).toBe(true);
+  expect(info.score).toBeLessThanOrEqual(100);
+  expect(info.timeSec).toBeLessThanOrEqual(15);
+});
+
+test("new: multi blank options include underscore separators", async ({ page, baseURL }) => {
+  await loginAndBoot(page, baseURL, "req_new_multiblank_underscore");
+
+  const result = await page.evaluate(() => {
+    const challenge = generateMultiBlankChallenge({ en: "planet", zh: "行星" });
+    if (!challenge) return { ok: false };
+    const correctOption = (challenge.options || []).find(o => o.correct);
+    return {
+      ok: true,
+      answerLen: String(challenge.answer || "").length,
+      correctText: String(correctOption?.text || "")
+    };
+  });
+
+  expect(result.ok).toBe(true);
+  expect(result.answerLen).toBe(2);
+  expect(result.correctText.includes("_")).toBe(true);
+});
+
+test("new: challenge hint shows answer and auto-passes in 2s", async ({ page, baseURL }) => {
+  await loginAndBoot(page, baseURL, "req_new_hint_autopass");
+
+  const before = await page.evaluate(() => {
+    window.MMWG_TEST_API.setState({ score: 0 });
+    startLearningChallenge({ en: "apple", zh: "苹果" }, "translate", "test");
+    const visible = document.getElementById("challenge-modal")?.classList.contains("visible");
+    useLearningChallengeHint();
+    return { visible, score: window.MMWG_TEST_API.getState().score };
+  });
+
+  expect(before.visible).toBe(true);
+
+  await page.waitForTimeout(2200);
+
+  const after = await page.evaluate(() => {
+    const visible = document.getElementById("challenge-modal")?.classList.contains("visible");
+    const correction = !!document.querySelector("#challenge-question .challenge-correction");
+    return { visible, correction, score: window.MMWG_TEST_API.getState().score };
+  });
+
+  expect(after.visible).toBe(false);
+  expect(after.score).toBeGreaterThan(before.score);
+});

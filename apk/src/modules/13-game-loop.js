@@ -51,6 +51,7 @@ function update() {
     if (typeof updateAllInteractionChains === 'function') updateAllInteractionChains();
     if (typeof updateBiomeVisuals === 'function') updateBiomeVisuals();
     if (typeof updateDeepDarkNoiseSystem === 'function') updateDeepDarkNoiseSystem();
+    if (typeof updatePlayerPoisonStatus === "function") updatePlayerPoisonStatus();
     tickWeather();
 
     const isUnderwater = (currentBiome === 'ocean');
@@ -352,7 +353,19 @@ function update() {
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();
 
     golems.forEach(g => optimizedUpdate(g, () => g.update(player, playerPositionHistory, enemies, platforms)));
-    golems = golems.filter(g => !g.remove && g.x > cameraX - 260);
+    golems = golems.filter(g => {
+        if (!g || g.remove || g.x <= cameraX - 260) return false;
+        if (g.type === "snow") {
+            if (!g.spawnedAt) g.spawnedAt = Date.now();
+            if (!g.maxLifetimeMs) g.maxLifetimeMs = 5 * 60 * 1000;
+            if (Date.now() - g.spawnedAt >= g.maxLifetimeMs) {
+                g.remove = true;
+                showFloatingText("⏱️ 消失", g.x, g.y - 20, "#B0BEC5");
+                return false;
+            }
+        }
+        return true;
+    });
 
     enemies.forEach(e => {
         optimizedUpdate(e, () => e.update(player));
@@ -1136,6 +1149,10 @@ function spawnGolem(type) {
         return;
     }
     const newGolem = new Golem(player.x + 50, player.y, type);
+    if (type === "snow") {
+        newGolem.spawnedAt = Date.now();
+        newGolem.maxLifetimeMs = 5 * 60 * 1000;
+    }
     golems.push(newGolem);
     const name = type === "iron" ? "铁傀儡" : "雪傀儡";
     showToast(`✅ 成功召唤 ${name}！`);

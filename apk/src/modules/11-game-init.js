@@ -94,6 +94,7 @@ function startLevel(idx) {
     particles = [];
     enemies = [];
     golems = [];
+    if (typeof resetPlayerPoisonStatus === "function") resetPlayerPoisonStatus();
     digHits.clear();
     resetProjectiles();
     playerPositionHistory = [];

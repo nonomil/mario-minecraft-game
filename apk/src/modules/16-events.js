@@ -319,6 +319,7 @@ function wireLearningModals() {
     challengeInputEl = document.getElementById("challenge-input");
     challengeTimerEl = document.getElementById("challenge-timer");
     challengeRepeatBtn = document.getElementById("challenge-repeat");
+    challengeHintBtn = document.getElementById("challenge-hint");
     wordMatchScreenEl = document.getElementById("word-match-screen");
     matchLeftEl = document.getElementById("match-left");
     matchRightEl = document.getElementById("match-right");
@@ -334,6 +335,13 @@ function wireLearningModals() {
         challengeRepeatBtn.addEventListener("click", () => {
             if (currentLearningChallenge?.wordObj) {
                 speakWord(currentLearningChallenge.wordObj);
+            }
+        });
+    }
+    if (challengeHintBtn) {
+        challengeHintBtn.addEventListener("click", () => {
+            if (typeof useLearningChallengeHint === "function") {
+                useLearningChallengeHint();
             }
         });
     }

@@ -166,11 +166,21 @@ function generateMultiBlankChallenge(wordObj) {
     positions.sort((a, b) => a - b);
     const missing = positions.map(i => en[i]).join("");
     const display = en.split("").map((ch, idx) => (positions.includes(idx) ? "_" : ch)).join(" ");
+    const formatMissingWithGaps = (raw, idxList) => {
+        if (!raw || !idxList || idxList.length <= 1) return raw;
+        let out = raw[0];
+        for (let i = 1; i < raw.length; i++) {
+            const gap = Math.max(0, (idxList[i] - idxList[i - 1] - 1));
+            out += "_".repeat(gap + 1) + raw[i];
+        }
+        return out;
+    };
     const options = [missing];
     while (options.length < 4) {
         const fake = positions.map(() => "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]).join("");
         if (!options.includes(fake)) options.push(fake);
     }
+    const missingDisplay = formatMissingWithGaps(missing, positions);
 
     return {
         mode: "fill_blank",
@@ -180,8 +190,13 @@ function generateMultiBlankChallenge(wordObj) {
             `<div class="challenge-fill-hint">填入缺少的 ${positions.length} 个字母</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,
-        options: shuffle(options).map(opt => ({ text: opt, value: opt, correct: opt === missing })),
-        answer: missing
+        options: shuffle(options).map(opt => ({
+            text: formatMissingWithGaps(opt, positions),
+            value: opt,
+            correct: opt === missing
+        })),
+        answer: missing,
+        hintLettersDisplay: missingDisplay
     };
 }
 
@@ -431,6 +446,10 @@ function showLearningChallenge(challenge) {
     if (challengeRepeatBtn) {
         challengeRepeatBtn.style.display = challenge.type === "listen" ? "inline-flex" : "none";
     }
+    if (challengeHintBtn) {
+        challengeHintBtn.style.display = "inline-flex";
+        challengeHintBtn.disabled = false;
+    }
 }
 
 function updateChallengeTimerDisplay() {
@@ -466,10 +485,13 @@ function showChallengeCorrection(wordObj) {
     const zh = String(wordObj.zh || "").trim();
     const phrase = String(wordObj.phrase || "").trim();
     const phraseZh = String(wordObj.phraseZh || "").trim();
+    const hintLetters = String(currentLearningChallenge?.hintLettersDisplay || "").trim();
+    const hintLine = hintLetters ? `<div style="color:#90CAF9;font-size:12px;margin-top:4px;">缺失字母: ${hintLetters}</div>` : "";
 
     correctionDiv.innerHTML =
         `<div style="color:#4CAF50;font-size:14px;">正确答案</div>` +
         `<div style="color:#FFF;font-size:18px;font-weight:bold;margin-top:4px;">${en}${zh ? ` = ${zh}` : ""}</div>` +
+        hintLine +
         (phrase ? `<div style="color:#FFD54F;font-size:12px;margin-top:4px;">${phrase}${phraseZh ? ` · ${phraseZh}` : ""}</div>` : "");
     challengeQuestionEl.appendChild(correctionDiv);
 
@@ -480,6 +502,15 @@ function showChallengeCorrection(wordObj) {
         });
     }
     if (typeof speakWord === "function") speakWord(wordObj);
+}
+
+function useLearningChallengeHint() {
+    if (!currentLearningChallenge?.wordObj) return;
+    if (challengeHintBtn) challengeHintBtn.disabled = true;
+    showChallengeCorrection(currentLearningChallenge.wordObj);
+    setTimeout(() => {
+        completeLearningChallenge(true);
+    }, 2000);
 }
 
 function completeLearningChallenge(correct) {

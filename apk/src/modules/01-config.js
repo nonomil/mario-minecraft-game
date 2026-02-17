@@ -63,6 +63,7 @@ let challengeInputWrapperEl = null;
 let challengeInputEl = null;
 let challengeTimerEl = null;
 let challengeRepeatBtn = null;
+let challengeHintBtn = null;
 let wordMatchScreenEl = null;
 let matchLeftEl = null;
 let matchRightEl = null;

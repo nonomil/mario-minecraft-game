@@ -1,27 +1,27 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>我的世界：单词大冒险 (宝箱增强版)</title>
+    <title>鎴戠殑涓栫晫锛氬崟璇嶅ぇ鍐掗櫓 (瀹濈澧炲己鐗?</title>
     <link rel="stylesheet" href="src/styles.css">
 </head>
 <body>
 
 <div id="login-screen" class="login-screen visible">
     <div class="login-container">
-        <h1 class="game-title">Minecraft 单词游戏</h1>
+        <h1 class="game-title">Minecraft 鍗曡瘝娓告垙</h1>
         <div id="login-form" class="login-form">
             <div class="form-group">
-                <label for="username-input">请输入用户名</label>
-                <input type="text" id="username-input" placeholder="昵称" maxlength="20">
+                <label for="username-input">璇疯緭鍏ョ敤鎴峰悕</label>
+                <input type="text" id="username-input" placeholder="鏄电О" maxlength="20">
             </div>
-            <button id="btn-login" class="game-btn">连接</button>
+            <button id="btn-login" class="game-btn">杩炴帴</button>
         </div>
         <div id="account-list" class="account-list">
-            <h3>已有账号</h3>
+            <h3>宸叉湁璐﹀彿</h3>
             <div id="accounts-container"></div>
-            <button id="btn-new-account" class="game-btn game-btn-small">创建新账号</button>
+            <button id="btn-new-account" class="game-btn game-btn-small">鍒涘缓鏂拌处鍙?/button>
         </div>
     </div>
 </div>
@@ -31,33 +31,33 @@
 
         <div id="ui-layer">
         <div class="hud-top">
-            <div class="hud-box">🪙 金币: <span id="score">0</span></div>
+            <div class="hud-box">馃獧 閲戝竵: <span id="score">0</span></div>
             <div class="hud-box" id="hp"></div>
             <div class="hud-box" id="word-display">Start!</div>
-            <div class="hud-box" id="level-info">🌲 森林</div>
-            <div class="hud-box" id="weapon-info">⚔️ 石剑</div>
-            <div class="hud-box hud-box-clickable" id="armor-status">🛡️ 无</div>
+            <div class="hud-box" id="level-info">馃尣 妫灄</div>
+            <div class="hud-box" id="weapon-info">鈿旓笍 鐭冲墤</div>
+            <div class="hud-box hud-box-clickable" id="armor-status">馃洝锔?鏃?/div>
         </div>
 
         <div class="btn-group-left">
-            <button class="game-btn" id="btn-inventory">🎒 背包</button>
+            <button class="game-btn" id="btn-inventory">馃帓 鑳屽寘</button>
         </div>
 
         <div class="btn-group">
-            <button class="game-btn" id="btn-settings">⚙️ 设置</button>
-            <button class="game-btn" id="btn-profile">📋 档案</button>
-            <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
+            <button class="game-btn" id="btn-settings">鈿欙笍 璁剧疆</button>
+            <button class="game-btn" id="btn-profile">馃搵 妗ｆ</button>
+            <button class="game-btn" id="btn-repeat-pause">馃攰 閲嶈/鏆傚仠</button>
         </div>
 
         <div class="inventory-bar">
-            <div class="inv-slot" title="钻石"><span class="inv-icon">💎</span><span class="inv-count" id="count-diamond">0</span></div>
-            <div class="inv-slot" title="南瓜"><span class="inv-icon">🎃</span><span class="inv-count" id="count-pumpkin">0</span></div>
-            <div class="inv-slot" title="铁块"><span class="inv-icon">🧱</span><span class="inv-count" id="count-iron">0</span></div>
-            <div class="inv-slot" title="木棍"><span class="inv-icon">🥢</span><span class="inv-count" id="count-stick">0</span></div>
-            <div class="inv-slot" title="石剑"><span class="inv-icon">⚔️</span><span class="inv-count" id="count-stone_sword">0</span></div>
-            <div class="inv-slot" title="铁镐"><span class="inv-icon">⛏️</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
-            <div class="inv-slot" title="弓"><span class="inv-icon">🏹</span><span class="inv-count" id="count-bow">0</span></div>
-            <div class="inv-slot" title="箭矢"><span class="inv-icon">🏹</span><span class="inv-count" id="count-arrow">0</span></div>
+            <div class="inv-slot" title="閽荤煶"><span class="inv-icon">馃拵</span><span class="inv-count" id="count-diamond">0</span></div>
+            <div class="inv-slot" title="鍗楃摐"><span class="inv-icon">馃巸</span><span class="inv-count" id="count-pumpkin">0</span></div>
+            <div class="inv-slot" title="閾佸潡"><span class="inv-icon">馃П</span><span class="inv-count" id="count-iron">0</span></div>
+            <div class="inv-slot" title="鏈ㄦ"><span class="inv-icon">馃ア</span><span class="inv-count" id="count-stick">0</span></div>
+            <div class="inv-slot" title="鐭冲墤"><span class="inv-icon">鈿旓笍</span><span class="inv-count" id="count-stone_sword">0</span></div>
+            <div class="inv-slot" title="閾侀晲"><span class="inv-icon">鉀忥笍</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
+            <div class="inv-slot" title="寮?><span class="inv-icon">馃徆</span><span class="inv-count" id="count-bow">0</span></div>
+            <div class="inv-slot" title="绠煝"><span class="inv-icon">馃徆</span><span class="inv-count" id="count-arrow">0</span></div>
         </div>
 
         <div id="toast">Level Up!</div>
@@ -72,16 +72,16 @@
 
         <div id="touch-controls" aria-hidden="true">
             <div class="touch-left">
-                <button class="touch-btn" data-action="left">⬅️</button>
-                <button class="touch-btn" data-action="right">➡️</button>
+                <button class="touch-btn" data-action="left">猬咃笍</button>
+                <button class="touch-btn" data-action="right">鉃★笍</button>
             </div>
             <div class="touch-right">
-                <button class="touch-btn" data-action="use-diamond">💎</button>
-                <button class="touch-btn" data-action="interact">🧰</button>
-                <button class="touch-btn" data-action="switch">🔁</button>
+                <button class="touch-btn" data-action="use-diamond">馃拵</button>
+                <button class="touch-btn" data-action="interact">馃О</button>
+                <button class="touch-btn" data-action="switch">馃攣</button>
                 <span class="touch-spacer"></span>
-                <button class="touch-btn" data-action="jump">⤴️</button>
-                <button class="touch-btn" data-action="attack">🗡️</button>
+                <button class="touch-btn" data-action="jump">猡达笍</button>
+                <button class="touch-btn" data-action="attack">馃棥锔?/button>
             </div>
         </div>
     </div>
@@ -89,171 +89,171 @@
 
 <div id="screen-overlay" class="screen-overlay" aria-hidden="true">
     <div class="overlay-card">
-        <div class="overlay-title" id="overlay-title">准备开始</div>
+        <div class="overlay-title" id="overlay-title">鍑嗗寮€濮?/div>
                         <div class="overlay-text" id="overlay-text">
-            ⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>
-            ⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>
-            📦 打开宝箱  ⛏️ 采集
+            猬咃笍鉃★笍 绉诲姩  猬嗭笍 璺?鍙簩娈佃烦)<br>
+            鈿旓笍 鏀诲嚮  馃攧 鍒囨崲姝﹀櫒  馃拵 浣跨敤閽荤煶<br>
+            馃摝 鎵撳紑瀹濈  鉀忥笍 閲囬泦
         </div>
         <div class="overlay-buttons">
-            <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
-            <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">积分复活</button>
-            <button class="overlay-btn overlay-leaderboard" id="btn-overlay-leaderboard" style="display:none;">🏆 排行榜</button>
+            <button class="overlay-btn" id="btn-overlay-action">寮€濮嬫父鎴?/button>
+            <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">绉垎澶嶆椿</button>
+            <button class="overlay-btn overlay-leaderboard" id="btn-overlay-leaderboard" style="display:none;">馃弳 鎺掕姒?/button>
         </div>
     </div>
 </div>
 
 <div id="settings-modal" aria-hidden="true">
-    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="游戏设置">
-        <div class="settings-title">游戏设置</div>
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="娓告垙璁剧疆">
+        <div class="settings-title">娓告垙璁剧疆</div>
 
         <div class="settings-actions settings-actions-top">
-            <button class="game-btn" id="btn-settings-save">保存</button>
+            <button class="game-btn" id="btn-settings-save">淇濆瓨</button>
         </div>
 
         <div class="settings-row settings-row-keys">
-            <div class="settings-label">操作提示</div>
+            <div class="settings-label">鎿嶄綔鎻愮ず</div>
                                     <div class="settings-hint">
-                ⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>
-            ⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>
-            📦 打开宝箱  ⛏️ 采集
+                猬咃笍鉃★笍 绉诲姩  猬嗭笍 璺?鍙簩娈佃烦)<br>
+            鈿旓笍 鏀诲嚮  馃攧 鍒囨崲姝﹀櫒  馃拵 浣跨敤閽荤煶<br>
+            馃摝 鎵撳紑瀹濈  鉀忥笍 閲囬泦
             </div>
         </div>
 
 
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 瀛︿範妯″紡(鏇村皯骞叉壈)</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-challenge-mode"> 学习挑战(随机弹出)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-challenge-mode"> 瀛︿範鎸戞垬(闅忔満寮瑰嚭)</label>
         </div>
         <div class="settings-row">
-            <div class="settings-label">挑战频率</div>
+            <div class="settings-label">鎸戞垬棰戠巼</div>
             <select class="settings-select" id="opt-challenge-freq">
-                <option value="0.15">低</option>
-                <option value="0.3">中</option>
-                <option value="0.45">高</option>
+                <option value="0.15">浣?/option>
+                <option value="0.3">涓?/option>
+                <option value="0.45">楂?/option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">单词卡停留时长</div>
+            <div class="settings-label">鍗曡瘝鍗″仠鐣欐椂闀?/div>
             <select class="settings-select" id="opt-word-card-duration">
-                <option value="700">短(0.7秒)</option>
-                <option value="900">标准(0.9秒)</option>
-                <option value="1200">长(1.2秒)</option>
-                <option value="1500">更长(1.5秒)</option>
+                <option value="700">鐭?0.7绉?</option>
+                <option value="900">鏍囧噯(0.9绉?</option>
+                <option value="1200">闀?1.2绉?</option>
+                <option value="1500">鏇撮暱(1.5绉?</option>
             </select>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
+            <label class="settings-label"><input type="checkbox" id="opt-speech"> 鏈楄鍗曡瘝</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-speech-zh-enabled"> 朗读中文释义</label>
+            <label class="settings-label"><input type="checkbox" id="opt-speech-zh-enabled"> 鏈楄涓枃閲婁箟</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
+            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 鑳屾櫙闊充箰</label>
         </div>
         <div class="settings-row">
-            <div class="settings-label">英文语速</div>
+            <div class="settings-label">鑻辨枃璇€?/div>
             <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">中文语速</div>
+            <div class="settings-label">涓枃璇€?/div>
             <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">界面大小</div>
+            <div class="settings-label">鐣岄潰澶у皬</div>
             <input class="settings-range" id="opt-ui-scale" type="range" min="0.8" max="1.4" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">显示模式</div>
+            <div class="settings-label">鏄剧ず妯″紡</div>
             <select class="settings-select" id="opt-device-mode">
-                <option value="auto">自动</option>
-                <option value="phone">手机</option>
-                <option value="tablet">平板</option>
+                <option value="auto">鑷姩</option>
+                <option value="phone">鎵嬫満</option>
+                <option value="tablet">骞虫澘</option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">屏幕方向</div>
+            <div class="settings-label">灞忓箷鏂瑰悜</div>
             <select class="settings-select" id="opt-orientation-lock">
-                <option value="auto">自动</option>
-                <option value="portrait">竖屏</option>
-                <option value="landscape">横屏</option>
+                <option value="auto">鑷姩</option>
+                <option value="portrait">绔栧睆</option>
+                <option value="landscape">妯睆</option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">动作速度</div>
+            <div class="settings-label">鍔ㄤ綔閫熷害</div>
             <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">移动速度</div>
+            <div class="settings-label">绉诲姩閫熷害</div>
             <select class="settings-select" id="opt-speed">
-                <option value="slow">慢（练习）</option>
-                <option value="normal">普通</option>
-                <option value="fast">快（挑战）</option>
+                <option value="slow">鎱紙缁冧範锛?/option>
+                <option value="normal">鏅€?/option>
+                <option value="fast">蹇紙鎸戞垬锛?/option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">游戏难度</div>
+            <div class="settings-label">娓告垙闅惧害</div>
             <select class="settings-select" id="opt-difficulty">
-                <option value="auto">自动(随积分)</option>
-                <option value="新手">新手</option>
-                <option value="简单">简单</option>
-                <option value="普通">普通</option>
-                <option value="困难">困难</option>
-                <option value="地狱">地狱</option>
+                <option value="auto">鑷姩(闅忕Н鍒?</option>
+                <option value="鏂版墜">鏂版墜</option>
+                <option value="绠€鍗?>绠€鍗?/option>
+                <option value="鏅€?>鏅€?/option>
+                <option value="鍥伴毦">鍥伴毦</option>
+                <option value="鍦扮嫳">鍦扮嫳</option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">环境切换周期(分数)</div>
+            <div class="settings-label">鐜鍒囨崲鍛ㄦ湡(鍒嗘暟)</div>
             <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
+            <label class="settings-label"><input type="checkbox" id="opt-touch"> 灞忓箷鎸夐敭</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重复(轮换)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 鍗曡瘝涓嶉噸澶?杞崲)</label>
         </div>
 
         <div class="settings-row">
-            <div class="settings-label">词库</div>
+            <div class="settings-label">璇嶅簱</div>
             <select class="settings-select" id="opt-vocab"></select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">词库预览</div>
-            <div id="vocab-preview" class="settings-hint">自动轮换词库</div>
+            <div class="settings-label">璇嶅簱棰勮</div>
+            <div id="vocab-preview" class="settings-hint">鑷姩杞崲璇嶅簱</div>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-show-image"> 显示图片</label>
+            <label class="settings-label"><input type="checkbox" id="opt-show-image"> 鏄剧ず鍥剧墖</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-word-gate"> 词语闸门(触发额外挑战)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-word-gate"> 璇嶈闂搁棬(瑙﹀彂棰濆鎸戞垬)</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-word-match"> 词语匹配复活(结束时)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-word-match"> 璇嶈鍖归厤澶嶆椿(缁撴潫鏃?</label>
         </div>
 
         <div class="settings-row settings-row-keys">
-            <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互,切换,使用钻石</div>
+            <div class="settings-label">鎸夐敭(閫楀彿鍒嗛殧): 璺宠穬,鏀诲嚮,浜や簰,鍒囨崲,浣跨敤閽荤煶</div>
             <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
         </div>
 
         <div class="settings-row settings-row-progress">
-            <div class="settings-label">词库轮换</div>
-            <div class="settings-progress" id="progress-vocab">未加载</div>
-            <button class="game-btn game-btn-danger" id="btn-reset-progress">重置轮换</button>
+            <div class="settings-label">璇嶅簱杞崲</div>
+            <div class="settings-progress" id="progress-vocab">鏈姞杞?/div>
+            <button class="game-btn game-btn-danger" id="btn-reset-progress">閲嶇疆杞崲</button>
         </div>
 
         <div class="settings-actions">
-            <button class="game-btn" id="btn-settings-close">关闭</button>
+            <button class="game-btn" id="btn-settings-close">鍏抽棴</button>
         </div>
     </div>
 </div>
 <div id="armor-select-modal" class="armor-modal" aria-hidden="true">
     <div class="armor-modal-content">
         <div class="armor-modal-header">
-            <span>盔甲仓库</span>
-            <button class="game-btn game-btn-small" id="btn-armor-close">关闭</button>
+            <span>鐩旂敳浠撳簱</span>
+            <button class="game-btn game-btn-small" id="btn-armor-close">鍏抽棴</button>
         </div>
         <div class="armor-list"></div>
     </div>
@@ -262,14 +262,14 @@
 <div id="inventory-modal" class="inventory-modal" aria-hidden="true">
     <div class="inventory-panel">
         <div class="inventory-header">
-            <span>🎒 背包</span>
-            <button class="game-btn game-btn-small" id="btn-inventory-close">关闭</button>
+            <span>馃帓 鑳屽寘</span>
+            <button class="game-btn game-btn-small" id="btn-inventory-close">鍏抽棴</button>
         </div>
         <div class="inventory-tabs">
-            <button class="inventory-tab active" data-tab="items">物品</button>
-            <button class="inventory-tab" data-tab="materials">材料</button>
-            <button class="inventory-tab" data-tab="equipment">装备</button>
-            <button class="inventory-tab" data-tab="collectibles">收藏品</button>
+            <button class="inventory-tab active" data-tab="items">鐗╁搧</button>
+            <button class="inventory-tab" data-tab="materials">鏉愭枡</button>
+            <button class="inventory-tab" data-tab="equipment">瑁呭</button>
+            <button class="inventory-tab" data-tab="collectibles">鏀惰棌鍝?/button>
         </div>
         <div class="inventory-content" id="inventory-content"></div>
     </div>
@@ -278,16 +278,17 @@
 <div id="challenge-modal" class="learning-modal" aria-hidden="true">
     <div class="learning-modal-content">
         <div class="learning-modal-header">
-            <span>学习挑战</span>
+            <span>瀛︿範鎸戞垬</span>
+            <button class="game-btn game-btn-small challenge-hint-btn" id="challenge-hint">提示</button>
         </div>
         <div class="learning-modal-question" id="challenge-question"></div>
         <div class="learning-modal-options" id="challenge-options"></div>
         <div class="learning-modal-input" id="challenge-input-wrapper">
-            <input type="text" id="challenge-input" placeholder="输入英文或中文" autocomplete="off">
+            <input type="text" id="challenge-input" placeholder="杈撳叆鑻辨枃鎴栦腑鏂? autocomplete="off">
         </div>
         <div class="learning-modal-footer">
             <div class="learning-modal-timer" id="challenge-timer">10</div>
-            <button class="game-btn game-btn-small" id="challenge-repeat">再听一次</button>
+            <button class="game-btn game-btn-small" id="challenge-repeat">鍐嶅惉涓€娆?/button>
         </div>
     </div>
 </div>
@@ -295,13 +296,13 @@
 <div id="word-match-screen" class="learning-modal" aria-hidden="true">
     <div class="learning-modal-content word-match-content">
         <div class="word-match-header">
-            <h2>词语匹配复活</h2>
+            <h2>璇嶈鍖归厤澶嶆椿</h2>
             <div class="match-timer" id="match-timer">30</div>
         </div>
-        <p class="word-match-subtitle" id="match-subtitle">将英文与中文拉线连对，只有1次机会</p>
+        <p class="word-match-subtitle" id="match-subtitle">灏嗚嫳鏂囦笌涓枃鎷夌嚎杩炲锛屽彧鏈?娆℃満浼?/p>
         <div class="match-top-actions">
-            <div>已连线: <span id="match-count">0</span>/<span id="match-total">0</span></div>
-            <button class="game-btn game-btn-small" id="btn-match-submit">提交复活</button>
+            <div>宸茶繛绾? <span id="match-count">0</span>/<span id="match-total">0</span></div>
+            <button class="game-btn game-btn-small" id="btn-match-submit">鎻愪氦澶嶆椿</button>
         </div>
         <div class="match-scrollable-wrapper">
             <div class="match-container">
@@ -317,17 +318,17 @@
 <div id="profile-modal" class="profile-modal" aria-hidden="true">
     <div class="profile-modal-content">
         <div class="profile-header">
-            <h2 id="profile-username">玩家档案</h2>
-            <button class="game-btn game-btn-small" id="btn-profile-close">关闭</button>
+            <h2 id="profile-username">鐜╁妗ｆ</h2>
+            <button class="game-btn game-btn-small" id="btn-profile-close">鍏抽棴</button>
         </div>
         <div class="profile-stats">
-            <div>游戏次数: <span id="profile-games">0</span></div>
-            <div>最高积分: <span id="profile-highscore">0</span></div>
-            <div>已学词数: <span id="profile-words">0</span></div>
-            <div>游玩时长: <span id="profile-playtime">0 分钟</span></div>
+            <div>娓告垙娆℃暟: <span id="profile-games">0</span></div>
+            <div>鏈€楂樼Н鍒? <span id="profile-highscore">0</span></div>
+            <div>宸插璇嶆暟: <span id="profile-words">0</span></div>
+            <div>娓哥帺鏃堕暱: <span id="profile-playtime">0 鍒嗛挓</span></div>
         </div>
         <div class="profile-achievements">
-            <h3>成就</h3>
+            <h3>鎴愬氨</h3>
             <div id="achievements-container"></div>
         </div>
     </div>
@@ -336,18 +337,18 @@
 <div id="leaderboard-modal" class="profile-modal" aria-hidden="true">
     <div class="profile-modal-content">
         <div class="profile-header">
-            <h2 id="leaderboard-title">🏆 排行榜</h2>
-            <button class="game-btn game-btn-small" id="btn-leaderboard-close">关闭</button>
+            <h2 id="leaderboard-title">馃弳 鎺掕姒?/h2>
+            <button class="game-btn game-btn-small" id="btn-leaderboard-close">鍏抽棴</button>
         </div>
         <div class="leaderboard-save-section" id="leaderboard-save-section">
-            <h3>保存本次成绩</h3>
+            <h3>淇濆瓨鏈鎴愮哗</h3>
             <div class="leaderboard-input-group">
-                <input type="text" id="leaderboard-name-input" placeholder="输入你的名字" maxlength="20">
-                <button class="game-btn" id="btn-leaderboard-save">保存成绩</button>
+                <input type="text" id="leaderboard-name-input" placeholder="杈撳叆浣犵殑鍚嶅瓧" maxlength="20">
+                <button class="game-btn" id="btn-leaderboard-save">淇濆瓨鎴愮哗</button>
             </div>
         </div>
         <div class="leaderboard-list-section">
-            <h3>本地排行榜</h3>
+            <h3>鏈湴鎺掕姒?/h3>
             <div id="leaderboard-list" class="leaderboard-list"></div>
         </div>
     </div>
@@ -356,7 +357,7 @@
 <script src="src/defaults.js"></script>
 <script src="src/storage.js"></script>
 <script src="words/vocabs/manifest.js"></script>
-<!-- main.js 模块化拆分 (原 main.js 按功能拆分为以下模块) -->
+<!-- main.js 妯″潡鍖栨媶鍒?(鍘?main.js 鎸夊姛鑳芥媶鍒嗕负浠ヤ笅妯″潡) -->
 <script src="src/modules/01-config.js"></script>
 <script src="src/modules/02-utils.js"></script>
 <script src="src/modules/03-audio.js"></script>
@@ -367,22 +368,22 @@
 <script src="src/modules/08-account.js"></script>
 <script src="src/modules/09-vocab.js"></script>
 <script src="src/modules/10-ui.js"></script>
-<!-- 实体类必须在游戏逻辑和渲染之前加载 -->
+<!-- 瀹炰綋绫诲繀椤诲湪娓告垙閫昏緫鍜屾覆鏌撲箣鍓嶅姞杞?-->
 <script src="src/modules/15-entities-base.js"></script>
 <script src="src/modules/15-entities-decorations.js"></script>
 <script src="src/modules/15-entities-particles.js"></script>
 <script src="src/modules/15-entities-combat.js"></script>
 <script src="src/modules/15-entities-boss.js"></script>
-<!-- 村庄系统模块 (v1.8.0) -->
+<!-- 鏉戝簞绯荤粺妯″潡 (v1.8.0) -->
 <script src="src/modules/18-village.js"></script>
 <script src="src/modules/18-village-render.js"></script>
 <script src="src/modules/18-interaction-chains.js"></script>
 <script src="src/modules/19-biome-visuals.js"></script>
-<!-- 新群系敌人系统 -->
+<!-- 鏂扮兢绯绘晫浜虹郴缁?-->
 <script src="src/modules/20-enemies-new.js"></script>
-<!-- 新群系装饰系统 -->
+<!-- 鏂扮兢绯昏楗扮郴缁?-->
 <script src="src/modules/21-decorations-new.js"></script>
-<!-- 游戏逻辑和渲染模块 -->
+<!-- 娓告垙閫昏緫鍜屾覆鏌撴ā鍧?-->
 <script src="src/modules/11-game-init.js"></script>
 <script src="src/modules/12-challenges.js"></script>
 <script src="src/modules/12-village-challenges.js"></script>
@@ -394,3 +395,4 @@
 <script src="src/modules/17-bootstrap.js"></script>
 </body>
 </html>
+

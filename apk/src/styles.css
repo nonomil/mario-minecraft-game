@@ -262,7 +262,17 @@ body {
     font-weight: 900;
     margin-bottom: 12px;
     color: #FFD54F;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
  }
+
+.challenge-hint-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    min-height: 30px;
+}
 
 .learning-modal-question {
     font-size: clamp(18px, 2.5vw, 26px);

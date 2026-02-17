@@ -31,7 +31,7 @@
         },
         "minStay": {
             "forest": { "score": 100, "timeSec": 20 },
-            "cherry_grove": { "score": 150, "timeSec": 30 },
+            "cherry_grove": { "score": 80, "timeSec": 12 },
             "snow": { "score": 150, "timeSec": 30 },
             "desert": { "score": 150, "timeSec": 30 },
             "mushroom_island": { "score": 200, "timeSec": 40 },
