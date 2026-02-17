@@ -429,6 +429,7 @@ function spawnEnemyByDifficulty(x, y) {
     const tier = Math.max(0, Math.floor((Number(getProgressScore()) || 0) / Math.max(1, step)));
     const biomePools = {
         forest: ["zombie", "creeper", "spider", "skeleton", "enderman"],
+        cherry_grove: ["bee", "bee", "fox", "witch"],
         snow: ["zombie", "skeleton", "creeper", "spider", "enderman"],
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],

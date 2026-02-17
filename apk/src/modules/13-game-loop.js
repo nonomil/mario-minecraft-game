@@ -503,6 +503,17 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const dir = sourceX != null ? (player.x > sourceX ? 1 : -1) : -1;
     player.x += dir * knockback;
     player.y -= 40;
+    // 击退后位置合法性校验：不嵌入平台
+    for (let p of platforms) {
+        if (!p || p.remove) continue;
+        const d = colCheck(player, p);
+        if (d === "l") player.x = p.x + p.width;
+        else if (d === "r") player.x = p.x - player.width;
+        else if (d === "b") player.y = p.y - player.height;
+        else if (d === "t") player.y = p.y + p.height;
+    }
+    // 不超出屏幕上边界
+    if (player.y < -player.height * 2) player.y = -player.height * 2;
     const baseDamage = Math.max(1, Number(amount) || 1);
     const diff = getDifficultyState();
     const damageUnit = Number(getDifficultyConfig().damageUnit ?? 20) || 20;

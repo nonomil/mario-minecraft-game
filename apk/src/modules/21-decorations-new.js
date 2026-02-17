@@ -124,6 +124,10 @@ class SmallStreamDecor extends Decoration {
     onCollision(entity) {
         if (entity === player && entity.grounded) {
             entity.velX *= 0.85; // 水流减速
+            // 保证最低速度，防止完全卡住
+            if (Math.abs(entity.velX) < 0.3 && Math.abs(entity.velX) > 0.01) {
+                entity.velX = entity.velX > 0 ? 0.3 : -0.3;
+            }
         }
     }
 }

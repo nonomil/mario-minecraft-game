@@ -110,6 +110,7 @@ class Enemy extends Entity {
         super(x, y, size.w, size.h);
         this.type = type;
         this.startX = x;
+        this.startY = y;
         this.range = range;
         this.hp = Math.max(1, Math.round(stats.hp * diff.enemyHpMult));
         this.maxHp = this.hp;
