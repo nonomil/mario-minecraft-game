@@ -608,4 +608,12 @@ b11ef12 chore: 更新 apk/android-app/package.json 版本至 v1.6.5
 
 
 
+## v1.18.4（发布日期：2026-02-18）
+- 类型：PATCH
+- APK 版本：versionName = 1.18.4，versionCode = 105
+- 主要变更
+  - SQLite 词库维护链路增强：新增 `vocab:db:dedup` 与 `vocab:db:import:external`
+  - 外部词库导入脚本支持 URL 与位置参数兜底，默认 `inactive` 安全导入
+  - 新增完整维护文档：`docs/guide/词库数据库维护图文指南.md`
+  - 实操执行完成：导入、去重分析、外部合入、导出、校验、发布全链路验证通过
 

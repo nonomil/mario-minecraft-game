@@ -666,4 +666,29 @@
 
 
 
+## v1.18.4 (2026-02-18)
 
+### 词库数据库维护能力增强
+- 新增 SQLite 词库去重分析命令：`npm run vocab:db:dedup`
+- 新增外部词库导入命令：`npm run vocab:db:import:external`
+- 外部导入支持“位置参数兜底”，兼容 Windows `npm run` 参数透传差异
+- 增补维护文档：`docs/guide/词库数据库维护图文指南.md`
+
+### 维护实操结果（本次）
+- 主词库导入：45 文件 / 9380 原始词条
+- 去重分析：exact duplicate = 0，compact collisions = 453
+- 外部合入演示（inactive）：
+  - `hermitdave-en50k`：插入 569 条（limit 600）
+  - `arstgit-10k`：插入 251 条（limit 500）
+- 导出与校验通过：active 2981，duplicate keys 0，missing chinese 0
+
+### 测试/验证
+- `npm run vocab:db:import`
+- `npm run vocab:db:dedup`
+- `npm run vocab:db:import:external -- --url https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/en/en_50k.txt --sourcePack hermitdave-en50k --sourceGroup frequency --sourceVersion 2018 --limit 600 --status inactive`
+- `npm run vocab:db:import:external -- --url https://raw.githubusercontent.com/arstgit/high-frequency-vocabulary/master/10k.txt --sourcePack arstgit-10k --sourceGroup frequency --sourceVersion master --limit 500 --status inactive`
+- `npm run vocab:db:export`
+- `npm run vocab:db:validate`
+- `npm run vocab:db:publish`
+
+---
