@@ -186,12 +186,12 @@ body {
 
 .overlay-btn {
     width: 100%;
-    height: clamp(44px, 6vh, 56px);
+    height: clamp(32px, 4vh, 42px);
     border-radius: 12px;
     border: 3px solid rgba(255,255,255,0.8);
     background: #4CAF50;
     color: #fff;
-    font-size: clamp(16px, 3vw, 22px);
+    font-size: clamp(11px, 2vw, 14px);
     font-weight: 900;
     cursor: pointer;
 }
@@ -213,7 +213,7 @@ body {
     border: none;
     padding: 12px 18px;
     border-radius: 10px;
-    font-size: clamp(16px, 3vw, 22px);
+    font-size: clamp(11px, 2vw, 14px);
     font-weight: 900;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
