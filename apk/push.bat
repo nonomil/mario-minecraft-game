@@ -66,8 +66,18 @@ git -c http.version=HTTP/1.1 push %REMOTE% %BRANCH%
 if not errorlevel 1 goto :push_success
 
 echo.
-echo [RETRY] First push failed. Retrying with schannel backend...
+echo [RETRY 1] First push failed. Retrying with schannel backend...
 git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% %BRANCH%
+if not errorlevel 1 goto :push_success
+
+echo.
+echo [RETRY 2] Retrying with proxy (127.0.0.1:1080) and openssl...
+git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% %BRANCH%
+if not errorlevel 1 goto :push_success
+
+echo.
+echo [RETRY 3] Retrying with socks5 proxy...
+git -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 push %REMOTE% %BRANCH%
 if not errorlevel 1 goto :push_success
 
 echo.
@@ -75,15 +85,22 @@ echo ========================================
 echo   Push Failed
 echo ========================================
 echo.
+echo All retry attempts failed.
+echo.
 echo Possible causes:
-echo 1. Terminal network path cannot reach github.com:443
-echo 2. Proxy/VPN not applied to cmd/powershell
+echo 1. Network cannot reach github.com:443
+echo 2. Proxy/VPN not running (check port 1080)
 echo 3. Authentication issue
 echo.
 echo Quick checks:
-echo - Test browser and terminal separately
-echo - Run: Test-NetConnection github.com -Port 443
+echo - Ensure v2ray is running on port 1080
+echo - Test: curl -x http://127.0.0.1:1080 https://github.com
 echo - Run: git remote -v
+echo.
+echo Successful proxy config that worked:
+echo   git config http.proxy http://127.0.0.1:1080
+echo   git config https.proxy http://127.0.0.1:1080
+echo   git config http.sslBackend openssl
 echo.
 pause
 exit /b 1
