@@ -67,6 +67,7 @@ function placeholderImageDataUrl(text) {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
+let _wordImageVersion = 0;
 function updateWordImage(wordObj) {
     const img = document.getElementById("word-card-image");
     if (!img) return;
@@ -84,13 +85,23 @@ function updateWordImage(wordObj) {
         img.alt = "";
         return;
     }
-    img.style.display = "block";
-    img.src = url;
+    const ver = ++_wordImageVersion;
     img.alt = wordObj && wordObj.en ? String(wordObj.en) : "";
-    img.onerror = () => {
-        img.onerror = null;
-        img.src = placeholderImageDataUrl(wordObj && wordObj.en ? wordObj.en : "");
+    // Preload image to avoid showing stale/previous image
+    const preload = new Image();
+    preload.onload = () => {
+        if (ver !== _wordImageVersion) return; // outdated, skip
+        img.src = preload.src;
+        img.style.display = "block";
     };
+    preload.onerror = () => {
+        if (ver !== _wordImageVersion) return;
+        img.src = placeholderImageDataUrl(wordObj && wordObj.en ? wordObj.en : "");
+        img.style.display = "block";
+    };
+    // Hide until correct image is loaded
+    img.style.display = "none";
+    preload.src = url;
 }
 
 function ensureVocabEngine() {

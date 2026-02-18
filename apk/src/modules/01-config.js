@@ -63,7 +63,6 @@ let challengeInputWrapperEl = null;
 let challengeInputEl = null;
 let challengeTimerEl = null;
 let challengeRepeatBtn = null;
-let challengeHintBtn = null;
 let wordMatchScreenEl = null;
 let matchLeftEl = null;
 let matchRightEl = null;
@@ -135,53 +134,10 @@ const INVENTORY_TEMPLATE = {
     coal: 0,
     gold: 0,
     shell: 0,
-    starfish: 0,
-    snow_block: 0,
-    sculk_vein: 0,
-    echo_shard: 0,
-    beef: 0,
-    mutton: 0,
-    mushroom_stew: 0
+    starfish: 0
 };
 let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
-
-// 物品冷却系统
-const ITEM_COOLDOWNS = {
-    gunpowder: 300,      // 5秒 (火药炸弹)
-    ender_pearl: 480,    // 8秒 (末影珍珠传送)
-    string: 360,         // 6秒 (蜘蛛丝陷阱)
-    rotten_flesh: 240,   // 4秒 (腐肉诱饵)
-    shell: 1200,         // 20秒 (贝壳护盾)
-    coal: 180,           // 3秒 (煤矿火把)
-    flower: 600,         // 10秒 (花朵治愈)
-    dragon_egg: 720,     // 12秒 (龙蛋龙息)
-    starfish: 5400,      // 90秒 (海星幸运)
-    gold: 0              // 无冷却 (黄金交易)
-};
-let itemCooldownTimers = {}; // { itemKey: remainingFrames }
-
-// 物品描述（用于Tooltip）
-const ITEM_DESCRIPTIONS = {
-    gunpowder: { desc: "投掷炸弹，爆炸范围120px，造成30伤害", cost: "消耗: 1个", cd: "冷却: 5秒" },
-    ender_pearl: { desc: "向前方传送200px，穿越障碍物", cost: "消耗: 1个", cd: "冷却: 8秒" },
-    string: { desc: "放置蛛网陷阱，减速敌人80%持续5秒", cost: "消耗: 2个", cd: "冷却: 6秒" },
-    dragon_egg: { desc: "释放全屏龙息，对所有敌人造成50伤害", cost: "消耗: 1个", cd: "冷却: 12秒" },
-    shell: { desc: "激活2秒无敌护盾，抵挡所有伤害", cost: "消耗: 3个", cd: "冷却: 20秒" },
-    starfish: { desc: "30秒内宝箱稀有度提升一级", cost: "消耗: 1个", cd: "冷却: 90秒" },
-    coal: { desc: "放置光源，照亮周围区域8秒", cost: "消耗: 1个", cd: "冷却: 3秒" },
-    rotten_flesh: { desc: "投掷腐肉吸引附近敌人", cost: "消耗: 1个", cd: "冷却: 4秒" },
-    flower: { desc: "5秒内持续回血，共回复2❤️", cost: "消耗: 2个", cd: "冷却: 10秒" },
-    gold: { desc: "猪灵交易，获得随机物品", cost: "消耗: 1个", cd: "无冷却" },
-    diamond: { desc: "立即回复1❤️生命值", cost: "消耗: 1个", cd: "无冷却" },
-    pumpkin: { desc: "召唤雪傀儡辅助战斗", cost: "消耗: 1个", cd: "无冷却" },
-    iron: { desc: "召唤铁傀儡强力护卫", cost: "消耗: 3个", cd: "无冷却" },
-    mushroom: { desc: "合成蘑菇煲回血食物", cost: "消耗: 2个", cd: "无冷却" },
-    stick: { desc: "修复当前护甲20%耐久", cost: "消耗: 3个", cd: "无冷却" },
-    snow_block: { desc: "召唤雪傀儡的材料之一", cost: "合成材料", cd: "无冷却" },
-    sculk_vein: { desc: "幽匿碎片，可制作静音鞋", cost: "合成材料", cd: "无冷却" }
-};
-
 const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "stone_sword", "iron_pickaxe", "bow", "arrow"];
 const ITEM_LABELS = {
     diamond: "钻石",
@@ -202,13 +158,7 @@ const ITEM_LABELS = {
     coal: "煤矿",
     gold: "黄金",
     shell: "贝壳",
-    starfish: "海星",
-    snow_block: "雪块",
-    sculk_vein: "幽匿碎片",
-    echo_shard: "回响碎片",
-    beef: "牛肉",
-    mutton: "羊肉",
-    mushroom_stew: "蘑菇煲"
+    starfish: "海星"
 };
 const ITEM_ICONS = {
     diamond: "💎",
@@ -230,26 +180,13 @@ const ITEM_ICONS = {
     gold: "🪙",
     shell: "🐚",
     starfish: "⭐",
-    snow_block: "🧊",
-    sculk_vein: "🧩",
-    echo_shard: "🔷",
-    beef: "🥩",
-    mutton: "🍖",
-    mushroom_stew: "🍲",
     hp: "❤️",
     max_hp: "💖",
-    score: "🪙",
-    // 装备图标
-    armor_leather: "🟤",
-    armor_chainmail: "⛓️",
-    armor_iron: "🛡️",
-    armor_gold: "🟡",
-    armor_diamond: "💠",
-    armor_netherite: "⬛"
+    score: "🪙"
 };
 const INVENTORY_CATEGORIES = {
     items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow"],
-    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom", "sculk_vein", "echo_shard", "beef", "mutton", "mushroom_stew"],
+    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom"],
     equipment: []
 };
 const SPEED_LEVELS = {
@@ -278,50 +215,6 @@ const ACHIEVEMENT_MAP = {
     chests: ["chests_50"],
     score: ["score_1000", "score_5000"]
 };
-
-// ========== 文案集中管理 ==========
-const BIOME_MESSAGES = {
-    enter: (biomeName) => `🌍 进入${biomeName}群系`,
-    heatDamage: '🔥 高温灼伤',
-    heatDeath: '💀 生命耗尽',
-    lavaFall: '💀 掉进了岩浆!',
-    lavaDeath: '💀 生命耗尽',
-    mushroomHeal: '+1 ❤️ 🍄',
-    portalTeleport: '🌀 传送!',
-    speedBoost: '⚡ 加速!',
-    hpDrain: '🔥 -1❤️',
-    enterVillage: (biomeName) => `🏘️ 进入${biomeName}村庄`,
-    leaveVillage: '👋 离开村庄'
-};
-
-const UI_TEXTS = {
-    dragonAppear: '⚠️ 末影龙降临！',
-    platformBreak: '⚠️ 平台将破裂',
-    luckyStarEnd: '⭐ 幸运星效果结束',
-    fullHp: '❤️ 已满血',
-    diamondInsufficient: '💎 不足',
-    diamondHeal: '💎 换取 +1❤️',
-    armorBroken: (name) => `${name || "盔甲"} 已破损`,
-    itemInsufficient: '❌ 物品不足',
-    cooldown: (sec) => `⏳ 冷却中 (${sec}秒)`,
-    cooldownShort: '⏳ 冷却中',
-    reviveUsed: '复活机会已用完',
-    reviveSuccess: '✨ 词语匹配复活成功！',
-    selectAccount: '请先选择或创建档案',
-    scoreSaved: '📝 成绩已保存到排行榜',
-    restAlready: '💤 已经休息过了',
-    restFullHp: '❤️ 已满血，无需休息',
-    restSuccess: (amount) => `💤 休息成功！生命+${amount}`,
-    restHeal: '❤️ +休息',
-    restPrompt: '💤 休息回血',
-    restButton: '休息 (Y)',
-    villageSaved: '💾 游戏进度已保存',
-    villageAlreadySaved: '💾 本村庄已存档',
-    questDone: '📚 已完成学习任务',
-    specialUsed: '🏗 该特色建筑已使用',
-    specialNoFunc: '🏗 特色建筑暂无功能'
-};
-
 let currentAccount = null;
 let autoSaveInterval = null;
 let lastSaveTime = Date.now();
@@ -423,14 +316,7 @@ const ARMOR_TYPES = {
         description: "传说加护"
     }
 };
-const FOOD_TYPES = {
-    beef: { heal: 1, icon: "🥩", name: "牛肉", color: "#8B4513" },
-    mutton: { heal: 1, icon: "🍖", name: "羊肉", color: "#DEB887" },
-    mushroom_stew: { heal: 1, icon: "🍲", name: "蘑菇煲", color: "#CD853F" },
-    raw_fish: { heal: 1, icon: "🐟", name: "生鱼", color: "#87CEEB" }
-};
 let playerEquipment = { armor: null, armorDurability: 0 };
-let silentBootsState = { equipped: false, durability: 0, maxDurability: 30 };
 let armorInventory = [];
 
 const playerWeapons = {
@@ -443,16 +329,6 @@ const playerWeapons = {
     doublePressWindow: 220
 };
 const keys = { right: false, left: false };
-
-// 水下物理常量
-const WATER_PHYSICS = {
-    horizontalSpeedMultiplier: 0.45,
-    verticalSwimSpeed: 1.2,
-    swimJumpImpulse: 1.8,
-    sinkSpeed: 0.5,
-    gravity: 0.15,
-    bubbleInterval: 15,
-};
 
 let jumpBuffer = 0;
 let coyoteTimer = 0;
@@ -476,23 +352,22 @@ const MAX_GOLEMS = 3;
 let playerPositionHistory = [];
 let projectiles = [];
 let digHits = new Map();
-let playerInvincibleTimer = 0;
-let overlayMode = "start";
-const START_OVERLAY_INTRO_MS = 1600;
-const START_OVERLAY_HINT_HTML = "操作提示: 移动跳转 攻击 切换武器";
-let startOverlayTimer = 0;
-let startOverlayReady = false;
-let startOverlayActive = false;
-let enemyKillStats = { total: 0 };
-let repeatPauseState = "repeat";
-
-// ===== 村庄系统 =====
+let bossSpawned = false;
+let bossArena = null;
 let villageConfig = {};
 let activeVillages = [];
 let villageSpawnedForScore = {};
 let playerInVillage = false;
 let currentVillage = null;
-
+let playerInvincibleTimer = 0;
+let overlayMode = "start";
+const START_OVERLAY_INTRO_MS = 1600;
+const START_OVERLAY_HINT_HTML = "⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>📦 打开宝箱  ⛏️ 采集";
+let startOverlayTimer = 0;
+let startOverlayReady = false;
+let startOverlayActive = false;
+let enemyKillStats = { total: 0 };
+let repeatPauseState = "repeat";
 const projectilePool = {
     arrows: [],
     snowballs: [],
@@ -587,16 +462,6 @@ const DEFAULT_BIOME_CONFIGS = {
         decorations: { lava_pool: 0.15, fire: 0.2, soul_sand: 0.1, nether_wart: 0.12, basalt: 0.18, lava_fall: 0.08 },
         effects: { particles: "flames", ambient: "#CC3333", damage: 1, onEnterOnly: true, speedMultiplier: 0.7 },
         spawnWeight: { min: 3500, max: 5000 }
-    },
-    end: {
-        id: "end",
-        name: "末地",
-        color: "#1A0A2E",
-        groundType: "end_stone",
-        decorations: { end_stone_pillar: 0.15, obsidian_platform: 0.08, chorus_plant: 0.12, purple_crystal: 0.1 },
-        treeTypes: {},
-        effects: { particles: "end_particles", ambient: "#2D1B4E", gravityMultiplier: 0.65, jumpMultiplier: 1.5 },
-        spawnWeight: { min: 4000, max: 6000 }
     }
 };
 
@@ -610,15 +475,14 @@ let netherEntryPenaltyArmed = true;
 const MAX_DECORATIONS_ONSCREEN = 60;
 const DEFAULT_BIOME_SWITCH = {
     stepScore: 200,
-    order: ["forest", "snow", "desert", "mountain", "ocean", "nether", "end"],
+    order: ["forest", "snow", "desert", "mountain", "ocean", "nether"],
     unlockScore: {
         forest: 0,
         snow: 200,
         desert: 400,
         mountain: 600,
         ocean: 800,
-        nether: 2000,
-        end: 4000
+        nether: 2000
     }
 };
 let biomeSwitchConfig = JSON.parse(JSON.stringify(DEFAULT_BIOME_SWITCH));
@@ -656,50 +520,43 @@ const DEFAULT_CHEST_TABLES = {
         { item: "iron", weight: 18, min: 1, max: 3 },
         { item: "pumpkin", weight: 12, min: 1, max: 2 },
         { item: "stick", weight: 12, min: 1, max: 3 },
-        { item: "diamond", weight: 2, min: 1, max: 1 },
+        { item: "diamond", weight: 4, min: 1, max: 1 },
         { item: "coal", weight: 10, min: 1, max: 3 },
         { item: "arrow", weight: 10, min: 2, max: 6 },
         { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
         { item: "flower", weight: 6, min: 1, max: 2 },
         { item: "mushroom", weight: 6, min: 1, max: 2 },
-        { item: "beef", weight: 8, min: 1, max: 2 },
-        { item: "mutton", weight: 8, min: 1, max: 2 },
         { item: "hp", weight: 8, min: 1, max: 1 },
-        { item: "score", weight: 7, min: 10, max: 25 },
-        { item: "word_card", weight: 25, min: 5, max: 10 },
-        { item: "empty", weight: 10, min: 0, max: 0 }
+        { item: "score", weight: 7, min: 10, max: 25 }
     ],
     rare: [
-        { item: "diamond", weight: 3, min: 1, max: 1 },
+        { item: "diamond", weight: 6, min: 1, max: 1 },
         { item: "stone_sword", weight: 7, min: 1, max: 1 },
         { item: "iron_pickaxe", weight: 5, min: 1, max: 1 },
         { item: "ender_pearl", weight: 4, min: 1, max: 1 },
         { item: "iron", weight: 8, min: 2, max: 4 },
         { item: "arrow", weight: 8, min: 4, max: 8 },
-        { item: "mushroom_stew", weight: 6, min: 1, max: 2 },
         { item: "hp", weight: 8, min: 1, max: 1 },
-        { item: "score", weight: 8, min: 20, max: 40 },
-        { item: "word_card", weight: 15, min: 10, max: 20 }
+        { item: "score", weight: 8, min: 20, max: 40 }
     ],
     epic: [
         { item: "max_hp", weight: 6, min: 1, max: 1 },
-        { item: "diamond", weight: 4, min: 1, max: 1 },
+        { item: "diamond", weight: 6, min: 1, max: 2 },
         { item: "ender_pearl", weight: 5, min: 1, max: 2 },
         { item: "iron_pickaxe", weight: 6, min: 1, max: 1 },
-        { item: "score", weight: 8, min: 40, max: 80 },
-        { item: "word_card", weight: 10, min: 15, max: 25 }
+        { item: "score", weight: 8, min: 40, max: 80 }
     ],
     legendary: [
         { item: "max_hp", weight: 8, min: 1, max: 2 },
-        { item: "diamond", weight: 5, min: 1, max: 2 },
+        { item: "diamond", weight: 8, min: 2, max: 3 },
         { item: "dragon_egg", weight: 4, min: 1, max: 1 },
         { item: "ender_pearl", weight: 6, min: 2, max: 3 },
         { item: "score", weight: 10, min: 80, max: 150 }
     ]
 };
 const DEFAULT_CHEST_ROLLS = {
-    twoDropChance: 0.30,
-    threeDropChance: 0.10
+    twoDropChance: 0.45,
+    threeDropChance: 0.15
 };
 
 const LEARNING_CONFIG = {
@@ -723,7 +580,6 @@ const LEARNING_CONFIG = {
         bonusPerMatch: 10
     }
 };
-let foodCooldown = 0;
 let floatingTexts = [];
 let lastGenX = 0;
 let difficultyState = null;

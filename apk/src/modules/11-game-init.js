@@ -27,8 +27,7 @@ function createPlayer() {
         jumpCount: 0,
         maxJumps: gameConfig.player.maxJumps,
         isAttacking: false,
-        attackTimer: 0,
-        lastFragilePlatform: null
+        attackTimer: 0
     };
     applyMotionToPlayer(p);
     return p;
@@ -58,26 +57,12 @@ function initGame() {
     resetInventory();
     updateInventoryUI();
     player = createPlayer();
-    // Reset BOSS arena state
+    bossSpawned = false;
     if (typeof bossArena !== 'undefined' && bossArena) {
-        bossArena.active = false;
-        bossArena.boss = null;
-        bossArena.victoryTimer = 0;
-        bossArena.viewportLocked = false;
-        bossArena.phaseFlashTimer = 0;
-        bossArena.phaseBannerText = '';
-        bossArena.lockedCamX = 0;
-        bossArena.leftWall = 0;
-        bossArena.rightWall = 0;
-        if (bossArena.spawned) {
-            for (const k in bossArena.spawned) delete bossArena.spawned[k];
-        }
+        bossArena.active = false; bossArena.boss = null; bossArena.spawned = {};
     }
-    // Reset village state
     if (typeof activeVillages !== 'undefined') activeVillages = [];
-    if (typeof villageSpawnedForScore !== 'undefined') {
-        for (const k in villageSpawnedForScore) delete villageSpawnedForScore[k];
-    }
+    if (typeof villageSpawnedForScore !== 'undefined') villageSpawnedForScore = {};
     if (typeof playerInVillage !== 'undefined') playerInVillage = false;
     if (typeof currentVillage !== 'undefined') currentVillage = null;
     startLevel(0);
@@ -100,7 +85,6 @@ function startLevel(idx) {
     particles = [];
     enemies = [];
     golems = [];
-    if (typeof resetPlayerPoisonStatus === "function") resetPlayerPoisonStatus();
     digHits.clear();
     resetProjectiles();
     playerPositionHistory = [];
@@ -110,14 +94,10 @@ function startLevel(idx) {
     sessionCollectedWords = [];
     updateHpUI();
     player.x = 100;
-    player.y = Math.min(300, groundY - player.height - 10);
+    player.y = 300;
     player.velX = 0;
     player.velY = 0;
     generatePlatform(0, 12, groundY);
-    // Safety: ensure ground platform exists and is within canvas
-    if (!platforms.length || groundY <= 0 || groundY >= canvas.height) {
-        console.warn('startLevel: groundY invalid or no platforms', { groundY, canvasHeight: canvas.height, platforms: platforms.length });
-    }
 }
 
 function shuffle(arr) {
@@ -144,6 +124,10 @@ function buildWordPicker() {
     let tick = 0;
     const byEn = Object.create(null);
     base.forEach(w => { byEn[w.en] = w; });
+    function ensureStat(en) {
+        if (!stats[en]) stats[en] = { count: 0, quality: "correct_slow" };
+        return stats[en];
+    }
     return {
         next(excludeSet) {
             if (!base.length) return { en: "word", zh: "单词" };
@@ -155,9 +139,10 @@ function buildWordPicker() {
                 if (!en) break;
                 if (!excludes.has(en) && !stats[en]) {
                     unseen.shift();
-                    stats[en] = { count: 1, quality: "correct_slow" };
-                    const ivl = INTERVALS.correct_slow;
-                    due[en] = tick + ivl[Math.min(stats[en].count, ivl.length - 1)];
+                    const stat = ensureStat(en);
+                    stat.count++;
+                    const ivl = INTERVALS[stat.quality] || INTERVALS.correct_slow;
+                    due[en] = tick + ivl[Math.min(stat.count, ivl.length - 1)];
                     return byEn[en] || base[0];
                 }
                 unseen.shift();
@@ -181,20 +166,19 @@ function buildWordPicker() {
                 }
             }
             const chosen = best || base[Math.floor(Math.random() * base.length)];
-            if (!stats[chosen.en]) stats[chosen.en] = { count: 0, quality: "correct_slow" };
-            stats[chosen.en].count++;
-            const q = stats[chosen.en].quality || "correct_slow";
-            const ivl = INTERVALS[q] || INTERVALS.correct_slow;
-            due[chosen.en] = tick + ivl[Math.min(stats[chosen.en].count, ivl.length - 1)];
+            const stat = ensureStat(chosen.en);
+            stat.count++;
+            const ivl = INTERVALS[stat.quality] || INTERVALS.correct_slow;
+            due[chosen.en] = tick + ivl[Math.min(stat.count, ivl.length - 1)];
             return chosen;
         },
         updateWordQuality(en, quality) {
             if (!en) return;
-            if (!stats[en]) stats[en] = { count: 0, quality: "correct_slow" };
-            stats[en].quality = quality || "correct_slow";
-            if (quality === "wrong") {
-                due[en] = tick;
+            const stat = ensureStat(en);
+            if (quality === "correct_fast" || quality === "correct_slow" || quality === "wrong") {
+                stat.quality = quality;
             }
+            if (quality === "wrong") due[en] = tick;
         }
     };
 }
@@ -280,13 +264,11 @@ function estimateMaxJumpHeightPx() {
 }
 
 function generatePlatform(startX, length, groundYValue) {
-    console.log('generatePlatform called:', { startX, length, groundYValue, blockSize });
     const level = levels[currentLevelIdx];
     const biome = getBiomeById(getBiomeIdForScore(getProgressScore()));
     const platformCfg = biome.platform || {};
     const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
-    console.log('Platform config:', { groundType, newWidth, biomeId: biome.id });
     let merged = false;
     for (let i = platforms.length - 1; i >= 0; i--) {
         const p = platforms[i];
@@ -301,7 +283,6 @@ function generatePlatform(startX, length, groundYValue) {
 
     if (!merged) {
         platforms.push(new Platform(startX, groundYValue, newWidth, blockSize, groundType));
-        console.log('Platform created! Total platforms:', platforms.length);
     }
 
     generateBiomeDecorations(startX, groundYValue, newWidth, biome);
@@ -320,11 +301,7 @@ function generatePlatform(startX, length, groundYValue) {
         const floatX = startX + blockSize + Math.floor(Math.random() * (length - floatLen) * blockSize);
         const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
         const floatType = floatTypes[Math.floor(Math.random() * floatTypes.length)] || groundType;
-        const floatPlatform = new Platform(floatX, floatY, floatLen * blockSize, blockSize, floatType);
-        if (biome.id === "nether" && Math.random() < 0.45 && typeof floatPlatform.makeFragile === "function") {
-            floatPlatform.makeFragile(3);
-        }
-        platforms.push(floatPlatform);
+        platforms.push(new Platform(floatX, floatY, floatLen * blockSize, blockSize, floatType));
         const floatItemX = floatX + blockSize / 2;
         if (Math.random() < floatItemChance && canSpawnWordItemAt(floatItemX)) {
             const word = pickWordForSpawn();
@@ -355,11 +332,7 @@ function generatePlatform(startX, length, groundYValue) {
                 for (let i = 0; i < steps; i++) {
                     const mx = stairX0 + i * blockSize;
                     const my = groundYValue - (i + 1) * blockSize;
-                    const microPlatform = new Platform(mx, my, blockSize, blockSize, microType);
-                    if (biome.id === "nether" && Math.random() < 0.5 && typeof microPlatform.makeFragile === "function") {
-                        microPlatform.makeFragile(3);
-                    }
-                    platforms.push(microPlatform);
+                    platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
                 }
                 const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(topX)) {
@@ -381,11 +354,7 @@ function generatePlatform(startX, length, groundYValue) {
                 let mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
                 mx = Math.floor(mx / blockSize) * blockSize;
                 const my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
-                const microPlatform = new Platform(mx, my, blockSize, blockSize, microType);
-                if (biome.id === "nether" && Math.random() < 0.5 && typeof microPlatform.makeFragile === "function") {
-                    microPlatform.makeFragile(3);
-                }
-                platforms.push(microPlatform);
+                platforms.push(new Platform(mx, my, blockSize, blockSize, microType));
                 const spawnX = mx + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(spawnX)) {
                     const word = pickWordForSpawn();
@@ -398,6 +367,7 @@ function generatePlatform(startX, length, groundYValue) {
 
     if (startX > 400) {
         const objectX = startX + 100 + Math.random() * (length * blockSize - 150);
+        const inVillage = typeof isInVillageArea === 'function' && isInVillageArea(objectX);
         const rand = Math.random();
         const rates = getSpawnRates();
         const enemyConfig = getEnemyConfig();
@@ -408,7 +378,16 @@ function generatePlatform(startX, length, groundYValue) {
             enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance + extra));
         }
         enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance));
-        if (rand < rates.treeChance) {
+        if (inVillage) {
+            // Village: no enemies, more words and chests
+            if (rand < 0.4 && canSpawnWordItemAt(objectX)) {
+                const word = pickWordForSpawn();
+                items.push(new Item(objectX, groundYValue - 60, word));
+                registerWordItemSpawn(objectX);
+            } else if (rand < 0.6) {
+                chests.push(new Chest(objectX, groundYValue));
+            }
+        } else if (rand < rates.treeChance) {
             spawnBiomeTree(objectX, groundYValue, biome, level.treeType);
         } else if (rand < rates.chestChance) {
             chests.push(new Chest(objectX, groundYValue));
@@ -428,14 +407,11 @@ function generatePlatform(startX, length, groundYValue) {
 }
 
 function spawnEnemyByDifficulty(x, y) {
-    // 村庄安全区不刷怪 (v1.8.0)
-    if (typeof isInVillageArea === 'function' && isInVillageArea(x)) return;
     const enemyConfig = getEnemyConfig();
     const step = Number(getBiomeSwitchConfig().stepScore) || 200;
     const tier = Math.max(0, Math.floor((Number(getProgressScore()) || 0) / Math.max(1, step)));
     const biomePools = {
         forest: ["zombie", "creeper", "spider", "skeleton", "enderman"],
-        cherry_grove: ["bee", "bee", "fox", "witch"],
         snow: ["zombie", "skeleton", "creeper", "spider", "enderman"],
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
@@ -444,70 +420,14 @@ function spawnEnemyByDifficulty(x, y) {
         mushroom_island: ["spore_bug", "bee", "fox"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
-
-    // P1-1: 群系敌人分层 - 根据轮次覆盖敌人池
-    const biomeCfg = biomeConfigs[currentBiome];
-    const tiers = biomeCfg && biomeCfg.enemyTiers;
-    let pool;
-    let tierSpawnRate = 1.0;
-    if (tiers && tiers.length > 0 && typeof getBiomeVisitRound === 'function') {
-        const round = getBiomeVisitRound(currentBiome);
-        const tierIdx = Math.max(0, Math.min(Number(round) || 0, tiers.length) - 1);
-        const tierData = tiers[tierIdx] || {};
-        const tierTypes = (Array.isArray(tierData.types) ? tierData.types : []).filter(t => ENEMY_STATS[t]);
-        const fallbackTake = Math.max(2, Math.min(basePool.length, 2 + tierIdx));
-        pool = tierTypes.length > 0
-            ? tierTypes
-            : basePool.slice(0, fallbackTake).filter(t => ENEMY_STATS[t]);
-        tierSpawnRate = Number(tierData.spawnRate) || 1.0;
-        if (Math.random() > tierSpawnRate) return; // 按 spawnRate 概率跳过生成
-    } else {
-        const take = Math.max(2, Math.min(basePool.length, 2 + tier));
-        pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
-    }
+    const take = Math.max(2, Math.min(basePool.length, 2 + tier));
+    let pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
     if (getProgressScore() < 3000) {
         pool = pool.filter(t => t !== "enderman");
     }
-    // P1-3: 海洋群系排除 creeper
-    if (currentBiome === 'ocean') {
-        pool = pool.filter(t => t !== "creeper");
-    }
 
     const aliveEnemies = enemies.filter(e => !e.remove && e.y < 900).length;
-    const penaltyMult = typeof getMushroomIslandPenaltyMultiplier === 'function'
-        ? Math.max(1, Number(getMushroomIslandPenaltyMultiplier()) || 1)
-        : 1;
-    const maxOnScreen = Math.round((enemyConfig.maxOnScreen || 8) * penaltyMult);
-    if (aliveEnemies >= maxOnScreen) return;
-
-    if (currentBiome === "nether") {
-        const weightedPool = [
-            { type: "zombie", weight: 0.2 },
-            { type: "piglin", weight: 0.3 },
-            { type: "skeleton", weight: 0.2 },
-            { type: "creeper", weight: 0.15 },
-            { type: "enderman", weight: 0.15 }
-        ];
-        let randomValue = Math.random();
-        let selectedType = "piglin";
-        for (const entry of weightedPool) {
-            randomValue -= entry.weight;
-            if (randomValue <= 0) {
-                selectedType = entry.type;
-                break;
-            }
-        }
-        enemies.push(new Enemy(x, y, selectedType));
-        return;
-    }
-
-    if (typeof spawnBiomeEnemy === "function") {
-        const biomeEnemy = spawnBiomeEnemy(currentBiome, x, y);
-        if (biomeEnemy) {
-            enemies.push(biomeEnemy);
-            return;
-        }
-    }
+    if (aliveEnemies >= (enemyConfig.maxOnScreen || 8)) return;
 
     const type = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "zombie";
     enemies.push(new Enemy(x, y, type));
@@ -643,12 +563,6 @@ function generateBiomeDecorations(x, yPos, width, biome) {
             case "seaweed":
                 spawnDecoration("seaweed", obj => obj.reset(decorX, yPos - 30), () => new Seaweed(decorX, yPos - 30));
                 break;
-            case "large_seaweed":
-                spawnDecoration("large_seaweed", obj => obj.reset(decorX, yPos - 70), () => new LargeSeaweed(decorX, yPos - 70));
-                break;
-            case "coral":
-                spawnDecoration("coral", obj => obj.reset(decorX, yPos - 15), () => new CoralDecor(decorX, yPos - 15));
-                break;
             case "boat":
                 spawnDecoration("boat", obj => obj.reset(decorX, yPos - 18), () => new BoatDecor(decorX, yPos - 18));
                 break;
@@ -669,23 +583,6 @@ function generateBiomeDecorations(x, yPos, width, biome) {
             case "basalt":
                 spawnDecoration("basalt", obj => obj.reset(decorX, yPos - 40), () => new Basalt(decorX, yPos - 40));
                 break;
-            case "cherry_tree":
-            case "flower_cluster":
-            case "butterfly":
-            case "small_stream":
-            case "giant_mushroom":
-            case "glow_mushroom":
-            case "mushroom_cow":
-            case "magma_crack":
-            case "hot_spring":
-            case "obsidian_pillar":
-            case "sculk_sensor":
-            case "soul_lantern":
-            case "cloud_platform":
-                if (typeof spawnBiomeDecoration === "function") {
-                    spawnBiomeDecoration(biome?.id || currentBiome, decorX, yPos, yPos);
-                }
-                break;
             default:
                 break;
         }
@@ -700,7 +597,7 @@ function updateMapGeneration() {
         const length = Math.floor(4 + Math.random() * 7);
         generatePlatform(lastGenX, length, groundY);
     }
-    platforms = platforms.filter(p => !p.remove && p.x + p.width > cameraX - removeThreshold);
+    platforms = platforms.filter(p => p.x + p.width > cameraX - removeThreshold);
     trees = trees.filter(t => t.x + t.width > cameraX - removeThreshold && !t.remove);
     chests = chests.filter(c => c.x + 40 > cameraX - removeThreshold);
     items = items.filter(i => i.x + 30 > cameraX - removeThreshold && !i.collected);

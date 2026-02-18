@@ -791,7 +791,7 @@ function handleInteraction() {
             !currentLearningChallenge) {
 
             // 从当前词库随机取一个单词
-            const wordObj = pickNextWord();
+            const wordObj = pickWordForSpawn();
 
             if (wordObj) {
                 // 触发 Challenge，origin 传入 chest 实例
