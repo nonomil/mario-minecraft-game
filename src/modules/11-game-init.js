@@ -406,7 +406,8 @@ function spawnEnemyByDifficulty(x, y) {
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
         ocean: ["drowned", "pufferfish"],
-        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
+        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"],
+        mushroom_island: ["spore_bug", "bee", "fox"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
     const take = Math.max(2, Math.min(basePool.length, 2 + tier));

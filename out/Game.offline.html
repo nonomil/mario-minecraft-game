@@ -2044,30 +2044,93 @@ window.MMWG_STORAGE = {
 (() => {
   const packs = [
     {
-      id: "vocab.kindergarten",
-      title: "幼儿园",
+      id: "vocab.kindergarten.basic",
+      title: "幼儿园 - 初级",
       stage: "kindergarten",
       difficulty: "basic",
+      level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/01_kindergarten/kindergarten_1_base.js",
-        "words/vocabs/01_kindergarten/kindergarten_2_study.js",
-        "words/vocabs/01_kindergarten/kindergarten_3_nature.js",
-        "words/vocabs/01_kindergarten/kindergarten_4_communication.js",
-        "words/vocabs/01_kindergarten/kindergarten_5_daily.js",
-        "words/vocabs/01_kindergarten/kindergarten_6_general.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_01.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_02.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_03.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_04.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_05.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_06.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_07.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_08.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_09.js",
-        "words/vocabs/01_kindergarten/kindergarten_part_10.js",
-        "words/vocabs/01_kindergarten/kindergarten_basic.js",
-        "words/vocabs/01_kindergarten/kindergarten_full.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_01.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_02.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_03.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_KINDERGARTEN_PART01 !== "undefined" ? STAGE_KINDERGARTEN_PART01 : []),
+          ...(typeof STAGE_KINDERGARTEN_PART02 !== "undefined" ? STAGE_KINDERGARTEN_PART02 : []),
+          ...(typeof STAGE_KINDERGARTEN_PART03 !== "undefined" ? STAGE_KINDERGARTEN_PART03 : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.kindergarten.intermediate",
+      title: "幼儿园 - 中级",
+      stage: "kindergarten",
+      difficulty: "basic",
+      level: "intermediate",
+      weight: 1,
+      files: [
+        "words/vocabs/01_幼儿园/幼儿园_分卷_04.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_05.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_06.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_07.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_KINDERGARTEN_PART04 !== "undefined" ? STAGE_KINDERGARTEN_PART04 : []),
+          ...(typeof STAGE_KINDERGARTEN_PART05 !== "undefined" ? STAGE_KINDERGARTEN_PART05 : []),
+          ...(typeof STAGE_KINDERGARTEN_PART06 !== "undefined" ? STAGE_KINDERGARTEN_PART06 : []),
+          ...(typeof STAGE_KINDERGARTEN_PART07 !== "undefined" ? STAGE_KINDERGARTEN_PART07 : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.kindergarten.advanced",
+      title: "幼儿园 - 高级",
+      stage: "kindergarten",
+      difficulty: "basic",
+      level: "advanced",
+      weight: 1,
+      files: [
+        "words/vocabs/01_幼儿园/幼儿园_分卷_08.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_09.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_10.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_KINDERGARTEN_PART08 !== "undefined" ? STAGE_KINDERGARTEN_PART08 : []),
+          ...(typeof STAGE_KINDERGARTEN_PART09 !== "undefined" ? STAGE_KINDERGARTEN_PART09 : []),
+          ...(typeof STAGE_KINDERGARTEN_PART10 !== "undefined" ? STAGE_KINDERGARTEN_PART10 : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.kindergarten",
+      title: "幼儿园 - 完整",
+      stage: "kindergarten",
+      difficulty: "basic",
+      level: "full",
+      weight: 1,
+      files: [
+        "words/vocabs/01_幼儿园/幼儿园_1_基础.js",
+        "words/vocabs/01_幼儿园/幼儿园_2_学习.js",
+        "words/vocabs/01_幼儿园/幼儿园_3_自然.js",
+        "words/vocabs/01_幼儿园/幼儿园_4_沟通.js",
+        "words/vocabs/01_幼儿园/幼儿园_5_日常.js",
+        "words/vocabs/01_幼儿园/幼儿园_6_通用.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_01.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_02.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_03.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_04.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_05.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_06.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_07.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_08.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_09.js",
+        "words/vocabs/01_幼儿园/幼儿园_分卷_10.js",
+        "words/vocabs/01_幼儿园/幼儿园基础.js",
+        "words/vocabs/01_幼儿园/幼儿园完整词库.js",
       ],
       getRaw() {
         return [
@@ -2093,22 +2156,85 @@ window.MMWG_STORAGE = {
       }
     },
     {
-      id: "vocab.elementary_lower",
-      title: "小学低年级",
+      id: "vocab.elementary_lower.basic",
+      title: "小学低年级 - 初级",
       stage: "elementary_lower",
       difficulty: "basic",
+      level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/02_elementary_lower/elementary_lower_part_01.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_02.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_03.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_04.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_05.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_06.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_07.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_08.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_09.js",
-        "words/vocabs/02_elementary_lower/elementary_lower_part_10.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_01.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_02.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_03.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART01 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART01 : []),
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART02 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART02 : []),
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART03 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART03 : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.elementary_lower.intermediate",
+      title: "小学低年级 - 中级",
+      stage: "elementary_lower",
+      difficulty: "basic",
+      level: "intermediate",
+      weight: 1,
+      files: [
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_04.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_05.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_06.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_07.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART04 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART04 : []),
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART05 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART05 : []),
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART06 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART06 : []),
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART07 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART07 : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.elementary_lower.advanced",
+      title: "小学低年级 - 高级",
+      stage: "elementary_lower",
+      difficulty: "basic",
+      level: "advanced",
+      weight: 1,
+      files: [
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_08.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_09.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_10.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART08 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART08 : []),
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART09 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART09 : []),
+          ...(typeof STAGE_ELEMENTARY_LOWER_PART10 !== "undefined" ? STAGE_ELEMENTARY_LOWER_PART10 : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.elementary_lower",
+      title: "小学低年级 - 完整",
+      stage: "elementary_lower",
+      difficulty: "basic",
+      level: "full",
+      weight: 1,
+      files: [
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_01.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_02.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_03.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_04.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_05.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_06.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_07.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_08.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_09.js",
+        "words/vocabs/02_小学_低年级/小学低年级_分卷_10.js",
       ],
       getRaw() {
         return [
@@ -2126,16 +2252,65 @@ window.MMWG_STORAGE = {
       }
     },
     {
-      id: "vocab.elementary_upper",
-      title: "小学高年级",
+      id: "vocab.elementary_upper.basic",
+      title: "小学高年级 - 初级",
       stage: "elementary_upper",
       difficulty: "intermediate",
+      level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/03_elementary_upper/elementary_lower_basic.js",
-        "words/vocabs/03_elementary_upper/elementary_lower_vocab.js",
-        "words/vocabs/03_elementary_upper/elementary_merged.js",
-        "words/vocabs/03_elementary_upper/elementary_upper_basic.js",
+        "words/vocabs/03_小学_高年级/小学低年级基础.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_ELEMENTARY_LOWER !== "undefined" ? STAGE_ELEMENTARY_LOWER : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.elementary_upper.intermediate",
+      title: "小学高年级 - 中级",
+      stage: "elementary_upper",
+      difficulty: "intermediate",
+      level: "intermediate",
+      weight: 1,
+      files: [
+        "words/vocabs/03_小学_高年级/小学高年级基础.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_ELEMENTARY_UPPER !== "undefined" ? STAGE_ELEMENTARY_UPPER : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.elementary_upper.advanced",
+      title: "小学高年级 - 高级",
+      stage: "elementary_upper",
+      difficulty: "intermediate",
+      level: "advanced",
+      weight: 1,
+      files: [
+        "words/vocabs/03_小学_高年级/小学全阶段合并词库.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof MERGED_VOCABULARY !== "undefined" ? MERGED_VOCABULARY : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.elementary_upper",
+      title: "小学高年级 - 完整",
+      stage: "elementary_upper",
+      difficulty: "intermediate",
+      level: "full",
+      weight: 1,
+      files: [
+        "words/vocabs/03_小学_高年级/小学低年级基础.js",
+        "words/vocabs/03_小学_高年级/小学低年级词汇库.js",
+        "words/vocabs/03_小学_高年级/小学全阶段合并词库.js",
+        "words/vocabs/03_小学_高年级/小学高年级基础.js",
       ],
       getRaw() {
         return [
@@ -2147,25 +2322,90 @@ window.MMWG_STORAGE = {
       }
     },
     {
-      id: "vocab.minecraft",
-      title: "我的世界",
+      id: "vocab.minecraft.basic",
+      title: "我的世界 - 初级",
       stage: "minecraft",
       difficulty: "basic",
+      level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/04_minecraft/minecraft_advanced.js",
-        "words/vocabs/04_minecraft/minecraft_advancements.js",
-        "words/vocabs/04_minecraft/minecraft_basic.js",
-        "words/vocabs/04_minecraft/minecraft_biomes.js",
-        "words/vocabs/04_minecraft/minecraft_blocks.js",
-        "words/vocabs/04_minecraft/minecraft_enchantments.js",
-        "words/vocabs/04_minecraft/minecraft_entities.js",
-        "words/vocabs/04_minecraft/minecraft_environment.js",
-        "words/vocabs/04_minecraft/minecraft_intermediate.js",
-        "words/vocabs/04_minecraft/minecraft_items.js",
-        "words/vocabs/04_minecraft/minecraft_items_2.js",
-        "words/vocabs/04_minecraft/minecraft_status_effects.js",
-        "words/vocabs/04_minecraft/minecraft_words_full.js",
+        "words/vocabs/04_我的世界/minecraft_basic.js",
+        "words/vocabs/04_我的世界/minecraft_blocks.js",
+        "words/vocabs/04_我的世界/minecraft_items.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof VOCAB_1_MINECRAFT____BASIC !== "undefined" ? VOCAB_1_MINECRAFT____BASIC : []),
+          ...(typeof MINECRAFT_1_BLOCKS___ !== "undefined" ? MINECRAFT_1_BLOCKS___ : []),
+          ...(typeof MINECRAFT_2_ITEMS___ !== "undefined" ? MINECRAFT_2_ITEMS___ : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.minecraft.intermediate",
+      title: "我的世界 - 中级",
+      stage: "minecraft",
+      difficulty: "basic",
+      level: "intermediate",
+      weight: 1,
+      files: [
+        "words/vocabs/04_我的世界/minecraft_intermediate.js",
+        "words/vocabs/04_我的世界/minecraft_entities.js",
+        "words/vocabs/04_我的世界/minecraft_biomes.js",
+        "words/vocabs/04_我的世界/minecraft_environment.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof VOCAB_2_MINECRAFT____BASIC !== "undefined" ? VOCAB_2_MINECRAFT____BASIC : []),
+          ...(typeof MINECRAFT_3_ENTITIES___ !== "undefined" ? MINECRAFT_3_ENTITIES___ : []),
+          ...(typeof MINECRAFT_5_BIOMES_____ !== "undefined" ? MINECRAFT_5_BIOMES_____ : []),
+          ...(typeof MINECRAFT_4_ENVIRONMENT___ !== "undefined" ? MINECRAFT_4_ENVIRONMENT___ : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.minecraft.advanced",
+      title: "我的世界 - 高级",
+      stage: "minecraft",
+      difficulty: "basic",
+      level: "advanced",
+      weight: 1,
+      files: [
+        "words/vocabs/04_我的世界/minecraft_advanced.js",
+        "words/vocabs/04_我的世界/minecraft_enchantments.js",
+        "words/vocabs/04_我的世界/minecraft_advancements.js",
+        "words/vocabs/04_我的世界/minecraft_status_effects.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof VOCAB_3_MINECRAFT____ADVANCED !== "undefined" ? VOCAB_3_MINECRAFT____ADVANCED : []),
+          ...(typeof MINECRAFT_7_____ENCHANTMENTS_ !== "undefined" ? MINECRAFT_7_____ENCHANTMENTS_ : []),
+          ...(typeof MINECRAFT_8_____ADVANCEMENTS_ !== "undefined" ? MINECRAFT_8_____ADVANCEMENTS_ : []),
+          ...(typeof MINECRAFT_6_______STATUS_EFFECTS_ !== "undefined" ? MINECRAFT_6_______STATUS_EFFECTS_ : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.minecraft",
+      title: "我的世界 - 完整",
+      stage: "minecraft",
+      difficulty: "basic",
+      level: "full",
+      weight: 1,
+      files: [
+        "words/vocabs/04_我的世界/minecraft_advanced.js",
+        "words/vocabs/04_我的世界/minecraft_advancements.js",
+        "words/vocabs/04_我的世界/minecraft_basic.js",
+        "words/vocabs/04_我的世界/minecraft_biomes.js",
+        "words/vocabs/04_我的世界/minecraft_blocks.js",
+        "words/vocabs/04_我的世界/minecraft_enchantments.js",
+        "words/vocabs/04_我的世界/minecraft_entities.js",
+        "words/vocabs/04_我的世界/minecraft_environment.js",
+        "words/vocabs/04_我的世界/minecraft_intermediate.js",
+        "words/vocabs/04_我的世界/minecraft_items.js",
+        "words/vocabs/04_我的世界/minecraft_items_2.js",
+        "words/vocabs/04_我的世界/minecraft_status_effects.js",
+        "words/vocabs/04_我的世界/minecraft_words_full.js",
       ],
       getRaw() {
         return [
@@ -2191,7 +2431,7 @@ window.MMWG_STORAGE = {
   packs.forEach(p => { byId[p.id] = p; });
 
   window.MMWG_VOCAB_MANIFEST = {
-    version: "2026-02-08.1",
+    version: "2026-02-04.1",
     packs,
     byId
   };
@@ -3408,6 +3648,8 @@ let playerPositionHistory = [];
 let projectiles = [];
 let digHits = new Map();
 let bossSpawned = false;
+let bossArena = null;
+let villageConfig = {};
 let playerInvincibleTimer = 0;
 let overlayMode = "start";
 const START_OVERLAY_INTRO_MS = 1600;
@@ -5359,6 +5601,9 @@ function wireProfileModal() {
  */
 function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
+    if (typeof merged.challengeEnabled !== "boolean") merged.challengeEnabled = defaultSettings.challengeEnabled ?? true;
+    if (typeof merged.challengeFrequency !== "number") merged.challengeFrequency = defaultSettings.challengeFrequency ?? 0.3;
+    if (typeof merged.wordCardDuration !== "number") merged.wordCardDuration = defaultSettings.wordCardDuration ?? 900;
     if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;
     if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
     if (typeof merged.speechZhEnabled !== "boolean") merged.speechZhEnabled = defaultSettings.speechZhEnabled ?? false;
@@ -5368,11 +5613,14 @@ function normalizeSettings(raw) {
     if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
     if (typeof merged.wordGateEnabled !== "boolean") merged.wordGateEnabled = defaultSettings.wordGateEnabled ?? true;
     if (typeof merged.wordMatchEnabled !== "boolean") merged.wordMatchEnabled = defaultSettings.wordMatchEnabled ?? true;
-    if (typeof merged.wordCardDuration !== "number") merged.wordCardDuration = defaultSettings.wordCardDuration ?? 900;
+    if (typeof merged.villageEnabled !== "boolean") merged.villageEnabled = defaultSettings.villageEnabled ?? true;
+    if (typeof merged.villageFrequency !== "number") merged.villageFrequency = defaultSettings.villageFrequency ?? 500;
+    if (typeof merged.villageAutoSave !== "boolean") merged.villageAutoSave = defaultSettings.villageAutoSave ?? true;
     if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
-    merged.wordCardDuration = Math.max(600, Math.min(3000, Number(merged.wordCardDuration) || 900));
+    merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
+    merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 900));
     if (!merged.keyCodes) {
         merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
             .filter(Boolean)
@@ -5405,11 +5653,6 @@ function saveVocabState() {
 function normalizeProgress(raw) {
     const p = raw && typeof raw === "object" ? raw : {};
     if (!p.vocab || typeof p.vocab !== "object") p.vocab = {};
-
-    // === 新增：答题统计数据 (v1.6.0) ===
-    if (!p.challengeStats || typeof p.challengeStats !== "object") p.challengeStats = {};
-    // 结构：p.challengeStats["apple"] = { correct: 3, wrong: 1, lastSeen: 1707900000000 }
-
     return p;
 }
 
@@ -5465,16 +5708,74 @@ function renderVocabSelect() {
     const sel = document.getElementById("opt-vocab");
     if (!sel) return;
     sel.innerHTML = "";
-    const add = (value, text) => {
+    const add = (value, text, isOptgroup = false) => {
+        if (isOptgroup) {
+            const optgroup = document.createElement("optgroup");
+            optgroup.label = text;
+            sel.appendChild(optgroup);
+            return optgroup;
+        }
         const opt = document.createElement("option");
         opt.value = value;
         opt.innerText = text;
         sel.appendChild(opt);
     };
+    const addToGroup = (group, value, text) => {
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.innerText = text;
+        group.appendChild(opt);
+    };
+
     add("auto", "随机词库（按类别轮换）");
     const engine = ensureVocabEngine();
     if (!engine) return;
-    vocabManifest.packs.forEach(p => add(p.id, p.title));
+
+    // Group packs by stage
+    const grouped = {};
+    vocabManifest.packs.forEach(p => {
+        const stage = p.stage || "other";
+        if (!grouped[stage]) grouped[stage] = [];
+        grouped[stage].push(p);
+    });
+
+    // Define stage order and labels
+    const stageOrder = ["kindergarten", "elementary_lower", "elementary_upper", "minecraft"];
+    const stageLabels = {
+        "kindergarten": "幼儿园",
+        "elementary_lower": "小学低年级",
+        "elementary_upper": "小学高年级",
+        "minecraft": "我的世界"
+    };
+
+    // Define level order
+    const levelOrder = ["basic", "intermediate", "advanced", "full"];
+    const levelLabels = {
+        "basic": "初级",
+        "intermediate": "中级",
+        "advanced": "高级",
+        "full": "完整"
+    };
+
+    // Render grouped options
+    stageOrder.forEach(stage => {
+        if (!grouped[stage]) return;
+        const group = add(null, stageLabels[stage] || stage, true);
+
+        // Sort packs by level
+        const packs = grouped[stage].sort((a, b) => {
+            const aLevel = a.level || "full";
+            const bLevel = b.level || "full";
+            return levelOrder.indexOf(aLevel) - levelOrder.indexOf(bLevel);
+        });
+
+        packs.forEach(p => {
+            const levelLabel = levelLabels[p.level] || p.level || "";
+            const title = levelLabel ? `${levelLabel}` : p.title;
+            addToGroup(group, p.id, title);
+        });
+    });
+
     sel.value = settings.vocabSelection || "auto";
     updateVocabPreview(sel.value);
 }
@@ -5708,20 +6009,12 @@ function switchToNextPackInOrder() {
 }
 
 function applySettingsToUI() {
-    const previousLayout = {
-        canvasWidth: canvas.width,
-        canvasHeight: canvas.height
-    };
     const visualViewport = getViewportSize();
     // Use the safe-area-adjusted game area for canvas + physics scaling.
     const gameArea = getGameAreaSize();
     applyConfig(gameArea);
     const viewportChanged = gameArea.width !== lastViewport.width || gameArea.height !== lastViewport.height;
     lastViewport = { width: gameArea.width, height: gameArea.height };
-
-    if (viewportChanged && startedOnce) {
-        realignWorldForViewport(previousLayout);
-    }
 
     const baseScale = Number(settings.uiScale) || 1.0;
     const uiScale = clamp(worldScale.unit * baseScale, 0.6, 2.2);
@@ -5760,99 +6053,9 @@ function scheduleApplySettingsToUI() {
     });
 }
 
-/**
- * 获取答题统计数据 (v1.6.0 新增)
- * @returns {Object} 统计对象
- */
-function getChallengeStats() {
-    const stats = progress.challengeStats || {};
-    const words = Object.keys(stats);
-
-    let totalCorrect = 0, totalWrong = 0;
-    words.forEach(w => {
-        totalCorrect += stats[w].correct || 0;
-        totalWrong += stats[w].wrong || 0;
-    });
-
-    const total = totalCorrect + totalWrong;
-
-    return {
-        wordCount: words.length,           // 答题涉及单词数
-        totalCorrect: totalCorrect,        // 总答对次数
-        totalWrong: totalWrong,            // 总答错次数
-        accuracy: total > 0 ? Math.round(totalCorrect / total * 100) : 0,  // 正确率
-        details: stats                     // 详细数据
-    };
-}
-
-/**
- * 从当前词库随机取一个单词 (v1.6.1 新增)
- * @returns {Object|null} 单词对象或null
- */
-function pickNextWord() {
-    if (!wordDatabase || !wordDatabase.length) return null;
-
-    // 从已加载的 wordDatabase 中随机取一个
-    const idx = Math.floor(Math.random() * wordDatabase.length);
-    return wordDatabase[idx];
-}
-
-/**
- * 获取需要复习的单词列表（基于间隔重复算法）(v1.6.3 新增)
- * @param {number} count - 需要复习的单词数量（默认3个）
- * @returns {Array} 单词对象数组
- */
-function getWordsForReview(count) {
-    count = count || 3;
-    const stats = progress.challengeStats || {};
-    const now = Date.now();
-    const candidates = [];
-
-    // 从答题记录中找出"该复习"的单词
-    for (const word in stats) {
-        const s = stats[word];
-        const total = (s.correct || 0) + (s.wrong || 0);
-        if (total === 0) continue;
-
-        // 间隔策略：答对越多，复习间隔越长
-        const level = Math.min(s.correct || 0, 5);
-        const intervals = [
-            0,           // level 0: 立即
-            60000,       // level 1: 1分钟
-            300000,      // level 2: 5分钟
-            900000,      // level 3: 15分钟
-            3600000,     // level 4: 1小时
-            86400000     // level 5: 1天
-        ];
-
-        const nextReview = (s.lastSeen || 0) + (intervals[level] || 0);
-
-        if (now >= nextReview) {
-            // 计算优先级：错误率高的 + 久未复习的优先
-            const errorRate = (s.wrong || 0) / total;
-            const timeSince = now - (s.lastSeen || 0);
-
-            candidates.push({
-                word: word,
-                priority: errorRate * 100 + timeSince / 60000  // 归一化优先级
-            });
-        }
-    }
-
-    // 按优先级排序，取前N个
-    candidates.sort((a, b) => b.priority - a.priority);
-
-    // 返回完整的 wordObj
-    return candidates.slice(0, count).map(c => {
-        const found = wordDatabase.find(w => w.en === c.word);
-        return found || { en: c.word, zh: stats[c.word]?.zh || "" };
-    });
-}
-
-
 </script>
 <script>
-﻿/**
+/**
  * 10-ui.js - UI覆盖层、游戏结束、复活
  * 从 main.js 拆分 (原始行 2497-2836)
  */
@@ -6268,6 +6471,13 @@ function initGame() {
     updateInventoryUI();
     player = createPlayer();
     bossSpawned = false;
+    if (typeof bossArena !== 'undefined' && bossArena) {
+        bossArena.active = false; bossArena.boss = null; bossArena.spawned = {};
+    }
+    if (typeof activeVillages !== 'undefined') activeVillages = [];
+    if (typeof villageSpawnedForScore !== 'undefined') villageSpawnedForScore = {};
+    if (typeof playerInVillage !== 'undefined') playerInVillage = false;
+    if (typeof currentVillage !== 'undefined') currentVillage = null;
     startLevel(0);
     updateDifficultyState(true);
 }
@@ -6798,7 +7008,7 @@ function updateMapGeneration() {
 
 </script>
 <script>
-﻿/**
+/**
  * 12-challenges.js - 单词收集与学习挑战
  * 从 main.js 拆分 (原始行 3401-3817)
  */
@@ -7547,13 +7757,27 @@ function update() {
 
     for (let p of platforms) {
         const dir = colCheck(player, p);
-        if (dir === "l" || dir === "r") player.velX = 0;
-        else if (dir === "b") {
+        if (dir === "l" || dir === "r") {
+            // 如果玩家脚底接近平台顶部，视为踩上平台而非撞墙
+            const feetY = player.y + player.height;
+            const stepUpThreshold = blockSize * 0.6;
+            if (feetY >= p.y && feetY - p.y < stepUpThreshold) {
+                player.y = p.y - player.height;
+                player.grounded = true;
+                player.jumpCount = 0;
+                player.velY = 0;
+                coyoteTimer = gameConfig.jump.coyoteFrames;
+            } else {
+                player.velX = 0;
+            }
+        } else if (dir === "b") {
             player.grounded = true;
+            player.y = p.y - player.height;
             player.jumpCount = 0;
             coyoteTimer = gameConfig.jump.coyoteFrames;
         } else if (dir === "t") {
-            player.velY *= -1;
+            player.y = p.y + p.height;
+            if (player.velY < 0) player.velY = 0;
         }
     }
 
@@ -7562,8 +7786,20 @@ function update() {
         const trunkY = t.y + t.height - 60;
         const dir = colCheckRect(player.x, player.y, player.width, player.height, trunkX, trunkY, 30, 60);
         if (dir) {
-            if (dir === "l" || dir === "r") player.velX = 0;
-            else if (dir === "b") {
+            if (dir === "l" || dir === "r") {
+                // 树干也需要 step-up 逻辑
+                const feetY = player.y + player.height;
+                const stepUpThreshold = blockSize * 0.6;
+                if (feetY >= trunkY && feetY - trunkY < stepUpThreshold) {
+                    player.y = trunkY - player.height;
+                    player.grounded = true;
+                    player.jumpCount = 0;
+                    player.velY = 0;
+                    coyoteTimer = gameConfig.jump.coyoteFrames;
+                } else {
+                    player.velX = 0;
+                }
+            } else if (dir === "b") {
                 player.grounded = true;
                 player.jumpCount = 0;
                 player.y = trunkY - player.height;
@@ -7599,12 +7835,34 @@ function update() {
     player.x += player.velX;
     player.y += player.velY;
 
+    // 上边界保护
+    if (player.y < -player.height * 2) {
+        player.y = -player.height * 2;
+        if (player.velY < 0) player.velY = 0;
+    }
+
     if (player.y > fallResetY) {
         player.y = 0;
         player.x -= 200;
         if (player.x < 0) player.x = 100;
         player.velY = 0;
     }
+
+    // 卡住检测
+    if (typeof player._stuckFrames === "undefined") player._stuckFrames = 0;
+    if (typeof player._lastStuckX === "undefined") player._lastStuckX = player.x;
+    const hasInput = keys.right || keys.left || keys.up || keys.jump;
+    if (hasInput && Math.abs(player.x - player._lastStuckX) < 0.5 && player.grounded) {
+        player._stuckFrames++;
+        if (player._stuckFrames > 45) {
+            player.y = player.y - blockSize * 0.8;
+            player.velY = -2;
+            player._stuckFrames = 0;
+        }
+    } else {
+        player._stuckFrames = 0;
+    }
+    player._lastStuckX = player.x;
 
     let targetCamX = player.x - cameraOffsetX;
     if (targetCamX < 0) targetCamX = 0;
@@ -7642,6 +7900,11 @@ function update() {
     spawnBiomeParticles();
 
     checkBossSpawn();
+    if (typeof bossArena !== 'undefined' && bossArena) {
+        bossArena.checkSpawn(getProgressScore());
+        bossArena.update(player);
+    }
+    if (typeof updateVillages === 'function') updateVillages();
 
     playerPositionHistory.push({ x: player.x, y: player.y, frame: gameFrame });
     if (playerPositionHistory.length > 150) playerPositionHistory.shift();
@@ -7805,6 +8068,16 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const dir = sourceX != null ? (player.x > sourceX ? 1 : -1) : -1;
     player.x += dir * knockback;
     player.y -= 40;
+    // 击退后位置合法性校验：不嵌入平台
+    for (let p of platforms) {
+        if (!p || p.remove) continue;
+        const d = colCheck(player, p);
+        if (d === "l") player.x = p.x + p.width;
+        else if (d === "r") player.x = p.x - player.width;
+        else if (d === "b") player.y = p.y - player.height;
+        else if (d === "t") player.y = p.y + p.height;
+    }
+    if (player.y < -player.height * 2) player.y = -player.height * 2;
     const baseDamage = Math.max(1, Number(amount) || 1);
     const diff = getDifficultyState();
     const damageUnit = Number(getDifficultyConfig().damageUnit ?? 20) || 20;
@@ -7844,8 +8117,8 @@ function showToast(msg) {
     setTimeout(() => t.style.display = "none", 2000);
 }
 
-function showFloatingText(text, x, y) {
-    floatingTexts.push({ text, x, y, life: 60 });
+function showFloatingText(text, x, y, color) {
+    floatingTexts.push({ text, x, y, life: 60, color: color || '#FFF' });
 }
 
 function updateInventoryUI() {
@@ -8205,6 +8478,9 @@ function spawnGolem(type) {
 }
 
 function handleInteraction() {
+    // 村庄建筑交互优先
+    if (typeof tryVillageInteraction === 'function' && tryVillageInteraction()) return;
+
     let nearestChest = null;
     let minDist = 60;
     const now = Date.now();
@@ -8319,6 +8595,9 @@ const ENTITY_NAMES = {
     blaze:           { en: "BLAZE",           zh: "烈焰人" },
     wither_skeleton: { en: "WITHER SKELETON", zh: "凋零骷髅" },
 
+    // 村庄
+    villager:        { en: "VILLAGER",        zh: "村民" },
+
     // 友方
     iron_golem:      { en: "IRON GOLEM",      zh: "铁傀儡" },
     snow_golem:      { en: "SNOW GOLEM",      zh: "雪傀儡" },
@@ -8384,6 +8663,9 @@ function draw() {
 
     wordGates.forEach(gate => drawWordGate(gate));
 
+    // 村庄渲染（在敌人之前）
+    if (typeof drawVillages === 'function') drawVillages(ctx);
+
     if (particles.length) {
         particles.forEach(p => drawParticle(p));
     }
@@ -8403,6 +8685,7 @@ function draw() {
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 3;
     floatingTexts.forEach(t => {
+        ctx.fillStyle = t.color || '#FFF';
         ctx.strokeText(t.text, t.x + 10, t.y);
         ctx.fillText(t.text, t.x + 10, t.y);
     });
@@ -8425,6 +8708,16 @@ function draw() {
     }
 
     ctx.restore();
+
+    // BOSS竞技场渲染
+    if (typeof bossArena !== 'undefined' && bossArena && bossArena.active) {
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+        bossArena.renderBoss(ctx);
+        bossArena.renderProjectiles(ctx);
+        ctx.restore();
+        bossArena.renderBossHpBar(ctx);
+    }
 
     const boss = enemies.find(e => e.type === "ender_dragon" && !e.remove);
     if (boss) {
@@ -10583,6 +10876,7 @@ class Enemy extends Entity {
         super(x, y, size.w, size.h);
         this.type = type;
         this.startX = x;
+        this.startY = y;
         this.range = range;
         this.hp = Math.max(1, Math.round(stats.hp * diff.enemyHpMult));
         this.maxHp = this.hp;
@@ -10981,6 +11275,2307 @@ class Golem extends Entity {
 
 </script>
 <script>
+// ============ BOSS 战斗系统 ============
+
+// BOSS 基类
+class Boss {
+    constructor(config) {
+        this.name = config.name;
+        this.maxHp = config.maxHp;
+        this.hp = config.maxHp;
+        this.x = config.x || 0;
+        this.y = config.y || 100;
+        this.width = config.width || 96;
+        this.height = config.height || 96;
+        this.color = config.color || '#333';
+        this.phase = 1;
+        this.phaseThresholds = config.phaseThresholds || [0.6, 0.2];
+        this.alive = true;
+        this.remove = false;
+        this.bossProjectiles = [];
+        this.attackTimer = 0;
+        this.stunTimer = 0;
+        this.flashTimer = 0;
+        this.particles = [];
+        this.damage = config.damage || 1;
+        this.type = 'boss';
+    }
+
+    update(playerRef) {
+        if (!this.alive) return;
+        this.updatePhase();
+        this.updateProjectiles();
+        this.updateParticles();
+        if (this.flashTimer > 0) this.flashTimer--;
+        if (this.stunTimer > 0) { this.stunTimer--; return; }
+        this.updateBehavior(playerRef);
+    }
+
+    updatePhase() {
+        const pct = this.hp / this.maxHp;
+        if (this.phase === 1 && pct <= this.phaseThresholds[0]) {
+            this.phase = 2;
+            this.onPhaseChange(2);
+        } else if (this.phase === 2 && pct <= this.phaseThresholds[1]) {
+            this.phase = 3;
+            this.onPhaseChange(3);
+        }
+    }
+// PLACEHOLDER_BOSS_METHODS
+
+    updateProjectiles() {
+        for (let i = this.bossProjectiles.length - 1; i >= 0; i--) {
+            const p = this.bossProjectiles[i];
+            // 追踪逻辑（反弹后不再追踪玩家）
+            if (p.tracking && !p.reflected && p.trackDelay !== undefined) {
+                if (p.trackDelay > 0) { p.trackDelay--; }
+                else {
+                    const dx = player.x + player.width / 2 - p.x;
+                    const dy = player.y + player.height / 2 - p.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist > 0) {
+                        p.vx += (dx / dist) * 0.15;
+                        p.vy += (dy / dist) * 0.15;
+                        const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                        if (spd > 4) { p.vx = (p.vx / spd) * 4; p.vy = (p.vy / spd) * 4; }
+                    }
+                }
+            }
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life = (p.life || 300) - 1;
+            // 反弹弹幕碰撞BOSS
+            if (p.reflected) {
+                if (Math.abs(p.x - this.x - this.width / 2) < p.size + this.width / 2 &&
+                    Math.abs(p.y - this.y - this.height / 2) < p.size + this.height / 2) {
+                    this.takeDamage(p.damage);
+                    this.bossProjectiles.splice(i, 1);
+                    continue;
+                }
+            } else {
+                // 碰撞玩家
+                if (Math.abs(p.x - player.x - player.width / 2) < p.size + player.width / 2 &&
+                    Math.abs(p.y - player.y - player.height / 2) < p.size + player.height / 2) {
+                    damagePlayer(p.damage, p.x);
+                    this.bossProjectiles.splice(i, 1);
+                    continue;
+                }
+            }
+            // 超出范围或生命结束
+            if (p.life <= 0 || p.x < cameraX - 200 || p.x > cameraX + canvas.width + 200 ||
+                p.y < -200 || p.y > 1000) {
+                this.bossProjectiles.splice(i, 1);
+            }
+        }
+    }
+
+    updateParticles() {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.x += p.vx || 0;
+            p.y += p.vy || 0;
+            p.life -= 0.02;
+            if (p.life <= 0) this.particles.splice(i, 1);
+        }
+    }
+
+    takeDamage(amount) {
+        if (this.stunTimer > 0) amount = Math.ceil(amount * 1.5);
+        this.hp -= amount;
+        this.flashTimer = 10;
+        showFloatingText(`-${amount}`, this.x + this.width / 2, this.y - 10, '#FF4444');
+        if (this.hp <= 0) {
+            this.hp = 0;
+            this.die();
+        }
+    }
+
+    die() {
+        this.alive = false;
+        this.remove = true;
+        bossArena.onVictory();
+    }
+
+    updateBehavior(playerRef) {}
+    onPhaseChange(newPhase) {}
+    render(ctx) {}
+}
+
+// BOSS 战场管理器
+const bossArena = {
+    active: false,
+    boss: null,
+    victoryTimer: 0,
+    bossTypes: ['wither', 'ghast', 'blaze', 'wither_skeleton'],
+    bossScores: [2000, 4000, 6000, 8000],         // 触发分数阈值
+    spawned: {},           // 已生成的BOSS记录
+
+// PLACEHOLDER_ARENA_METHODS
+
+    checkSpawn() {
+        if (this.active) return;
+        const score = getProgressScore();
+        for (let i = 0; i < this.bossTypes.length; i++) {
+            const type = this.bossTypes[i];
+            if (!this.spawned[type] && score >= this.bossScores[i]) {
+                this.enter(type);
+                return;
+            }
+        }
+    },
+
+    enter(bossType) {
+        this.active = true;
+        this.victoryTimer = 0;
+        this.spawned[bossType] = true;
+        this.boss = this.createBoss(bossType);
+        showToast(`⚠️ BOSS战: ${this.boss.name}!`);
+    },
+
+    createBoss(type) {
+        const spawnX = player.x + 300;
+        switch (type) {
+            case 'wither': return new WitherBoss(spawnX);
+            case 'ghast': return new GhastBoss(spawnX);
+            case 'blaze': return new BlazeBoss(spawnX);
+            case 'wither_skeleton': return new WitherSkeletonBoss(spawnX);
+            default: return new WitherBoss(spawnX);
+        }
+    },
+
+    exit() {
+        this.active = false;
+        this.boss = null;
+    },
+
+    onVictory() {
+        if (this.victoryTimer > 0) return;
+        this.victoryTimer = 1;
+        // 奖励
+        score += 500;
+        inventory.iron = (inventory.iron || 0) + 5;
+        addArmorToInventory('diamond');
+        showFloatingText('🏆 BOSS DEFEATED!', player.x, player.y - 60, '#FFD700');
+        showToast('🏆 击败BOSS! 获得丰厚奖励!');
+    },
+
+    update() {
+        if (!this.active || !this.boss) return;
+        if (!this.boss.alive) {
+            this.victoryTimer++;
+            if (this.victoryTimer > 180) this.exit();
+            return;
+        }
+        this.boss.update(player);
+    },
+
+    renderBossHpBar(ctx) {
+        if (!this.active || !this.boss) return;
+        const barW = Math.min(360, canvas.width * 0.6);
+        const barH = 14;
+        const bx = (canvas.width - barW) / 2;
+        const by = 20;
+        const pct = Math.max(0, this.boss.hp / this.boss.maxHp);
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(bx - 4, by - 4, barW + 8, barH + 8);
+        ctx.fillStyle = '#111';
+        ctx.fillRect(bx, by, barW, barH);
+        const hpColor = pct > 0.5 ? '#4CAF50' : pct > 0.2 ? '#FF9800' : '#F44336';
+        ctx.fillStyle = hpColor;
+        ctx.fillRect(bx, by, barW * pct, barH);
+        ctx.strokeStyle = '#FFF';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(bx, by, barW, barH);
+        ctx.fillStyle = '#FFF';
+        ctx.font = 'bold 14px Verdana';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${this.boss.name} (阶段${this.boss.phase})`, canvas.width / 2, by - 6);
+        ctx.textAlign = 'left';
+    },
+
+    renderProjectiles(ctx, camX) {
+        if (!this.active || !this.boss) return;
+        this.boss.bossProjectiles.forEach(p => {
+            ctx.fillStyle = p.color || '#1A1A1A';
+            ctx.beginPath();
+            ctx.arc(p.x - camX, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            // 反弹火球拖尾
+            if (p.reflected) {
+                ctx.globalAlpha = 0.3;
+                ctx.fillStyle = '#00BFFF';
+                ctx.beginPath();
+                ctx.arc(p.x - camX - p.vx, p.y - p.vy, p.size * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        });
+    },
+
+    renderBoss(ctx, camX) {
+        if (!this.active || !this.boss) return;
+        this.boss.render(ctx, camX);
+    }
+};
+
+// 凋零 BOSS
+class WitherBoss extends Boss {
+    constructor(spawnX) {
+        super({
+            name: '凋零 Wither',
+            maxHp: 30,
+            color: '#1A1A1A',
+            x: spawnX,
+            y: 80,
+            width: 96,
+            height: 96,
+            phaseThresholds: [0.6, 0.2],
+            damage: 1
+        });
+        this.floatOffset = 0;
+        this.moveDir = 1;
+        this.moveSpeed = 1.5;
+        this.charging = false;
+        this.chargeTarget = null;
+        this.chargeTimer = 0;
+        this.startX = spawnX;
+    }
+
+    updateBehavior(playerRef) {
+        this.floatOffset = Math.sin(Date.now() / 500) * 10;
+        // 跟随玩家水平位置
+        const targetX = playerRef.x;
+        if (Math.abs(this.x - targetX) > 150) {
+            this.x += (targetX > this.x ? 1 : -1) * this.moveSpeed * (this.phase === 2 ? 1.5 : 1);
+        }
+        switch (this.phase) {
+            case 1: this.phaseOne(playerRef); break;
+            case 2: this.phaseTwo(playerRef); break;
+            case 3: this.phaseThree(playerRef); break;
+        }
+    }
+
+    // 阶段一：每3秒1个黑球
+    phaseOne(playerRef) {
+        this.attackTimer++;
+        if (this.attackTimer >= 180) {
+            this.shootBlackBall(playerRef, 1);
+            this.attackTimer = 0;
+        }
+    }
+
+    // 阶段二：每2秒3个扇形黑球 + 冲刺
+    phaseTwo(playerRef) {
+        if (this.charging) { this.executeCharge(playerRef); return; }
+        this.attackTimer++;
+        if (this.attackTimer >= 120) {
+            this.shootBlackBall(playerRef, 3);
+            this.attackTimer = 0;
+        }
+        this.chargeTimer++;
+        if (this.chargeTimer >= 480) {
+            this.startCharge(playerRef);
+            this.chargeTimer = 0;
+        }
+    }
+
+    // 阶段三：固定中央，每1秒5个追踪弹
+    phaseThree(playerRef) {
+        const centerX = playerRef.x;
+        this.x += (centerX - this.x) * 0.03;
+        this.x += (Math.random() - 0.5) * 4;
+        this.y = 80 + (Math.random() - 0.5) * 4;
+        this.attackTimer++;
+        if (this.attackTimer >= 60) {
+            this.shootTrackingBalls(5);
+            this.attackTimer = 0;
+        }
+    }
+// PLACEHOLDER_WITHER_METHODS
+
+    shootBlackBall(playerRef, count) {
+        const cx = this.x + this.width / 2;
+        const cy = this.y + this.height / 2;
+        const px = playerRef.x + playerRef.width / 2;
+        const py = playerRef.y + playerRef.height / 2;
+        const angle = Math.atan2(py - cy, px - cx);
+        for (let i = 0; i < count; i++) {
+            const spread = count > 1 ? (i - (count - 1) / 2) * 0.3 : 0;
+            this.bossProjectiles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle + spread) * 4,
+                vy: Math.sin(angle + spread) * 4,
+                damage: this.phase >= 2 ? 2 : 1,
+                size: 12, color: '#1A1A1A',
+                tracking: false, life: 300
+            });
+        }
+    }
+
+    shootTrackingBalls(count) {
+        const cx = this.x + this.width / 2;
+        const cy = this.y + this.height / 2;
+        for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 / count) * i;
+            this.bossProjectiles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle) * 3,
+                vy: Math.sin(angle) * 3,
+                damage: 1, size: 10, color: '#4A0080',
+                tracking: true, trackDelay: 60, life: 300
+            });
+        }
+    }
+
+    startCharge(playerRef) {
+        this.charging = true;
+        this.chargeTarget = { x: playerRef.x, y: playerRef.y };
+        this.flashTimer = 30;
+        showFloatingText('⚠️', this.x + this.width / 2, this.y - 20, '#FF0000');
+    }
+
+    executeCharge() {
+        const dx = this.chargeTarget.x - this.x;
+        const dy = this.chargeTarget.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 20) {
+            this.charging = false;
+            this.stunTimer = 30;
+            this.y = 80;
+            return;
+        }
+        this.x += (dx / dist) * 8;
+        this.y += (dy / dist) * 8;
+        // 冲刺碰撞玩家
+        if (Math.abs(this.x - player.x) < this.width &&
+            Math.abs(this.y - player.y) < this.height) {
+            damagePlayer(2, this.x, 120);
+            this.charging = false;
+            this.stunTimer = 30;
+            this.y = 80;
+        }
+    }
+
+    onPhaseChange(newPhase) {
+        this.attackTimer = 0;
+        this.chargeTimer = 0;
+        if (newPhase === 2) {
+            this.color = '#8B0000';
+            showToast('⚠️ 凋零进入暴怒状态!');
+        } else if (newPhase === 3) {
+            showToast('⚠️ 凋零进入狂暴状态!');
+        }
+        // 爆发粒子
+        for (let i = 0; i < 20; i++) {
+            this.particles.push({
+                x: this.x + Math.random() * this.width,
+                y: this.y + Math.random() * this.height,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1
+            });
+        }
+    }
+
+    render(ctx, camX) {
+        const drawX = this.x - camX;
+        const drawY = this.y + this.floatOffset;
+        // 受击闪白
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : this.color;
+        // 身体
+        ctx.fillRect(drawX, drawY, this.width, this.height);
+        // 三个头
+        const hs = 24;
+        ctx.fillStyle = '#0D0D0D';
+        ctx.fillRect(drawX + 8, drawY - hs, hs, hs);
+        ctx.fillRect(drawX + this.width / 2 - hs / 2, drawY - hs - 8, hs, hs);
+        ctx.fillRect(drawX + this.width - hs - 8, drawY - hs, hs, hs);
+        // 眼睛
+        ctx.fillStyle = this.phase === 3 ? '#FF0000' : '#FFF';
+        [drawX + 14, drawX + this.width / 2 - 4, drawX + this.width - 22].forEach(ex => {
+            ctx.fillRect(ex, drawY - hs + 6, 4, 4);
+            ctx.fillRect(ex + 8, drawY - hs + 6, 4, 4);
+        });
+        // 阶段三裂痕
+        if (this.phase === 3) {
+            ctx.strokeStyle = '#FFF';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(drawX + 20, drawY + 10);
+            ctx.lineTo(drawX + 50, drawY + 50);
+            ctx.lineTo(drawX + 30, drawY + 80);
+            ctx.stroke();
+        }
+        // 粒子
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = '#8B008B';
+            ctx.fillRect(p.x - camX, p.y, 3, 3);
+        });
+        ctx.globalAlpha = 1;
+    }
+}
+
+// 恶魂 BOSS
+class GhastBoss extends Boss {
+    constructor(spawnX) {
+        super({
+            name: '恶魂 Ghast',
+            maxHp: 25,
+            color: '#F0F0F0',
+            x: spawnX,
+            y: 80,
+            width: 64,
+            height: 64,
+            phaseThresholds: [0.5, 0.2],
+            damage: 2
+        });
+        this.hitCount = 0;
+        this.crying = false;
+        this.cryTimer = 0;
+        this.moveAngle = 0;
+        this.rushTimer = 0;
+        this.rushing = false;
+        this.rushTarget = null;
+        this.startX = spawnX;
+    }
+// PLACEHOLDER_GHAST_PART1
+
+    updateBehavior(playerRef) {
+        // 哭泣状态更新
+        if (this.crying) {
+            this.cryTimer--;
+            if (this.cryTimer % 10 === 0) {
+                this.particles.push({
+                    x: this.x + this.width / 2 + (Math.random() - 0.5) * 20,
+                    y: this.y + this.height / 2,
+                    vx: 0, vy: 2, life: 1.0
+                });
+            }
+            if (this.cryTimer <= 0) this.crying = false;
+            return; // 哭泣期间不攻击
+        }
+
+        // 突进逻辑
+        if (this.rushing) {
+            this.executeRush(playerRef);
+            return;
+        }
+
+        // 8字形移动
+        const speed = this.phase === 1 ? 0.02 : this.phase === 2 ? 0.03 : 0.04;
+        this.moveAngle += speed;
+        const rangeX = this.phase >= 3 ? 200 : 150;
+        this.x = playerRef.x + Math.sin(this.moveAngle) * rangeX - this.width / 2;
+        this.y = 80 + Math.sin(this.moveAngle * 2) * 60;
+
+        // 攻击
+        const interval = this.phase === 1 ? 150 : this.phase === 2 ? 90 : 60;
+        this.attackTimer++;
+        if (this.attackTimer >= interval) {
+            const count = this.phase === 1 ? 1 : this.phase === 2 ? 2 : 3;
+            this.shootFireball(playerRef, count);
+            this.attackTimer = 0;
+        }
+
+        // 突进计时
+        const rushInterval = this.phase >= 3 ? 360 : 600;
+        this.rushTimer++;
+        if (this.rushTimer >= rushInterval) {
+            this.startRush(playerRef);
+            this.rushTimer = 0;
+        }
+    }
+// PLACEHOLDER_GHAST_PART2
+
+    shootFireball(playerRef, count) {
+        const cx = this.x + this.width / 2;
+        const cy = this.y + this.height / 2;
+        const px = playerRef.x + playerRef.width / 2;
+        const py = playerRef.y + playerRef.height / 2;
+        const angle = Math.atan2(py - cy, px - cx);
+        for (let i = 0; i < count; i++) {
+            const spread = count > 1 ? (i - (count - 1) / 2) * 0.25 : 0;
+            this.bossProjectiles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle + spread) * 3.5,
+                vy: Math.sin(angle + spread) * 3.5,
+                damage: 2, size: 16,
+                color: '#FF4500',
+                reflectable: true,
+                reflected: false,
+                tracking: false, life: 300
+            });
+        }
+    }
+
+    startRush(playerRef) {
+        this.rushing = true;
+        this.rushTarget = { x: playerRef.x, y: playerRef.y - 50 };
+        this.flashTimer = 20;
+        showFloatingText('⚠️', this.x + this.width / 2, this.y - 20, '#FF0000');
+    }
+
+    executeRush(playerRef) {
+        const dx = this.rushTarget.x - this.x;
+        const dy = this.rushTarget.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 20) {
+            this.rushing = false;
+            this.stunTimer = 20;
+            return;
+        }
+        this.x += (dx / dist) * 6;
+        this.y += (dy / dist) * 6;
+        if (Math.abs(this.x - player.x) < this.width &&
+            Math.abs(this.y - player.y) < this.height) {
+            damagePlayer(2, this.x, 100);
+            this.rushing = false;
+            this.stunTimer = 20;
+        }
+    }
+
+    takeDamage(amount) {
+        super.takeDamage(amount);
+        this.hitCount++;
+        if (this.hitCount >= 10 && !this.crying) {
+            this.crying = true;
+            this.cryTimer = 300; // 5秒
+            this.hitCount = 0;
+            showToast('😢 恶魂进入哭泣状态!');
+        }
+    }
+
+    onPhaseChange(newPhase) {
+        this.attackTimer = 0;
+        this.rushTimer = 0;
+        if (newPhase === 2) {
+            showToast('⚠️ 恶魂变得更加狂暴!');
+        } else if (newPhase === 3) {
+            showToast('⚠️ 恶魂进入濒死状态!');
+        }
+        for (let i = 0; i < 15; i++) {
+            this.particles.push({
+                x: this.x + Math.random() * this.width,
+                y: this.y + Math.random() * this.height,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 3,
+                life: 1
+            });
+        }
+    }
+// PLACEHOLDER_GHAST_RENDER
+
+    render(ctx, camX) {
+        const drawX = this.x - camX;
+        const drawY = this.y;
+        // 哭泣时半透明
+        ctx.globalAlpha = this.crying ? 0.5 : 0.9;
+        // 身体
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#F0F0F0';
+        ctx.fillRect(drawX, drawY, this.width, this.height);
+        // 红色眼睛
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(drawX + 16, drawY + 20, 8, 12);
+        ctx.fillRect(drawX + 40, drawY + 20, 8, 12);
+        // 嘴巴
+        ctx.fillStyle = '#333';
+        if (this.crying) {
+            ctx.fillRect(drawX + 20, drawY + 44, 24, 4);
+        } else {
+            ctx.fillRect(drawX + 22, drawY + 40, 20, 8);
+        }
+        // 触手
+        ctx.fillStyle = '#DDD';
+        for (let i = 0; i < 4; i++) {
+            const tx = drawX + 8 + i * 14;
+            const sway = Math.sin(Date.now() / 300 + i) * 3;
+            ctx.fillRect(tx + sway, drawY + this.height, 6, 16);
+        }
+        ctx.globalAlpha = 1;
+        // 哭泣泪水粒子
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = this.crying ? '#4FC3F7' : '#FF8A65';
+            ctx.fillRect(p.x - camX, p.y, 3, 3);
+        });
+        ctx.globalAlpha = 1;
+    }
+}
+
+// 烈焰人 BOSS
+class BlazeBoss extends Boss {
+    constructor(spawnX) {
+        super({
+            name: '烈焰人 Blaze',
+            maxHp: 28,
+            color: '#FFD700',
+            x: spawnX,
+            y: 100,
+            width: 48,
+            height: 64,
+            phaseThresholds: [0.7, 0.5],
+            damage: 1
+        });
+        this.rotationAngle = 0;
+        this.floatY = 100;
+        this.floatDir = 1;
+        this.fireColumns = [];
+        this.minions = [];
+        this.minionsSummoned = false;
+        this.burstQueue = [];
+        this.burstTimer = 0;
+        this.fireColumnTimer = 0;
+    }
+
+    updateBehavior(playerRef) {
+        this.updateFloat();
+        this.updateBurstQueue(playerRef);
+        this.updateFireColumns(playerRef);
+        this.updateMinions(playerRef);
+
+        // 三连火球（始终激活）
+        const burstInterval = this.phase === 1 ? 240 : this.phase === 2 ? 180 : 120;
+        this.attackTimer++;
+        if (this.attackTimer >= burstInterval) {
+            this.fireballBurst(playerRef, 3, 18);
+            this.attackTimer = 0;
+        }
+
+        // 火焰旋风（阶段2+）
+        if (this.phase >= 2) {
+            this.fireColumnTimer++;
+            if (this.fireColumnTimer >= 600) {
+                this.spawnFireColumns();
+                this.fireColumnTimer = 0;
+            }
+        }
+
+        // 召唤小烈焰人（阶段3，仅一次）
+        if (this.phase >= 3 && !this.minionsSummoned) {
+            this.summonMinions();
+        }
+    }
+// PLACEHOLDER_BLAZE_CONTINUE
+
+    updateFloat() {
+        this.floatY += this.floatDir * 0.5;
+        if (this.floatY <= 60 || this.floatY >= 180) this.floatDir *= -1;
+        this.y = this.floatY;
+        // 水平缓慢追踪玩家
+        const dx = player.x - this.x;
+        this.x += Math.sign(dx) * 0.5;
+    }
+
+    fireballBurst(playerRef, count, interval) {
+        for (let i = 0; i < count; i++) {
+            this.burstQueue.push({ delay: i * interval, playerRef });
+        }
+    }
+
+    updateBurstQueue(playerRef) {
+        if (this.burstQueue.length === 0) return;
+        this.burstTimer++;
+        while (this.burstQueue.length > 0 && this.burstTimer >= this.burstQueue[0].delay) {
+            const burst = this.burstQueue.shift();
+            const cx = this.x + this.width / 2;
+            const cy = this.y + this.height / 2;
+            const px = player.x + player.width / 2;
+            const py = player.y + player.height / 2;
+            const angle = Math.atan2(py - cy, px - cx);
+            this.bossProjectiles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle) * 4,
+                vy: Math.sin(angle) * 4,
+                damage: 1, size: 10,
+                color: '#FF4500',
+                tracking: false, life: 300
+            });
+        }
+        if (this.burstQueue.length === 0) this.burstTimer = 0;
+    }
+
+    spawnFireColumns() {
+        for (let i = 0; i < 3; i++) {
+            this.fireColumns.push({
+                x: player.x + (Math.random() - 0.5) * 300,
+                y: groundY,
+                width: 20, height: 60,
+                life: 480,
+                trackSpeed: 0.8,
+                dmgTimer: 0
+            });
+        }
+        showFloatingText('🔥 火焰旋风!', this.x + this.width / 2, this.y - 20, '#FF4500');
+    }
+// PLACEHOLDER_BLAZE_CONTINUE2
+
+    updateFireColumns(playerRef) {
+        for (let i = this.fireColumns.length - 1; i >= 0; i--) {
+            const col = this.fireColumns[i];
+            const dx = player.x - col.x;
+            col.x += Math.sign(dx) * col.trackSpeed;
+            col.life--;
+            col.dmgTimer++;
+            // 每秒1心伤害
+            if (col.dmgTimer >= 60) {
+                col.dmgTimer = 0;
+                if (Math.abs(player.x + player.width / 2 - col.x - col.width / 2) < col.width / 2 + player.width / 2 &&
+                    player.y + player.height > col.y - col.height && player.y < col.y) {
+                    damagePlayer(1, col.x);
+                }
+            }
+            if (col.life <= 0) this.fireColumns.splice(i, 1);
+        }
+    }
+
+    summonMinions() {
+        this.minionsSummoned = true;
+        for (let i = 0; i < 2; i++) {
+            this.minions.push({
+                x: this.x + (i === 0 ? -80 : 80),
+                y: this.y,
+                hp: 8, maxHp: 8,
+                width: 24, height: 32,
+                speed: 2.5,
+                attackTimer: 0,
+                alive: true
+            });
+        }
+        showFloatingText('🔥 召唤小烈焰人!', this.x + this.width / 2, this.y - 20, '#FF4500');
+    }
+
+    updateMinions(playerRef) {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const dx = player.x - m.x;
+            m.x += Math.sign(dx) * m.speed;
+            // 浮空
+            m.y = this.floatY + 30;
+            m.attackTimer++;
+            if (m.attackTimer >= 180) {
+                this.bossProjectiles.push({
+                    x: m.x + m.width / 2, y: m.y + m.height / 2,
+                    vx: Math.sign(dx) * 3, vy: 0,
+                    damage: 1, size: 8, color: '#FF6600',
+                    tracking: false, life: 300
+                });
+                m.attackTimer = 0;
+            }
+        });
+    }
+// PLACEHOLDER_BLAZE_CONTINUE3
+
+    // 小烈焰人受伤（近战攻击检测）
+    damageMinionAt(ax, ay, range, damage) {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            if (Math.abs(ax - m.x - m.width / 2) < range + m.width / 2 &&
+                Math.abs(ay - m.y - m.height / 2) < range + m.height / 2) {
+                m.hp -= damage;
+                showFloatingText(`-${damage}`, m.x + m.width / 2, m.y - 10, '#FF4444');
+                if (m.hp <= 0) {
+                    m.alive = false;
+                    showFloatingText('💀', m.x + m.width / 2, m.y - 20, '#FFD700');
+                }
+            }
+        });
+    }
+
+    // 小怪存活时BOSS防御+50%
+    takeDamage(amount) {
+        const aliveMinions = this.minions.filter(m => m.alive).length;
+        if (aliveMinions > 0) amount = Math.ceil(amount * 0.5);
+        super.takeDamage(amount);
+    }
+
+    onPhaseChange(newPhase) {
+        this.attackTimer = 0;
+        this.fireColumnTimer = 0;
+        if (newPhase === 2) {
+            showToast('⚠️ 烈焰人释放火焰旋风!');
+        } else if (newPhase === 3) {
+            showToast('⚠️ 烈焰人召唤援军!');
+        }
+        for (let i = 0; i < 15; i++) {
+            this.particles.push({
+                x: this.x + Math.random() * this.width,
+                y: this.y + Math.random() * this.height,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1
+            });
+        }
+    }
+
+    render(ctx, camX) {
+        const drawX = this.x - camX;
+        const drawY = this.y;
+        this.rotationAngle += 0.05;
+        const cx = drawX + this.width / 2;
+        const cy = drawY + this.height / 2;
+
+        // 中心核心
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#FFD700';
+        ctx.fillRect(drawX + 8, drawY + 8, this.width - 16, this.height - 16);
+
+        // 旋转烈焰棒（4根）
+        ctx.fillStyle = '#FF8C00';
+        for (let i = 0; i < 4; i++) {
+            const angle = this.rotationAngle + (Math.PI / 2) * i;
+            const bx = cx + Math.cos(angle) * 28 - 4;
+            const by = cy + Math.sin(angle) * 28 - 12;
+            ctx.fillRect(bx, by, 8, 24);
+        }
+
+        // 眼睛
+        ctx.fillStyle = '#FF0000';
+        ctx.fillRect(drawX + 14, drawY + 20, 6, 6);
+        ctx.fillRect(drawX + 28, drawY + 20, 6, 6);
+// PLACEHOLDER_BLAZE_RENDER_END
+
+        // 火焰粒子环绕
+        for (let i = 0; i < 3; i++) {
+            const px = cx + Math.cos(Date.now() / 200 + i * 2) * 20;
+            const py = cy + Math.sin(Date.now() / 200 + i * 2) * 20;
+            ctx.fillStyle = `rgba(255, ${100 + Math.random() * 100 | 0}, 0, 0.6)`;
+            ctx.fillRect(px - 2, py - 2, 4, 4);
+        }
+
+        // 渲染火焰柱
+        this.fireColumns.forEach(col => {
+            const colX = col.x - camX;
+            const alpha = col.life > 60 ? 0.8 : (col.life / 60) * 0.8;
+            ctx.fillStyle = `rgba(255, 69, 0, ${alpha})`;
+            ctx.fillRect(colX, col.y - col.height, col.width, col.height);
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(colX - 2, col.y - col.height - 8, col.width + 4, 8);
+        });
+
+        // 渲染小烈焰人
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const mx = m.x - camX;
+            ctx.fillStyle = '#FF8C00';
+            ctx.fillRect(mx, m.y, m.width, m.height);
+            // 小血条
+            const hpPct = m.hp / m.maxHp;
+            ctx.fillStyle = '#F44336';
+            ctx.fillRect(mx, m.y - 6, m.width * hpPct, 3);
+        });
+
+        // 粒子
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = '#FF6600';
+            ctx.fillRect(p.x - camX, p.y, 3, 3);
+        });
+        ctx.globalAlpha = 1;
+    }
+}
+
+// 凋零骷髅 BOSS
+class WitherSkeletonBoss extends Boss {
+    constructor(spawnX) {
+        super({
+            name: '凋零骷髅 Wither Skeleton',
+            maxHp: 40,
+            color: '#1A1A1A',
+            x: spawnX,
+            y: groundY - 96,
+            width: 48,
+            height: 96,
+            phaseThresholds: [0.6, 0.3],
+            damage: 1
+        });
+        this.grounded = true;
+        this.moveSpeed = 2.0;
+        this.facing = -1;
+        this.state = 'patrol';
+        this.comboStep = 0;
+        this.comboTimer = 0;
+        this.blockTimer = 0;
+        this.blockHits = 0;
+        this.jumpAttackPhase = 0;
+        this.minions = [];
+        this.minionsSummoned = false;
+        this.vy = 0;
+        this.gravity = 0.5;
+        this.actionCooldown = 0;
+    }
+
+    updateBehavior(playerRef) {
+        this.facing = playerRef.x > this.x ? 1 : -1;
+        const dist = Math.abs(playerRef.x - this.x);
+
+        // 重力
+        if (this.y < groundY - this.height) {
+            this.vy += this.gravity;
+            this.y += this.vy;
+            if (this.y >= groundY - this.height) {
+                this.y = groundY - this.height;
+                this.vy = 0;
+            }
+        }
+
+        if (this.actionCooldown > 0) this.actionCooldown--;
+
+        switch (this.state) {
+            case 'patrol':
+                this.x += this.facing * this.moveSpeed * (this.phase >= 2 ? 1.3 : 1);
+                if (dist < 64 && this.actionCooldown <= 0) {
+                    this.startCombo();
+                } else if (dist > 96 && this.actionCooldown <= 0 && Math.random() < 0.01) {
+                    this.startJumpAttack();
+                }
+                if (this.actionCooldown <= 0 && Math.random() < 0.003) {
+                    this.startBlocking();
+                }
+                break;
+            case 'combo': this.updateCombo(); break;
+            case 'jump_attack': this.updateJumpAttack(); break;
+            case 'blocking': this.updateBlocking(); break;
+            case 'stunned':
+                this.stunTimer--;
+                if (this.stunTimer <= 0) { this.state = 'patrol'; this.actionCooldown = 60; }
+                break;
+            case 'summoning':
+                this.comboTimer++;
+                if (this.comboTimer >= 60) { this.state = 'patrol'; this.actionCooldown = 60; }
+                break;
+        }
+
+        if (this.hp / this.maxHp < 0.3) this.summonMinions();
+        this.updateMinions();
+    }
+// PLACEHOLDER_WSKEL_CONTINUE
+
+    startCombo() {
+        this.state = 'combo';
+        this.comboStep = 0;
+        this.comboTimer = 0;
+    }
+
+    updateCombo() {
+        this.comboTimer++;
+        const stepDuration = 30;
+        if (this.comboTimer >= stepDuration) {
+            this.comboTimer = 0;
+            this.executeComboStep(this.comboStep);
+            this.comboStep++;
+            if (this.comboStep >= 3) {
+                this.state = 'patrol';
+                this.comboStep = 0;
+                this.actionCooldown = 60;
+            }
+        }
+    }
+
+    executeComboStep(step) {
+        const range = 60;
+        const playerDist = Math.abs(player.x - this.x);
+        switch (step) {
+            case 0: // 横扫
+                if (playerDist < range + 20) {
+                    damagePlayer(1, this.x);
+                    showFloatingText('横扫!', this.x + this.width / 2, this.y - 20, '#FF4444');
+                }
+                break;
+            case 1: // 下劈
+                if (playerDist < range) {
+                    damagePlayer(2, this.x);
+                    showFloatingText('下劈!', this.x + this.width / 2, this.y - 20, '#FF0000');
+                }
+                break;
+            case 2: // 突刺+击退
+                if (playerDist < range + 10) {
+                    damagePlayer(1, this.x, 150);
+                    showFloatingText('突刺!', this.x + this.width / 2, this.y - 20, '#FF6600');
+                }
+                break;
+        }
+    }
+
+    startJumpAttack() {
+        this.state = 'jump_attack';
+        this.jumpAttackPhase = 1;
+        this.comboTimer = 0;
+        showFloatingText('⚠️', this.x + this.width / 2, this.y - 20, '#FF0000');
+    }
+// PLACEHOLDER_WSKEL_CONTINUE2
+
+    updateJumpAttack() {
+        switch (this.jumpAttackPhase) {
+            case 1: // 蓄力
+                this.comboTimer++;
+                if (this.comboTimer >= 30) {
+                    this.jumpAttackPhase = 2;
+                    this.vy = -12;
+                    this.facing = player.x > this.x ? 1 : -1;
+                }
+                break;
+            case 2: // 跃起+下落
+                this.vy += this.gravity;
+                this.y += this.vy;
+                this.x += this.facing * 3;
+                if (this.y >= groundY - this.height) {
+                    this.y = groundY - this.height;
+                    this.vy = 0;
+                    this.jumpAttackPhase = 3;
+                    this.comboTimer = 0;
+                    this.jumpAttackLand();
+                }
+                break;
+            case 3: // 着地硬直
+                this.comboTimer++;
+                if (this.comboTimer >= 30) {
+                    this.state = 'patrol';
+                    this.jumpAttackPhase = 0;
+                    this.actionCooldown = 60;
+                }
+                break;
+        }
+    }
+
+    jumpAttackLand() {
+        const aoeRange = 64;
+        const dist = Math.abs(player.x - this.x);
+        if (dist < aoeRange) {
+            damagePlayer(2, this.x, 120);
+            showFloatingText('💥 跳劈!', this.x + this.width / 2, this.y - 30, '#FF0000');
+        }
+        for (let i = 0; i < 10; i++) {
+            this.particles.push({
+                x: this.x + (Math.random() - 0.5) * aoeRange * 2,
+                y: groundY,
+                vx: (Math.random() - 0.5) * 3,
+                vy: -Math.random() * 4,
+                life: 1.0
+            });
+        }
+    }
+
+    startBlocking() {
+        this.state = 'blocking';
+        this.blockTimer = 180;
+        this.blockHits = 0;
+    }
+
+    updateBlocking() {
+        this.blockTimer--;
+        if (this.blockTimer <= 0) {
+            this.state = 'patrol';
+            this.actionCooldown = 60;
+        }
+    }
+// PLACEHOLDER_WSKEL_CONTINUE3
+
+    takeDamage(amount) {
+        if (this.state === 'blocking') {
+            this.blockHits++;
+            showFloatingText('格挡!', this.x + this.width / 2, this.y - 20, '#AAAAAA');
+            if (this.blockHits >= 7) {
+                this.state = 'stunned';
+                this.stunTimer = 180;
+                showFloatingText('⭐ 破防!', this.x + this.width / 2, this.y - 30, '#FFD700');
+            }
+            return;
+        }
+        if (this.state === 'stunned') amount = Math.ceil(amount * 1.5);
+        super.takeDamage(amount);
+    }
+
+    summonMinions() {
+        if (this.minionsSummoned) return;
+        this.minionsSummoned = true;
+        this.state = 'summoning';
+        this.comboTimer = 0;
+        for (let i = 0; i < 4; i++) {
+            this.minions.push({
+                x: this.x + (i - 1.5) * 50,
+                y: groundY - 48,
+                hp: 5, maxHp: 5,
+                width: 24, height: 48,
+                speed: 2.0,
+                attackTimer: 0,
+                alive: true
+            });
+        }
+        showFloatingText('💀 召唤骷髅小兵!', this.x + this.width / 2, this.y - 30, '#666');
+    }
+
+    updateMinions() {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const dx = player.x - m.x;
+            m.x += Math.sign(dx) * m.speed;
+            m.attackTimer++;
+            if (m.attackTimer >= 120 && Math.abs(player.x - m.x) < 40) {
+                damagePlayer(1, m.x);
+                m.attackTimer = 0;
+                showFloatingText('💀', m.x, m.y - 10, '#666');
+            }
+        });
+    }
+
+    damageMinionAt(ax, ay, range, damage) {
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            if (Math.abs(ax - m.x - m.width / 2) < range + m.width / 2 &&
+                Math.abs(ay - m.y - m.height / 2) < range + m.height / 2) {
+                m.hp -= damage;
+                showFloatingText(`-${damage}`, m.x + m.width / 2, m.y - 10, '#FF4444');
+                if (m.hp <= 0) {
+                    m.alive = false;
+                    showFloatingText('💀', m.x + m.width / 2, m.y - 20, '#FFD700');
+                }
+            }
+        });
+    }
+// PLACEHOLDER_WSKEL_CONTINUE4
+
+    onPhaseChange(newPhase) {
+        this.actionCooldown = 0;
+        if (newPhase === 2) {
+            this.moveSpeed = 2.6;
+            showToast('⚠️ 凋零骷髅变得更加凶猛!');
+        } else if (newPhase === 3) {
+            this.moveSpeed = 3.0;
+            showToast('⚠️ 凋零骷髅进入狂暴状态!');
+        }
+        for (let i = 0; i < 15; i++) {
+            this.particles.push({
+                x: this.x + Math.random() * this.width,
+                y: this.y + Math.random() * this.height,
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                life: 1
+            });
+        }
+    }
+
+    render(ctx, camX) {
+        const drawX = this.x - camX;
+        const drawY = this.y;
+        const squash = this.jumpAttackPhase === 1 ? 0.8 : 1;
+
+        // 身体
+        ctx.fillStyle = this.flashTimer > 0 ? '#FFF' : '#1A1A1A';
+        ctx.fillRect(drawX, drawY + this.height * (1 - squash), this.width, this.height * squash);
+
+        // 骷髅头
+        ctx.fillStyle = '#2A2A2A';
+        ctx.fillRect(drawX + 8, drawY - 4 + this.height * (1 - squash), 32, 28);
+        // 眼睛
+        ctx.fillStyle = this.phase >= 3 ? '#FF0000' : '#CC0000';
+        ctx.fillRect(drawX + 14, drawY + 4 + this.height * (1 - squash), 6, 6);
+        ctx.fillRect(drawX + 28, drawY + 4 + this.height * (1 - squash), 6, 6);
+
+        // 石剑
+        ctx.fillStyle = '#808080';
+        const swordX = this.facing > 0 ? drawX + this.width : drawX - 12;
+        ctx.fillRect(swordX, drawY + 20, 8, 40);
+        ctx.fillStyle = '#A0A0A0';
+        ctx.fillRect(swordX - 4, drawY + 56, 16, 6);
+// PLACEHOLDER_WSKEL_RENDER_END
+
+        // 格挡状态 - 白色防护罩
+        if (this.state === 'blocking') {
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(drawX + this.width / 2, drawY + this.height / 2, 50, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // 眩晕状态 - 头顶星星
+        if (this.state === 'stunned') {
+            for (let i = 0; i < 3; i++) {
+                const sx = drawX + 10 + i * 14 + Math.sin(Date.now() / 200 + i) * 5;
+                ctx.fillStyle = '#FFD700';
+                ctx.font = '14px Arial';
+                ctx.fillText('⭐', sx, drawY - 20);
+            }
+        }
+
+        // 渲染小兵
+        this.minions.forEach(m => {
+            if (!m.alive) return;
+            const mx = m.x - camX;
+            ctx.fillStyle = '#333';
+            ctx.fillRect(mx, m.y, m.width, m.height);
+            ctx.fillStyle = '#F44336';
+            ctx.fillRect(mx, m.y - 5, m.width * (m.hp / m.maxHp), 3);
+        });
+
+        // 粒子
+        this.particles.forEach(p => {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = '#666';
+            ctx.fillRect(p.x - camX, p.y, 3, 3);
+        });
+        ctx.globalAlpha = 1;
+    }
+}
+
+</script>
+<script>
+/**
+ * 12-challenges.js - 学习挑战系统
+ * v1.8.3 添加村庄挑战支持
+ */
+
+// ========== v1.8.3 村庄挑战系统 ==========
+
+/**
+ * 启动村庄学习挑战
+ * @param {Object} village - 当前村庄实例
+ * @param {Function} onComplete - 完成回调
+ */
+function startVillageChallenge(village, onComplete) {
+  if (!village) {
+    console.warn('[Village Challenge] No village provided');
+    return;
+  }
+
+  // 从 villageConfig.challengeQuestionCount 获取题目数量（默认3）
+  const questionCount = villageConfig?.challengeQuestionCount || 3;
+
+  // 检测村庄是否已有学习挑战进度
+  if (!village.challengeProgress) {
+    village.challengeProgress = {
+      currentQuestion: 0,
+      correctCount: 0,
+      wordsSeen: []
+    };
+  }
+
+  const progress = village.challengeProgress;
+  progress.currentQuestion = 0;
+  progress.correctCount = 0;
+
+  console.log(`[Village Challenge] Starting challenge for village ${village.id}, questions: ${questionCount}`);
+
+  // 获取群系专属单词
+  const biomeWords = typeof getVillageWords === 'function'
+    ? getVillageWords(village.biomeId)
+    : [];
+
+  if (!biomeWords || biomeWords.length === 0) {
+    showToast('📚 当前群系暂无可用单词');
+    if (typeof onComplete === 'function') onComplete(0, questionCount);
+    return;
+  }
+
+  // 随机打乱单词顺序
+  const shuffled = [...biomeWords].sort(() => Math.random() - 0.5);
+  const selectedWords = shuffled.slice(0, Math.min(questionCount, shuffled.length));
+
+  if (selectedWords.length === 0) {
+    showToast('📚 单词数量不足');
+    if (typeof onComplete === 'function') onComplete(0, 0);
+    return;
+  }
+
+  // 显示挑战开始界面
+  showVillageChallengeIntro(village.biomeId, selectedWords.length, () => {
+    // 统一答题回调，所有题目复用
+    function handleAnswer(isCorrect) {
+      if (isCorrect) progress.correctCount++;
+      progress.currentQuestion++;
+      if (progress.currentWord && !progress.wordsSeen.includes(progress.currentWord.en)) {
+        progress.wordsSeen.push(progress.currentWord.en);
+      }
+      if (progress.currentQuestion >= selectedWords.length) {
+        finishVillageChallenge(village, progress.correctCount, selectedWords.length, onComplete);
+      } else {
+        setTimeout(() => {
+          showVillageQuestion(village, selectedWords, progress, handleAnswer);
+        }, 500);
+      }
+    }
+
+    // 延迟后显示第一题
+    setTimeout(() => {
+      showVillageQuestion(village, selectedWords, progress, handleAnswer);
+    }, 300);
+  });
+}
+
+/**
+ * 显示村庄挑战开始界面
+ * @param {string} biomeId - 群系ID
+ * @param {number} count - 题目数量
+ * @param {Function} onStart - 开始回调
+ */
+function showVillageChallengeIntro(biomeId, count, onStart) {
+  const modal = document.getElementById('challenge-modal');
+  if (!modal) {
+    console.warn('[Village Challenge] Challenge modal not found');
+    return;
+  }
+
+  // 暂停游戏
+  pausedByModal = !paused;
+  paused = true;
+
+  const biomeName = getBiomeName(biomeId);
+
+  modal.innerHTML = `
+    <div style="text-align:center; padding:20px;">
+      <div style="font-size:32px; margin-bottom:10px;">📚</div>
+      <h3 style="color:#FFD54F; margin:8px 0;">${biomeName}村庄 · 单词挑战</h3>
+      <p style="color:#EEE; font-size:14px;">回答 ${count} 道单词题</p>
+      <p style="color:#AEA; font-size:12px;">全对奖励：💎×1 + 🪙×100 + 群系道具</p>
+      <button id="btn-village-challenge-start"
+              style="margin-top:16px; padding:10px 30px; font-size:16px;
+                     background:#4CAF50; color:#FFF; border:none; border-radius:8px;
+                     cursor:pointer;">
+        开始挑战
+      </button>
+    </div>
+  `;
+  modal.style.display = 'flex';
+
+  const btnStart = document.getElementById('btn-village-challenge-start');
+  if (btnStart) {
+    btnStart.addEventListener('click', () => {
+      modal.style.display = 'none';
+      // 恢复游戏
+      if (pausedByModal) paused = false;
+      pausedByModal = false;
+      if (typeof onStart === 'function') onStart();
+    });
+  }
+}
+
+/**
+ * 显示村庄单词题目（字母填空选择题）
+ * @param {Object} village - 村庄实例
+ * @param {Array} words - 单词列表
+ * @param {Object} progress - 进度对象
+ * @param {Function} onAnswer - 答题回调
+ */
+function showVillageQuestion(village, words, progress, onAnswer) {
+  const modal = document.getElementById('challenge-modal');
+  if (!modal) return;
+
+  pausedByModal = !paused;
+  paused = true;
+
+  const word = words[progress.currentQuestion];
+  progress.currentWord = word;
+
+  const en = (word.en || word.english || '').toLowerCase();
+  const zh = word.zh || word.chinese || '';
+
+  // 随机隐藏一个字母
+  const hideIndex = Math.floor(Math.random() * en.length);
+  const displayed = en.split('').map((ch, i) => i === hideIndex ? '_' : ch);
+  const correctLetter = en[hideIndex];
+
+  // 生成选项（正确答案 + 3 个干扰项）
+  const allLetters = 'abcdefghijklmnopqrstuvwxyz';
+  const options = [correctLetter];
+  while (options.length < 4) {
+    const rand = allLetters[Math.floor(Math.random() * 26)];
+    if (!options.includes(rand)) options.push(rand);
+  }
+  options.sort(() => Math.random() - 0.5);
+
+  modal.innerHTML = `
+    <div style="text-align:center; padding:20px;">
+      <p style="color:#AAA; font-size:12px; margin-bottom:8px;">选择正确的字母填空</p>
+      <div style="font-size:28px; color:#FFF; letter-spacing:4px; margin:12px 0; font-family:monospace;">
+        ${displayed.join('')}
+      </div>
+      <p style="color:#FFD54F; font-size:14px; margin-bottom:16px;">${zh}</p>
+      <div id="village-challenge-options" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        ${options.map(opt => `
+          <button class="village-opt-btn"
+                  data-letter="${opt}"
+                  style="width:50px; height:50px; font-size:22px; font-family:monospace;
+                         background:#37474F; color:#FFF; border:2px solid #546E7A;
+                         border-radius:8px; cursor:pointer;">
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  modal.style.display = 'flex';
+
+  // 绑定选项点击
+  setTimeout(() => {
+    const btns = modal.querySelectorAll('.village-opt-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selected = btn.dataset.letter;
+        const isCorrect = selected === correctLetter;
+
+        // 视觉反馈
+        btns.forEach(b => {
+          b.style.pointerEvents = 'none';
+          if (b.dataset.letter === correctLetter) {
+            b.style.background = '#4CAF50';
+            b.style.borderColor = '#66BB6A';
+          } else if (b === btn && !isCorrect) {
+            b.style.background = '#F44336';
+            b.style.borderColor = '#EF5350';
+          }
+        });
+
+        // 播放单词发音
+        if (typeof speakWord === 'function') {
+          speakWord(en);
+        }
+
+        // 显示反馈
+        setTimeout(() => {
+          if (isCorrect) {
+            showFloatingText('✅ Correct!', player.x, player.y - 30);
+          } else {
+            showFloatingText(`❌ ${en}`, player.x, player.y - 30);
+          }
+
+          // 显示完整单词
+          setTimeout(() => {
+            const fullWordEl = document.createElement('div');
+            fullWordEl.style.cssText = 'color:#FFD54F; font-size:14px; margin-top:8px;';
+            fullWordEl.textContent = `${en} - ${zh}`;
+            modal.appendChild(fullWordEl);
+
+            setTimeout(() => {
+              if (typeof onAnswer === 'function') onAnswer(isCorrect);
+              fullWordEl.remove();
+            }, 800);
+          }, 200);
+        }, 300);
+      });
+    });
+  }, 100);
+}
+
+/**
+ * 村庄挑战完成结算
+ * @param {Object} village - 村庄实例
+ * @param {number} correct - 正确数量
+ * @param {number} total - 总题数
+ * @param {Function} onComplete - 完成回调
+ */
+function finishVillageChallenge(village, correct, total, onComplete) {
+  const modal = document.getElementById('challenge-modal');
+  if (!modal) return;
+
+  const reward = villageConfig?.challengeReward || {};
+  const isPerfect = correct === total;
+
+  const rewardText = isPerfect
+    ? `🎉 全对! +${reward.perfect?.score || 100}🪙 +${reward.perfect?.diamonds || 1}💎`
+    : `📝 ${correct}/${total} +${reward.partial?.score || 50}🪙`;
+
+  modal.innerHTML = `
+    <div style="text-align:center; padding:20px;">
+      <div style="font-size:40px; margin-bottom:10px;">${isPerfect ? '🏆' : '📖'}</div>
+      <h3 style="color:${isPerfect ? '#FFD54F' : '#EEE'}; margin:8px 0;">
+        ${isPerfect ? '完美通关!' : '挑战完成'}
+      </h3>
+      <p style="color:#AEA; font-size:16px;">${correct} / ${total} 正确</p>
+      <p style="color:#FFD54F; font-size:14px; margin-top:8px;">${rewardText}</p>
+      <button id="btn-village-challenge-done"
+              style="margin-top:16px; padding:10px 30px; font-size:16px;
+                     background:#4CAF50; color:#FFF; border:none; border-radius:8px;
+                     cursor:pointer;">
+        继续冒险
+      </button>
+    </div>
+  `;
+  modal.style.display = 'flex';
+
+  const btnDone = document.getElementById('btn-village-challenge-done');
+  if (btnDone) {
+    btnDone.addEventListener('click', () => {
+      modal.style.display = 'none';
+      // 发放奖励
+      if (isPerfect) {
+        score += reward.perfect?.score || 100;
+        inventory.diamond += reward.perfect?.diamonds || 1;
+      } else {
+        score += reward.partial?.score || 50;
+      }
+      updateDiamondUI();
+
+      // 群系专属道具奖励
+      if (typeof grantBiomeReward === 'function') {
+        grantBiomeReward(village.biomeId);
+      }
+
+      // 恢复游戏
+      if (pausedByModal) paused = false;
+      pausedByModal = false;
+
+      if (typeof onComplete === 'function') onComplete(correct, total);
+    });
+  }
+}
+
+</script>
+<script>
+/**
+ * 18-village.js - 村庄系统核心逻辑
+ * v1.8.0 实现村庄基础框架
+ */
+
+// ========== 村庄风格定义 ==========
+const VILLAGE_STYLES = {
+  forest: {
+    buildingColors: { wall: '#8B6914', roof: '#2E7D32', door: '#5D4037' },
+    groundColor: '#6D4C41',
+    decorations: ['well', 'farm', 'fence', 'flower_pot'],
+    specialBuilding: 'library'
+  },
+  snow: {
+    buildingColors: { wall: '#ECEFF1', roof: '#1565C0', door: '#37474F' },
+    groundColor: '#B0BEC5',
+    decorations: ['snowman', 'ice_lamp', 'pine_fence'],
+    specialBuilding: 'hot_spring'
+  },
+  desert: {
+    buildingColors: { wall: '#D7CCC8', roof: '#FF8F00', door: '#4E342E' },
+    groundColor: '#BCAAA4',
+    decorations: ['cactus_pot', 'sand_lamp', 'oasis'],
+    specialBuilding: 'water_station'
+  },
+  mountain: {
+    buildingColors: { wall: '#78909C', roof: '#455A64', door: '#37474F' },
+    groundColor: '#607D8B',
+    decorations: ['anvil', 'stone_lamp', 'mine_cart'],
+    specialBuilding: 'blacksmith'
+  },
+  ocean: {
+    buildingColors: { wall: '#4FC3F7', roof: '#0277BD', door: '#01579B' },
+    groundColor: '#4DB6AC',
+    decorations: ['anchor', 'barrel', 'fishing_rod'],
+    specialBuilding: 'lighthouse'
+  },
+  nether: {
+    buildingColors: { wall: '#4A148C', roof: '#880E4F', door: '#311B92' },
+    groundColor: '#6A1B9A',
+    decorations: ['soul_lantern', 'nether_wart_pot', 'chain'],
+    specialBuilding: 'brewing_stand'
+  }
+};
+
+// ========== 加载配置 ==========
+function loadVillageConfig() {
+  // 从 config/village.json 加载，失败时用默认值
+  // 在 17-bootstrap.js 的 loadAllConfigs() 中调用
+  const defaultVillageConfig = {
+    enabled: true,
+    spawnScoreInterval: 500,
+    villageWidth: 800,
+    safeZone: true,
+    restHealFull: true,
+    challengeQuestionCount: 3,
+    challengeReward: {
+      perfect: { score: 100, diamonds: 1 },
+      partial: { score: 50, diamonds: 0 }
+    },
+    npcSpeed: 0.3,
+    npcGreetDistance: 80,
+    maxActiveVillages: 3,
+    buildings: {
+      bed_house: { w: 80, h: 60, offset: 100 },
+      word_house: { w: 100, h: 80, offset: 300 },
+      save_stone: { w: 40, h: 50, offset: 550 },
+      special: { w: 80, h: 60, offset: 700 }
+    },
+    biomeWords: {
+      forest: ["tree", "leaf", "bird", "flower", "grass", "wood", "deer", "owl"],
+      snow: ["snow", "ice", "cold", "coat", "hat", "scarf", "ski", "sled"],
+      desert: ["sand", "sun", "hot", "water", "cactus", "camel", "oasis", "dry"],
+      mountain: ["rock", "iron", "gold", "pick", "cave", "stone", "gem", "ore"],
+      ocean: ["fish", "wave", "boat", "shell", "whale", "coral", "swim", "sea"],
+      nether: ["fire", "red", "lava", "dark", "flame", "ash", "smoke", "glow"]
+    }
+  };
+
+  fetch('config/village.json')
+    .then(r => r.json())
+    .then(data => {
+      villageConfig = data;
+      console.log('[Village] 配置加载成功');
+    })
+    .catch(() => {
+      villageConfig = defaultVillageConfig;
+      console.warn('[Village] 使用默认配置');
+    });
+}
+
+// ========== 村庄生成 ==========
+function maybeSpawnVillage(playerScore, playerX) {
+  if (!settings || !settings.villageEnabled) return;
+  if (!villageConfig || !villageConfig.enabled) return;
+  const interval = villageConfig.spawnScoreInterval || 500;
+  // 计算当前分数应该生成的村庄编号
+  const villageIndex = Math.floor(playerScore / interval);
+  if (villageIndex < 1) return; // 0分不生成
+  if (villageSpawnedForScore[villageIndex]) return; // 已生成
+
+  const biomeId = currentBiome || 'forest';
+  const village = createVillage(playerX + 600, biomeId, villageIndex);
+  activeVillages.push(village);
+  villageSpawnedForScore[villageIndex] = true;
+
+  // 回收远离的村庄
+  cleanupVillages(playerX);
+  console.log(`[Village] 生成村庄 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
+}
+
+function createVillage(startX, biomeId, index) {
+  const style = VILLAGE_STYLES[biomeId] || VILLAGE_STYLES.forest;
+  const cfg = villageConfig.buildings || {};
+  const village = {
+    id: index,
+    x: startX,
+    width: villageConfig.villageWidth || 800,
+    biomeId: biomeId,
+    style: style,
+    buildings: [
+      { type: 'bed_house',  x: startX + (cfg.bed_house?.offset || 100),  w: cfg.bed_house?.w || 80,  h: cfg.bed_house?.h || 60 },
+      { type: 'word_house', x: startX + (cfg.word_house?.offset || 300), w: cfg.word_house?.w || 100, h: cfg.word_house?.h || 80 },
+      { type: 'save_stone', x: startX + (cfg.save_stone?.offset || 550), w: cfg.save_stone?.w || 40,  h: cfg.save_stone?.h || 50 },
+      { type: style.specialBuilding, x: startX + (cfg.special?.offset || 700), w: cfg.special?.w || 80, h: cfg.special?.h || 60 }
+    ],
+    npcs: [],
+    decorations: style.decorations.map((d, i) => ({
+      type: d, x: startX + 50 + i * 150
+    })),
+    visited: false,
+    restUsed: false,
+    questCompleted: false,
+    saved: false
+  };
+
+  // v1.8.1 添加 NPC
+  if (typeof createVillageNPC === 'function') {
+    const roles = ['greeter', 'teacher', 'trader'];
+    const baseX = startX + 200;
+    village.npcs = roles.map((role, i) =>
+      createVillageNPC(baseX + i * 200, role, village.x, village.width)
+    );
+  }
+
+  return village;
+}
+
+function cleanupVillages(playerX) {
+  const max = villageConfig.maxActiveVillages || 3;
+  // 移除玩家身后超过 2000px 的村庄
+  activeVillages = activeVillages.filter(v => {
+    return (v.x + v.width) > playerX - 2000;
+  });
+  // 如果仍超过上限，移除最远的
+  while (activeVillages.length > max) {
+    activeVillages.shift();
+  }
+}
+
+// ========== NPC 村民系统 (v1.8.1) ==========
+
+const NPC_ROLES = {
+  greeter: {
+    greeting: 'Welcome! 欢迎!',
+    speed: 0.3,
+    patrolRange: 120
+  },
+  teacher: {
+    greeting: 'Come learn! 来学习!',
+    speed: 0.2,
+    patrolRange: 80
+  },
+  trader: {
+    greeting: 'Trade? 交易吗?',
+    speed: 0.15,
+    patrolRange: 60
+  }
+};
+
+function createVillageNPC(baseX, role, villageX, villageWidth) {
+  const cfg = NPC_ROLES[role] || NPC_ROLES.greeter;
+  const minX = Math.max(villageX + 20, baseX - cfg.patrolRange);
+  const maxX = Math.min(villageX + villageWidth - 20, baseX + cfg.patrolRange);
+  return {
+    x: baseX,
+    y: 0,
+    role: role,
+    direction: 1,
+    speed: cfg.speed,
+    minX: minX,
+    maxX: maxX,
+    showBubble: false,
+    bubbleText: cfg.greeting,
+    bubbleTimer: 0,
+    facingRight: true,
+    animFrame: 0,
+    animTimer: 0
+  };
+}
+
+function updateVillageNPCs(village) {
+  for (const npc of village.npcs) {
+    // 来回走动
+    npc.x += npc.direction * npc.speed;
+    if (npc.x <= npc.minX) {
+      npc.x = npc.minX;
+      npc.direction = 1;
+      npc.facingRight = true;
+    } else if (npc.x >= npc.maxX) {
+      npc.x = npc.maxX;
+      npc.direction = -1;
+      npc.facingRight = false;
+    }
+
+    // 走路动画帧
+    npc.animTimer++;
+    if (npc.animTimer >= 15) {
+      npc.animTimer = 0;
+      npc.animFrame = (npc.animFrame + 1) % 2;
+    }
+
+    // 玩家靠近时显示气泡
+    const dist = Math.abs(player.x - npc.x);
+    const greetDist = villageConfig.npcGreetDistance || 80;
+    if (dist < greetDist) {
+      npc.showBubble = true;
+      // 面向玩家
+      npc.facingRight = player.x > npc.x;
+      npc.direction = 0; // 停下来
+      npc.bubbleTimer = 120; // 气泡持续 2 秒
+    } else if (npc.bubbleTimer > 0) {
+      npc.bubbleTimer--;
+      if (npc.bubbleTimer <= 0) {
+        npc.showBubble = false;
+        // 恢复巡逻
+        npc.direction = npc.facingRight ? 1 : -1;
+      }
+    } else {
+      npc.showBubble = false;
+    }
+  }
+}
+
+// ========== 村庄状态更新 ==========
+function updateVillages() {
+  if (!settings || !settings.villageEnabled) return;
+  if (!player) return;
+  // 检查是否需要生成新村庄
+  maybeSpawnVillage(score, player.x);
+  // 检测玩家是否在村庄内
+  const wasInVillage = playerInVillage;
+  playerInVillage = false;
+  currentVillage = null;
+  for (const v of activeVillages) {
+    if (player.x >= v.x && player.x <= v.x + v.width) {
+      playerInVillage = true;
+      currentVillage = v;
+      if (!v.visited) {
+        v.visited = true;
+        const biomeName = getBiomeName(v.biomeId);
+        showToast(`🏘️ 进入${biomeName}村庄`);
+      }
+      // v1.8.1 更新村民 (v1.8.1)
+      updateVillageNPCs(v);
+
+      // v1.8.2 检测休息屋 (v1.8.2)
+      checkVillageRest(v);
+      break;
+    }
+  }
+  if (wasInVillage && !playerInVillage) {
+    showToast('👋 离开村庄');
+    // v1.8.2 清除休息提示
+    hideRestPrompt();
+  }
+}
+
+// ========== 休息系统 (v1.8.2) ==========
+let restPromptVisible = false;
+let restPromptVillage = null;
+
+function checkVillageRest(village) {
+  if (!village) return;
+  if (village.restUsed) return; // 已使用过
+
+  // 查找 bed_house 建筑
+  const bedHouse = village.buildings.find(b => b.type === 'bed_house');
+  if (!bedHouse) return;
+
+  // 检测玩家是否在床屋区域内
+  const inBedHouse = player.x >= bedHouse.x && player.x <= bedHouse.x + bedHouse.w;
+  if (inBedHouse && !restPromptVisible) {
+    showRestPrompt(village);
+  } else if (!inBedHouse && restPromptVisible) {
+    hideRestPrompt();
+  }
+}
+
+function checkVillageBuildings(village) {
+  if (!village) return;
+
+  for (const building of village.buildings) {
+    const buildingLeft = building.x;
+    const buildingRight = building.x + building.w;
+
+    // 检测玩家是否在建筑区域内
+    if (player.x + player.width / 2 >= buildingLeft &&
+        player.x + player.width / 2 <= buildingRight) {
+      handleVillageInteraction(building, village);
+    }
+  }
+}
+
+function showRestPrompt(village) {
+  restPromptVisible = true;
+  restPromptVillage = village;
+  const restPromptEl = document.getElementById('rest-prompt');
+  if (restPromptEl) {
+    restPromptEl.style.display = 'block';
+    return;
+  }
+
+  // 动态创建休息提示
+  const prompt = document.createElement('div');
+  prompt.id = 'rest-prompt';
+  prompt.className = 'rest-prompt';
+  prompt.innerHTML = `
+    <div class="rest-prompt-content">
+      <div>💤 休息回血</div>
+      <button id="btn-rest" class="game-btn">休息 (Y)</button>
+    </div>
+  `;
+  document.getElementById('game-container').appendChild(prompt);
+
+  const btnRest = document.getElementById('btn-rest');
+  if (btnRest) {
+    btnRest.addEventListener('click', () => {
+      performRest(restPromptVillage);
+    });
+  }
+}
+
+function hideRestPrompt() {
+  restPromptVisible = false;
+  restPromptVillage = null;
+  const restPromptEl = document.getElementById('rest-prompt');
+  if (restPromptEl) {
+    restPromptEl.style.display = 'none';
+  }
+}
+
+function performRest(village) {
+  if (!village) return;
+  if (village.restUsed) {
+    showToast('💤 已经休息过了');
+    return;
+  }
+
+  // 检查满血条件
+  const isFullHp = playerHp >= playerMaxHp;
+  if (isFullHp && villageConfig.restHealFull) {
+    showToast('❤️ 已满血，无需休息');
+    return;
+  }
+
+  // 执行休息回血
+  if (villageConfig.restHealFull) {
+    playerHp = playerMaxHp;
+  } else {
+    playerHp = Math.min(playerMaxHp, playerHp + 5);
+  }
+
+  updateHpUI();
+  village.restUsed = true;
+  hideRestPrompt();
+
+  const healAmount = villageConfig.restHealFull ? '全满' : '+5';
+  showToast(`💤 休息成功！生命${healAmount}`);
+  showFloatingText('❤️ +休息', player.x, player.y - 60);
+
+  // 保存进度
+  if (typeof saveCurrentProgress === 'function') {
+    saveCurrentProgress();
+  }
+}
+
+// ========== 辅助函数 ==========
+function isInVillageArea(x) {
+  for (const v of activeVillages) {
+    if (x >= v.x && x <= v.x + v.width) return true;
+  }
+  return false;
+}
+
+function getVillageAt(x) {
+  for (const v of activeVillages) {
+    if (x >= v.x && x <= v.x + v.width) return v;
+  }
+  return null;
+}
+
+function getBiomeName(biomeId) {
+  if (typeof biomeConfigs === 'undefined' || !biomeConfigs) return biomeId || 'forest';
+  const biome = biomeConfigs[biomeId];
+  return biome ? biome.name : biomeId;
+}
+
+// ========== v1.8.3 村庄单词系统 ==========
+function getVillageWords(biomeId) {
+  if (!villageConfig || !villageConfig.biomeWords) return [];
+  return villageConfig.biomeWords[biomeId] || villageConfig.biomeWords.forest || [];
+}
+
+function handleVillageInteraction(building, village) {
+  if (!building || !village) return false;
+
+  switch (building.type) {
+    case 'bed_house':
+      // v1.8.2 休息系统已在 checkVillageRest 中处理
+      return true;
+    case 'word_house':
+      // v1.8.3 单词学习屋
+      if (village.questCompleted) {
+        showToast('📚 已完成学习任务');
+        return false;
+      }
+      if (typeof startVillageChallenge === 'function') {
+        startVillageChallenge(village, () => {
+          village.questCompleted = true;
+        });
+      }
+      return true;
+    case 'save_stone':
+      // v1.8.4 存档石碑
+      if (typeof saveVillageProgress === 'function') {
+        saveVillageProgress(village);
+      }
+      return true;
+    case 'special':
+      // v1.8.4 特色建筑
+      showToast('🏗 特色建筑暂未开放');
+      return true;
+  }
+  return false;
+}
+
+function saveVillageProgress(village) {
+  village.saved = true;
+  showToast('💾 游戏进度已保存');
+  // 这里可以添加实际的存档逻辑
+}
+
+</script>
+<script>
+/**
+ * 18-village-render.js - Village rendering
+ * v1.8.0
+ */
+
+function drawVillages(ctx) {
+  if (!settings?.villageEnabled) return;
+  if (!Array.isArray(activeVillages)) return;
+  for (const village of activeVillages) {
+    if (!village) continue;
+    if (village.x + village.width < cameraX - 100) continue;
+    if (village.x > cameraX + canvas.width + 100) continue;
+    drawVillageGround(ctx, village);
+    drawVillageDecorations(ctx, village);
+    if (Array.isArray(village.buildings)) {
+      for (const building of village.buildings) {
+        drawVillageBuilding(ctx, building, village.style || {});
+      }
+    }
+    if (Array.isArray(village.npcs)) {
+      for (const npc of village.npcs) {
+        drawVillageNPC(ctx, npc);
+      }
+    }
+  }
+}
+
+function drawVillageNPC(ctx, npc) {
+  if (!npc) return;
+  const sx = npc.x - cameraX;
+  const sy = groundY - 24;
+  const legOffset = npc.animFrame === 0 ? 0 : 2;
+
+  ctx.fillStyle = "#8B4513";
+  ctx.fillRect(sx, sy, 16, 24);
+
+  ctx.fillStyle = "#FFF";
+  const eyeX = npc.facingRight ? sx + 10 : sx + 3;
+  ctx.fillRect(eyeX, sy + 4, 4, 4);
+
+  ctx.fillStyle = "#5D4037";
+  ctx.fillRect(sx + 2 + legOffset, sy + 20, 5, 4);
+  ctx.fillRect(sx + 9 + legOffset, sy + 20, 5, 4);
+
+  if (npc.showBubble) {
+    const bubbleW = 80;
+    const bubbleH = 20;
+    const bubbleX = sx + 8 - bubbleW / 2;
+    const bubbleY = sy - bubbleH - 8;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (typeof ctx.roundRect === "function") {
+      ctx.roundRect(bubbleX, bubbleY, bubbleW, bubbleH, 4);
+    } else {
+      ctx.rect(bubbleX, bubbleY, bubbleW, bubbleH);
+    }
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#000";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(npc.bubbleText || "", sx + 8, bubbleY + 14);
+    ctx.textAlign = "left";
+  }
+}
+
+function drawVillageGround(ctx, village) {
+  if (!village) return;
+  const sx = village.x - cameraX;
+  const w = village.width || 0;
+  const groundColor = village.style?.groundColor || "#6D4C41";
+  ctx.fillStyle = groundColor;
+  ctx.fillRect(sx, groundY, w, 6);
+  ctx.strokeStyle = "rgba(0,0,0,0.2)";
+  ctx.lineWidth = 1;
+  for (let i = 0; i < w; i += 20) {
+    ctx.strokeRect(sx + i, groundY, 20, 6);
+  }
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  ctx.fillRect(sx, groundY - 300, 4, 300);
+  ctx.fillRect(sx + w - 4, groundY - 300, 4, 300);
+}
+
+function drawVillageBuilding(ctx, building, style) {
+  if (!building) return;
+  const sx = building.x - cameraX;
+  const sy = groundY - building.h;
+  const colors = style?.buildingColors || {};
+  const wall = colors.wall || "#8D6E63";
+  const roof = colors.roof || "#5D4037";
+  const door = colors.door || "#3E2723";
+
+  ctx.fillStyle = wall;
+  ctx.fillRect(sx, sy, building.w, building.h);
+  ctx.strokeStyle = "rgba(0,0,0,0.15)";
+  ctx.lineWidth = 1;
+  for (let row = 0; row < building.h; row += 10) {
+    ctx.beginPath();
+    ctx.moveTo(sx, sy + row);
+    ctx.lineTo(sx + building.w, sy + row);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = roof;
+  ctx.beginPath();
+  ctx.moveTo(sx - 8, sy);
+  ctx.lineTo(sx + building.w / 2, sy - 25);
+  ctx.lineTo(sx + building.w + 8, sy);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = door;
+  const doorW = 16;
+  const doorH = Math.min(30, building.h - 5);
+  ctx.fillRect(sx + building.w / 2 - doorW / 2, sy + building.h - doorH, doorW, doorH);
+
+  if (building.w >= 60) {
+    ctx.fillStyle = "#FFEB3B";
+    ctx.globalAlpha = 0.8;
+    ctx.fillRect(sx + 8, sy + 8, 12, 12);
+    if (building.w >= 80) {
+      ctx.fillRect(sx + building.w - 20, sy + 8, 12, 12);
+    }
+    ctx.globalAlpha = 1.0;
+  }
+
+  const icons = {
+    bed_house: "🛏️",
+    word_house: "📎",
+    save_stone: "🧱",
+    library: "📘",
+    hot_spring: "♨️",
+    water_station: "🚧",
+    blacksmith: "⚒️",
+    lighthouse: "🗼",
+    brewing_stand: "⚙️"
+  };
+  const icon = icons[building.type] || "🏠";
+  const iconSize = 16 * (worldScale?.x || 1);
+  ctx.font = `${iconSize}px serif`;
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#fff";
+  ctx.fillText(icon, sx + building.w / 2, sy - 30);
+  ctx.textAlign = "left";
+
+  switch (building.type) {
+    case "library":
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = "#8B4513";
+        ctx.fillRect(sx + 10 + i * 8, sy - 60 + i * 8, 8, 12);
+      }
+      ctx.fillStyle = "#5D4037";
+      ctx.fillRect(sx + 14, sy - 64, 4, 24);
+      break;
+    case "hot_spring":
+      ctx.fillStyle = "rgba(255,255,255,0.3)";
+      ctx.beginPath();
+      ctx.arc(sx + building.w / 2, sy - 30, 10, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "water_station":
+      ctx.fillStyle = "#4FC3F7";
+      ctx.fillRect(sx + 8, sy - 40, 16, 20);
+      ctx.fillStyle = "#0277BD";
+      ctx.fillRect(sx + 10, sy - 40, 12, 12);
+      break;
+    case "blacksmith":
+      ctx.fillStyle = "#795548";
+      ctx.fillRect(sx + 6, sy - 30, building.w - 12, 8);
+      ctx.fillStyle = "#3E2723";
+      ctx.fillRect(sx + 16, sy - 24, 16, 12);
+      break;
+    case "lighthouse":
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = `rgba(255, 255, ${200 + i * 55}, ${Math.random() * 0.3 + 0.2})`;
+        ctx.fillRect(sx + 12 + i * 4, sy - 70 - i * 6, 8, 8);
+      }
+      ctx.fillStyle = "#FFEB3B";
+      ctx.fillRect(sx + 12, sy - 58, building.w - 20, 8);
+      break;
+    case "brewing_stand":
+      ctx.fillStyle = "#880E4F";
+      ctx.fillRect(sx + 10, sy - 35, 12, 20);
+      ctx.fillStyle = "#A52A2A";
+      ctx.fillRect(sx + 26, sy - 35, 8, 12);
+      break;
+  }
+}
+
+function drawVillageDecorations(ctx, village) {
+  if (!village || !Array.isArray(village.decorations)) return;
+  for (const deco of village.decorations) {
+    if (!deco) continue;
+    const sx = deco.x - cameraX;
+    const sy = groundY;
+    switch (deco.type) {
+      case "well":
+        ctx.fillStyle = "#78909C";
+        ctx.fillRect(sx, sy - 20, 20, 20);
+        ctx.fillStyle = "#42A5F5";
+        ctx.fillRect(sx + 3, sy - 17, 14, 10);
+        break;
+      case "farm":
+        ctx.fillStyle = "#5D4037";
+        ctx.fillRect(sx, sy - 4, 30, 4);
+        ctx.fillStyle = "#66BB6A";
+        for (let i = 0; i < 5; i++) ctx.fillRect(sx + 2 + i * 6, sy - 12, 4, 8);
+        break;
+      case "fence":
+        ctx.fillStyle = "#8D6E63";
+        for (let i = 0; i < 3; i++) {
+          ctx.fillRect(sx + i * 12, sy - 18, 3, 18);
+        }
+        ctx.fillRect(sx, sy - 14, 26, 3);
+        ctx.fillRect(sx, sy - 6, 26, 3);
+        break;
+      default:
+        ctx.fillStyle = "#9E9E9E";
+        ctx.fillRect(sx, sy - 12, 12, 12);
+        ctx.fillStyle = "#FFF";
+        ctx.font = "8px monospace";
+        ctx.fillText((deco.type || "?").charAt(0).toUpperCase(), sx + 2, sy - 3);
+        break;
+    }
+  }
+}
+
+function drawVillageSaveStone(ctx, building, village) {
+  if (!building || !village) return;
+  const sx = building.x - cameraX;
+  const sy = groundY - building.h;
+
+  ctx.fillStyle = "#708090";
+  ctx.fillRect(sx, sy, building.w, building.h);
+
+  ctx.fillStyle = "#9E9E9E";
+  ctx.fillRect(sx, sy, building.w, 8);
+
+  ctx.fillStyle = village.saved ? "#4CAF50" : "#AAA";
+  ctx.font = "bold 20px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(village.saved ? "🧱" : "?", sx + building.w / 2, sy + 20);
+
+  ctx.strokeStyle = village.saved ? "#66BB6A" : "#888";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(sx + 2, sy + 2, building.w - 4, building.h - 4);
+  ctx.textAlign = "left";
+}
+
+function drawVillageSpecialBuilding(ctx, building) {
+  if (!building) return;
+  const sx = building.x - cameraX;
+  const sy = groundY - building.h;
+
+  switch (building.type) {
+    case "library":
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = "#8B4513";
+        ctx.fillRect(sx + 8 + i * 8, sy - 60 - i * 12, 8, 16);
+      }
+      ctx.fillStyle = "#5D4037";
+      ctx.fillRect(sx + 12, sy - 64, 10, 24);
+      break;
+    case "hot_spring":
+      ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+      ctx.beginPath();
+      ctx.arc(sx + 12, sy - 30, 8, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case "water_station":
+      ctx.fillStyle = "#4FC3F7";
+      ctx.fillRect(sx + 10, sy - 30, 12, 20);
+      break;
+    case "blacksmith":
+      ctx.fillStyle = "#795548";
+      ctx.fillRect(sx + 8, sy - 24, 16, 12);
+      break;
+    case "lighthouse":
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = i === 0 ? "rgba(255, 255, 0, 0.8)" : "rgba(255, 255, 255, 0.6)";
+        ctx.fillRect(sx + 8 + i * 6, sy - 50 + i * 10, 4, 10);
+      }
+      break;
+    case "brewing_stand":
+      ctx.fillStyle = "#880E4F";
+      ctx.fillRect(sx + 8, sy - 20, 8, 16);
+      break;
+    default:
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = "#8B4513";
+        ctx.fillRect(sx + 8 + i * 8, sy - 60 - i * 12, 8, 16);
+      }
+      break;
+  }
+}
+
+</script>
+<script>
 /**
  * 16-events.js - 事件绑定与输入处理
  * 从 main.js 拆分 (原始行 7076-7401)
@@ -11356,12 +13951,13 @@ function wireLearningModals() {
  * 从 main.js 拆分 (原始行 7402-7663)
  */
 async function start() {
-    const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes] = await Promise.all([
+    const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes, loadedVillage] = await Promise.all([
         loadJsonWithFallback("config/game.json", defaultGameConfig),
         loadJsonWithFallback("config/controls.json", defaultControls),
         loadJsonWithFallback("config/levels.json", defaultLevels),
         loadJsonWithFallback("words/words-base.json", defaultWords),
-        loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS })
+        loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS }),
+        loadJsonWithFallback("config/village.json", { enabled: true, spawnScoreInterval: 500 })
     ]);
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
@@ -11373,6 +13969,7 @@ async function start() {
     const bundle = normalizeBiomeBundle(loadedBiomes);
     biomeConfigs = bundle.biomes;
     biomeSwitchConfig = bundle.switch;
+    if (typeof villageConfig !== 'undefined') villageConfig = loadedVillage || {};
     baseGameConfig = JSON.parse(JSON.stringify(gameConfig));
     baseCanvasSize = { width: baseGameConfig.canvas.width, height: baseGameConfig.canvas.height };
     baseEnemyStats = JSON.parse(JSON.stringify(ENEMY_STATS));

@@ -63,6 +63,12 @@ function initGame() {
         bossArena.active = false;
         bossArena.boss = null;
         bossArena.victoryTimer = 0;
+        bossArena.viewportLocked = false;
+        bossArena.phaseFlashTimer = 0;
+        bossArena.phaseBannerText = '';
+        bossArena.lockedCamX = 0;
+        bossArena.leftWall = 0;
+        bossArena.rightWall = 0;
         if (bossArena.spawned) {
             for (const k in bossArena.spawned) delete bossArena.spawned[k];
         }

@@ -70,7 +70,7 @@ function wireSettingsModal() {
             optDifficulty.value = desired;
             if (optDifficulty.value !== desired) optDifficulty.value = "auto";
         }
-        if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 200);
+        if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 300);
         if (optTouch) optTouch.checked = !!settings.touchControls;
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;

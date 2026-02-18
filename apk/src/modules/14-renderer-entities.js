@@ -356,6 +356,7 @@ function drawProjectile(proj) {
 // 渲染新BOSS系统
 function renderBossSystem() {
     if (typeof bossArena === 'undefined' || !bossArena.active) return;
-    bossArena.renderBoss(ctx, cameraX);
-    bossArena.renderProjectiles(ctx, cameraX);
+    // draw() already applied ctx.translate(-cameraX, 0), so pass 0 here to avoid double offset.
+    bossArena.renderBoss(ctx, 0);
+    bossArena.renderProjectiles(ctx, 0);
 }

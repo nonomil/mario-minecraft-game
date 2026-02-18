@@ -221,7 +221,7 @@ window.MMWG_DEFAULTS = {
         avoidWordRepeats: true,
         showWordImage: true,
         showEnvironmentLabels: true,
-        biomeSwitchStepScore: 200,
+        biomeSwitchStepScore: 300,
         gameDifficulty: "medium",
         vocabStage: "auto",
         vocabSelection: "vocab.kindergarten",

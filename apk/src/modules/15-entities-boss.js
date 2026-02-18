@@ -165,12 +165,28 @@ const bossArena = {
         this.phaseBannerText = '';
         this.spawned[bossType] = true;
         this.boss = this.createBoss(bossType);
+        const isFlyingBoss = bossType === 'wither' || bossType === 'ghast' || bossType === 'blaze';
+        let grantedRangedSupport = false;
+        if (isFlyingBoss) {
+            const minArrows = 12;
+            if ((inventory.bow || 0) <= 0) {
+                inventory.bow = 1;
+                grantedRangedSupport = true;
+            }
+            if ((inventory.arrow || 0) < minArrows) {
+                inventory.arrow = minArrows;
+                grantedRangedSupport = true;
+            }
+            if (typeof syncWeaponsFromInventory === 'function') syncWeaponsFromInventory();
+            if (typeof updateInventoryUI === 'function') updateInventoryUI();
+        }
         // 视口锁定 + 边界墙
         this.viewportLocked = true;
         this.lockedCamX = cameraX;
         this.leftWall = cameraX;
         this.rightWall = cameraX + canvas.width;
-        showToast(`⚠️ BOSS战: ${this.boss.name}!`);
+        const supportText = grantedRangedSupport ? '（已补给弓箭）' : '';
+        showToast(`⚔️ BOSS战！${this.boss.name}${supportText}`);
     },
 
     createBoss(type) {

@@ -1,6 +1,6 @@
 {
     "switch": {
-        "stepScore": 200,
+        "stepScore": 300,
         "order": [
             "forest",
             "cherry_grove",
@@ -37,8 +37,8 @@
             "mushroom_island": { "score": 200, "timeSec": 40 },
             "mountain": { "score": 200, "timeSec": 35 },
             "ocean": { "score": 200, "timeSec": 40 },
-            "volcano": { "score": 200, "timeSec": 40 },
-            "nether": { "score": 250, "timeSec": 45 },
+            "volcano": { "score": 320, "timeSec": 70 },
+            "nether": { "score": 360, "timeSec": 75 },
             "deep_dark": { "score": 250, "timeSec": 45 },
             "end": { "score": 300, "timeSec": 50 },
             "sky_dimension": { "score": 300, "timeSec": 50 }

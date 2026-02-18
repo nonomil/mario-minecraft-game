@@ -23,7 +23,7 @@ function getBiomeById(id) {
 function getBiomeSwitchConfig() {
     const cfg = biomeSwitchConfig && typeof biomeSwitchConfig === "object" ? biomeSwitchConfig : DEFAULT_BIOME_SWITCH;
     const stepFromSettings = Number(settings?.biomeSwitchStepScore);
-    const stepScore = isFinite(stepFromSettings) && stepFromSettings >= 50 ? stepFromSettings : (Number(cfg.stepScore) || 200);
+    const stepScore = isFinite(stepFromSettings) && stepFromSettings >= 150 ? stepFromSettings : (Number(cfg.stepScore) || 300);
     return { ...cfg, stepScore };
 }
 

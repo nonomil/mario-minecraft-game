@@ -6,6 +6,15 @@ function getArrowCount() {
     return Number(inventory.arrow) || 0;
 }
 
+let lastNoArrowToastFrame = -9999;
+
+function showNoArrowToast() {
+    const frame = Number(gameFrame) || 0;
+    if (frame - lastNoArrowToastFrame < 45) return;
+    lastNoArrowToastFrame = frame;
+    showToast("❌ 没有箭！");
+}
+
 function unlockWeapon(id) {
     if (!WEAPONS[id]) return false;
     if (playerWeapons.unlocked.includes(id)) return false;
@@ -53,7 +62,7 @@ function startBowCharge() {
     const weapon = WEAPONS.bow;
     if (playerWeapons.attackCooldown > 0) return;
     if (getArrowCount() <= 0) {
-        showToast("❌ 没有箭！");
+        showNoArrowToast();
         return;
     }
     playerWeapons.isCharging = true;
@@ -64,7 +73,7 @@ function releaseBowShot(forceCharge = null) {
     const weapon = WEAPONS.bow;
     if (playerWeapons.attackCooldown > 0) return;
     if (getArrowCount() <= 0) {
-        showToast("❌ 没有箭！");
+        showNoArrowToast();
         return;
     }
     const ratio = forceCharge != null ? forceCharge : Math.min(1, playerWeapons.chargeTime / weapon.chargeMax);
