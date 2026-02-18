@@ -278,6 +278,8 @@ body {
     font-size: clamp(18px, 2.5vw, 26px);
     margin-bottom: 16px;
     min-height: 48px;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .challenge-fill {
@@ -289,14 +291,33 @@ body {
 .challenge-fill-word {
     font-size: clamp(28px, 5vw, 44px);
     letter-spacing: 6px;
+    word-spacing: 2px;
+    line-height: 1.2;
     font-weight: 900;
     color: #4FC3F7;
     text-shadow: 1px 1px 0 #000;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .challenge-fill-word.phrase {
     font-size: clamp(18px, 3.2vw, 28px);
-    letter-spacing: 2px;
+    letter-spacing: 1px;
+    word-spacing: 6px;
+    line-height: 1.35;
+}
+
+.challenge-fill-word.long {
+    font-size: clamp(20px, 3.8vw, 30px);
+    letter-spacing: 1px;
+    line-height: 1.35;
+}
+
+.challenge-fill-word.xlong {
+    font-size: clamp(16px, 3vw, 24px);
+    letter-spacing: 0.5px;
+    line-height: 1.42;
 }
 
 .challenge-fill-hint {

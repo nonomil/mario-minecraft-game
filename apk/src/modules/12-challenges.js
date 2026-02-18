@@ -87,6 +87,75 @@ function getUniqueSessionWords() {
     });
 }
 
+function normalizeChallengeTextSpacing(text) {
+    return String(text || "").trim().replace(/\s+/g, " ");
+}
+
+function getChallengeWordDisplayClass(text, forcePhrase = false) {
+    const normalized = normalizeChallengeTextSpacing(text);
+    const wordCount = normalized ? normalized.split(" ").filter(Boolean).length : 0;
+    const charCount = normalized.length;
+    const classNames = ["challenge-fill-word"];
+    if (forcePhrase || wordCount > 1) classNames.push("phrase");
+    if (charCount > 26 || wordCount > 5) classNames.push("long");
+    if (charCount > 40 || wordCount > 8) classNames.push("xlong");
+    return classNames.join(" ");
+}
+
+function generatePhraseFillBlankChallenge(wordObj) {
+    const phrase = normalizeChallengeTextSpacing(wordObj?.en);
+    const tokens = phrase.split(" ").filter(Boolean);
+    if (tokens.length < 2) return null;
+
+    const candidateIndexes = [];
+    for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i].length >= 2) candidateIndexes.push(i);
+    }
+    const fallbackIndexes = candidateIndexes.length ? candidateIndexes : tokens.map((_, idx) => idx);
+    const missingIndex = fallbackIndexes[Math.floor(Math.random() * fallbackIndexes.length)];
+    const answer = tokens[missingIndex];
+
+    const displayTokens = tokens.map((token, idx) => {
+        if (idx !== missingIndex) return token;
+        const underscoreCount = Math.max(3, Math.min(10, token.length));
+        return "_".repeat(underscoreCount);
+    });
+    const displayText = displayTokens.join(" ");
+
+    const tokenPool = (Array.isArray(wordDatabase) ? wordDatabase : [])
+        .map(w => normalizeChallengeTextSpacing(w?.en))
+        .filter(Boolean)
+        .flatMap(text => text.split(" "))
+        .filter(token => /^[a-zA-Z]+$/.test(token));
+    const options = [answer];
+    let guard = 0;
+    while (options.length < 4 && guard < 60) {
+        guard++;
+        const pick = tokenPool.length
+            ? tokenPool[Math.floor(Math.random() * tokenPool.length)]
+            : answer;
+        if (!pick || options.includes(pick)) continue;
+        options.push(pick);
+    }
+    while (options.length < 4) {
+        const fake = answer.split("").sort(() => Math.random() - 0.5).join("");
+        if (!fake || options.includes(fake)) continue;
+        options.push(fake);
+    }
+
+    return {
+        mode: "fill_blank",
+        questionHtml:
+            `<div class="challenge-fill">` +
+            `<div class="${getChallengeWordDisplayClass(displayText, true)}">${displayText}</div>` +
+            `<div class="challenge-fill-hint">填入缺少的单词</div>` +
+            `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
+            `</div>`,
+        options: shuffle(options).map(option => ({ text: option, value: option, correct: option === answer })),
+        answer
+    };
+}
+
 function generateLetterOptions(correctLetter, count = 4) {
     const options = [correctLetter];
     const similarLetters = {
@@ -123,7 +192,11 @@ function generateLetterOptions(correctLetter, count = 4) {
 }
 
 function generateFillBlankChallenge(wordObj) {
-    const enRaw = String(wordObj?.en || "").toLowerCase();
+    const enRaw = normalizeChallengeTextSpacing(wordObj?.en).toLowerCase();
+    if (/\s+/.test(enRaw)) {
+        const phrasePayload = generatePhraseFillBlankChallenge(wordObj);
+        if (phrasePayload) return phrasePayload;
+    }
     const en = enRaw.replace(/[^a-z]/g, "");
     if (!en) return null;
     const minIndex = en.length > 2 ? 1 : 0;
@@ -136,7 +209,7 @@ function generateFillBlankChallenge(wordObj) {
         mode: "fill_blank",
         questionHtml:
             `<div class="challenge-fill">` +
-            `<div class="challenge-fill-word">${wordDisplay}</div>` +
+            `<div class="${getChallengeWordDisplayClass(wordDisplay)}">${wordDisplay}</div>` +
             `<div class="challenge-fill-hint">缺少哪个字母？</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,
@@ -147,7 +220,11 @@ function generateFillBlankChallenge(wordObj) {
 
 
 function generateMultiBlankChallenge(wordObj) {
-    const enRaw = String(wordObj?.en || "").toLowerCase();
+    const enRaw = normalizeChallengeTextSpacing(wordObj?.en).toLowerCase();
+    if (/\s+/.test(enRaw)) {
+        const phrasePayload = generatePhraseFillBlankChallenge(wordObj);
+        if (phrasePayload) return phrasePayload;
+    }
     const en = enRaw.replace(/[^a-z]/g, "");
     if (en.length < 4) return generateFillBlankChallenge(wordObj);
 
@@ -186,7 +263,7 @@ function generateMultiBlankChallenge(wordObj) {
         mode: "fill_blank",
         questionHtml:
             `<div class="challenge-fill">` +
-            `<div class="challenge-fill-word">${display}</div>` +
+            `<div class="${getChallengeWordDisplayClass(display)}">${display}</div>` +
             `<div class="challenge-fill-hint">填入缺少的 ${positions.length} 个字母</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,
@@ -253,7 +330,7 @@ function generatePhraseUnscrambleDistractors(correctPhrase, count) {
 }
 
 function generateUnscrambleChallenge(wordObj) {
-    const enRaw = String(wordObj?.en || "").toLowerCase().trim();
+    const enRaw = normalizeChallengeTextSpacing(wordObj?.en).toLowerCase();
     const isPhrase = /\s+/.test(enRaw);
 
     if (isPhrase) {
@@ -269,7 +346,7 @@ function generateUnscrambleChallenge(wordObj) {
             mode: "fill_blank",
             questionHtml:
                 `<div class="challenge-fill">` +
-                `<div class="challenge-fill-word phrase" style="color:#FFD54F;">${scrambledTokens.join(" ")}</div>` +
+                `<div class="${getChallengeWordDisplayClass(scrambledTokens.join(" "), true)}" style="color:#FFD54F;">${scrambledTokens.join(" ")}</div>` +
                 `<div class="challenge-fill-hint">重新排列单词顺序，拼出正确词组</div>` +
                 `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
                 `</div>`,
@@ -295,7 +372,7 @@ function generateUnscrambleChallenge(wordObj) {
         mode: "fill_blank",
         questionHtml:
             `<div class="challenge-fill">` +
-            `<div class="challenge-fill-word" style="letter-spacing:8px;color:#FFD54F;">${scrambled.join(" ")}</div>` +
+            `<div class="${getChallengeWordDisplayClass(scrambled.join(" "))}" style="letter-spacing:8px;color:#FFD54F;">${scrambled.join(" ")}</div>` +
             `<div class="challenge-fill-hint">重新排列字母，拼出正确单词</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,

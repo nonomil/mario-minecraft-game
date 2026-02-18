@@ -19,11 +19,11 @@
          this.shake = 0;
          this.petals = 0;
          this.maxPetals = 5 + Math.floor(Math.random() * 6);
-         const blossomCount = 15 + Math.floor(Math.random() * 6);
+         const blossomCount = 18 + Math.floor(Math.random() * 10);
          this.blossomOffsets = Array.from({ length: blossomCount }, () => ({
-             x: (Math.random() - 0.5) * this.width * 0.6,
-             y: (Math.random() - 0.5) * this.height * 0.42,
-             size: 5 + Math.random() * 2,
+             x: (Math.random() - 0.5) * this.width * (0.5 + Math.random() * 0.35),
+             y: -Math.random() * this.height * (0.26 + Math.random() * 0.2),
+             size: 2 + Math.random() * 2.8,
              color: ["#FF69B4", "#FFB7C5", "#FFC0CB"][Math.floor(Math.random() * 3)]
          }));
          this.branchOffsets = Array.from({ length: 3 }, (_, idx) => ({
@@ -691,19 +691,21 @@ function renderCherryTree(ctx, d, camX) {
     const dx = d.x - camX;
     // 树干
     ctx.fillStyle = "#8B4513";
-    ctx.fillRect(dx + d.width * 0.4, d.y + d.height * 0.5, d.width * 0.2, d.height * 0.5);
+    ctx.fillRect(dx + d.width * 0.42, d.y + d.height * 0.52, d.width * 0.18, d.height * 0.48);
 
     // 树冠基底（绿色）
     ctx.fillStyle = "#5A8F3C";
     ctx.beginPath();
-    ctx.arc(dx + d.width / 2, d.y + d.height * 0.3, d.width * 0.4, 0, Math.PI * 2);
+    ctx.arc(dx + d.width * 0.34, d.y + d.height * 0.37, d.width * 0.24, 0, Math.PI * 2);
+    ctx.arc(dx + d.width * 0.5, d.y + d.height * 0.28, d.width * 0.3, 0, Math.PI * 2);
+    ctx.arc(dx + d.width * 0.66, d.y + d.height * 0.37, d.width * 0.24, 0, Math.PI * 2);
     ctx.fill();
 
     // 樱花覆盖层（半透明）
-    ctx.globalAlpha = 0.82;
-    ctx.fillStyle = "#FFB7C5";
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = "#7CA858";
     ctx.beginPath();
-    ctx.arc(dx + d.width / 2, d.y + d.height * 0.3, d.width * 0.36, 0, Math.PI * 2);
+    ctx.arc(dx + d.width * 0.5, d.y + d.height * 0.33, d.width * 0.28, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalAlpha = 1;
 
@@ -720,21 +722,23 @@ function renderCherryTree(ctx, d, camX) {
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
         ctx.stroke();
-        ctx.fillStyle = "#FFC0CB";
-        ctx.beginPath();
-        ctx.arc(endX, endY, 3, 0, Math.PI * 2);
-        ctx.fill();
     }
 
     // 多色花瓣点缀
     const blossomOffsets = Array.isArray(d.blossomOffsets) ? d.blossomOffsets : [];
     for (const spot of blossomOffsets) {
-        const ox = spot.x;
-        const oy = spot.y;
-        const size = spot.size || 4;
+        const size = spot.size || 3;
         ctx.fillStyle = spot.color || "#FFC0CB";
         ctx.beginPath();
-        ctx.arc(dx + d.width / 2 + ox, d.y + d.height * 0.3 + oy, size, 0, Math.PI * 2);
+        ctx.ellipse(
+            dx + d.width / 2 + spot.x,
+            d.y + d.height * 0.35 + spot.y,
+            size,
+            size * (0.72 + Math.random() * 0.2),
+            Math.random() * Math.PI,
+            0,
+            Math.PI * 2
+        );
         ctx.fill();
     }
 
