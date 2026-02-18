@@ -1,11 +1,11 @@
-﻿/**
- * 20-enemies-new.js - 鏂扮兢绯绘晫浜虹郴缁?(v1.7.0)
- * 妯辫姳涓涙灄銆佽槕鑿囧矝銆佺伀灞便€佹繁鏆椾箣鍩熴€佸ぉ绌轰箣鍩庝笓鐢ㄦ晫浜?
+/**
+ * 20-enemies-new.js - 新群系敌人系统 (v1.7.0)
+ * 樱花丛林、蘑菇岛、火山、深暗之域、天空之城专用敌人
  */
 
-// ============ 鏂版晫浜哄睘鎬ч厤缃?============
+// ============ 新敌人属性配置 ============
 const BIOME_ENEMY_STATS = {
-    // 妯辫姳涓涙灄鏁屼汉
+    // 樱花丛林敌人
     bee: {
         hp: 10,
         speed: 1.8,
@@ -40,7 +40,7 @@ const BIOME_ENEMY_STATS = {
         biome: "cherry_grove"
     },
 
-    // 铇戣弴宀涙晫浜?
+    // 蘑菇岛敌人
     spore_bug: {
         hp: 8,
         speed: 0.8,
@@ -53,7 +53,7 @@ const BIOME_ENEMY_STATS = {
         biome: "mushroom_island"
     },
 
-    // 鐏北鏁屼汉
+    // 火山敌人
     magma_cube: {
         hp: 25,
         speed: 1.2,
@@ -77,7 +77,7 @@ const BIOME_ENEMY_STATS = {
         biome: "volcano"
     },
 
-    // 娣辨殫涔嬪煙鏁屼汉
+    // 深暗之域敌人
     sculk_worm: {
         hp: 5,
         speed: 1.5,
@@ -112,7 +112,7 @@ const BIOME_ENEMY_STATS = {
         biome: "deep_dark"
     },
 
-    // 澶╃┖涔嬪煄鏁屼汉
+    // 天空之城敌人
     phantom: {
         hp: 22,
         speed: 2.0,
@@ -156,7 +156,7 @@ function consumeSilentBootsDurability(cost = 1) {
     if (silentBootsState.durability <= 0) {
         silentBootsState.equipped = false;
         silentBootsState.durability = 0;
-        showToast("闈欓煶闉嬪凡鎹熷潖");
+        showToast("静音鞋已损坏");
     }
 }
 
@@ -259,7 +259,7 @@ function renderDeepDarkNoiseHud(ctx) {
     ctx.restore();
 }
 
-// ============ 鏂版晫浜篈I绫?============
+// ============ 新敌人AI类 ============
 
 class BeeEnemy extends Enemy {
     constructor(x, y) {
@@ -272,17 +272,17 @@ class BeeEnemy extends Enemy {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
-        // 铚滆渹鎮仠椋炶
+        // 蜜蜂悬停飞行
         this.y = this.startY + Math.sin(gameFrame * 0.05 + this.hoverOffset) * 20;
 
         if (dist < 180) {
             this.state = "chase";
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
 
-            // 涓瘨鏀诲嚮
+            // 中毒攻击
             if (dist < 30 && this.attackCooldown === 0) {
                 damagePlayer(this.damage, this.x);
-                 tryApplyPoisonEffect(this.x, this.y);
+                tryApplyPoisonEffect(this.x, this.y);
                 this.attackCooldown = 90;
                 this.poisonCooldown = 120;
             }
@@ -309,7 +309,7 @@ class FoxEnemy extends Enemy {
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
         if (this.fleeTimer > 0) {
-            // 閫冭窇妯″紡
+            // 逃跑模式
             this.state = "fleeing";
             this.x += (playerRef.x > this.x ? -1 : 1) * this.speed * 1.5 * speedMult;
             this.fleeTimer--;
@@ -319,10 +319,10 @@ class FoxEnemy extends Enemy {
 
         if (dist < 200) {
             if (dist < 40 && this.stealCooldown === 0) {
-                // 鍋风獌鏀诲嚮
+                // 偷窃攻击
                 if (score >= 50) {
                     score = Math.max(0, score - 50);
-                    showFloatingText("馃 鍋疯蛋浜?0鍒?", playerRef.x, playerRef.y - 40, "#FF8C00");
+                    showFloatingText("🦊 偷走了50分!", playerRef.x, playerRef.y - 40, "#FF8C00");
                 }
                 this.stealCooldown = 300;
                 this.fleeTimer = 90;
@@ -353,14 +353,14 @@ class WitchEnemy extends Enemy {
         if (dist < 250) {
             this.state = "chase";
 
-            // 淇濇寔璺濈
+            // 保持距离
             if (dist < 100) {
                 this.x += (playerRef.x > this.x ? -1 : 1) * this.speed * speedMult;
             } else if (dist > 150) {
                 this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
             }
 
-            // 鎶曟幏鑽按
+            // 投掷药水
             if (this.potionCooldown === 0 && dist < 200) {
                 const allowPoison = canApplyPoisonEffect();
                 this.potionType = allowPoison && Math.random() < 0.6 ? "poison" : "slow";
@@ -386,7 +386,7 @@ class SporeBugEnemy extends Enemy {
 
     die() {
         if (this.splitOnDeath && this.splitCount < 2) {
-            // 鍒嗚鎴?涓皬瀛㈠瓙铏?
+            // 分裂成2个小孢子虫
             for (let i = 0; i < 2; i++) {
                 const offsetX = (i === 0 ? -20 : 20);
                 const miniBug = new SporeBugEnemy(this.x + offsetX, this.y);
@@ -395,7 +395,7 @@ class SporeBugEnemy extends Enemy {
                 miniBug.splitOnDeath = miniBug.splitCount < 2;
                 if (!enemies.includes(miniBug)) enemies.push(miniBug);
             }
-            showFloatingText("鉁?鍒嗚!", this.x, this.y - 20, "#9370DB");
+            showFloatingText("✨ 分裂!", this.x, this.y - 20, "#9370DB");
         }
         super.die();
     }
@@ -404,7 +404,7 @@ class SporeBugEnemy extends Enemy {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
-        // 缂撴參杩借釜
+        // 缓慢追踪
         if (dist < 150) {
             this.state = "chase";
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * 0.7 * speedMult;
@@ -425,7 +425,7 @@ class MagmaCubeEnemy extends Enemy {
         this.isJumping = false;
         this.jumpVelY = 0;
 
-        // 鏍规嵁澶у皬璋冩暣灞炴€?
+        // 根据大小调整属性
         if (size === "large") {
             this.hp = 25;
             this.maxHp = 25;
@@ -445,7 +445,7 @@ class MagmaCubeEnemy extends Enemy {
     }
 
     die() {
-        // 鍒嗚鎴愬皬宀╂祮鎬?
+        // 分裂成小岩浆怪
         if (this.cubeSize === "large") {
             for (let i = 0; i < 2; i++) {
                 const offsetX = (i === 0 ? -25 : 25);
@@ -453,7 +453,7 @@ class MagmaCubeEnemy extends Enemy {
                 mediumCube.startX = this.x + offsetX;
                 if (!enemies.includes(mediumCube)) enemies.push(mediumCube);
             }
-            showFloatingText("鉁?鍒嗚!", this.x, this.y - 20, "#FF4500");
+            showFloatingText("✨ 分裂!", this.x, this.y - 20, "#FF4500");
         } else if (this.cubeSize === "medium") {
             for (let i = 0; i < 2; i++) {
                 const offsetX = (i === 0 ? -18 : 18);
@@ -461,7 +461,7 @@ class MagmaCubeEnemy extends Enemy {
                 smallCube.startX = this.x + offsetX;
                 if (!enemies.includes(smallCube)) enemies.push(smallCube);
             }
-            showFloatingText("鉁?鍒嗚!", this.x, this.y - 20, "#FF4500");
+            showFloatingText("✨ 分裂!", this.x, this.y - 20, "#FF4500");
         }
         super.die();
     }
@@ -470,7 +470,7 @@ class MagmaCubeEnemy extends Enemy {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
-        // 宀╂祮鎬烦璺冩満鍒?
+        // 岩浆怪跳跃机制
         if (this.jumpCooldown > 0) {
             this.jumpCooldown--;
         } else if (!this.isJumping) {
@@ -483,7 +483,7 @@ class MagmaCubeEnemy extends Enemy {
             this.jumpVelY += gameConfig.physics.gravity;
             this.y += this.jumpVelY;
 
-            // 妫€娴嬭惤鍦?
+            // 检测落地
             for (const p of platforms) {
                 if (colCheck(this, p)) {
                     this.isJumping = false;
@@ -492,12 +492,12 @@ class MagmaCubeEnemy extends Enemy {
                 }
             }
 
-            // 绌轰腑绉诲姩
+            // 空中移动
             if (dist < 200) {
                 this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * 0.8 * speedMult;
             }
         } else {
-            // 鍦伴潰杩借釜
+            // 地面追踪
             if (dist < 150) {
                 this.state = "chase";
                 this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
@@ -508,7 +508,7 @@ class MagmaCubeEnemy extends Enemy {
             }
         }
 
-        // 纰版挒浼ゅ
+        // 碰撞伤害
         if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
             damagePlayer(this.damage, this.x);
         }
@@ -530,7 +530,7 @@ class FireSpiritEnemy extends Enemy {
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
         if (this.isDashing) {
-            // 鍐插埡鐘舵€?
+            // 冲刺状态
             this.x += (this.dashTargetX > this.x ? 1 : -1) * this.speed * 2.5 * speedMult;
             this.dashTimer--;
 
@@ -538,7 +538,7 @@ class FireSpiritEnemy extends Enemy {
                 this.isDashing = false;
             }
 
-            // 鍐插埡纰版挒浼ゅ
+            // 冲刺碰撞伤害
             if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
                 damagePlayer(this.damage, this.x);
                 this.isDashing = false;
@@ -546,26 +546,26 @@ class FireSpiritEnemy extends Enemy {
             return;
         }
 
-        // 浼犻€佹満鍒?
+        // 传送机制
         if (this.teleportCooldown === 0 && dist > 150 && Math.random() < 0.03) {
             this.x = playerRef.x + (Math.random() > 0.5 ? 100 : -100);
             this.y = playerRef.y;
             this.teleportCooldown = 90;
-            showFloatingText("馃敟", this.x, this.y, "#FF6347");
+            showFloatingText("🔥", this.x, this.y, "#FF6347");
             return;
         }
 
-        // 鍐插埡鏀诲嚮
+        // 冲刺攻击
         if (this.dashCooldown === 0 && dist < 200) {
             this.isDashing = true;
             this.dashTimer = 25;
             this.dashTargetX = playerRef.x;
             this.dashCooldown = 150;
-            showFloatingText("鈿?鍐插埡!", this.x, this.y - 20, "#FF4500");
+            showFloatingText("⚡ 冲刺!", this.x, this.y - 20, "#FF4500");
             return;
         }
 
-        // 姝ｅ父杩借釜
+        // 正常追踪
         if (dist < 180) {
             this.state = "chase";
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
@@ -593,18 +593,18 @@ class SculkWormEnemy extends Enemy {
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
         if (this.underground) {
-            // 鍦颁笅杩借釜锛屼笉鍙
+            // 地下追踪，不可见
             this.emergeTimer--;
             if (this.emergeTimer <= 0 && dist < 100) {
                 this.underground = false;
                 this.isEmerged = true;
                 this.emergeTimer = 120;
-                showFloatingText("馃悰 骞藉尶铏嚭鐜?", this.x, this.y - 20, "#008080");
+                showFloatingText("🐛 幽匿虫出现!", this.x, this.y - 20, "#008080");
             } else {
                 this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * 1.2 * speedMult;
             }
         } else {
-            // 鍦伴潰鏀诲嚮
+            // 地面攻击
             if (dist < 40 && this.attackCooldown === 0) {
                 damagePlayer(this.damage, this.x);
                 this.attackCooldown = 60;
@@ -614,7 +614,7 @@ class SculkWormEnemy extends Enemy {
             if (this.emergeTimer <= 0) {
                 this.underground = true;
                 this.emergeTimer = 60;
-                showFloatingText("馃挩 閽诲叆鍦颁笅", this.x, this.y - 20, "#008080");
+                showFloatingText("💨 钻入地下", this.x, this.y - 20, "#008080");
             }
         }
 
@@ -622,7 +622,7 @@ class SculkWormEnemy extends Enemy {
     }
 
     render(ctx, camX) {
-        if (this.underground) return; // 鍦颁笅鏃朵笉娓叉煋
+        if (this.underground) return; // 地下时不渲染
         super.render(ctx, camX);
     }
 }
@@ -641,30 +641,30 @@ class ShadowStalkerEnemy extends Enemy {
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
         if (this.stealthed) {
-            // 闅愯韩鐘舵€?
+            // 隐身状态
             if (dist < 80) {
-                // 鑳屽埡鍒ゅ畾
+                // 背刺判定
                 const facingAway = (playerRef.x > this.x && playerRef.dir > 0) || (playerRef.x < this.x && playerRef.dir < 0);
                 if (facingAway) {
                     this.stealthed = false;
                     this.revealTimer = 90;
                     const backstabDamage = this.damage + this.backstabBonus;
                     damagePlayer(backstabDamage, this.x);
-                    showFloatingText(`馃棥锔?鑳屽埡 ${backstabDamage}!`, playerRef.x, playerRef.y - 40, "#1B3A4B");
+                    showFloatingText(`🗡️ 背刺 ${backstabDamage}!`, playerRef.x, playerRef.y - 40, "#1B3A4B");
                 }
             }
 
-            // 缂撴參鎺ヨ繎
+            // 缓慢接近
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * 1.5 * speedMult;
 
-            // 浼犻€?
+            // 传送
             if (this.teleportCooldown === 0 && dist > 200 && Math.random() < 0.02) {
                 this.x = playerRef.x + (Math.random() > 0.5 ? -80 : 80);
                 this.y = playerRef.y;
                 this.teleportCooldown = 120;
             }
         } else {
-            // 鏄惧舰鐘舵€?
+            // 显形状态
             if (dist < 60 && this.attackCooldown === 0) {
                 damagePlayer(this.damage, this.x);
                 this.attackCooldown = 80;
@@ -738,11 +738,11 @@ class PhantomEnemy extends Enemy {
     update(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
 
-        // 椋炶楂樺害
+        // 飞行高度
         this.y = this.startY - this.flyHeight;
 
         if (this.isDiving) {
-            // 淇啿鏀诲嚮
+            // 俯冲攻击
             this.y += 5;
             this.x += (playerRef.x - this.x) * 0.1;
 
@@ -752,7 +752,7 @@ class PhantomEnemy extends Enemy {
                 this.y = this.startY - this.flyHeight;
             }
 
-            // 淇啿纰版挒
+            // 俯冲碰撞
             if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
                 damagePlayer(this.damage, this.x);
                 this.isDiving = false;
@@ -761,19 +761,19 @@ class PhantomEnemy extends Enemy {
             return;
         }
 
-        // 鐩樻棆椋炶
+        // 盘旋飞行
         if (dist < 250) {
             this.state = "chase";
             this.circlePhase += 0.03;
             const circleX = Math.sin(this.circlePhase) * 80;
             this.x = playerRef.x + circleX;
 
-            // 淇啿鏀诲嚮
+            // 俯冲攻击
             if (this.diveCooldown === 0 && dist < 150) {
                 this.isDiving = true;
                 this.diveTimer = 60;
                 this.diveCooldown = 200;
-                showFloatingText("猬囷笍 淇啿!", this.x, this.y - 20, "#9370DB");
+                showFloatingText("⬇️ 俯冲!", this.x, this.y - 20, "#9370DB");
             }
         } else {
             this.state = "patrol";
@@ -785,7 +785,7 @@ class PhantomEnemy extends Enemy {
     }
 
     applyGravity() {
-        // 骞荤考涓嶅彈閲嶅姏褰卞搷
+        // 幻翼不受重力影响
     }
 }
 
@@ -802,7 +802,7 @@ class VexEnemy extends Enemy {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
-        // 绌垮鍐插埡
+        // 穿墙冲刺
         if (this.isPhasing) {
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * 3 * speedMult;
             this.phaseTimer--;
@@ -811,7 +811,7 @@ class VexEnemy extends Enemy {
                 this.isPhasing = false;
             }
 
-            // 绌垮纰版挒
+            // 穿墙碰撞
             if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
                 damagePlayer(this.damage, this.x);
                 this.isPhasing = false;
@@ -819,17 +819,17 @@ class VexEnemy extends Enemy {
             return;
         }
 
-        // 姝ｅ父AI
+        // 正常AI
         if (dist < 200) {
             this.state = "chase";
             this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
 
-            // 绌垮鏀诲嚮
+            // 穿墙攻击
             if (this.phaseCooldown === 0 && dist < 150) {
                 this.isPhasing = true;
                 this.phaseTimer = 20;
                 this.phaseCooldown = 100;
-                showFloatingText("鉁?绌垮!", this.x, this.y - 20, "#87CEEB");
+                showFloatingText("✨ 穿墙!", this.x, this.y - 20, "#87CEEB");
             }
         } else {
             this.state = "patrol";
@@ -841,7 +841,7 @@ class VexEnemy extends Enemy {
     }
 
     applyGravity() {
-        // 鎭奸涓嶅彈閲嶅姏褰卞搷
+        // 恼鬼不受重力影响
     }
 
     update(playerRef) {
@@ -855,7 +855,7 @@ class VexEnemy extends Enemy {
     }
 }
 
-// ============ 濂冲帆鑽按鎶曞皠鐗?============
+// ============ 女巫药水投射物 ============
 class PotionProjectile extends Projectile {
     constructor(x, y, targetX, targetY, potionType = "poison") {
         super(x, y, targetX, targetY, 2.5, "enemy");
@@ -872,19 +872,19 @@ class PotionProjectile extends Projectile {
         this.y += this.velY;
         this.lifetime--;
 
-        // 妫€娴嬬鎾?
+        // 检测碰撞
         if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
-            if (this.potionType === "poison" && canApplyPoisonEffect()) {
-                 tryApplyPoisonEffect(this.x, this.y);
+            if (this.potionType === "poison") {
+                tryApplyPoisonEffect(this.x, this.y);
             } else if (this.potionType === "slow") {
                 player.velX *= 0.3;
-                showFloatingText("馃悓 鍑忛€?", this.x, this.y - 20, "#87CEEB");
+                showFloatingText("🐌 减速!", this.x, this.y - 20, "#87CEEB");
             }
             this.remove = true;
             return;
         }
 
-        // 妫€娴嬪钩鍙扮鎾?
+        // 检测平台碰撞
         for (const p of platforms) {
             if (rectIntersect(this.x, this.y, this.width, this.height, p.x, p.y, p.width, p.height)) {
                 this.remove = true;
@@ -896,7 +896,7 @@ class PotionProjectile extends Projectile {
     }
 }
 
-// ============ 鎶曞皠鐗╂睜鎵╁睍 ============
+// ============ 投射物池扩展 ============
 const potionPool = {
     potions: [],
 
@@ -972,7 +972,7 @@ function resetPlayerPoisonStatus() {
     playerPoisonState.halfHeartCarry = 0;
 }
 
-// ============ 鏁屼汉宸ュ巶鎵╁睍 ============
+// ============ 敌人工厂扩展 ============
 function spawnBiomeEnemy(biomeId, x, y) {
     const enemyTypes = [];
 
@@ -1023,7 +1023,7 @@ function createBiomeEnemy(type, x, y) {
     }
 }
 
-// ============ 瀵煎嚭閰嶇疆 ============
+// ============ 导出配置 ============
 if (typeof ENEMY_STATS !== 'undefined') {
     Object.assign(ENEMY_STATS, BIOME_ENEMY_STATS);
 }
