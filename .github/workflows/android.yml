@@ -23,7 +23,7 @@ jobs:
         id: version
         working-directory: apk
         run: |
-          node scripts/version-manager.js patch
+          node scripts/version-manager.cjs patch
           echo "version=$(node -p "require('./version.json').versionName")" >> $GITHUB_OUTPUT
           echo "versionCode=$(node -p "require('./version.json').versionCode")" >> $GITHUB_OUTPUT
           echo "buildNumber=$(node -p "require('./version.json').buildNumber")" >> $GITHUB_OUTPUT
