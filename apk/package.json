@@ -22,5 +22,8 @@
     "build:apk:release": "cd android-app/android && ./gradlew assembleRelease",
     "open:android": "cd android-app && npx cap open android"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "description": "Mario Minecraft Game - Educational English vocabulary learning game"
 }

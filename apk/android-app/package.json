@@ -5,6 +5,9 @@
   "scripts": {
     "sync-web": "node ../scripts/sync-web.js"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "devDependencies": {
     "@capacitor/cli": "^7.4.3"
   },
