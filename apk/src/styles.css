@@ -75,6 +75,8 @@ body {
 .overlay-card {
     width: min(560px, 90vw);
     max-width: calc(100% - 32px);
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
     background: rgba(20,20,20,0.95);
     border: 3px solid rgba(255,255,255,0.4);
     border-radius: 16px;
@@ -93,7 +95,7 @@ body {
 }
 
 .overlay-text {
-    font-size: clamp(14px, 3vw, 20px);
+    font-size: clamp(7px, 1.5vw, 10px);
     font-weight: 900;
     line-height: 1.6;
     margin-bottom: 14px;
