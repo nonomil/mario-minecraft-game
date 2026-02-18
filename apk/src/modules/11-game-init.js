@@ -434,7 +434,8 @@ function spawnEnemyByDifficulty(x, y) {
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
         ocean: ["drowned", "pufferfish"],
-        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
+        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"],
+        mushroom_island: ["spore_bug", "bee", "fox"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
 
@@ -445,11 +446,14 @@ function spawnEnemyByDifficulty(x, y) {
     let tierSpawnRate = 1.0;
     if (tiers && tiers.length > 0 && typeof getBiomeVisitRound === 'function') {
         const round = getBiomeVisitRound(currentBiome);
-        const tierIdx = Math.min(round, tiers.length) - 1;
-        const tier = tiers[tierIdx];
-        const tierTypes = (tier.types || []).filter(t => ENEMY_STATS[t]);
-        pool = tierTypes.length > 0 ? tierTypes : basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
-        tierSpawnRate = tier.spawnRate || 1.0;
+        const tierIdx = Math.max(0, Math.min(Number(round) || 0, tiers.length) - 1);
+        const tierData = tiers[tierIdx] || {};
+        const tierTypes = (Array.isArray(tierData.types) ? tierData.types : []).filter(t => ENEMY_STATS[t]);
+        const fallbackTake = Math.max(2, Math.min(basePool.length, 2 + tierIdx));
+        pool = tierTypes.length > 0
+            ? tierTypes
+            : basePool.slice(0, fallbackTake).filter(t => ENEMY_STATS[t]);
+        tierSpawnRate = Number(tierData.spawnRate) || 1.0;
         if (Math.random() > tierSpawnRate) return; // 按 spawnRate 概率跳过生成
     } else {
         const take = Math.max(2, Math.min(basePool.length, 2 + tier));

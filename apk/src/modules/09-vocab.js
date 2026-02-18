@@ -21,6 +21,7 @@ function normalizeSettings(raw) {
     if (typeof merged.villageAutoSave !== "boolean") merged.villageAutoSave = defaultSettings.villageAutoSave ?? true;
     if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
+    if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
     merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
     merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
     merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 900));
@@ -433,8 +434,16 @@ function applySettingsToUI() {
     const touch = document.getElementById("touch-controls");
     if (touch) {
         const enabled = !!settings.touchControls;
+        const mode = String(settings.deviceMode || "auto");
+        const shortestSide = Math.min(Number(visualViewport.width) || 0, Number(visualViewport.height) || 0);
+        const resolvedDevice = mode === "phone" || mode === "tablet"
+            ? mode
+            : (shortestSide > 0 && shortestSide < 768 ? "phone" : "tablet");
         touch.classList.toggle("visible", enabled);
+        touch.classList.toggle("layout-phone", resolvedDevice === "phone");
+        touch.classList.toggle("layout-tablet", resolvedDevice === "tablet");
         touch.setAttribute("aria-hidden", enabled ? "false" : "true");
+        touch.dataset.deviceMode = resolvedDevice;
     }
 
     if (viewportChanged && startedOnce) {

@@ -7,6 +7,8 @@
     --vvh: 100vh;
     --ui-scale: 1;
     --touch-btn-size: 64px;
+    --touch-left-bottom: 20px;
+    --touch-right-bottom: 20px;
 }
 
 html, body {
@@ -809,7 +811,7 @@ canvas {
 .touch-left {
     position: absolute;
     left: 20px;
-    bottom: 20px;
+    bottom: calc(var(--safe-bottom) + var(--touch-left-bottom));
     display: flex;
     flex-direction: row;
     gap: 15px;
@@ -820,13 +822,23 @@ canvas {
 .touch-right {
     position: absolute;
     right: 20px;
-    bottom: 20px;
+    bottom: calc(var(--safe-bottom) + var(--touch-right-bottom));
     display: grid;
     grid-template-columns: repeat(2, var(--touch-btn-size));
     grid-template-rows: repeat(3, var(--touch-btn-size));
     gap: 12px;
     align-items: end;
     pointer-events: auto;
+}
+
+#touch-controls.layout-phone {
+    --touch-left-bottom: clamp(96px, 22vh, 220px);
+    --touch-right-bottom: clamp(96px, 20vh, 200px);
+}
+
+#touch-controls.layout-tablet {
+    --touch-left-bottom: 20px;
+    --touch-right-bottom: 20px;
 }
 
 /* 鍗婇€忔槑娴呯櫧鑹茶竟妗嗘寜閽?- 鎴戠殑涓栫晫绉诲姩鐗堥鏍?*/

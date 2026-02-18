@@ -213,7 +213,7 @@ window.MMWG_DEFAULTS = {
         speechEnRate: 1.2,
         speechZhRate: 1.1,
         musicEnabled: true,
-        deviceMode: "phone",
+        deviceMode: "auto",
         orientationLock: "auto",
         uiScale: 1.0,
         motionScale: 1.25,

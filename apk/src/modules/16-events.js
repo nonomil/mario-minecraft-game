@@ -20,6 +20,7 @@ function wireSettingsModal() {
     const optSpeechZhEnabled = document.getElementById("opt-speech-zh-enabled");
     const optBgm = document.getElementById("opt-bgm");
     const optUiScale = document.getElementById("opt-ui-scale");
+    const optDeviceMode = document.getElementById("opt-device-mode");
     const optMotionScale = document.getElementById("opt-motion-scale");
     const optDifficulty = document.getElementById("opt-difficulty");
     const optBiomeStep = document.getElementById("opt-biome-step");
@@ -62,6 +63,7 @@ function wireSettingsModal() {
         if (optSpeechZh) optSpeechZh.disabled = !settings.speechZhEnabled;
         if (optBgm) optBgm.checked = !!settings.musicEnabled;
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
+        if (optDeviceMode) optDeviceMode.value = settings.deviceMode || "auto";
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
         if (optDifficulty) {
             const desired = settings.difficultySelection || "auto";
@@ -113,6 +115,7 @@ function wireSettingsModal() {
         if (optSpeechZhEnabled) settings.speechZhEnabled = !!optSpeechZhEnabled.checked;
         if (optBgm) settings.musicEnabled = !!optBgm.checked;
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
+        if (optDeviceMode) settings.deviceMode = String(optDeviceMode.value || "auto");
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);
         if (optDifficulty) settings.difficultySelection = String(optDifficulty.value || "auto");
         if (optBiomeStep) settings.biomeSwitchStepScore = Number(optBiomeStep.value);
