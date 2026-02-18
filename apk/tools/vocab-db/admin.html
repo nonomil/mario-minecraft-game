@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vocab DB Admin</title>
+  <style>
+    body { font-family: "Segoe UI", sans-serif; margin: 16px; background: #f4f6f8; color: #1f2937; }
+    .card { background: #fff; border: 1px solid #d1d5db; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    input, select, button { padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; }
+    button { cursor: pointer; background: #2563eb; color: #fff; border: none; }
+    button.secondary { background: #4b5563; }
+    button.warn { background: #dc2626; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: 6px; text-align: left; vertical-align: top; }
+    th { background: #f8fafc; position: sticky; top: 0; }
+    .muted { color: #6b7280; font-size: 12px; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    .active { background: #dcfce7; color: #166534; }
+    .inactive { background: #fee2e2; color: #991b1b; }
+    .grid { max-height: 60vh; overflow: auto; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="row">
+      <strong>词库管理（SQLite）</strong>
+      <span id="stats" class="muted"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <input id="q" placeholder="搜索 lemma/word/chinese" style="min-width:260px">
+      <select id="status">
+        <option value="active">active</option>
+        <option value="inactive">inactive</option>
+        <option value="all">all</option>
+      </select>
+      <button id="searchBtn">搜索</button>
+      <button id="nextBtn" class="secondary">下一页</button>
+      <span id="pageInfo" class="muted"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <input id="word" placeholder="word">
+      <input id="standardized" placeholder="standardized">
+      <input id="chinese" placeholder="chinese">
+      <input id="phrase" placeholder="phrase">
+      <input id="phraseTranslation" placeholder="phraseTranslation">
+      <button id="upsertBtn">新增/更新</button>
+    </div>
+  </div>
+
+  <div class="card grid">
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>lemma_key</th>
+          <th>type</th>
+          <th>word</th>
+          <th>chinese</th>
+          <th>phrase</th>
+          <th>status</th>
+          <th>action</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const limit = 100;
+    let offset = 0;
+    let lastTotal = 0;
+
+    function txt(id){ return document.getElementById(id); }
+    function val(id){ return txt(id).value.trim(); }
+
+    async function api(path, options) {
+      const res = await fetch(path, options);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+      return data;
+    }
+
+    async function loadStats() {
+      const s = await api('/api/stats');
+      txt('stats').textContent = `total=${s.total_count} active=${s.active_count} inactive=${s.inactive_count}`;
+    }
+
+    function renderRows(rows) {
+      txt('tbody').innerHTML = rows.map(r => `
+        <tr>
+          <td>${r.id}</td>
+          <td>${r.lemma_key}</td>
+          <td>${r.learn_type}</td>
+          <td>${r.word || ''}</td>
+          <td>${r.chinese || ''}</td>
+          <td>${r.phrase || ''}</td>
+          <td><span class="pill ${r.status}">${r.status}</span></td>
+          <td>
+            ${r.status === 'active'
+              ? `<button class="warn" onclick="setStatus(${r.id},'deactivate')">停用</button>`
+              : `<button class="secondary" onclick="setStatus(${r.id},'reactivate')">恢复</button>`
+            }
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function search(reset = false) {
+      if (reset) offset = 0;
+      const q = encodeURIComponent(val('q'));
+      const status = encodeURIComponent(val('status') || 'active');
+      const data = await api(`/api/entries?q=${q}&status=${status}&limit=${limit}&offset=${offset}`);
+      lastTotal = data.total;
+      renderRows(data.rows);
+      txt('pageInfo').textContent = `offset=${offset} / total=${lastTotal}`;
+    }
+
+    async function setStatus(id, action) {
+      await api(`/api/entry/${action}`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      await loadStats();
+      await search();
+    }
+    window.setStatus = setStatus;
+
+    async function upsert() {
+      await api('/api/entry/upsert', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          word: val('word'),
+          standardized: val('standardized'),
+          chinese: val('chinese'),
+          phrase: val('phrase'),
+          phraseTranslation: val('phraseTranslation')
+        })
+      });
+      ['word','standardized','chinese','phrase','phraseTranslation'].forEach(id => txt(id).value = '');
+      await loadStats();
+      await search(true);
+    }
+
+    txt('searchBtn').onclick = () => search(true);
+    txt('nextBtn').onclick = () => {
+      if (offset + limit < lastTotal) {
+        offset += limit;
+        search(false);
+      }
+    };
+    txt('upsertBtn').onclick = upsert;
+
+    loadStats().then(() => search(true)).catch(err => alert(err.message));
+  </script>
+</body>
+</html>

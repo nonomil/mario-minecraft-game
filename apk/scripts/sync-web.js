@@ -8,6 +8,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const repoRoot = path.resolve(__dirname, "..");
+execFileSync(process.execPath, [path.join(repoRoot, "tools", "vocab-db", "publish.mjs")], {
+  cwd: repoRoot,
+  stdio: "inherit",
+});
 execFileSync(process.execPath, [path.join(repoRoot, "tools", "build-singlefile.js")], {
   cwd: repoRoot,
   stdio: "inherit",
