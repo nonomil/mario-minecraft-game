@@ -19,12 +19,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Get version from package.json
+      - name: Auto-increment version
         id: version
+        working-directory: apk
         run: |
-          VERSION=$(node -p "require('./apk/android-app/package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          node scripts/version-manager.js patch
+          echo "version=$(node -p "require('./version.json').versionName")" >> $GITHUB_OUTPUT
+          echo "versionCode=$(node -p "require('./version.json').versionCode")" >> $GITHUB_OUTPUT
+          echo "buildNumber=$(node -p "require('./version.json').buildNumber")" >> $GITHUB_OUTPUT
+          echo "tag=v$(node -p "require('./version.json').versionName")" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -157,25 +160,46 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          # Always create a unique release even when the app version stays the same.
-          # Include run_attempt so "Re-run jobs" also produces a new release (no tag collisions).
-          tag: v${{ steps.version.outputs.version }}-run${{ github.run_number }}-a${{ github.run_attempt }}
-          name: Mario Minecraft Game v${{ steps.version.outputs.version }} (run ${{ github.run_number }} attempt ${{ github.run_attempt }})
+          tag: v${{ steps.version.outputs.version }}
+          name: Mario Minecraft Game v${{ steps.version.outputs.version }}
           body: |
             ## Mario Minecraft Game v${{ steps.version.outputs.version }}
 
-            - Build: run ${{ github.run_number }} attempt ${{ github.run_attempt }}
-            - Commit: ${{ github.sha }}
+            ### 📱 版本信息
+            - **版本号**: ${{ steps.version.outputs.version }}
+            - **版本代码**: ${{ steps.version.outputs.versionCode }}
+            - **构建号**: ${{ steps.version.outputs.buildNumber }}
+            - **提交**: ${{ github.sha }}
 
-            ### 下载
+            ### 📥 下载
             - **Debug APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk` - 用于测试
             - **Release APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-release.apk` - 用于发布
 
-            ### 安装说明
+            ### 📝 安装说明
             1. 下载对应的 APK 文件
             2. 在 Android 设备上启用"允许安装未知来源应用"
             3. 安装 APK 文件
+
+            ### ✨ 本次更新
+            - P0: BOSS渲染双重偏移修复 - 解决"只掉血看不到敌人"问题
+            - P1: 飞行BOSS可打性兜底 - 自动补给弓箭
+            - P2: 群系切换节奏平衡 - 火山/地狱停留时间优化
           artifacts: |
             apk/android-app/android/app/build/outputs/apk/debug/*.apk,
             apk/android-app/android/app/build/outputs/apk/release/*.apk
+          allowUpdates: true
+          removeArtifacts: true
           makeLatest: true
+
+      - name: Commit version changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add apk/version.json apk/android-app/package.json apk/android-app/android/app/build.gradle
+          git diff --staged --quiet || git commit -m "chore(apk): auto-bump version to ${{ steps.version.outputs.version }} [skip ci]"
+
+      - name: Push version changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
