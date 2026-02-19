@@ -165,26 +165,26 @@ jobs:
           body: |
             ## Mario Minecraft Game v${{ steps.version.outputs.version }}
 
-            ### 📱 版本信息
-            - **版本号**: ${{ steps.version.outputs.version }}
-            - **版本代码**: ${{ steps.version.outputs.versionCode }}
-            - **构建号**: ${{ steps.version.outputs.buildNumber }}
-            - **提交**: ${{ github.sha }}
+            ### Version Info
+            - Version: ${{ steps.version.outputs.version }}
+            - VersionCode: ${{ steps.version.outputs.versionCode }}
+            - BuildNumber: ${{ steps.version.outputs.buildNumber }}
+            - Commit: ${{ github.sha }}
 
-            ### 📥 下载
-            - **Debug APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk` - 用于测试
-            - **Release APK**: `mario-minecraft-game-${{ steps.version.outputs.version }}-release.apk` - 用于发布
+            ### Downloads
+            - Debug APK: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk`
+            - Release APK: `mario-minecraft-game-${{ steps.version.outputs.version }}-release.apk`
 
-            ### 📝 安装说明
-            1. 下载对应的 APK 文件
-            2. 在 Android 设备上启用"允许安装未知来源应用"
-            3. 安装 APK 文件
+            ### Install
+            1. Download the APK file.
+            2. Enable install from unknown sources on Android.
+            3. Install APK.
 
-            ### ✨ 本次更新
-            - 需求7：村庄房屋室内模式上线（可进出、室内床恢复、词屋挑战）
-            - 室内模式与 BOSS/门禁/群系切换互斥守卫完善，异常重开自动重置状态
-            - 首页文案与样式乱码修复，触控端新增室内退出按钮（🚪）
-            - 版本与发布链路修复：BOM 兼容解析、构建稳定性提升
+            ### What's New
+            - Requirement 11 tuning: Wither gate trigger reduced to once every two biome transitions (villages are not counted as biomes).
+            - Wither no longer damages players while they are inside village area; attacks resume after leaving village.
+            - Interior mode base interactions stabilized: auto-enter, in-room movement, and point-based interaction flow.
+            - Version/docs/release metadata synchronized for this release.
           artifacts: |
             apk/android-app/android/app/build/outputs/apk/debug/*.apk,
             apk/android-app/android/app/build/outputs/apk/release/*.apk

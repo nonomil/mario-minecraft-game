@@ -1,3 +1,18 @@
+## v1.18.16 (2026-02-19)
+
+### Gameplay
+- Requirement 11 implemented: Wither gate spawn frequency reduced to once every two biome transitions.
+- Village is not counted as biome transition in this rule.
+- While player is inside village area, Wither cannot deal projectile or charge collision damage.
+- After player leaves village, Wither attacks resume normally.
+
+### Interior Mode Stability
+- Interior mode movement/interaction baseline merged (auto-enter + in-room movement + point-based interaction foundation).
+
+### Release
+- Version and release metadata synchronized for this publish.
+
+---
 ## v1.18.15 (2026-02-19)
 
 ### 村庄室内模式（需求7）落地

@@ -1,5 +1,9 @@
 // ============ BOSS 战斗系统 ============
 
+function isPlayerProtectedFromWitherInVillage() {
+    return typeof playerInVillage !== 'undefined' && !!playerInVillage;
+}
+
 // BOSS 基类
 class Boss {
     constructor(config) {
@@ -81,6 +85,7 @@ class Boss {
                 // 碰撞玩家
                 if (Math.abs(p.x - player.x - player.width / 2) < p.size + player.width / 2 &&
                     Math.abs(p.y - player.y - player.height / 2) < p.size + player.height / 2) {
+                    if (this.type === 'wither' && isPlayerProtectedFromWitherInVillage()) continue;
                     damagePlayer(p.damage, p.x);
                     this.bossProjectiles.splice(i, 1);
                     continue;
@@ -495,7 +500,9 @@ class WitherBoss extends Boss {
         // 冲刺碰撞玩家
         if (Math.abs(this.x - player.x) < this.width &&
             Math.abs(this.y - player.y) < this.height) {
-            damagePlayer(2, this.x, 120);
+            if (!isPlayerProtectedFromWitherInVillage()) {
+                damagePlayer(2, this.x, 120);
+            }
             this.charging = false;
             this.stunTimer = 30;
             this.shockwave = { x: this.x + this.width / 2, y: this.y + this.height / 2, radius: 12, maxRadius: 96, alpha: 0.85 };

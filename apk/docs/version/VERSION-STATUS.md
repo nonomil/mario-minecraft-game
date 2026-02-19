@@ -1,42 +1,22 @@
-# v1.18.15 版本状态
+# v1.18.16 版本状态
 
 ## 已完成
 ### 1) 版本号同步
-- `apk/version.json`: `versionName "1.18.15"`, `versionCode 15`, `buildNumber 15`
-- `apk/package.json`: `1.18.15`
-- `apk/android-app/package.json`: `1.18.15`
-- `apk/android-app/android/app/build.gradle`: `versionName "1.18.15"`, `versionCode 15`
+- `apk/version.json`: `versionName "1.18.16"`, `versionCode 16`, `buildNumber 16`
+- `apk/package.json`: `1.18.16`
+- `apk/android-app/package.json`: `1.18.16`
+- `apk/android-app/android/app/build.gradle`: `versionName "1.18.16"`, `versionCode 16`
 
 ### 2) 本次重点变更
-- 需求7室内模式实现：
-  - 房屋进出（`bed_house` / `word_house`）
-  - 室内渲染、交互分流、Esc/触控退出、异常重置
-  - 与 BOSS/门禁/群系切换互斥
-- 首页与样式乱码修复：
-  - `apk/Game.html` 文案与触控区修复
-  - `apk/src/styles.css` 显示相关乱码修复
-- 发布稳定性修复：
-  - 版本文件 BOM 兼容解析
-  - 构建脚本 BOM 风险修复
-  - Release 文案模板更新为当前版本说明
+- 需求11：凋零出现频率调整为每隔两个群系切换一次。
+- 村庄不计入群系切换计数。
+- 玩家进入村庄后，凋零攻击不再造成伤害；离开村庄后恢复攻击。
+- 室内模式基础交互链路（自动进屋/室内移动/点位交互）纳入此版本。
 
-### 3) 已执行验证
-- `node --check`：
-  - `apk/src/modules/11-game-init.js`
-  - `apk/src/modules/13-game-loop.js`
-  - `apk/src/modules/14-renderer-main.js`
-  - `apk/src/modules/16-events.js`
-  - `apk/src/modules/17-bootstrap.js`
-  - `apk/src/modules/18-village.js`
-- `npm --prefix apk run test:e2e`（完成执行，历史失败项待后续独立修复）
-
-### 4) 备注
-- 当前 e2e 失败项不阻塞本次需求7交付，已确认与室内模式核心链路无直接耦合：
-  - `boss-debug-controls`
-  - `p1-phrase-followup`（direct 断言）
-  - `p2-biome-config`（断言值与已调整参数不一致）
+### 3) Release 介绍更新
+- `.github/workflows/android.yml` 的 Release body 已更新为本次真实变更说明。
 
 ---
 
-更新时间：2026-02-19（触发构建）  
-状态：已完成（待推送后触发 Actions 与 Release）
+更新时间：2026-02-19
+状态：待推送触发 Actions

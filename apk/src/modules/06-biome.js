@@ -156,6 +156,7 @@ let biomeGateState = {
     pendingToBiome: null,
     gateActive: false,
     clearedMap: Object.create(null),
+    witherTransitionCounter: 0,
     lockedBiome: null,
     gateStartedAtMs: 0,
     stallWarned: false
@@ -166,6 +167,7 @@ function resetBiomeGateState() {
     biomeGateState.pendingToBiome = null;
     biomeGateState.gateActive = false;
     biomeGateState.clearedMap = Object.create(null);
+    biomeGateState.witherTransitionCounter = 0;
     biomeGateState.lockedBiome = null;
     biomeGateState.gateStartedAtMs = 0;
     biomeGateState.stallWarned = false;
@@ -196,6 +198,14 @@ function shouldTriggerBiomeGate(fromBiomeId, toBiomeId) {
     if (gateCfg.exemptSet && gateCfg.exemptSet.has(fromBiomeId)) return false;
     if (biomeGateState.gateActive) return false;
     if (gateCfg.perBiomeOnce && biomeGateState.clearedMap[fromBiomeId]) return false;
+    if (typeof bossArena !== "undefined" && bossArena && typeof bossArena.resolveGateBossType === "function") {
+        const gateBossType = bossArena.resolveGateBossType(fromBiomeId);
+        // 凋零门禁节奏：每经过两个环境切换才触发一次（村庄不计入环境切换）
+        if (gateBossType === "wither") {
+            biomeGateState.witherTransitionCounter = (Number(biomeGateState.witherTransitionCounter) || 0) + 1;
+            if ((biomeGateState.witherTransitionCounter % 2) !== 0) return false;
+        }
+    }
     return true;
 }
 
@@ -262,6 +272,7 @@ function getBiomeGateStateSnapshot() {
         pendingFromBiome: biomeGateState.pendingFromBiome || null,
         pendingToBiome: biomeGateState.pendingToBiome || null,
         gateActive: !!biomeGateState.gateActive,
+        witherTransitionCounter: Number(biomeGateState.witherTransitionCounter || 0),
         lockedBiome: biomeGateState.lockedBiome || null,
         gateStartedAtMs: Number(biomeGateState.gateStartedAtMs || 0),
         stallWarned: !!biomeGateState.stallWarned,

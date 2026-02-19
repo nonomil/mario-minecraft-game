@@ -298,6 +298,9 @@ function updateVillages() {
       }
       // v1.8.1 更新村民
       updateVillageNPCs(v);
+      if (typeof tryAutoEnterVillageInterior === "function") {
+        tryAutoEnterVillageInterior(v);
+      }
 
       break;
     }
@@ -313,6 +316,10 @@ function updateVillages() {
 let restPromptVisible = false;
 let restPromptVillage = null;
 const INTERIOR_BUILDING_TYPES = new Set(["bed_house", "word_house"]);
+const INTERIOR_MOVE_SPEED = 2.2;
+const INTERIOR_HALF_RANGE = 72;
+const INTERIOR_DOOR_RANGE = 20;
+const INTERIOR_ACTION_RANGE = 22;
 const villageInteriorState = {
   active: false,
   villageId: null,
@@ -322,7 +329,8 @@ const villageInteriorState = {
   returnPlayerY: 0,
   enteredAt: 0,
   exitConfirmUntil: 0,
-  challengeStarted: false
+  challengeStarted: false,
+  autoEnterBlockUntil: 0
 };
 
 function isVillageInteriorActive() {
@@ -347,6 +355,30 @@ function getVillageInteriorBuilding(village) {
   return village.buildings?.find(b => b?.type === villageInteriorState.buildingType) || null;
 }
 
+function getInteriorDoorX() {
+  return Number(villageInteriorState.entryBuildingX) || 0;
+}
+
+function getInteriorActionX(type = villageInteriorState.buildingType) {
+  const base = getInteriorDoorX();
+  if (type === "bed_house") return base - 30;
+  if (type === "word_house") return base + 34;
+  return base;
+}
+
+function getInteriorMoveBounds() {
+  const doorX = getInteriorDoorX();
+  return {
+    minX: doorX - INTERIOR_HALF_RANGE,
+    maxX: doorX + INTERIOR_HALF_RANGE
+  };
+}
+
+function getPlayerCenterX() {
+  if (!player) return 0;
+  return (Number(player.x) || 0) + ((Number(player.width) || 0) * 0.5);
+}
+
 function resetVillageInteriorState({ silent = true } = {}) {
   const wasActive = villageInteriorState.active;
   villageInteriorState.active = false;
@@ -358,6 +390,7 @@ function resetVillageInteriorState({ silent = true } = {}) {
   villageInteriorState.enteredAt = 0;
   villageInteriorState.exitConfirmUntil = 0;
   villageInteriorState.challengeStarted = false;
+  villageInteriorState.autoEnterBlockUntil = 0;
   syncVillageInteriorTouchUi();
   if (!silent && wasActive) showToast("🏠 已离开房屋");
 }
@@ -390,8 +423,13 @@ function enterVillageInterior(village, building) {
   villageInteriorState.challengeStarted = false;
   syncVillageInteriorTouchUi();
   if (player) {
+    const doorX = getInteriorDoorX();
+    const bounds = getInteriorMoveBounds();
+    player.x = Math.max(bounds.minX, Math.min(bounds.maxX, doorX - (player.width * 0.5)));
+    player.y = groundY - player.height;
     player.velX = 0;
     player.velY = 0;
+    player.grounded = true;
   }
   const label = building.type === "bed_house" ? "床屋" : "词屋";
   showToast(`🏠 进入${label}（Esc 退出）`);
@@ -415,6 +453,7 @@ function exitVillageInterior(reason = "") {
   }
   const text = reason || "🏠 离开房屋";
   resetVillageInteriorState();
+  villageInteriorState.autoEnterBlockUntil = Date.now() + 1400;
   showToast(text);
   return true;
 }
@@ -437,8 +476,22 @@ function updateVillageInteriorMode() {
     exitVillageInterior("🏠 挑战结束，已离开词屋");
     return;
   }
+  const bounds = getInteriorMoveBounds();
+  let moveX = 0;
+  if (keys.left) {
+    moveX -= INTERIOR_MOVE_SPEED;
+    player.facingRight = false;
+  }
+  if (keys.right) {
+    moveX += INTERIOR_MOVE_SPEED;
+    player.facingRight = true;
+  }
+  player.x = Math.max(bounds.minX, Math.min(bounds.maxX, (Number(player.x) || 0) + moveX));
+  player.y = groundY - player.height;
   player.velX = 0;
   player.velY = 0;
+  player.grounded = true;
+  player.jumpCount = 0;
   const targetCam = Math.max(0, player.x - cameraOffsetX);
   if (targetCam > cameraX) cameraX = targetCam;
 }
@@ -472,6 +525,29 @@ function renderVillageInterior(ctx) {
   ctx.strokeStyle = "rgba(0,0,0,0.2)";
   ctx.lineWidth = 2;
   ctx.strokeRect(panelX + panelW - 110, panelY + 36, 70, 46);
+  // 室内交互锚点和玩家位置（简化表现）
+  const bounds = getInteriorMoveBounds();
+  const floorY = panelY + panelH - 84;
+  const usableLeft = panelX + 56;
+  const usableRight = panelX + panelW - 56;
+  const toPanelX = (worldX) => {
+    const ratio = (worldX - bounds.minX) / Math.max(1, (bounds.maxX - bounds.minX));
+    return usableLeft + Math.max(0, Math.min(1, ratio)) * (usableRight - usableLeft);
+  };
+  const doorPx = toPanelX(getInteriorDoorX());
+  const actionPx = toPanelX(getInteriorActionX(buildingType));
+  const playerPx = toPanelX(getPlayerCenterX());
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.fillRect(doorPx - 10, floorY, 20, 8);
+  ctx.fillRect(actionPx - 10, floorY, 20, 8);
+  ctx.fillStyle = "rgba(255,255,255,0.86)";
+  ctx.font = "14px sans-serif";
+  ctx.fillText("门", doorPx - 6, floorY - 6);
+  ctx.fillText(buildingType === "bed_house" ? "床" : "桌", actionPx - 8, floorY - 6);
+  ctx.fillStyle = "#FFEE58";
+  ctx.fillRect(playerPx - 9, floorY - 26, 18, 24);
+  ctx.fillStyle = "#5D4037";
+  ctx.fillRect(playerPx - 9, floorY - 2, 18, 2);
 
   const title = buildingType === "bed_house" ? "🛏️ 床屋室内" : "📚 词屋室内";
   ctx.fillStyle = "#1E1E1E";
@@ -514,6 +590,26 @@ function checkVillageBuildings(village) {
   return !!handleVillageInteraction(nearby, village);
 }
 
+
+function isInteriorBuildingType(type) {
+  return type === "bed_house" || type === "word_house";
+}
+
+function tryAutoEnterVillageInterior(village) {
+  if (!village || !player) return false;
+  if (isVillageInteriorActive()) return false;
+  if (paused || pausedByModal) return false;
+  const now = Date.now();
+  if (now < Number(villageInteriorState.autoEnterBlockUntil || 0)) return false;
+  const nearby = getNearbyBuilding(village, 2);
+  if (!nearby || !isInteriorBuildingType(nearby.type)) return false;
+  const centerX = getPlayerCenterX();
+  const doorCenter = nearby.x + nearby.w * 0.5;
+  if (Math.abs(centerX - doorCenter) > INTERIOR_DOOR_RANGE) return false;
+  if (village._lastAutoEnterAt && now - village._lastAutoEnterAt < 1000) return false;
+  village._lastAutoEnterAt = now;
+  return enterVillageInterior(village, nearby);
+}
 function getNearbyBuilding(village, margin = 4) {
   if (!village || !Array.isArray(village.buildings) || !player) return null;
   const centerX = player.x + player.width / 2;
@@ -622,28 +718,35 @@ function handleVillageInteraction(building, village) {
 
 function handleVillageInteriorInteraction() {
   if (!isVillageInteriorActive()) return false;
-  const now = Date.now();
-  if (now <= Number(villageInteriorState.exitConfirmUntil || 0)) {
-    exitVillageInterior("🏠 离开房屋");
-    return true;
-  }
   const village = getVillageInteriorVillage();
   if (!village) {
     resetVillageInteriorState();
     return false;
   }
-  const type = villageInteriorState.buildingType;
-  if (type === "bed_house") {
-    performRest(village);
-    villageInteriorState.exitConfirmUntil = Date.now() + 1800;
-    showToast("🔁 再按一次互动键可退出房屋");
+
+  const centerX = getPlayerCenterX();
+  const doorX = getInteriorDoorX();
+  if (Math.abs(centerX - doorX) <= INTERIOR_DOOR_RANGE) {
+    exitVillageInterior("🏠 离开房屋");
     return true;
   }
+
+  const type = villageInteriorState.buildingType;
+  const actionX = getInteriorActionX(type);
+  if (Math.abs(centerX - actionX) > INTERIOR_ACTION_RANGE) {
+    showToast("靠近目标再交互：门口可离开");
+    return true;
+  }
+
+  if (type === "bed_house") {
+    performRest(village);
+    showToast("🛏️ 已休息，回门口可离开");
+    return true;
+  }
+
   if (type === "word_house") {
     if (village.questCompleted) {
       showToast(UI_TEXTS.questDone);
-      villageInteriorState.exitConfirmUntil = Date.now() + 1800;
-      showToast("🔁 再按一次互动键可退出房屋");
       return true;
     }
     if (typeof startVillageChallenge === "function") {
