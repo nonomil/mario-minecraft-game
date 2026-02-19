@@ -21,18 +21,23 @@ const DEFAULT_VERSION = {
     lastBuildDate: new Date().toISOString()
 };
 
+function parseJsonFile(filePath) {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const normalizedContent = content.replace(/^\uFEFF/, '');
+    return JSON.parse(normalizedContent);
+}
+
 /**
  * 读取当前版本信息
  */
 function readCurrentVersion() {
     try {
         if (fs.existsSync(VERSION_FILE_PATH)) {
-            const content = fs.readFileSync(VERSION_FILE_PATH, 'utf8');
-            return JSON.parse(content);
+            return parseJsonFile(VERSION_FILE_PATH);
         }
         // 如果 version.json 不存在，从 package.json 读取
         if (fs.existsSync(PACKAGE_JSON_PATH)) {
-            const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf8'));
+            const pkg = parseJsonFile(PACKAGE_JSON_PATH);
             return {
                 ...DEFAULT_VERSION,
                 versionName: pkg.version || DEFAULT_VERSION.versionName
