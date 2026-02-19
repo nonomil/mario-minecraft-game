@@ -290,7 +290,11 @@ function updateVillages() {
         showToast(`🏘️ 进入${biomeName}村庄`);
         // Remove enemies inside village area
         if (typeof enemies !== 'undefined' && Array.isArray(enemies)) {
-          enemies = enemies.filter(e => e.x < v.x || e.x > v.x + v.width);
+          for (let i = enemies.length - 1; i >= 0; i--) {
+            if (enemies[i].x >= v.x && enemies[i].x <= v.x + v.width) {
+              enemies.splice(i, 1);
+            }
+          }
         }
       }
       // v1.8.1 更新村民 (v1.8.1)
