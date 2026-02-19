@@ -14,6 +14,7 @@
     "vocab:db:publish": "node tools/vocab-db/publish.mjs",
     "vocab:db:admin": "node tools/vocab-db/admin-server.mjs --port 4174",
     "vocab:db:dedup": "node tools/vocab-db/dedup.mjs",
+    "vocab:db:audit": "node tools/vocab-db/audit.mjs",
     "vocab:db:import:external": "node tools/vocab-db/import-external-list.mjs",
     "vocab:db:upsert": "node tools/vocab-db/crud.mjs upsert",
     "vocab:db:deactivate": "node tools/vocab-db/crud.mjs deactivate",

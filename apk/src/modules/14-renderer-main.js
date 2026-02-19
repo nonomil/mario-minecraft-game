@@ -384,13 +384,21 @@ function drawItem(x, y, text) {
     ctx.fill();
     ctx.restore();
 
+    const rawText = String(text || "").trim();
+    const isPhrase = /\s/.test(rawText);
+    const maxChars = isPhrase ? 24 : 14;
+    const displayText = rawText.length > maxChars ? `${rawText.slice(0, maxChars - 1)}…` : rawText;
+    let fontSize = Math.max(10, Math.round(size * 0.55));
+    if (displayText.length > 12) fontSize = Math.max(9, Math.round(size * 0.46));
+    if (displayText.length > 18) fontSize = Math.max(8, Math.round(size * 0.40));
+
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.lineWidth = Math.max(2, size * 0.12);
-    ctx.font = `bold ${Math.max(12, Math.round(size * 0.6))}px Arial`;
+    ctx.font = `bold ${fontSize}px Arial`;
     ctx.textAlign = "center";
-    ctx.strokeText(text, cx, y - size * 0.2);
-    ctx.fillText(text, cx, y - size * 0.2);
+    ctx.strokeText(displayText, cx, y - size * 0.2);
+    ctx.fillText(displayText, cx, y - size * 0.2);
 }
 
 function drawWordGate(gate) {

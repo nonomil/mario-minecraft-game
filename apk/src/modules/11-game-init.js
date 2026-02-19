@@ -45,6 +45,7 @@ function initGame() {
     lastDamageFrame = 0;
     difficultyState = null;
     sessionCollectedWords = [];
+    followUpQueue = [];
     wordGates = [];
     currentLearningChallenge = null;
     clearLearningChallengeTimer();
@@ -108,6 +109,7 @@ function startLevel(idx) {
     cameraX = 0;
     wordGates = [];
     sessionCollectedWords = [];
+    followUpQueue = [];
     updateHpUI();
     player.x = 100;
     player.y = Math.min(300, groundY - player.height - 10);
@@ -140,10 +142,22 @@ function buildWordPicker() {
     };
     const stats = Object.create(null);
     const due = Object.create(null);
+    const recentWords = [];
     const unseen = shuffle(base.map(w => w.en));
     let tick = 0;
     const byEn = Object.create(null);
     base.forEach(w => { byEn[w.en] = w; });
+    function getRepeatWindow() {
+        return Math.max(1, Number(settings?.wordRepeatWindow) || 6);
+    }
+
+    function pushRecentWord(en) {
+        if (!en) return;
+        recentWords.push(en);
+        const windowSize = getRepeatWindow();
+        while (recentWords.length > windowSize) recentWords.shift();
+    }
+
     return {
         next(excludeSet) {
             if (!base.length) return { en: "word", zh: "单词" };
@@ -158,6 +172,7 @@ function buildWordPicker() {
                     stats[en] = { count: 1, quality: "correct_slow" };
                     const ivl = INTERVALS.correct_slow;
                     due[en] = tick + ivl[Math.min(stats[en].count, ivl.length - 1)];
+                    pushRecentWord(en);
                     return byEn[en] || base[0];
                 }
                 unseen.shift();
@@ -166,11 +181,13 @@ function buildWordPicker() {
 
             let best = null;
             let bestCount = Infinity;
+            const windowSet = new Set(recentWords);
             for (let i = 0; i < base.length; i++) {
                 const w = bag[cursor++ % bag.length];
                 if (!w || excludes.has(w.en)) continue;
                 const nextDue = typeof due[w.en] === "number" ? due[w.en] : 0;
                 if (nextDue > tick) continue;
+                if (windowSet.has(w.en)) continue;
                 const c = stats[w.en]?.count || 0;
                 if (c < bestCount) {
                     best = w;
@@ -180,12 +197,29 @@ function buildWordPicker() {
                     best = w;
                 }
             }
+            if (!best) {
+                for (let i = 0; i < base.length; i++) {
+                    const w = bag[cursor++ % bag.length];
+                    if (!w || excludes.has(w.en)) continue;
+                    const nextDue = typeof due[w.en] === "number" ? due[w.en] : 0;
+                    if (nextDue > tick) continue;
+                    const c = stats[w.en]?.count || 0;
+                    if (c < bestCount) {
+                        best = w;
+                        bestCount = c;
+                        if (bestCount === 0) break;
+                    } else if (c === bestCount && Math.random() < 0.25) {
+                        best = w;
+                    }
+                }
+            }
             const chosen = best || base[Math.floor(Math.random() * base.length)];
             if (!stats[chosen.en]) stats[chosen.en] = { count: 0, quality: "correct_slow" };
             stats[chosen.en].count++;
             const q = stats[chosen.en].quality || "correct_slow";
             const ivl = INTERVALS[q] || INTERVALS.correct_slow;
             due[chosen.en] = tick + ivl[Math.min(stats[chosen.en].count, ivl.length - 1)];
+            pushRecentWord(chosen.en);
             return chosen;
         },
         updateWordQuality(en, quality) {
@@ -203,6 +237,73 @@ function ensureWordPicker() {
     if (!wordPicker) wordPicker = buildWordPicker();
 }
 
+function createFollowUpPhraseItem(wordObj, gapRemaining) {
+    if (!wordObj || !wordObj.phrase) return null;
+    const phraseText = String(wordObj.phrase || "").trim();
+    if (!phraseText) return null;
+    const phraseZh = String(wordObj.phraseZh || wordObj.phraseTranslation || wordObj.zh || "").trim();
+    return {
+        en: phraseText,
+        zh: phraseZh || wordObj.zh || "",
+        phrase: "",
+        phraseZh: "",
+        phraseTranslation: "",
+        __followUpPhrase: true,
+        __sourceWordEn: String(wordObj.en || "").trim(),
+        __gapRemaining: Math.max(0, Number(gapRemaining) || 0)
+    };
+}
+
+function getPhraseFollowMode() {
+    return String(settings?.phraseFollowMode || "hybrid");
+}
+
+function pickPhraseGapCount() {
+    const explicit = Number(settings?.phraseFollowGapCount);
+    if (Number.isFinite(explicit)) return Math.max(0, explicit);
+    return 2;
+}
+
+function maybeEnqueueFollowUpPhrase(wordObj) {
+    if (!wordObj || wordObj.__followUpPhrase) return;
+    const phraseText = String(wordObj.phrase || "").trim();
+    if (!phraseText) return;
+    const mode = getPhraseFollowMode();
+    if (mode === "off") return;
+
+    let gapRemaining = 0;
+    if (mode === "gap2") {
+        gapRemaining = pickPhraseGapCount();
+    } else if (mode === "hybrid") {
+        const directRatio = Math.max(0, Math.min(1, Number(settings?.phraseFollowDirectRatio) || 0.7));
+        gapRemaining = Math.random() < directRatio ? 0 : pickPhraseGapCount();
+    }
+
+    const phraseItem = createFollowUpPhraseItem(wordObj, gapRemaining);
+    if (!phraseItem) return;
+    const duplicate = followUpQueue.some(q => q && q.en === phraseItem.en && q.__sourceWordEn === phraseItem.__sourceWordEn);
+    if (!duplicate) followUpQueue.push(phraseItem);
+}
+
+function maybeTakeFollowUpPhrase(excludeSet) {
+    if (!Array.isArray(followUpQueue) || !followUpQueue.length) return null;
+    for (let i = 0; i < followUpQueue.length; i++) {
+        const item = followUpQueue[0];
+        if (!item) {
+            followUpQueue.shift();
+            continue;
+        }
+        const gapRemaining = Math.max(0, Number(item.__gapRemaining) || 0);
+        if (gapRemaining > 0) {
+            item.__gapRemaining = gapRemaining - 1;
+            return null;
+        }
+        followUpQueue.shift();
+        if (!excludeSet || !excludeSet.has(item.en)) return item;
+    }
+    return null;
+}
+
 function pickWordForSpawn() {
     ensureWordPicker();
     const exclude = new Set();
@@ -210,7 +311,12 @@ function pickWordForSpawn() {
         items.forEach(i => { if (i && i.wordObj && i.wordObj.en) exclude.add(i.wordObj.en); });
         if (lastWord && lastWord.en) exclude.add(lastWord.en);
     }
-    return wordPicker.next(exclude);
+    const followWord = maybeTakeFollowUpPhrase(exclude);
+    if (followWord) return followWord;
+
+    const picked = wordPicker.next(exclude);
+    maybeEnqueueFollowUpPhrase(picked);
+    return picked;
 }
 
 function clearOldWordItems() {

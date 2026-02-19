@@ -109,6 +109,7 @@
 
         <div class="settings-actions settings-actions-top">
             <button class="game-btn" id="btn-settings-save">保存</button>
+            <button class="game-btn" id="btn-settings-advanced">高级学习设置</button>
         </div>
 
         <div class="settings-row settings-row-keys">
@@ -249,6 +250,54 @@
         </div>
     </div>
 </div>
+
+<div id="advanced-settings-modal" aria-hidden="true">
+    <div class="settings-panel advanced-settings-panel" role="dialog" aria-modal="true" aria-label="高级学习设置">
+        <div class="settings-title">高级学习设置</div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-hint">
+                这里控制“单词→短语跟随策略”和“短期重复频率”。
+            </div>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">短语跟随模式</div>
+            <select class="settings-select" id="opt-phrase-follow-mode">
+                <option value="hybrid">混合(推荐)</option>
+                <option value="direct">紧跟</option>
+                <option value="gap2">隔词</option>
+                <option value="off">关闭</option>
+            </select>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">混合模式直跟比例</div>
+            <input class="settings-range" id="opt-phrase-follow-direct-ratio" type="range" min="0" max="1" step="0.05">
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">隔词数量</div>
+            <select class="settings-select" id="opt-phrase-follow-gap-count">
+                <option value="1">隔 1 个单词</option>
+                <option value="2">隔 2 个单词</option>
+                <option value="3">隔 3 个单词</option>
+                <option value="4">隔 4 个单词</option>
+            </select>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">短期重复窗口</div>
+            <input class="settings-range" id="opt-word-repeat-window" type="range" min="1" max="20" step="1">
+        </div>
+
+        <div class="settings-actions">
+            <button class="game-btn" id="btn-advanced-settings-save">保存</button>
+            <button class="game-btn" id="btn-advanced-settings-close">关闭</button>
+        </div>
+    </div>
+</div>
+
 <div id="armor-select-modal" class="armor-modal" aria-hidden="true">
     <div class="armor-modal-content">
         <div class="armor-modal-header">

@@ -395,6 +395,9 @@ function update() {
         if (rectIntersect(player.x, player.y, player.width, player.height, item.x, item.y + item.floatY, 30, 30)) {
             item.collected = true;
             addScore(gameConfig.scoring.word);
+            if (wordPicker && typeof wordPicker.updateWordQuality === "function" && item.wordObj?.en) {
+                wordPicker.updateWordQuality(item.wordObj.en, "correct_slow");
+            }
             recordWordProgress(item.wordObj);
             speakWord(item.wordObj);
             showFloatingText(item.wordObj.zh, item.x, item.y);

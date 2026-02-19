@@ -40,3 +40,4 @@ out/
 android-app/web/index.html
 *.lnk
 apks/
+words/db/reports/

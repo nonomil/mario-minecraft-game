@@ -7,8 +7,16 @@ function wireSettingsModal() {
     const btnOpen = document.getElementById("btn-settings");
     const btnClose = document.getElementById("btn-settings-close");
     const btnSave = document.getElementById("btn-settings-save");
+    const btnAdvanced = document.getElementById("btn-settings-advanced");
     const btnResetProgress = document.getElementById("btn-reset-progress");
     const progressVocab = document.getElementById("progress-vocab");
+    const advancedModal = document.getElementById("advanced-settings-modal");
+    const btnAdvancedClose = document.getElementById("btn-advanced-settings-close");
+    const btnAdvancedSave = document.getElementById("btn-advanced-settings-save");
+    const optPhraseFollowMode = document.getElementById("opt-phrase-follow-mode");
+    const optPhraseFollowDirectRatio = document.getElementById("opt-phrase-follow-direct-ratio");
+    const optPhraseFollowGapCount = document.getElementById("opt-phrase-follow-gap-count");
+    const optWordRepeatWindow = document.getElementById("opt-word-repeat-window");
 
     const optLearningMode = document.getElementById("opt-learning-mode");
     const optChallengeMode = document.getElementById("opt-challenge-mode");
@@ -42,6 +50,45 @@ function wireSettingsModal() {
     const optKeys = document.getElementById("opt-keys");
     let resetArmed = false;
     let resetTimer = null;
+    let advancedModalVisible = false;
+
+    function fillAdvanced() {
+        if (optPhraseFollowMode) optPhraseFollowMode.value = String(settings.phraseFollowMode || "hybrid");
+        if (optPhraseFollowDirectRatio) optPhraseFollowDirectRatio.value = String(settings.phraseFollowDirectRatio ?? 0.7);
+        if (optPhraseFollowGapCount) {
+            const gap = String(settings.phraseFollowGapCount ?? 2);
+            optPhraseFollowGapCount.value = gap;
+            if (optPhraseFollowGapCount.value !== gap) optPhraseFollowGapCount.value = "2";
+        }
+        if (optWordRepeatWindow) optWordRepeatWindow.value = String(settings.wordRepeatWindow ?? 6);
+    }
+
+    function openAdvanced() {
+        if (!advancedModal) return;
+        fillAdvanced();
+        advancedModal.classList.add("visible");
+        advancedModal.setAttribute("aria-hidden", "false");
+        advancedModalVisible = true;
+    }
+
+    function closeAdvanced() {
+        if (!advancedModal) return;
+        advancedModal.classList.remove("visible");
+        advancedModal.setAttribute("aria-hidden", "true");
+        advancedModalVisible = false;
+    }
+
+    function saveAdvanced() {
+        if (optPhraseFollowMode) settings.phraseFollowMode = String(optPhraseFollowMode.value || "hybrid");
+        if (optPhraseFollowDirectRatio) settings.phraseFollowDirectRatio = Number(optPhraseFollowDirectRatio.value || 0.7);
+        if (optPhraseFollowGapCount) settings.phraseFollowGapCount = Number(optPhraseFollowGapCount.value || 2);
+        if (optWordRepeatWindow) settings.wordRepeatWindow = Number(optWordRepeatWindow.value || 6);
+        settings = normalizeSettings(settings);
+        wordPicker = null;
+        saveSettings();
+        closeAdvanced();
+        showToast("高级学习设置已保存");
+    }
 
     function fill() {
         if (optLearningMode) optLearningMode.checked = !!settings.learningMode;
@@ -94,6 +141,7 @@ function wireSettingsModal() {
 
     function close() {
         if (!modal) return;
+        closeAdvanced();
         modal.classList.remove("visible");
         modal.setAttribute("aria-hidden", "true");
         if (pausedByModal) paused = false;
@@ -160,6 +208,9 @@ function wireSettingsModal() {
     if (btnOpen) btnOpen.addEventListener("click", open);
     if (btnClose) btnClose.addEventListener("click", close);
     if (btnSave) btnSave.addEventListener("click", save);
+    if (btnAdvanced) btnAdvanced.addEventListener("click", openAdvanced);
+    if (btnAdvancedClose) btnAdvancedClose.addEventListener("click", closeAdvanced);
+    if (btnAdvancedSave) btnAdvancedSave.addEventListener("click", saveAdvanced);
     if (btnResetProgress) {
         btnResetProgress.addEventListener("click", () => {
             if (!resetArmed) {
@@ -180,7 +231,12 @@ function wireSettingsModal() {
     }
     if (modal) {
         modal.addEventListener("click", e => {
-            if (e.target === modal) close();
+            if (e.target === modal && !advancedModalVisible) close();
+        });
+    }
+    if (advancedModal) {
+        advancedModal.addEventListener("click", e => {
+            if (e.target === advancedModal) closeAdvanced();
         });
     }
 }

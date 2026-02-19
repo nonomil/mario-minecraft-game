@@ -37,6 +37,7 @@ let vocabState = storage ? storage.loadJson("mmwg:vocabState", { runCounts: {}, 
 let progress = storage ? storage.loadJson("mmwg:progress", { vocab: {} }) : { vocab: {} };
 let lastWord = null;
 let wordPicker = null;
+let followUpQueue = [];
 let paused = false;
 let pausedByModal = false;
 let startedOnce = false;
