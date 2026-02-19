@@ -125,7 +125,7 @@ class Boss {
 }
 
 // BOSS 战场管理器
-const bossArena = {
+globalThis.bossArena = globalThis.bossArena || {
     active: false,
     boss: null,
     victoryTimer: 0,
