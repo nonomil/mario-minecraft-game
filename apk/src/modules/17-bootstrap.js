@@ -228,7 +228,9 @@ function registerTestApi() {
                 inventory: inventory ? { ...inventory } : null,
                 equipment: playerEquipment ? { ...playerEquipment } : null,
                 armorInventory: Array.isArray(armorInventory) ? [...armorInventory] : null,
-                currentAccount: currentAccount ? { id: currentAccount.id, username: currentAccount.username } : null
+                currentAccount: currentAccount ? { id: currentAccount.id, username: currentAccount.username } : null,
+                currentBiome: currentBiome || null,
+                biomeGateState: (typeof getBiomeGateStateSnapshot === "function") ? getBiomeGateStateSnapshot() : null
             };
         },
         setState(patch) {

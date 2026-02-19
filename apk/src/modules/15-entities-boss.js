@@ -137,6 +137,7 @@ class Boss {
 globalThis.bossArena = globalThis.bossArena || {
     active: false,
     boss: null,
+    currentEncounter: null,
     victoryTimer: 0,
     phaseFlashTimer: 0,
     phaseBannerText: '',
@@ -146,26 +147,49 @@ globalThis.bossArena = globalThis.bossArena || {
 
 // PLACEHOLDER_ARENA_METHODS
 
+    normalizeBossType(type) {
+        const normalized = String(type || "").trim().toLowerCase();
+        if (this.bossTypes.includes(normalized)) return normalized;
+        return "wither";
+    },
+
+    resolveGateBossType(fromBiomeId) {
+        const cfg = (typeof getBiomeSwitchConfig === "function") ? getBiomeSwitchConfig() : null;
+        const gateBossCfg = cfg && cfg.gateBoss && typeof cfg.gateBoss === "object" ? cfg.gateBoss : {};
+        const fromBiome = (fromBiomeId && typeof getBiomeById === "function") ? getBiomeById(fromBiomeId) : null;
+        const biomeType = String(fromBiome?.gateBossType || "").trim().toLowerCase();
+        const defaultType = String(gateBossCfg.defaultType || "wither").trim().toLowerCase();
+        return this.normalizeBossType(biomeType || defaultType);
+    },
+
     checkSpawn() {
         if (this.active) return;
+        if (settings && settings.fixedBossEnabled === false) return;
         const score = getProgressScore();
         for (let i = 0; i < this.bossTypes.length; i++) {
             const type = this.bossTypes[i];
             if (!this.spawned[type] && score >= this.bossScores[i]) {
-                this.enter(type);
+                this.enter(type, { source: "score_threshold", markSpawned: true });
                 return;
             }
         }
     },
 
-    enter(bossType) {
+    enter(bossType, options = {}) {
+        const resolvedType = this.normalizeBossType(bossType);
         this.active = true;
         this.victoryTimer = 0;
         this.phaseFlashTimer = 0;
         this.phaseBannerText = '';
-        this.spawned[bossType] = true;
-        this.boss = this.createBoss(bossType);
-        const isFlyingBoss = bossType === 'wither' || bossType === 'ghast' || bossType === 'blaze';
+        this.currentEncounter = {
+            source: String(options.source || "manual"),
+            fromBiome: options.fromBiome || null,
+            toBiome: options.toBiome || null,
+            onVictory: (typeof options.onVictory === "function") ? options.onVictory : null
+        };
+        if (options.markSpawned !== false) this.spawned[resolvedType] = true;
+        this.boss = this.createBoss(resolvedType);
+        const isFlyingBoss = resolvedType === 'wither' || resolvedType === 'ghast' || resolvedType === 'blaze';
         let grantedRangedSupport = false;
         if (isFlyingBoss) {
             const minArrows = 12;
@@ -186,7 +210,24 @@ globalThis.bossArena = globalThis.bossArena || {
         this.leftWall = cameraX;
         this.rightWall = cameraX + canvas.width;
         const supportText = grantedRangedSupport ? '（已补给弓箭）' : '';
-        showToast(`⚔️ BOSS战！${this.boss.name}${supportText}`);
+        if (this.currentEncounter.source === "biome_gate") {
+            const fromBiome = this.currentEncounter.fromBiome || "?";
+            const toBiome = this.currentEncounter.toBiome || "?";
+            showToast(`⚔️ 门禁BOSS：${fromBiome} -> ${toBiome}（${this.boss.name}）${supportText}`);
+        } else {
+            showToast(`⚔️ BOSS战！${this.boss.name}${supportText}`);
+        }
+    },
+
+    enterBiomeGate(fromBiomeId, toBiomeId, options = {}) {
+        const bossType = this.resolveGateBossType(fromBiomeId);
+        this.enter(bossType, {
+            source: "biome_gate",
+            fromBiome: fromBiomeId || null,
+            toBiome: toBiomeId || null,
+            markSpawned: false,
+            onVictory: options.onVictory
+        });
     },
 
     createBoss(type) {
@@ -203,6 +244,7 @@ globalThis.bossArena = globalThis.bossArena || {
     exit() {
         this.active = false;
         this.boss = null;
+        this.currentEncounter = null;
         this.viewportLocked = false;
         this.phaseFlashTimer = 0;
         this.phaseBannerText = '';
@@ -218,6 +260,21 @@ globalThis.bossArena = globalThis.bossArena || {
         addArmorToInventory('diamond');
         showFloatingText('🏆 BOSS DEFEATED!', player.x, player.y - 60, '#FFD700');
         showToast('🏆 击败BOSS! 获得丰厚奖励!');
+        const callback = this.currentEncounter && typeof this.currentEncounter.onVictory === "function"
+            ? this.currentEncounter.onVictory
+            : null;
+        if (callback) {
+            try {
+                callback({
+                    source: this.currentEncounter.source || "manual",
+                    fromBiome: this.currentEncounter.fromBiome || null,
+                    toBiome: this.currentEncounter.toBiome || null,
+                    bossType: this.boss ? this.boss.type : null
+                });
+            } catch (err) {
+                console.warn("bossArena.onVictory callback failed", err);
+            }
+        }
     },
 
     update() {

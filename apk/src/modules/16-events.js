@@ -17,6 +17,9 @@ function wireSettingsModal() {
     const optPhraseFollowDirectRatio = document.getElementById("opt-phrase-follow-direct-ratio");
     const optPhraseFollowGapCount = document.getElementById("opt-phrase-follow-gap-count");
     const optWordRepeatWindow = document.getElementById("opt-word-repeat-window");
+    const optPhraseFollowAdaptive = document.getElementById("opt-phrase-follow-adaptive");
+    const optWordRepeatBias = document.getElementById("opt-word-repeat-bias");
+    const optWordFollowStats = document.getElementById("opt-word-follow-stats");
 
     const optLearningMode = document.getElementById("opt-learning-mode");
     const optChallengeMode = document.getElementById("opt-challenge-mode");
@@ -52,6 +55,23 @@ function wireSettingsModal() {
     let resetTimer = null;
     let advancedModalVisible = false;
 
+    function readFollowUpMetrics() {
+        const m = globalThis.__MMWG_FOLLOWUP_METRICS || {};
+        const calls = Number(m.pickCalls) || 0;
+        const served = Number(m.followServed) || 0;
+        const queued = Number(m.followQueued) || 0;
+        const deferred = Number(m.followDeferredByExclude) || 0;
+        const dropped = Number(m.followDroppedByQueueLimit) || 0;
+        const hitRate = calls > 0 ? (served / calls).toFixed(2) : "0.00";
+        return { calls, served, queued, deferred, dropped, hitRate };
+    }
+
+    function renderFollowUpStats() {
+        if (!optWordFollowStats) return;
+        const m = readFollowUpMetrics();
+        optWordFollowStats.innerText = `calls=${m.calls}, served=${m.served}, hitRate=${m.hitRate}, queued=${m.queued}, deferred=${m.deferred}, dropped=${m.dropped}`;
+    }
+
     function fillAdvanced() {
         if (optPhraseFollowMode) optPhraseFollowMode.value = String(settings.phraseFollowMode || "hybrid");
         if (optPhraseFollowDirectRatio) optPhraseFollowDirectRatio.value = String(settings.phraseFollowDirectRatio ?? 0.7);
@@ -61,6 +81,13 @@ function wireSettingsModal() {
             if (optPhraseFollowGapCount.value !== gap) optPhraseFollowGapCount.value = "2";
         }
         if (optWordRepeatWindow) optWordRepeatWindow.value = String(settings.wordRepeatWindow ?? 6);
+        if (optPhraseFollowAdaptive) optPhraseFollowAdaptive.checked = settings.phraseFollowAdaptive !== false;
+        if (optWordRepeatBias) {
+            const desiredBias = String(settings.wordRepeatBias || "reinforce_wrong");
+            optWordRepeatBias.value = desiredBias;
+            if (optWordRepeatBias.value !== desiredBias) optWordRepeatBias.value = "reinforce_wrong";
+        }
+        renderFollowUpStats();
     }
 
     function openAdvanced() {
@@ -83,8 +110,13 @@ function wireSettingsModal() {
         if (optPhraseFollowDirectRatio) settings.phraseFollowDirectRatio = Number(optPhraseFollowDirectRatio.value || 0.7);
         if (optPhraseFollowGapCount) settings.phraseFollowGapCount = Number(optPhraseFollowGapCount.value || 2);
         if (optWordRepeatWindow) settings.wordRepeatWindow = Number(optWordRepeatWindow.value || 6);
+        if (optPhraseFollowAdaptive) settings.phraseFollowAdaptive = !!optPhraseFollowAdaptive.checked;
+        if (optWordRepeatBias) settings.wordRepeatBias = String(optWordRepeatBias.value || "reinforce_wrong");
         settings = normalizeSettings(settings);
         wordPicker = null;
+        followUpQueue = [];
+        if (typeof resetFollowUpMetrics === "function") resetFollowUpMetrics();
+        renderFollowUpStats();
         saveSettings();
         closeAdvanced();
         showToast("高级学习设置已保存");

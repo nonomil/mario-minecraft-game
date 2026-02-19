@@ -620,6 +620,12 @@ const DEFAULT_BIOME_SWITCH = {
         ocean: 800,
         nether: 2000,
         end: 4000
+    },
+    gateBoss: {
+        enabled: true,
+        defaultType: "wither",
+        perBiomeOnce: true,
+        gateExempt: []
     }
 };
 let biomeSwitchConfig = JSON.parse(JSON.stringify(DEFAULT_BIOME_SWITCH));

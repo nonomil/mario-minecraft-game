@@ -19,13 +19,17 @@ function normalizeSettings(raw) {
     if (typeof merged.phraseFollowMode !== "string") merged.phraseFollowMode = defaultSettings.phraseFollowMode ?? "hybrid";
     if (typeof merged.phraseFollowGapCount !== "number") merged.phraseFollowGapCount = defaultSettings.phraseFollowGapCount ?? 2;
     if (typeof merged.phraseFollowDirectRatio !== "number") merged.phraseFollowDirectRatio = defaultSettings.phraseFollowDirectRatio ?? 0.7;
+    if (typeof merged.phraseFollowAdaptive !== "boolean") merged.phraseFollowAdaptive = defaultSettings.phraseFollowAdaptive ?? true;
     if (typeof merged.wordRepeatWindow !== "number") merged.wordRepeatWindow = defaultSettings.wordRepeatWindow ?? 6;
+    if (typeof merged.wordRepeatBias !== "string") merged.wordRepeatBias = defaultSettings.wordRepeatBias ?? "reinforce_wrong";
+    if (typeof merged.fixedBossEnabled !== "boolean") merged.fixedBossEnabled = defaultSettings.fixedBossEnabled ?? true;
     if (typeof merged.villageEnabled !== "boolean") merged.villageEnabled = defaultSettings.villageEnabled ?? true;
     if (typeof merged.villageFrequency !== "number") merged.villageFrequency = defaultSettings.villageFrequency ?? 500;
     if (typeof merged.villageAutoSave !== "boolean") merged.villageAutoSave = defaultSettings.villageAutoSave ?? true;
     if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
     if (!["off", "direct", "gap2", "hybrid"].includes(String(merged.phraseFollowMode || ""))) merged.phraseFollowMode = "hybrid";
+    if (!["balanced", "reinforce_wrong"].includes(String(merged.wordRepeatBias || ""))) merged.wordRepeatBias = "reinforce_wrong";
     if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
     merged.biomeSwitchStepScore = Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 300));
     merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
