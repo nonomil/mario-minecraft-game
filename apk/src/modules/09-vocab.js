@@ -330,6 +330,7 @@ function normalizeRawWord(raw) {
         zh: zh || "",
         phrase: String(raw.phrase || "").trim() || null,
         phraseZh: String(raw.phraseTranslation || "").trim() || null,
+        phraseTranslation: String(raw.phraseTranslation || "").trim() || null,
         imageURLs: Array.isArray(raw.imageURLs) ? raw.imageURLs : []
     };
 }

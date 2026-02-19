@@ -27,7 +27,7 @@ function showWordCard(wordObj) {
     if (zh) zh.innerText = wordObj.zh;
     if (phrase) {
         const phraseText = String(wordObj?.phrase || "").trim();
-        const phraseZh = String(wordObj?.phraseZh || "").trim();
+        const phraseZh = String(wordObj?.phraseZh || wordObj?.phraseTranslation || "").trim();
         if (phraseText) {
             phrase.innerText = phraseZh ? `${phraseText} · ${phraseZh}` : phraseText;
             phrase.style.display = "block";
@@ -561,7 +561,7 @@ function showChallengeCorrection(wordObj) {
     const en = String(wordObj.en || "").trim();
     const zh = String(wordObj.zh || "").trim();
     const phrase = String(wordObj.phrase || "").trim();
-    const phraseZh = String(wordObj.phraseZh || "").trim();
+    const phraseZh = String(wordObj.phraseZh || wordObj.phraseTranslation || "").trim();
     const hintLetters = String(currentLearningChallenge?.hintLettersDisplay || "").trim();
     const hintLine = hintLetters ? `<div style="color:#90CAF9;font-size:12px;margin-top:4px;">缺失字母: ${hintLetters}</div>` : "";
 

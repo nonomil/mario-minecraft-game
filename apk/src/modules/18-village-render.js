@@ -87,7 +87,7 @@ function drawVillageBed(ctx, bx, by, colors) {
 
 // Draw village path (cobblestone)
 function drawVillagePath(ctx, village) {
-  const sx = village.x - cameraX;
+  const sx = village.x;
   const w = village.width || 800;
   const colors = getVillageColors(village.biomeId);
   const bs = 12;
@@ -104,7 +104,7 @@ function drawVillagePath(ctx, village) {
 
 // Draw a well (stone blocks + water)
 function drawVillageWell(ctx, x) {
-  const sx = x - cameraX;
+  const sx = x;
   const wy = groundY - 24;
   // Stone base
   for (let r = 0; r < 3; r++) {
@@ -126,7 +126,7 @@ function drawVillageWell(ctx, x) {
 
 // Draw a lamp post
 function drawVillageLamp(ctx, x, colors) {
-  const sx = x - cameraX;
+  const sx = x;
   const ly = groundY - 40;
   ctx.fillStyle = colors.log;
   ctx.fillRect(sx + 3, ly, 4, 40);
@@ -144,7 +144,7 @@ function drawVillageLamp(ctx, x, colors) {
 
 // Draw a fence section
 function drawVillageFence(ctx, x, colors) {
-  const sx = x - cameraX;
+  const sx = x;
   const fy = groundY - 18;
   ctx.fillStyle = colors.log;
   ctx.fillRect(sx, fy, 3, 18);
@@ -157,7 +157,7 @@ function drawVillageFence(ctx, x, colors) {
 
 // Draw village entrance sign
 function drawVillageSign(ctx, x, biomeName) {
-  const sx = x - cameraX;
+  const sx = x;
   const sy = groundY - 50;
   // Post
   ctx.fillStyle = '#6B4226';
@@ -179,7 +179,7 @@ function drawVillageSign(ctx, x, biomeName) {
 // Draw NPC (Minecraft villager style)
 function drawVillageNPC(ctx, npc) {
   if (!npc) return;
-  const sx = npc.x - cameraX;
+  const sx = npc.x;
   const sy = groundY - 28;
   const legOff = npc.animFrame === 0 ? 0 : 2;
   // Body (brown robe)
@@ -233,10 +233,10 @@ function drawVillages(ctx) {
     if (Array.isArray(village.buildings)) {
       for (const building of village.buildings) {
         const colors = getVillageColors(village.biomeId);
-        drawBlockHouse(ctx, building.x - cameraX, groundY - building.h, building.w, building.h, colors, building.type);
+        drawBlockHouse(ctx, building.x, groundY - building.h, building.w, building.h, colors, building.type);
         // Draw bed next to bed_house
         if (building.type === 'bed_house') {
-          drawVillageBed(ctx, building.x - cameraX + building.w + 8, groundY - 10, colors);
+          drawVillageBed(ctx, building.x + building.w + 8, groundY - 10, colors);
         }
       }
     }
@@ -250,7 +250,7 @@ function drawVillages(ctx) {
 
 // Draw soft background tint for village area
 function drawVillageBackground(ctx, village) {
-  const sx = village.x - cameraX;
+  const sx = village.x;
   const w = village.width || 800;
   // Soft warm overlay
   ctx.fillStyle = 'rgba(255,248,225,0.12)';
@@ -290,7 +290,7 @@ function drawVillageDecorations(ctx, village) {
 
 // Draw village name banner at top
 function drawVillageBanner(ctx, village) {
-  const sx = village.x - cameraX;
+  const sx = village.x;
   const w = village.width || 800;
   const cx = sx + w / 2;
   const biomeName = typeof getBiomeName === 'function' ? getBiomeName(village.biomeId) : village.biomeId;

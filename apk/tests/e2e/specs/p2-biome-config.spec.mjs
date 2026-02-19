@@ -19,6 +19,6 @@ test("P2 settings slider min should prevent flash switching", async ({ request }
   const vocabResp = await request.get("/src/modules/09-vocab.js");
   expect(vocabResp.ok()).toBeTruthy();
   const vocabJs = await vocabResp.text();
-  expect(vocabJs).toContain("Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200))");
+  expect(vocabJs).toContain("Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 300))");
 });
 

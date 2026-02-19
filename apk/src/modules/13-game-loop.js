@@ -1160,6 +1160,7 @@ function spawnGolem(type) {
 }
 
 function handleInteraction() {
+    if (paused || pausedByModal) return;
     // v1.8.3 村庄建筑交互优先
     if (playerInVillage && currentVillage && typeof checkVillageBuildings === 'function') {
       const handled = checkVillageBuildings(currentVillage);

@@ -139,15 +139,15 @@ async function start() {
         if (isAttack) handleAttack("press");
         if (isWeaponSwitch) switchWeapon();
         if (isUseDiamond) useDiamondForHp();
-        if (isInteract) handleInteraction();
-        if (isDecorInteract) handleDecorationInteract();
+        if (isInteract && !pausedByModal && !paused) handleInteraction();
+        if (isDecorInteract && !pausedByModal && !paused) handleDecorationInteract();
         if (!inInput && e.key >= "1" && e.key <= "9") {
             selectedSlot = parseInt(e.key, 10) - 1;
             updateInventoryUI();
             const itemKey = HOTBAR_ITEMS[selectedSlot];
             showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "空"}`);
         }
-        if (isPause && startedOnce) {
+        if (isPause && startedOnce && !pausedByModal) {
             paused = !paused;
             const btnPause = document.getElementById("btn-pause");
             if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
