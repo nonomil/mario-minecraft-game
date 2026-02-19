@@ -1,3 +1,34 @@
+## v1.18.15 (2026-02-19)
+
+### 村庄室内模式（需求7）落地
+- `bed_house` / `word_house` 改为“先进屋再交互”，支持进入与退出
+- 新增室内状态机：`enterVillageInterior` / `exitVillageInterior` / `updateVillageInteriorMode` / `renderVillageInterior`
+- 室内模式下冻结外部系统更新（群系切换、BOSS 触发、敌人与场景外部链路）
+- 新增退出路径：键盘 `Esc`、触控 `🚪` 按钮、互动二次确认退出
+- 增加异常兜底：`initGame` / `startLevel` 强制重置室内状态，避免死亡/重开状态泄漏
+
+### 编码与显示修复
+- 修复首页文案乱码与触控区显示问题（`apk/Game.html`）
+- 修复样式文件乱码注释与显示一致性问题（`apk/src/styles.css`）
+- 修复版本读取回退问题：`version-manager` 支持去 BOM JSON 解析，避免错误回退到旧版本号
+
+### 发布链路修复
+- 修复 Android Gradle 构建入口 BOM 问题（`apk/android-app/android/app/build.gradle`）
+- 统一版本号源：`apk/version.json`、`apk/package.json`、`apk/android-app/package.json`、`build.gradle`
+- 更新 GitHub Release 文案模板，改为本次版本真实更新项
+
+### 测试
+- `node --check`：
+  - `apk/src/modules/11-game-init.js`
+  - `apk/src/modules/13-game-loop.js`
+  - `apk/src/modules/14-renderer-main.js`
+  - `apk/src/modules/16-events.js`
+  - `apk/src/modules/17-bootstrap.js`
+  - `apk/src/modules/18-village.js`
+- `npm --prefix apk run test:e2e`（执行完成，现存失败项为历史链路：`boss-debug-controls`、`p1-phrase-followup`、`p2-biome-config` 断言）
+
+---
+
 ## v1.18.3 (2026-02-18)
 
 ### 樱花丛林与学习挑战显示优化

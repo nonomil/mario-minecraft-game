@@ -148,11 +148,17 @@ async function start() {
             showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "空"}`);
         }
         if (isPause && startedOnce && !pausedByModal) {
-            paused = !paused;
-            const btnPause = document.getElementById("btn-pause");
-            if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
-            if (paused) setOverlay(true, "pause");
-            else setOverlay(false);
+            if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+                if (typeof exitVillageInterior === "function") {
+                    exitVillageInterior("🏠 离开房屋");
+                }
+            } else {
+                paused = !paused;
+                const btnPause = document.getElementById("btn-pause");
+                if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
+                if (paused) setOverlay(true, "pause");
+                else setOverlay(false);
+            }
         }
     });
 
@@ -230,6 +236,7 @@ function registerTestApi() {
                 armorInventory: Array.isArray(armorInventory) ? [...armorInventory] : null,
                 currentAccount: currentAccount ? { id: currentAccount.id, username: currentAccount.username } : null,
                 currentBiome: currentBiome || null,
+                villageInteriorActive: (typeof isVillageInteriorActive === "function") ? !!isVillageInteriorActive() : false,
                 biomeGateState: (typeof getBiomeGateStateSnapshot === "function") ? getBiomeGateStateSnapshot() : null
             };
         },

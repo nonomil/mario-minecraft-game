@@ -44,6 +44,11 @@ function emitGameParticle(type, x, y) {
 
 function update() {
     if (paused) return;
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+        if (typeof updateVillageInteriorMode === "function") updateVillageInteriorMode();
+        gameFrame++;
+        return;
+    }
     updateCurrentBiome();
     // 村庄系统更新 (v1.8.0)
     if (typeof updateVillages === 'function') updateVillages();
@@ -1163,6 +1168,13 @@ function spawnGolem(type) {
 }
 
 function handleInteraction() {
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+        if (paused || pausedByModal) return;
+        if (typeof handleVillageInteriorInteraction === "function") {
+            handleVillageInteriorInteraction();
+        }
+        return;
+    }
     if (paused || pausedByModal) return;
     // v1.8.3 村庄建筑交互优先
     if (playerInVillage && currentVillage && typeof checkVillageBuildings === 'function') {
@@ -1192,6 +1204,7 @@ function handleInteraction() {
 }
 
 function handleDecorationInteract() {
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
     for (const d of decorations) {
         if (!d.collectible) continue;
         if (rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
@@ -1202,6 +1215,7 @@ function handleDecorationInteract() {
 }
 
 function handleAttack(mode = "press") {
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
     if (playerWeapons.attackCooldown > 0) return;
     if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "attack");
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;

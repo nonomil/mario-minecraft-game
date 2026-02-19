@@ -181,9 +181,10 @@ jobs:
             3. 安装 APK 文件
 
             ### ✨ 本次更新
-            - P0: BOSS渲染双重偏移修复 - 解决"只掉血看不到敌人"问题
-            - P1: 飞行BOSS可打性兜底 - 自动补给弓箭
-            - P2: 群系切换节奏平衡 - 火山/地狱停留时间优化
+            - 需求7：村庄房屋室内模式上线（可进出、室内床恢复、词屋挑战）
+            - 室内模式与 BOSS/门禁/群系切换互斥守卫完善，异常重开自动重置状态
+            - 首页文案与样式乱码修复，触控端新增室内退出按钮（🚪）
+            - 版本与发布链路修复：BOM 兼容解析、构建稳定性提升
           artifacts: |
             apk/android-app/android/app/build/outputs/apk/debug/*.apk,
             apk/android-app/android/app/build/outputs/apk/release/*.apk
@@ -195,7 +196,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add apk/version.json apk/android-app/package.json apk/android-app/android/app/build.gradle
+          git add apk/version.json apk/package.json apk/android-app/package.json apk/android-app/android/app/build.gradle
           git diff --staged --quiet || git commit -m "chore(apk): auto-bump version to ${{ steps.version.outputs.version }} [skip ci]"
 
       - name: Push version changes

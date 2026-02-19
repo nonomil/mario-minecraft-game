@@ -398,6 +398,11 @@ function wireTouchControls() {
     bindTap("jump", () => { jumpBuffer = gameConfig.jump.bufferFrames; });
     bindTap("attack", () => { handleAttack("tap"); });
     bindTap("interact", () => { handleInteraction(); });
+    bindTap("interior-exit", () => {
+        if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+            if (typeof exitVillageInterior === "function") exitVillageInterior("🏠 离开房屋");
+        }
+    });
     bindTap("switch", () => { switchWeapon(); });
     bindTap("use-diamond", () => { useDiamondForHp(); });
 }

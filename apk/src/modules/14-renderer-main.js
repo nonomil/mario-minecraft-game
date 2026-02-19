@@ -2,8 +2,36 @@
  * 14-renderer-main.js - 主渲染函数
  * 从 14-renderer.js 拆分
  */
+function scheduleNextFrame() {
+    requestAnimationFrame(() => {
+        try {
+            update();
+            draw();
+        } catch (e) {
+            // Single-shot fatal guard: avoid freezing on an uncaught exception.
+            // Do not attempt retries here; pause and surface an error overlay instead.
+            try { console.error('[gameLoop] fatal:', e); } catch {}
+            try {
+                if (typeof window !== "undefined") {
+                    window.__MMWG_LAST_ERROR = (e && e.stack) ? String(e.stack) : String(e && e.message ? e.message : e);
+                }
+            } catch {}
+            paused = true;
+            pausedByModal = true;
+            try { setOverlay(true, "error"); } catch {}
+        }
+    });
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+        if (typeof renderVillageInterior === "function") {
+            renderVillageInterior(ctx);
+        }
+        scheduleNextFrame();
+        return;
+    }
     const biome = getBiomeById(currentBiome);
     drawBackground(biome);
     if (typeof renderBiomeVisuals === 'function') renderBiomeVisuals(ctx, cameraX);
@@ -127,24 +155,7 @@ function draw() {
         bossArena.renderBossHpBar(ctx);
     }
 
-    requestAnimationFrame(() => {
-        try {
-            update();
-            draw();
-        } catch (e) {
-            // Single-shot fatal guard: avoid freezing on an uncaught exception.
-            // Do not attempt retries here; pause and surface an error overlay instead.
-            try { console.error('[gameLoop] fatal:', e); } catch {}
-            try {
-                if (typeof window !== "undefined") {
-                    window.__MMWG_LAST_ERROR = (e && e.stack) ? String(e.stack) : String(e && e.message ? e.message : e);
-                }
-            } catch {}
-            paused = true;
-            pausedByModal = true;
-            try { setOverlay(true, "error"); } catch {}
-        }
-    });
+    scheduleNextFrame();
 }
 
 function drawBlock(x, y, w, h, type) {

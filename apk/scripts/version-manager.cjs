@@ -12,6 +12,7 @@ const path = require('path');
 const BUILD_GRADLE_PATH = path.join(__dirname, '../android-app/android/app/build.gradle');
 const VERSION_FILE_PATH = path.join(__dirname, '../version.json');
 const PACKAGE_JSON_PATH = path.join(__dirname, '../android-app/package.json');
+const ROOT_PACKAGE_JSON_PATH = path.join(__dirname, '../package.json');
 
 // 默认版本信息
 const DEFAULT_VERSION = {
@@ -136,19 +137,20 @@ function updateBuildGradle(versionInfo) {
  * 更新 package.json 版本
  */
 function updatePackageJson(versionInfo) {
-    try {
-        if (!fs.existsSync(PACKAGE_JSON_PATH)) {
-            console.warn('⚠️  package.json 不存在，跳过更新');
-            return;
+    const packagePaths = [PACKAGE_JSON_PATH, ROOT_PACKAGE_JSON_PATH];
+    for (const packagePath of packagePaths) {
+        try {
+            if (!fs.existsSync(packagePath)) {
+                console.warn(`⚠️  package.json 不存在，跳过更新: ${packagePath}`);
+                continue;
+            }
+            const pkg = parseJsonFile(packagePath);
+            pkg.version = versionInfo.versionName;
+            fs.writeFileSync(packagePath, JSON.stringify(pkg, null, 2) + '\n');
+            console.log(`✅ package.json 已更新: ${packagePath}`);
+        } catch (error) {
+            console.warn(`⚠️  更新 package.json 失败 (${packagePath}):`, error.message);
         }
-
-        const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON_PATH, 'utf8'));
-        pkg.version = versionInfo.versionName;
-        fs.writeFileSync(PACKAGE_JSON_PATH, JSON.stringify(pkg, null, 2) + '\n');
-        console.log('✅ package.json 已更新');
-
-    } catch (error) {
-        console.warn('⚠️  更新 package.json 失败:', error.message);
     }
 }
 

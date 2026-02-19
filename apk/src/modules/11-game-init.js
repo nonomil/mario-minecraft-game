@@ -84,6 +84,7 @@ function initGame() {
     }
     if (typeof playerInVillage !== 'undefined') playerInVillage = false;
     if (typeof currentVillage !== 'undefined') currentVillage = null;
+    if (typeof resetVillageInteriorState === "function") resetVillageInteriorState();
     startLevel(0);
     updateDifficultyState(true);
 }
@@ -115,6 +116,7 @@ function startLevel(idx) {
     followUpQueue = [];
     resetFollowUpMetrics();
     if (typeof resetBiomeGateState === "function") resetBiomeGateState();
+    if (typeof resetVillageInteriorState === "function") resetVillageInteriorState();
     updateHpUI();
     player.x = 100;
     player.y = Math.min(300, groundY - player.height - 10);

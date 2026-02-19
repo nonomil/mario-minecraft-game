@@ -312,6 +312,192 @@ function updateVillages() {
 // ========== 休息系统 (v1.8.2) ==========
 let restPromptVisible = false;
 let restPromptVillage = null;
+const INTERIOR_BUILDING_TYPES = new Set(["bed_house", "word_house"]);
+const villageInteriorState = {
+  active: false,
+  villageId: null,
+  buildingType: null,
+  entryBuildingX: 0,
+  returnPlayerX: 0,
+  returnPlayerY: 0,
+  enteredAt: 0,
+  exitConfirmUntil: 0,
+  challengeStarted: false
+};
+
+function isVillageInteriorActive() {
+  return !!villageInteriorState.active;
+}
+
+function syncVillageInteriorTouchUi() {
+  if (typeof document === "undefined") return;
+  const root = document.getElementById("touch-controls");
+  if (!root) return;
+  if (isVillageInteriorActive()) root.classList.add("interior-active");
+  else root.classList.remove("interior-active");
+}
+
+function getVillageInteriorVillage() {
+  if (!villageInteriorState.villageId) return null;
+  return activeVillages.find(v => v && v.id === villageInteriorState.villageId) || null;
+}
+
+function getVillageInteriorBuilding(village) {
+  if (!village || !villageInteriorState.buildingType) return null;
+  return village.buildings?.find(b => b?.type === villageInteriorState.buildingType) || null;
+}
+
+function resetVillageInteriorState({ silent = true } = {}) {
+  const wasActive = villageInteriorState.active;
+  villageInteriorState.active = false;
+  villageInteriorState.villageId = null;
+  villageInteriorState.buildingType = null;
+  villageInteriorState.entryBuildingX = 0;
+  villageInteriorState.returnPlayerX = 0;
+  villageInteriorState.returnPlayerY = 0;
+  villageInteriorState.enteredAt = 0;
+  villageInteriorState.exitConfirmUntil = 0;
+  villageInteriorState.challengeStarted = false;
+  syncVillageInteriorTouchUi();
+  if (!silent && wasActive) showToast("🏠 已离开房屋");
+}
+
+function canEnterVillageInterior(village, building) {
+  if (!village || !building) return false;
+  if (!INTERIOR_BUILDING_TYPES.has(building.type)) return false;
+  if (isVillageInteriorActive()) return false;
+  if (typeof bossArena !== "undefined" && bossArena?.active) {
+    showToast("⚔️ BOSS战中，暂时不能进屋");
+    return false;
+  }
+  if (typeof biomeGateState !== "undefined" && biomeGateState?.gateActive) {
+    showToast("🚪 门禁战进行中，暂时不能进屋");
+    return false;
+  }
+  return true;
+}
+
+function enterVillageInterior(village, building) {
+  if (!canEnterVillageInterior(village, building)) return false;
+  villageInteriorState.active = true;
+  villageInteriorState.villageId = village.id;
+  villageInteriorState.buildingType = building.type;
+  villageInteriorState.entryBuildingX = Number(building.x) || 0;
+  villageInteriorState.returnPlayerX = Number(player?.x) || 0;
+  villageInteriorState.returnPlayerY = Number(player?.y) || 0;
+  villageInteriorState.enteredAt = Date.now();
+  villageInteriorState.exitConfirmUntil = 0;
+  villageInteriorState.challengeStarted = false;
+  syncVillageInteriorTouchUi();
+  if (player) {
+    player.velX = 0;
+    player.velY = 0;
+  }
+  const label = building.type === "bed_house" ? "床屋" : "词屋";
+  showToast(`🏠 进入${label}（Esc 退出）`);
+  return true;
+}
+
+function exitVillageInterior(reason = "") {
+  if (!isVillageInteriorActive()) return false;
+  const village = getVillageInteriorVillage();
+  const building = getVillageInteriorBuilding(village);
+  if (player) {
+    const fallbackX = villageInteriorState.returnPlayerX || player.x;
+    const exitX = building ? (building.x + building.w * 0.5 - player.width * 0.5) : fallbackX;
+    player.x = Math.max(0, exitX);
+    player.y = Math.min(groundY - player.height, villageInteriorState.returnPlayerY || player.y);
+    player.velX = 0;
+    player.velY = 0;
+    player.grounded = false;
+    player.jumpCount = 0;
+    player.lastFragilePlatform = null;
+  }
+  const text = reason || "🏠 离开房屋";
+  resetVillageInteriorState();
+  showToast(text);
+  return true;
+}
+
+function updateVillageInteriorMode() {
+  if (!isVillageInteriorActive()) return;
+  syncVillageInteriorTouchUi();
+  const village = getVillageInteriorVillage();
+  if (!village) {
+    resetVillageInteriorState();
+    return;
+  }
+  if (!player) return;
+  if (
+    villageInteriorState.buildingType === "word_house" &&
+    villageInteriorState.challengeStarted &&
+    !village._challengeRunning &&
+    !pausedByModal
+  ) {
+    exitVillageInterior("🏠 挑战结束，已离开词屋");
+    return;
+  }
+  player.velX = 0;
+  player.velY = 0;
+  const targetCam = Math.max(0, player.x - cameraOffsetX);
+  if (targetCam > cameraX) cameraX = targetCam;
+}
+
+function renderVillageInterior(ctx) {
+  if (!isVillageInteriorActive()) return false;
+  if (!ctx || !canvas) return false;
+  const village = getVillageInteriorVillage();
+  const buildingType = villageInteriorState.buildingType || "bed_house";
+  const colors = typeof getVillageColors === "function"
+    ? getVillageColors(village?.biomeId || "forest")
+    : { plank: "#B8945A", log: "#5D4037", glass: "#A8D8EA" };
+
+  ctx.fillStyle = "rgba(0,0,0,0.72)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const panelW = Math.min(canvas.width * 0.9, 720);
+  const panelH = Math.min(canvas.height * 0.8, 460);
+  const panelX = (canvas.width - panelW) * 0.5;
+  const panelY = (canvas.height - panelH) * 0.5;
+  ctx.fillStyle = colors.plank || "#B8945A";
+  ctx.fillRect(panelX, panelY, panelW, panelH);
+  ctx.strokeStyle = colors.log || "#5D4037";
+  ctx.lineWidth = 6;
+  ctx.strokeRect(panelX, panelY, panelW, panelH);
+
+  // Floor and wall accents
+  ctx.fillStyle = "rgba(0,0,0,0.16)";
+  ctx.fillRect(panelX + 24, panelY + panelH - 92, panelW - 48, 56);
+  ctx.fillStyle = colors.glass || "#A8D8EA";
+  ctx.fillRect(panelX + panelW - 110, panelY + 36, 70, 46);
+  ctx.strokeStyle = "rgba(0,0,0,0.2)";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(panelX + panelW - 110, panelY + 36, 70, 46);
+
+  const title = buildingType === "bed_house" ? "🛏️ 床屋室内" : "📚 词屋室内";
+  ctx.fillStyle = "#1E1E1E";
+  ctx.font = "bold 28px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(title, panelX + 28, panelY + 48);
+
+  if (buildingType === "bed_house") {
+    drawVillageBed(ctx, panelX + 80, panelY + panelH - 110, colors);
+    ctx.fillStyle = "#222";
+    ctx.font = "18px sans-serif";
+    ctx.fillText("按 交互键(Y) 躺床恢复生命", panelX + 28, panelY + 96);
+    ctx.fillText("按 Esc 或 🚪 退出房屋", panelX + 28, panelY + 128);
+  } else {
+    ctx.fillStyle = colors.log || "#6B4226";
+    ctx.fillRect(panelX + 72, panelY + panelH - 126, 180, 18);
+    ctx.fillRect(panelX + 86, panelY + panelH - 108, 14, 50);
+    ctx.fillRect(panelX + 224, panelY + panelH - 108, 14, 50);
+    ctx.fillStyle = "#222";
+    ctx.font = "18px sans-serif";
+    ctx.fillText("按 交互键(Y) 开始词汇挑战", panelX + 28, panelY + 96);
+    ctx.fillText("按 Esc 或 🚪 退出房屋", panelX + 28, panelY + 128);
+  }
+  ctx.textAlign = "left";
+  return true;
+}
 
 function checkVillageRest(village) {
   if (!village) return;
@@ -419,19 +605,9 @@ function handleVillageInteraction(building, village) {
 
   switch (building.type) {
     case 'bed_house':
-      performRest(village);
-      return true;
+      return enterVillageInterior(village, building);
     case 'word_house':
-      if (village.questCompleted) {
-        showToast(UI_TEXTS.questDone);
-        return false;
-      }
-      if (typeof startVillageChallenge === 'function') {
-        startVillageChallenge(village, () => {
-          village.questCompleted = true;
-        });
-      }
-      return true;
+      return enterVillageInterior(village, building);
     case 'save_stone':
       saveVillageProgress(village);
       return true;
@@ -442,6 +618,43 @@ function handleVillageInteraction(building, village) {
       }
       return false;
   }
+}
+
+function handleVillageInteriorInteraction() {
+  if (!isVillageInteriorActive()) return false;
+  const now = Date.now();
+  if (now <= Number(villageInteriorState.exitConfirmUntil || 0)) {
+    exitVillageInterior("🏠 离开房屋");
+    return true;
+  }
+  const village = getVillageInteriorVillage();
+  if (!village) {
+    resetVillageInteriorState();
+    return false;
+  }
+  const type = villageInteriorState.buildingType;
+  if (type === "bed_house") {
+    performRest(village);
+    villageInteriorState.exitConfirmUntil = Date.now() + 1800;
+    showToast("🔁 再按一次互动键可退出房屋");
+    return true;
+  }
+  if (type === "word_house") {
+    if (village.questCompleted) {
+      showToast(UI_TEXTS.questDone);
+      villageInteriorState.exitConfirmUntil = Date.now() + 1800;
+      showToast("🔁 再按一次互动键可退出房屋");
+      return true;
+    }
+    if (typeof startVillageChallenge === "function") {
+      villageInteriorState.challengeStarted = true;
+      startVillageChallenge(village, () => {
+        village.questCompleted = true;
+      });
+      return true;
+    }
+  }
+  return false;
 }
 
 function saveVillageProgress(village) {
