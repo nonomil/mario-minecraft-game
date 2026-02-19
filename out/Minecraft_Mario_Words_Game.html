@@ -3648,7 +3648,6 @@ let playerPositionHistory = [];
 let projectiles = [];
 let digHits = new Map();
 let bossSpawned = false;
-let bossArena = null;
 let villageConfig = {};
 let activeVillages = [];
 let villageSpawnedForScore = {};
@@ -11428,7 +11427,7 @@ class Boss {
 }
 
 // BOSS 战场管理器
-const bossArena = {
+globalThis.bossArena = globalThis.bossArena || {
     active: false,
     boss: null,
     victoryTimer: 0,

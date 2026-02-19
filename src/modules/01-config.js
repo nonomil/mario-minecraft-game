@@ -353,7 +353,6 @@ let playerPositionHistory = [];
 let projectiles = [];
 let digHits = new Map();
 let bossSpawned = false;
-let bossArena = null;
 let villageConfig = {};
 let activeVillages = [];
 let villageSpawnedForScore = {};
