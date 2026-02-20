@@ -1,6 +1,6 @@
 {
   "name": "mario-minecraft-game-v1",
-  "version": "1.18.24",
+  "version": "1.18.25",
   "private": true,
   "type": "module",
   "scripts": {
@@ -36,4 +36,3 @@
     "@playwright/test": "^1.51.1"
   }
 }
-

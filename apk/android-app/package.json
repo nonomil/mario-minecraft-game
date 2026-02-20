@@ -1,6 +1,6 @@
 {
   "name": "android-app",
-  "version": "1.18.24",
+  "version": "1.18.25",
   "private": true,
   "scripts": {
     "sync-web": "node ../scripts/sync-web.js"
@@ -17,4 +17,3 @@
     "@capacitor/core": "^7.4.3"
   }
 }
-
