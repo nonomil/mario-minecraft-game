@@ -163,7 +163,9 @@ function maybeSpawnVillage(playerScore, playerX) {
       : false;
     const lastScore = Number(villageSpawnState?.lastSpawnScore);
     const lastX = Number(villageSpawnState?.lastSpawnX);
-    return hasScoreMark || Number.isFinite(lastScore) && lastScore > 0 || Number.isFinite(lastX) && lastX > 0;
+    return hasScoreMark
+      || (Number.isFinite(lastScore) && lastScore > 0)
+      || (Number.isFinite(lastX) && lastX > 0);
   })();
 
   if (typeof villageSpawnState !== "undefined" && villageSpawnState && hasSpawnHistory) {
@@ -849,7 +851,7 @@ function performRest(village) {
     return;
   }
 
-  // 鎵ц浼戞伅鍥炶
+  // 执行休息回血
   if (cfg.restHealFull) {
     playerHp = playerMaxHp;
   } else {
@@ -948,12 +950,15 @@ const TRADER_ARMOR_PRICES = {
   diamond: 40
 };
 
+let traderPrevPaused = false;
+
 function openVillageTrader(village) {
   if (typeof document === "undefined") {
     showToast("🧑‍🌾 商人暂不可用");
     return false;
   }
   if (pausedByModal) return false;
+  traderPrevPaused = !!paused;
   pausedByModal = true;
   paused = true;
   const modal = ensureVillageTraderModal();
@@ -990,7 +995,7 @@ function closeVillageTrader() {
     modal.setAttribute("aria-hidden", "true");
   }
   if (pausedByModal) {
-    paused = false;
+    paused = traderPrevPaused;
     pausedByModal = false;
   }
 }

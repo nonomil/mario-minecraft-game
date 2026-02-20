@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 20-enemies-new.js - 新群系敌人系统 (v1.7.0)
  * 樱花丛林、蘑菇岛、火山、深暗之域、天空之城专用敌人
  */
@@ -53,7 +53,7 @@ const BIOME_ENEMY_STATS = {
         biome: "mushroom_island"
     },
 
-    // 鐏北鏁屼汉
+    // 火山敌人
     magma_cube: {
         hp: 25,
         speed: 1.2,
@@ -272,7 +272,7 @@ class BeeEnemy extends Enemy {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
-        // 铚滆渹鎮仠椋炶
+        // 蜜蜂悬停飞行
         this.y = this.startY + Math.sin(gameFrame * 0.05 + this.hoverOffset) * 20;
 
         if (dist < 180) {
@@ -738,7 +738,7 @@ class PhantomEnemy extends Enemy {
     update(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
 
-        // 椋炶楂樺害
+        // 飞行高度
         this.y = this.startY - this.flyHeight;
 
         if (this.isDiving) {
@@ -841,7 +841,7 @@ class VexEnemy extends Enemy {
     }
 
     applyGravity() {
-        // 恶魂不受重力影响
+        // 恼鬼不受重力影响
     }
 
     update(playerRef) {
