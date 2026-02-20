@@ -165,32 +165,30 @@ jobs:
           body: |
             ## Mario Minecraft Game v${{ steps.version.outputs.version }}
 
-            ### Version Info
+            ### 版本信息
             - Version: ${{ steps.version.outputs.version }}
             - VersionCode: ${{ steps.version.outputs.versionCode }}
             - BuildNumber: ${{ steps.version.outputs.buildNumber }}
             - Commit: ${{ github.sha }}
 
-            ### Downloads
+            ### 下载文件
             - Debug APK: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk`
             - Release APK: `mario-minecraft-game-${{ steps.version.outputs.version }}-release.apk`
 
-            ### Install
-            1. Download the APK file.
-            2. Enable install from unknown sources on Android.
-            3. Install APK.
+            ### 安装说明
+            1. 下载 APK 文件
+            2. 在 Android 设备开启“允许安装未知来源应用”
+            3. 安装 APK
 
-            ### What's New
-            - Requirement 11 tuning: Wither gate trigger reduced to once every two biome transitions (villages are not counted as biomes).
-            - Wither no longer damages players while they are inside village area; attacks resume after leaving village.
-            - Requirement 12 implemented for interior mode:
-              - Keep full player avatar visible in-room.
-              - Spawn player at room center on entry.
-              - Limit in-room movement speed to 50% of normal max speed.
-              - Place door and bed/test points on opposite sides.
-              - Enable proximity auto-trigger (no key press needed).
-              - Add hint texts above door/bed/test points.
-            - Version/docs/release metadata synchronized for this release.
+            ### 本次更新（0220）
+            - 村庄与室内显示优化：修复关键文案显示问题，提升可读性；村民模型尺寸上调。
+            - BOSS 战斗优化：BOSS 血量提升（默认 2 倍）、血条阶段显示统一。
+            - BOSS 战武器锁定：战斗期间强制使用剑，避免误切武器导致无法有效输出。
+            - 门禁小 BOSS 轮换：门禁战不再长期固定凋零，支持轮换出场。
+            - 商人屋系统：可卖材料换钻石，可用钻石购买护甲。
+            - 防晒霜机制：5 钻购买，持续 180 秒，联动沙漠/地狱/火山/岩浆环境伤害。
+            - 末影珍珠增强：使用后触发 60 秒隐身（隐身期间免受伤害）。
+            - 版本文档、发布说明与构建元信息已同步更新。
           artifacts: |
             apk/android-app/android/app/build/outputs/apk/debug/*.apk,
             apk/android-app/android/app/build/outputs/apk/release/*.apk

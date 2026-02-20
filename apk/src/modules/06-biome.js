@@ -54,7 +54,7 @@ function selectBiome(x, scoreValue) {
 function updateCurrentBiome() {
     const progressScore = getProgressScore();
     const nextBiome = getBiomeById(getBiomeIdForScore(progressScore));
-    const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
+    const hasFireResistance = hasHeatProtection();
     refreshBiomeGateState();
     if (nextBiome.id !== currentBiome) {
         // P1-2: 最小停留守卫
@@ -113,7 +113,13 @@ function applyBiomeEffectsToPlayer() {
     const useSlowHeatDot = currentBiome === "nether" || currentBiome === "volcano";
     if (!useSlowHeatDot && biome.effects?.damage && !biome.effects.onEnterOnly) {
         if (gameFrame % 90 === 0) {
-            damagePlayer(biome.effects.damage, player.x, 30);
+            let envDamage = Number(biome.effects.damage) || 0;
+            if (currentBiome === "desert" && hasSunscreenBuff()) {
+                envDamage *= 0.35;
+            }
+            if (envDamage > 0) {
+                damagePlayer(envDamage, player.x, 30);
+            }
         }
     }
     // 火山/地狱统一环境掉血：每分钟掉半格
@@ -243,7 +249,7 @@ function handleBiomeGateVictory(payload) {
     if (!toBiome || toBiome === currentBiome) return;
     const nextBiome = getBiomeById(toBiome);
     const progressScore = getProgressScore();
-    const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
+    const hasFireResistance = hasHeatProtection();
     applyBiomeTransition(nextBiome, progressScore, hasFireResistance);
 }
 
@@ -337,6 +343,16 @@ function resetBiomeStayStats() {
 // ============ 高温环境（火山/地狱） ============
 let biomeHeatDotTimerMs = 0;
 let biomeHeatLastTickMs = 0;
+let lavaProtectionTickAt = 0;
+
+function hasSunscreenBuff() {
+    return typeof hasVillageBuff === "function" && hasVillageBuff("sunscreen");
+}
+
+function hasHeatProtection() {
+    if (typeof hasVillageBuff !== "function") return false;
+    return hasVillageBuff("fireResistance") || hasVillageBuff("sunscreen");
+}
 let netherMushrooms = [];
 let fragilePlatforms = [];
 const biomeParticlePools = Object.create(null);
@@ -577,7 +593,7 @@ function emitBiomeParticle(type, x, y) {
 function updateExtremeHeatEnvironment() {
     const now = Date.now();
     const inHeatBiome = currentBiome === "nether" || currentBiome === "volcano";
-    const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
+    const hasFireResistance = hasHeatProtection();
     if (!inHeatBiome) {
         biomeHeatDotTimerMs = 0;
         biomeHeatLastTickMs = now;
@@ -638,6 +654,17 @@ function checkLavaCollision() {
     decorations.forEach(d => {
         if (d.type !== 'lava_pool') return;
         if (rectIntersect(player.x, player.y + player.height - 5, player.width, 5, d.x, d.y, d.width, d.height)) {
+            if (hasSunscreenBuff()) {
+                const now = Date.now();
+                if (now - lavaProtectionTickAt > 900) {
+                    lavaProtectionTickAt = now;
+                    damagePlayer(1, d.x, 40);
+                    showFloatingText("🧴 防晒霜抵消岩浆致命伤", player.x + player.width / 2, player.y - 30, "#FFD54F");
+                }
+                player.y = Math.min(player.y, d.y - player.height - 2);
+                player.velY = Math.min(0, Number(player.velY) || 0);
+                return;
+            }
             playerHp = 0;
             updateHpUI();
             showFloatingText(BIOME_MESSAGES.lavaFall, player.x + player.width / 2, player.y - 30, '#FF0000');

@@ -7,9 +7,11 @@ function isPlayerProtectedFromWitherInVillage() {
 // BOSS 基类
 class Boss {
     constructor(config) {
+        const hpMultiplier = Math.max(1, Number(settings?.bossHpMultiplier) || 2);
+        const scaledMaxHp = Math.max(1, Math.round((Number(config.maxHp) || 1) * hpMultiplier));
         this.name = config.name;
-        this.maxHp = config.maxHp;
-        this.hp = config.maxHp;
+        this.maxHp = scaledMaxHp;
+        this.hp = scaledMaxHp;
         this.x = config.x || 0;
         this.y = config.y || 100;
         this.width = config.width || 96;
@@ -149,6 +151,9 @@ globalThis.bossArena = globalThis.bossArena || {
     bossTypes: ['wither', 'ghast', 'blaze', 'wither_skeleton'],
     bossScores: [2000, 4000, 6000, 8000],         // 触发分数阈值
     spawned: {},           // 已生成的BOSS记录
+    gateBossRotationCursor: 0,
+    weaponLockActive: false,
+    weaponBeforeBoss: "sword",
 
 // PLACEHOLDER_ARENA_METHODS
 
@@ -164,7 +169,45 @@ globalThis.bossArena = globalThis.bossArena || {
         const fromBiome = (fromBiomeId && typeof getBiomeById === "function") ? getBiomeById(fromBiomeId) : null;
         const biomeType = String(fromBiome?.gateBossType || "").trim().toLowerCase();
         const defaultType = String(gateBossCfg.defaultType || "wither").trim().toLowerCase();
-        return this.normalizeBossType(biomeType || defaultType);
+        if (biomeType) return this.normalizeBossType(biomeType);
+        // Keep gate bosses rotating by default so players don't always face wither.
+        if (!defaultType || defaultType === "rotate") return this.nextGateBossType();
+        if (defaultType === "wither" && gateBossCfg.rotateOnFallback !== false) return this.nextGateBossType();
+        return this.normalizeBossType(defaultType);
+    },
+
+    nextGateBossType() {
+        const list = Array.isArray(this.bossTypes) && this.bossTypes.length ? this.bossTypes : ["wither"];
+        const idx = Math.max(0, Number(this.gateBossRotationCursor) || 0) % list.length;
+        this.gateBossRotationCursor = (idx + 1) % list.length;
+        return this.normalizeBossType(list[idx]);
+    },
+
+    lockWeaponForBossFight() {
+        if (typeof playerWeapons === "undefined" || !playerWeapons) return;
+        this.weaponLockActive = true;
+        this.weaponBeforeBoss = playerWeapons.current || "sword";
+        if (playerWeapons.current !== "sword") {
+            playerWeapons.current = "sword";
+            playerWeapons.attackCooldown = 0;
+            if (typeof updateWeaponUI === "function") updateWeaponUI();
+            showToast("⚔️ BOSS战已锁定为剑模式");
+        }
+    },
+
+    unlockWeaponAfterBossFight() {
+        if (typeof playerWeapons === "undefined" || !playerWeapons) {
+            this.weaponLockActive = false;
+            this.weaponBeforeBoss = "sword";
+            return;
+        }
+        const prev = this.weaponBeforeBoss || "sword";
+        const unlocked = Array.isArray(playerWeapons.unlocked) ? playerWeapons.unlocked : [];
+        playerWeapons.current = unlocked.includes(prev) ? prev : "sword";
+        playerWeapons.attackCooldown = 0;
+        this.weaponLockActive = false;
+        this.weaponBeforeBoss = "sword";
+        if (typeof updateWeaponUI === "function") updateWeaponUI();
     },
 
     checkSpawn() {
@@ -194,6 +237,7 @@ globalThis.bossArena = globalThis.bossArena || {
         };
         if (options.markSpawned !== false) this.spawned[resolvedType] = true;
         this.boss = this.createBoss(resolvedType);
+        this.lockWeaponForBossFight();
         const isFlyingBoss = resolvedType === 'wither' || resolvedType === 'ghast' || resolvedType === 'blaze';
         let grantedRangedSupport = false;
         if (isFlyingBoss) {
@@ -247,6 +291,7 @@ globalThis.bossArena = globalThis.bossArena || {
     },
 
     exit() {
+        this.unlockWeaponAfterBossFight();
         this.active = false;
         this.boss = null;
         this.currentEncounter = null;
@@ -313,7 +358,7 @@ globalThis.bossArena = globalThis.bossArena || {
         ctx.fillStyle = '#FFF';
         ctx.font = 'bold 14px Verdana';
         ctx.textAlign = 'center';
-        ctx.fillText(`${this.boss.name} (阶段${this.boss.phase})`, canvas.width / 2, by - 6);
+        ctx.fillText(`${this.boss.name}（阶段${this.boss.phase}）`, canvas.width / 2, by - 6);
         if (this.phaseFlashTimer > 0 && this.phaseBannerText) {
             const bannerAlpha = Math.min(1, this.phaseFlashTimer / 20);
             ctx.fillStyle = `rgba(255, 255, 255, ${bannerAlpha * 0.85})`;
@@ -363,6 +408,10 @@ globalThis.bossArena = globalThis.bossArena || {
         this.phaseFlashTimer = 18;
     }
 };
+
+function isBossWeaponLockActive() {
+    return !!(typeof bossArena !== "undefined" && bossArena && bossArena.weaponLockActive);
+}
 
 // 凋零 BOSS
 class WitherBoss extends Boss {

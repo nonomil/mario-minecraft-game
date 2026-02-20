@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 18-village-render.js - Village rendering (Minecraft style)
  * Draws village as background environment with stone/wood block buildings
  */
@@ -64,8 +64,8 @@ function drawBlockHouse(ctx, bx, by, w, h, colors, type) {
     drawBlock_village(ctx, bx + (cols - 2) * bs, winY, bs, bs, colors.glass);
   }
   // Icon label
-  const icons = { bed_house: '🛏️', word_house: '📖', save_stone: '💾' };
-  const icon = icons[type] || '🏠';
+  const icons = { bed_house: "🛏️", word_house: "📘", trader_house: "🧑‍🌾", save_stone: "💾" };
+  const icon = icons[type] || "🏠";
   ctx.font = `${14 * (worldScale?.x || 1)}px serif`;
   ctx.textAlign = 'center';
   ctx.fillText(icon, bx + w / 2, by - roofRows * bs - 4);
@@ -179,30 +179,38 @@ function drawVillageSign(ctx, x, biomeName) {
 // Draw NPC (Minecraft villager style)
 function drawVillageNPC(ctx, npc) {
   if (!npc) return;
+  // Keep villager close to player silhouette size (player is ~26x52), slightly smaller.
+  const bodyW = 20;
+  const bodyH = 18;
+  const headW = 16;
+  const headH = 14;
+  const legW = 7;
+  const legH = 12;
+  const totalH = bodyH + headH + legH;
   const sx = npc.x;
-  const sy = groundY - 28;
+  const sy = groundY - totalH;
   const legOff = npc.animFrame === 0 ? 0 : 2;
-  // Body (brown robe)
+  // Body (robe)
   ctx.fillStyle = '#8B4513';
-  ctx.fillRect(sx, sy + 8, 14, 14);
-  // Head (skin)
+  ctx.fillRect(sx, sy + headH, bodyW, bodyH);
+  // Head
   ctx.fillStyle = '#D2A679';
-  ctx.fillRect(sx + 2, sy, 10, 10);
-  // Nose (big villager nose)
+  ctx.fillRect(sx + 2, sy, headW, headH);
+  // Nose
   ctx.fillStyle = '#C49A6C';
-  ctx.fillRect(sx + 5, sy + 4, 4, 4);
+  ctx.fillRect(sx + 8, sy + 6, 5, 5);
   // Eyes
   ctx.fillStyle = '#3E2723';
-  const eyeX = npc.facingRight ? sx + 7 : sx + 3;
-  ctx.fillRect(eyeX, sy + 3, 2, 2);
+  const eyeX = npc.facingRight ? sx + 11 : sx + 6;
+  ctx.fillRect(eyeX, sy + 5, 2, 2);
   // Legs
   ctx.fillStyle = '#5D4037';
-  ctx.fillRect(sx + 1 + legOff, sy + 22, 5, 6);
-  ctx.fillRect(sx + 8 - legOff, sy + 22, 5, 6);
+  ctx.fillRect(sx + 2 + legOff, sy + headH + bodyH, legW, legH);
+  ctx.fillRect(sx + bodyW - legW - 2 - legOff, sy + headH + bodyH, legW, legH);
   // Speech bubble
   if (npc.showBubble) {
-    const bw = 70, bh = 16;
-    const bx = sx + 7 - bw / 2;
+    const bw = 88, bh = 18;
+    const bx = sx + bodyW / 2 - bw / 2;
     const by = sy - bh - 6;
     ctx.fillStyle = 'rgba(255,255,255,0.92)';
     ctx.strokeStyle = '#555';
@@ -210,15 +218,15 @@ function drawVillageNPC(ctx, npc) {
     ctx.beginPath();
     if (typeof ctx.roundRect === 'function') ctx.roundRect(bx, by, bw, bh, 3);
     else ctx.rect(bx, by, bw, bh);
-    ctx.fill(); ctx.stroke();
+    ctx.fill();
+    ctx.stroke();
     ctx.fillStyle = '#333';
-    ctx.font = '9px sans-serif';
+    ctx.font = '10px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(npc.bubbleText || '', sx + 7, by + 12);
+    ctx.fillText(npc.bubbleText || '', sx + bodyW / 2, by + 13);
     ctx.textAlign = 'left';
   }
 }
-
 // Main village draw function
 function drawVillages(ctx) {
   if (!settings?.villageEnabled) return;
@@ -311,3 +319,4 @@ function drawVillageBanner(ctx, village) {
   ctx.fillText(text, cx, 24);
   ctx.textAlign = 'left';
 }
+

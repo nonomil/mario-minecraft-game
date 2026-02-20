@@ -15,7 +15,7 @@
   "buildings": {
     "bed_house": { "w": 80, "h": 60, "offset": 100 },
     "word_house": { "w": 100, "h": 80, "offset": 300 },
-    "save_stone": { "w": 40, "h": 50, "offset": 550 },
+    "trader_house": { "w": 72, "h": 62, "offset": 550 },
     "special": { "w": 80, "h": 60, "offset": 700 }
   },
   "biomeWords": {

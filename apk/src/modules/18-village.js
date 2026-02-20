@@ -64,7 +64,7 @@ function loadVillageConfig() {
     buildings: {
       bed_house: { w: 80, h: 60, offset: 100 },
       word_house: { w: 100, h: 80, offset: 300 },
-      save_stone: { w: 40, h: 50, offset: 550 },
+      trader_house: { w: 72, h: 62, offset: 550 },
       special: { w: 80, h: 60, offset: 700 }
     },
     biomeWords: {
@@ -153,7 +153,7 @@ function createVillage(startX, biomeId, index) {
     buildings: [
       { type: 'bed_house',  x: startX + (cfg.bed_house?.offset || 100),  w: cfg.bed_house?.w || 80,  h: cfg.bed_house?.h || 60 },
       { type: 'word_house', x: startX + (cfg.word_house?.offset || 300), w: cfg.word_house?.w || 100, h: cfg.word_house?.h || 80 },
-      { type: 'save_stone', x: startX + (cfg.save_stone?.offset || 550), w: cfg.save_stone?.w || 40,  h: cfg.save_stone?.h || 50 },
+      { type: 'trader_house', x: startX + (cfg.trader_house?.offset || cfg.save_stone?.offset || 550), w: cfg.trader_house?.w || 72,  h: cfg.trader_house?.h || 62 },
       { type: style.specialBuilding, x: startX + (cfg.special?.offset || 700), w: cfg.special?.w || 80, h: cfg.special?.h || 60 }
     ],
     npcs: [],
@@ -853,8 +853,8 @@ function handleVillageInteraction(building, village) {
       return enterVillageInterior(village, building);
     case 'word_house':
       return enterVillageInterior(village, building);
-    case 'save_stone':
-      saveVillageProgress(village);
+    case 'trader_house':
+      openVillageTrader(village);
       return true;
     default:
       if (SPECIAL_BUILDING_EFFECTS[building.type]) {
@@ -869,6 +869,125 @@ function handleVillageInteriorInteraction() {
   const village = getVillageInteriorVillage();
   if (!village) return false;
   return !!triggerVillageInteriorChestAction(village);
+}
+
+const TRADER_MATERIAL_PRICES = {
+  iron: 2,
+  gold: 3,
+  coal: 1,
+  shell: 2,
+  starfish: 4,
+  gunpowder: 2,
+  rotten_flesh: 1,
+  string: 1,
+  ender_pearl: 5,
+  sculk_vein: 4,
+  echo_shard: 6
+};
+
+const TRADER_ARMOR_PRICES = {
+  leather: 10,
+  iron: 20,
+  gold: 30,
+  diamond: 40
+};
+
+function openVillageTrader(village) {
+  if (typeof window === "undefined" || typeof window.prompt !== "function") {
+    showToast("🧑‍🌾 商人暂不可用");
+    return false;
+  }
+  if (pausedByModal) return false;
+  pausedByModal = true;
+  try {
+    const tip = [
+      "商人交易",
+      "1=卖材料换钻石",
+      "2=买盔甲（10木/20铁/30金/40钻）",
+      "3=买防晒霜（5钻，180秒）",
+      "0=取消"
+    ].join("\n");
+    const action = String(window.prompt(tip, "1") || "").trim();
+    if (action === "1") return handleTraderSellMaterials();
+    if (action === "2") return handleTraderBuyArmor();
+    if (action === "3") return handleTraderBuySunscreen();
+    showToast("🛒 已取消交易");
+    return false;
+  } finally {
+    pausedByModal = false;
+  }
+}
+
+function handleTraderSellMaterials() {
+  const sellable = Object.entries(TRADER_MATERIAL_PRICES)
+    .filter(([itemId]) => Number(inventory?.[itemId]) > 0)
+    .map(([itemId, price], idx) => {
+      const count = Number(inventory[itemId]) || 0;
+      const label = ITEM_LABELS[itemId] || itemId;
+      return `${idx + 1}. ${label}（库存${count}，单价${price}钻）`;
+    });
+  if (!sellable.length) {
+    showToast("🧺 没有可出售材料");
+    return false;
+  }
+  const choice = String(window.prompt(`选择出售材料编号：\n${sellable.join("\n")}`, "1") || "").trim();
+  const index = Math.max(1, Number(choice) || 0) - 1;
+  const pickedEntry = Object.entries(TRADER_MATERIAL_PRICES).filter(([itemId]) => Number(inventory?.[itemId]) > 0)[index];
+  if (!pickedEntry) {
+    showToast("🛒 选择无效");
+    return false;
+  }
+  const [itemId, unitPrice] = pickedEntry;
+  const maxCount = Number(inventory[itemId]) || 0;
+  const countInput = String(window.prompt(`输入出售数量（1-${maxCount}）`, "1") || "").trim();
+  const sellCount = Math.max(1, Math.min(maxCount, Number(countInput) || 1));
+  if (sellCount <= 0) return false;
+  inventory[itemId] -= sellCount;
+  inventory.diamond = (Number(inventory.diamond) || 0) + (sellCount * unitPrice);
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
+  showToast(`💎 售出${ITEM_LABELS[itemId] || itemId} x${sellCount}，获得${sellCount * unitPrice}钻石`);
+  return true;
+}
+
+function handleTraderBuyArmor() {
+  const lines = Object.entries(TRADER_ARMOR_PRICES).map(([armorId, price], idx) => {
+    const armorName = ARMOR_TYPES?.[armorId]?.name || armorId;
+    return `${idx + 1}. ${armorName}（${price}钻）`;
+  });
+  const choice = String(window.prompt(`选择购买盔甲编号：\n${lines.join("\n")}`, "1") || "").trim();
+  const index = Math.max(1, Number(choice) || 0) - 1;
+  const pickedEntry = Object.entries(TRADER_ARMOR_PRICES)[index];
+  if (!pickedEntry) {
+    showToast("🛒 选择无效");
+    return false;
+  }
+  const [armorId, cost] = pickedEntry;
+  if ((Number(inventory.diamond) || 0) < cost) {
+    showToast("💎 钻石不足");
+    return false;
+  }
+  inventory.diamond -= cost;
+  if (typeof addArmorToInventory === "function") {
+    addArmorToInventory(armorId);
+  }
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
+  const armorName = ARMOR_TYPES?.[armorId]?.name || armorId;
+  showToast(`🛡️ 购买成功：${armorName}`);
+  return true;
+}
+
+function handleTraderBuySunscreen() {
+  const cost = 5;
+  if ((Number(inventory.diamond) || 0) < cost) {
+    showToast("💎 钻石不足");
+    return false;
+  }
+  inventory.diamond -= cost;
+  setVillageBuff("sunscreen", 180000);
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
+  showToast("🧴 防晒霜已生效（180秒）");
+  showFloatingText("🧴 防晒中", player.x, player.y - 36, "#FFD54F");
+  return true;
 }
 
 function saveVillageProgress(village) {

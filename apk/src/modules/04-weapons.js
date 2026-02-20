@@ -32,6 +32,10 @@ function syncWeaponsFromInventory() {
 }
 
 function switchWeapon() {
+    if (typeof isBossWeaponLockActive === "function" && isBossWeaponLockActive()) {
+        showToast("⚔️ BOSS战期间仅可使用剑");
+        return;
+    }
     const list = playerWeapons.unlocked;
     if (!list.length) return;
     if (list.length === 1) {

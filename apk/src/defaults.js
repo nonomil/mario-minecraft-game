@@ -226,6 +226,7 @@ window.MMWG_DEFAULTS = {
         wordRepeatWindow: 6,
         wordRepeatBias: "reinforce_wrong",
         fixedBossEnabled: true,
+        bossHpMultiplier: 2,
         showWordImage: true,
         showEnvironmentLabels: true,
         biomeSwitchStepScore: 300,
