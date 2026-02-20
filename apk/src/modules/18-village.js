@@ -1,9 +1,9 @@
 ﻿/**
- * 18-village.js - 鏉戝簞绯荤粺鏍稿績閫昏緫
- * v1.8.0 瀹炵幇鏉戝簞鍩虹妗嗘灦
+ * 18-village.js - 村庄系统核心逻辑
+ * v1.8.0 实现村庄基础框架
  */
 
-// ========== 鏉戝簞椋庢牸瀹氫箟 ==========
+// ========== 村庄风格定义 ==========
 const VILLAGE_STYLES = {
   forest: {
     buildingColors: { wall: '#8B6914', roof: '#2E7D32', door: '#5D4037' },
@@ -43,61 +43,105 @@ const VILLAGE_STYLES = {
   }
 };
 
-// ========== 鍔犺浇閰嶇疆 ==========
-function loadVillageConfig() {
-  // 浠?config/village.json 鍔犺浇锛屽け璐ユ椂鐢ㄩ粯璁ゅ€?
-  // 鍦?17-bootstrap.js 鐨?loadAllConfigs() 涓皟鐢?
-  const defaultVillageConfig = {
-    enabled: true,
-    spawnScoreInterval: 500,
-    villageWidth: 800,
-    safeZone: true,
-    restHealFull: true,
-    challengeQuestionCount: 3,
+const DEFAULT_VILLAGE_CONFIG = {
+  enabled: true,
+  spawnScoreInterval: 500,
+  villageWidth: 800,
+  safeZone: true,
+  restHealFull: true,
+  challengeQuestionCount: 3,
+  minSpawnScoreGap: 900,
+  minSpawnDistancePx: 2600,
+  minBiomeTransitionsBetweenVillages: 2,
+  minBiomeStayScoreForVillage: 120,
+  challengeReward: {
+    perfect: { score: 100, diamonds: 1 },
+    partial: { score: 50, diamonds: 0 }
+  },
+  npcSpeed: 0.3,
+  npcGreetDistance: 80,
+  maxActiveVillages: 3,
+  buildings: {
+    bed_house: { w: 80, h: 60, offset: 100 },
+    word_house: { w: 100, h: 80, offset: 300 },
+    trader_house: { w: 72, h: 62, offset: 550 },
+    special: { w: 80, h: 60, offset: 700 }
+  },
+  biomeWords: {
+    forest: ["tree", "leaf", "bird", "flower", "grass", "wood", "deer", "owl"],
+    snow: ["snow", "ice", "cold", "coat", "hat", "scarf", "ski", "sled"],
+    desert: ["sand", "sun", "hot", "water", "cactus", "camel", "oasis", "dry"],
+    mountain: ["rock", "iron", "gold", "pick", "cave", "stone", "gem", "ore"],
+    ocean: ["fish", "wave", "boat", "shell", "whale", "coral", "swim", "sea"],
+    nether: ["fire", "red", "lava", "dark", "flame", "ash", "smoke", "glow"]
+  }
+};
+
+function getVillageConfig() {
+  const cfg = (villageConfig && typeof villageConfig === "object") ? villageConfig : {};
+  return {
+    ...DEFAULT_VILLAGE_CONFIG,
+    ...cfg,
     challengeReward: {
-      perfect: { score: 100, diamonds: 1 },
-      partial: { score: 50, diamonds: 0 }
+      ...DEFAULT_VILLAGE_CONFIG.challengeReward,
+      ...(cfg.challengeReward || {}),
+      perfect: {
+        ...DEFAULT_VILLAGE_CONFIG.challengeReward.perfect,
+        ...(cfg.challengeReward?.perfect || {})
+      },
+      partial: {
+        ...DEFAULT_VILLAGE_CONFIG.challengeReward.partial,
+        ...(cfg.challengeReward?.partial || {})
+      }
     },
-    npcSpeed: 0.3,
-    npcGreetDistance: 80,
-    maxActiveVillages: 3,
     buildings: {
-      bed_house: { w: 80, h: 60, offset: 100 },
-      word_house: { w: 100, h: 80, offset: 300 },
-      trader_house: { w: 72, h: 62, offset: 550 },
-      special: { w: 80, h: 60, offset: 700 }
+      ...DEFAULT_VILLAGE_CONFIG.buildings,
+      ...(cfg.buildings || {})
     },
     biomeWords: {
-      forest: ["tree", "leaf", "bird", "flower", "grass", "wood", "deer", "owl"],
-      snow: ["snow", "ice", "cold", "coat", "hat", "scarf", "ski", "sled"],
-      desert: ["sand", "sun", "hot", "water", "cactus", "camel", "oasis", "dry"],
-      mountain: ["rock", "iron", "gold", "pick", "cave", "stone", "gem", "ore"],
-      ocean: ["fish", "wave", "boat", "shell", "whale", "coral", "swim", "sea"],
-      nether: ["fire", "red", "lava", "dark", "flame", "ash", "smoke", "glow"]
+      ...DEFAULT_VILLAGE_CONFIG.biomeWords,
+      ...(cfg.biomeWords || {})
     }
   };
+}
 
+// ========== 加载配置 ==========
+function loadVillageConfig() {
+  // 从 config/village.json 加载，失败时使用默认值
+  // 在 17-bootstrap.js 的 loadAllConfigs() 中调用
   fetch('config/village.json')
     .then(r => r.json())
     .then(data => {
-      villageConfig = data;
+      villageConfig = {
+        ...DEFAULT_VILLAGE_CONFIG,
+        ...(data || {}),
+        buildings: {
+          ...DEFAULT_VILLAGE_CONFIG.buildings,
+          ...(data?.buildings || {})
+        },
+        biomeWords: {
+          ...DEFAULT_VILLAGE_CONFIG.biomeWords,
+          ...(data?.biomeWords || {})
+        }
+      };
       console.log('[Village] 配置加载成功');
     })
     .catch(() => {
-      villageConfig = defaultVillageConfig;
+      villageConfig = { ...DEFAULT_VILLAGE_CONFIG };
       console.warn('[Village] 使用默认配置');
     });
 }
 
-// ========== 鏉戝簞鐢熸垚 ==========
+// ========== 村庄生成 ==========
 function maybeSpawnVillage(playerScore, playerX) {
   if (!settings || !settings.villageEnabled) return;
-  if (!villageConfig || !villageConfig.enabled) return;
-  const interval = villageConfig.spawnScoreInterval || 500;
-  const minScoreGap = Math.max(0, Number(villageConfig.minSpawnScoreGap ?? 900));
-  const minDistancePx = Math.max(0, Number(villageConfig.minSpawnDistancePx ?? 2600));
-  const minBiomeTransitionsBetweenVillages = Math.max(0, Math.floor(Number(villageConfig.minBiomeTransitionsBetweenVillages ?? 2)));
-  const minBiomeStayScoreForVillage = Math.max(0, Number(villageConfig.minBiomeStayScoreForVillage ?? 120));
+  const cfg = getVillageConfig();
+  if (!cfg.enabled) return;
+  const interval = cfg.spawnScoreInterval || 500;
+  const minScoreGap = Math.max(0, Number(cfg.minSpawnScoreGap ?? 900));
+  const minDistancePx = Math.max(0, Number(cfg.minSpawnDistancePx ?? 2600));
+  const minBiomeTransitionsBetweenVillages = Math.max(0, Math.floor(Number(cfg.minBiomeTransitionsBetweenVillages ?? 2)));
+  const minBiomeStayScoreForVillage = Math.max(0, Number(cfg.minBiomeStayScoreForVillage ?? 120));
 
   const transitionTick = (() => {
     if (typeof getBiomeVisitCountSnapshot !== "function") return 0;
@@ -113,17 +157,26 @@ function maybeSpawnVillage(playerScore, playerX) {
     return Number(info.scoreInBiome) || 0;
   })();
 
-  if (typeof villageSpawnState !== "undefined" && villageSpawnState) {
+  const hasSpawnHistory = (() => {
+    const hasScoreMark = villageSpawnedForScore && typeof villageSpawnedForScore === "object"
+      ? Object.keys(villageSpawnedForScore).length > 0
+      : false;
+    const lastScore = Number(villageSpawnState?.lastSpawnScore);
+    const lastX = Number(villageSpawnState?.lastSpawnX);
+    return hasScoreMark || Number.isFinite(lastScore) && lastScore > 0 || Number.isFinite(lastX) && lastX > 0;
+  })();
+
+  if (typeof villageSpawnState !== "undefined" && villageSpawnState && hasSpawnHistory) {
     if ((playerScore - (Number(villageSpawnState.lastSpawnScore) || -Infinity)) < minScoreGap) return;
     if ((playerX - (Number(villageSpawnState.lastSpawnX) || -Infinity)) < minDistancePx) return;
     if ((transitionTick - (Number(villageSpawnState.lastSpawnTransitionTick) || 0)) < minBiomeTransitionsBetweenVillages) return;
     if (stayScore < minBiomeStayScoreForVillage) return;
   }
 
-  // 璁＄畻褰撳墠鍒嗘暟搴旇鐢熸垚鐨勬潙搴勭紪鍙?
+  // 计算当前分数应当生成的村庄编号
   const villageIndex = Math.floor(playerScore / interval);
-  if (villageIndex < 1) return; // 0鍒嗕笉鐢熸垚
-  if (villageSpawnedForScore[villageIndex]) return; // 宸茬敓鎴?
+  if (villageIndex < 1) return; // 0分不生成
+  if (villageSpawnedForScore[villageIndex]) return; // 已生成
 
   const biomeId = currentBiome || 'forest';
   const village = createVillage(playerX + 600, biomeId, villageIndex);
@@ -136,18 +189,19 @@ function maybeSpawnVillage(playerScore, playerX) {
     villageSpawnState.lastSpawnTransitionTick = transitionTick;
   }
 
-  // 鍥炴敹杩滃鐨勬潙搴?
+  // 回收远处的村庄
   cleanupVillages(playerX);
   console.log(`[Village] 生成村庄 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
 }
 
 function createVillage(startX, biomeId, index) {
+  const config = getVillageConfig();
   const style = VILLAGE_STYLES[biomeId] || VILLAGE_STYLES.forest;
-  const cfg = villageConfig.buildings || {};
+  const cfg = config.buildings || {};
   const village = {
     id: index,
     x: startX,
-    width: villageConfig.villageWidth || 800,
+    width: config.villageWidth || 800,
     biomeId: biomeId,
     style: style,
     buildings: [
@@ -166,7 +220,7 @@ function createVillage(startX, biomeId, index) {
     saved: false
   };
 
-  // v1.8.1 娣诲姞 NPC
+  // v1.8.1 添加 NPC
   if (typeof createVillageNPC === 'function') {
     const roles = ['greeter', 'teacher', 'trader'];
     const baseX = startX + 200;
@@ -205,18 +259,18 @@ function spawnVillageItems(village) {
 }
 
 function cleanupVillages(playerX) {
-  const max = villageConfig.maxActiveVillages || 3;
-  // 绉婚櫎鐜╁韬悗瓒呰繃 2000px 鐨勬潙搴?
+  const max = getVillageConfig().maxActiveVillages || 3;
+  // 移除玩家身后超过 2000px 的村庄
   activeVillages = activeVillages.filter(v => {
     return (v.x + v.width) > playerX - 2000;
   });
-  // 濡傛灉浠嶈秴杩囦笂闄愶紝绉婚櫎鏈€杩滅殑
+  // 如果仍超过上限，移除最远的
   while (activeVillages.length > max) {
     activeVillages.shift();
   }
 }
 
-// ========== NPC 鏉戞皯绯荤粺 (v1.8.1) ==========
+// ========== NPC 村民系统 (v1.8.1) ==========
 
 const NPC_ROLES = {
   greeter: {
@@ -259,7 +313,7 @@ function createVillageNPC(baseX, role, villageX, villageWidth) {
 
 function updateVillageNPCs(village) {
   for (const npc of village.npcs) {
-    // 鏉ュ洖璧板姩
+    // 来回走动
     npc.x += npc.direction * npc.speed;
     if (npc.x <= npc.minX) {
       npc.x = npc.minX;
@@ -271,27 +325,27 @@ function updateVillageNPCs(village) {
       npc.facingRight = false;
     }
 
-    // 璧拌矾鍔ㄧ敾甯?
+    // 走路动画帧
     npc.animTimer++;
     if (npc.animTimer >= 15) {
       npc.animTimer = 0;
       npc.animFrame = (npc.animFrame + 1) % 2;
     }
 
-    // 鐜╁闈犺繎鏃舵樉绀烘皵娉?
+    // 玩家靠近时显示气泡
     const dist = Math.abs(player.x - npc.x);
-    const greetDist = villageConfig.npcGreetDistance || 80;
+    const greetDist = getVillageConfig().npcGreetDistance || 80;
     if (dist < greetDist) {
       npc.showBubble = true;
-      // 闈㈠悜鐜╁
+      // 面向玩家
       npc.facingRight = player.x > npc.x;
-      npc.direction = 0; // 鍋滀笅鏉?
-      npc.bubbleTimer = 120; // 姘旀场鎸佺画 2 绉?
+      npc.direction = 0; // 停下来
+      npc.bubbleTimer = 120; // 气泡持续 2 秒
     } else if (npc.bubbleTimer > 0) {
       npc.bubbleTimer--;
       if (npc.bubbleTimer <= 0) {
         npc.showBubble = false;
-        // 鎭㈠宸￠€?
+        // 恢复巡逻
         npc.direction = npc.facingRight ? 1 : -1;
       }
     } else {
@@ -300,14 +354,14 @@ function updateVillageNPCs(village) {
   }
 }
 
-// ========== 鏉戝簞鐘舵€佹洿鏂?==========
+// ========== 村庄状态更新 ==========
 function updateVillages() {
   if (!settings || !settings.villageEnabled) return;
   if (!player) return;
   if (typeof updateVillageBuffs === 'function') updateVillageBuffs();
-  // 妫€鏌ユ槸鍚﹂渶瑕佺敓鎴愭柊鏉戝簞
+  // 检查是否需要生成新村庄
   maybeSpawnVillage(score, player.x);
-  // 妫€娴嬬帺瀹舵槸鍚﹀湪鏉戝簞鍐?
+  // 检测玩家是否在村庄内
   const wasInVillage = playerInVillage;
   playerInVillage = false;
   currentVillage = null;
@@ -328,7 +382,7 @@ function updateVillages() {
           }
         }
       }
-      // v1.8.1 鏇存柊鏉戞皯
+      // v1.8.1 更新村民
       updateVillageNPCs(v);
       if (typeof tryAutoEnterVillageInterior === "function") {
         tryAutoEnterVillageInterior(v);
@@ -339,12 +393,12 @@ function updateVillages() {
   }
   if (wasInVillage && !playerInVillage) {
     showToast(BIOME_MESSAGES.leaveVillage);
-    // v1.8.2 娓呴櫎浼戞伅鎻愮ず
+    // v1.8.2 清除休息提示
     hideRestPrompt();
   }
 }
 
-// ========== 浼戞伅绯荤粺 (v1.8.2) ==========
+// ========== 休息系统 (v1.8.2) ==========
 let restPromptVisible = false;
 let restPromptVillage = null;
 const INTERIOR_BUILDING_TYPES = new Set(["bed_house", "word_house"]);
@@ -726,7 +780,7 @@ function triggerVillageInteriorChestAction(village) {
 
 function checkVillageRest(village) {
   if (!village) return;
-  if (village.restUsed) return; // 宸蹭娇鐢ㄨ繃
+  if (village.restUsed) return; // 已使用过
   const nearby = getNearbyBuilding(village);
   if (nearby && nearby.type === 'bed_house') showRestPrompt(village);
   else hideRestPrompt();
@@ -787,15 +841,16 @@ function performRest(village) {
     return;
   }
 
-  // 妫€鏌ユ弧琛€鏉′欢
+  // 检查满血条件
   const isFullHp = playerHp >= playerMaxHp;
-  if (isFullHp && villageConfig.restHealFull) {
+  const cfg = getVillageConfig();
+  if (isFullHp && cfg.restHealFull) {
     showToast(UI_TEXTS.restFullHp);
     return;
   }
 
   // 鎵ц浼戞伅鍥炶
-  if (villageConfig.restHealFull) {
+  if (cfg.restHealFull) {
     playerHp = playerMaxHp;
   } else {
     playerHp = Math.min(playerMaxHp, playerHp + 5);
@@ -805,11 +860,11 @@ function performRest(village) {
   village.restUsed = true;
   hideRestPrompt();
 
-  const healAmount = villageConfig.restHealFull ? '鍏ㄦ弧' : '+5';
+  const healAmount = cfg.restHealFull ? '全满' : '+5';
   showToast(UI_TEXTS.restSuccess(healAmount));
   showFloatingText(UI_TEXTS.restHeal, player.x, player.y - 60);
 
-  // 淇濆瓨杩涘害
+  // 保存进度
   if (typeof saveCurrentProgress === 'function') {
     saveCurrentProgress();
   }
@@ -836,10 +891,11 @@ function getBiomeName(biomeId) {
   return biome ? biome.name : biomeId;
 }
 
-// ========== v1.8.3 鏉戝簞鍗曡瘝绯荤粺 ==========
+// ========== v1.8.3 村庄单词系统 ==========
 function getVillageWords(biomeId) {
-  if (!villageConfig || !villageConfig.biomeWords) return [];
-  return villageConfig.biomeWords[biomeId] || villageConfig.biomeWords.forest || [];
+  const cfg = getVillageConfig();
+  if (!cfg.biomeWords) return [];
+  return cfg.biomeWords[biomeId] || cfg.biomeWords.forest || [];
 }
 
 function handleVillageInteraction(building, village) {
@@ -893,55 +949,144 @@ const TRADER_ARMOR_PRICES = {
 };
 
 function openVillageTrader(village) {
-  if (typeof window === "undefined" || typeof window.prompt !== "function") {
+  if (typeof document === "undefined") {
     showToast("🧑‍🌾 商人暂不可用");
     return false;
   }
   if (pausedByModal) return false;
   pausedByModal = true;
-  try {
-    const tip = [
-      "商人交易",
-      "1=卖材料换钻石",
-      "2=买盔甲（10木/20铁/30金/40钻）",
-      "3=买防晒霜（5钻，180秒）",
-      "0=取消"
-    ].join("\n");
-    const action = String(window.prompt(tip, "1") || "").trim();
-    if (action === "1") return handleTraderSellMaterials();
-    if (action === "2") return handleTraderBuyArmor();
-    if (action === "3") return handleTraderBuySunscreen();
-    showToast("🛒 已取消交易");
-    return false;
-  } finally {
+  paused = true;
+  const modal = ensureVillageTraderModal();
+  renderVillageTraderMain(modal, village);
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+  return true;
+}
+
+function ensureVillageTraderModal() {
+  let modal = document.getElementById("village-trader-modal");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "village-trader-modal";
+  modal.className = "learning-modal";
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = `
+    <div class="learning-modal-content" style="max-width: 560px;">
+      <div id="village-trader-body"></div>
+    </div>
+  `;
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeVillageTrader();
+  });
+  document.getElementById("game-container")?.appendChild(modal);
+  return modal;
+}
+
+function closeVillageTrader() {
+  const modal = document.getElementById("village-trader-modal");
+  if (modal) {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+  }
+  if (pausedByModal) {
+    paused = false;
     pausedByModal = false;
   }
 }
 
-function handleTraderSellMaterials() {
+function renderVillageTraderMain(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const diamondCount = Number(inventory?.diamond) || 0;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">🧑‍🌾 商人交易</h3>
+    <p style="margin:0 0 12px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b></p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button id="trader-btn-sell" class="game-btn">卖材料换钻石</button>
+      <button id="trader-btn-armor" class="game-btn">买盔甲</button>
+      <button id="trader-btn-sunscreen" class="game-btn">买防晒霜（5💎）</button>
+      <button id="trader-btn-close" class="game-btn">关闭</button>
+    </div>
+  `;
+  body.querySelector("#trader-btn-sell")?.addEventListener("click", () => renderTraderSellMaterials(modal, village));
+  body.querySelector("#trader-btn-armor")?.addEventListener("click", () => renderTraderBuyArmor(modal, village));
+  body.querySelector("#trader-btn-sunscreen")?.addEventListener("click", () => {
+    handleTraderBuySunscreen();
+    renderVillageTraderMain(modal, village);
+  });
+  body.querySelector("#trader-btn-close")?.addEventListener("click", closeVillageTrader);
+}
+
+function renderTraderSellMaterials(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
   const sellable = Object.entries(TRADER_MATERIAL_PRICES)
     .filter(([itemId]) => Number(inventory?.[itemId]) > 0)
-    .map(([itemId, price], idx) => {
+    .map(([itemId, price]) => {
       const count = Number(inventory[itemId]) || 0;
       const label = ITEM_LABELS[itemId] || itemId;
-      return `${idx + 1}. ${label}（库存${count}，单价${price}钻）`;
+      return { itemId, price, count, label };
     });
   if (!sellable.length) {
     showToast("🧺 没有可出售材料");
+    renderVillageTraderMain(modal, village);
+    return;
+  }
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">出售材料</h3>
+    <div id="trader-sell-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="margin-top:12px;">
+      <button id="trader-btn-back-main" class="game-btn">返回</button>
+    </div>
+  `;
+  const list = body.querySelector("#trader-sell-list");
+  sellable.forEach(({ itemId, price, count, label }) => {
+    const btn = document.createElement("button");
+    btn.className = "game-btn";
+    btn.textContent = `${label}（库存${count}，单价${price}💎）`;
+    btn.addEventListener("click", () => renderTraderSellCount(modal, village, itemId, price, count, label));
+    list?.appendChild(btn);
+  });
+  body.querySelector("#trader-btn-back-main")?.addEventListener("click", () => renderVillageTraderMain(modal, village));
+}
+
+function renderTraderSellCount(modal, village, itemId, unitPrice, maxCount, label) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const btnAllText = `全部（${maxCount}）`;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">出售 ${label}</h3>
+    <p style="margin:0 0 12px;color:#E0E0E0;">单价：${unitPrice}💎 / 件，库存：${maxCount}</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button id="trader-sell-1" class="game-btn">卖出 x1</button>
+      <button id="trader-sell-5" class="game-btn">卖出 x5</button>
+      <button id="trader-sell-all" class="game-btn">${btnAllText}</button>
+      <button id="trader-sell-back" class="game-btn">返回材料列表</button>
+    </div>
+  `;
+  body.querySelector("#trader-sell-1")?.addEventListener("click", () => {
+    sellMaterialByTrader(itemId, unitPrice, 1);
+    renderTraderSellMaterials(modal, village);
+  });
+  body.querySelector("#trader-sell-5")?.addEventListener("click", () => {
+    sellMaterialByTrader(itemId, unitPrice, 5);
+    renderTraderSellMaterials(modal, village);
+  });
+  body.querySelector("#trader-sell-all")?.addEventListener("click", () => {
+    sellMaterialByTrader(itemId, unitPrice, maxCount);
+    renderTraderSellMaterials(modal, village);
+  });
+  body.querySelector("#trader-sell-back")?.addEventListener("click", () => renderTraderSellMaterials(modal, village));
+}
+
+function sellMaterialByTrader(itemId, unitPrice, requestedCount) {
+  const maxCount = Number(inventory?.[itemId]) || 0;
+  const sellCount = Math.max(0, Math.min(maxCount, Number(requestedCount) || 0));
+  if (sellCount <= 0) {
+    showToast("🛒 没有可出售数量");
     return false;
   }
-  const choice = String(window.prompt(`选择出售材料编号：\n${sellable.join("\n")}`, "1") || "").trim();
-  const index = Math.max(1, Number(choice) || 0) - 1;
-  const pickedEntry = Object.entries(TRADER_MATERIAL_PRICES).filter(([itemId]) => Number(inventory?.[itemId]) > 0)[index];
-  if (!pickedEntry) {
-    showToast("🛒 选择无效");
-    return false;
-  }
-  const [itemId, unitPrice] = pickedEntry;
-  const maxCount = Number(inventory[itemId]) || 0;
-  const countInput = String(window.prompt(`输入出售数量（1-${maxCount}）`, "1") || "").trim();
-  const sellCount = Math.max(1, Math.min(maxCount, Number(countInput) || 1));
-  if (sellCount <= 0) return false;
   inventory[itemId] -= sellCount;
   inventory.diamond = (Number(inventory.diamond) || 0) + (sellCount * unitPrice);
   if (typeof updateInventoryUI === "function") updateInventoryUI();
@@ -949,27 +1094,39 @@ function handleTraderSellMaterials() {
   return true;
 }
 
-function handleTraderBuyArmor() {
-  const lines = Object.entries(TRADER_ARMOR_PRICES).map(([armorId, price], idx) => {
+function renderTraderBuyArmor(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">购买盔甲</h3>
+    <div id="trader-armor-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="margin-top:12px;">
+      <button id="trader-btn-back-main" class="game-btn">返回</button>
+    </div>
+  `;
+  const list = body.querySelector("#trader-armor-list");
+  Object.entries(TRADER_ARMOR_PRICES).forEach(([armorId, cost]) => {
     const armorName = ARMOR_TYPES?.[armorId]?.name || armorId;
-    return `${idx + 1}. ${armorName}（${price}钻）`;
+    const btn = document.createElement("button");
+    btn.className = "game-btn";
+    btn.textContent = `${armorName}（${cost}💎）`;
+    btn.addEventListener("click", () => {
+      handleTraderBuyArmor(armorId, cost);
+      renderTraderBuyArmor(modal, village);
+    });
+    list?.appendChild(btn);
   });
-  const choice = String(window.prompt(`选择购买盔甲编号：\n${lines.join("\n")}`, "1") || "").trim();
-  const index = Math.max(1, Number(choice) || 0) - 1;
-  const pickedEntry = Object.entries(TRADER_ARMOR_PRICES)[index];
-  if (!pickedEntry) {
-    showToast("🛒 选择无效");
-    return false;
-  }
-  const [armorId, cost] = pickedEntry;
-  if ((Number(inventory.diamond) || 0) < cost) {
+  body.querySelector("#trader-btn-back-main")?.addEventListener("click", () => renderVillageTraderMain(modal, village));
+}
+
+function handleTraderBuyArmor(armorId, cost) {
+  if (!armorId || !Number.isFinite(Number(cost))) return false;
+  if ((Number(inventory.diamond) || 0) < Number(cost)) {
     showToast("💎 钻石不足");
     return false;
   }
-  inventory.diamond -= cost;
-  if (typeof addArmorToInventory === "function") {
-    addArmorToInventory(armorId);
-  }
+  inventory.diamond -= Number(cost);
+  if (typeof addArmorToInventory === "function") addArmorToInventory(armorId);
   if (typeof updateInventoryUI === "function") updateInventoryUI();
   const armorName = ARMOR_TYPES?.[armorId]?.name || armorId;
   showToast(`🛡️ 购买成功：${armorName}`);

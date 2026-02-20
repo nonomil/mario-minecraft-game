@@ -64,12 +64,14 @@ function drawBlockHouse(ctx, bx, by, w, h, colors, type) {
     drawBlock_village(ctx, bx + (cols - 2) * bs, winY, bs, bs, colors.glass);
   }
   // Icon label
-  const icons = { bed_house: "🛏️", word_house: "📘", trader_house: "🧑‍🌾", save_stone: "💾" };
+  const icons = { bed_house: "🛏️", word_house: "", trader_house: "🧑‍🌾", save_stone: "💾" };
   const icon = icons[type] || "🏠";
-  ctx.font = `${14 * (worldScale?.x || 1)}px serif`;
-  ctx.textAlign = 'center';
-  ctx.fillText(icon, bx + w / 2, by - roofRows * bs - 4);
-  ctx.textAlign = 'left';
+  if (icon) {
+    ctx.font = `${14 * (worldScale?.x || 1)}px serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(icon, bx + w / 2, by - roofRows * bs - 4);
+    ctx.textAlign = 'left';
+  }
 }
 
 // Draw a bed inside the bed_house area

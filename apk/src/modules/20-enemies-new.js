@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 20-enemies-new.js - 新群系敌人系统 (v1.7.0)
  * 樱花丛林、蘑菇岛、火山、深暗之域、天空之城专用敌人
  */
@@ -53,7 +53,7 @@ const BIOME_ENEMY_STATS = {
         biome: "mushroom_island"
     },
 
-    // 火山敌人
+    // 鐏北鏁屼汉
     magma_cube: {
         hp: 25,
         speed: 1.2,
@@ -156,7 +156,7 @@ function consumeSilentBootsDurability(cost = 1) {
     if (silentBootsState.durability <= 0) {
         silentBootsState.equipped = false;
         silentBootsState.durability = 0;
-        showToast("静音鞋已损坏");
+        showToast("静音靴已损坏");
     }
 }
 
@@ -272,7 +272,7 @@ class BeeEnemy extends Enemy {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
-        // 蜜蜂悬停飞行
+        // 铚滆渹鎮仠椋炶
         this.y = this.startY + Math.sin(gameFrame * 0.05 + this.hoverOffset) * 20;
 
         if (dist < 180) {
@@ -508,7 +508,7 @@ class MagmaCubeEnemy extends Enemy {
             }
         }
 
-        // 碰撞伤害
+        // 碰撞伤害
         if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
             damagePlayer(this.damage, this.x);
         }
@@ -738,7 +738,7 @@ class PhantomEnemy extends Enemy {
     update(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
 
-        // 飞行高度
+        // 椋炶楂樺害
         this.y = this.startY - this.flyHeight;
 
         if (this.isDiving) {
@@ -761,7 +761,7 @@ class PhantomEnemy extends Enemy {
             return;
         }
 
-        // 盘旋飞行
+        // 盘旋飞行
         if (dist < 250) {
             this.state = "chase";
             this.circlePhase += 0.03;
@@ -841,7 +841,7 @@ class VexEnemy extends Enemy {
     }
 
     applyGravity() {
-        // 恼鬼不受重力影响
+        // 恶魂不受重力影响
     }
 
     update(playerRef) {
@@ -999,9 +999,17 @@ function spawnBiomeEnemy(biomeId, x, y) {
             if (score > 1000) enemyTypes.push("phantom");
             break;
         default:
-            return null;
+            break;
     }
 
+    // 狐狸全图随机刷新：樱花更常见，其它群系低概率出现。
+    if (biomeId === "cherry_grove") {
+        if (Math.random() < 0.55) enemyTypes.push("fox");
+    } else if (Math.random() < 0.18) {
+        enemyTypes.push("fox");
+    }
+
+    if (!enemyTypes.length) return null;
     const type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
     return createBiomeEnemy(type, x, y);
 }
@@ -1027,3 +1035,4 @@ function createBiomeEnemy(type, x, y) {
 if (typeof ENEMY_STATS !== 'undefined') {
     Object.assign(ENEMY_STATS, BIOME_ENEMY_STATS);
 }
+
