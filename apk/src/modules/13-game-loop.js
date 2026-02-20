@@ -573,10 +573,34 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const penalty = scorePenaltyForDamage(baseDamage * diff.enemyDamageMult);
     addScore(-penalty);
     const defense = getArmorDefense();
-    const reduction = Math.min(0.5, defense * 0.1);
-    const actualDamage = Math.max(1, Math.round(scaledDamage * (1 - reduction)));
-    if (playerEquipment.armor && playerEquipment.armorDurability > 0) {
-        playerEquipment.armorDurability = Math.max(0, playerEquipment.armorDurability - 5);
+    const armorId = playerEquipment.armor;
+    const hasArmor = !!(armorId && playerEquipment.armorDurability > 0);
+    const reductionByArmor = {
+        leather: 0.2,
+        chainmail: 0.35,
+        iron: 0.55,
+        gold: 0.65,
+        diamond: 1.0,
+        netherite: 1.0
+    };
+    const baseReduction = Math.min(0.6, defense * 0.12);
+    const armorReduction = reductionByArmor[armorId];
+    const reduction = hasArmor ? (Number.isFinite(armorReduction) ? armorReduction : baseReduction) : baseReduction;
+    const minDamage = hasArmor ? 0 : 1;
+    const actualDamage = Math.max(minDamage, Math.round(scaledDamage * (1 - reduction)));
+    if (hasArmor) {
+        const durabilityLossByArmor = {
+            leather: 6,
+            chainmail: 5,
+            iron: 4,
+            gold: 5,
+            diamond: 3,
+            netherite: 2
+        };
+        playerEquipment.armorDurability = Math.max(0, playerEquipment.armorDurability - (durabilityLossByArmor[armorId] || 5));
+        if (actualDamage <= 0) {
+            showFloatingText("🛡️ 格挡", player.x, player.y - 24, "#80DEEA");
+        }
         if (playerEquipment.armorDurability <= 0) {
             const broken = ARMOR_TYPES[playerEquipment.armor];
             showToast(`${broken?.name || "盔甲"} 已破损`);

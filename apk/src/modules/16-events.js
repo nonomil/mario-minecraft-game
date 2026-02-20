@@ -379,18 +379,47 @@ function wireTouchControls() {
     function bindTap(action, fn) {
         const btn = root.querySelector(`[data-action="${action}"]`);
         if (!btn) return;
+        let armed = false;
+        let lastTapAt = 0;
+        const fireTap = (e) => {
+            if (e) e.preventDefault();
+            const now = Date.now();
+            if (now - lastTapAt < 180) return;
+            lastTapAt = now;
+            fn();
+        };
         const supportsPointer = (typeof window !== "undefined") && ("PointerEvent" in window);
         if (supportsPointer) {
             btn.addEventListener("pointerdown", e => {
                 e.preventDefault();
-                fn();
+                armed = true;
+                try { btn.setPointerCapture(e.pointerId); } catch {}
             }, { passive: false });
+            btn.addEventListener("pointerup", e => {
+                if (!armed) return;
+                armed = false;
+                fireTap(e);
+            }, { passive: false });
+            btn.addEventListener("pointercancel", () => { armed = false; }, { passive: false });
+            btn.addEventListener("lostpointercapture", () => { armed = false; });
             return;
         }
 
-        btn.addEventListener("touchstart", e => { e.preventDefault(); fn(); }, { passive: false });
-        btn.addEventListener("mousedown", e => { e.preventDefault(); fn(); }, { passive: false });
-        btn.addEventListener("click", e => { e.preventDefault(); fn(); }, { passive: false });
+        btn.addEventListener("touchstart", e => { e.preventDefault(); armed = true; }, { passive: false });
+        btn.addEventListener("touchend", e => {
+            if (!armed) return;
+            armed = false;
+            fireTap(e);
+        }, { passive: false });
+        btn.addEventListener("touchcancel", () => { armed = false; }, { passive: false });
+        btn.addEventListener("mousedown", e => { e.preventDefault(); armed = true; }, { passive: false });
+        btn.addEventListener("mouseup", e => {
+            if (!armed) return;
+            armed = false;
+            fireTap(e);
+        }, { passive: false });
+        btn.addEventListener("mouseleave", () => { armed = false; });
+        btn.addEventListener("click", e => { e.preventDefault(); }, { passive: false });
     }
 
     bindHold("left", () => { keys.left = true; }, () => { keys.left = false; });

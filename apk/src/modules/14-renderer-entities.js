@@ -19,6 +19,31 @@ function drawSteve(x, y, facingRight, attacking) {
     const ex = facingRight ? x + 16 * s : x + 6 * s;
     ctx.fillRect(ex, y + 6 * s, 4 * s, 4 * s); // Steve's eye
 
+    if (playerEquipment?.armor) {
+        const armor = ARMOR_TYPES?.[playerEquipment.armor];
+        const dur = Math.max(0, Math.min(100, Number(playerEquipment?.armorDurability) || 0));
+        if (armor && dur > 0) {
+            const alpha = 0.4 + (dur / 100) * 0.35;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = armor.color || "#90A4AE";
+            // Helmet (on head, slightly wider than hair)
+            ctx.fillRect(x + 2 * s, y - 1 * s, 22 * s, 8 * s);
+            // Chest plate
+            ctx.fillRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
+            // Shoulder pads
+            ctx.fillRect(x + 4 * s, y + 20 * s, 2 * s, 8 * s);
+            ctx.fillRect(x + 20 * s, y + 20 * s, 2 * s, 8 * s);
+            // Leggings
+            ctx.fillRect(x + 6 * s, y + 40 * s, 14 * s, 8 * s);
+            ctx.restore();
+
+            ctx.strokeStyle = "rgba(255,255,255,0.45)";
+            ctx.lineWidth = Math.max(1, s * 0.8);
+            ctx.strokeRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
+        }
+    }
+
     if (attacking) {
         ctx.save();
         ctx.translate(x + (facingRight ? 26 * s : 0), y + 26 * s);

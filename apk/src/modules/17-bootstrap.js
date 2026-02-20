@@ -137,10 +137,10 @@ async function start() {
         if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = true;
         if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
         if (isAttack) handleAttack("press");
-        if (isWeaponSwitch) switchWeapon();
+        if (isWeaponSwitch && !e.repeat) switchWeapon();
         if (isUseDiamond) useDiamondForHp();
-        if (isInteract && !pausedByModal && !paused) handleInteraction();
-        if (isDecorInteract && !pausedByModal && !paused) handleDecorationInteract();
+        if (isInteract && !e.repeat && !pausedByModal && !paused) handleInteraction();
+        if (isDecorInteract && !e.repeat && !pausedByModal && !paused) handleDecorationInteract();
         if (!inInput && e.key >= "1" && e.key <= "9") {
             selectedSlot = parseInt(e.key, 10) - 1;
             updateInventoryUI();

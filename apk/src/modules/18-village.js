@@ -753,13 +753,18 @@ function triggerVillageInteriorAutoDoor(village) {
 
 function triggerVillageInteriorChestAction(village) {
   if (!isVillageInteriorActive() || !village || !player) return false;
+  const now = Date.now();
+  if (now < Number(villageInteriorState.autoTriggerCooldownUntil || 0)) return false;
   const type = villageInteriorState.buildingType;
   const centerX = getPlayerCenterX();
   const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
   if (!nearAction) {
     showToast(type === "bed_house" ? "靠近床后按宝箱键" : "靠近单词书后按宝箱键");
+    villageInteriorState.autoTriggerCooldownUntil = now + 250;
     return true;
   }
+  villageInteriorState.autoTriggerZone = "";
+  villageInteriorState.autoTriggerCooldownUntil = now + 900;
   if (type === "bed_house") {
     performRest(village);
     return true;
@@ -1000,6 +1005,24 @@ function closeVillageTrader() {
   }
 }
 
+function bindTraderTap(target, handler) {
+  if (!target || typeof handler !== "function") return;
+  let lastTapAt = 0;
+  const invoke = (e) => {
+    if (e) e.preventDefault();
+    const now = Date.now();
+    if (now - lastTapAt < 180) return;
+    lastTapAt = now;
+    handler();
+  };
+  if ((typeof window !== "undefined") && ("PointerEvent" in window)) {
+    target.addEventListener("pointerup", invoke, { passive: false });
+  } else {
+    target.addEventListener("touchend", invoke, { passive: false });
+    target.addEventListener("mouseup", invoke, { passive: false });
+  }
+}
+
 function renderVillageTraderMain(modal, village) {
   const body = modal.querySelector("#village-trader-body");
   if (!body) return;
@@ -1014,13 +1037,13 @@ function renderVillageTraderMain(modal, village) {
       <button id="trader-btn-close" class="game-btn">关闭</button>
     </div>
   `;
-  body.querySelector("#trader-btn-sell")?.addEventListener("click", () => renderTraderSellMaterials(modal, village));
-  body.querySelector("#trader-btn-armor")?.addEventListener("click", () => renderTraderBuyArmor(modal, village));
-  body.querySelector("#trader-btn-sunscreen")?.addEventListener("click", () => {
+  bindTraderTap(body.querySelector("#trader-btn-sell"), () => renderTraderSellMaterials(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-armor"), () => renderTraderBuyArmor(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-sunscreen"), () => {
     handleTraderBuySunscreen();
     renderVillageTraderMain(modal, village);
   });
-  body.querySelector("#trader-btn-close")?.addEventListener("click", closeVillageTrader);
+  bindTraderTap(body.querySelector("#trader-btn-close"), closeVillageTrader);
 }
 
 function renderTraderSellMaterials(modal, village) {
@@ -1050,10 +1073,10 @@ function renderTraderSellMaterials(modal, village) {
     const btn = document.createElement("button");
     btn.className = "game-btn";
     btn.textContent = `${label}（库存${count}，单价${price}💎）`;
-    btn.addEventListener("click", () => renderTraderSellCount(modal, village, itemId, price, count, label));
+    bindTraderTap(btn, () => renderTraderSellCount(modal, village, itemId, price, count, label));
     list?.appendChild(btn);
   });
-  body.querySelector("#trader-btn-back-main")?.addEventListener("click", () => renderVillageTraderMain(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-back-main"), () => renderVillageTraderMain(modal, village));
 }
 
 function renderTraderSellCount(modal, village, itemId, unitPrice, maxCount, label) {
@@ -1070,19 +1093,19 @@ function renderTraderSellCount(modal, village, itemId, unitPrice, maxCount, labe
       <button id="trader-sell-back" class="game-btn">返回材料列表</button>
     </div>
   `;
-  body.querySelector("#trader-sell-1")?.addEventListener("click", () => {
+  bindTraderTap(body.querySelector("#trader-sell-1"), () => {
     sellMaterialByTrader(itemId, unitPrice, 1);
     renderTraderSellMaterials(modal, village);
   });
-  body.querySelector("#trader-sell-5")?.addEventListener("click", () => {
+  bindTraderTap(body.querySelector("#trader-sell-5"), () => {
     sellMaterialByTrader(itemId, unitPrice, 5);
     renderTraderSellMaterials(modal, village);
   });
-  body.querySelector("#trader-sell-all")?.addEventListener("click", () => {
+  bindTraderTap(body.querySelector("#trader-sell-all"), () => {
     sellMaterialByTrader(itemId, unitPrice, maxCount);
     renderTraderSellMaterials(modal, village);
   });
-  body.querySelector("#trader-sell-back")?.addEventListener("click", () => renderTraderSellMaterials(modal, village));
+  bindTraderTap(body.querySelector("#trader-sell-back"), () => renderTraderSellMaterials(modal, village));
 }
 
 function sellMaterialByTrader(itemId, unitPrice, requestedCount) {
@@ -1115,13 +1138,13 @@ function renderTraderBuyArmor(modal, village) {
     const btn = document.createElement("button");
     btn.className = "game-btn";
     btn.textContent = `${armorName}（${cost}💎）`;
-    btn.addEventListener("click", () => {
+    bindTraderTap(btn, () => {
       handleTraderBuyArmor(armorId, cost);
       renderTraderBuyArmor(modal, village);
     });
     list?.appendChild(btn);
   });
-  body.querySelector("#trader-btn-back-main")?.addEventListener("click", () => renderVillageTraderMain(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-back-main"), () => renderVillageTraderMain(modal, village));
 }
 
 function handleTraderBuyArmor(armorId, cost) {
