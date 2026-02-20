@@ -491,6 +491,12 @@ let repeatPauseState = "repeat";
 let villageConfig = {};
 let activeVillages = [];
 let villageSpawnedForScore = {};
+let villageSpawnState = {
+    lastSpawnScore: -Infinity,
+    lastSpawnX: -Infinity,
+    lastSpawnBiome: null,
+    lastSpawnTransitionTick: 0
+};
 let playerInVillage = false;
 let currentVillage = null;
 

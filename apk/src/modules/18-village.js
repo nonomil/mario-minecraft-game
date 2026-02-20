@@ -94,6 +94,32 @@ function maybeSpawnVillage(playerScore, playerX) {
   if (!settings || !settings.villageEnabled) return;
   if (!villageConfig || !villageConfig.enabled) return;
   const interval = villageConfig.spawnScoreInterval || 500;
+  const minScoreGap = Math.max(0, Number(villageConfig.minSpawnScoreGap ?? 900));
+  const minDistancePx = Math.max(0, Number(villageConfig.minSpawnDistancePx ?? 2600));
+  const minBiomeTransitionsBetweenVillages = Math.max(0, Math.floor(Number(villageConfig.minBiomeTransitionsBetweenVillages ?? 2)));
+  const minBiomeStayScoreForVillage = Math.max(0, Number(villageConfig.minBiomeStayScoreForVillage ?? 120));
+
+  const transitionTick = (() => {
+    if (typeof getBiomeVisitCountSnapshot !== "function") return 0;
+    const snap = getBiomeVisitCountSnapshot() || {};
+    let total = 0;
+    for (const v of Object.values(snap)) total += Number(v) || 0;
+    return total;
+  })();
+
+  const stayScore = (() => {
+    if (typeof getBiomeStayDebugInfo !== "function") return Infinity;
+    const info = getBiomeStayDebugInfo(playerScore) || {};
+    return Number(info.scoreInBiome) || 0;
+  })();
+
+  if (typeof villageSpawnState !== "undefined" && villageSpawnState) {
+    if ((playerScore - (Number(villageSpawnState.lastSpawnScore) || -Infinity)) < minScoreGap) return;
+    if ((playerX - (Number(villageSpawnState.lastSpawnX) || -Infinity)) < minDistancePx) return;
+    if ((transitionTick - (Number(villageSpawnState.lastSpawnTransitionTick) || 0)) < minBiomeTransitionsBetweenVillages) return;
+    if (stayScore < minBiomeStayScoreForVillage) return;
+  }
+
   // 璁＄畻褰撳墠鍒嗘暟搴旇鐢熸垚鐨勬潙搴勭紪鍙?
   const villageIndex = Math.floor(playerScore / interval);
   if (villageIndex < 1) return; // 0鍒嗕笉鐢熸垚
@@ -103,6 +129,12 @@ function maybeSpawnVillage(playerScore, playerX) {
   const village = createVillage(playerX + 600, biomeId, villageIndex);
   activeVillages.push(village);
   villageSpawnedForScore[villageIndex] = true;
+  if (typeof villageSpawnState !== "undefined" && villageSpawnState) {
+    villageSpawnState.lastSpawnScore = Number(playerScore) || 0;
+    villageSpawnState.lastSpawnX = Number(village.x) || Number(playerX) || 0;
+    villageSpawnState.lastSpawnBiome = biomeId;
+    villageSpawnState.lastSpawnTransitionTick = transitionTick;
+  }
 
   // 鍥炴敹杩滃鐨勬潙搴?
   cleanupVillages(playerX);

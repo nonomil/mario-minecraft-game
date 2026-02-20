@@ -82,6 +82,12 @@ function initGame() {
     if (typeof villageSpawnedForScore !== 'undefined') {
         for (const k in villageSpawnedForScore) delete villageSpawnedForScore[k];
     }
+    if (typeof villageSpawnState !== 'undefined' && villageSpawnState) {
+        villageSpawnState.lastSpawnScore = -Infinity;
+        villageSpawnState.lastSpawnX = -Infinity;
+        villageSpawnState.lastSpawnBiome = null;
+        villageSpawnState.lastSpawnTransitionTick = 0;
+    }
     if (typeof playerInVillage !== 'undefined') playerInVillage = false;
     if (typeof currentVillage !== 'undefined') currentVillage = null;
     if (typeof resetVillageInteriorState === "function") resetVillageInteriorState();
