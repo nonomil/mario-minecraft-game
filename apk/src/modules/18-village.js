@@ -503,7 +503,7 @@ function updateVillageInteriorMode() {
   player.velY = 0;
   player.grounded = true;
   player.jumpCount = 0;
-  triggerVillageInteriorAutoAction(village);
+  triggerVillageInteriorAutoDoor(village);
   const targetCam = Math.max(0, player.x - cameraOffsetX);
   if (targetCam > cameraX) cameraX = targetCam;
 }
@@ -590,24 +590,57 @@ function renderVillageInterior(ctx) {
     ctx.fillText("左右移动，靠近测试点自动开始", panelX + 28, panelY + 96);
     ctx.fillText("靠近门口自动离开房间", panelX + 28, panelY + 128);
   }
+  // Requirement update: door remains auto-trigger, bed/word action uses chest interaction key.
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.textAlign = "center";
+  ctx.font = "bold 13px sans-serif";
+  ctx.fillText("门口（自动离开）", doorPx, floorY - 22);
+  ctx.fillText(buildingType === "bed_house" ? "床（按宝箱键）" : "单词书（按宝箱键）", actionPx, floorY - 22);
+
+  if (buildingType === "word_house") {
+    // Replace table-like marker with a book icon.
+    ctx.fillStyle = colors.plank || "#B8945A";
+    ctx.fillRect(actionPx - 42, floorY - 54, 84, 44);
+    const bookX = actionPx - 24;
+    const bookY = floorY - 44;
+    ctx.fillStyle = "#1E88E5";
+    ctx.fillRect(bookX, bookY, 48, 32);
+    ctx.fillStyle = "#E3F2FD";
+    ctx.fillRect(bookX + 4, bookY + 4, 18, 24);
+    ctx.fillRect(bookX + 26, bookY + 4, 18, 24);
+    ctx.fillStyle = "rgba(0,0,0,0.25)";
+    ctx.fillRect(bookX + 23, bookY + 2, 2, 28);
+  }
+
+  ctx.fillStyle = colors.plank || "#B8945A";
+  ctx.fillRect(panelX + 24, panelY + 74, panelW - 48, 72);
+  ctx.fillStyle = "#222";
+  ctx.textAlign = "left";
+  ctx.font = "18px sans-serif";
+  if (buildingType === "bed_house") {
+    ctx.fillText("左右移动，靠近床后按宝箱键休息", panelX + 28, panelY + 96);
+    ctx.fillText("靠近门口自动离开房间", panelX + 28, panelY + 128);
+  } else {
+    ctx.fillText("左右移动，靠近单词书后按宝箱键开始", panelX + 28, panelY + 96);
+    ctx.fillText("靠近门口自动离开房间", panelX + 28, panelY + 128);
+  }
+
   ctx.textAlign = "left";
   return true;
 }
 
-function triggerVillageInteriorAutoAction(village) {
+function triggerVillageInteriorAutoDoor(village) {
   if (!isVillageInteriorActive() || !village || !player) return false;
   if (paused || pausedByModal) return false;
   const now = Date.now();
   if (now < Number(villageInteriorState.autoTriggerCooldownUntil || 0)) return false;
 
-  const type = villageInteriorState.buildingType;
   const centerX = getPlayerCenterX();
   const nearDoor = Math.abs(centerX - getInteriorDoorX()) <= INTERIOR_DOOR_RANGE;
-  const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
-  const zone = nearDoor ? "door" : (nearAction ? "action" : "");
+  const zone = nearDoor ? "door" : "";
 
   if (!zone) {
-    villageInteriorState.autoTriggerZone = "";
+    if (villageInteriorState.autoTriggerZone === "door") villageInteriorState.autoTriggerZone = "";
     return false;
   }
   if (zone === villageInteriorState.autoTriggerZone) return false;
@@ -620,11 +653,22 @@ function triggerVillageInteriorAutoAction(village) {
     return true;
   }
 
+  return false;
+}
+
+function triggerVillageInteriorChestAction(village) {
+  if (!isVillageInteriorActive() || !village || !player) return false;
+  const type = villageInteriorState.buildingType;
+  const centerX = getPlayerCenterX();
+  const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
+  if (!nearAction) {
+    showToast(type === "bed_house" ? "靠近床后按宝箱键" : "靠近单词书后按宝箱键");
+    return true;
+  }
   if (type === "bed_house") {
     performRest(village);
     return true;
   }
-
   if (type === "word_house") {
     if (village.questCompleted) {
       showToast(UI_TEXTS.questDone);
@@ -785,7 +829,7 @@ function handleVillageInteraction(building, village) {
 function handleVillageInteriorInteraction() {
   const village = getVillageInteriorVillage();
   if (!village) return false;
-  return !!triggerVillageInteriorAutoAction(village);
+  return !!triggerVillageInteriorChestAction(village);
 }
 
 function saveVillageProgress(village) {
