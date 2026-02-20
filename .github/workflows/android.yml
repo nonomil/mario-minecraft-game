@@ -183,7 +183,13 @@ jobs:
             ### What's New
             - Requirement 11 tuning: Wither gate trigger reduced to once every two biome transitions (villages are not counted as biomes).
             - Wither no longer damages players while they are inside village area; attacks resume after leaving village.
-            - Interior mode base interactions stabilized: auto-enter, in-room movement, and point-based interaction flow.
+            - Requirement 12 implemented for interior mode:
+              - Keep full player avatar visible in-room.
+              - Spawn player at room center on entry.
+              - Limit in-room movement speed to 50% of normal max speed.
+              - Place door and bed/test points on opposite sides.
+              - Enable proximity auto-trigger (no key press needed).
+              - Add hint texts above door/bed/test points.
             - Version/docs/release metadata synchronized for this release.
           artifacts: |
             apk/android-app/android/app/build/outputs/apk/debug/*.apk,

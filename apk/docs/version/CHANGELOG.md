@@ -1,3 +1,17 @@
+## v1.18.17 (2026-02-20)
+
+### Interior Mode (Requirement 12)
+- Keep full player avatar in interior mode (uses `drawSteve` when available).
+- Spawn position moved to room center when entering house.
+- Interior left/right movement speed is capped at 50% of normal max speed.
+- Door and action points are placed on opposite sides (door right, bed/test left).
+- Proximity auto-trigger enabled: no key press required for door exit, bed rest, or word-test start.
+- Added in-room hint texts above interaction points for clearer guidance.
+
+### Release
+- Updated GitHub Release "What's New" description for this publish.
+
+---
 ## v1.18.16 (2026-02-19)
 
 ### Gameplay
