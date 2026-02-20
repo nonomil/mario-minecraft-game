@@ -81,11 +81,11 @@ function loadVillageConfig() {
     .then(r => r.json())
     .then(data => {
       villageConfig = data;
-      console.log('[Village] 閰嶇疆鍔犺浇鎴愬姛');
+      console.log('[Village] 配置加载成功');
     })
     .catch(() => {
       villageConfig = defaultVillageConfig;
-      console.warn('[Village] 浣跨敤榛樿閰嶇疆');
+      console.warn('[Village] 使用默认配置');
     });
 }
 
@@ -106,7 +106,7 @@ function maybeSpawnVillage(playerScore, playerX) {
 
   // 鍥炴敹杩滃鐨勬潙搴?
   cleanupVillages(playerX);
-  console.log(`[Village] 鐢熸垚鏉戝簞 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
+  console.log(`[Village] 生成村庄 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
 }
 
 function createVillage(startX, biomeId, index) {
@@ -188,17 +188,17 @@ function cleanupVillages(playerX) {
 
 const NPC_ROLES = {
   greeter: {
-    greeting: 'Welcome! 娆㈣繋!',
+    greeting: 'Welcome! 欢迎!',
     speed: 0.3,
     patrolRange: 120
   },
   teacher: {
-    greeting: 'Come learn! 鏉ュ涔?',
+    greeting: 'Come learn! 来学习!',
     speed: 0.2,
     patrolRange: 80
   },
   trader: {
-    greeting: 'Trade? 浜ゆ槗鍚?',
+    greeting: 'Trade? 交易吗?',
     speed: 0.15,
     patrolRange: 60
   }
@@ -397,7 +397,7 @@ function resetVillageInteriorState({ silent = true } = {}) {
   villageInteriorState.autoTriggerCooldownUntil = 0;
   villageInteriorState.autoTriggerZone = "";
   syncVillageInteriorTouchUi();
-  if (!silent && wasActive) showToast("馃彔 宸茬寮€鎴垮眿");
+  if (!silent && wasActive) showToast("🏠 已离开房屋");
 }
 
 function canEnterVillageInterior(village, building) {
@@ -438,8 +438,8 @@ function enterVillageInterior(village, building) {
     player.velY = 0;
     player.grounded = true;
   }
-  const label = building.type === "bed_house" ? "搴婂眿" : "璇嶅眿";
-  showToast(`馃彔 杩涘叆${label}锛圗sc 閫€鍑猴級`);
+  const label = building.type === "bed_house" ? "床屋" : "词屋";
+  showToast(`🏠 进入${label}（Esc 退出）`);
   return true;
 }
 
@@ -458,7 +458,7 @@ function exitVillageInterior(reason = "") {
     player.jumpCount = 0;
     player.lastFragilePlatform = null;
   }
-  const text = reason || "馃彔 绂诲紑鎴垮眿";
+  const text = reason || "🏠 离开房屋";
   resetVillageInteriorState();
   villageInteriorState.autoEnterBlockUntil = Date.now() + 1400;
   showToast(text);
@@ -480,7 +480,7 @@ function updateVillageInteriorMode() {
     !village._challengeRunning &&
     !pausedByModal
   ) {
-    exitVillageInterior("馃彔 鎸戞垬缁撴潫锛屽凡绂诲紑璇嶅眿");
+    exitVillageInterior("🏠 挑战结束，已离开词屋");
     return;
   }
   const bounds = getInteriorMoveBounds();
@@ -569,7 +569,7 @@ function renderVillageInterior(ctx) {
     ctx.fillRect(playerPx - 9, floorY - 2, 18, 2);
   }
 
-  const title = buildingType === "bed_house" ? "馃彔 搴婂眿瀹ゅ唴" : "馃摌 璇嶅眿瀹ゅ唴";
+  const title = buildingType === "bed_house" ? "🏠 床屋室内" : "📘 词屋室内";
   ctx.fillStyle = "#1E1E1E";
   ctx.font = "bold 28px sans-serif";
   ctx.textAlign = "left";
@@ -656,7 +656,7 @@ function triggerVillageInteriorAutoDoor(village) {
   villageInteriorState.autoTriggerCooldownUntil = now + 900;
 
   if (zone === "door") {
-    exitVillageInterior("馃彔 绂诲紑鎴垮眿");
+    exitVillageInterior("🏠 离开房屋");
     return true;
   }
 
@@ -669,7 +669,7 @@ function triggerVillageInteriorChestAction(village) {
   const centerX = getPlayerCenterX();
   const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
   if (!nearAction) {
-    showToast(type === "bed_house" ? "闈犺繎搴婂悗鎸夊疂绠遍敭" : "闈犺繎鍗曡瘝涔﹀悗鎸夊疂绠遍敭");
+    showToast(type === "bed_house" ? "靠近床后按宝箱键" : "靠近单词书后按宝箱键");
     return true;
   }
   if (type === "bed_house") {
@@ -873,7 +873,7 @@ function saveVillageProgress(village) {
     saveCurrentProgress();
   }
   showToast(UI_TEXTS.villageSaved);
-  showFloatingText('馃捑 Save', player.x, player.y - 40, '#66BB6A');
+  showFloatingText('💾 已保存', player.x, player.y - 40, '#66BB6A');
   return true;
 }
 
@@ -904,7 +904,7 @@ function updateVillageBuffs() {
   for (const [buffId, buff] of Object.entries(buffs)) {
     if (!buff || Number(buff.expiresAt) <= now) {
       delete buffs[buffId];
-      showToast(`鈴?${buffId} 鏁堟灉缁撴潫`);
+      showToast(`🔔 ${buffId} 效果结束`);
     }
   }
 }
@@ -923,7 +923,7 @@ const SPECIAL_BUILDING_EFFECTS = {
       const picked = [...words].sort(() => Math.random() - 0.5).slice(0, 2);
       if (picked.length) {
         const hints = picked.map(w => `${w.en || w}/${w.zh || ''}`.trim()).join(' / ');
-        showToast(`馃摌 瀛︿範: ${hints}`);
+        showToast(`📚 学习: ${hints}`);
         if (typeof speakWord === 'function') {
           picked.forEach((w, i) => setTimeout(() => speakWord({ en: w.en || w, zh: w.zh || '' }), i * 700));
         }
@@ -938,7 +938,7 @@ const SPECIAL_BUILDING_EFFECTS = {
       setVillageBuff('antiFreeze', 30000);
       playerHp = Math.min((Number(playerMaxHp) || 3), (Number(playerHp) || 0) + 2);
       if (typeof updateHpUI === 'function') updateHpUI();
-      showToast('鉂わ笍 鎶楀啺鍐?0绉掞紝鎭㈠2鐢熷懡');
+      showToast('❤️ 抗冰冻30秒，恢复2点生命');
       showFloatingText('+2 HP', player.x, player.y - 30, '#80CBC4');
     }
   },
@@ -946,7 +946,7 @@ const SPECIAL_BUILDING_EFFECTS = {
     execute() {
       setVillageBuff('waterProtection', 30000);
       addInventoryItem('shell', 1);
-      showToast('馃毀 娌欐紶淇濇姢30绉掞紝鑾峰緱璐濆３x1');
+      showToast('🛡️ 沙漠保护30秒，获得贝壳x1');
       showFloatingText('+1 shell', player.x, player.y - 30, '#4FC3F7');
     }
   },
@@ -955,7 +955,7 @@ const SPECIAL_BUILDING_EFFECTS = {
       addInventoryItem('iron', 3);
       if (typeof addScore === 'function') addScore(50);
       else score += 50;
-      showToast('鈿掞笍 鑾峰緱閾佸潡x3锛屽垎鏁?50');
+      showToast('⚒️ 获得铁块x3，分数+50');
       showFloatingText('+3 iron +50', player.x, player.y - 30, '#B0BEC5');
     }
   },
@@ -970,7 +970,7 @@ const SPECIAL_BUILDING_EFFECTS = {
     execute() {
       setVillageBuff('fireResistance', 30000);
       addInventoryItem('mushroom_stew', 1);
-      showToast('鈿欙笍 鎶楃伀30绉掞紝鑾峰緱铇戣弴鐓瞲1');
+      showToast('🧪 抗火30秒，获得蘑菇煲x1');
       showFloatingText('FireRes+', player.x, player.y - 30, '#FF8A65');
     }
   }
