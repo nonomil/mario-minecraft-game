@@ -255,7 +255,47 @@ function drawVillages(ctx) {
     }
     // Village name banner
     drawVillageBanner(ctx, village);
+    drawVillageInteractHint(ctx, village);
   }
+}
+
+function drawVillageInteractHint(ctx, village) {
+  if (!village || !Array.isArray(village.buildings) || typeof player === "undefined" || !player) return;
+  if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
+  if (typeof paused !== "undefined" && paused) return;
+  if (typeof pausedByModal !== "undefined" && pausedByModal) return;
+
+  const centerX = player.x + (Number(player.width) || 0) * 0.5;
+  let hint = "";
+  for (const building of village.buildings) {
+    if (!building) continue;
+    if (building.type !== "word_house" && building.type !== "trader_house") continue;
+    const doorX = building.x + (Number(building.w) || 0) * 0.5;
+    const near = Math.abs(centerX - doorX) <= 46;
+    if (!near) continue;
+    if (building.type === "word_house") {
+      hint = "\u5355\u8bcd\u5c4b\uff1a\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\u89e6\u53d1";
+    } else {
+      hint = "\u5546\u4eba\u5c4b\uff1a\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\u89e6\u53d1";
+    }
+    break;
+  }
+  if (!hint) return;
+
+  const cx = Math.max(120, Math.min(canvas.width - 120, (village.x + village.width * 0.5) - cameraX));
+  const y = 52;
+  ctx.save();
+  ctx.font = "bold 16px sans-serif";
+  ctx.textAlign = "center";
+  const pad = 10;
+  const textW = Math.ceil(ctx.measureText(hint).width);
+  const boxW = textW + pad * 2;
+  const boxX = cx - boxW * 0.5;
+  ctx.fillStyle = "rgba(20, 20, 20, 0.62)";
+  ctx.fillRect(boxX, y - 17, boxW, 24);
+  ctx.fillStyle = "#FFF59D";
+  ctx.fillText(hint, cx, y);
+  ctx.restore();
 }
 
 // Draw soft background tint for village area
