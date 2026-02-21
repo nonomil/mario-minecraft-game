@@ -1255,18 +1255,18 @@ function spawnGolem(type) {
     showFloatingText(`🧱 ${name}`, player.x, player.y - 40);
 }
 
-function handleInteraction() {
+function handleInteraction(interactMode = "tap") {
     if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
         if (paused || pausedByModal) return;
         if (typeof handleVillageInteriorInteraction === "function") {
-            handleVillageInteriorInteraction();
+            handleVillageInteriorInteraction(interactMode);
         }
         return;
     }
     if (paused || pausedByModal) return;
     // v1.8.3 村庄建筑交互优先
     if (playerInVillage && currentVillage && typeof checkVillageBuildings === 'function') {
-      const handled = checkVillageBuildings(currentVillage);
+      const handled = checkVillageBuildings(currentVillage, interactMode);
       if (handled) return;
     }
 

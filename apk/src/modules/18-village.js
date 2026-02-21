@@ -650,8 +650,8 @@ function renderVillageInterior(ctx) {
   ctx.fillStyle = "rgba(255,255,255,0.9)";
   ctx.textAlign = "center";
   ctx.font = "bold 13px sans-serif";
-  ctx.fillText("门口（自动离开）", doorPx, floorY - 22);
-  ctx.fillText(buildingType === "bed_house" ? "床（按宝箱键）" : "单词书（按宝箱键）", actionPx, floorY - 22);
+  ctx.fillText("\u95e8\u53e3\uff08\u81ea\u52a8\u79bb\u5f00\uff09", doorPx, floorY - 22);
+  ctx.fillText(buildingType === "bed_house" ? "\u5e8a\uff08\u6309\u5b9d\u7bb1\u952e\uff09" : "\u5355\u8bcd\u4e66\uff08\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\uff09", actionPx, floorY - 22);
 
   const steveX = playerPx - (Number(player?.width) || 26) * 0.5;
   const steveY = floorY - (Number(player?.height) || 52);
@@ -713,11 +713,11 @@ function renderVillageInterior(ctx) {
   ctx.fillStyle = "rgba(255,255,255,0.95)";
   ctx.textAlign = "center";
   ctx.font = "bold 13px sans-serif";
-  ctx.fillText("门", doorPx, floorY - 24);
-  ctx.fillText("靠近自动离开", doorPx, floorY - 8);
-  ctx.fillText(buildingType === "bed_house" ? "床" : "单词书", actionPx, floorY - 24);
-  ctx.fillText("按宝箱键触发", actionPx, floorY - 8);
-  ctx.fillText(buildingType === "bed_house" ? "休息回血" : "开始单词测验", actionPx, floorY + 8);
+  ctx.fillText("\u95e8", doorPx, floorY - 24);
+  ctx.fillText("\u9760\u8fd1\u81ea\u52a8\u79bb\u5f00", doorPx, floorY - 8);
+  ctx.fillText(buildingType === "bed_house" ? "\u5e8a" : "\u5355\u8bcd\u4e66", actionPx, floorY - 24);
+  ctx.fillText(buildingType === "bed_house" ? "\u6309\u5b9d\u7bb1\u952e\u89e6\u53d1" : "\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\u89e6\u53d1", actionPx, floorY - 8);
+  ctx.fillText(buildingType === "bed_house" ? "\u4f11\u606f\u56de\u8840" : "\u5f00\u59cb\u5355\u8bcd\u6d4b\u9a8c", actionPx, floorY + 8);
 
   ctx.textAlign = "left";
   return true;
@@ -750,7 +750,7 @@ function triggerVillageInteriorAutoDoor(village) {
   return false;
 }
 
-function triggerVillageInteriorChestAction(village) {
+function triggerVillageInteriorChestAction(village, interactMode = "tap") {
   if (!isVillageInteriorActive() || !village || !player) return false;
   const now = Date.now();
   if (now < Number(villageInteriorState.actionTriggerCooldownUntil || 0)) return false;
@@ -758,7 +758,7 @@ function triggerVillageInteriorChestAction(village) {
   const centerX = getPlayerCenterX();
   const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
   if (!nearAction) {
-    showToast(type === "bed_house" ? "靠近床后按宝箱键" : "靠近单词书后按宝箱键");
+    showToast(type === "bed_house" ? "\u9760\u8fd1\u5e8a\u540e\u6309\u5b9d\u7bb1\u952e" : "\u9760\u8fd1\u5355\u8bcd\u4e66\u540e\u957f\u6309\u5b9d\u7bb1\u56fe\u6807");
     villageInteriorState.actionTriggerCooldownUntil = now + 180;
     return true;
   }
@@ -770,6 +770,11 @@ function triggerVillageInteriorChestAction(village) {
     return true;
   }
   if (type === "word_house") {
+    if (interactMode !== "hold") {
+      showToast("\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\u89e6\u53d1");
+      villageInteriorState.actionTriggerCooldownUntil = now + 220;
+      return true;
+    }
     if (village.questCompleted) {
       showToast(UI_TEXTS.questDone);
       return true;
@@ -786,6 +791,8 @@ function triggerVillageInteriorChestAction(village) {
 }
 
 function triggerVillageInteriorAutoAction(village) {
+  // Word-house quiz now requires explicit long-press trigger.
+  return false;
   if (!isVillageInteriorActive() || !village || !player) return false;
   if (paused || pausedByModal) return false;
   if (villageInteriorState.buildingType !== "word_house") return false;
@@ -814,11 +821,11 @@ function checkVillageRest(village) {
   else hideRestPrompt();
 }
 
-function checkVillageBuildings(village) {
+function checkVillageBuildings(village, interactMode = "tap") {
   if (!village) return false;
   const nearby = getNearbyBuilding(village);
   if (!nearby) return false;
-  return !!handleVillageInteraction(nearby, village);
+  return !!handleVillageInteraction(nearby, village, interactMode);
 }
 
 
@@ -840,7 +847,7 @@ function tryAutoEnterVillageInterior(village) {
   if (Math.abs(centerX - doorCenter) > autoRange) return false;
   if (village._lastAutoEnterAt && now - village._lastAutoEnterAt < 1000) return false;
   village._lastAutoEnterAt = now;
-  if (nearby.type === "trader_house") return !!handleVillageInteraction(nearby, village);
+  if (nearby.type === "trader_house") return false;
   if (!isInteriorBuildingType(nearby.type)) return false;
   return enterVillageInterior(village, nearby);
 }
@@ -931,7 +938,7 @@ function getVillageWords(biomeId) {
   return cfg.biomeWords[biomeId] || cfg.biomeWords.forest || [];
 }
 
-function handleVillageInteraction(building, village) {
+function handleVillageInteraction(building, village, interactMode = "tap") {
   if (!building || !village) return false;
   const now = Date.now();
   if (village._lastInteractAt && now - village._lastInteractAt < 250) return false;
@@ -943,6 +950,10 @@ function handleVillageInteraction(building, village) {
     case 'word_house':
       return enterVillageInterior(village, building);
     case 'trader_house':
+      if (interactMode !== "hold") {
+        showToast("\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\u89e6\u53d1");
+        return true;
+      }
       openVillageTrader(village);
       return true;
     default:
@@ -954,10 +965,10 @@ function handleVillageInteraction(building, village) {
   }
 }
 
-function handleVillageInteriorInteraction() {
+function handleVillageInteriorInteraction(interactMode = "tap") {
   const village = getVillageInteriorVillage();
   if (!village) return false;
-  return !!triggerVillageInteriorChestAction(village);
+  return !!triggerVillageInteriorChestAction(village, interactMode);
 }
 
 const TRADER_MATERIAL_PRICES = {

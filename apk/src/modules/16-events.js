@@ -422,11 +422,60 @@ function wireTouchControls() {
         btn.addEventListener("click", e => { e.preventDefault(); }, { passive: false });
     }
 
+    function bindLongPress(action, fn, holdMs = 420) {
+        const btn = root.querySelector(`[data-action="${action}"]`);
+        if (!btn) return;
+        let timer = null;
+        let fired = false;
+        const clearPress = () => {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+        };
+        const startPress = (e) => {
+            if (e) e.preventDefault();
+            clearPress();
+            fired = false;
+            timer = setTimeout(() => {
+                fired = true;
+                fn();
+            }, holdMs);
+        };
+        const endPress = (e) => {
+            if (e) e.preventDefault();
+            clearPress();
+        };
+
+        const supportsPointer = (typeof window !== "undefined") && ("PointerEvent" in window);
+        if (supportsPointer) {
+            btn.addEventListener("pointerdown", e => {
+                startPress(e);
+                try { btn.setPointerCapture(e.pointerId); } catch {}
+            }, { passive: false });
+            btn.addEventListener("pointerup", endPress, { passive: false });
+            btn.addEventListener("pointercancel", endPress, { passive: false });
+            btn.addEventListener("lostpointercapture", clearPress);
+            return;
+        }
+
+        btn.addEventListener("touchstart", startPress, { passive: false });
+        btn.addEventListener("touchend", endPress, { passive: false });
+        btn.addEventListener("touchcancel", endPress, { passive: false });
+        btn.addEventListener("mousedown", startPress, { passive: false });
+        btn.addEventListener("mouseup", endPress, { passive: false });
+        btn.addEventListener("mouseleave", clearPress);
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            if (fired) fired = false;
+        }, { passive: false });
+    }
+
     bindHold("left", () => { keys.left = true; }, () => { keys.left = false; });
     bindHold("right", () => { keys.right = true; }, () => { keys.right = false; });
     bindTap("jump", () => { jumpBuffer = gameConfig.jump.bufferFrames; });
     bindTap("attack", () => { handleAttack("tap"); });
-    bindTap("interact", () => { handleInteraction(); });
+    bindLongPress("interact", () => { handleInteraction("hold"); });
     bindTap("interior-exit", () => {
         if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
             if (typeof exitVillageInterior === "function") exitVillageInterior("🏠 离开房屋");
