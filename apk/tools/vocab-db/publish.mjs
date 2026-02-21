@@ -9,6 +9,7 @@ function runStep(command, args) {
     }
 }
 
+runStep("node", ["tools/vocab-db/import.mjs"]);
 runStep("node", ["tools/vocab-db/export.mjs"]);
 runStep("node", ["tools/vocab-db/dedup.mjs"]);
 runStep("node", ["tools/vocab-db/validate.mjs"]);

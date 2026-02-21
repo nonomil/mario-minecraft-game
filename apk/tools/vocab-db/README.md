@@ -11,7 +11,7 @@
 - `npm run vocab:db:import` - import words from manifest-referenced JS files
 - `npm run vocab:db:export` - export database to JS + CSV
 - `npm run vocab:db:validate` - validate duplicate keys and required fields
-- `npm run vocab:db:publish` - export + dedup + validate + audit (scoped to `vocab.junior_high,vocab.kindergarten.supplement,vocab.elementary_lower.supplement`; BLOCKER findings fail build)
+- `npm run vocab:db:publish` - import + export + dedup + validate + audit (scoped to `vocab.junior_high,vocab.kindergarten.supplement,vocab.elementary_lower.supplement`; BLOCKER findings fail build)
 - `npm run vocab:db:admin` - start local admin UI at `http://127.0.0.1:4174`
 - `npm run vocab:db:dedup` - generate dedup/collision analysis report
 - `npm run vocab:db:audit -- --pack vocab.kindergarten` - run quality/complexity audit and emit JSON + CSV reports
