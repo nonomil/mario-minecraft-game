@@ -1,3 +1,33 @@
+## v1.18.33 (2026-02-21)
+
+### Junior High Vocab Update
+- Added junior high level packs:
+  - `vocab.junior_high.basic`
+  - `vocab.junior_high.intermediate`
+  - `vocab.junior_high.advanced`
+  - kept `vocab.junior_high` as full pack
+- Generated new files:
+  - `words/vocabs/05_初中/junior_high_basic.js`
+  - `words/vocabs/05_初中/junior_high_intermediate.js`
+  - `words/vocabs/05_初中/junior_high_advanced.js`
+
+### Phrase Follow Support
+- Re-generated `words/vocabs/05_初中/junior_high_full.js` with phrase fields populated.
+- Cleared empty phrase entries for junior high pack so “word + phrase” flow can be triggered like elementary packs.
+
+### Validation
+- Updated E2E vocab switch test to assert junior high level packs are selectable.
+- `p0-vocab-pack-switch.spec.mjs` passed after update.
+
+### Release Metadata
+- Version bump:
+  - `apk/package.json` -> `1.18.33`
+  - `apk/android-app/package.json` -> `1.18.33`
+  - `apk/version.json` -> `versionCode/buildNumber 33`
+  - `apk/android-app/android/app/build.gradle` -> `versionCode 33`, `versionName 1.18.33`
+
+---
+
 ## v1.18.32 (2026-02-21)
 
 ### Vocabulary DB Tooling

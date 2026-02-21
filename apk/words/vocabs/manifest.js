@@ -1,16 +1,16 @@
-(() => {
+﻿(() => {
   const packs = [
     {
       id: "vocab.kindergarten.basic",
-      title: "幼儿园 - 初级",
+      title: "骞煎効鍥?- 鍒濈骇",
       stage: "kindergarten",
       difficulty: "basic",
       level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/01_幼儿园/幼儿园_分卷_01.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_02.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_03.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_01.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_02.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_03.js",
       ],
       getRaw() {
         return [
@@ -22,16 +22,16 @@
     },
     {
       id: "vocab.kindergarten.intermediate",
-      title: "幼儿园 - 中级",
+      title: "骞煎効鍥?- 涓骇",
       stage: "kindergarten",
       difficulty: "basic",
       level: "intermediate",
       weight: 1,
       files: [
-        "words/vocabs/01_幼儿园/幼儿园_分卷_04.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_05.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_06.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_07.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_04.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_05.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_06.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_07.js",
       ],
       getRaw() {
         return [
@@ -44,15 +44,15 @@
     },
     {
       id: "vocab.kindergarten.advanced",
-      title: "幼儿园 - 高级",
+      title: "骞煎効鍥?- 楂樼骇",
       stage: "kindergarten",
       difficulty: "basic",
       level: "advanced",
       weight: 1,
       files: [
-        "words/vocabs/01_幼儿园/幼儿园_分卷_08.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_09.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_10.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_08.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_09.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_10.js",
       ],
       getRaw() {
         return [
@@ -64,30 +64,30 @@
     },
     {
       id: "vocab.kindergarten",
-      title: "幼儿园 - 完整",
+      title: "骞煎効鍥?- 瀹屾暣",
       stage: "kindergarten",
       difficulty: "basic",
       level: "full",
       weight: 1,
       files: [
-        "words/vocabs/01_幼儿园/幼儿园_1_基础.js",
-        "words/vocabs/01_幼儿园/幼儿园_2_学习.js",
-        "words/vocabs/01_幼儿园/幼儿园_3_自然.js",
-        "words/vocabs/01_幼儿园/幼儿园_4_沟通.js",
-        "words/vocabs/01_幼儿园/幼儿园_5_日常.js",
-        "words/vocabs/01_幼儿园/幼儿园_6_通用.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_01.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_02.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_03.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_04.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_05.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_06.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_07.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_08.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_09.js",
-        "words/vocabs/01_幼儿园/幼儿园_分卷_10.js",
-        "words/vocabs/01_幼儿园/幼儿园基础.js",
-        "words/vocabs/01_幼儿园/幼儿园完整词库.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤1_鍩虹.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤2_瀛︿範.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤3_鑷劧.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤4_娌熼€?js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤5_鏃ュ父.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤6_閫氱敤.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_01.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_02.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_03.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_04.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_05.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_06.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_07.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_08.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_09.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥璤鍒嗗嵎_10.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥熀纭€.js",
+        "words/vocabs/01_骞煎効鍥?骞煎効鍥畬鏁磋瘝搴?js",
       ],
       getRaw() {
         return [
@@ -114,15 +114,15 @@
     },
     {
       id: "vocab.elementary_lower.basic",
-      title: "小学低年级 - 初级",
+      title: "灏忓浣庡勾绾?- 鍒濈骇",
       stage: "elementary_lower",
       difficulty: "basic",
       level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_01.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_02.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_03.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_01.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_02.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_03.js",
       ],
       getRaw() {
         return [
@@ -134,16 +134,16 @@
     },
     {
       id: "vocab.elementary_lower.intermediate",
-      title: "小学低年级 - 中级",
+      title: "灏忓浣庡勾绾?- 涓骇",
       stage: "elementary_lower",
       difficulty: "basic",
       level: "intermediate",
       weight: 1,
       files: [
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_04.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_05.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_06.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_07.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_04.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_05.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_06.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_07.js",
       ],
       getRaw() {
         return [
@@ -156,15 +156,15 @@
     },
     {
       id: "vocab.elementary_lower.advanced",
-      title: "小学低年级 - 高级",
+      title: "灏忓浣庡勾绾?- 楂樼骇",
       stage: "elementary_lower",
       difficulty: "basic",
       level: "advanced",
       weight: 1,
       files: [
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_08.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_09.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_10.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_08.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_09.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_10.js",
       ],
       getRaw() {
         return [
@@ -176,22 +176,22 @@
     },
     {
       id: "vocab.elementary_lower",
-      title: "小学低年级 - 完整",
+      title: "灏忓浣庡勾绾?- 瀹屾暣",
       stage: "elementary_lower",
       difficulty: "basic",
       level: "full",
       weight: 1,
       files: [
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_01.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_02.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_03.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_04.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_05.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_06.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_07.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_08.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_09.js",
-        "words/vocabs/02_小学_低年级/小学低年级_分卷_10.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_01.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_02.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_03.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_04.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_05.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_06.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_07.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_08.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_09.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?灏忓浣庡勾绾鍒嗗嵎_10.js",
       ],
       getRaw() {
         return [
@@ -210,13 +210,13 @@
     },
     {
       id: "vocab.elementary_upper.basic",
-      title: "小学高年级 - 初级",
+      title: "灏忓楂樺勾绾?- 鍒濈骇",
       stage: "elementary_upper",
       difficulty: "intermediate",
       level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/03_小学_高年级/小学低年级基础.js",
+        "words/vocabs/03_灏忓_楂樺勾绾?灏忓浣庡勾绾у熀纭€.js",
       ],
       getRaw() {
         return [
@@ -226,13 +226,13 @@
     },
     {
       id: "vocab.elementary_upper.intermediate",
-      title: "小学高年级 - 中级",
+      title: "灏忓楂樺勾绾?- 涓骇",
       stage: "elementary_upper",
       difficulty: "intermediate",
       level: "intermediate",
       weight: 1,
       files: [
-        "words/vocabs/03_小学_高年级/小学高年级基础.js",
+        "words/vocabs/03_灏忓_楂樺勾绾?灏忓楂樺勾绾у熀纭€.js",
       ],
       getRaw() {
         return [
@@ -242,13 +242,13 @@
     },
     {
       id: "vocab.elementary_upper.advanced",
-      title: "小学高年级 - 高级",
+      title: "灏忓楂樺勾绾?- 楂樼骇",
       stage: "elementary_upper",
       difficulty: "intermediate",
       level: "advanced",
       weight: 1,
       files: [
-        "words/vocabs/03_小学_高年级/小学全阶段合并词库.js",
+        "words/vocabs/03_灏忓_楂樺勾绾?灏忓鍏ㄩ樁娈靛悎骞惰瘝搴?js",
       ],
       getRaw() {
         return [
@@ -258,16 +258,16 @@
     },
     {
       id: "vocab.elementary_upper",
-      title: "小学高年级 - 完整",
+      title: "灏忓楂樺勾绾?- 瀹屾暣",
       stage: "elementary_upper",
       difficulty: "intermediate",
       level: "full",
       weight: 1,
       files: [
-        "words/vocabs/03_小学_高年级/小学低年级基础.js",
-        "words/vocabs/03_小学_高年级/小学低年级词汇库.js",
-        "words/vocabs/03_小学_高年级/小学全阶段合并词库.js",
-        "words/vocabs/03_小学_高年级/小学高年级基础.js",
+        "words/vocabs/03_灏忓_楂樺勾绾?灏忓浣庡勾绾у熀纭€.js",
+        "words/vocabs/03_灏忓_楂樺勾绾?灏忓浣庡勾绾ц瘝姹囧簱.js",
+        "words/vocabs/03_灏忓_楂樺勾绾?灏忓鍏ㄩ樁娈靛悎骞惰瘝搴?js",
+        "words/vocabs/03_灏忓_楂樺勾绾?灏忓楂樺勾绾у熀纭€.js",
       ],
       getRaw() {
         return [
@@ -280,15 +280,15 @@
     },
     {
       id: "vocab.minecraft.basic",
-      title: "我的世界 - 初级",
+      title: "鎴戠殑涓栫晫 - 鍒濈骇",
       stage: "minecraft",
       difficulty: "basic",
       level: "basic",
       weight: 1,
       files: [
-        "words/vocabs/04_我的世界/minecraft_basic.js",
-        "words/vocabs/04_我的世界/minecraft_blocks.js",
-        "words/vocabs/04_我的世界/minecraft_items.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_basic.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_blocks.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_items.js",
       ],
       getRaw() {
         return [
@@ -300,16 +300,16 @@
     },
     {
       id: "vocab.minecraft.intermediate",
-      title: "我的世界 - 中级",
+      title: "鎴戠殑涓栫晫 - 涓骇",
       stage: "minecraft",
       difficulty: "basic",
       level: "intermediate",
       weight: 1,
       files: [
-        "words/vocabs/04_我的世界/minecraft_intermediate.js",
-        "words/vocabs/04_我的世界/minecraft_entities.js",
-        "words/vocabs/04_我的世界/minecraft_biomes.js",
-        "words/vocabs/04_我的世界/minecraft_environment.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_intermediate.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_entities.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_biomes.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_environment.js",
       ],
       getRaw() {
         return [
@@ -322,16 +322,16 @@
     },
     {
       id: "vocab.minecraft.advanced",
-      title: "我的世界 - 高级",
+      title: "鎴戠殑涓栫晫 - 楂樼骇",
       stage: "minecraft",
       difficulty: "basic",
       level: "advanced",
       weight: 1,
       files: [
-        "words/vocabs/04_我的世界/minecraft_advanced.js",
-        "words/vocabs/04_我的世界/minecraft_enchantments.js",
-        "words/vocabs/04_我的世界/minecraft_advancements.js",
-        "words/vocabs/04_我的世界/minecraft_status_effects.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_advanced.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_enchantments.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_advancements.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_status_effects.js",
       ],
       getRaw() {
         return [
@@ -344,25 +344,25 @@
     },
     {
       id: "vocab.minecraft",
-      title: "我的世界 - 完整",
+      title: "鎴戠殑涓栫晫 - 瀹屾暣",
       stage: "minecraft",
       difficulty: "basic",
       level: "full",
       weight: 1,
       files: [
-        "words/vocabs/04_我的世界/minecraft_advanced.js",
-        "words/vocabs/04_我的世界/minecraft_advancements.js",
-        "words/vocabs/04_我的世界/minecraft_basic.js",
-        "words/vocabs/04_我的世界/minecraft_biomes.js",
-        "words/vocabs/04_我的世界/minecraft_blocks.js",
-        "words/vocabs/04_我的世界/minecraft_enchantments.js",
-        "words/vocabs/04_我的世界/minecraft_entities.js",
-        "words/vocabs/04_我的世界/minecraft_environment.js",
-        "words/vocabs/04_我的世界/minecraft_intermediate.js",
-        "words/vocabs/04_我的世界/minecraft_items.js",
-        "words/vocabs/04_我的世界/minecraft_items_2.js",
-        "words/vocabs/04_我的世界/minecraft_status_effects.js",
-        "words/vocabs/04_我的世界/minecraft_words_full.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_advanced.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_advancements.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_basic.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_biomes.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_blocks.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_enchantments.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_entities.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_environment.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_intermediate.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_items.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_items_2.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_status_effects.js",
+        "words/vocabs/04_鎴戠殑涓栫晫/minecraft_words_full.js",
       ],
       getRaw() {
         return [
@@ -383,8 +383,56 @@
       }
     },
     {
+      id: "vocab.junior_high.basic",
+      title: "初中-初级",
+      stage: "junior_high",
+      difficulty: "basic",
+      level: "basic",
+      weight: 1,
+      files: [
+        "words/vocabs/05_初中/junior_high_basic.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_JUNIOR_HIGH_BASIC !== "undefined" ? STAGE_JUNIOR_HIGH_BASIC : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.junior_high.intermediate",
+      title: "初中-中级",
+      stage: "junior_high",
+      difficulty: "intermediate",
+      level: "intermediate",
+      weight: 1,
+      files: [
+        "words/vocabs/05_初中/junior_high_intermediate.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_JUNIOR_HIGH_INTERMEDIATE !== "undefined" ? STAGE_JUNIOR_HIGH_INTERMEDIATE : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.junior_high.advanced",
+      title: "初中-高级",
+      stage: "junior_high",
+      difficulty: "advanced",
+      level: "advanced",
+      weight: 1,
+      files: [
+        "words/vocabs/05_初中/junior_high_advanced.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_JUNIOR_HIGH_ADVANCED !== "undefined" ? STAGE_JUNIOR_HIGH_ADVANCED : []),
+        ];
+      }
+    },
+    {
       id: "vocab.junior_high",
-      title: "初中-完整",
+      title: "鍒濅腑-瀹屾暣",
       stage: "junior_high",
       difficulty: "intermediate",
       level: "full",
@@ -400,13 +448,13 @@
     },
     {
       id: "vocab.kindergarten.supplement",
-      title: "幼儿园-补充",
+      title: "骞煎効鍥?琛ュ厖",
       stage: "kindergarten",
       difficulty: "basic",
       level: "full",
       weight: 1,
       files: [
-        "words/vocabs/01_幼儿园/kindergarten_supplement_external_20260221.js",
+        "words/vocabs/01_骞煎効鍥?kindergarten_supplement_external_20260221.js",
       ],
       getRaw() {
         return [
@@ -416,13 +464,13 @@
     },
     {
       id: "vocab.elementary_lower.supplement",
-      title: "小学-补充",
+      title: "灏忓-琛ュ厖",
       stage: "elementary_lower",
       difficulty: "basic",
       level: "full",
       weight: 1,
       files: [
-        "words/vocabs/02_小学_低年级/elementary_supplement_external_20260221.js",
+        "words/vocabs/02_灏忓_浣庡勾绾?elementary_supplement_external_20260221.js",
       ],
       getRaw() {
         return [
@@ -436,8 +484,11 @@
   packs.forEach(p => { byId[p.id] = p; });
 
   window.MMWG_VOCAB_MANIFEST = {
-    version: "2026-02-21.2",
+    version: "2026-02-21.3",
     packs,
     byId
   };
 })();
+
+
+

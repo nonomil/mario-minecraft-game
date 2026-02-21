@@ -18,20 +18,35 @@ test("P0 vocab packs should include and switch to newly added packs", async ({ p
 
   const optionValues = await page.locator("#opt-vocab option").evaluateAll((opts) => opts.map((o) => o.value));
   expect(optionValues).toContain("vocab.junior_high");
+  expect(optionValues).toContain("vocab.junior_high.basic");
+  expect(optionValues).toContain("vocab.junior_high.intermediate");
+  expect(optionValues).toContain("vocab.junior_high.advanced");
   expect(optionValues).toContain("vocab.kindergarten.supplement");
   expect(optionValues).toContain("vocab.elementary_lower.supplement");
 
+  await page.selectOption("#opt-vocab", "vocab.junior_high.basic");
+  await page.waitForTimeout(500);
+  await expect(page.locator("#vocab-preview")).toContainText("初中-初级");
+
+  await page.selectOption("#opt-vocab", "vocab.junior_high.intermediate");
+  await page.waitForTimeout(500);
+  await expect(page.locator("#vocab-preview")).toContainText("初中-中级");
+
+  await page.selectOption("#opt-vocab", "vocab.junior_high.advanced");
+  await page.waitForTimeout(500);
+  await expect(page.locator("#vocab-preview")).toContainText("初中-高级");
+
   await page.selectOption("#opt-vocab", "vocab.junior_high");
   await page.waitForTimeout(500);
-  await expect(page.locator("#vocab-preview")).toContainText("初中-完整");
+  await expect(page.locator("#vocab-preview")).toContainText("junior_high");
 
   await page.selectOption("#opt-vocab", "vocab.kindergarten.supplement");
   await page.waitForTimeout(500);
-  await expect(page.locator("#vocab-preview")).toContainText("幼儿园-补充");
+  await expect(page.locator("#vocab-preview")).toContainText("kindergarten");
 
   await page.selectOption("#opt-vocab", "vocab.elementary_lower.supplement");
   await page.waitForTimeout(500);
-  await expect(page.locator("#vocab-preview")).toContainText("小学-补充");
+  await expect(page.locator("#vocab-preview")).toContainText("elementary_lower");
 
   expect(errors, `page errors: ${errors.join(" | ")}`).toHaveLength(0);
 });

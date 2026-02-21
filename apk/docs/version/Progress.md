@@ -1,4 +1,15 @@
-﻿## v1.18.32（发布日期：2026-02-21）
+﻿## v1.18.33（发布日期：2026-02-21）
+- 类型：PATCH（初中词库分级与短语补齐）
+- APK 版本：versionName = 1.18.33，versionCode = 33
+- 主要完成项：
+  - 初中词库新增三档：`vocab.junior_high.basic` / `vocab.junior_high.intermediate` / `vocab.junior_high.advanced`。
+  - 保留完整包 `vocab.junior_high`，并重生成词条短语字段，支持“单词 + 短语”显示链路。
+  - 新增文件：
+    - `words/vocabs/05_初中/junior_high_basic.js`
+    - `words/vocabs/05_初中/junior_high_intermediate.js`
+    - `words/vocabs/05_初中/junior_high_advanced.js`
+  - 更新 E2E：`p0-vocab-pack-switch.spec.mjs`，验证初中四个包可切换。
+## v1.18.32（发布日期：2026-02-21）
 - 类型：PATCH（词库系统扩展 + 初中词库上线）
 - APK 版本：versionName = 1.18.32，versionCode = 32
 - 主要完成项：
@@ -669,6 +680,7 @@ b11ef12 chore: 閺囧瓨鏌?apk/android-app/package.json 閻楀牊婀伴懛?v1.6
   - 婢舵牠鍎寸拠宥呯氨鐎电厧鍙嗛懘姘拱閺€顖涘瘮 URL 娑撳簼缍呯純顔煎棘閺佹澘鍘规惔鏇礉姒涙顓?`inactive` 鐎瑰鍙忕€电厧鍙?
   - 閺傛澘顤冪€瑰本鏆ｇ紒瀛樺Б閺傚洦銆傞敍姝歞ocs/guide/鐠囧秴绨遍弫鐗堝祦鎼存挾娣幎銈呮禈閺傚洦瀵氶崡?md`
   - 鐎圭偞鎼烽幍褑顢戠€瑰本鍨氶敍姘嚤閸忋儯鈧礁骞撻柌宥呭瀻閺嬫劑鈧礁顦婚柈銊ユ値閸忋儯鈧礁顕遍崙鎭掆偓浣圭墡妤犲被鈧礁褰傜敮鍐ㄥ弿闁炬崘鐭炬宀冪槈闁俺绻?
+
 
 
 
