@@ -430,7 +430,7 @@ const FOOD_TYPES = {
     mushroom_stew: { heal: 1, icon: "🍲", name: "蘑菇煲", color: "#CD853F" },
     raw_fish: { heal: 1, icon: "🐟", name: "生鱼", color: "#87CEEB" }
 };
-let playerEquipment = { armor: null, armorDurability: 0 };
+let playerEquipment = { armor: null, armorDurability: 0, armorEquippedAt: 0, armorLastDurabilityTick: 0 };
 let silentBootsState = { equipped: false, durability: 0, maxDurability: 30 };
 let armorInventory = [];
 

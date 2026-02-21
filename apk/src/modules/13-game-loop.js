@@ -58,6 +58,7 @@ function update() {
     if (typeof updateDeepDarkNoiseSystem === 'function') updateDeepDarkNoiseSystem();
     if (typeof updatePlayerPoisonStatus === "function") updatePlayerPoisonStatus();
     tickWeather();
+    tickArmorDurabilityByTime();
 
     const isUnderwater = (currentBiome === 'ocean');
     const camelRideEffect = typeof getCamelRideEffect === 'function' ? getCamelRideEffect() : null;
@@ -542,6 +543,66 @@ function scorePenaltyForDamage(amount) {
     return Math.max(minPenalty, Math.min(maxPenalty, raw || minPenalty));
 }
 
+const ARMOR_DURATION_MINUTES = {
+    leather: 3,   // 木盔甲（皮革）
+    chainmail: 4,
+    iron: 4,
+    gold: 5,
+    diamond: 6,
+    netherite: 7
+};
+
+function getArmorDurationMs(armorId) {
+    const minutes = Number(ARMOR_DURATION_MINUTES[armorId]);
+    const safeMinutes = Number.isFinite(minutes) && minutes > 0 ? minutes : 4;
+    return safeMinutes * 60 * 1000;
+}
+
+function breakEquippedArmor(armorId) {
+    const broken = ARMOR_TYPES?.[armorId];
+    playerEquipment.armor = null;
+    playerEquipment.armorDurability = 0;
+    playerEquipment.armorEquippedAt = 0;
+    playerEquipment.armorLastDurabilityTick = 0;
+    showToast(`${broken?.name || "盔甲"} 已失效`);
+    updateArmorUI();
+}
+
+function tickArmorDurabilityByTime() {
+    const armorId = playerEquipment?.armor;
+    if (!armorId) return;
+    if (!Number.isFinite(Number(playerEquipment.armorDurability))) {
+        playerEquipment.armorDurability = 100;
+    }
+    if (playerEquipment.armorDurability <= 0) {
+        breakEquippedArmor(armorId);
+        return;
+    }
+
+    const now = Date.now();
+    if (!Number(playerEquipment.armorEquippedAt)) {
+        playerEquipment.armorEquippedAt = now;
+        playerEquipment.armorLastDurabilityTick = now;
+        return;
+    }
+
+    const lastTick = Number(playerEquipment.armorLastDurabilityTick) || now;
+    const dt = Math.max(0, now - lastTick);
+    if (dt <= 0) return;
+
+    const durationMs = getArmorDurationMs(armorId);
+    const loss = (dt / durationMs) * 100;
+    if (loss <= 0) return;
+
+    playerEquipment.armorDurability = Math.max(0, Math.round((Number(playerEquipment.armorDurability) - loss) * 10) / 10);
+    playerEquipment.armorLastDurabilityTick = now;
+    if (playerEquipment.armorDurability <= 0) {
+        breakEquippedArmor(armorId);
+        return;
+    }
+    updateArmorUI();
+}
+
 function damagePlayer(amount, sourceX, knockback = 90) {
     if (typeof hasVillageBuff === "function" && hasVillageBuff("invisible")) return;
     if (typeof getInvincibilityEffect === 'function') {
@@ -589,23 +650,8 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const minDamage = hasArmor ? 0 : 1;
     const actualDamage = Math.max(minDamage, Math.round(scaledDamage * (1 - reduction)));
     if (hasArmor) {
-        const durabilityLossByArmor = {
-            leather: 6,
-            chainmail: 5,
-            iron: 4,
-            gold: 5,
-            diamond: 3,
-            netherite: 2
-        };
-        playerEquipment.armorDurability = Math.max(0, playerEquipment.armorDurability - (durabilityLossByArmor[armorId] || 5));
         if (actualDamage <= 0) {
             showFloatingText("🛡️ 格挡", player.x, player.y - 24, "#80DEEA");
-        }
-        if (playerEquipment.armorDurability <= 0) {
-            const broken = ARMOR_TYPES[playerEquipment.armor];
-            showToast(`${broken?.name || "盔甲"} 已破损`);
-            playerEquipment.armor = null;
-            playerEquipment.armorDurability = 0;
         }
     }
     updateArmorUI();
@@ -673,7 +719,7 @@ function renderInventoryModal() {
     if (!inventoryContentEl) return;
     if (inventoryTab === "equipment") {
         const armorLabel = playerEquipment.armor ? (ARMOR_TYPES[playerEquipment.armor]?.name || playerEquipment.armor) : "无";
-        const armorDur = playerEquipment.armor ? `${playerEquipment.armorDurability}%` : "--";
+        const armorDur = playerEquipment.armor ? `${Math.round(Number(playerEquipment.armorDurability) || 0)}%` : "--";
         const armorListHtml = (armorInventory || []).map((entry, idx) => {
             const armor = ARMOR_TYPES[entry.id];
             const name = armor?.name || entry.id;
@@ -681,7 +727,7 @@ function renderInventoryModal() {
             return `<div class="inventory-item" onclick="window.equipArmorFromBackpack && window.equipArmorFromBackpack('${entry.id}')">
                 <div class="inventory-item-left">
                     <div class="inventory-item-icon">${icon}</div>
-                    <div>${name} (${entry.durability}%)</div>
+                    <div>${name} (${Math.round(Number(entry.durability) || 0)}%)</div>
                 </div>
                 <div class="inventory-item-count">装备</div>
             </div>`;
@@ -1038,7 +1084,10 @@ function equipArmor(armorId) {
         });
     }
     playerEquipment.armor = selected.id;
-    playerEquipment.armorDurability = selected.durability;
+    playerEquipment.armorDurability = Number.isFinite(Number(selected.durability)) ? Number(selected.durability) : 100;
+    const now = Date.now();
+    playerEquipment.armorEquippedAt = now;
+    playerEquipment.armorLastDurabilityTick = now;
     updateArmorUI();
     showToast(`🛡️ 装备 ${armor.name}`);
     showFloatingText(`🛡️ ${armor.name}`, player ? player.x : 0, player ? player.y - 60 : 120);
@@ -1054,6 +1103,8 @@ function unequipArmor() {
     });
     playerEquipment.armor = null;
     playerEquipment.armorDurability = 0;
+    playerEquipment.armorEquippedAt = 0;
+    playerEquipment.armorLastDurabilityTick = 0;
     updateArmorUI();
     showToast(`${armor?.name || "盔甲"} 已卸下`);
 }
@@ -1069,7 +1120,7 @@ function updateArmorUI() {
     if (!el) return;
     if (playerEquipment.armor) {
         const armor = ARMOR_TYPES[playerEquipment.armor];
-        const dur = Math.max(0, Math.min(100, playerEquipment.armorDurability));
+        const dur = Math.max(0, Math.min(100, Math.round(Number(playerEquipment.armorDurability) || 0)));
         el.innerText = `🛡️ ${armor.name} ${dur}%`;
         el.classList.add("hud-box-active");
     } else {
@@ -1093,7 +1144,7 @@ function showArmorSelectUI() {
             <div class="armor-details">
                 <div class="armor-name">${armor.name}（已装备）</div>
                 <div class="armor-defense">防御 ${armor.defense}</div>
-                <div class="armor-durability">耐久 ${playerEquipment.armorDurability}%</div>
+                <div class="armor-durability">耐久 ${Math.round(Number(playerEquipment.armorDurability) || 0)}%</div>
             </div>
         `;
         card.addEventListener("click", () => {
@@ -1113,7 +1164,7 @@ function showArmorSelectUI() {
                 <div class="armor-details">
                     <div class="armor-name">${armor.name}</div>
                     <div class="armor-defense">防御 ${armor.defense}</div>
-                    <div class="armor-durability">耐久 ${item.durability}%</div>
+                    <div class="armor-durability">耐久 ${Math.round(Number(item.durability) || 0)}%</div>
                 </div>
             `;
             card.addEventListener("click", () => {
