@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 18-village.js - 村庄系统核心逻辑
  * v1.8.0 实现村庄基础框架
  */
@@ -49,13 +49,13 @@ const DEFAULT_VILLAGE_CONFIG = {
   villageWidth: 800,
   safeZone: true,
   restHealFull: true,
-  challengeQuestionCount: 3,
+  challengeQuestionCount: 10,
   minSpawnScoreGap: 900,
   minSpawnDistancePx: 2600,
   minBiomeTransitionsBetweenVillages: 2,
   minBiomeStayScoreForVillage: 120,
   challengeReward: {
-    perfect: { score: 100, diamonds: 1 },
+    perfect: { score: 100, diamonds: 0 },
     partial: { score: 50, diamonds: 0 }
   },
   npcSpeed: 0.3,
@@ -420,7 +420,9 @@ const villageInteriorState = {
   challengeStarted: false,
   autoEnterBlockUntil: 0,
   autoTriggerCooldownUntil: 0,
-  autoTriggerZone: ""
+  actionTriggerCooldownUntil: 0,
+  autoTriggerZone: "",
+  autoActionZone: ""
 };
 
 function isVillageInteriorActive() {
@@ -483,7 +485,9 @@ function resetVillageInteriorState({ silent = true } = {}) {
   villageInteriorState.challengeStarted = false;
   villageInteriorState.autoEnterBlockUntil = 0;
   villageInteriorState.autoTriggerCooldownUntil = 0;
+  villageInteriorState.actionTriggerCooldownUntil = 0;
   villageInteriorState.autoTriggerZone = "";
+  villageInteriorState.autoActionZone = "";
   syncVillageInteriorTouchUi();
   if (!silent && wasActive) showToast("🏠 已离开房屋");
 }
@@ -515,7 +519,9 @@ function enterVillageInterior(village, building) {
   villageInteriorState.exitConfirmUntil = 0;
   villageInteriorState.challengeStarted = false;
   villageInteriorState.autoTriggerCooldownUntil = Date.now() + 600;
+  villageInteriorState.actionTriggerCooldownUntil = 0;
   villageInteriorState.autoTriggerZone = "";
+  villageInteriorState.autoActionZone = "";
   syncVillageInteriorTouchUi();
   if (player) {
     const centerX = Number(villageInteriorState.entryBuildingX) || 0;
@@ -592,6 +598,7 @@ function updateVillageInteriorMode() {
   player.grounded = true;
   player.jumpCount = 0;
   triggerVillageInteriorAutoDoor(village);
+  triggerVillageInteriorAutoAction(village);
   const targetCam = Math.max(0, player.x - cameraOffsetX);
   if (targetCam > cameraX) cameraX = targetCam;
 }
@@ -667,14 +674,6 @@ function renderVillageInterior(ctx) {
   ctx.font = "18px sans-serif";
   if (buildingType === "bed_house") {
     drawVillageBed(ctx, panelX + 80, panelY + panelH - 110, colors);
-    ctx.fillText("", panelX + 28, panelY + 96);
-    ctx.fillText("", panelX + 28, panelY + 128);
-  } else {
-    ctx.fillStyle = colors.log || "#6B4226";
-    ctx.fillRect(panelX + 72, panelY + panelH - 126, 180, 18);
-    ctx.fillRect(panelX + 86, panelY + panelH - 108, 14, 50);
-    ctx.fillRect(panelX + 224, panelY + panelH - 108, 14, 50);
-    ctx.fillStyle = "#222";
     ctx.fillText("", panelX + 28, panelY + 96);
     ctx.fillText("", panelX + 28, panelY + 128);
   }
@@ -754,17 +753,18 @@ function triggerVillageInteriorAutoDoor(village) {
 function triggerVillageInteriorChestAction(village) {
   if (!isVillageInteriorActive() || !village || !player) return false;
   const now = Date.now();
-  if (now < Number(villageInteriorState.autoTriggerCooldownUntil || 0)) return false;
+  if (now < Number(villageInteriorState.actionTriggerCooldownUntil || 0)) return false;
   const type = villageInteriorState.buildingType;
   const centerX = getPlayerCenterX();
   const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
   if (!nearAction) {
     showToast(type === "bed_house" ? "靠近床后按宝箱键" : "靠近单词书后按宝箱键");
-    villageInteriorState.autoTriggerCooldownUntil = now + 250;
+    villageInteriorState.actionTriggerCooldownUntil = now + 180;
     return true;
   }
   villageInteriorState.autoTriggerZone = "";
-  villageInteriorState.autoTriggerCooldownUntil = now + 900;
+  villageInteriorState.autoActionZone = "";
+  villageInteriorState.actionTriggerCooldownUntil = now + 650;
   if (type === "bed_house") {
     performRest(village);
     return true;
@@ -783,6 +783,27 @@ function triggerVillageInteriorChestAction(village) {
     }
   }
   return false;
+}
+
+function triggerVillageInteriorAutoAction(village) {
+  if (!isVillageInteriorActive() || !village || !player) return false;
+  if (paused || pausedByModal) return false;
+  if (villageInteriorState.buildingType !== "word_house") return false;
+  if (village.questCompleted || village._challengeRunning || villageInteriorState.challengeStarted) return false;
+  const now = Date.now();
+  if (now < Number(villageInteriorState.actionTriggerCooldownUntil || 0)) return false;
+
+  const centerX = getPlayerCenterX();
+  const nearAction = Math.abs(centerX - getInteriorActionX("word_house")) <= INTERIOR_ACTION_RANGE;
+  const zone = nearAction ? "word_action" : "";
+  if (!zone) {
+    if (villageInteriorState.autoActionZone === "word_action") villageInteriorState.autoActionZone = "";
+    return false;
+  }
+  if (zone === villageInteriorState.autoActionZone) return false;
+  villageInteriorState.autoActionZone = zone;
+  villageInteriorState.actionTriggerCooldownUntil = now + 650;
+  return !!triggerVillageInteriorChestAction(village);
 }
 
 function checkVillageRest(village) {
@@ -812,20 +833,25 @@ function tryAutoEnterVillageInterior(village) {
   const now = Date.now();
   if (now < Number(villageInteriorState.autoEnterBlockUntil || 0)) return false;
   const nearby = getNearbyBuilding(village, 2);
-  if (!nearby || !isInteriorBuildingType(nearby.type)) return false;
+  if (!nearby) return false;
   const centerX = getPlayerCenterX();
   const doorCenter = nearby.x + nearby.w * 0.5;
-  if (Math.abs(centerX - doorCenter) > INTERIOR_DOOR_RANGE) return false;
+  const autoRange = nearby.type === "trader_house" ? (INTERIOR_DOOR_RANGE + 12) : INTERIOR_DOOR_RANGE;
+  if (Math.abs(centerX - doorCenter) > autoRange) return false;
   if (village._lastAutoEnterAt && now - village._lastAutoEnterAt < 1000) return false;
   village._lastAutoEnterAt = now;
+  if (nearby.type === "trader_house") return !!handleVillageInteraction(nearby, village);
+  if (!isInteriorBuildingType(nearby.type)) return false;
   return enterVillageInterior(village, nearby);
 }
 function getNearbyBuilding(village, margin = 4) {
   if (!village || !Array.isArray(village.buildings) || !player) return null;
   const centerX = player.x + player.width / 2;
   for (const building of village.buildings) {
-    const left = building.x - margin;
-    const right = building.x + building.w + margin;
+    const extraMargin = building.type === "trader_house" ? 14 : 0;
+    const hitMargin = margin + extraMargin;
+    const left = building.x - hitMargin;
+    const right = building.x + building.w + hitMargin;
     if (centerX >= left && centerX <= right) return building;
   }
   return null;

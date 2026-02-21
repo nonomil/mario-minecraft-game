@@ -1455,6 +1455,12 @@ canvas {
     margin-bottom: 10px;
 }
 
+.profile-actions {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+}
+
 .achievement-item {
     display: flex;
     align-items: center;
@@ -1578,6 +1584,131 @@ canvas {
 .leaderboard-score {
     color: #4CAF50;
     font-weight: bold;
+}
+
+/* Village Challenge Modal */
+.village-challenge-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1400;
+    padding: 16px;
+}
+
+.village-challenge-modal.visible {
+    display: flex;
+}
+
+.village-challenge-panel {
+    width: min(92vw, 680px);
+    max-height: 86vh;
+    overflow: auto;
+    background: #202832;
+    border: 2px solid #546E7A;
+    border-radius: 12px;
+    padding: 20px;
+    color: #fff;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+    text-align: center;
+}
+
+.village-challenge-emoji {
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.village-challenge-title {
+    margin: 8px 0;
+    font-size: clamp(20px, 3vw, 28px);
+    color: #FFD54F;
+}
+
+.village-challenge-subtitle {
+    margin: 6px 0;
+    color: #EEE;
+    font-size: 14px;
+}
+
+.village-challenge-tip {
+    margin: 8px 0;
+    color: #AEEA00;
+    font-size: 13px;
+}
+
+.village-challenge-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.village-btn-muted {
+    background: #666 !important;
+}
+
+.village-question-wrap {
+    text-align: center;
+}
+
+.village-question-progress {
+    color: #AAA;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.village-question-word {
+    font-size: clamp(28px, 4.6vw, 42px);
+    color: #FFF;
+    margin: 12px 0;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.village-question-hint {
+    color: #FFD54F;
+    font-size: 15px;
+    margin-bottom: 14px;
+}
+
+.village-question-controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.village-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.village-opt-btn {
+    padding: 10px 12px;
+    min-height: 44px;
+    border-radius: 10px;
+    border: 2px solid #546E7A;
+    background: #37474F;
+    color: #FFF;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.village-opt-btn.correct {
+    background: #2E7D32;
+    border-color: #66BB6A;
+}
+
+.village-opt-btn.wrong {
+    background: #C62828;
+    border-color: #EF5350;
+}
+
+.village-opt-btn.hint-removed {
+    opacity: 0.35;
 }
 
 .leaderboard-words {

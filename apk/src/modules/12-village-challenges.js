@@ -1,6 +1,6 @@
-﻿/**
+/**
  * 12-village-challenges.js - Village-specific quiz flow
- * Uses a dedicated modal to avoid interfering with generic learning challenge DOM.
+ * Uses a dedicated modal and question style to avoid interfering with generic learning challenge DOM.
  */
 
 let villageChallengeSession = null;
@@ -11,18 +11,9 @@ function getVillageChallengeModal() {
 
   modal = document.createElement("div");
   modal.id = "village-challenge-modal";
+  modal.className = "village-challenge-modal";
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-modal", "true");
-  modal.style.cssText = [
-    "position:fixed",
-    "inset:0",
-    "display:none",
-    "align-items:center",
-    "justify-content:center",
-    "background:rgba(0,0,0,0.55)",
-    "z-index:1400",
-    "padding:16px"
-  ].join(";");
   modal.addEventListener("click", (e) => {
     if (e.target !== modal) return;
     if (!villageChallengeSession) return;
@@ -35,17 +26,17 @@ function getVillageChallengeModal() {
 function showVillageChallengeModal(innerHtml) {
   const modal = getVillageChallengeModal();
   modal.innerHTML = `
-    <div style="width:min(92vw,680px);max-height:86vh;overflow:auto;background:#202832;border:2px solid #546E7A;border-radius:12px;padding:20px;color:#FFF;box-shadow:0 14px 40px rgba(0,0,0,0.45);">
+    <div class="village-challenge-panel">
       ${innerHtml}
     </div>
   `;
-  modal.style.display = "flex";
+  modal.classList.add("visible");
 }
 
 function hideVillageChallengeModal() {
   const modal = document.getElementById("village-challenge-modal");
   if (!modal) return;
-  modal.style.display = "none";
+  modal.classList.remove("visible");
   modal.innerHTML = "";
 }
 
@@ -133,32 +124,63 @@ function resolveVillageChallengeWord(rawWord) {
   return { en, zh, phrase, phraseTranslation };
 }
 
+function getVillageQuestionCount() {
+  if (typeof getVillageConfig === "function") {
+    const cfg = getVillageConfig();
+    return Math.max(1, Number(cfg?.challengeQuestionCount) || 10);
+  }
+  return Math.max(1, Number(villageConfig?.challengeQuestionCount) || 10);
+}
+
+function getVillageRewardConfig() {
+  if (typeof getVillageConfig === "function") {
+    return getVillageConfig()?.challengeReward || {};
+  }
+  return villageConfig?.challengeReward || {};
+}
+
 function buildVillageChallengeWords(village, questionCount) {
   const biomeWords = typeof getVillageWords === "function" ? getVillageWords(village.biomeId) : [];
-  if (!Array.isArray(biomeWords) || !biomeWords.length) return [];
-  const normalized = biomeWords
-    .map(resolveVillageChallengeWord)
-    .filter((w) => !!w && !!String(w.en || "").trim());
-  if (!normalized.length) return [];
-  const shuffled = [...normalized].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(questionCount, shuffled.length));
-}
+  const normalized = Array.isArray(biomeWords)
+    ? biomeWords.map(resolveVillageChallengeWord).filter((w) => !!w && !!String(w.en || "").trim())
+    : [];
 
-function buildLetterChoices(correctLetter) {
-  const options = [correctLetter];
-  const allLetters = "abcdefghijklmnopqrstuvwxyz";
-  while (options.length < 4) {
-    const rand = allLetters[Math.floor(Math.random() * allLetters.length)];
-    if (!options.includes(rand)) options.push(rand);
+  const fallback = Array.isArray(wordDatabase)
+    ? wordDatabase.map(resolveVillageChallengeWord).filter((w) => !!w && !!String(w.en || "").trim())
+    : [];
+
+  const pool = normalized.length ? normalized : fallback;
+  if (!pool.length) return [];
+
+  const selected = [];
+  const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
+  let idx = 0;
+  while (selected.length < questionCount) {
+    if (idx >= shuffledPool.length) {
+      idx = 0;
+      shuffledPool.sort(() => Math.random() - 0.5);
+    }
+    selected.push(shuffledPool[idx]);
+    idx++;
   }
-  return options.sort(() => Math.random() - 0.5);
+  return selected;
 }
 
-/**
- * 启动村庄学习挑战
- * @param {Object} village - 当前村庄实例
- * @param {Function} onComplete - 完成回调
- */
+function buildVillageZhOptions(correctWord, wordsPool) {
+  const correct = String(correctWord?.zh || "").trim() || String(correctWord?.en || "").trim();
+  const distractorPool = (Array.isArray(wordsPool) ? wordsPool : [])
+    .map((w) => String(w?.zh || "").trim())
+    .filter((zh) => zh && zh !== correct);
+
+  const unique = [...new Set(distractorPool)].sort(() => Math.random() - 0.5).slice(0, 3);
+  while (unique.length < 3) {
+    unique.push(`干扰项${unique.length + 1}`);
+  }
+
+  return [{ text: correct, value: correct, correct: true }, ...unique.map((text) => ({ text, value: text, correct: false }))]
+    .sort(() => Math.random() - 0.5);
+}
+
 function startVillageChallenge(village, onComplete) {
   if (!village) {
     console.warn("[Village Challenge] No village provided");
@@ -175,7 +197,7 @@ function startVillageChallenge(village, onComplete) {
     return;
   }
 
-  const questionCount = Math.max(1, Number(villageConfig?.challengeQuestionCount) || 3);
+  const questionCount = getVillageQuestionCount();
   const selectedWords = buildVillageChallengeWords(village, questionCount);
   if (!selectedWords.length) {
     showToast("当前群系暂无可用单词");
@@ -187,30 +209,36 @@ function startVillageChallenge(village, onComplete) {
     currentQuestion: 0,
     correctCount: 0,
     wordsSeen: [],
-    currentWord: null
+    currentWord: null,
+    roundDiamonds: 0,
+    hintUsedCurrent: false
   };
   village.challengeProgress = progress;
-
-  console.log(`[Village Challenge] Starting challenge for village ${village.id}, questions: ${selectedWords.length}`);
 
   showVillageChallengeIntro(session, village.biomeId, selectedWords.length, () => {
     if (!isVillageChallengeActive(session)) return;
 
     function handleAnswer(isCorrect) {
       if (!isVillageChallengeActive(session)) return;
-      if (isCorrect) progress.correctCount++;
+      if (isCorrect) {
+        progress.correctCount++;
+        inventory.diamond = (Number(inventory?.diamond) || 0) + 1;
+        progress.roundDiamonds += 1;
+        if (typeof updateInventoryUI === "function") updateInventoryUI();
+        showFloatingText("💎 +1", player?.x || 120, (player?.y || 120) - 30, "#FFD54F");
+      }
       progress.currentQuestion++;
       if (progress.currentWord?.en && !progress.wordsSeen.includes(progress.currentWord.en)) {
         progress.wordsSeen.push(progress.currentWord.en);
       }
 
       if (progress.currentQuestion >= selectedWords.length) {
-        finishVillageChallenge(session, village, progress.correctCount, selectedWords.length);
+        finishVillageChallenge(session, village, progress.correctCount, selectedWords.length, progress.roundDiamonds);
       } else {
         setTimeout(() => {
           if (!isVillageChallengeActive(session)) return;
           showVillageQuestion(session, selectedWords, progress, handleAnswer);
-        }, 350);
+        }, 280);
       }
     }
 
@@ -222,32 +250,27 @@ function showVillageChallengeIntro(session, biomeId, count, onStart) {
   if (!isVillageChallengeActive(session)) return;
   const biomeName = typeof getBiomeName === "function" ? getBiomeName(biomeId) : biomeId;
   showVillageChallengeModal(`
-    <div style="text-align:center;">
-      <div style="font-size:34px; margin-bottom:8px;">📚</div>
-      <h3 style="color:#FFD54F; margin:8px 0;">${biomeName}村庄 · 单词挑战</h3>
-      <p style="color:#EEE; font-size:14px;">回答 ${count} 道单词题</p>
-      <p style="color:#AEEA00; font-size:12px;">全对奖励：💎×1 + 🪙×100 + 群系道具</p>
-      <div style="display:flex; gap:12px; justify-content:center; margin-top:16px;">
-        <button id="btn-village-challenge-start" style="padding:10px 24px; font-size:16px; background:#4CAF50; color:#FFF; border:none; border-radius:8px; cursor:pointer;">开始挑战</button>
-        <button id="btn-village-challenge-cancel" style="padding:10px 24px; font-size:16px; background:#555; color:#FFF; border:none; border-radius:8px; cursor:pointer;">退出</button>
+    <div class="village-challenge-intro">
+      <div class="village-challenge-emoji">📚</div>
+      <h3 class="village-challenge-title">${biomeName}村庄 · 单词挑战</h3>
+      <p class="village-challenge-subtitle">共 ${count} 题，题型：英文词义选择</p>
+      <p class="village-challenge-tip">每题答对奖励：💎 x1</p>
+      <div class="village-challenge-actions">
+        <button id="btn-village-challenge-start" class="game-btn">开始挑战</button>
+        <button id="btn-village-challenge-cancel" class="game-btn village-btn-muted">退出</button>
       </div>
     </div>
   `);
 
   const modal = getVillageChallengeModal();
-  const btnStart = modal.querySelector("#btn-village-challenge-start");
-  const btnCancel = modal.querySelector("#btn-village-challenge-cancel");
+  modal.querySelector("#btn-village-challenge-start")?.addEventListener("click", () => {
+    if (!isVillageChallengeActive(session)) return;
+    if (typeof onStart === "function") onStart();
+  });
 
-  if (btnStart) {
-    btnStart.addEventListener("click", () => {
-      if (!isVillageChallengeActive(session)) return;
-      if (typeof onStart === "function") onStart();
-    });
-  }
-
-  if (btnCancel) {
-    btnCancel.addEventListener("click", () => cancelVillageChallenge(session, "已退出村庄挑战"));
-  }
+  modal.querySelector("#btn-village-challenge-cancel")?.addEventListener("click", () => {
+    cancelVillageChallenge(session, "已退出村庄挑战");
+  });
 }
 
 function showVillageQuestion(session, words, progress, onAnswer) {
@@ -255,69 +278,61 @@ function showVillageQuestion(session, words, progress, onAnswer) {
 
   const word = words[progress.currentQuestion];
   if (!word) {
-    finishVillageChallenge(session, session.village, progress.correctCount, progress.currentQuestion);
+    finishVillageChallenge(session, session.village, progress.correctCount, progress.currentQuestion, progress.roundDiamonds);
     return;
   }
   progress.currentWord = word;
+  progress.hintUsedCurrent = false;
 
-  const enRaw = String(word.en || "").trim().toLowerCase();
-  const enLetters = enRaw.replace(/[^a-z]/g, "");
-  if (!enLetters) {
-    progress.currentQuestion++;
-    setTimeout(() => {
-      if (!isVillageChallengeActive(session)) return;
-      showVillageQuestion(session, words, progress, onAnswer);
-    }, 0);
-    return;
-  }
-
-  const hideIndex = Math.floor(Math.random() * enLetters.length);
-  const displayed = enLetters.split("").map((ch, i) => (i === hideIndex ? "_" : ch));
-  const correctLetter = enLetters[hideIndex];
-  const options = buildLetterChoices(correctLetter);
-  const zh = String(word.zh || "").trim();
+  const questionEn = String(word.en || "").trim();
+  const options = buildVillageZhOptions(word, words);
 
   showVillageChallengeModal(`
-    <div style="text-align:center;">
-      <p style="color:#AAA; font-size:12px; margin-bottom:8px;">第 ${progress.currentQuestion + 1} / ${words.length} 题 · 选择正确的字母填空</p>
-      <div style="font-size:28px; color:#FFF; letter-spacing:4px; margin:12px 0; font-family:monospace;">
-        ${displayed.join("")}
+    <div class="village-question-wrap">
+      <p class="village-question-progress">第 ${progress.currentQuestion + 1} / ${words.length} 题</p>
+      <div class="village-question-word">${questionEn}</div>
+      <p class="village-question-hint">请选择对应的中文含义</p>
+      <div class="village-question-controls">
+        <button id="btn-village-question-hint" class="game-btn game-btn-small">提示</button>
+        <button id="btn-village-challenge-exit" class="game-btn game-btn-small village-btn-muted">退出挑战</button>
       </div>
-      <p style="color:#FFD54F; font-size:14px; margin-bottom:16px; min-height:20px;">${zh || "请选择正确字母"}</p>
-      <div id="village-challenge-options" style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <div id="village-challenge-options" class="village-options-grid">
         ${options.map((opt) => `
-          <button class="village-opt-btn" data-letter="${opt}" style="width:50px; height:50px; font-size:22px; font-family:monospace; background:#37474F; color:#FFF; border:2px solid #546E7A; border-radius:8px; cursor:pointer;">
-            ${opt}
-          </button>
+          <button class="village-opt-btn" data-correct="${opt.correct ? "1" : "0"}">${opt.text}</button>
         `).join("")}
       </div>
-      <button id="btn-village-challenge-exit" style="margin-top:16px; padding:8px 16px; font-size:13px; background:#666; color:#FFF; border:none; border-radius:6px; cursor:pointer;">退出挑战</button>
     </div>
   `);
 
   const modal = getVillageChallengeModal();
-  const btnExit = modal.querySelector("#btn-village-challenge-exit");
-  if (btnExit) {
-    btnExit.addEventListener("click", () => cancelVillageChallenge(session, "已退出村庄挑战"));
-  }
+  modal.querySelector("#btn-village-challenge-exit")?.addEventListener("click", () => {
+    cancelVillageChallenge(session, "已退出村庄挑战");
+  });
 
-  const btns = modal.querySelectorAll(".village-opt-btn");
-  btns.forEach((btn) => {
+  const btnHint = modal.querySelector("#btn-village-question-hint");
+  const optionButtons = Array.from(modal.querySelectorAll(".village-opt-btn"));
+
+  btnHint?.addEventListener("click", () => {
+    if (!isVillageChallengeActive(session) || progress.hintUsedCurrent) return;
+    progress.hintUsedCurrent = true;
+    const wrongButtons = optionButtons.filter((b) => b.dataset.correct !== "1");
+    wrongButtons.sort(() => Math.random() - 0.5).slice(0, 2).forEach((b) => {
+      b.disabled = true;
+      b.classList.add("hint-removed");
+    });
+    if (btnHint) btnHint.disabled = true;
+  });
+
+  optionButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       if (!isVillageChallengeActive(session)) return;
-      const selected = btn.dataset.letter;
-      const isCorrect = selected === correctLetter;
+      const isCorrect = btn.dataset.correct === "1";
 
-      btns.forEach((b) => {
-        b.style.pointerEvents = "none";
-        if (b.dataset.letter === correctLetter) {
-          b.style.background = "#4CAF50";
-          b.style.borderColor = "#66BB6A";
-        } else if (b === btn && !isCorrect) {
-          b.style.background = "#F44336";
-          b.style.borderColor = "#EF5350";
-        }
+      optionButtons.forEach((b) => {
+        b.disabled = true;
+        if (b.dataset.correct === "1") b.classList.add("correct");
       });
+      if (!isCorrect) btn.classList.add("wrong");
 
       if (typeof speakWord === "function") {
         speakWord({
@@ -331,62 +346,41 @@ function showVillageQuestion(session, words, progress, onAnswer) {
 
       setTimeout(() => {
         if (!isVillageChallengeActive(session)) return;
-        showFloatingText(
-          isCorrect ? "✅ Correct!" : `❌ ${enLetters}`,
-          player?.x || 120,
-          (player?.y || 120) - 30
-        );
-
+        showFloatingText(isCorrect ? "✅ 正确" : "❌ 错误", player?.x || 120, (player?.y || 120) - 30);
         setTimeout(() => {
           if (!isVillageChallengeActive(session)) return;
           if (typeof onAnswer === "function") onAnswer(isCorrect);
-        }, 650);
-      }, 250);
+        }, 420);
+      }, 200);
     });
   });
 }
 
-function finishVillageChallenge(session, village, correct, total) {
+function finishVillageChallenge(session, village, correct, total, diamondsEarned) {
   if (!isVillageChallengeActive(session)) return;
 
-  const reward = villageConfig?.challengeReward || {};
+  const reward = getVillageRewardConfig();
   const isPerfect = correct === total;
-  const rewardText = isPerfect
-    ? `🎉 全对! +${reward.perfect?.score || 100}🪙 +${reward.perfect?.diamonds || 1}💎`
-    : `📝 ${correct}/${total} +${reward.partial?.score || 50}🪙`;
+  const scoreReward = isPerfect ? (reward.perfect?.score || 100) : (reward.partial?.score || 50);
 
   showVillageChallengeModal(`
-    <div style="text-align:center;">
-      <div style="font-size:40px; margin-bottom:10px;">${isPerfect ? "🏆" : "📖"}</div>
-      <h3 style="color:${isPerfect ? "#FFD54F" : "#EEE"}; margin:8px 0;">${isPerfect ? "完美通关!" : "挑战完成"}</h3>
-      <p style="color:#AEA; font-size:16px;">${correct} / ${total} 正确</p>
-      <p style="color:#FFD54F; font-size:14px; margin-top:8px;">${rewardText}</p>
-      <div style="display:flex; gap:12px; justify-content:center; margin-top:16px;">
-        <button id="btn-village-challenge-done" style="padding:10px 24px; font-size:16px; background:#4CAF50; color:#FFF; border:none; border-radius:8px; cursor:pointer;">继续冒险</button>
+    <div class="village-challenge-result">
+      <div class="village-challenge-emoji">${isPerfect ? "🏆" : "📖"}</div>
+      <h3 class="village-challenge-title">${isPerfect ? "完美通关" : "挑战完成"}</h3>
+      <p class="village-challenge-subtitle">正确 ${correct} / ${total}</p>
+      <p class="village-challenge-tip">本局奖励：💎 ${diamondsEarned}，积分 +${scoreReward}</p>
+      <div class="village-challenge-actions">
+        <button id="btn-village-challenge-done" class="game-btn">继续冒险</button>
       </div>
     </div>
   `);
 
   const modal = getVillageChallengeModal();
-  const btnDone = modal.querySelector("#btn-village-challenge-done");
-  if (!btnDone) return;
-
-  btnDone.addEventListener("click", () => {
+  modal.querySelector("#btn-village-challenge-done")?.addEventListener("click", () => {
     if (!isVillageChallengeActive(session)) return;
 
-    if (!inventory || typeof inventory !== "object") inventory = {};
-    if (typeof inventory.diamond !== "number") inventory.diamond = Number(inventory.diamond) || 0;
-
-    if (isPerfect) {
-      score += reward.perfect?.score || 100;
-      inventory.diamond += reward.perfect?.diamonds || 1;
-    } else {
-      score += reward.partial?.score || 50;
-    }
-
-    if (typeof updateDiamondUI === "function") updateDiamondUI();
-    else if (typeof updateInventoryUI === "function") updateInventoryUI();
-
+    score += scoreReward;
+    if (typeof updateInventoryUI === "function") updateInventoryUI();
     if (typeof grantBiomeReward === "function") grantBiomeReward(village.biomeId);
 
     closeVillageChallengeSession(session, {

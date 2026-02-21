@@ -492,7 +492,14 @@ function formatPlayTime(seconds) {
 function wireProfileModal() {
     const modal = document.getElementById("profile-modal");
     const btnClose = document.getElementById("btn-profile-close");
+    const btnSaveLeaderboard = document.getElementById("btn-profile-save-leaderboard");
     if (btnClose) btnClose.addEventListener("click", hideProfileModal);
+    if (btnSaveLeaderboard) {
+        btnSaveLeaderboard.addEventListener("click", () => {
+            if (typeof saveCurrentProgress === "function") saveCurrentProgress();
+            if (typeof saveProfileScoreToLeaderboard === "function") saveProfileScoreToLeaderboard();
+        });
+    }
     if (modal) {
         modal.addEventListener("click", e => {
             if (e.target === modal) hideProfileModal();

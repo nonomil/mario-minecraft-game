@@ -424,6 +424,8 @@ function showLeaderboardModal() {
     if (!modal) return;
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
+    const saveSection = document.getElementById("leaderboard-save-section");
+    if (saveSection) saveSection.style.display = "";
     renderLeaderboard();
     // Pre-fill name input with current account username
     const nameInput = document.getElementById("leaderboard-name-input");
@@ -455,6 +457,15 @@ function saveToLeaderboard() {
     // Hide the save section after saving
     const saveSection = document.getElementById("leaderboard-save-section");
     if (saveSection) saveSection.style.display = "none";
+}
+
+function saveProfileScoreToLeaderboard() {
+    if (typeof saveCurrentProgress === "function") saveCurrentProgress();
+    const nameInput = document.getElementById("leaderboard-name-input");
+    if (nameInput && currentAccount?.username) nameInput.value = currentAccount.username;
+    if (typeof hideProfileModal === "function") hideProfileModal();
+    showLeaderboardModal();
+    saveToLeaderboard();
 }
 
 function renderLeaderboard() {
