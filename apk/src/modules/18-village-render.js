@@ -274,9 +274,9 @@ function drawVillageInteractHint(ctx, village) {
     const near = Math.abs(centerX - doorX) <= 46;
     if (!near) continue;
     if (building.type === "word_house") {
-      hint = "\u5355\u8bcd\u5c4b\uff1a\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\u89e6\u53d1";
+      hint = "\u5355\u8bcd\u5c4b\uff1a\u6309\u5b9d\u7bb1\u952e\u89e6\u53d1";
     } else {
-      hint = "\u5546\u4eba\u5c4b\uff1a\u957f\u6309\u5b9d\u7bb1\u56fe\u6807\u89e6\u53d1";
+      hint = "\u5546\u4eba\u5c4b\uff1a\u6309\u5b9d\u7bb1\u952e\u89e6\u53d1";
     }
     break;
   }

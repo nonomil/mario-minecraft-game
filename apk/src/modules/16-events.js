@@ -475,7 +475,7 @@ function wireTouchControls() {
     bindHold("right", () => { keys.right = true; }, () => { keys.right = false; });
     bindTap("jump", () => { jumpBuffer = gameConfig.jump.bufferFrames; });
     bindTap("attack", () => { handleAttack("tap"); });
-    bindLongPress("interact", () => { handleInteraction("hold"); });
+    bindTap("interact", () => { handleInteraction("tap"); });
     bindTap("interior-exit", () => {
         if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
             if (typeof exitVillageInterior === "function") exitVillageInterior("🏠 离开房屋");
