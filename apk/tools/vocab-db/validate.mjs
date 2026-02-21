@@ -39,6 +39,6 @@ console.log(`[vocab-db] duplicate keys: ${report.totals.duplicateKeys}`);
 console.log(`[vocab-db] missing chinese: ${report.totals.missingChinese}`);
 console.log(`[vocab-db] report -> ${path.relative(process.cwd(), outPath)}`);
 
-if (report.totals.duplicateKeys > 0 || report.totals.missingWord > 0) {
+if (report.totals.duplicateKeys > 0 || report.totals.missingWord > 0 || report.totals.missingChinese > 0) {
     process.exitCode = 1;
 }

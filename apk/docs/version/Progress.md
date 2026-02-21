@@ -1,4 +1,22 @@
-﻿## v1.18.33（发布日期：2026-02-21）
+﻿## v1.18.34（发布日期：2026-02-21）
+- 类型：PATCH（词库发布链路加固 + 初中/补充包质量修复）
+- APK 版本：versionName = 1.18.34，versionCode = 34
+- 主要完成项：
+  - 修复 `words/vocabs/manifest.js` 的路径映射异常，消除词库文件路径解析风险。
+  - 强化 `vocab-db` 发布链路：
+    - `publish` 增加 `dedup + validate + audit`
+    - `validate` 增加 `missing chinese` 失败闸门
+    - `publish` 在审计存在 BLOCKER 时失败（作用域：初中与两个补充包）
+  - 修复 `import.mjs` 图片导入逻辑为增量合并，避免覆盖历史图片。
+  - 初中/补充包数据清洗：
+    - 清除占位符短语翻译
+    - 补齐空短语
+    - 统一 `stage/category/difficulty` 字段
+- 验证结果：
+  - `npm run vocab:db:import` 通过（missingFiles=0）
+  - `npm run vocab:db:publish` 通过
+  - `npm run test:e2e -- tests/e2e/specs/p0-vocab-pack-switch.spec.mjs` 通过
+## v1.18.33（发布日期：2026-02-21）
 - 类型：PATCH（初中词库分级与短语补齐）
 - APK 版本：versionName = 1.18.33，versionCode = 33
 - 主要完成项：
@@ -680,6 +698,7 @@ b11ef12 chore: 閺囧瓨鏌?apk/android-app/package.json 閻楀牊婀伴懛?v1.6
   - 婢舵牠鍎寸拠宥呯氨鐎电厧鍙嗛懘姘拱閺€顖涘瘮 URL 娑撳簼缍呯純顔煎棘閺佹澘鍘规惔鏇礉姒涙顓?`inactive` 鐎瑰鍙忕€电厧鍙?
   - 閺傛澘顤冪€瑰本鏆ｇ紒瀛樺Б閺傚洦銆傞敍姝歞ocs/guide/鐠囧秴绨遍弫鐗堝祦鎼存挾娣幎銈呮禈閺傚洦瀵氶崡?md`
   - 鐎圭偞鎼烽幍褑顢戠€瑰本鍨氶敍姘嚤閸忋儯鈧礁骞撻柌宥呭瀻閺嬫劑鈧礁顦婚柈銊ユ値閸忋儯鈧礁顕遍崙鎭掆偓浣圭墡妤犲被鈧礁褰傜敮鍐ㄥ弿闁炬崘鐭炬宀冪槈闁俺绻?
+
 
 
 

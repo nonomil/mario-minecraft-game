@@ -45,7 +45,8 @@ const insertImageStmt = db.prepare(`
     INSERT INTO entry_images (entry_id, filename, url, type, is_primary)
     VALUES (?, ?, ?, ?, ?)
 `);
-const clearImagesByEntryStmt = db.prepare(`DELETE FROM entry_images WHERE entry_id=?`);
+const hasImageByUrlStmt = db.prepare(`SELECT 1 AS ok FROM entry_images WHERE entry_id=? AND url=? LIMIT 1`);
+const countImagesByEntryStmt = db.prepare(`SELECT COUNT(*) AS c FROM entry_images WHERE entry_id=?`);
 
 let importedFiles = 0;
 let importedWords = 0;
@@ -115,23 +116,24 @@ try {
                 }
             }
 
-            clearImagesByEntryStmt.run(entryId);
             const images = Array.isArray(raw.imageURLs)
                 ? raw.imageURLs
                 : (raw.imageUrl ? [{ filename: "", url: raw.imageUrl, type: "default" }] : []);
-            let first = true;
+            let imageCount = Number(countImagesByEntryStmt.get(entryId)?.c || 0);
             for (const img of images) {
                 if (!img || typeof img !== "object") continue;
                 const url = normalizeSpace(img.url);
                 if (!url) continue;
+                const exists = hasImageByUrlStmt.get(entryId, url);
+                if (exists && Number(exists.ok) === 1) continue;
                 insertImageStmt.run(
                     entryId,
                     normalizeSpace(img.filename),
                     url,
                     normalizeSpace(img.type),
-                    first ? 1 : 0
+                    imageCount === 0 ? 1 : 0
                 );
-                first = false;
+                imageCount++;
             }
             importedWords++;
         }

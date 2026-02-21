@@ -1,3 +1,46 @@
+## v1.18.34 (2026-02-21)
+
+### Vocab DB + Pack Quality Fixes
+- Repaired `words/vocabs/manifest.js` file-path mapping and regenerated pack metadata output to remove runtime path corruption risk.
+- Upgraded `vocab:db:publish` pipeline to run:
+  - export
+  - dedup
+  - validate
+  - scoped audit (`vocab.junior_high`, `vocab.kindergarten.supplement`, `vocab.elementary_lower.supplement`)
+- Added publish gate: build fails when scoped audit has `BLOCKER` findings.
+- Strengthened `validate` gate: now fails on `missing chinese` as well.
+- Improved import image strategy in `tools/vocab-db/import.mjs`:
+  - removed destructive image clear
+  - switched to additive image merge by URL to avoid last-source overwrite.
+
+### Junior High + Supplement Data Normalization
+- Normalized junior high packs:
+  - `junior_high_basic.js`
+  - `junior_high_intermediate.js`
+  - `junior_high_advanced.js`
+  - `junior_high_full.js`
+- Added phrase follow compatibility for all new/updated entries:
+  - no empty `phrase`
+  - no placeholder-only `phraseTranslation`
+- Normalized supplement packs:
+  - `kindergarten_supplement_external_20260221.js`
+  - `elementary_supplement_external_20260221.js`
+- Fixed stage/category/difficulty consistency for targeted packs so they can pass scoped audit gate.
+
+### Validation
+- `npm run vocab:db:import` passed (no missing files / parse errors).
+- `npm run vocab:db:publish` passed with new gate.
+- `npm run test:e2e -- tests/e2e/specs/p0-vocab-pack-switch.spec.mjs` passed.
+
+### Release Metadata
+- Version bump:
+  - `apk/package.json` -> `1.18.34`
+  - `apk/android-app/package.json` -> `1.18.34`
+  - `apk/version.json` -> `versionCode/buildNumber 34`
+  - `apk/android-app/android/app/build.gradle` -> `versionCode 34`, `versionName 1.18.34`
+
+---
+
 ## v1.18.33 (2026-02-21)
 
 ### Junior High Vocab Update

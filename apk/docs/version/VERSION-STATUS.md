@@ -2,13 +2,13 @@
 
 ## Current Baseline
 - Local version file: `apk/version.json`
-- versionName: **1.18.33**
-- versionCode/buildNumber: **33**
+- versionName: **1.18.34**
+- versionCode/buildNumber: **34**
 
 ## Git State
 - Branch: `main`
-- Includes junior high pack level split + phrase field completion.
-- After pushing, CI auto-bump workflow is expected to publish next patch version (**1.18.34**).
+- Includes vocab-db publish-gate hardening + manifest path repair + junior-high/supplement normalization.
+- After pushing, CI auto-bump workflow is expected to publish next patch version (**1.18.35**).
 
 ## Records Check
 - Updated: `apk/docs/version/CHANGELOG.md`
