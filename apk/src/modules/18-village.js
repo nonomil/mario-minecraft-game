@@ -403,7 +403,7 @@ function updateVillages() {
 // ========== 休息系统 (v1.8.2) ==========
 let restPromptVisible = false;
 let restPromptVillage = null;
-const INTERIOR_BUILDING_TYPES = new Set(["bed_house", "word_house"]);
+const INTERIOR_BUILDING_TYPES = new Set(["bed_house", "word_house", "trader_house"]);
 const INTERIOR_MOVE_SPEED_FACTOR = 0.5;
 const INTERIOR_HALF_RANGE = 72;
 const INTERIOR_DOOR_RANGE = 20;
@@ -456,6 +456,7 @@ function getInteriorActionX(type = villageInteriorState.buildingType) {
   const center = Number(villageInteriorState.entryBuildingX) || 0;
   if (type === "bed_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.7);
   if (type === "word_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.7);
+  if (type === "trader_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.4);
   return center;
 }
 
@@ -532,7 +533,7 @@ function enterVillageInterior(village, building) {
     player.velY = 0;
     player.grounded = true;
   }
-  const label = building.type === "bed_house" ? "床屋" : "词屋";
+  const label = building.type === "bed_house" ? "床屋" : (building.type === "word_house" ? "词屋" : "商人屋");
   showToast(`🏠 进入${label}（Esc 退出）`);
   return true;
 }
@@ -651,7 +652,10 @@ function renderVillageInterior(ctx) {
   ctx.textAlign = "center";
   ctx.font = "bold 13px sans-serif";
   ctx.fillText("\u95e8\u53e3\uff08\u81ea\u52a8\u79bb\u5f00\uff09", doorPx, floorY - 22);
-  ctx.fillText(buildingType === "bed_house" ? "\u5e8a\uff08\u6309\u5b9d\u7bb1\u952e\uff09" : "\u5355\u8bcd\u4e66\uff08\u6309\u5b9d\u7bb1\u952e\uff09", actionPx, floorY - 22);
+  const actionHeader = buildingType === "bed_house"
+    ? "\u5e8a\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
+    : (buildingType === "word_house" ? "\u5355\u8bcd\u4e66\uff08\u6309\u5b9d\u7bb1\u952e\uff09" : "\u5546\u4eba\uff08\u6309\u5b9d\u7bb1\u952e\uff09");
+  ctx.fillText(actionHeader, actionPx, floorY - 22);
 
   const steveX = playerPx - (Number(player?.width) || 26) * 0.5;
   const steveY = floorY - (Number(player?.height) || 52);
@@ -664,7 +668,9 @@ function renderVillageInterior(ctx) {
     ctx.fillRect(playerPx - 9, floorY - 2, 18, 2);
   }
 
-  const title = buildingType === "bed_house" ? "🏠 床屋室内" : "📘 词屋室内";
+  const title = buildingType === "bed_house"
+    ? "\ud83c\udfe0 \u5e8a\u5c4b\u5ba4\u5185"
+    : (buildingType === "word_house" ? "\ud83d\udcd8 \u8bcd\u5c4b\u5ba4\u5185" : "\ud83e\uddd1\u200d\ud83c\udf3e \u5546\u4eba\u5c4b\u5ba4\u5185");
   ctx.fillStyle = "#1E1E1E";
   ctx.font = "bold 28px sans-serif";
   ctx.textAlign = "left";
@@ -709,15 +715,34 @@ function renderVillageInterior(ctx) {
     ctx.fillStyle = "rgba(0,0,0,0.25)";
     ctx.fillRect(bookX + 23, bookY + 2, 2, 28);
   }
+  if (buildingType === "trader_house") {
+    const npcX = actionPx - 16;
+    const npcY = floorY - 56;
+    ctx.fillStyle = "#6D4C41";
+    ctx.fillRect(npcX + 6, npcY + 20, 20, 24);
+    ctx.fillStyle = "#F2C9A0";
+    ctx.fillRect(npcX + 8, npcY + 4, 16, 16);
+    ctx.fillStyle = "#5D4037";
+    ctx.fillRect(npcX + 14, npcY + 12, 6, 6);
+    ctx.fillStyle = "#3E2723";
+    ctx.fillRect(npcX + 11, npcY + 10, 2, 2);
+    ctx.fillRect(npcX + 19, npcY + 10, 2, 2);
+  }
 
   ctx.fillStyle = "rgba(255,255,255,0.95)";
   ctx.textAlign = "center";
   ctx.font = "bold 13px sans-serif";
   ctx.fillText("\u95e8", doorPx, floorY - 24);
   ctx.fillText("\u9760\u8fd1\u81ea\u52a8\u79bb\u5f00", doorPx, floorY - 8);
-  ctx.fillText(buildingType === "bed_house" ? "\u5e8a" : "\u5355\u8bcd\u4e66", actionPx, floorY - 24);
+  const actionName = buildingType === "bed_house"
+    ? "\u5e8a"
+    : (buildingType === "word_house" ? "\u5355\u8bcd\u4e66" : "\u5546\u4eba");
+  ctx.fillText(actionName, actionPx, floorY - 24);
   ctx.fillText("\u6309\u5b9d\u7bb1\u952e\u89e6\u53d1", actionPx, floorY - 8);
-  ctx.fillText(buildingType === "bed_house" ? "\u4f11\u606f\u56de\u8840" : "\u5f00\u59cb\u5355\u8bcd\u6d4b\u9a8c", actionPx, floorY + 8);
+  const actionDesc = buildingType === "bed_house"
+    ? "\u4f11\u606f\u56de\u8840"
+    : (buildingType === "word_house" ? "\u5f00\u59cb\u5355\u8bcd\u6d4b\u9a8c" : "\u5f00\u542f\u4ea4\u6613\u5bf9\u8bdd");
+  ctx.fillText(actionDesc, actionPx, floorY + 8);
 
   ctx.textAlign = "left";
   return true;
@@ -758,7 +783,12 @@ function triggerVillageInteriorChestAction(village, interactMode = "tap") {
   const centerX = getPlayerCenterX();
   const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
   if (!nearAction) {
-    showToast(type === "bed_house" ? "\u9760\u8fd1\u5e8a\u540e\u6309\u5b9d\u7bb1\u952e" : "\u9760\u8fd1\u5355\u8bcd\u4e66\u540e\u6309\u5b9d\u7bb1\u952e");
+    const nearHint = type === "bed_house"
+      ? "\u9760\u8fd1\u5e8a\u540e\u6309\u5b9d\u7bb1\u952e"
+      : (type === "word_house"
+        ? "\u9760\u8fd1\u5355\u8bcd\u4e66\u540e\u6309\u5b9d\u7bb1\u952e"
+        : "\u9760\u8fd1\u5546\u4eba\u540e\u6309\u5b9d\u7bb1\u952e");
+    showToast(nearHint);
     villageInteriorState.actionTriggerCooldownUntil = now + 180;
     return true;
   }
@@ -781,6 +811,9 @@ function triggerVillageInteriorChestAction(village, interactMode = "tap") {
       });
       return true;
     }
+  }
+  if (type === "trader_house") {
+    return !!openVillageTrader(village);
   }
   return false;
 }
@@ -825,7 +858,7 @@ function checkVillageBuildings(village, interactMode = "tap") {
 
 
 function isInteriorBuildingType(type) {
-  return type === "bed_house" || type === "word_house";
+  return type === "bed_house" || type === "word_house" || type === "trader_house";
 }
 
 function tryAutoEnterVillageInterior(village) {
@@ -945,8 +978,7 @@ function handleVillageInteraction(building, village, interactMode = "tap") {
     case 'word_house':
       return enterVillageInterior(village, building);
     case 'trader_house':
-      openVillageTrader(village);
-      return true;
+      return enterVillageInterior(village, building);
     default:
       if (SPECIAL_BUILDING_EFFECTS[building.type]) {
         interactSpecialBuilding(village, building.type);
