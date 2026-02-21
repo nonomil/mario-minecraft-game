@@ -219,6 +219,7 @@ async function loginWithAccount(account, options) {
     if (!account) return;
     const mode = options && options.mode ? options.mode : "continue";
     if (mode === "restart") {
+        if (typeof saveCurrentProgress === "function") saveCurrentProgress();
         resetAccountRunState(account);
         storage.saveAccount(account);
     }

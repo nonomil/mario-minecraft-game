@@ -4,9 +4,9 @@
   "villageWidth": 800,
   "safeZone": true,
   "restHealFull": true,
-  "challengeQuestionCount": 3,
+  "challengeQuestionCount": 10,
   "challengeReward": {
-    "perfect": { "score": 100, "diamonds": 1 },
+    "perfect": { "score": 100, "diamonds": 0 },
     "partial": { "score": 50, "diamonds": 0 }
   },
   "npcSpeed": 0.3,
