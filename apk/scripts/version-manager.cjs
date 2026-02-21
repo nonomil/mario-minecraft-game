@@ -110,7 +110,7 @@ function updateBuildGradle(versionInfo) {
             throw new Error('build.gradle 文件不存在: ' + BUILD_GRADLE_PATH);
         }
 
-        let content = fs.readFileSync(BUILD_GRADLE_PATH, 'utf8');
+        let content = fs.readFileSync(BUILD_GRADLE_PATH, 'utf8').replace(/^\uFEFF/, '');
 
         // 更新 versionCode
         content = content.replace(
