@@ -16,6 +16,7 @@
     "vocab:db:dedup": "node tools/vocab-db/dedup.mjs",
     "vocab:db:audit": "node tools/vocab-db/audit.mjs",
     "vocab:db:import:external": "node tools/vocab-db/import-external-list.mjs",
+    "vocab:db:export:pack": "node tools/vocab-db/export-pack.mjs",
     "vocab:db:upsert": "node tools/vocab-db/crud.mjs upsert",
     "vocab:db:deactivate": "node tools/vocab-db/crud.mjs deactivate",
     "sync": "cd android-app && npx cap sync android",

@@ -167,11 +167,12 @@ function renderVocabSelect() {
     });
 
     // Define stage order and labels
-    const stageOrder = ["kindergarten", "elementary_lower", "elementary_upper", "minecraft"];
+    const stageOrder = ["kindergarten", "elementary_lower", "elementary_upper", "junior_high", "minecraft"];
     const stageLabels = {
         "kindergarten": "幼儿园",
         "elementary_lower": "小学低年级",
         "elementary_upper": "小学高年级",
+        "junior_high": "初中",
         "minecraft": "我的世界"
     };
 

@@ -15,7 +15,8 @@
 - `npm run vocab:db:admin` - start local admin UI at `http://127.0.0.1:4174`
 - `npm run vocab:db:dedup` - generate dedup/collision analysis report
 - `npm run vocab:db:audit -- --pack vocab.kindergarten` - run quality/complexity audit and emit JSON + CSV reports
-- `npm run vocab:db:import:external -- --url <raw_txt_url> --sourcePack <id> [--limit 300]` - import external list (default inactive)
+- `npm run vocab:db:import:external -- --url <raw_url> | --file <local.txt> --sourcePack <id> [--format auto|txt|tsv|csv] [--wordCol 0 --chineseCol 1] [--limit 300]` - import external list (default inactive)
+- `npm run vocab:db:export:pack -- --sourcePack <id> --packId <vocab.xxx> --stage <stage> --title <name> --output <words/vocabs/...js> [--varName STAGE_XXX]` - export one source pack into runtime JS and append manifest pack
 - `npm run vocab:db:upsert -- --word apple --chinese pingguo` - add/update one entry
 - `npm run vocab:db:deactivate -- --word apple` - soft delete one entry
 

@@ -1,20 +1,22 @@
-# Version Status (2026-02-21)
+﻿# Version Status (2026-02-21)
 
 ## Current Baseline
 - Local version file: `apk/version.json`
-- versionName: **1.18.31**
-- versionCode/buildNumber: **31**
+- versionName: **1.18.32**
+- versionCode/buildNumber: **32**
 
 ## Git State
 - Branch: `main`
-- Local is currently ahead of `origin/main` by pending commits in this session.
-- After pushing, CI auto-bump workflow is expected to publish next patch version (**1.18.32**).
+- Includes vocab-db tooling upgrade + junior high + kindergarten/elementary supplement packs.
+- After pushing, CI auto-bump workflow is expected to publish next patch version (**1.18.33**).
 
 ## Records Check
-- Checked folder: `apk/docs/version`
-- Completed: backfilled missing changelog entries for **v1.18.25 ~ v1.18.31** in `CHANGELOG.md`.
-- Updated this status file to reflect current repository/CI state.
+- Updated: `apk/docs/version/CHANGELOG.md`
+- Updated: `apk/docs/version/Progress.md`
+- Updated: `apk/docs/version/VERSION-STATUS.md`
+- Added release notes: `apk/docs/release/发布说明-v1.18.32.md`
 
-## Notes
-- Historical older entries may contain legacy encoding artifacts from earlier sessions.
-- New entries were written in clean UTF-8.
+## Validation Snapshot
+- `npm run vocab:db:publish` passed.
+- `npm run vocab:db:dedup` executed.
+- `npx playwright test -c tests/e2e/playwright.config.mjs tests/e2e/specs/p0-vocab-pack-switch.spec.mjs` passed.

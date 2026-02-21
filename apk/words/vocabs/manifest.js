@@ -382,13 +382,61 @@
         ];
       }
     },
+    {
+      id: "vocab.junior_high",
+      title: "初中-完整",
+      stage: "junior_high",
+      difficulty: "intermediate",
+      level: "full",
+      weight: 1,
+      files: [
+        "words/vocabs/05_初中/junior_high_full.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_JUNIOR_HIGH !== "undefined" ? STAGE_JUNIOR_HIGH : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.kindergarten.supplement",
+      title: "幼儿园-补充",
+      stage: "kindergarten",
+      difficulty: "basic",
+      level: "full",
+      weight: 1,
+      files: [
+        "words/vocabs/01_幼儿园/kindergarten_supplement_external_20260221.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_KINDERGARTEN_SUPPLEMENT_20260221 !== "undefined" ? STAGE_KINDERGARTEN_SUPPLEMENT_20260221 : []),
+        ];
+      }
+    },
+    {
+      id: "vocab.elementary_lower.supplement",
+      title: "小学-补充",
+      stage: "elementary_lower",
+      difficulty: "basic",
+      level: "full",
+      weight: 1,
+      files: [
+        "words/vocabs/02_小学_低年级/elementary_supplement_external_20260221.js",
+      ],
+      getRaw() {
+        return [
+          ...(typeof STAGE_ELEMENTARY_SUPPLEMENT_20260221 !== "undefined" ? STAGE_ELEMENTARY_SUPPLEMENT_20260221 : []),
+        ];
+      }
+    },
   ];
 
   const byId = Object.create(null);
   packs.forEach(p => { byId[p.id] = p; });
 
   window.MMWG_VOCAB_MANIFEST = {
-    version: "2026-02-04.1",
+    version: "2026-02-21.2",
     packs,
     byId
   };

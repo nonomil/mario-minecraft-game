@@ -1,3 +1,48 @@
+## v1.18.32 (2026-02-21)
+
+### Vocabulary DB Tooling
+- Enhanced `tools/vocab-db/import-external-list.mjs`:
+  - Added `--file` local import mode (download-first workflow).
+  - Added `--format auto|txt|tsv|csv`, CSV quoted-field parsing, and `--hasHeader`.
+  - Added safer upsert behavior for external imports: fill empty fields on existing entries and optional re-activation when `--status active`.
+- Added `tools/vocab-db/export-pack.mjs` to export one `source_pack` into runtime JS vocab files and append manifest pack entries.
+- Added npm script: `vocab:db:export:pack`.
+
+### New Vocabulary Packs
+- Added **Junior High** pack:
+  - `vocab.junior_high`
+  - source: `KyleBing/english-vocabulary` (`1 初中-乱序.txt`)
+  - generated file: `words/vocabs/05_初中/junior_high_full.js`
+- Added **Kindergarten Supplement** pack:
+  - `vocab.kindergarten.supplement`
+  - generated file: `words/vocabs/01_幼儿园/kindergarten_supplement_external_20260221.js`
+- Added **Elementary Supplement** pack:
+  - `vocab.elementary_lower.supplement`
+  - generated file: `words/vocabs/02_小学_低年级/elementary_supplement_external_20260221.js`
+- Updated vocab stage selector to include `junior_high`.
+
+### External Research + Compare + Dedup
+- Researched and downloaded external kindergarten/elementary lists to:
+  - `words/vocabs/external_sources/2026-02-21/`
+- Generated comparison report against current DB:
+  - `words/db/reports/external-compare-2026-02-21.json`
+- Imported external lists through `vocab-db` workflow with source tagging and dedup.
+
+### Validation & Tests
+- `npm run vocab:db:publish` passed (`active entries=4799`, `duplicate keys=0`, `missing chinese=0`).
+- `npm run vocab:db:dedup` executed and report regenerated.
+- Added E2E test `tests/e2e/specs/p0-vocab-pack-switch.spec.mjs` and passed:
+  - verifies new packs exist in settings and can be switched.
+
+### Release Metadata
+- Version bump:
+  - `apk/package.json` -> `1.18.32`
+  - `apk/android-app/package.json` -> `1.18.32`
+  - `apk/version.json` -> `versionCode/buildNumber 32`
+  - `apk/android-app/android/app/build.gradle` -> `versionCode 32`, `versionName 1.18.32`
+
+---
+
 ## v1.18.31 (2026-02-21)
 
 ### Village Interaction
