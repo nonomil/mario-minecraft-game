@@ -1,3 +1,59 @@
+## v1.18.31 (2026-02-21)
+
+### Village Interaction
+- Restored chest interaction to **tap** for normal chests and village houses (bed/word/trader).
+- Trader house now follows interior-first flow: enter house first, move near trader NPC, then tap chest key to open trading dialog.
+- Added/updated in-village hints around word house and trader house entry points.
+
+### Armor System
+- Armor durability changed to time-based lifetime by tier (minutes):
+  - leather 3, iron 4, gold 5, diamond 6, netherite 7
+- Removed per-hit durability drain to keep duration behavior predictable.
+
+### Fox Behavior
+- Fox size increased, movement constrained to ground, speed aligned to zombie pace.
+- Limited to at most one fox on-screen at a time.
+
+---
+## v1.18.30 (2026-02-21)
+
+### Village UX Follow-up
+- Added near-building prompt overlays for word/trader houses.
+- Stabilized touch interaction path for village actions and trader menu buttons.
+
+---
+## v1.18.29 (2026-02-21)
+
+### Village + Enemy Balancing
+- Unified village interaction handling for interior/trader scenarios.
+- Refined fox spawn/behavior tuning across biomes.
+
+---
+## v1.18.28 (2026-02-21)
+
+### Armor Durability Refactor
+- Introduced real-time durability ticking and equip-time tracking fields.
+- UI durability display rounded for readability while preserving internal precision.
+
+---
+## v1.18.27 (2026-02-21)
+
+### E2E Coverage
+- Added follow-up E2E coverage for village trigger stability, trader flow, 10-question quiz mode, and leaderboard persistence path.
+
+---
+## v1.18.26 (2026-02-21)
+
+### Release Metadata
+- Version metadata and automated APK bump pipeline aligned for 0220 follow-up deliveries.
+
+---
+## v1.18.25 (2026-02-20)
+
+### 0220 Follow-up Baseline
+- Consolidated village optimization follow-up plan and staged implementation workflow.
+
+---
 ## v1.18.24 (2026-02-20)
 
 ### 游戏优化 0220-3
