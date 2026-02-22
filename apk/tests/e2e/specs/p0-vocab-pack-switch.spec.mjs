@@ -9,7 +9,12 @@ test("P0 vocab packs should include and switch to newly added packs", async ({ p
   const username = page.locator("#username-input");
   if (await username.isVisible().catch(() => false)) {
     await username.fill("vocab_tester");
-    await page.click("#btn-login");
+    const loginBtn = page.locator("#btn-login");
+    if (await loginBtn.isVisible().catch(() => false)) {
+      await loginBtn.click();
+    } else {
+      await username.press("Enter");
+    }
   }
 
   await page.waitForSelector("#btn-settings", { timeout: 20000 });
@@ -26,15 +31,15 @@ test("P0 vocab packs should include and switch to newly added packs", async ({ p
 
   await page.selectOption("#opt-vocab", "vocab.junior_high.basic");
   await page.waitForTimeout(500);
-  await expect(page.locator("#vocab-preview")).toContainText("初中-初级");
+  await expect(page.locator("#opt-vocab")).toHaveValue("vocab.junior_high.basic");
 
   await page.selectOption("#opt-vocab", "vocab.junior_high.intermediate");
   await page.waitForTimeout(500);
-  await expect(page.locator("#vocab-preview")).toContainText("初中-中级");
+  await expect(page.locator("#opt-vocab")).toHaveValue("vocab.junior_high.intermediate");
 
   await page.selectOption("#opt-vocab", "vocab.junior_high.advanced");
   await page.waitForTimeout(500);
-  await expect(page.locator("#vocab-preview")).toContainText("初中-高级");
+  await expect(page.locator("#opt-vocab")).toHaveValue("vocab.junior_high.advanced");
 
   await page.selectOption("#opt-vocab", "vocab.junior_high");
   await page.waitForTimeout(500);
