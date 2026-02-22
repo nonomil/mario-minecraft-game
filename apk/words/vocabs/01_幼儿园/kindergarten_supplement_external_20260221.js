@@ -1,652 +1,591 @@
 ﻿// Auto-generated from vocab-db source_pack=kindergarten.external.2026
 const STAGE_KINDERGARTEN_SUPPLEMENT_20260221 = [
-    {
-        "word":  "and",
-        "standardized":  "And",
-        "chinese":  "和",
-        "phonetic":  "",
-        "phrase":  "Learn the word and",
-        "phraseTranslation":  "学习单词 and",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-                          {
-                              "filename":  "And.png",
-                              "url":  "https://minecraft.wiki/w/File:And.png",
-                              "type":  "Default"
-                          },
-                          {
-                              "filename":  "InvIcon And.png",
-                              "url":  "https://minecraft.wiki/w/File:InvIcon And.png",
-                              "type":  "Inventory Icon"
-                          },
-                          {
-                              "filename":  "Block And.png",
-                              "url":  "https://minecraft.wiki/w/File:Block And.png",
-                              "type":  "Block"
-                          },
-                          {
-                              "filename":  "Item And.png",
-                              "url":  "https://minecraft.wiki/w/File:Item And.png",
-                              "type":  "Item"
-                          },
-                          {
-                              "filename":  "Entity And.png",
-                              "url":  "https://minecraft.wiki/w/File:Entity And.png",
-                              "type":  "Entity"
-                          }
-                      ]
-    },
-    {
-        "word":  "away",
-        "standardized":  "away",
-        "chinese":  "adv. 离去，离开；在远处",
-        "phonetic":  "",
-        "phrase":  "Learn the word away",
-        "phraseTranslation":  "学习单词 away",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "big",
-        "standardized":  "big",
-        "chinese":  "adj. 大的；重要的；量大的 adv. 大量地；顺利；夸大地 n. (Big)人名；(土)比格",
-        "phonetic":  "",
-        "phrase":  "Learn the word big",
-        "phraseTranslation":  "学习单词 big",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "Blue",
-        "standardized":  "Blue",
-        "chinese":  "蓝色",
-        "phonetic":  "",
-        "phrase":  "Learn the word Blue",
-        "phraseTranslation":  "学习单词 Blue",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-                          {
-                              "filename":  "Blue.png",
-                              "url":  "https://minecraft.wiki/w/File:Blue.png",
-                              "type":  "Default"
-                          },
-                          {
-                              "filename":  "InvIcon Blue.png",
-                              "url":  "https://minecraft.wiki/w/File:InvIcon Blue.png",
-                              "type":  "Inventory Icon"
-                          },
-                          {
-                              "filename":  "Block Blue.png",
-                              "url":  "https://minecraft.wiki/w/File:Block Blue.png",
-                              "type":  "Block"
-                          },
-                          {
-                              "filename":  "Item Blue.png",
-                              "url":  "https://minecraft.wiki/w/File:Item Blue.png",
-                              "type":  "Item"
-                          },
-                          {
-                              "filename":  "Entity Blue.png",
-                              "url":  "https://minecraft.wiki/w/File:Entity Blue.png",
-                              "type":  "Entity"
-                          }
-                      ]
-    },
-    {
-        "word":  "can",
-        "standardized":  "can",
-        "chinese":  "v. 将…装入密封罐中保存 aux. 能； 能够； 可以； 可能 n. 罐头； （用金属或塑料制作的）容器； （马口铁或其他金属制作的）食品罐头",
-        "phonetic":  "",
-        "phrase":  "Learn the word can",
-        "phraseTranslation":  "学习单词 can",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "come",
-        "standardized":  "come",
-        "chinese":  "v. [came-come] 来， 来到； 达到， 至； 产生， 来； 变成； 实现； 开始；",
-        "phonetic":  "",
-        "phrase":  "Learn the word come",
-        "phraseTranslation":  "学习单词 come",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "down",
-        "standardized":  "down",
-        "chinese":  "adv. 向下，下去；在下面 adj. 向下的 n. 软毛，绒毛；[地质] 开阔的高地 prep. 沿着，往下 v. 打倒，击败",
-        "phonetic":  "",
-        "phrase":  "Learn the word down",
-        "phraseTranslation":  "学习单词 down",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "find",
-        "standardized":  "find",
-        "chinese":  "v. 发现，找到 〔一直在寻找之物〕 n. 〔尤指通过挖掘或水下打捞找到的〕发现物",
-        "phonetic":  "",
-        "phrase":  "Learn the word find",
-        "phraseTranslation":  "学习单词 find",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "for",
-        "standardized":  "for",
-        "chinese":  "prep. 为，为了；因为；给；对于；至于；适合于 conj. 因为",
-        "phonetic":  "",
-        "phrase":  "Learn the word for",
-        "phraseTranslation":  "学习单词 for",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "funny",
-        "standardized":  "funny",
-        "chinese":  "adj. 有趣的，好笑的，滑稽的；（口）稀奇的，古怪的，奇异的；有病的，不舒服的；狡猾的，欺骗（性）的，可疑的，不光明 n. 滑稽人物；笑话，有趣的故事；滑稽连环漫画栏；（英）（比赛用）单人双桨小艇",
-        "phonetic":  "",
-        "phrase":  "Learn the word funny",
-        "phraseTranslation":  "学习单词 funny",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "help",
-        "standardized":  "help",
-        "chinese":  "v. 帮助；促进；治疗；补救 n. 帮助；补救办法；帮忙者；有益的东西",
-        "phonetic":  "",
-        "phrase":  "Learn the word help",
-        "phraseTranslation":  "学习单词 help",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "here",
-        "standardized":  "here",
-        "chinese":  "adv. 在这里；此时 int. 嘿！；喂！ n. 这里",
-        "phonetic":  "",
-        "phrase":  "Learn the word here",
-        "phraseTranslation":  "学习单词 here",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "in",
-        "standardized":  "in",
-        "chinese":  "prep. 按照（表示方式）；从事于；在…之内 adv. 进入；当选；（服装等）时髦；在屋里 adj. 在里面的；时髦的 n. 执政者；门路；知情者",
-        "phonetic":  "",
-        "phrase":  "Learn the word in",
-        "phraseTranslation":  "学习单词 in",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "is",
-        "standardized":  "is",
-        "chinese":  "v. 存在， 是",
-        "phonetic":  "",
-        "phrase":  "Learn the word is",
-        "phraseTranslation":  "学习单词 is",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "it",
-        "standardized":  "it",
-        "chinese":  "pron. [指无生命的东西、动物、植物]它；这；那 abbr. 信息技术information technology",
-        "phonetic":  "",
-        "phrase":  "Learn the word it",
-        "phraseTranslation":  "学习单词 it",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "jump",
-        "standardized":  "Jump",
-        "chinese":  "跳",
-        "phonetic":  "",
-        "phrase":  "Learn the word jump",
-        "phraseTranslation":  "学习单词 jump",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-                          {
-                              "filename":  "Jump.png",
-                              "url":  "https://minecraft.wiki/w/File:Jump.png",
-                              "type":  "Default"
-                          },
-                          {
-                              "filename":  "InvIcon Jump.png",
-                              "url":  "https://minecraft.wiki/w/File:InvIcon Jump.png",
-                              "type":  "Inventory Icon"
-                          },
-                          {
-                              "filename":  "Block Jump.png",
-                              "url":  "https://minecraft.wiki/w/File:Block Jump.png",
-                              "type":  "Block"
-                          },
-                          {
-                              "filename":  "Item Jump.png",
-                              "url":  "https://minecraft.wiki/w/File:Item Jump.png",
-                              "type":  "Item"
-                          },
-                          {
-                              "filename":  "Entity Jump.png",
-                              "url":  "https://minecraft.wiki/w/File:Entity Jump.png",
-                              "type":  "Entity"
-                          }
-                      ]
-    },
-    {
-        "word":  "little",
-        "standardized":  "little",
-        "chinese":  "adj. 小的， 矮小的； 短的； 琐碎的， 微不足道的； 不多的， 少到",
-        "phonetic":  "",
-        "phrase":  "Learn the word little",
-        "phraseTranslation":  "学习单词 little",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "look",
-        "standardized":  "look",
-        "chinese":  "v. 看；期待；注意；面向；看上去像 n. 看；样子；面容",
-        "phonetic":  "",
-        "phrase":  "Learn the word look",
-        "phraseTranslation":  "学习单词 look",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "make",
-        "standardized":  "make",
-        "chinese":  "v. [made-made] 做， 制造； 作出， 制定； 使， 迫使； 获得， 挣得； 成为， 到达",
-        "phonetic":  "",
-        "phrase":  "Learn the word make",
-        "phraseTranslation":  "学习单词 make",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "me",
-        "standardized":  "me",
-        "chinese":  "pron. 我（宾格） n. 自我；极端自私的人；自我的一部分",
-        "phonetic":  "",
-        "phrase":  "Learn the word me",
-        "phraseTranslation":  "学习单词 me",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "my",
-        "standardized":  "my",
-        "chinese":  "pron. 我的 int. 哎呀（表示惊奇等）；喔唷 n. (My)人名；(越)美；(老、柬)米",
-        "phonetic":  "",
-        "phrase":  "Learn the word my",
-        "phraseTranslation":  "学习单词 my",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "not",
-        "standardized":  "not",
-        "chinese":  "adv. 表示否定，不 n. “非”（计算机中逻辑运算的一种）",
-        "phonetic":  "",
-        "phrase":  "Learn the word not",
-        "phraseTranslation":  "学习单词 not",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "one",
-        "standardized":  "one",
-        "chinese":  "pron. 一个人；任何人 adj. 一的；唯一的 n. 一 num. 一；一个",
-        "phonetic":  "",
-        "phrase":  "Learn the word one",
-        "phraseTranslation":  "学习单词 one",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "play",
-        "standardized":  "play",
-        "chinese":  "v. 游戏；扮演；演奏；播放；同…比赛 n. 游戏；比赛；剧本",
-        "phonetic":  "",
-        "phrase":  "Learn the word play",
-        "phraseTranslation":  "学习单词 play",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "Red",
-        "standardized":  "Red",
-        "chinese":  "红色",
-        "phonetic":  "",
-        "phrase":  "Learn the word Red",
-        "phraseTranslation":  "学习单词 Red",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-                          {
-                              "filename":  "Red.png",
-                              "url":  "https://minecraft.wiki/w/File:Red.png",
-                              "type":  "Default"
-                          },
-                          {
-                              "filename":  "InvIcon Red.png",
-                              "url":  "https://minecraft.wiki/w/File:InvIcon Red.png",
-                              "type":  "Inventory Icon"
-                          },
-                          {
-                              "filename":  "Block Red.png",
-                              "url":  "https://minecraft.wiki/w/File:Block Red.png",
-                              "type":  "Block"
-                          },
-                          {
-                              "filename":  "Item Red.png",
-                              "url":  "https://minecraft.wiki/w/File:Item Red.png",
-                              "type":  "Item"
-                          },
-                          {
-                              "filename":  "Entity Red.png",
-                              "url":  "https://minecraft.wiki/w/File:Entity Red.png",
-                              "type":  "Entity"
-                          }
-                      ]
-    },
-    {
-        "word":  "run",
-        "standardized":  "run",
-        "chinese":  "v. [run-run, running] 跑， 奔跑； 行驶， 驾驶； 蔓延， 伸展； 操作； 竞",
-        "phonetic":  "",
-        "phrase":  "Learn the word run",
-        "phraseTranslation":  "学习单词 run",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "see",
-        "standardized":  "see",
-        "chinese":  "v. [saw-seen] 看， 观看； 参见， 会晤； 领会， 理解； 想象； 把…看作； 发现； 体",
-        "phonetic":  "",
-        "phrase":  "Learn the word see",
-        "phraseTranslation":  "学习单词 see",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "the",
-        "standardized":  "The",
-        "chinese":  "组组 成",
-        "phonetic":  "",
-        "phrase":  "Learn the word the",
-        "phraseTranslation":  "学习单词 the",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-                          {
-                              "filename":  "The.png",
-                              "url":  "https://minecraft.wiki/w/File:The.png",
-                              "type":  "Default"
-                          },
-                          {
-                              "filename":  "InvIcon The.png",
-                              "url":  "https://minecraft.wiki/w/File:InvIcon The.png",
-                              "type":  "Inventory Icon"
-                          },
-                          {
-                              "filename":  "Block The.png",
-                              "url":  "https://minecraft.wiki/w/File:Block The.png",
-                              "type":  "Block"
-                          },
-                          {
-                              "filename":  "Item The.png",
-                              "url":  "https://minecraft.wiki/w/File:Item The.png",
-                              "type":  "Item"
-                          },
-                          {
-                              "filename":  "Entity The.png",
-                              "url":  "https://minecraft.wiki/w/File:Entity The.png",
-                              "type":  "Entity"
-                          }
-                      ]
-    },
-    {
-        "word":  "three",
-        "standardized":  "three",
-        "chinese":  "n. 三，三个 num. 三 adj. 三的，三个的",
-        "phonetic":  "",
-        "phrase":  "Learn the word three",
-        "phraseTranslation":  "学习单词 three",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "to",
-        "standardized":  "to",
-        "chinese":  "adv. 向前；（门等）关上 prep. 到；向；（表示时间、方向）朝…方向 n. (To)人名；(柬)多；(中)脱(普通话·威妥玛)",
-        "phonetic":  "",
-        "phrase":  "Learn the word to",
-        "phraseTranslation":  "学习单词 to",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "two",
-        "standardized":  "two",
-        "chinese":  "n. 两个 adj. 两个的 num. 二",
-        "phonetic":  "",
-        "phrase":  "Learn the word two",
-        "phraseTranslation":  "学习单词 two",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "up",
-        "standardized":  "up",
-        "chinese":  "adv. 起来；上涨；向上 prep. 在…之上；向…的较高处 adj. 涨的；起床的；向上的 n. 上升；繁荣",
-        "phonetic":  "",
-        "phrase":  "Learn the word up",
-        "phraseTranslation":  "学习单词 up",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "we",
-        "standardized":  "we",
-        "chinese":  "pron. 我们（主格）；笔者，本人（作者或演讲人使用）；朕，寡人 n. (We)人名；(缅)韦",
-        "phonetic":  "",
-        "phrase":  "Learn the word we",
-        "phraseTranslation":  "学习单词 we",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "where",
-        "standardized":  "where",
-        "chinese":  "adv. 在哪里 pron. 哪里 conj. 在…的地方 n. 地点",
-        "phonetic":  "",
-        "phrase":  "Learn the word where",
-        "phraseTranslation":  "学习单词 where",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    },
-    {
-        "word":  "Yellow",
-        "standardized":  "Yellow",
-        "chinese":  "黄色",
-        "phonetic":  "",
-        "phrase":  "Learn the word Yellow",
-        "phraseTranslation":  "学习单词 Yellow",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-                          {
-                              "filename":  "Yellow.png",
-                              "url":  "https://minecraft.wiki/w/File:Yellow.png",
-                              "type":  "Default"
-                          },
-                          {
-                              "filename":  "InvIcon Yellow.png",
-                              "url":  "https://minecraft.wiki/w/File:InvIcon Yellow.png",
-                              "type":  "Inventory Icon"
-                          },
-                          {
-                              "filename":  "Block Yellow.png",
-                              "url":  "https://minecraft.wiki/w/File:Block Yellow.png",
-                              "type":  "Block"
-                          },
-                          {
-                              "filename":  "Item Yellow.png",
-                              "url":  "https://minecraft.wiki/w/File:Item Yellow.png",
-                              "type":  "Item"
-                          },
-                          {
-                              "filename":  "Entity Yellow.png",
-                              "url":  "https://minecraft.wiki/w/File:Entity Yellow.png",
-                              "type":  "Entity"
-                          }
-                      ]
-    },
-    {
-        "word":  "you",
-        "standardized":  "you",
-        "chinese":  "pron. 你；你们 n. (You)人名；(柬)尤；(东南亚国家华语)猷",
-        "phonetic":  "",
-        "phrase":  "Learn the word you",
-        "phraseTranslation":  "学习单词 you",
-        "difficulty":  "basic",
-        "category":  "kindergarten",
-        "stage":  "kindergarten",
-        "imageURLs":  [
-
-                      ]
-    }
+  {
+    "word": "and",
+    "standardized": "And",
+    "chinese": "和",
+    "phonetic": "",
+    "phrase": "I like apples and bananas.",
+    "phraseTranslation": "例句：I like apples and bananas.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "And.png",
+        "url": "https://minecraft.wiki/w/File:And.png",
+        "type": "Default"
+      },
+      {
+        "filename": "InvIcon And.png",
+        "url": "https://minecraft.wiki/w/File:InvIcon And.png",
+        "type": "Inventory Icon"
+      },
+      {
+        "filename": "Block And.png",
+        "url": "https://minecraft.wiki/w/File:Block And.png",
+        "type": "Block"
+      },
+      {
+        "filename": "Item And.png",
+        "url": "https://minecraft.wiki/w/File:Item And.png",
+        "type": "Item"
+      },
+      {
+        "filename": "Entity And.png",
+        "url": "https://minecraft.wiki/w/File:Entity And.png",
+        "type": "Entity"
+      }
+    ]
+  },
+  {
+    "word": "away",
+    "standardized": "away",
+    "chinese": "adv. 离去，离开；在远处",
+    "phonetic": "",
+    "phrase": "The bird flies away.",
+    "phraseTranslation": "例句：The bird flies away.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "big",
+    "standardized": "big",
+    "chinese": "adj. 大的；重要的；量大的 adv. 大量地；顺利；夸大地 n. (Big)人名；(土)比格",
+    "phonetic": "",
+    "phrase": "I see a big dog.",
+    "phraseTranslation": "例句：I see a big dog.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "Blue",
+    "standardized": "Blue",
+    "chinese": "蓝色",
+    "phonetic": "",
+    "phrase": "The sky is blue.",
+    "phraseTranslation": "例句：The sky is blue.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "Blue.png",
+        "url": "https://minecraft.wiki/w/File:Blue.png",
+        "type": "Default"
+      },
+      {
+        "filename": "InvIcon Blue.png",
+        "url": "https://minecraft.wiki/w/File:InvIcon Blue.png",
+        "type": "Inventory Icon"
+      },
+      {
+        "filename": "Block Blue.png",
+        "url": "https://minecraft.wiki/w/File:Block Blue.png",
+        "type": "Block"
+      },
+      {
+        "filename": "Item Blue.png",
+        "url": "https://minecraft.wiki/w/File:Item Blue.png",
+        "type": "Item"
+      },
+      {
+        "filename": "Entity Blue.png",
+        "url": "https://minecraft.wiki/w/File:Entity Blue.png",
+        "type": "Entity"
+      }
+    ]
+  },
+  {
+    "word": "can",
+    "standardized": "can",
+    "chinese": "v. 将…装入密封罐中保存 aux. 能； 能够； 可以； 可能 n. 罐头； （用金属或塑料制作的）容器； （马口铁或其他金属制作的）食品罐头",
+    "phonetic": "",
+    "phrase": "I can swim.",
+    "phraseTranslation": "例句：I can swim.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "come",
+    "standardized": "come",
+    "chinese": "v. [came-come] 来， 来到； 达到， 至； 产生， 来； 变成； 实现； 开始；",
+    "phonetic": "",
+    "phrase": "Come here, please.",
+    "phraseTranslation": "例句：Come here, please.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "down",
+    "standardized": "down",
+    "chinese": "adv. 向下，下去；在下面 adj. 向下的 n. 软毛，绒毛；[地质] 开阔的高地 prep. 沿着，往下 v. 打倒，击败",
+    "phonetic": "",
+    "phrase": "Please sit down.",
+    "phraseTranslation": "例句：Please sit down.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "find",
+    "standardized": "find",
+    "chinese": "v. 发现，找到 〔一直在寻找之物〕 n. 〔尤指通过挖掘或水下打捞找到的〕发现物",
+    "phonetic": "",
+    "phrase": "Can you find your book?",
+    "phraseTranslation": "例句：Can you find your book?",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "for",
+    "standardized": "for",
+    "chinese": "prep. 为，为了；因为；给；对于；至于；适合于 conj. 因为",
+    "phonetic": "",
+    "phrase": "This gift is for you.",
+    "phraseTranslation": "例句：This gift is for you.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "funny",
+    "standardized": "funny",
+    "chinese": "adj. 有趣的，好笑的，滑稽的；（口）稀奇的，古怪的，奇异的；有病的，不舒服的；狡猾的，欺骗（性）的，可疑的，不光明 n. 滑稽人物；笑话，有趣的故事；滑稽连环漫画栏；（英）（比赛用）单人双桨小艇",
+    "phonetic": "",
+    "phrase": "This story is funny.",
+    "phraseTranslation": "例句：This story is funny.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "help",
+    "standardized": "help",
+    "chinese": "v. 帮助；促进；治疗；补救 n. 帮助；补救办法；帮忙者；有益的东西",
+    "phonetic": "",
+    "phrase": "I help my mother.",
+    "phraseTranslation": "例句：I help my mother.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "here",
+    "standardized": "here",
+    "chinese": "adv. 在这里；此时 int. 嘿！；喂！ n. 这里",
+    "phonetic": "",
+    "phrase": "Come here, please.",
+    "phraseTranslation": "例句：Come here, please.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "in",
+    "standardized": "in",
+    "chinese": "prep. 按照（表示方式）；从事于；在…之内 adv. 进入；当选；（服装等）时髦；在屋里 adj. 在里面的；时髦的 n. 执政者；门路；知情者",
+    "phonetic": "",
+    "phrase": "The book is in my bag.",
+    "phraseTranslation": "例句：The book is in my bag.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "is",
+    "standardized": "is",
+    "chinese": "v. 存在， 是",
+    "phonetic": "",
+    "phrase": "This is my English book.",
+    "phraseTranslation": "例句：This is my English book.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "it",
+    "standardized": "it",
+    "chinese": "pron. [指无生命的东西、动物、植物]它；这；那 abbr. 信息技术information technology",
+    "phonetic": "",
+    "phrase": "It is a sunny day.",
+    "phraseTranslation": "例句：It is a sunny day.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "jump",
+    "standardized": "Jump",
+    "chinese": "跳",
+    "phonetic": "",
+    "phrase": "The rabbit can jump.",
+    "phraseTranslation": "例句：The rabbit can jump.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "Jump.png",
+        "url": "https://minecraft.wiki/w/File:Jump.png",
+        "type": "Default"
+      },
+      {
+        "filename": "InvIcon Jump.png",
+        "url": "https://minecraft.wiki/w/File:InvIcon Jump.png",
+        "type": "Inventory Icon"
+      },
+      {
+        "filename": "Block Jump.png",
+        "url": "https://minecraft.wiki/w/File:Block Jump.png",
+        "type": "Block"
+      },
+      {
+        "filename": "Item Jump.png",
+        "url": "https://minecraft.wiki/w/File:Item Jump.png",
+        "type": "Item"
+      },
+      {
+        "filename": "Entity Jump.png",
+        "url": "https://minecraft.wiki/w/File:Entity Jump.png",
+        "type": "Entity"
+      }
+    ]
+  },
+  {
+    "word": "little",
+    "standardized": "little",
+    "chinese": "adj. 小的， 矮小的； 短的； 琐碎的， 微不足道的； 不多的， 少到",
+    "phonetic": "",
+    "phrase": "I have a little toy.",
+    "phraseTranslation": "例句：I have a little toy.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "look",
+    "standardized": "look",
+    "chinese": "v. 看；期待；注意；面向；看上去像 n. 看；样子；面容",
+    "phonetic": "",
+    "phrase": "Look at the blackboard.",
+    "phraseTranslation": "例句：Look at the blackboard.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "make",
+    "standardized": "make",
+    "chinese": "v. [made-made] 做， 制造； 作出， 制定； 使， 迫使； 获得， 挣得； 成为， 到达",
+    "phonetic": "",
+    "phrase": "I make a paper boat.",
+    "phraseTranslation": "例句：I make a paper boat.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "me",
+    "standardized": "me",
+    "chinese": "pron. 我（宾格） n. 自我；极端自私的人；自我的一部分",
+    "phonetic": "",
+    "phrase": "Please help me with this question.",
+    "phraseTranslation": "例句：Please help me with this question.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "my",
+    "standardized": "my",
+    "chinese": "pron. 我的 int. 哎呀（表示惊奇等）；喔唷 n. (My)人名；(越)美；(老、柬)米",
+    "phonetic": "",
+    "phrase": "My name is Lily.",
+    "phraseTranslation": "例句：My name is Lily.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "not",
+    "standardized": "not",
+    "chinese": "adv. 表示否定，不 n. “非”（计算机中逻辑运算的一种）",
+    "phonetic": "",
+    "phrase": "I am not late today.",
+    "phraseTranslation": "例句：I am not late today.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "one",
+    "standardized": "one",
+    "chinese": "pron. 一个人；任何人 adj. 一的；唯一的 n. 一 num. 一；一个",
+    "phonetic": "",
+    "phrase": "I have one apple.",
+    "phraseTranslation": "例句：I have one apple.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "play",
+    "standardized": "play",
+    "chinese": "v. 游戏；扮演；演奏；播放；同…比赛 n. 游戏；比赛；剧本",
+    "phonetic": "",
+    "phrase": "We play games after class.",
+    "phraseTranslation": "例句：We play games after class.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "Red",
+    "standardized": "Red",
+    "chinese": "红色",
+    "phonetic": "",
+    "phrase": "The apple is red.",
+    "phraseTranslation": "例句：The apple is red.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "Red.png",
+        "url": "https://minecraft.wiki/w/File:Red.png",
+        "type": "Default"
+      },
+      {
+        "filename": "InvIcon Red.png",
+        "url": "https://minecraft.wiki/w/File:InvIcon Red.png",
+        "type": "Inventory Icon"
+      },
+      {
+        "filename": "Block Red.png",
+        "url": "https://minecraft.wiki/w/File:Block Red.png",
+        "type": "Block"
+      },
+      {
+        "filename": "Item Red.png",
+        "url": "https://minecraft.wiki/w/File:Item Red.png",
+        "type": "Item"
+      },
+      {
+        "filename": "Entity Red.png",
+        "url": "https://minecraft.wiki/w/File:Entity Red.png",
+        "type": "Entity"
+      }
+    ]
+  },
+  {
+    "word": "run",
+    "standardized": "run",
+    "chinese": "v. [run-run, running] 跑， 奔跑； 行驶， 驾驶； 蔓延， 伸展； 操作； 竞",
+    "phonetic": "",
+    "phrase": "I run in the park.",
+    "phraseTranslation": "例句：I run in the park.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "see",
+    "standardized": "see",
+    "chinese": "v. [saw-seen] 看， 观看； 参见， 会晤； 领会， 理解； 想象； 把…看作； 发现； 体",
+    "phonetic": "",
+    "phrase": "I can see a bird.",
+    "phraseTranslation": "例句：I can see a bird.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "the",
+    "standardized": "The",
+    "chinese": "组组 成",
+    "phonetic": "",
+    "phrase": "The cat is on the chair.",
+    "phraseTranslation": "例句：The cat is on the chair.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "The.png",
+        "url": "https://minecraft.wiki/w/File:The.png",
+        "type": "Default"
+      },
+      {
+        "filename": "InvIcon The.png",
+        "url": "https://minecraft.wiki/w/File:InvIcon The.png",
+        "type": "Inventory Icon"
+      },
+      {
+        "filename": "Block The.png",
+        "url": "https://minecraft.wiki/w/File:Block The.png",
+        "type": "Block"
+      },
+      {
+        "filename": "Item The.png",
+        "url": "https://minecraft.wiki/w/File:Item The.png",
+        "type": "Item"
+      },
+      {
+        "filename": "Entity The.png",
+        "url": "https://minecraft.wiki/w/File:Entity The.png",
+        "type": "Entity"
+      }
+    ]
+  },
+  {
+    "word": "three",
+    "standardized": "three",
+    "chinese": "n. 三，三个 num. 三 adj. 三的，三个的",
+    "phonetic": "",
+    "phrase": "I have three pencils.",
+    "phraseTranslation": "例句：I have three pencils.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "to",
+    "standardized": "to",
+    "chinese": "adv. 向前；（门等）关上 prep. 到；向；（表示时间、方向）朝…方向 n. (To)人名；(柬)多；(中)脱(普通话·威妥玛)",
+    "phonetic": "",
+    "phrase": "I go to school every day.",
+    "phraseTranslation": "例句：I go to school every day.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "two",
+    "standardized": "two",
+    "chinese": "n. 两个 adj. 两个的 num. 二",
+    "phonetic": "",
+    "phrase": "I have two books.",
+    "phraseTranslation": "例句：I have two books.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "up",
+    "standardized": "up",
+    "chinese": "adv. 起来；上涨；向上 prep. 在…之上；向…的较高处 adj. 涨的；起床的；向上的 n. 上升；繁荣",
+    "phonetic": "",
+    "phrase": "Stand up, please.",
+    "phraseTranslation": "例句：Stand up, please.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "we",
+    "standardized": "we",
+    "chinese": "pron. 我们（主格）；笔者，本人（作者或演讲人使用）；朕，寡人 n. (We)人名；(缅)韦",
+    "phonetic": "",
+    "phrase": "We read together every morning.",
+    "phraseTranslation": "例句：We read together every morning.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "where",
+    "standardized": "where",
+    "chinese": "adv. 在哪里 pron. 哪里 conj. 在…的地方 n. 地点",
+    "phonetic": "",
+    "phrase": "Where is your school?",
+    "phraseTranslation": "例句：Where is your school?",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  },
+  {
+    "word": "Yellow",
+    "standardized": "Yellow",
+    "chinese": "黄色",
+    "phonetic": "",
+    "phrase": "The banana is yellow.",
+    "phraseTranslation": "例句：The banana is yellow.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "Yellow.png",
+        "url": "https://minecraft.wiki/w/File:Yellow.png",
+        "type": "Default"
+      },
+      {
+        "filename": "InvIcon Yellow.png",
+        "url": "https://minecraft.wiki/w/File:InvIcon Yellow.png",
+        "type": "Inventory Icon"
+      },
+      {
+        "filename": "Block Yellow.png",
+        "url": "https://minecraft.wiki/w/File:Block Yellow.png",
+        "type": "Block"
+      },
+      {
+        "filename": "Item Yellow.png",
+        "url": "https://minecraft.wiki/w/File:Item Yellow.png",
+        "type": "Item"
+      },
+      {
+        "filename": "Entity Yellow.png",
+        "url": "https://minecraft.wiki/w/File:Entity Yellow.png",
+        "type": "Entity"
+      }
+    ]
+  },
+  {
+    "word": "you",
+    "standardized": "you",
+    "chinese": "pron. 你；你们 n. (You)人名；(柬)尤；(东南亚国家华语)猷",
+    "phonetic": "",
+    "phrase": "You are my best friend.",
+    "phraseTranslation": "例句：You are my best friend.",
+    "difficulty": "basic",
+    "category": "kindergarten",
+    "stage": "kindergarten",
+    "imageURLs": []
+  }
 ];
-
