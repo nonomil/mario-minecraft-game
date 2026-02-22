@@ -143,7 +143,35 @@ function createVillage(startX, biomeId, index) {
     );
   }
 
+  // Spawn word items and chests inside village
+  spawnVillageItems(village);
+
   return village;
+}
+
+function spawnVillageItems(village) {
+  if (typeof pickWordForSpawn !== 'function') return;
+  if (typeof Item === 'undefined') return;
+  const vx = village.x;
+  const w = village.width || 800;
+  // Spawn 3-5 word items spread across village
+  const wordCount = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < wordCount; i++) {
+    const ix = vx + 80 + (i * (w - 160) / wordCount) + Math.random() * 40;
+    const word = pickWordForSpawn();
+    if (word) {
+      items.push(new Item(ix, groundY - 60, word));
+      if (typeof registerWordItemSpawn === 'function') registerWordItemSpawn(ix);
+    }
+  }
+  // Spawn 1-2 chests
+  if (typeof Chest !== 'undefined') {
+    const chestCount = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < chestCount; i++) {
+      const cx = vx + 200 + i * 300 + Math.random() * 80;
+      chests.push(new Chest(cx, groundY));
+    }
+  }
 }
 
 function cleanupVillages(playerX) {
@@ -260,6 +288,14 @@ function updateVillages() {
         v.visited = true;
         const biomeName = getBiomeName(v.biomeId);
         showToast(`🏘️ 进入${biomeName}村庄`);
+        // Remove enemies inside village area
+        if (typeof enemies !== 'undefined' && Array.isArray(enemies)) {
+          for (let i = enemies.length - 1; i >= 0; i--) {
+            if (enemies[i].x >= v.x && enemies[i].x <= v.x + v.width) {
+              enemies.splice(i, 1);
+            }
+          }
+        }
       }
       // v1.8.1 更新村民 (v1.8.1)
       updateVillageNPCs(v);

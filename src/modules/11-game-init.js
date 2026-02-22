@@ -367,6 +367,7 @@ function generatePlatform(startX, length, groundYValue) {
 
     if (startX > 400) {
         const objectX = startX + 100 + Math.random() * (length * blockSize - 150);
+        const inVillage = typeof isInVillageArea === 'function' && isInVillageArea(objectX);
         const rand = Math.random();
         const rates = getSpawnRates();
         const enemyConfig = getEnemyConfig();
@@ -377,7 +378,16 @@ function generatePlatform(startX, length, groundYValue) {
             enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance + extra));
         }
         enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance));
-        if (rand < rates.treeChance) {
+        if (inVillage) {
+            // Village: no enemies, more words and chests
+            if (rand < 0.4 && canSpawnWordItemAt(objectX)) {
+                const word = pickWordForSpawn();
+                items.push(new Item(objectX, groundYValue - 60, word));
+                registerWordItemSpawn(objectX);
+            } else if (rand < 0.6) {
+                chests.push(new Chest(objectX, groundYValue));
+            }
+        } else if (rand < rates.treeChance) {
             spawnBiomeTree(objectX, groundYValue, biome, level.treeType);
         } else if (rand < rates.chestChance) {
             chests.push(new Chest(objectX, groundYValue));
@@ -406,7 +416,8 @@ function spawnEnemyByDifficulty(x, y) {
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
         ocean: ["drowned", "pufferfish"],
-        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
+        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"],
+        mushroom_island: ["spore_bug", "bee", "fox"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
     const take = Math.max(2, Math.min(basePool.length, 2 + tier));
