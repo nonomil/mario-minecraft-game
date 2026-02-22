@@ -7,10 +7,10 @@ const __dirname = path.dirname(__filename);
 const apkRoot = path.resolve(__dirname, "..", "..");
 
 const targetFiles = [
-  "words/vocabs/05_\u521d\u4e2d/junior_high_basic.js",
-  "words/vocabs/05_\u521d\u4e2d/junior_high_intermediate.js",
-  "words/vocabs/05_\u521d\u4e2d/junior_high_advanced.js",
-  "words/vocabs/05_\u521d\u4e2d/junior_high_full.js"
+  "words/vocabs/05_初中/junior_high_basic.js",
+  "words/vocabs/05_初中/junior_high_intermediate.js",
+  "words/vocabs/05_初中/junior_high_advanced.js",
+  "words/vocabs/05_初中/junior_high_full.js"
 ].map((rel) => path.join(apkRoot, rel));
 
 const cachePath = path.join(apkRoot, "tools", "vocab-db", ".cache", "junior-phrase-cache.json");
@@ -85,8 +85,7 @@ const fixedPhrase = {
   might: "It might rain this afternoon.",
   must: "We must wear uniforms at school.",
   should: "You should review your notes tonight.",
-  would: "I would like a cup of tea."
-  ,
+  would: "I would like a cup of tea.",
   america: "America is a large country.",
   american: "My American friend studies in our school.",
   asia: "Asia is the largest continent.",
@@ -96,7 +95,25 @@ const fixedPhrase = {
   august: "It is very hot in August.",
   apple: "I eat an apple every morning.",
   article: "I read an article about science.",
-  assistant: "The assistant helped the teacher prepare class."
+  assistant: "The assistant helped the teacher prepare class.",
+  among: "She sat among her classmates.",
+  anymore: "I don't watch TV much anymore.",
+  anyone: "Anyone can ask a question in class.",
+  anybody: "Anyone can ask a question in class.",
+  anything: "You can ask me anything after class.",
+  ancient: "We visited an ancient temple.",
+  ant: "An ant is carrying a leaf.",
+  queue: "Please stand in a queue.",
+  quality: "This product has good quality.",
+  radio: "I listen to the radio every morning.",
+  railway: "The railway station is near my home.",
+  raincoat: "Take a raincoat on rainy days.",
+  quite: "The test was quite easy.",
+  seldom: "He seldom eats fast food.",
+  so: "I was tired, so I went to bed early.",
+  somewhere: "I left my keys somewhere in the room.",
+  soon: "We will start the meeting soon.",
+  southeast: "Our school is in the southeast of the city."
 };
 
 const badWordPattern =
@@ -169,18 +186,27 @@ function isBadPhrase(phrase, word) {
   if (/^I use\b.+\bdaily life\.?$/i.test(p)) return true;
   if (/^She speaks\b.+\bin class\.?$/i.test(p)) return true;
   if (/^The story is very\b/i.test(p)) return true;
+  if (/^I read a short text about .+ in class\.$/i.test(p)) return true;
+  if (/^I .+ every day after school\.$/i.test(p)) return true;
+  if (/^The weather is .+ today\.$/i.test(p)) return true;
+  if (/^Please do the task .+\.$/i.test(p)) return true;
+  if (/^The library is .+ the playground\.$/i.test(p)) return true;
+  if (/^I have .+ books\.$/i.test(p)) return true;
+  if (/^I have .+ pencils\.$/i.test(p)) return true;
   if (/^This gift is for (anyone|anybody|anything)\.?$/i.test(p)) return true;
   if (/^The (cat|bag) is .+ the (table|chair)\.?$/i.test(p)) return true;
   if (/^I eat \w+ anymore\.?$/i.test(p)) return true;
-  if (/^I \w+ every day after school\.$/i.test(p)) return true;
   if (/^The book is \w+\.$/i.test(p)) return true;
   if (/^I want to visit Apple\.$/i.test(p)) return true;
   if (/^This is a?n? \w+\.$/i.test(p)) return true;
-  if (/^I have \w+ books\.$/i.test(p)) return true;
+  if (/^The word '.+' appears in this sentence\.$/i.test(p)) return true;
+  if (/^The new word is .+\.$/i.test(p)) return true;
+  if (/^We (learn|talked about) .+ in class today\.$/i.test(p)) return true;
   if (new RegExp(`^${esc}$`, "i").test(p)) return true;
   if (p.includes(";") || p.includes("/")) return true;
   if (!/^[A-Z"']/.test(p)) return true;
   if (badWordPattern.test(p)) return true;
+  if (/“|”|‘|’/.test(p)) return true;
   const tokens = countTokens(p);
   if (tokens < 4 || tokens > 16) return true;
   if (/\b[A-Za-z]{11,}\b/.test(p)) return true;
@@ -192,38 +218,38 @@ function fallbackPhrase(word, chinese, posHint = "unknown") {
   const w = normalizeWord(word);
   const low = w.toLowerCase();
   if (fixedPhrase[low]) return fixedPhrase[low];
-  if (low === "among") return "She sat among her classmates.";
-  if (low === "anymore") return "I don't watch TV much anymore.";
-  if (low === "anyone" || low === "anybody") return "Anyone can ask a question in class.";
-  if (low === "anything") return "You can ask me anything after class.";
-  if (low === "an") return "She has an orange.";
-  if (low === "ancient") return "We visited an ancient temple.";
-  if (low === "ant") return "An ant is carrying a leaf.";
+
   const pos = posHint !== "unknown" ? posHint : detectPosFromChinese(chinese);
   const article = /^[aeiou]/i.test(low) ? "an" : "a";
+  const abstractNoun = /(tion|sion|ment|ness|ity|ship|age|ance|ence|ism)$/i.test(low);
+  const properNoun = /^[A-Z]/.test(w);
+
   switch (pos) {
     case "noun":
-      return `I read a short text about ${low} in class.`;
+      if (properNoun) return `${w} appears in our geography textbook.`;
+      if (abstractNoun) return `We discussed ${low} during today's class.`;
+      return `I saw ${article} ${low} near the school.`;
     case "verb":
-      return `I ${low} every day after school.`;
+      return `I usually ${low} with my classmates after school.`;
     case "adjective":
-      return `The weather is ${low} today.`;
+      return `The movie was ${low}.`;
     case "adverb":
-      return `Please do the task ${low}.`;
+      return `She answered ${low} in the interview.`;
     case "preposition":
-      return `The library is ${low} the playground.`;
+      return `The cat is ${low} the table.`;
     case "conjunction":
       return `I stayed home because it was raining.`;
     case "pronoun":
       return `This gift is for ${low}.`;
     case "number":
-      return `I have ${low} pencils.`;
+      return `I have ${low} notebooks in my bag.`;
     case "auxiliary":
       return `I ${low} finish this work today.`;
     case "article":
-      return `I have ${low} orange.`;
+      return `She bought ${low} orange at the store.`;
     default:
-      return `We learn the word ${low} in class today.`;
+      if (properNoun) return `${w} is an important name in this lesson.`;
+      return `I used the word ${low} in a simple sentence.`;
   }
 }
 
@@ -238,8 +264,9 @@ function scorePhrase(phrase, word) {
   const rawTokens = s.split(/\s+/).map((t) => t.replace(/[^A-Za-z'-]/g, "")).filter(Boolean);
   if (rawTokens.some((t) => t.length > 10)) return -1e9;
   if (/[,]{2,}|[:]/.test(s)) return -1e9;
-  const uncommonHardWords = /(atmospheric|intolerance|heritage|expediency|uprising|vandalism|deemed|privileges)/i;
+  const uncommonHardWords = /(atmospheric|intolerance|heritage|expediency|uprising|vandalism|deemed|privileges|trenches|foundering)/i;
   if (uncommonHardWords.test(s)) return -1e9;
+  if (/“|”|‘|’/.test(s)) return -1e9;
   let score = 0;
   score += 40;
   score += Math.max(0, 20 - Math.abs(tokens - 9) * 2);
@@ -346,7 +373,9 @@ async function generatePhrase(word, chinese, cache, refresh = false) {
     cache[word] = { phrase: out };
     return out;
   }
-  if (!refresh && cache[word]?.phrase && !isBadPhrase(cache[word].phrase, word)) return cache[word].phrase;
+  if (!refresh && cache[word]?.phrase && !isBadPhrase(cache[word].phrase, word)) {
+    return cache[word].phrase;
+  }
 
   const fromDict = await pickDictionaryPhrase(word);
   let phrase = fromDict.phrase;
