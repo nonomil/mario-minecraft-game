@@ -9,11 +9,11 @@ test("P0 vocab packs should include and switch to newly added packs", async ({ p
   const username = page.locator("#username-input");
   if (await username.isVisible().catch(() => false)) {
     await username.fill("vocab_tester");
+    await username.press("Enter");
+    await page.waitForTimeout(300);
     const loginBtn = page.locator("#btn-login");
     if (await loginBtn.isVisible().catch(() => false)) {
-      await loginBtn.click();
-    } else {
-      await username.press("Enter");
+      await loginBtn.click({ force: true }).catch(() => {});
     }
   }
 
