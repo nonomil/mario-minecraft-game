@@ -13,17 +13,32 @@ function normalizeSettings(raw) {
     if (typeof merged.musicEnabled !== "boolean") merged.musicEnabled = defaultSettings.musicEnabled ?? true;
     if (typeof merged.uiScale !== "number") merged.uiScale = defaultSettings.uiScale ?? 1.0;
     if (typeof merged.motionScale !== "number") merged.motionScale = defaultSettings.motionScale ?? 1.25;
-    if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 200;
+    if (typeof merged.biomeSwitchStepScore !== "number") merged.biomeSwitchStepScore = defaultSettings.biomeSwitchStepScore ?? 300;
     if (typeof merged.wordGateEnabled !== "boolean") merged.wordGateEnabled = defaultSettings.wordGateEnabled ?? true;
     if (typeof merged.wordMatchEnabled !== "boolean") merged.wordMatchEnabled = defaultSettings.wordMatchEnabled ?? true;
+    if (typeof merged.phraseFollowMode !== "string") merged.phraseFollowMode = defaultSettings.phraseFollowMode ?? "hybrid";
+    if (typeof merged.phraseFollowGapCount !== "number") merged.phraseFollowGapCount = defaultSettings.phraseFollowGapCount ?? 2;
+    if (typeof merged.phraseFollowDirectRatio !== "number") merged.phraseFollowDirectRatio = defaultSettings.phraseFollowDirectRatio ?? 0.7;
+    if (typeof merged.phraseFollowAdaptive !== "boolean") merged.phraseFollowAdaptive = defaultSettings.phraseFollowAdaptive ?? true;
+    if (typeof merged.wordRepeatWindow !== "number") merged.wordRepeatWindow = defaultSettings.wordRepeatWindow ?? 6;
+    if (typeof merged.wordRepeatBias !== "string") merged.wordRepeatBias = defaultSettings.wordRepeatBias ?? "reinforce_wrong";
+    if (typeof merged.fixedBossEnabled !== "boolean") merged.fixedBossEnabled = defaultSettings.fixedBossEnabled ?? true;
+    if (typeof merged.bossHpMultiplier !== "number") merged.bossHpMultiplier = defaultSettings.bossHpMultiplier ?? 2;
     if (typeof merged.villageEnabled !== "boolean") merged.villageEnabled = defaultSettings.villageEnabled ?? true;
     if (typeof merged.villageFrequency !== "number") merged.villageFrequency = defaultSettings.villageFrequency ?? 500;
     if (typeof merged.villageAutoSave !== "boolean") merged.villageAutoSave = defaultSettings.villageAutoSave ?? true;
     if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
-    merged.biomeSwitchStepScore = Math.max(50, Math.min(2000, Number(merged.biomeSwitchStepScore) || 200));
+    if (!["off", "direct", "gap2", "hybrid"].includes(String(merged.phraseFollowMode || ""))) merged.phraseFollowMode = "hybrid";
+    if (!["balanced", "reinforce_wrong"].includes(String(merged.wordRepeatBias || ""))) merged.wordRepeatBias = "reinforce_wrong";
+    if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
+    merged.biomeSwitchStepScore = Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 300));
     merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
     merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 900));
+    merged.phraseFollowGapCount = Math.max(0, Math.min(6, Number(merged.phraseFollowGapCount) || 2));
+    merged.phraseFollowDirectRatio = clamp(Number(merged.phraseFollowDirectRatio) || 0.7, 0, 1);
+    merged.wordRepeatWindow = Math.max(1, Math.min(20, Number(merged.wordRepeatWindow) || 6));
+    merged.bossHpMultiplier = Math.max(1, Math.min(5, Number(merged.bossHpMultiplier) || 2));
     if (!merged.keyCodes) {
         merged.keyCodes = [defaultControls.jump, defaultControls.attack, defaultControls.interact, defaultControls.switch, defaultControls.useDiamond]
             .filter(Boolean)
@@ -67,6 +82,7 @@ function placeholderImageDataUrl(text) {
     return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
+let _wordImageVersion = 0;
 function updateWordImage(wordObj) {
     const img = document.getElementById("word-card-image");
     if (!img) return;
@@ -84,13 +100,21 @@ function updateWordImage(wordObj) {
         img.alt = "";
         return;
     }
-    img.style.display = "block";
-    img.src = url;
+    const ver = ++_wordImageVersion;
     img.alt = wordObj && wordObj.en ? String(wordObj.en) : "";
-    img.onerror = () => {
-        img.onerror = null;
-        img.src = placeholderImageDataUrl(wordObj && wordObj.en ? wordObj.en : "");
+    const preload = new Image();
+    preload.onload = () => {
+        if (ver !== _wordImageVersion) return;
+        img.src = preload.src;
+        img.style.display = "block";
     };
+    preload.onerror = () => {
+        if (ver !== _wordImageVersion) return;
+        img.src = placeholderImageDataUrl(wordObj && wordObj.en ? wordObj.en : "");
+        img.style.display = "block";
+    };
+    img.style.display = "none";
+    preload.src = url;
 }
 
 function ensureVocabEngine() {
@@ -143,11 +167,12 @@ function renderVocabSelect() {
     });
 
     // Define stage order and labels
-    const stageOrder = ["kindergarten", "elementary_lower", "elementary_upper", "minecraft"];
+    const stageOrder = ["kindergarten", "elementary_lower", "elementary_upper", "junior_high", "minecraft"];
     const stageLabels = {
         "kindergarten": "幼儿园",
         "elementary_lower": "小学低年级",
         "elementary_upper": "小学高年级",
+        "junior_high": "初中",
         "minecraft": "我的世界"
     };
 
@@ -320,6 +345,7 @@ function normalizeRawWord(raw) {
         zh: zh || "",
         phrase: String(raw.phrase || "").trim() || null,
         phraseZh: String(raw.phraseTranslation || "").trim() || null,
+        phraseTranslation: String(raw.phraseTranslation || "").trim() || null,
         imageURLs: Array.isArray(raw.imageURLs) ? raw.imageURLs : []
     };
 }
@@ -433,8 +459,16 @@ function applySettingsToUI() {
     const touch = document.getElementById("touch-controls");
     if (touch) {
         const enabled = !!settings.touchControls;
+        const mode = String(settings.deviceMode || "auto");
+        const shortestSide = Math.min(Number(visualViewport.width) || 0, Number(visualViewport.height) || 0);
+        const resolvedDevice = mode === "phone" || mode === "tablet"
+            ? mode
+            : (shortestSide > 0 && shortestSide < 768 ? "phone" : "tablet");
         touch.classList.toggle("visible", enabled);
+        touch.classList.toggle("layout-phone", resolvedDevice === "phone");
+        touch.classList.toggle("layout-tablet", resolvedDevice === "tablet");
         touch.setAttribute("aria-hidden", enabled ? "false" : "true");
+        touch.dataset.deviceMode = resolvedDevice;
     }
 
     if (viewportChanged && startedOnce) {
@@ -454,4 +488,41 @@ function scheduleApplySettingsToUI() {
         applySettingsRaf = 0;
         applySettingsToUI();
     });
+}
+
+// --- First-launch vocab prompt modal ---
+
+function showVocabPromptModal() {
+    const modal = document.getElementById("vocab-prompt-modal");
+    if (!modal) return;
+    const sel = document.getElementById("vocab-prompt-select");
+    if (sel) {
+        const source = document.getElementById("opt-vocab");
+        if (source) sel.innerHTML = source.innerHTML;
+        sel.value = settings.vocabSelection || "auto";
+    }
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    pausedByModal = true;
+    paused = true;
+}
+
+function hideVocabPromptModal() {
+    const modal = document.getElementById("vocab-prompt-modal");
+    if (!modal) return;
+    modal.classList.remove("visible");
+    modal.setAttribute("aria-hidden", "true");
+    if (typeof markVocabPromptSeen === "function") markVocabPromptSeen();
+    if (pausedByModal) { pausedByModal = false; paused = false; }
+}
+
+async function confirmVocabPrompt() {
+    const sel = document.getElementById("vocab-prompt-select");
+    if (sel) {
+        settings.vocabSelection = sel.value || "auto";
+        saveSettings();
+        await setActiveVocabPack(settings.vocabSelection);
+    }
+    hideVocabPromptModal();
+    showToast("📚 词库已设置");
 }

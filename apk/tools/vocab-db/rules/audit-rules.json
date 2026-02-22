@@ -1,0 +1,172 @@
+{
+  "version": "2026-02-19.1",
+  "allowed_difficulties": [
+    "basic",
+    "intermediate",
+    "advanced"
+  ],
+  "global": {
+    "treat_empty_difficulty_as_invalid": false,
+    "word_sentence_token_threshold": 4,
+    "mojibake_markers": [
+      "�",
+      "Ã",
+      "Â",
+      "ä¾",
+      "å",
+      "æ",
+      "ç"
+    ]
+  },
+  "difficulty_compatibility": [
+    {
+      "pack_pattern": "^vocab\\.kindergarten$",
+      "allowed_difficulties": [
+        "basic",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    {
+      "pack_pattern": "^vocab\\.kindergarten\\.basic$",
+      "allowed_difficulties": [
+        "basic",
+        "intermediate"
+      ]
+    },
+    {
+      "pack_pattern": "^vocab\\.kindergarten\\.intermediate$",
+      "allowed_difficulties": [
+        "basic",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    {
+      "pack_pattern": "^vocab\\.kindergarten\\.advanced$",
+      "allowed_difficulties": [
+        "basic",
+        "intermediate",
+        "advanced"
+      ]
+    }
+  ],
+  "pack_profiles": [
+    {
+      "name": "kindergarten-basic",
+      "pack_pattern": "^vocab\\.kindergarten\\.basic$",
+      "max_word_length_single": 12,
+      "max_word_length_with_space": 20,
+      "max_phrase_tokens": 6,
+      "max_phrase_length": 48,
+      "flag_terminal_punctuation": true,
+      "move_to_pack_on_complexity": "vocab.elementary_lower",
+      "move_to_pack_on_command": "vocab.minecraft",
+      "command_keyword_whitelist": [
+        "book",
+        "bookshelf"
+      ],
+      "command_keywords": [
+        "attack",
+        "defend",
+        "fight",
+        "kill",
+        "sword",
+        "zombie",
+        "creeper",
+        "teleport",
+        "respawn",
+        "enchant",
+        "xp",
+        "boss"
+      ]
+    },
+    {
+      "name": "kindergarten-intermediate",
+      "pack_pattern": "^vocab\\.kindergarten\\.intermediate$",
+      "max_word_length_single": 12,
+      "max_word_length_with_space": 20,
+      "max_phrase_tokens": 8,
+      "max_phrase_length": 64,
+      "flag_terminal_punctuation": true,
+      "move_to_pack_on_complexity": "vocab.elementary_lower",
+      "move_to_pack_on_command": "vocab.minecraft",
+      "command_keyword_whitelist": [
+        "book",
+        "bookshelf"
+      ],
+      "command_keywords": [
+        "attack",
+        "defend",
+        "fight",
+        "kill",
+        "sword",
+        "zombie",
+        "creeper",
+        "teleport",
+        "respawn",
+        "enchant",
+        "xp",
+        "boss"
+      ]
+    },
+    {
+      "name": "kindergarten-advanced",
+      "pack_pattern": "^vocab\\.kindergarten\\.advanced$",
+      "max_word_length_single": 12,
+      "max_word_length_with_space": 20,
+      "max_phrase_tokens": 10,
+      "max_phrase_length": 72,
+      "flag_terminal_punctuation": true,
+      "move_to_pack_on_complexity": "vocab.elementary_lower",
+      "move_to_pack_on_command": "vocab.minecraft",
+      "command_keyword_whitelist": [
+        "book",
+        "bookshelf"
+      ],
+      "command_keywords": [
+        "attack",
+        "defend",
+        "fight",
+        "kill",
+        "sword",
+        "zombie",
+        "creeper",
+        "teleport",
+        "respawn",
+        "enchant",
+        "xp",
+        "boss"
+      ]
+    },
+    {
+      "name": "kindergarten-full",
+      "pack_pattern": "^vocab\\.kindergarten$",
+      "max_word_length_single": 12,
+      "max_word_length_with_space": 20,
+      "max_phrase_tokens": 10,
+      "max_phrase_length": 72,
+      "flag_terminal_punctuation": true,
+      "move_to_pack_on_complexity": "vocab.elementary_lower",
+      "move_to_pack_on_command": "vocab.minecraft",
+      "command_keyword_whitelist": [
+        "book",
+        "bookshelf"
+      ],
+      "command_keywords": [
+        "attack",
+        "defend",
+        "fight",
+        "kill",
+        "sword",
+        "zombie",
+        "creeper",
+        "teleport",
+        "respawn",
+        "enchant",
+        "xp",
+        "boss"
+      ]
+    }
+  ]
+}

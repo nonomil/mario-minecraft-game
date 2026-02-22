@@ -37,6 +37,7 @@ let vocabState = storage ? storage.loadJson("mmwg:vocabState", { runCounts: {}, 
 let progress = storage ? storage.loadJson("mmwg:progress", { vocab: {} }) : { vocab: {} };
 let lastWord = null;
 let wordPicker = null;
+let followUpQueue = [];
 let paused = false;
 let pausedByModal = false;
 let startedOnce = false;
@@ -429,7 +430,7 @@ const FOOD_TYPES = {
     mushroom_stew: { heal: 1, icon: "🍲", name: "蘑菇煲", color: "#CD853F" },
     raw_fish: { heal: 1, icon: "🐟", name: "生鱼", color: "#87CEEB" }
 };
-let playerEquipment = { armor: null, armorDurability: 0 };
+let playerEquipment = { armor: null, armorDurability: 0, armorEquippedAt: 0, armorLastDurabilityTick: 0 };
 let silentBootsState = { equipped: false, durability: 0, maxDurability: 30 };
 let armorInventory = [];
 
@@ -490,6 +491,12 @@ let repeatPauseState = "repeat";
 let villageConfig = {};
 let activeVillages = [];
 let villageSpawnedForScore = {};
+let villageSpawnState = {
+    lastSpawnScore: -Infinity,
+    lastSpawnX: -Infinity,
+    lastSpawnBiome: null,
+    lastSpawnTransitionTick: 0
+};
 let playerInVillage = false;
 let currentVillage = null;
 
@@ -619,6 +626,12 @@ const DEFAULT_BIOME_SWITCH = {
         ocean: 800,
         nether: 2000,
         end: 4000
+    },
+    gateBoss: {
+        enabled: true,
+        defaultType: "wither",
+        perBiomeOnce: true,
+        gateExempt: []
     }
 };
 let biomeSwitchConfig = JSON.parse(JSON.stringify(DEFAULT_BIOME_SWITCH));

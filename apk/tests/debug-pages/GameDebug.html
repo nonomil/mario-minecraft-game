@@ -99,7 +99,7 @@
         if (iframeAccessError) {
           statusEl.innerText =
             "status: iframe loaded but inaccessible (cross-origin/preview sandbox).\n" +
-            "请用本地 HTTP 打开: http://localhost:8080/apk/tests/debug-pages/GameDebug.html";
+            "请用本地 HTTP 打开: http://localhost:4173/tests/debug-pages/GameDebug.html";
           return;
         }
         statusEl.innerText =
@@ -143,6 +143,20 @@
       }
       try { fn(w); } catch (e) { console.error(e); }
       renderStatus(w);
+    }
+
+    function ensureRunning() {
+      withGame(w => {
+        try {
+          if (typeof w.bootGameLoopIfNeeded === "function") w.bootGameLoopIfNeeded();
+          if (typeof w.resumeGameFromOverlay === "function") w.resumeGameFromOverlay();
+          if (typeof w.setOverlay === "function") w.setOverlay(false);
+          if (typeof w.paused !== "undefined") w.paused = false;
+          if (typeof w.pausedByModal !== "undefined") w.pausedByModal = false;
+        } catch (e) {
+          console.warn("ensureRunning failed:", e);
+        }
+      });
     }
 
     function patchGodMode(w) {
@@ -286,6 +300,57 @@
       if (w) patchGodMode(w);
       renderStatus(w);
     });
+
+    // Playwright-friendly debug API
+    window.MMDBG = {
+      ready() {
+        const w = gw();
+        return Boolean(w && w.bossArena && w.player && typeof w.updateCurrentBiome === "function");
+      },
+      ensureRunning,
+      setBiome(id) {
+        const el = document.getElementById("biome");
+        if (el && id) el.value = String(id);
+        setBiome();
+      },
+      setBiomeRound(roundValue) {
+        const el = document.getElementById("biomeRound");
+        if (el) el.value = String(Math.max(1, Number(roundValue) || 1));
+        setBiomeRound();
+      },
+      setScore(scoreValue) {
+        const el = document.getElementById("score");
+        if (el) el.value = String(Math.max(0, Number(scoreValue) || 0));
+        setScore();
+      },
+      spawnBoss(type) {
+        const el = document.getElementById("boss");
+        if (el && type) el.value = String(type);
+        spawnBoss();
+      },
+      setGodMode(on) {
+        debugGodMode = Boolean(on);
+        const btn = document.getElementById("btnGod");
+        if (btn) btn.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
+      },
+      getState() {
+        const w = gw();
+        if (!w) return { ready: false };
+        const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+        const stay = typeof w.getBiomeStayDebugInfo === "function" ? w.getBiomeStayDebugInfo(Number(w.score) || 0) : null;
+        return {
+          ready: true,
+          score: Number(w.score) || 0,
+          runBestScore: Number(w.runBestScore) || 0,
+          biome: w.currentBiome || null,
+          bossActive: Boolean(w.bossArena && w.bossArena.active),
+          bossLocked: Boolean(w.bossArena && w.bossArena.viewportLocked),
+          bossType: boss && boss.constructor ? boss.constructor.name : null,
+          bossName: boss && boss.name ? boss.name : null,
+          stay
+        };
+      }
+    };
 
     setInterval(() => {
       const w = gw();

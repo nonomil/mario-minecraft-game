@@ -1,11 +1,17 @@
 // ============ BOSS 战斗系统 ============
 
+function isPlayerProtectedFromWitherInVillage() {
+    return typeof playerInVillage !== 'undefined' && !!playerInVillage;
+}
+
 // BOSS 基类
 class Boss {
     constructor(config) {
+        const hpMultiplier = Math.max(1, Number(settings?.bossHpMultiplier) || 2);
+        const scaledMaxHp = Math.max(1, Math.round((Number(config.maxHp) || 1) * hpMultiplier));
         this.name = config.name;
-        this.maxHp = config.maxHp;
-        this.hp = config.maxHp;
+        this.maxHp = scaledMaxHp;
+        this.hp = scaledMaxHp;
         this.x = config.x || 0;
         this.y = config.y || 100;
         this.width = config.width || 96;
@@ -81,6 +87,7 @@ class Boss {
                 // 碰撞玩家
                 if (Math.abs(p.x - player.x - player.width / 2) < p.size + player.width / 2 &&
                     Math.abs(p.y - player.y - player.height / 2) < p.size + player.height / 2) {
+                    if (this.type === 'wither' && isPlayerProtectedFromWitherInVillage()) continue;
                     damagePlayer(p.damage, p.x);
                     this.bossProjectiles.splice(i, 1);
                     continue;
@@ -134,43 +141,142 @@ class Boss {
 }
 
 // BOSS 战场管理器
-const bossArena = {
+globalThis.bossArena = globalThis.bossArena || {
     active: false,
     boss: null,
+    currentEncounter: null,
     victoryTimer: 0,
     phaseFlashTimer: 0,
     phaseBannerText: '',
     bossTypes: ['wither', 'ghast', 'blaze', 'wither_skeleton'],
     bossScores: [2000, 4000, 6000, 8000],         // 触发分数阈值
     spawned: {},           // 已生成的BOSS记录
+    gateBossRotationCursor: 0,
+    weaponLockActive: false,
+    weaponBeforeBoss: "sword",
 
 // PLACEHOLDER_ARENA_METHODS
 
+    normalizeBossType(type) {
+        const normalized = String(type || "").trim().toLowerCase();
+        if (this.bossTypes.includes(normalized)) return normalized;
+        return "wither";
+    },
+
+    resolveGateBossType(fromBiomeId) {
+        const cfg = (typeof getBiomeSwitchConfig === "function") ? getBiomeSwitchConfig() : null;
+        const gateBossCfg = cfg && cfg.gateBoss && typeof cfg.gateBoss === "object" ? cfg.gateBoss : {};
+        const fromBiome = (fromBiomeId && typeof getBiomeById === "function") ? getBiomeById(fromBiomeId) : null;
+        const biomeType = String(fromBiome?.gateBossType || "").trim().toLowerCase();
+        const defaultType = String(gateBossCfg.defaultType || "wither").trim().toLowerCase();
+        if (biomeType) return this.normalizeBossType(biomeType);
+        // Keep gate bosses rotating by default so players don't always face wither.
+        if (!defaultType || defaultType === "rotate") return this.nextGateBossType();
+        if (defaultType === "wither" && gateBossCfg.rotateOnFallback !== false) return this.nextGateBossType();
+        return this.normalizeBossType(defaultType);
+    },
+
+    nextGateBossType() {
+        const list = Array.isArray(this.bossTypes) && this.bossTypes.length ? this.bossTypes : ["wither"];
+        const idx = Math.max(0, Number(this.gateBossRotationCursor) || 0) % list.length;
+        this.gateBossRotationCursor = (idx + 1) % list.length;
+        return this.normalizeBossType(list[idx]);
+    },
+
+    lockWeaponForBossFight() {
+        if (typeof playerWeapons === "undefined" || !playerWeapons) return;
+        this.weaponLockActive = true;
+        this.weaponBeforeBoss = playerWeapons.current || "sword";
+        if (playerWeapons.current !== "sword") {
+            playerWeapons.current = "sword";
+            playerWeapons.attackCooldown = 0;
+            if (typeof updateWeaponUI === "function") updateWeaponUI();
+            showToast("⚔️ BOSS战已锁定为剑模式");
+        }
+    },
+
+    unlockWeaponAfterBossFight() {
+        if (typeof playerWeapons === "undefined" || !playerWeapons) {
+            this.weaponLockActive = false;
+            this.weaponBeforeBoss = "sword";
+            return;
+        }
+        const prev = this.weaponBeforeBoss || "sword";
+        const unlocked = Array.isArray(playerWeapons.unlocked) ? playerWeapons.unlocked : [];
+        playerWeapons.current = unlocked.includes(prev) ? prev : "sword";
+        playerWeapons.attackCooldown = 0;
+        this.weaponLockActive = false;
+        this.weaponBeforeBoss = "sword";
+        if (typeof updateWeaponUI === "function") updateWeaponUI();
+    },
+
     checkSpawn() {
         if (this.active) return;
+        if (settings && settings.fixedBossEnabled === false) return;
         const score = getProgressScore();
         for (let i = 0; i < this.bossTypes.length; i++) {
             const type = this.bossTypes[i];
             if (!this.spawned[type] && score >= this.bossScores[i]) {
-                this.enter(type);
+                this.enter(type, { source: "score_threshold", markSpawned: true });
                 return;
             }
         }
     },
 
-    enter(bossType) {
+    enter(bossType, options = {}) {
+        const resolvedType = this.normalizeBossType(bossType);
         this.active = true;
         this.victoryTimer = 0;
         this.phaseFlashTimer = 0;
         this.phaseBannerText = '';
-        this.spawned[bossType] = true;
-        this.boss = this.createBoss(bossType);
+        this.currentEncounter = {
+            source: String(options.source || "manual"),
+            fromBiome: options.fromBiome || null,
+            toBiome: options.toBiome || null,
+            onVictory: (typeof options.onVictory === "function") ? options.onVictory : null
+        };
+        if (options.markSpawned !== false) this.spawned[resolvedType] = true;
+        this.boss = this.createBoss(resolvedType);
+        this.lockWeaponForBossFight();
+        const isFlyingBoss = resolvedType === 'wither' || resolvedType === 'ghast' || resolvedType === 'blaze';
+        let grantedRangedSupport = false;
+        if (isFlyingBoss) {
+            const minArrows = 12;
+            if ((inventory.bow || 0) <= 0) {
+                inventory.bow = 1;
+                grantedRangedSupport = true;
+            }
+            if ((inventory.arrow || 0) < minArrows) {
+                inventory.arrow = minArrows;
+                grantedRangedSupport = true;
+            }
+            if (typeof syncWeaponsFromInventory === 'function') syncWeaponsFromInventory();
+            if (typeof updateInventoryUI === 'function') updateInventoryUI();
+        }
         // 视口锁定 + 边界墙
         this.viewportLocked = true;
         this.lockedCamX = cameraX;
         this.leftWall = cameraX;
         this.rightWall = cameraX + canvas.width;
-        showToast(`⚠️ BOSS战: ${this.boss.name}!`);
+        const supportText = grantedRangedSupport ? '（已补给弓箭）' : '';
+        if (this.currentEncounter.source === "biome_gate") {
+            const fromBiome = this.currentEncounter.fromBiome || "?";
+            const toBiome = this.currentEncounter.toBiome || "?";
+            showToast(`⚔️ 门禁BOSS：${fromBiome} -> ${toBiome}（${this.boss.name}）${supportText}`);
+        } else {
+            showToast(`⚔️ BOSS战！${this.boss.name}${supportText}`);
+        }
+    },
+
+    enterBiomeGate(fromBiomeId, toBiomeId, options = {}) {
+        const bossType = this.resolveGateBossType(fromBiomeId);
+        this.enter(bossType, {
+            source: "biome_gate",
+            fromBiome: fromBiomeId || null,
+            toBiome: toBiomeId || null,
+            markSpawned: false,
+            onVictory: options.onVictory
+        });
     },
 
     createBoss(type) {
@@ -185,8 +291,10 @@ const bossArena = {
     },
 
     exit() {
+        this.unlockWeaponAfterBossFight();
         this.active = false;
         this.boss = null;
+        this.currentEncounter = null;
         this.viewportLocked = false;
         this.phaseFlashTimer = 0;
         this.phaseBannerText = '';
@@ -202,6 +310,21 @@ const bossArena = {
         addArmorToInventory('diamond');
         showFloatingText('🏆 BOSS DEFEATED!', player.x, player.y - 60, '#FFD700');
         showToast('🏆 击败BOSS! 获得丰厚奖励!');
+        const callback = this.currentEncounter && typeof this.currentEncounter.onVictory === "function"
+            ? this.currentEncounter.onVictory
+            : null;
+        if (callback) {
+            try {
+                callback({
+                    source: this.currentEncounter.source || "manual",
+                    fromBiome: this.currentEncounter.fromBiome || null,
+                    toBiome: this.currentEncounter.toBiome || null,
+                    bossType: this.boss ? this.boss.type : null
+                });
+            } catch (err) {
+                console.warn("bossArena.onVictory callback failed", err);
+            }
+        }
     },
 
     update() {
@@ -235,7 +358,7 @@ const bossArena = {
         ctx.fillStyle = '#FFF';
         ctx.font = 'bold 14px Verdana';
         ctx.textAlign = 'center';
-        ctx.fillText(`${this.boss.name} (阶段${this.boss.phase})`, canvas.width / 2, by - 6);
+        ctx.fillText(`${this.boss.name}（阶段${this.boss.phase}）`, canvas.width / 2, by - 6);
         if (this.phaseFlashTimer > 0 && this.phaseBannerText) {
             const bannerAlpha = Math.min(1, this.phaseFlashTimer / 20);
             ctx.fillStyle = `rgba(255, 255, 255, ${bannerAlpha * 0.85})`;
@@ -285,6 +408,10 @@ const bossArena = {
         this.phaseFlashTimer = 18;
     }
 };
+
+function isBossWeaponLockActive() {
+    return !!(typeof bossArena !== "undefined" && bossArena && bossArena.weaponLockActive);
+}
 
 // 凋零 BOSS
 class WitherBoss extends Boss {
@@ -422,7 +549,9 @@ class WitherBoss extends Boss {
         // 冲刺碰撞玩家
         if (Math.abs(this.x - player.x) < this.width &&
             Math.abs(this.y - player.y) < this.height) {
-            damagePlayer(2, this.x, 120);
+            if (!isPlayerProtectedFromWitherInVillage()) {
+                damagePlayer(2, this.x, 120);
+            }
             this.charging = false;
             this.stunTimer = 30;
             this.shockwave = { x: this.x + this.width / 2, y: this.y + this.height / 2, radius: 12, maxRadius: 96, alpha: 0.85 };

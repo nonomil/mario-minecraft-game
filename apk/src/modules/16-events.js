@@ -7,8 +7,19 @@ function wireSettingsModal() {
     const btnOpen = document.getElementById("btn-settings");
     const btnClose = document.getElementById("btn-settings-close");
     const btnSave = document.getElementById("btn-settings-save");
+    const btnAdvanced = document.getElementById("btn-settings-advanced");
     const btnResetProgress = document.getElementById("btn-reset-progress");
     const progressVocab = document.getElementById("progress-vocab");
+    const advancedModal = document.getElementById("advanced-settings-modal");
+    const btnAdvancedClose = document.getElementById("btn-advanced-settings-close");
+    const btnAdvancedSave = document.getElementById("btn-advanced-settings-save");
+    const optPhraseFollowMode = document.getElementById("opt-phrase-follow-mode");
+    const optPhraseFollowDirectRatio = document.getElementById("opt-phrase-follow-direct-ratio");
+    const optPhraseFollowGapCount = document.getElementById("opt-phrase-follow-gap-count");
+    const optWordRepeatWindow = document.getElementById("opt-word-repeat-window");
+    const optPhraseFollowAdaptive = document.getElementById("opt-phrase-follow-adaptive");
+    const optWordRepeatBias = document.getElementById("opt-word-repeat-bias");
+    const optWordFollowStats = document.getElementById("opt-word-follow-stats");
 
     const optLearningMode = document.getElementById("opt-learning-mode");
     const optChallengeMode = document.getElementById("opt-challenge-mode");
@@ -20,6 +31,7 @@ function wireSettingsModal() {
     const optSpeechZhEnabled = document.getElementById("opt-speech-zh-enabled");
     const optBgm = document.getElementById("opt-bgm");
     const optUiScale = document.getElementById("opt-ui-scale");
+    const optDeviceMode = document.getElementById("opt-device-mode");
     const optMotionScale = document.getElementById("opt-motion-scale");
     const optDifficulty = document.getElementById("opt-difficulty");
     const optBiomeStep = document.getElementById("opt-biome-step");
@@ -41,6 +53,74 @@ function wireSettingsModal() {
     const optKeys = document.getElementById("opt-keys");
     let resetArmed = false;
     let resetTimer = null;
+    let advancedModalVisible = false;
+
+    function readFollowUpMetrics() {
+        const m = globalThis.__MMWG_FOLLOWUP_METRICS || {};
+        const calls = Number(m.pickCalls) || 0;
+        const served = Number(m.followServed) || 0;
+        const queued = Number(m.followQueued) || 0;
+        const deferred = Number(m.followDeferredByExclude) || 0;
+        const dropped = Number(m.followDroppedByQueueLimit) || 0;
+        const hitRate = calls > 0 ? (served / calls).toFixed(2) : "0.00";
+        return { calls, served, queued, deferred, dropped, hitRate };
+    }
+
+    function renderFollowUpStats() {
+        if (!optWordFollowStats) return;
+        const m = readFollowUpMetrics();
+        optWordFollowStats.innerText = `calls=${m.calls}, served=${m.served}, hitRate=${m.hitRate}, queued=${m.queued}, deferred=${m.deferred}, dropped=${m.dropped}`;
+    }
+
+    function fillAdvanced() {
+        if (optPhraseFollowMode) optPhraseFollowMode.value = String(settings.phraseFollowMode || "hybrid");
+        if (optPhraseFollowDirectRatio) optPhraseFollowDirectRatio.value = String(settings.phraseFollowDirectRatio ?? 0.7);
+        if (optPhraseFollowGapCount) {
+            const gap = String(settings.phraseFollowGapCount ?? 2);
+            optPhraseFollowGapCount.value = gap;
+            if (optPhraseFollowGapCount.value !== gap) optPhraseFollowGapCount.value = "2";
+        }
+        if (optWordRepeatWindow) optWordRepeatWindow.value = String(settings.wordRepeatWindow ?? 6);
+        if (optPhraseFollowAdaptive) optPhraseFollowAdaptive.checked = settings.phraseFollowAdaptive !== false;
+        if (optWordRepeatBias) {
+            const desiredBias = String(settings.wordRepeatBias || "reinforce_wrong");
+            optWordRepeatBias.value = desiredBias;
+            if (optWordRepeatBias.value !== desiredBias) optWordRepeatBias.value = "reinforce_wrong";
+        }
+        renderFollowUpStats();
+    }
+
+    function openAdvanced() {
+        if (!advancedModal) return;
+        fillAdvanced();
+        advancedModal.classList.add("visible");
+        advancedModal.setAttribute("aria-hidden", "false");
+        advancedModalVisible = true;
+    }
+
+    function closeAdvanced() {
+        if (!advancedModal) return;
+        advancedModal.classList.remove("visible");
+        advancedModal.setAttribute("aria-hidden", "true");
+        advancedModalVisible = false;
+    }
+
+    function saveAdvanced() {
+        if (optPhraseFollowMode) settings.phraseFollowMode = String(optPhraseFollowMode.value || "hybrid");
+        if (optPhraseFollowDirectRatio) settings.phraseFollowDirectRatio = Number(optPhraseFollowDirectRatio.value || 0.7);
+        if (optPhraseFollowGapCount) settings.phraseFollowGapCount = Number(optPhraseFollowGapCount.value || 2);
+        if (optWordRepeatWindow) settings.wordRepeatWindow = Number(optWordRepeatWindow.value || 6);
+        if (optPhraseFollowAdaptive) settings.phraseFollowAdaptive = !!optPhraseFollowAdaptive.checked;
+        if (optWordRepeatBias) settings.wordRepeatBias = String(optWordRepeatBias.value || "reinforce_wrong");
+        settings = normalizeSettings(settings);
+        wordPicker = null;
+        followUpQueue = [];
+        if (typeof resetFollowUpMetrics === "function") resetFollowUpMetrics();
+        renderFollowUpStats();
+        saveSettings();
+        closeAdvanced();
+        showToast("高级学习设置已保存");
+    }
 
     function fill() {
         if (optLearningMode) optLearningMode.checked = !!settings.learningMode;
@@ -62,13 +142,14 @@ function wireSettingsModal() {
         if (optSpeechZh) optSpeechZh.disabled = !settings.speechZhEnabled;
         if (optBgm) optBgm.checked = !!settings.musicEnabled;
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
+        if (optDeviceMode) optDeviceMode.value = settings.deviceMode || "auto";
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
         if (optDifficulty) {
             const desired = settings.difficultySelection || "auto";
             optDifficulty.value = desired;
             if (optDifficulty.value !== desired) optDifficulty.value = "auto";
         }
-        if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 200);
+        if (optBiomeStep) optBiomeStep.value = String(settings.biomeSwitchStepScore ?? 300);
         if (optTouch) optTouch.checked = !!settings.touchControls;
         if (optNoRepeat) optNoRepeat.checked = !!settings.avoidWordRepeats;
         if (optShowImage) optShowImage.checked = !!settings.showWordImage;
@@ -92,6 +173,7 @@ function wireSettingsModal() {
 
     function close() {
         if (!modal) return;
+        closeAdvanced();
         modal.classList.remove("visible");
         modal.setAttribute("aria-hidden", "true");
         if (pausedByModal) paused = false;
@@ -113,6 +195,7 @@ function wireSettingsModal() {
         if (optSpeechZhEnabled) settings.speechZhEnabled = !!optSpeechZhEnabled.checked;
         if (optBgm) settings.musicEnabled = !!optBgm.checked;
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
+        if (optDeviceMode) settings.deviceMode = String(optDeviceMode.value || "auto");
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);
         if (optDifficulty) settings.difficultySelection = String(optDifficulty.value || "auto");
         if (optBiomeStep) settings.biomeSwitchStepScore = Number(optBiomeStep.value);
@@ -157,6 +240,9 @@ function wireSettingsModal() {
     if (btnOpen) btnOpen.addEventListener("click", open);
     if (btnClose) btnClose.addEventListener("click", close);
     if (btnSave) btnSave.addEventListener("click", save);
+    if (btnAdvanced) btnAdvanced.addEventListener("click", openAdvanced);
+    if (btnAdvancedClose) btnAdvancedClose.addEventListener("click", closeAdvanced);
+    if (btnAdvancedSave) btnAdvancedSave.addEventListener("click", saveAdvanced);
     if (btnResetProgress) {
         btnResetProgress.addEventListener("click", () => {
             if (!resetArmed) {
@@ -177,7 +263,12 @@ function wireSettingsModal() {
     }
     if (modal) {
         modal.addEventListener("click", e => {
-            if (e.target === modal) close();
+            if (e.target === modal && !advancedModalVisible) close();
+        });
+    }
+    if (advancedModal) {
+        advancedModal.addEventListener("click", e => {
+            if (e.target === advancedModal) closeAdvanced();
         });
     }
 }
@@ -203,6 +294,10 @@ function wireHudButtons() {
     const btnProfile = document.getElementById("btn-profile");
     if (btnProfile) {
         btnProfile.addEventListener("click", showProfileModal);
+    }
+    const btnSaveProgress = document.getElementById("btn-save-progress");
+    if (btnSaveProgress) {
+        btnSaveProgress.addEventListener("click", showSaveProgressModal);
     }
     const armorBadge = document.getElementById("armor-status");
     if (armorBadge) {
@@ -288,25 +383,108 @@ function wireTouchControls() {
     function bindTap(action, fn) {
         const btn = root.querySelector(`[data-action="${action}"]`);
         if (!btn) return;
+        let armed = false;
+        let lastTapAt = 0;
+        const fireTap = (e) => {
+            if (e) e.preventDefault();
+            const now = Date.now();
+            if (now - lastTapAt < 180) return;
+            lastTapAt = now;
+            fn();
+        };
         const supportsPointer = (typeof window !== "undefined") && ("PointerEvent" in window);
         if (supportsPointer) {
             btn.addEventListener("pointerdown", e => {
                 e.preventDefault();
-                fn();
+                armed = true;
+                try { btn.setPointerCapture(e.pointerId); } catch {}
             }, { passive: false });
+            btn.addEventListener("pointerup", e => {
+                if (!armed) return;
+                armed = false;
+                fireTap(e);
+            }, { passive: false });
+            btn.addEventListener("pointercancel", () => { armed = false; }, { passive: false });
+            btn.addEventListener("lostpointercapture", () => { armed = false; });
             return;
         }
 
-        btn.addEventListener("touchstart", e => { e.preventDefault(); fn(); }, { passive: false });
-        btn.addEventListener("mousedown", e => { e.preventDefault(); fn(); }, { passive: false });
-        btn.addEventListener("click", e => { e.preventDefault(); fn(); }, { passive: false });
+        btn.addEventListener("touchstart", e => { e.preventDefault(); armed = true; }, { passive: false });
+        btn.addEventListener("touchend", e => {
+            if (!armed) return;
+            armed = false;
+            fireTap(e);
+        }, { passive: false });
+        btn.addEventListener("touchcancel", () => { armed = false; }, { passive: false });
+        btn.addEventListener("mousedown", e => { e.preventDefault(); armed = true; }, { passive: false });
+        btn.addEventListener("mouseup", e => {
+            if (!armed) return;
+            armed = false;
+            fireTap(e);
+        }, { passive: false });
+        btn.addEventListener("mouseleave", () => { armed = false; });
+        btn.addEventListener("click", e => { e.preventDefault(); }, { passive: false });
+    }
+
+    function bindLongPress(action, fn, holdMs = 420) {
+        const btn = root.querySelector(`[data-action="${action}"]`);
+        if (!btn) return;
+        let timer = null;
+        let fired = false;
+        const clearPress = () => {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+        };
+        const startPress = (e) => {
+            if (e) e.preventDefault();
+            clearPress();
+            fired = false;
+            timer = setTimeout(() => {
+                fired = true;
+                fn();
+            }, holdMs);
+        };
+        const endPress = (e) => {
+            if (e) e.preventDefault();
+            clearPress();
+        };
+
+        const supportsPointer = (typeof window !== "undefined") && ("PointerEvent" in window);
+        if (supportsPointer) {
+            btn.addEventListener("pointerdown", e => {
+                startPress(e);
+                try { btn.setPointerCapture(e.pointerId); } catch {}
+            }, { passive: false });
+            btn.addEventListener("pointerup", endPress, { passive: false });
+            btn.addEventListener("pointercancel", endPress, { passive: false });
+            btn.addEventListener("lostpointercapture", clearPress);
+            return;
+        }
+
+        btn.addEventListener("touchstart", startPress, { passive: false });
+        btn.addEventListener("touchend", endPress, { passive: false });
+        btn.addEventListener("touchcancel", endPress, { passive: false });
+        btn.addEventListener("mousedown", startPress, { passive: false });
+        btn.addEventListener("mouseup", endPress, { passive: false });
+        btn.addEventListener("mouseleave", clearPress);
+        btn.addEventListener("click", e => {
+            e.preventDefault();
+            if (fired) fired = false;
+        }, { passive: false });
     }
 
     bindHold("left", () => { keys.left = true; }, () => { keys.left = false; });
     bindHold("right", () => { keys.right = true; }, () => { keys.right = false; });
     bindTap("jump", () => { jumpBuffer = gameConfig.jump.bufferFrames; });
     bindTap("attack", () => { handleAttack("tap"); });
-    bindTap("interact", () => { handleInteraction(); });
+    bindTap("interact", () => { handleInteraction("tap"); });
+    bindTap("interior-exit", () => {
+        if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+            if (typeof exitVillageInterior === "function") exitVillageInterior("🏠 离开房屋");
+        }
+    });
     bindTap("switch", () => { switchWeapon(); });
     bindTap("use-diamond", () => { useDiamondForHp(); });
 }

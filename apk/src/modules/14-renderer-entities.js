@@ -19,6 +19,31 @@ function drawSteve(x, y, facingRight, attacking) {
     const ex = facingRight ? x + 16 * s : x + 6 * s;
     ctx.fillRect(ex, y + 6 * s, 4 * s, 4 * s); // Steve's eye
 
+    if (playerEquipment?.armor) {
+        const armor = ARMOR_TYPES?.[playerEquipment.armor];
+        const dur = Math.max(0, Math.min(100, Number(playerEquipment?.armorDurability) || 0));
+        if (armor && dur > 0) {
+            const alpha = 0.4 + (dur / 100) * 0.35;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = armor.color || "#90A4AE";
+            // Helmet (on head, slightly wider than hair)
+            ctx.fillRect(x + 2 * s, y - 1 * s, 22 * s, 8 * s);
+            // Chest plate
+            ctx.fillRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
+            // Shoulder pads
+            ctx.fillRect(x + 4 * s, y + 20 * s, 2 * s, 8 * s);
+            ctx.fillRect(x + 20 * s, y + 20 * s, 2 * s, 8 * s);
+            // Leggings
+            ctx.fillRect(x + 6 * s, y + 40 * s, 14 * s, 8 * s);
+            ctx.restore();
+
+            ctx.strokeStyle = "rgba(255,255,255,0.45)";
+            ctx.lineWidth = Math.max(1, s * 0.8);
+            ctx.strokeRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
+        }
+    }
+
     if (attacking) {
         ctx.save();
         ctx.translate(x + (facingRight ? 26 * s : 0), y + 26 * s);
@@ -98,7 +123,7 @@ function drawEnemy(enemy) {
             drawSimpleBiomeEnemy(enemy, "#FFD54F", "#212121", false);
             break;
         case "fox":
-            drawSimpleBiomeEnemy(enemy, "#FB8C00", "#F5F5F5", false);
+            drawFoxEnemy(enemy);
             break;
         case "spore_bug":
             drawSimpleBiomeEnemy(enemy, "#8E24AA", "#4A148C", false);
@@ -356,6 +381,55 @@ function drawProjectile(proj) {
 // 渲染新BOSS系统
 function renderBossSystem() {
     if (typeof bossArena === 'undefined' || !bossArena.active) return;
-    bossArena.renderBoss(ctx, cameraX);
-    bossArena.renderProjectiles(ctx, cameraX);
+    // draw() already applied ctx.translate(-cameraX, 0), so pass 0 here to avoid double offset.
+    bossArena.renderBoss(ctx, 0);
+    bossArena.renderProjectiles(ctx, 0);
+}
+
+function drawFoxEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const faceRight = enemy.dir >= 0;
+
+    // Body
+    ctx.fillStyle = "#F57C00";
+    ctx.fillRect(x + w * 0.12, y + h * 0.38, w * 0.7, h * 0.42);
+
+    // Head
+    const headX = faceRight ? x + w * 0.58 : x + w * 0.06;
+    const headY = y + h * 0.2;
+    ctx.fillStyle = "#FB8C00";
+    ctx.fillRect(headX, headY, w * 0.32, h * 0.28);
+
+    // Ears
+    ctx.fillStyle = "#F57C00";
+    ctx.fillRect(headX + w * 0.02, headY - h * 0.08, w * 0.08, h * 0.1);
+    ctx.fillRect(headX + w * 0.22, headY - h * 0.08, w * 0.08, h * 0.1);
+    ctx.fillStyle = "#FFD9B3";
+    ctx.fillRect(headX + w * 0.04, headY - h * 0.05, w * 0.04, h * 0.05);
+    ctx.fillRect(headX + w * 0.24, headY - h * 0.05, w * 0.04, h * 0.05);
+
+    // Face details
+    const eyeX = faceRight ? headX + w * 0.2 : headX + w * 0.08;
+    ctx.fillStyle = "#212121";
+    ctx.fillRect(eyeX, headY + h * 0.09, w * 0.04, h * 0.05);
+    ctx.fillStyle = "#FFF3E0";
+    ctx.fillRect(headX + w * 0.1, headY + h * 0.16, w * 0.14, h * 0.1);
+    const noseX = faceRight ? headX + w * 0.25 : headX + w * 0.09;
+    ctx.fillStyle = "#5D4037";
+    ctx.fillRect(noseX, headY + h * 0.2, w * 0.03, h * 0.03);
+
+    // Tail
+    const tailX = faceRight ? x + w * 0.02 : x + w * 0.7;
+    ctx.fillStyle = "#F57C00";
+    ctx.fillRect(tailX, y + h * 0.32, w * 0.2, h * 0.16);
+    ctx.fillStyle = "#FFF3E0";
+    ctx.fillRect(faceRight ? tailX : tailX + w * 0.12, y + h * 0.34, w * 0.08, h * 0.1);
+
+    // Feet
+    ctx.fillStyle = "#E65100";
+    ctx.fillRect(x + w * 0.24, y + h * 0.76, w * 0.1, h * 0.1);
+    ctx.fillRect(x + w * 0.55, y + h * 0.76, w * 0.1, h * 0.1);
 }

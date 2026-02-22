@@ -19,9 +19,9 @@ const BIOME_ENEMY_STATS = {
     },
     fox: {
         hp: 12,
-        speed: 2.2,
+        speed: 0.55,
         damage: 3,
-        size: { w: 24, h: 20 },
+        size: { w: 48, h: 40 },
         color: "#FF8C00",
         attackType: "melee",
         drops: ["fur", "leather"],
@@ -156,7 +156,7 @@ function consumeSilentBootsDurability(cost = 1) {
     if (silentBootsState.durability <= 0) {
         silentBootsState.equipped = false;
         silentBootsState.durability = 0;
-        showToast("静音鞋已损坏");
+        showToast("静音靴已损坏");
     }
 }
 
@@ -301,41 +301,34 @@ class FoxEnemy extends Enemy {
     constructor(x, y) {
         super(x, y, "fox", 150);
         this.stealCooldown = 0;
-        this.fleeTimer = 0;
+        this.startY = Math.max(0, groundY - this.height);
+        this.y = this.startY;
+        this.velY = 0;
+        this.grounded = true;
     }
 
     update(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
 
-        if (this.fleeTimer > 0) {
-            // 逃跑模式
-            this.state = "fleeing";
-            this.x += (playerRef.x > this.x ? -1 : 1) * this.speed * 1.5 * speedMult;
-            this.fleeTimer--;
-            if (this.fleeTimer === 0) this.state = "patrol";
-            return;
-        }
-
         if (dist < 200) {
+            this.state = "chase";
+            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
             if (dist < 40 && this.stealCooldown === 0) {
-                // 偷窃攻击
                 if (score >= 50) {
                     score = Math.max(0, score - 50);
-                    showFloatingText("🦊 偷走了50分!", playerRef.x, playerRef.y - 40, "#FF8C00");
+                    showFloatingText("偷走50分", playerRef.x, playerRef.y - 40, "#FF8C00");
                 }
                 this.stealCooldown = 300;
-                this.fleeTimer = 90;
-            } else {
-                this.state = "chase";
-                this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
             }
         } else {
             this.state = "patrol";
             this.updateBasic();
         }
 
+        this.applyGravity();
         if (this.stealCooldown > 0) this.stealCooldown--;
+        if (this.webbed > 0) this.webbed--;
     }
 }
 
@@ -508,7 +501,7 @@ class MagmaCubeEnemy extends Enemy {
             }
         }
 
-        // 碰撞伤害
+        // 碰撞伤害
         if (rectIntersect(this.x, this.y, this.width, this.height, playerRef.x, playerRef.y, playerRef.width, playerRef.height)) {
             damagePlayer(this.damage, this.x);
         }
@@ -761,7 +754,7 @@ class PhantomEnemy extends Enemy {
             return;
         }
 
-        // 盘旋飞行
+        // 盘旋飞行
         if (dist < 250) {
             this.state = "chase";
             this.circlePhase += 0.03;
@@ -975,6 +968,11 @@ function resetPlayerPoisonStatus() {
 // ============ 敌人工厂扩展 ============
 function spawnBiomeEnemy(biomeId, x, y) {
     const enemyTypes = [];
+    const hasFoxOnScreen = enemies.some(e =>
+        e && !e.remove && e.type === "fox" &&
+        e.x < cameraX + canvas.width &&
+        e.x + e.width > cameraX
+    );
 
     switch (biomeId) {
         case "cherry_grove":
@@ -999,10 +997,23 @@ function spawnBiomeEnemy(biomeId, x, y) {
             if (score > 1000) enemyTypes.push("phantom");
             break;
         default:
-            return null;
+            break;
     }
 
-    const type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+    // 狐狸全图随机刷新：樱花更常见，其它群系低概率出现。
+    if (!hasFoxOnScreen && biomeId === "cherry_grove") {
+        if (Math.random() < 0.55) enemyTypes.push("fox");
+    } else if (!hasFoxOnScreen && Math.random() < 0.18) {
+        enemyTypes.push("fox");
+    }
+
+    if (!enemyTypes.length) return null;
+    let type = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+    if (type === "fox" && hasFoxOnScreen) {
+        const fallback = enemyTypes.filter(t => t !== "fox");
+        if (!fallback.length) return null;
+        type = fallback[Math.floor(Math.random() * fallback.length)];
+    }
     return createBiomeEnemy(type, x, y);
 }
 
@@ -1027,3 +1038,4 @@ function createBiomeEnemy(type, x, y) {
 if (typeof ENEMY_STATS !== 'undefined') {
     Object.assign(ENEMY_STATS, BIOME_ENEMY_STATS);
 }
+

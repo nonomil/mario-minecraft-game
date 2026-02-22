@@ -46,6 +46,7 @@
         <div class="btn-group">
             <button class="game-btn" id="btn-settings">⚙️ 设置</button>
             <button class="game-btn" id="btn-profile">📋 档案</button>
+            <button class="game-btn" id="btn-save-progress">💾 存档</button>
             <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
         </div>
 
@@ -76,6 +77,7 @@
                 <button class="touch-btn" data-action="right">➡️</button>
             </div>
             <div class="touch-right">
+                <button class="touch-btn touch-btn-interior" data-action="interior-exit" aria-label="退出房屋">🚪</button>
                 <button class="touch-btn" data-action="use-diamond">💎</button>
                 <button class="touch-btn" data-action="interact">🧰</button>
                 <button class="touch-btn" data-action="switch">🔁</button>
@@ -109,6 +111,7 @@
 
         <div class="settings-actions settings-actions-top">
             <button class="game-btn" id="btn-settings-save">保存</button>
+            <button class="game-btn" id="btn-settings-advanced">高级学习设置</button>
         </div>
 
         <div class="settings-row settings-row-keys">
@@ -206,7 +209,7 @@
         </div>
         <div class="settings-row">
             <div class="settings-label">环境切换周期(分数)</div>
-            <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
+            <input class="settings-range" id="opt-biome-step" type="range" min="150" max="1000" step="50">
         </div>
         <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
@@ -249,6 +252,71 @@
         </div>
     </div>
 </div>
+
+<div id="advanced-settings-modal" aria-hidden="true">
+    <div class="settings-panel advanced-settings-panel" role="dialog" aria-modal="true" aria-label="高级学习设置">
+        <div class="settings-title">高级学习设置</div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-hint">
+                这里控制“单词→短语跟随策略”和“短期重复频率”。
+            </div>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">短语跟随模式</div>
+            <select class="settings-select" id="opt-phrase-follow-mode">
+                <option value="hybrid">混合(推荐)</option>
+                <option value="direct">紧跟</option>
+                <option value="gap2">隔词</option>
+                <option value="off">关闭</option>
+            </select>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">混合模式直跟比例</div>
+            <input class="settings-range" id="opt-phrase-follow-direct-ratio" type="range" min="0" max="1" step="0.05">
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">隔词数量</div>
+            <select class="settings-select" id="opt-phrase-follow-gap-count">
+                <option value="1">隔 1 个单词</option>
+                <option value="2">隔 2 个单词</option>
+                <option value="3">隔 3 个单词</option>
+                <option value="4">隔 4 个单词</option>
+            </select>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">短期重复窗口</div>
+            <input class="settings-range" id="opt-word-repeat-window" type="range" min="1" max="20" step="1">
+        </div>
+
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-phrase-follow-adaptive"> Adaptive follow (mastery-based)</label>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">Repeat Bias</div>
+            <select class="settings-select" id="opt-word-repeat-bias">
+                <option value="reinforce_wrong">Reinforce wrong (Recommended)</option>
+                <option value="balanced">Balanced</option>
+            </select>
+        </div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-label">Follow-up Stats</div>
+            <div id="opt-word-follow-stats" class="settings-hint">calls=0, served=0, hitRate=0.00</div>
+        </div>
+
+        <div class="settings-actions">
+            <button class="game-btn" id="btn-advanced-settings-save">保存</button>
+            <button class="game-btn" id="btn-advanced-settings-close">关闭</button>
+        </div>
+    </div>
+</div>
+
 <div id="armor-select-modal" class="armor-modal" aria-hidden="true">
     <div class="armor-modal-content">
         <div class="armor-modal-header">
@@ -331,6 +399,9 @@
             <h3>成就</h3>
             <div id="achievements-container"></div>
         </div>
+        <div class="profile-actions">
+            <button class="game-btn" id="btn-profile-save-leaderboard">保存并查看排行榜</button>
+        </div>
     </div>
 </div>
 
@@ -354,10 +425,44 @@
     </div>
 </div>
 
+<div id="save-progress-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2>💾 保存进度</h2>
+            <button class="game-btn game-btn-small" id="btn-save-progress-close">关闭</button>
+        </div>
+        <div class="profile-stats">
+            <div>档案名: <strong id="save-progress-name"></strong></div>
+            <div>当前积分: <span id="save-progress-score"></span></div>
+            <div>已学词数: <span id="save-progress-words"></span></div>
+            <div>钻石: <span id="save-progress-diamonds"></span></div>
+        </div>
+        <div class="profile-actions">
+            <button class="game-btn" id="btn-save-progress-confirm">确认保存</button>
+        </div>
+    </div>
+</div>
+
+<div id="vocab-prompt-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2>📚 选择词库</h2>
+        </div>
+        <div class="profile-stats">
+            <p style="margin:0 0 12px;color:#ccc;">欢迎！请先选择一个适合的词库，游戏需要词库才能正常运行。</p>
+            <select class="settings-select" id="vocab-prompt-select" style="width:100%;margin-bottom:12px;"></select>
+        </div>
+        <div class="profile-actions">
+            <button class="game-btn" id="btn-vocab-prompt-confirm">确认选择</button>
+            <button class="game-btn game-btn-small" id="btn-vocab-prompt-skip">跳过(使用自动)</button>
+        </div>
+    </div>
+</div>
+
 <script src="src/defaults.js"></script>
 <script src="src/storage.js"></script>
 <script src="words/vocabs/manifest.js"></script>
-<!-- main.js 模块化拆分 (原 main.js 按功能拆分为以下模块) -->
+<!-- main.js 模块化拆分 (将 main.js 按功能拆分为以下模块) -->
 <script src="src/modules/01-config.js"></script>
 <script src="src/modules/02-utils.js"></script>
 <script src="src/modules/03-audio.js"></script>
@@ -395,3 +500,5 @@
 <script src="src/modules/17-bootstrap.js"></script>
 </body>
 </html>
+
+

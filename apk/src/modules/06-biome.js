@@ -23,7 +23,7 @@ function getBiomeById(id) {
 function getBiomeSwitchConfig() {
     const cfg = biomeSwitchConfig && typeof biomeSwitchConfig === "object" ? biomeSwitchConfig : DEFAULT_BIOME_SWITCH;
     const stepFromSettings = Number(settings?.biomeSwitchStepScore);
-    const stepScore = isFinite(stepFromSettings) && stepFromSettings >= 50 ? stepFromSettings : (Number(cfg.stepScore) || 200);
+    const stepScore = isFinite(stepFromSettings) && stepFromSettings >= 150 ? stepFromSettings : (Number(cfg.stepScore) || 300);
     return { ...cfg, stepScore };
 }
 
@@ -54,33 +54,45 @@ function selectBiome(x, scoreValue) {
 function updateCurrentBiome() {
     const progressScore = getProgressScore();
     const nextBiome = getBiomeById(getBiomeIdForScore(progressScore));
-    const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
+    const hasFireResistance = hasHeatProtection();
+    refreshBiomeGateState();
     if (nextBiome.id !== currentBiome) {
         // P1-2: 最小停留守卫
         if (currentBiome && !canLeaveBiome(progressScore)) return;
-        currentBiome = nextBiome.id;
-        biomeVisitCount[currentBiome] = (biomeVisitCount[currentBiome] || 0) + 1;
-        biomeEntryScore = progressScore;
-        biomeEntryTime = Date.now();
-        biomeTransitionX = player.x;
-        showToast(BIOME_MESSAGES.enter(nextBiome.name));
-        updateWeatherForBiome(nextBiome);
-        const info = document.getElementById("level-info");
-        if (info) info.innerText = `生态: ${nextBiome.name}`;
-        if (currentBiome === "nether" && netherEntryPenaltyArmed && !hasFireResistance) {
-            playerHp = Math.max(0, playerHp - 1);
-            updateHpUI();
-            showFloatingText(BIOME_MESSAGES.hpDrain, player.x, player.y - 20);
-            netherEntryPenaltyArmed = false;
-            if (playerHp <= 0) {
-                paused = true;
-                showToast(BIOME_MESSAGES.heatDeath);
-                setOverlay(true, "pause");
-            }
+        if (biomeGateState.gateActive) return;
+        if (shouldTriggerBiomeGate(currentBiome, nextBiome.id)) {
+            if (startBiomeGate(currentBiome, nextBiome.id)) return;
         }
-        if (currentBiome !== "nether") {
-            netherEntryPenaltyArmed = true;
+        applyBiomeTransition(nextBiome, progressScore, hasFireResistance);
+    }
+}
+
+function applyBiomeTransition(nextBiome, progressScore, hasFireResistance) {
+    if (!nextBiome || !nextBiome.id) return;
+    const prevBiome = currentBiome;
+    recordBiomeStay(prevBiome, progressScore);
+    currentBiome = nextBiome.id;
+    biomeVisitCount[currentBiome] = (biomeVisitCount[currentBiome] || 0) + 1;
+    biomeEntryScore = progressScore;
+    biomeEntryTime = Date.now();
+    biomeTransitionX = player.x;
+    showToast(BIOME_MESSAGES.enter(nextBiome.name));
+    updateWeatherForBiome(nextBiome);
+    const info = document.getElementById("level-info");
+    if (info) info.innerText = `生态: ${nextBiome.name}`;
+    if (currentBiome === "nether" && netherEntryPenaltyArmed && !hasFireResistance) {
+        playerHp = Math.max(0, playerHp - 1);
+        updateHpUI();
+        showFloatingText(BIOME_MESSAGES.hpDrain, player.x, player.y - 20);
+        netherEntryPenaltyArmed = false;
+        if (playerHp <= 0) {
+            paused = true;
+            showToast(BIOME_MESSAGES.heatDeath);
+            setOverlay(true, "pause");
         }
+    }
+    if (currentBiome !== "nether") {
+        netherEntryPenaltyArmed = true;
     }
 }
 
@@ -101,7 +113,13 @@ function applyBiomeEffectsToPlayer() {
     const useSlowHeatDot = currentBiome === "nether" || currentBiome === "volcano";
     if (!useSlowHeatDot && biome.effects?.damage && !biome.effects.onEnterOnly) {
         if (gameFrame % 90 === 0) {
-            damagePlayer(biome.effects.damage, player.x, 30);
+            let envDamage = Number(biome.effects.damage) || 0;
+            if (currentBiome === "desert" && hasSunscreenBuff()) {
+                envDamage *= 0.35;
+            }
+            if (envDamage > 0) {
+                damagePlayer(envDamage, player.x, 30);
+            }
         }
     }
     // 火山/地狱统一环境掉血：每分钟掉半格
@@ -138,6 +156,135 @@ function getBiomeVisitCountSnapshot() {
 // ============ 群系最小停留追踪（P1-2） ============
 let biomeEntryScore = 0;
 let biomeEntryTime = 0;
+let biomeStayStats = Object.create(null);
+let biomeGateState = {
+    pendingFromBiome: null,
+    pendingToBiome: null,
+    gateActive: false,
+    clearedMap: Object.create(null),
+    witherTransitionCounter: 0,
+    lockedBiome: null,
+    gateStartedAtMs: 0,
+    stallWarned: false
+};
+
+function resetBiomeGateState() {
+    biomeGateState.pendingFromBiome = null;
+    biomeGateState.pendingToBiome = null;
+    biomeGateState.gateActive = false;
+    biomeGateState.clearedMap = Object.create(null);
+    biomeGateState.witherTransitionCounter = 0;
+    biomeGateState.lockedBiome = null;
+    biomeGateState.gateStartedAtMs = 0;
+    biomeGateState.stallWarned = false;
+}
+
+function getBiomeGateConfig() {
+    const cfg = getBiomeSwitchConfig();
+    const gateBoss = cfg && cfg.gateBoss && typeof cfg.gateBoss === "object" ? cfg.gateBoss : {};
+    const exemptRaw = Array.isArray(gateBoss.gateExempt)
+        ? gateBoss.gateExempt
+        : (Array.isArray(gateBoss.exemptFromBiomes) ? gateBoss.exemptFromBiomes : []);
+    const exemptSet = new Set(
+        exemptRaw
+            .map(v => String(v || "").trim())
+            .filter(Boolean)
+    );
+    return {
+        enabled: gateBoss.enabled !== false,
+        perBiomeOnce: gateBoss.perBiomeOnce !== false,
+        exemptSet
+    };
+}
+
+function shouldTriggerBiomeGate(fromBiomeId, toBiomeId) {
+    if (!fromBiomeId || !toBiomeId || fromBiomeId === toBiomeId) return false;
+    const gateCfg = getBiomeGateConfig();
+    if (!gateCfg.enabled) return false;
+    if (gateCfg.exemptSet && gateCfg.exemptSet.has(fromBiomeId)) return false;
+    if (biomeGateState.gateActive) return false;
+    if (gateCfg.perBiomeOnce && biomeGateState.clearedMap[fromBiomeId]) return false;
+    if (typeof bossArena !== "undefined" && bossArena && typeof bossArena.resolveGateBossType === "function") {
+        const gateBossType = bossArena.resolveGateBossType(fromBiomeId);
+        // 凋零门禁节奏：每经过两个环境切换才触发一次（村庄不计入环境切换）
+        if (gateBossType === "wither") {
+            biomeGateState.witherTransitionCounter = (Number(biomeGateState.witherTransitionCounter) || 0) + 1;
+            if ((biomeGateState.witherTransitionCounter % 2) !== 0) return false;
+        }
+    }
+    return true;
+}
+
+function startBiomeGate(fromBiomeId, toBiomeId) {
+    if (!fromBiomeId || !toBiomeId) return false;
+    if (typeof bossArena === "undefined" || !bossArena || typeof bossArena.enterBiomeGate !== "function") {
+        return false;
+    }
+    if (bossArena.active) return false;
+    biomeGateState.pendingFromBiome = fromBiomeId;
+    biomeGateState.pendingToBiome = toBiomeId;
+    biomeGateState.gateActive = true;
+    biomeGateState.lockedBiome = fromBiomeId;
+    biomeGateState.gateStartedAtMs = Date.now();
+    biomeGateState.stallWarned = false;
+    bossArena.enterBiomeGate(fromBiomeId, toBiomeId, {
+        onVictory: payload => handleBiomeGateVictory(payload)
+    });
+    return true;
+}
+
+function handleBiomeGateVictory(payload) {
+    const gateCfg = getBiomeGateConfig();
+    const fromBiome = payload?.fromBiome || biomeGateState.pendingFromBiome;
+    const toBiome = payload?.toBiome || biomeGateState.pendingToBiome;
+    if (gateCfg.perBiomeOnce && fromBiome) {
+        biomeGateState.clearedMap[fromBiome] = true;
+    }
+    biomeGateState.gateActive = false;
+    biomeGateState.lockedBiome = null;
+    biomeGateState.pendingFromBiome = null;
+    biomeGateState.pendingToBiome = null;
+    biomeGateState.gateStartedAtMs = 0;
+    biomeGateState.stallWarned = false;
+    if (!toBiome || toBiome === currentBiome) return;
+    const nextBiome = getBiomeById(toBiome);
+    const progressScore = getProgressScore();
+    const hasFireResistance = hasHeatProtection();
+    applyBiomeTransition(nextBiome, progressScore, hasFireResistance);
+}
+
+function refreshBiomeGateState() {
+    if (!biomeGateState.gateActive) return;
+    if (typeof bossArena !== "undefined" && bossArena && bossArena.active) {
+        const elapsedMs = Math.max(0, Date.now() - (biomeGateState.gateStartedAtMs || 0));
+        if (!biomeGateState.stallWarned && elapsedMs >= 90000) {
+            biomeGateState.stallWarned = true;
+            console.warn(`[BiomeGate] gate still active after ${elapsedMs}ms: ${biomeGateState.pendingFromBiome || "?"} -> ${biomeGateState.pendingToBiome || "?"}`);
+        }
+        return;
+    }
+    // Intentionally clear pending transition when arena is no longer active without onVictory.
+    // This avoids auto-transition after abnormal exits (e.g. death/reset/forced exit).
+    biomeGateState.gateActive = false;
+    biomeGateState.pendingFromBiome = null;
+    biomeGateState.pendingToBiome = null;
+    biomeGateState.lockedBiome = null;
+    biomeGateState.gateStartedAtMs = 0;
+    biomeGateState.stallWarned = false;
+}
+
+function getBiomeGateStateSnapshot() {
+    return {
+        pendingFromBiome: biomeGateState.pendingFromBiome || null,
+        pendingToBiome: biomeGateState.pendingToBiome || null,
+        gateActive: !!biomeGateState.gateActive,
+        witherTransitionCounter: Number(biomeGateState.witherTransitionCounter || 0),
+        lockedBiome: biomeGateState.lockedBiome || null,
+        gateStartedAtMs: Number(biomeGateState.gateStartedAtMs || 0),
+        stallWarned: !!biomeGateState.stallWarned,
+        clearedMap: { ...(biomeGateState.clearedMap || {}) }
+    };
+}
 
 function canLeaveBiome(currentScore) {
     const cfg = getBiomeSwitchConfig();
@@ -163,13 +310,49 @@ function getBiomeStayDebugInfo(scoreValue = getProgressScore()) {
         timeInBiomeSec,
         minScore: Number(minStay?.score || 0),
         minTimeSec: Number(minStay?.timeSec || 0),
-        canLeave: canLeaveBiome(Number(scoreValue) || 0)
+        canLeave: canLeaveBiome(Number(scoreValue) || 0),
+        gateActive: !!biomeGateState.gateActive,
+        gatePendingFrom: biomeGateState.pendingFromBiome || null,
+        gatePendingTo: biomeGateState.pendingToBiome || null
     };
+}
+
+function recordBiomeStay(biomeId, currentScore) {
+    if (!biomeId || !biomeEntryTime) return;
+    const timeInBiomeSec = Math.max(0, (Date.now() - biomeEntryTime) / 1000);
+    const scoreInBiome = Math.max(0, (Number(currentScore) || 0) - biomeEntryScore);
+    if (!biomeStayStats[biomeId]) {
+        biomeStayStats[biomeId] = { runs: 0, totalTimeSec: 0, totalScore: 0, maxTimeSec: 0, maxScore: 0 };
+    }
+    const s = biomeStayStats[biomeId];
+    s.runs++;
+    s.totalTimeSec += timeInBiomeSec;
+    s.totalScore += scoreInBiome;
+    s.maxTimeSec = Math.max(s.maxTimeSec, timeInBiomeSec);
+    s.maxScore = Math.max(s.maxScore, scoreInBiome);
+}
+
+function getBiomeStayStats() {
+    return JSON.parse(JSON.stringify(biomeStayStats || {}));
+}
+
+function resetBiomeStayStats() {
+    biomeStayStats = Object.create(null);
 }
 
 // ============ 高温环境（火山/地狱） ============
 let biomeHeatDotTimerMs = 0;
 let biomeHeatLastTickMs = 0;
+let lavaProtectionTickAt = 0;
+
+function hasSunscreenBuff() {
+    return typeof hasVillageBuff === "function" && hasVillageBuff("sunscreen");
+}
+
+function hasHeatProtection() {
+    if (typeof hasVillageBuff !== "function") return false;
+    return hasVillageBuff("fireResistance") || hasVillageBuff("sunscreen");
+}
 let netherMushrooms = [];
 let fragilePlatforms = [];
 const biomeParticlePools = Object.create(null);
@@ -410,7 +593,7 @@ function emitBiomeParticle(type, x, y) {
 function updateExtremeHeatEnvironment() {
     const now = Date.now();
     const inHeatBiome = currentBiome === "nether" || currentBiome === "volcano";
-    const hasFireResistance = typeof hasVillageBuff === "function" && hasVillageBuff("fireResistance");
+    const hasFireResistance = hasHeatProtection();
     if (!inHeatBiome) {
         biomeHeatDotTimerMs = 0;
         biomeHeatLastTickMs = now;
@@ -471,6 +654,17 @@ function checkLavaCollision() {
     decorations.forEach(d => {
         if (d.type !== 'lava_pool') return;
         if (rectIntersect(player.x, player.y + player.height - 5, player.width, 5, d.x, d.y, d.width, d.height)) {
+            if (hasSunscreenBuff()) {
+                const now = Date.now();
+                if (now - lavaProtectionTickAt > 900) {
+                    lavaProtectionTickAt = now;
+                    damagePlayer(1, d.x, 40);
+                    showFloatingText("🧴 防晒霜抵消岩浆致命伤", player.x + player.width / 2, player.y - 30, "#FFD54F");
+                }
+                player.y = Math.min(player.y, d.y - player.height - 2);
+                player.velY = Math.min(0, Number(player.velY) || 0);
+                return;
+            }
             playerHp = 0;
             updateHpUI();
             showFloatingText(BIOME_MESSAGES.lavaFall, player.x + player.width / 2, player.y - 30, '#FF0000');

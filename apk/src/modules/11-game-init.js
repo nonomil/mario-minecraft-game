@@ -45,6 +45,9 @@ function initGame() {
     lastDamageFrame = 0;
     difficultyState = null;
     sessionCollectedWords = [];
+    followUpQueue = [];
+    resetFollowUpMetrics();
+    if (typeof resetBiomeGateState === "function") resetBiomeGateState();
     wordGates = [];
     currentLearningChallenge = null;
     clearLearningChallengeTimer();
@@ -62,7 +65,14 @@ function initGame() {
     if (typeof bossArena !== 'undefined' && bossArena) {
         bossArena.active = false;
         bossArena.boss = null;
+        bossArena.currentEncounter = null;
         bossArena.victoryTimer = 0;
+        bossArena.viewportLocked = false;
+        bossArena.phaseFlashTimer = 0;
+        bossArena.phaseBannerText = '';
+        bossArena.lockedCamX = 0;
+        bossArena.leftWall = 0;
+        bossArena.rightWall = 0;
         if (bossArena.spawned) {
             for (const k in bossArena.spawned) delete bossArena.spawned[k];
         }
@@ -72,8 +82,15 @@ function initGame() {
     if (typeof villageSpawnedForScore !== 'undefined') {
         for (const k in villageSpawnedForScore) delete villageSpawnedForScore[k];
     }
+    if (typeof villageSpawnState !== 'undefined' && villageSpawnState) {
+        villageSpawnState.lastSpawnScore = -Infinity;
+        villageSpawnState.lastSpawnX = -Infinity;
+        villageSpawnState.lastSpawnBiome = null;
+        villageSpawnState.lastSpawnTransitionTick = 0;
+    }
     if (typeof playerInVillage !== 'undefined') playerInVillage = false;
     if (typeof currentVillage !== 'undefined') currentVillage = null;
+    if (typeof resetVillageInteriorState === "function") resetVillageInteriorState();
     startLevel(0);
     updateDifficultyState(true);
 }
@@ -102,6 +119,10 @@ function startLevel(idx) {
     cameraX = 0;
     wordGates = [];
     sessionCollectedWords = [];
+    followUpQueue = [];
+    resetFollowUpMetrics();
+    if (typeof resetBiomeGateState === "function") resetBiomeGateState();
+    if (typeof resetVillageInteriorState === "function") resetVillageInteriorState();
     updateHpUI();
     player.x = 100;
     player.y = Math.min(300, groundY - player.height - 10);
@@ -134,10 +155,71 @@ function buildWordPicker() {
     };
     const stats = Object.create(null);
     const due = Object.create(null);
+    const recentWords = [];
     const unseen = shuffle(base.map(w => w.en));
     let tick = 0;
     const byEn = Object.create(null);
     base.forEach(w => { byEn[w.en] = w; });
+    function ensureStat(en) {
+        if (!en) return null;
+        if (!stats[en]) {
+            stats[en] = {
+                count: 0,
+                quality: "correct_slow",
+                mastery: 0,
+                streak: 0,
+                wrong: 0,
+                seen: 0,
+                lastTick: 0
+            };
+        }
+        return stats[en];
+    }
+
+    function getRepeatBias() {
+        const bias = String(settings?.wordRepeatBias || "reinforce_wrong");
+        return bias === "balanced" ? "balanced" : "reinforce_wrong";
+    }
+
+    function getRepeatWindow() {
+        return Math.max(1, Number(settings?.wordRepeatWindow) || 6);
+    }
+
+    function pushRecentWord(en) {
+        if (!en) return;
+        recentWords.push(en);
+        const windowSize = getRepeatWindow();
+        while (recentWords.length > windowSize) recentWords.shift();
+    }
+
+    function getCandidateScore(wordObj, nextDueTick, bias) {
+        const st = ensureStat(wordObj.en);
+        const dueReady = Math.max(0, tick - nextDueTick);
+        const weakBoost = Math.max(0, 2 - Number(st.mastery || 0));
+        const wrongBoost = bias === "reinforce_wrong" ? Math.min(4, Number(st.wrong || 0)) : 0;
+        return dueReady * 0.2 + weakBoost * 1.3 + wrongBoost * 0.9 - Number(st.count || 0) * 0.55;
+    }
+
+    function pickBestDueWord(excludes, windowSet, bias, allowRecentWords) {
+        let best = null;
+        let bestScore = -Infinity;
+        for (let i = 0; i < base.length; i++) {
+            const w = bag[cursor++ % bag.length];
+            if (!w || excludes.has(w.en)) continue;
+            const nextDue = typeof due[w.en] === "number" ? due[w.en] : 0;
+            if (nextDue > tick) continue;
+            if (!allowRecentWords && windowSet.has(w.en)) continue;
+            const score = getCandidateScore(w, nextDue, bias);
+            if (score > bestScore) {
+                best = w;
+                bestScore = score;
+            } else if (Math.abs(score - bestScore) < 0.0001 && Math.random() < 0.25) {
+                best = w;
+            }
+        }
+        return best;
+    }
+
     return {
         next(excludeSet) {
             if (!base.length) return { en: "word", zh: "单词" };
@@ -149,46 +231,57 @@ function buildWordPicker() {
                 if (!en) break;
                 if (!excludes.has(en) && !stats[en]) {
                     unseen.shift();
-                    stats[en] = { count: 1, quality: "correct_slow" };
+                    const st = ensureStat(en);
+                    st.count = 1;
+                    st.seen = (st.seen || 0) + 1;
+                    st.lastTick = tick;
                     const ivl = INTERVALS.correct_slow;
-                    due[en] = tick + ivl[Math.min(stats[en].count, ivl.length - 1)];
+                    due[en] = tick + ivl[Math.min(st.count, ivl.length - 1)];
+                    pushRecentWord(en);
                     return byEn[en] || base[0];
                 }
                 unseen.shift();
                 unseen.push(en);
             }
 
-            let best = null;
-            let bestCount = Infinity;
-            for (let i = 0; i < base.length; i++) {
-                const w = bag[cursor++ % bag.length];
-                if (!w || excludes.has(w.en)) continue;
-                const nextDue = typeof due[w.en] === "number" ? due[w.en] : 0;
-                if (nextDue > tick) continue;
-                const c = stats[w.en]?.count || 0;
-                if (c < bestCount) {
-                    best = w;
-                    bestCount = c;
-                    if (bestCount === 0) break;
-                } else if (c === bestCount && Math.random() < 0.25) {
-                    best = w;
-                }
-            }
+            const bias = getRepeatBias();
+            const windowSet = new Set(recentWords);
+            let best = pickBestDueWord(excludes, windowSet, bias, false);
+            if (!best) best = pickBestDueWord(excludes, windowSet, bias, true);
             const chosen = best || base[Math.floor(Math.random() * base.length)];
-            if (!stats[chosen.en]) stats[chosen.en] = { count: 0, quality: "correct_slow" };
-            stats[chosen.en].count++;
-            const q = stats[chosen.en].quality || "correct_slow";
+            const st = ensureStat(chosen.en);
+            st.count++;
+            st.seen = (st.seen || 0) + 1;
+            st.lastTick = tick;
+            const q = st.quality || "correct_slow";
             const ivl = INTERVALS[q] || INTERVALS.correct_slow;
-            due[chosen.en] = tick + ivl[Math.min(stats[chosen.en].count, ivl.length - 1)];
+            due[chosen.en] = tick + ivl[Math.min(st.count, ivl.length - 1)];
+            pushRecentWord(chosen.en);
             return chosen;
         },
         updateWordQuality(en, quality) {
             if (!en) return;
-            if (!stats[en]) stats[en] = { count: 0, quality: "correct_slow" };
-            stats[en].quality = quality || "correct_slow";
+            const st = ensureStat(en);
+            st.quality = quality || "correct_slow";
+            if (quality === "wrong") {
+                st.mastery = Math.max(-3, Number(st.mastery || 0) - 2);
+                st.wrong = (Number(st.wrong) || 0) + 1;
+                st.streak = Math.min(0, Number(st.streak || 0) - 1);
+            } else if (quality === "correct_fast") {
+                st.mastery = Math.min(5, Number(st.mastery || 0) + 2);
+                st.streak = Math.max(0, Number(st.streak || 0)) + 1;
+            } else {
+                st.mastery = Math.min(5, Number(st.mastery || 0) + 1);
+                st.streak = Math.max(0, Number(st.streak || 0)) + 1;
+            }
             if (quality === "wrong") {
                 due[en] = tick;
             }
+        },
+        getWordStats(en) {
+            const key = String(en || "").trim();
+            const st = key ? stats[key] : null;
+            return st ? { ...st } : null;
         }
     };
 }
@@ -197,14 +290,164 @@ function ensureWordPicker() {
     if (!wordPicker) wordPicker = buildWordPicker();
 }
 
+function normalizeWordKey(value) {
+    return String(value || "").trim().toLowerCase();
+}
+
+function ensureFollowUpMetrics() {
+    if (!globalThis.__MMWG_FOLLOWUP_METRICS) {
+        globalThis.__MMWG_FOLLOWUP_METRICS = {
+            pickCalls: 0,
+            followServed: 0,
+            followQueued: 0,
+            followDeferredByExclude: 0,
+            followDroppedByQueueLimit: 0
+        };
+    }
+    return globalThis.__MMWG_FOLLOWUP_METRICS;
+}
+
+function resetFollowUpMetrics() {
+    const m = ensureFollowUpMetrics();
+    m.pickCalls = 0;
+    m.followServed = 0;
+    m.followQueued = 0;
+    m.followDeferredByExclude = 0;
+    m.followDroppedByQueueLimit = 0;
+}
+
+function createFollowUpPhraseItem(wordObj, gapRemaining) {
+    if (!wordObj || !wordObj.phrase) return null;
+    const phraseText = String(wordObj.phrase || "").trim();
+    if (!phraseText) return null;
+    const phraseZh = String(wordObj.phraseZh || wordObj.phraseTranslation || wordObj.zh || "").trim();
+    return {
+        en: phraseText,
+        zh: phraseZh || wordObj.zh || "",
+        phrase: "",
+        phraseZh: "",
+        phraseTranslation: "",
+        __followUpPhrase: true,
+        __sourceWordEn: String(wordObj.en || "").trim(),
+        __gapRemaining: Math.max(0, Number(gapRemaining) || 0)
+    };
+}
+
+function getPhraseFollowMode() {
+    return String(settings?.phraseFollowMode || "hybrid");
+}
+
+function isPhraseFollowAdaptiveEnabled() {
+    if (typeof settings?.phraseFollowAdaptive === "boolean") return settings.phraseFollowAdaptive;
+    return true;
+}
+
+function pickPhraseGapCount() {
+    const explicit = Number(settings?.phraseFollowGapCount);
+    if (Number.isFinite(explicit)) return Math.max(0, explicit);
+    return 2;
+}
+
+function maybeEnqueueFollowUpPhrase(wordObj) {
+    if (!wordObj || wordObj.__followUpPhrase) return;
+    const phraseText = String(wordObj.phrase || "").trim();
+    if (!phraseText) return;
+    const mode = getPhraseFollowMode();
+    if (mode === "off") return;
+
+    let gapRemaining = 0;
+    if (mode === "gap2") {
+        gapRemaining = pickPhraseGapCount();
+    } else if (mode === "hybrid") {
+        let directRatio = Math.max(0, Math.min(1, Number(settings?.phraseFollowDirectRatio) || 0.7));
+        if (isPhraseFollowAdaptiveEnabled() && wordPicker && typeof wordPicker.getWordStats === "function") {
+            const st = wordPicker.getWordStats(wordObj.en);
+            const mastery = Number(st?.mastery || 0);
+            if (mastery <= -1) directRatio = Math.max(directRatio, 0.9);
+            else if (mastery >= 3) directRatio = Math.min(directRatio, 0.25);
+        }
+        gapRemaining = Math.random() < directRatio ? 0 : pickPhraseGapCount();
+    }
+
+    const phraseItem = createFollowUpPhraseItem(wordObj, gapRemaining);
+    if (!phraseItem) return;
+    const phraseKey = normalizeWordKey(phraseItem.en);
+    const sourceKey = normalizeWordKey(phraseItem.__sourceWordEn);
+    const duplicate = followUpQueue.some(q =>
+        q &&
+        normalizeWordKey(q.en) === phraseKey &&
+        normalizeWordKey(q.__sourceWordEn) === sourceKey
+    );
+    if (duplicate) return;
+    const metrics = ensureFollowUpMetrics();
+    const maxQueueSize = 24;
+    if (followUpQueue.length >= maxQueueSize) {
+        followUpQueue.shift();
+        metrics.followDroppedByQueueLimit++;
+    }
+    followUpQueue.push(phraseItem);
+    metrics.followQueued++;
+}
+
+function maybeTakeFollowUpPhrase(excludeSet) {
+    if (!Array.isArray(followUpQueue) || !followUpQueue.length) return null;
+    const metrics = ensureFollowUpMetrics();
+    const total = followUpQueue.length;
+    const excludeKeys = new Set();
+    if (excludeSet && typeof excludeSet.forEach === "function") {
+        excludeSet.forEach(v => excludeKeys.add(normalizeWordKey(v)));
+    }
+    let selected = null;
+    for (let i = 0; i < total; i++) {
+        const item = followUpQueue.shift();
+        if (!item) {
+            continue;
+        }
+        const gapRemaining = Math.max(0, Number(item.__gapRemaining) || 0);
+        if (gapRemaining > 0) {
+            item.__gapRemaining = gapRemaining - 1;
+            followUpQueue.push(item);
+            continue;
+        }
+        const itemKey = normalizeWordKey(item.en);
+        if (excludeKeys.has(itemKey)) {
+            metrics.followDeferredByExclude++;
+            followUpQueue.push(item);
+            continue;
+        }
+        if (!selected) {
+            selected = item;
+        } else {
+            followUpQueue.push(item);
+        }
+    }
+    return selected;
+}
+
 function pickWordForSpawn() {
     ensureWordPicker();
+    const metrics = ensureFollowUpMetrics();
+    metrics.pickCalls++;
     const exclude = new Set();
     if (settings.avoidWordRepeats) {
         items.forEach(i => { if (i && i.wordObj && i.wordObj.en) exclude.add(i.wordObj.en); });
         if (lastWord && lastWord.en) exclude.add(lastWord.en);
     }
-    return wordPicker.next(exclude);
+    const followWord = maybeTakeFollowUpPhrase(exclude);
+    if (followWord) {
+        metrics.followServed++;
+        return followWord;
+    }
+
+    const picked = wordPicker.next(exclude);
+    maybeEnqueueFollowUpPhrase(picked);
+    if (metrics.pickCalls % 60 === 0) {
+        const hitRate = metrics.pickCalls > 0
+            ? (metrics.followServed / metrics.pickCalls).toFixed(2)
+            : "0.00";
+        console.log(`[WordFollow] calls=${metrics.pickCalls}, served=${metrics.followServed}, queued=${metrics.followQueued}, hitRate=${hitRate}, deferred=${metrics.followDeferredByExclude}, dropped=${metrics.followDroppedByQueueLimit}, queue=${followUpQueue.length}`);
+    }
+    return picked;
 }
 
 function clearOldWordItems() {
@@ -434,7 +677,8 @@ function spawnEnemyByDifficulty(x, y) {
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
         ocean: ["drowned", "pufferfish"],
-        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"]
+        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"],
+        mushroom_island: ["spore_bug", "bee", "fox"]
     };
     const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
 
@@ -445,11 +689,14 @@ function spawnEnemyByDifficulty(x, y) {
     let tierSpawnRate = 1.0;
     if (tiers && tiers.length > 0 && typeof getBiomeVisitRound === 'function') {
         const round = getBiomeVisitRound(currentBiome);
-        const tierIdx = Math.min(round, tiers.length) - 1;
-        const tier = tiers[tierIdx];
-        const tierTypes = (tier.types || []).filter(t => ENEMY_STATS[t]);
-        pool = tierTypes.length > 0 ? tierTypes : basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
-        tierSpawnRate = tier.spawnRate || 1.0;
+        const tierIdx = Math.max(0, Math.min(Number(round) || 0, tiers.length) - 1);
+        const tierData = tiers[tierIdx] || {};
+        const tierTypes = (Array.isArray(tierData.types) ? tierData.types : []).filter(t => ENEMY_STATS[t]);
+        const fallbackTake = Math.max(2, Math.min(basePool.length, 2 + tierIdx));
+        pool = tierTypes.length > 0
+            ? tierTypes
+            : basePool.slice(0, fallbackTake).filter(t => ENEMY_STATS[t]);
+        tierSpawnRate = Number(tierData.spawnRate) || 1.0;
         if (Math.random() > tierSpawnRate) return; // 按 spawnRate 概率跳过生成
     } else {
         const take = Math.max(2, Math.min(basePool.length, 2 + tier));

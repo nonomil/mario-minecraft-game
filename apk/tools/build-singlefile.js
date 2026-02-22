@@ -51,13 +51,17 @@ function buildPreludeDataScript(data) {
 })();`;
 }
 
+function decodeUnicodeEscapes(str) {
+  return str.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+}
+
 function extractVocabFilesFromManifest(manifestJs) {
   const files = [];
   // Match both "file:" and strings in "files:" arrays
   const re = /"(words\/vocabs\/[^"]+\.js)"/g;
   let m;
   while ((m = re.exec(manifestJs))) {
-    files.push(m[1]);
+    files.push(decodeUnicodeEscapes(m[1]));
   }
   return Array.from(new Set(files));
 }

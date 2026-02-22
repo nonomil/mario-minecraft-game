@@ -219,6 +219,7 @@ async function loginWithAccount(account, options) {
     if (!account) return;
     const mode = options && options.mode ? options.mode : "continue";
     if (mode === "restart") {
+        if (typeof saveCurrentProgress === "function") saveCurrentProgress();
         resetAccountRunState(account);
         storage.saveAccount(account);
     }
@@ -248,6 +249,13 @@ async function loginWithAccount(account, options) {
     updateStartOverlayActionState();
     // If start() already finished wiring handlers, boot the game loop on first successful login.
     if (bootReady && !startOverlayVisible) bootGameLoopIfNeeded();
+
+    // First-launch: prompt user to select vocab pack
+    if (!hasSeenVocabPrompt() && storage.getAccountList().length <= 1) {
+        setTimeout(() => {
+            if (typeof showVocabPromptModal === "function") showVocabPromptModal();
+        }, 500);
+    }
 }
 
 function bootGameLoopIfNeeded() {
@@ -492,10 +500,63 @@ function formatPlayTime(seconds) {
 function wireProfileModal() {
     const modal = document.getElementById("profile-modal");
     const btnClose = document.getElementById("btn-profile-close");
+    const btnSaveLeaderboard = document.getElementById("btn-profile-save-leaderboard");
     if (btnClose) btnClose.addEventListener("click", hideProfileModal);
+    if (btnSaveLeaderboard) {
+        btnSaveLeaderboard.addEventListener("click", () => {
+            if (typeof saveCurrentProgress === "function") saveCurrentProgress();
+            if (typeof saveProfileScoreToLeaderboard === "function") saveProfileScoreToLeaderboard();
+        });
+    }
     if (modal) {
         modal.addEventListener("click", e => {
             if (e.target === modal) hideProfileModal();
         });
     }
+}
+
+// --- Save Progress Modal ---
+
+function showSaveProgressModal() {
+    if (!currentAccount) { showToast("请先登录账号"); return; }
+    const modal = document.getElementById("save-progress-modal");
+    if (!modal) return;
+    const nameEl = document.getElementById("save-progress-name");
+    const scoreEl = document.getElementById("save-progress-score");
+    const wordsEl = document.getElementById("save-progress-words");
+    const diamondsEl = document.getElementById("save-progress-diamonds");
+    if (nameEl) nameEl.innerText = currentAccount.username;
+    if (scoreEl) scoreEl.innerText = score;
+    if (wordsEl) wordsEl.innerText = currentAccount.vocabulary?.learnedWords?.length || 0;
+    if (diamondsEl) diamondsEl.innerText = inventory.diamond || 0;
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+    pausedByModal = true;
+    paused = true;
+}
+
+function hideSaveProgressModal() {
+    const modal = document.getElementById("save-progress-modal");
+    if (!modal) return;
+    modal.classList.remove("visible");
+    modal.setAttribute("aria-hidden", "true");
+    if (pausedByModal) { pausedByModal = false; paused = false; }
+}
+
+function confirmSaveProgress() {
+    saveCurrentProgress();
+    showToast("💾 进度已保存");
+    hideSaveProgressModal();
+}
+
+// --- First-launch vocab prompt helpers ---
+
+function hasSeenVocabPrompt() {
+    try { return window.localStorage.getItem("mmwg:vocabPromptSeen") === "1"; }
+    catch { return false; }
+}
+
+function markVocabPromptSeen() {
+    try { window.localStorage.setItem("mmwg:vocabPromptSeen", "1"); }
+    catch {}
 }

@@ -92,6 +92,22 @@ async function start() {
     if (leaderboardSaveBtn) {
         leaderboardSaveBtn.addEventListener("click", saveToLeaderboard);
     }
+
+    // Save progress modal
+    const btnSaveProgressClose = document.getElementById("btn-save-progress-close");
+    if (btnSaveProgressClose) btnSaveProgressClose.addEventListener("click", hideSaveProgressModal);
+    const btnSaveProgressConfirm = document.getElementById("btn-save-progress-confirm");
+    if (btnSaveProgressConfirm) btnSaveProgressConfirm.addEventListener("click", confirmSaveProgress);
+    const saveProgressModal = document.getElementById("save-progress-modal");
+    if (saveProgressModal) saveProgressModal.addEventListener("click", e => { if (e.target === saveProgressModal) hideSaveProgressModal(); });
+
+    // Vocab prompt modal
+    const btnVocabConfirm = document.getElementById("btn-vocab-prompt-confirm");
+    if (btnVocabConfirm) btnVocabConfirm.addEventListener("click", () => confirmVocabPrompt());
+    const btnVocabSkip = document.getElementById("btn-vocab-prompt-skip");
+    if (btnVocabSkip) btnVocabSkip.addEventListener("click", () => { markVocabPromptSeen(); hideVocabPromptModal(); });
+    const vocabPromptModal = document.getElementById("vocab-prompt-modal");
+    if (vocabPromptModal) vocabPromptModal.addEventListener("click", e => { if (e.target === vocabPromptModal) hideVocabPromptModal(); });
     const overlay = document.getElementById("screen-overlay");
     if (overlay) {
         overlay.addEventListener("click", e => { if (e.target === overlay) resumeGameFromOverlay(); });
@@ -137,22 +153,28 @@ async function start() {
         if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = true;
         if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
         if (isAttack) handleAttack("press");
-        if (isWeaponSwitch) switchWeapon();
+        if (isWeaponSwitch && !e.repeat) switchWeapon();
         if (isUseDiamond) useDiamondForHp();
-        if (isInteract) handleInteraction();
-        if (isDecorInteract) handleDecorationInteract();
+        if (isInteract && !e.repeat && !pausedByModal && !paused) handleInteraction();
+        if (isDecorInteract && !e.repeat && !pausedByModal && !paused) handleDecorationInteract();
         if (!inInput && e.key >= "1" && e.key <= "9") {
             selectedSlot = parseInt(e.key, 10) - 1;
             updateInventoryUI();
             const itemKey = HOTBAR_ITEMS[selectedSlot];
             showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "空"}`);
         }
-        if (isPause && startedOnce) {
-            paused = !paused;
-            const btnPause = document.getElementById("btn-pause");
-            if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
-            if (paused) setOverlay(true, "pause");
-            else setOverlay(false);
+        if (isPause && startedOnce && !pausedByModal) {
+            if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+                if (typeof exitVillageInterior === "function") {
+                    exitVillageInterior("🏠 离开房屋");
+                }
+            } else {
+                paused = !paused;
+                const btnPause = document.getElementById("btn-pause");
+                if (btnPause) btnPause.innerText = paused ? "▶️ 继续" : "⏸ 暂停";
+                if (paused) setOverlay(true, "pause");
+                else setOverlay(false);
+            }
         }
     });
 
@@ -228,7 +250,10 @@ function registerTestApi() {
                 inventory: inventory ? { ...inventory } : null,
                 equipment: playerEquipment ? { ...playerEquipment } : null,
                 armorInventory: Array.isArray(armorInventory) ? [...armorInventory] : null,
-                currentAccount: currentAccount ? { id: currentAccount.id, username: currentAccount.username } : null
+                currentAccount: currentAccount ? { id: currentAccount.id, username: currentAccount.username } : null,
+                currentBiome: currentBiome || null,
+                villageInteriorActive: (typeof isVillageInteriorActive === "function") ? !!isVillageInteriorActive() : false,
+                biomeGateState: (typeof getBiomeGateStateSnapshot === "function") ? getBiomeGateStateSnapshot() : null
             };
         },
         setState(patch) {

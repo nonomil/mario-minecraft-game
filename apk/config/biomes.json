@@ -1,6 +1,6 @@
 {
     "switch": {
-        "stepScore": 200,
+        "stepScore": 300,
         "order": [
             "forest",
             "cherry_grove",
@@ -31,23 +31,29 @@
         },
         "minStay": {
             "forest": { "score": 100, "timeSec": 20 },
-            "cherry_grove": { "score": 80, "timeSec": 12 },
+            "cherry_grove": { "score": 60, "timeSec": 10 },
             "snow": { "score": 150, "timeSec": 30 },
             "desert": { "score": 150, "timeSec": 30 },
             "mushroom_island": { "score": 200, "timeSec": 40 },
             "mountain": { "score": 200, "timeSec": 35 },
-            "ocean": { "score": 200, "timeSec": 40 },
-            "volcano": { "score": 200, "timeSec": 40 },
-            "nether": { "score": 250, "timeSec": 45 },
-            "deep_dark": { "score": 250, "timeSec": 45 },
+            "ocean": { "score": 140, "timeSec": 25 },
+            "volcano": { "score": 320, "timeSec": 70 },
+            "nether": { "score": 380, "timeSec": 80 },
+            "deep_dark": { "score": 320, "timeSec": 60 },
             "end": { "score": 300, "timeSec": 50 },
             "sky_dimension": { "score": 300, "timeSec": 50 }
+        },
+        "gateBoss": {
+            "enabled": true,
+            "defaultType": "wither",
+            "perBiomeOnce": true,
+            "gateExempt": ["forest"]
         }
     },
     "biomes": {
         "forest": {
             "id": "forest",
-            "name": "森林",
+            "name": "Forest",
             "color": "#4CAF50",
             "groundType": "grass",
             "decorations": {
@@ -95,7 +101,7 @@
         },
         "snow": {
             "id": "snow",
-            "name": "雪地",
+            "name": "Snow",
             "color": "#FFFFFF",
             "groundType": "snow",
             "decorations": {
@@ -130,7 +136,7 @@
         },
         "desert": {
             "id": "desert",
-            "name": "沙漠",
+            "name": "Desert",
             "color": "#FDD835",
             "groundType": "sand",
             "decorations": {
@@ -166,7 +172,7 @@
         },
         "mountain": {
             "id": "mountain",
-            "name": "山地",
+            "name": "Mountain",
             "color": "#757575",
             "groundType": "stone",
             "decorations": {
@@ -201,7 +207,7 @@
         },
         "cave": {
             "id": "cave",
-            "name": "矿洞",
+            "name": "Cave",
             "color": "#3B3B4F",
             "groundType": "stone",
             "decorations": {
@@ -244,7 +250,7 @@
         },
         "ocean": {
             "id": "ocean",
-            "name": "海滨",
+            "name": "Ocean",
             "color": "#2196F3",
             "groundType": "sand",
             "decorations": {
@@ -280,7 +286,8 @@
         },
         "nether": {
             "id": "nether",
-            "name": "地狱",
+            "name": "Nether",
+            "gateBossType": "ghast",
             "color": "#8B0000",
             "groundType": "netherrack",
             "decorations": {
@@ -317,7 +324,7 @@
         },
         "sky": {
             "id": "sky",
-            "name": "云端",
+            "name": "Sky",
             "color": "#87CEEB",
             "groundType": "cloud",
             "decorations": {},
@@ -336,7 +343,7 @@
         },
         "cherry_grove": {
             "id": "cherry_grove",
-            "name": "樱花丛林",
+            "name": "Cherry Grove",
             "color": "#FFB7C5",
             "groundType": "grass",
             "decorations": {
@@ -384,7 +391,7 @@
         },
         "mushroom_island": {
             "id": "mushroom_island",
-            "name": "蘑菇岛",
+            "name": "Mushroom Island",
             "color": "#BA55D3",
             "groundType": "mycelium",
             "decorations": {
@@ -425,7 +432,7 @@
         },
         "volcano": {
             "id": "volcano",
-            "name": "火山",
+            "name": "Volcano",
             "color": "#FF4500",
             "groundType": "basalt",
             "decorations": {
@@ -464,7 +471,8 @@
         },
         "deep_dark": {
             "id": "deep_dark",
-            "name": "深暗之域",
+            "name": "Deep Dark",
+            "gateBossType": "wither_skeleton",
             "color": "#008080",
             "groundType": "sculk",
             "decorations": {
@@ -500,7 +508,7 @@
         },
         "sky_dimension": {
             "id": "sky_dimension",
-            "name": "天空之城",
+            "name": "Sky Dimension",
             "color": "#FFD700",
             "groundType": "cloud",
             "decorations": {

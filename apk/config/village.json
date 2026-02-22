@@ -4,9 +4,9 @@
   "villageWidth": 800,
   "safeZone": true,
   "restHealFull": true,
-  "challengeQuestionCount": 3,
+  "challengeQuestionCount": 10,
   "challengeReward": {
-    "perfect": { "score": 100, "diamonds": 1 },
+    "perfect": { "score": 100, "diamonds": 0 },
     "partial": { "score": 50, "diamonds": 0 }
   },
   "npcSpeed": 0.3,
@@ -15,7 +15,7 @@
   "buildings": {
     "bed_house": { "w": 80, "h": 60, "offset": 100 },
     "word_house": { "w": 100, "h": 80, "offset": 300 },
-    "save_stone": { "w": 40, "h": 50, "offset": 550 },
+    "trader_house": { "w": 72, "h": 62, "offset": 550 },
     "special": { "w": 80, "h": 60, "offset": 700 }
   },
   "biomeWords": {

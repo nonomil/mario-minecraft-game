@@ -1,6 +1,6 @@
-/**
+﻿/**
  * 13-game-loop.js - 游戏主循环、背包、装备
- * 从 main.js 拆分 (原始行 3818-4571)
+ * 从 main.js 拆分（原始行 3818-4571）
  */
 function optimizedUpdate(entity, updateFn) {
     const margin = blockSize * 2;
@@ -44,6 +44,11 @@ function emitGameParticle(type, x, y) {
 
 function update() {
     if (paused) return;
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+        if (typeof updateVillageInteriorMode === "function") updateVillageInteriorMode();
+        gameFrame++;
+        return;
+    }
     updateCurrentBiome();
     // 村庄系统更新 (v1.8.0)
     if (typeof updateVillages === 'function') updateVillages();
@@ -53,6 +58,7 @@ function update() {
     if (typeof updateDeepDarkNoiseSystem === 'function') updateDeepDarkNoiseSystem();
     if (typeof updatePlayerPoisonStatus === "function") updatePlayerPoisonStatus();
     tickWeather();
+    tickArmorDurabilityByTime();
 
     const isUnderwater = (currentBiome === 'ocean');
     const camelRideEffect = typeof getCamelRideEffect === 'function' ? getCamelRideEffect() : null;
@@ -70,7 +76,7 @@ function update() {
         } else {
             player.velX *= 0.9;
         }
-        // 兼容移动端：跳跃按钮主要写入 jumpBuffer，水下也要消费
+        // 兼容移动端：跳跃按钮主要写入 jumpBuffer，水下也要生效
         const swimJumpTriggered = jumpBuffer > 0;
         if (swimJumpTriggered) jumpBuffer = 0;
         if (keys.up || keys.jump || swimJumpTriggered) {
@@ -111,7 +117,7 @@ function update() {
     player.velX *= gameConfig.physics.friction;
     let currentGravity = gameConfig.physics.gravity;
     if (Math.abs(player.velY) < 1.0) currentGravity = gameConfig.physics.gravity * 0.4;
-    // 末地低重力
+    // 本地低重力
     const endBiomeCfg = (currentBiome === 'end') ? getBiomeById('end') : null;
     if (endBiomeCfg) currentGravity *= (endBiomeCfg.effects?.gravityMultiplier || 0.65);
     player.velY += currentGravity;
@@ -156,7 +162,7 @@ function update() {
                 if (player.lastFragilePlatform !== p) {
                     p.onPlayerStep();
                     if (p.breaking) {
-                        showFloatingText("⚠️ 平台将破裂", p.x + p.width / 2, p.y - 12, "#FF7043");
+                        showFloatingText("⚠️ 平台即将破裂", p.x + p.width / 2, p.y - 12, "#FF7043");
                     }
                 }
             }
@@ -232,7 +238,7 @@ function update() {
     player.x += player.velX;
     player.y += player.velY;
 
-    // 上边界保护：跳出屏幕顶部时弹回
+    // 上边界保护：跳出屏幕顶部时回弹
     if (player.y < -player.height * 2) {
         player.y = -player.height * 2;
         if (player.velY < 0) player.velY = 0;
@@ -246,14 +252,14 @@ function update() {
     }
     } // end else (not underwater)
 
-    // 卡住检测：如果玩家有输入但位置长时间不变，强制解除
+    // 卡住检测：如果玩家有输入但位置长时间不变，强制解卡
     if (typeof player._stuckFrames === "undefined") player._stuckFrames = 0;
     if (typeof player._lastStuckX === "undefined") player._lastStuckX = player.x;
     const hasInput = keys.right || keys.left || keys.up || keys.jump;
     if (hasInput && Math.abs(player.x - player._lastStuckX) < 0.5 && player.grounded) {
         player._stuckFrames++;
         if (player._stuckFrames > 45) {
-            // 强制向前推一下
+            // 强制向前推一点
             player.y = player.y - blockSize * 0.8;
             player.velY = -2;
             player._stuckFrames = 0;
@@ -328,7 +334,7 @@ function update() {
     if (typeof checkLavaCollision === 'function') checkLavaCollision();
     if (typeof updateNetherMushrooms === 'function') updateNetherMushrooms();
 
-    // 末地实体清理（离开末地时）
+    // 本地实体清理（离开本地时）
     if (currentBiome !== 'end' && typeof clearEndEntities === 'function') clearEndEntities();
 
     // 技能物品实体更新
@@ -360,7 +366,7 @@ function update() {
             if (!g.maxLifetimeMs) g.maxLifetimeMs = 5 * 60 * 1000;
             if (Date.now() - g.spawnedAt >= g.maxLifetimeMs) {
                 g.remove = true;
-                showFloatingText("⏱️ 消失", g.x, g.y - 20, "#B0BEC5");
+                showFloatingText("🧱 消失", g.x, g.y - 20, "#B0BEC5");
                 return false;
             }
         }
@@ -395,6 +401,9 @@ function update() {
         if (rectIntersect(player.x, player.y, player.width, player.height, item.x, item.y + item.floatY, 30, 30)) {
             item.collected = true;
             addScore(gameConfig.scoring.word);
+            if (wordPicker && typeof wordPicker.updateWordQuality === "function" && item.wordObj?.en) {
+                wordPicker.updateWordQuality(item.wordObj.en, "correct_slow");
+            }
             recordWordProgress(item.wordObj);
             speakWord(item.wordObj);
             showFloatingText(item.wordObj.zh, item.x, item.y);
@@ -443,7 +452,7 @@ function update() {
         gameState.luckyStarTimer--;
         if (gameState.luckyStarTimer <= 0) {
             gameState.luckyStarActive = false;
-            showToast('⭐ 幸运星效果结束');
+            showToast('🌟 幸运星效果结束');
         }
     }
 
@@ -478,7 +487,7 @@ function updateHpUI() {
         const rowEmpty = (rowEnd - rowStart) - rowFilled;
         let rowHtml = "";
         for (let i = 0; i < rowFilled; i++) rowHtml += `<span class="hp-heart">❤️</span>`;
-        for (let i = 0; i < rowEmpty; i++) rowHtml += `<span class="hp-heart">🖤</span>`;
+        for (let i = 0; i < rowEmpty; i++) rowHtml += `<span class="hp-heart">🤍</span>`;
         html += `<div class="hp-row">${rowHtml}</div>`;
     }
     el.innerHTML = html;
@@ -534,7 +543,68 @@ function scorePenaltyForDamage(amount) {
     return Math.max(minPenalty, Math.min(maxPenalty, raw || minPenalty));
 }
 
+const ARMOR_DURATION_MINUTES = {
+    leather: 3,   // 木盔甲（皮革）
+    chainmail: 4,
+    iron: 4,
+    gold: 5,
+    diamond: 6,
+    netherite: 7
+};
+
+function getArmorDurationMs(armorId) {
+    const minutes = Number(ARMOR_DURATION_MINUTES[armorId]);
+    const safeMinutes = Number.isFinite(minutes) && minutes > 0 ? minutes : 4;
+    return safeMinutes * 60 * 1000;
+}
+
+function breakEquippedArmor(armorId) {
+    const broken = ARMOR_TYPES?.[armorId];
+    playerEquipment.armor = null;
+    playerEquipment.armorDurability = 0;
+    playerEquipment.armorEquippedAt = 0;
+    playerEquipment.armorLastDurabilityTick = 0;
+    showToast(`${broken?.name || "盔甲"} 已失效`);
+    updateArmorUI();
+}
+
+function tickArmorDurabilityByTime() {
+    const armorId = playerEquipment?.armor;
+    if (!armorId) return;
+    if (!Number.isFinite(Number(playerEquipment.armorDurability))) {
+        playerEquipment.armorDurability = 100;
+    }
+    if (playerEquipment.armorDurability <= 0) {
+        breakEquippedArmor(armorId);
+        return;
+    }
+
+    const now = Date.now();
+    if (!Number(playerEquipment.armorEquippedAt)) {
+        playerEquipment.armorEquippedAt = now;
+        playerEquipment.armorLastDurabilityTick = now;
+        return;
+    }
+
+    const lastTick = Number(playerEquipment.armorLastDurabilityTick) || now;
+    const dt = Math.max(0, now - lastTick);
+    if (dt <= 0) return;
+
+    const durationMs = getArmorDurationMs(armorId);
+    const loss = (dt / durationMs) * 100;
+    if (loss <= 0) return;
+
+    playerEquipment.armorDurability = Math.max(0, Math.round((Number(playerEquipment.armorDurability) - loss) * 10) / 10);
+    playerEquipment.armorLastDurabilityTick = now;
+    if (playerEquipment.armorDurability <= 0) {
+        breakEquippedArmor(armorId);
+        return;
+    }
+    updateArmorUI();
+}
+
 function damagePlayer(amount, sourceX, knockback = 90) {
+    if (typeof hasVillageBuff === "function" && hasVillageBuff("invisible")) return;
     if (typeof getInvincibilityEffect === 'function') {
         const inv = getInvincibilityEffect();
         if (inv?.invincible) return;
@@ -564,15 +634,24 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const penalty = scorePenaltyForDamage(baseDamage * diff.enemyDamageMult);
     addScore(-penalty);
     const defense = getArmorDefense();
-    const reduction = Math.min(0.5, defense * 0.1);
-    const actualDamage = Math.max(1, Math.round(scaledDamage * (1 - reduction)));
-    if (playerEquipment.armor && playerEquipment.armorDurability > 0) {
-        playerEquipment.armorDurability = Math.max(0, playerEquipment.armorDurability - 5);
-        if (playerEquipment.armorDurability <= 0) {
-            const broken = ARMOR_TYPES[playerEquipment.armor];
-            showToast(`${broken?.name || "盔甲"} 已破损`);
-            playerEquipment.armor = null;
-            playerEquipment.armorDurability = 0;
+    const armorId = playerEquipment.armor;
+    const hasArmor = !!(armorId && playerEquipment.armorDurability > 0);
+    const reductionByArmor = {
+        leather: 0.2,
+        chainmail: 0.35,
+        iron: 0.55,
+        gold: 0.65,
+        diamond: 1.0,
+        netherite: 1.0
+    };
+    const baseReduction = Math.min(0.6, defense * 0.12);
+    const armorReduction = reductionByArmor[armorId];
+    const reduction = hasArmor ? (Number.isFinite(armorReduction) ? armorReduction : baseReduction) : baseReduction;
+    const minDamage = hasArmor ? 0 : 1;
+    const actualDamage = Math.max(minDamage, Math.round(scaledDamage * (1 - reduction)));
+    if (hasArmor) {
+        if (actualDamage <= 0) {
+            showFloatingText("🛡️ 格挡", player.x, player.y - 24, "#80DEEA");
         }
     }
     updateArmorUI();
@@ -640,7 +719,7 @@ function renderInventoryModal() {
     if (!inventoryContentEl) return;
     if (inventoryTab === "equipment") {
         const armorLabel = playerEquipment.armor ? (ARMOR_TYPES[playerEquipment.armor]?.name || playerEquipment.armor) : "无";
-        const armorDur = playerEquipment.armor ? `${playerEquipment.armorDurability}%` : "--";
+        const armorDur = playerEquipment.armor ? `${Math.round(Number(playerEquipment.armorDurability) || 0)}%` : "--";
         const armorListHtml = (armorInventory || []).map((entry, idx) => {
             const armor = ARMOR_TYPES[entry.id];
             const name = armor?.name || entry.id;
@@ -648,7 +727,7 @@ function renderInventoryModal() {
             return `<div class="inventory-item" onclick="window.equipArmorFromBackpack && window.equipArmorFromBackpack('${entry.id}')">
                 <div class="inventory-item-left">
                     <div class="inventory-item-icon">${icon}</div>
-                    <div>${name} (${entry.durability}%)</div>
+                    <div>${name} (${Math.round(Number(entry.durability) || 0)}%)</div>
                 </div>
                 <div class="inventory-item-count">装备</div>
             </div>`;
@@ -693,8 +772,8 @@ function renderInventoryModal() {
         const style = disabled ? 'opacity:0.4;pointer-events:none' : '';
         let hint = '';
         if (entry.key === "pumpkin") hint = ' (→⛄)';
-        else if (entry.key === "iron" && entry.count >= 3) hint = ' (×3→🗿)';
-        else if (entry.key === "iron") hint = ` (${entry.count}/3→🗿)`;
+        else if (entry.key === "iron" && entry.count >= 3) hint = ' (×3→🤖)';
+        else if (entry.key === "iron") hint = ` (${entry.count}/3→🤖)`;
         return `<div class="inventory-item" data-item="${entry.key}" style="${style}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
             <div class="inventory-item-left">
                 <div class="inventory-item-icon">${entry.icon}</div>
@@ -764,7 +843,7 @@ function useInventoryItem(itemKey) {
             bombs.push(new Bomb(player.x + player.width / 2, player.y, direction));
         }
         itemCooldownTimers.gunpowder = ITEM_COOLDOWNS.gunpowder;
-        showToast(`💥 投掷炸弹`);
+        showToast("💣 投掷炸弹");
         used = true;
     } else if (itemKey === "ender_pearl") {
         // 末影珍珠传送
@@ -777,9 +856,12 @@ function useInventoryItem(itemKey) {
         for (let i = 0; i < 15; i++) {
             emitGameParticle("end_particle", player.x, player.y + Math.random() * player.height);
         }
+        if (typeof setVillageBuff === "function") {
+            setVillageBuff("invisible", 60000);
+        }
         itemCooldownTimers.ender_pearl = ITEM_COOLDOWNS.ender_pearl;
-        showFloatingText('🟣 传送!', player.x, player.y - 30, '#9C27B0');
-        showToast(`🟣 末影传送`);
+        showFloatingText("🟣 传送+隐身", player.x, player.y - 30, "#9C27B0");
+        showToast("🟣 末影传送，60秒隐身");
         used = true;
     } else if (itemKey === "string") {
         // 蜘蛛丝陷阱
@@ -792,7 +874,7 @@ function useInventoryItem(itemKey) {
             webTraps.push(new WebTrap(player.x - 20, groundY - 60));
         }
         itemCooldownTimers.string = ITEM_COOLDOWNS.string;
-        showToast(`🕸️ 放置蛛网陷阱`);
+        showToast("🕸️ 放置蛛网陷阱");
         used = true;
     } else if (itemKey === "rotten_flesh") {
         // 腐肉诱饵
@@ -801,7 +883,7 @@ function useInventoryItem(itemKey) {
             fleshBaits.push(new FleshBait(player.x + player.width / 2, groundY - 20));
         }
         itemCooldownTimers.rotten_flesh = ITEM_COOLDOWNS.rotten_flesh;
-        showToast(`🥩 投掷腐肉诱饵`);
+        showToast("🥩 投掷腐肉诱饵");
         used = true;
     } else if (itemKey === "shell") {
         // 贝壳护盾
@@ -813,16 +895,16 @@ function useInventoryItem(itemKey) {
         playerInvincibleTimer = 120; // 2秒无敌
         itemCooldownTimers.shell = ITEM_COOLDOWNS.shell;
         showFloatingText('🛡️ 无敌!', player.x, player.y - 30, '#00BFFF');
-        showToast(`🐚 激活护盾`);
+        showToast('🐚 激活护盾');
         used = true;
     } else if (itemKey === "coal") {
-        // 煤矿火把
+        // 煤炭火把
         inventory.coal -= 1;
         if (typeof torches !== 'undefined') {
             torches.push(new Torch(player.x, groundY - 30));
         }
         itemCooldownTimers.coal = ITEM_COOLDOWNS.coal;
-        showToast(`🪨 放置火把`);
+        showToast("🕯️ 放置火把");
         used = true;
     } else if (itemKey === "dragon_egg") {
         // 龙蛋龙息
@@ -840,7 +922,7 @@ function useInventoryItem(itemKey) {
         }
         itemCooldownTimers.dragon_egg = ITEM_COOLDOWNS.dragon_egg;
         showFloatingText(`🐉 龙息! (${hitCount}个敌人)`, player.x, player.y - 40, '#FF4500');
-        showToast(`🐉 释放龙息`);
+        showToast("🐉 释放龙息");
         used = true;
     } else if (itemKey === "starfish") {
         // 海星幸运星
@@ -849,8 +931,8 @@ function useInventoryItem(itemKey) {
         gameState.luckyStarActive = true;
         gameState.luckyStarTimer = 1800; // 30秒
         itemCooldownTimers.starfish = ITEM_COOLDOWNS.starfish;
-        showFloatingText('⭐ 幸运加持!', player.x, player.y - 30, '#FFD700');
-        showToast(`⭐ 幸运星激活 (30秒)`);
+        showFloatingText("⭐ 幸运加持!", player.x, player.y - 30, "#FFD700");
+        showToast("⭐ 幸运星激活 (30秒)");
         used = true;
     } else if (itemKey === "gold") {
         // 黄金交易
@@ -863,9 +945,9 @@ function useInventoryItem(itemKey) {
         const trade = trades[Math.floor(Math.random() * trades.length)];
         if (!inventory[trade.item]) inventory[trade.item] = 0;
         inventory[trade.item] += trade.count;
-        const icon = ITEM_ICONS[trade.item] || '✨';
+        const icon = ITEM_ICONS[trade.item] || '✅';
         showFloatingText(`${icon} +${trade.count}`, player.x, player.y - 30, '#FFD700');
-        showToast(`🪙 猪灵交易: ${ITEM_LABELS[trade.item]} ×${trade.count}`);
+        showToast(`🐷 猪灵交易: ${ITEM_LABELS[trade.item]} x${trade.count}`);
         used = true;
     }
     // 消耗品使用
@@ -877,24 +959,24 @@ function useInventoryItem(itemKey) {
         inventory.diamond -= 1;
         healPlayer(1);
         showFloatingText("+1❤️", player.x, player.y - 60);
-        showToast(`💎 恢复生命`);
+        showToast("💎 恢复生命");
         used = true;
     } else if (itemKey === "pumpkin") {
-        // 南瓜 → 召唤雪傀儡（×1）
+        // 南瓜 -> 召唤雪傀儡（x1）
         if (tryCraft("snow_golem")) {
             used = true;
         }
         renderInventoryModal();
         return;
     } else if (itemKey === "iron") {
-        // 铁块 → 召唤铁傀儡（×3）
+        // 铁块 -> 召唤铁傀儡（x3）
         if (tryCraft("iron_golem")) {
             used = true;
         }
         renderInventoryModal();
         return;
     } else if (itemKey === "sculk_vein") {
-        // 幽匿碎片 → 制作静音鞋（×5）
+        // 幽匿碎片 -> 制作静音靴（x5）
         if (tryCraft("silent_boots")) {
             used = true;
         }
@@ -904,7 +986,7 @@ function useInventoryItem(itemKey) {
     // 食物使用（牛肉、羊肉、蘑菇煲）
     else if (FOOD_TYPES[itemKey]) {
         if (playerHp >= playerMaxHp) {
-            showToast("❤️ 已满血");
+            showToast("❌ 已满血");
             return;
         }
         if (foodCooldown > 0) {
@@ -926,6 +1008,15 @@ function useInventoryItem(itemKey) {
             iron_pickaxe: "pickaxe"
         };
         const weaponId = weaponMap[itemKey];
+        if (
+            weaponId &&
+            weaponId !== "sword" &&
+            typeof isBossWeaponLockActive === "function" &&
+            isBossWeaponLockActive()
+        ) {
+            showToast("⚔️ BOSS战期间仅可使用剑");
+            return;
+        }
         if (weaponId && playerWeapons.current !== weaponId) {
             playerWeapons.current = weaponId;
             playerWeapons.attackCooldown = 0;
@@ -954,7 +1045,7 @@ function useInventoryItem(itemKey) {
     }
 }
 
-// 导出到全局供 HTML onclick 使用
+// 导出到全局，供 HTML onclick 使用
 if (typeof window !== "undefined") {
     window.useInventoryItem = useInventoryItem;
     window.equipArmorFromBackpack = function(armorId) {
@@ -993,7 +1084,10 @@ function equipArmor(armorId) {
         });
     }
     playerEquipment.armor = selected.id;
-    playerEquipment.armorDurability = selected.durability;
+    playerEquipment.armorDurability = Number.isFinite(Number(selected.durability)) ? Number(selected.durability) : 100;
+    const now = Date.now();
+    playerEquipment.armorEquippedAt = now;
+    playerEquipment.armorLastDurabilityTick = now;
     updateArmorUI();
     showToast(`🛡️ 装备 ${armor.name}`);
     showFloatingText(`🛡️ ${armor.name}`, player ? player.x : 0, player ? player.y - 60 : 120);
@@ -1009,6 +1103,8 @@ function unequipArmor() {
     });
     playerEquipment.armor = null;
     playerEquipment.armorDurability = 0;
+    playerEquipment.armorEquippedAt = 0;
+    playerEquipment.armorLastDurabilityTick = 0;
     updateArmorUI();
     showToast(`${armor?.name || "盔甲"} 已卸下`);
 }
@@ -1024,7 +1120,7 @@ function updateArmorUI() {
     if (!el) return;
     if (playerEquipment.armor) {
         const armor = ARMOR_TYPES[playerEquipment.armor];
-        const dur = Math.max(0, Math.min(100, playerEquipment.armorDurability));
+        const dur = Math.max(0, Math.min(100, Math.round(Number(playerEquipment.armorDurability) || 0)));
         el.innerText = `🛡️ ${armor.name} ${dur}%`;
         el.classList.add("hud-box-active");
     } else {
@@ -1048,7 +1144,7 @@ function showArmorSelectUI() {
             <div class="armor-details">
                 <div class="armor-name">${armor.name}（已装备）</div>
                 <div class="armor-defense">防御 ${armor.defense}</div>
-                <div class="armor-durability">耐久 ${playerEquipment.armorDurability}%</div>
+                <div class="armor-durability">耐久 ${Math.round(Number(playerEquipment.armorDurability) || 0)}%</div>
             </div>
         `;
         card.addEventListener("click", () => {
@@ -1068,7 +1164,7 @@ function showArmorSelectUI() {
                 <div class="armor-details">
                     <div class="armor-name">${armor.name}</div>
                     <div class="armor-defense">防御 ${armor.defense}</div>
-                    <div class="armor-durability">耐久 ${item.durability}%</div>
+                    <div class="armor-durability">耐久 ${Math.round(Number(item.durability) || 0)}%</div>
                 </div>
             `;
             card.addEventListener("click", () => {
@@ -1079,7 +1175,7 @@ function showArmorSelectUI() {
             list.appendChild(card);
         });
     } else if (!playerEquipment.armor) {
-        list.innerHTML = "<div class=\"armor-item\">当前无盔甲可用</div>";
+        list.innerHTML = "<div class=\"armor-item\">当前无护甲可用</div>";
     }
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
@@ -1110,12 +1206,12 @@ function tryCraft(recipeKey) {
     const recipe = RECIPES[recipeKey];
     if (!recipe) return false;
     if (recipeKey === "silent_boots" && silentBootsState?.equipped && Number(silentBootsState.durability) > 0) {
-        showToast("静音鞋已装备");
+        showToast("静音靴已装备");
         return false;
     }
     const isGolemRecipe = recipeKey === "snow_golem" || recipeKey === "iron_golem";
     if (isGolemRecipe && currentBiome === "ocean") {
-        showToast("⚠️ 海滨环境无法召唤傀儡！");
+        showToast("⚠️ 海洋环境无法召唤傀儡！");
         return false;
     }
     for (const [item, count] of Object.entries(recipe)) {
@@ -1131,8 +1227,8 @@ function tryCraft(recipeKey) {
         silentBootsState.equipped = true;
         silentBootsState.maxDurability = 30;
         silentBootsState.durability = 30;
-        showToast("👢 静音鞋已装备（耐久30）");
-        showFloatingText("👢 静音鞋", player.x, player.y - 40, "#7FDBFF");
+        showToast("🥾 静音靴已装备（耐久30）");
+        showFloatingText("🥾 静音靴", player.x, player.y - 40, "#7FDBFF");
         updateInventoryUI();
         return true;
     }
@@ -1155,14 +1251,22 @@ function spawnGolem(type) {
     }
     golems.push(newGolem);
     const name = type === "iron" ? "铁傀儡" : "雪傀儡";
-    showToast(`✅ 成功召唤 ${name}！`);
-    showFloatingText(`⚒️ ${name}`, player.x, player.y - 40);
+    showToast(`✅ 成功召唤 ${name}`);
+    showFloatingText(`🧱 ${name}`, player.x, player.y - 40);
 }
 
-function handleInteraction() {
+function handleInteraction(interactMode = "tap") {
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+        if (paused || pausedByModal) return;
+        if (typeof handleVillageInteriorInteraction === "function") {
+            handleVillageInteriorInteraction(interactMode);
+        }
+        return;
+    }
+    if (paused || pausedByModal) return;
     // v1.8.3 村庄建筑交互优先
     if (playerInVillage && currentVillage && typeof checkVillageBuildings === 'function') {
-      const handled = checkVillageBuildings(currentVillage);
+      const handled = checkVillageBuildings(currentVillage, interactMode);
       if (handled) return;
     }
 
@@ -1188,6 +1292,7 @@ function handleInteraction() {
 }
 
 function handleDecorationInteract() {
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
     for (const d of decorations) {
         if (!d.collectible) continue;
         if (rectIntersect(player.x, player.y, player.width, player.height, d.x, d.y, d.width, d.height)) {
@@ -1198,6 +1303,7 @@ function handleDecorationInteract() {
 }
 
 function handleAttack(mode = "press") {
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
     if (playerWeapons.attackCooldown > 0) return;
     if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "attack");
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
@@ -1235,3 +1341,4 @@ function triggerChestHint() {
     chestHintPos = null;
     if (storage) storage.saveJson("mmwg:hintChestSeen", true);
 }
+
