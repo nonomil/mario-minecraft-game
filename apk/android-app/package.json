@@ -1,9 +1,12 @@
-﻿{
+{
   "name": "android-app",
-  "version": "1.18.4",
+  "version": "1.18.42",
   "private": true,
   "scripts": {
     "sync-web": "node ../scripts/sync-web.js"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "devDependencies": {
     "@capacitor/cli": "^7.4.3"

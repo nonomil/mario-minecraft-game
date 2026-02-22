@@ -1,6 +1,6 @@
-﻿{
+{
   "name": "mario-minecraft-game-v1",
-  "version": "1.18.4",
+  "version": "1.18.42",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,13 +14,26 @@
     "vocab:db:publish": "node tools/vocab-db/publish.mjs",
     "vocab:db:admin": "node tools/vocab-db/admin-server.mjs --port 4174",
     "vocab:db:dedup": "node tools/vocab-db/dedup.mjs",
+    "vocab:db:audit": "node tools/vocab-db/audit.mjs",
     "vocab:db:import:external": "node tools/vocab-db/import-external-list.mjs",
+    "vocab:db:export:pack": "node tools/vocab-db/export-pack.mjs",
     "vocab:db:upsert": "node tools/vocab-db/crud.mjs upsert",
     "vocab:db:deactivate": "node tools/vocab-db/crud.mjs deactivate",
     "sync": "cd android-app && npx cap sync android",
     "build:apk": "cd android-app/android && ./gradlew assembleDebug",
     "build:apk:release": "cd android-app/android && ./gradlew assembleRelease",
-    "open:android": "cd android-app && npx cap open android"
+    "open:android": "cd android-app && npx cap open android",
+    "test:e2e": "playwright test -c tests/e2e/playwright.config.mjs",
+    "test:e2e:headed": "playwright test -c tests/e2e/playwright.config.mjs --headed",
+    "test:e2e:ui": "playwright test -c tests/e2e/playwright.config.mjs --ui",
+    "test:e2e:debug": "playwright test -c tests/e2e/playwright.config.mjs --debug",
+    "pw:install": "playwright install"
   },
-  "description": "Mario Minecraft Game - Educational English vocabulary learning game"
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Mario Minecraft Game - Educational English vocabulary learning game",
+  "devDependencies": {
+    "@playwright/test": "^1.51.1"
+  }
 }
