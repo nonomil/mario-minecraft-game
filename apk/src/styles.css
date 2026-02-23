@@ -207,6 +207,24 @@ body {
     margin-top: 12px;
 }
 
+.overlay-buttons.overlay-buttons-duo {
+    flex-direction: row;
+}
+
+.overlay-buttons.overlay-buttons-duo .overlay-btn {
+    width: auto;
+    flex: 1;
+}
+
+.overlay-btn-primary {
+    background: #4CAF50;
+}
+
+.overlay-btn-secondary {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.6);
+}
+
 #btn-overlay-score-revive {
     background: linear-gradient(135deg, #ffd700, #ffaa00);
     color: #333;
@@ -1423,6 +1441,15 @@ canvas {
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
+.login-actions {
+    margin-top: 16px;
+    display: flex;
+}
+
+.login-confirm-btn {
+    width: 100%;
+}
+
 .login-form .form-group {
     margin-bottom: 16px;
     text-align: left;
@@ -1457,6 +1484,11 @@ canvas {
 
 .account-item:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.account-item.selected {
+    border: 2px solid #FFD700;
+    background: rgba(255, 255, 255, 0.14);
 }
 
 .account-avatar {
