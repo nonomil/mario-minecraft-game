@@ -1,3 +1,17 @@
+﻿## v1.18.46 (2026-02-23)
+
+### 开局弹窗与发布链路
+- 开局弹窗标题去重，仅保留顶部主标题。
+- 开局弹窗副标题补充一句：挑战关卡，获取奖励与新武器。
+- APK 构建前自动同步网页资源（`build:apk` / `build:apk:release` 先执行 build + sync）。
+
+### Release Metadata
+- Version bump:
+  - `apk/package.json` -> `1.18.46`
+  - `apk/android-app/package.json` -> `1.18.46`
+  - `apk/version.json` -> `versionCode/buildNumber 46`
+  - `apk/android-app/android/app/build.gradle` -> `versionCode 46`, `versionName 1.18.46`
+
 ## v1.18.45 (2026-02-23)
 
 ### 悬浮平台 & 挖掘系统大改版
@@ -987,4 +1001,5 @@
 - `npm run vocab:db:publish`
 
 ---
+
 
