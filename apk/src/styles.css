@@ -543,6 +543,90 @@ canvas {
     transform-origin: top left;
 }
 
+
+
+.hud-grid {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 10px;
+    padding: 6px 12px;
+    align-items: center;
+    pointer-events: none;
+}
+
+.hud-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.hud-left,
+.hud-right {
+    pointer-events: auto;
+}
+
+.hud-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hud-row .hud-box,
+.hud-row .hud-btn {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.hud-center {
+    pointer-events: none;
+}
+
+.word-display-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 4px;
+    padding: 6px 8px;
+}
+
+.word-display-block.word-display-animate {
+    animation: word-slide-in 0.24s ease;
+}
+
+.word-display-title {
+    color: #FFD700;
+    font-weight: 900;
+    font-size: clamp(18px, 3.2vw, 28px);
+    letter-spacing: 0.18em;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.word-display-sub {
+    color: #fff6c2;
+    font-weight: 700;
+    font-size: clamp(12px, 2vw, 18px);
+    text-shadow: 1px 1px 0 #000;
+}
+
+@keyframes word-slide-in {
+    from {
+        transform: translateY(-8px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 /* Improve touch responsiveness in WebView (avoid delayed clicks). */
 .game-btn,
 .overlay-btn,
@@ -617,8 +701,6 @@ canvas {
 
 #word-display {
     color: #FFD700;
-    font-size: 24px;
-    transition: transform 0.2s;
 }
 
 .inventory-bar {
@@ -717,6 +799,20 @@ canvas {
     cursor: pointer;
     font-weight: bold;
     border-radius: 4px;
+}
+
+.hud-btn {
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.35);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.hud-btn:active {
+    transform: scale(0.98);
 }
 
 .game-btn:active {
