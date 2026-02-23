@@ -5,3 +5,5 @@ playwright-report/
 *.log
 *.backup
 src_backup/
+
+.worktrees/
