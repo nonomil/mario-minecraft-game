@@ -41,16 +41,30 @@ function draw() {
     ctx.save();
     ctx.translate(-cameraX, 0);
 
-    // Debug: 检查 platforms 数组
-    if (gameFrame % 60 === 0) {
-        console.log('Platforms count:', platforms.length, 'Camera X:', cameraX);
-    }
-
     platforms.forEach(p => {
         if (!p || p.remove) return;
+        // 悬浮平台阴影
+        if (p.y < groundY) {
+            ctx.fillStyle = "rgba(0,0,0,0.12)";
+            ctx.fillRect(p.x + 4, p.y + p.height + 3, p.width, 6);
+        }
         drawBlock(p.x, p.y, p.width, p.height, p.type);
         if (p.fragile) drawFragilePlatformOverlay(p);
     });
+
+    // 藏宝方块：金色斑点覆盖层
+    if (typeof treasureBlocks !== 'undefined') {
+        treasureBlocks.forEach(tb => {
+            const shimmer = 0.4 + Math.sin(gameFrame * 0.08 + tb.x) * 0.15;
+            ctx.fillStyle = `rgba(255, 215, 0, ${shimmer})`;
+            ctx.fillRect(tb.x + 8, tb.y + 6, 12, 10);
+            ctx.fillRect(tb.x + 28, tb.y + 16, 10, 8);
+            ctx.fillRect(tb.x + 14, tb.y + 28, 8, 10);
+            ctx.fillStyle = `rgba(255, 255, 200, ${shimmer * 0.7})`;
+            ctx.fillRect(tb.x + 20, tb.y + 4, 6, 6);
+            ctx.fillRect(tb.x + 36, tb.y + 26, 6, 6);
+        });
+    }
 
     if (biome.effects?.waterLevel) {
         ctx.fillStyle = "rgba(33, 150, 243, 0.25)";
@@ -159,6 +173,11 @@ function draw() {
 }
 
 function drawBlock(x, y, w, h, type) {
+    if (w <= 0) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, canvasHeight - y);
+    ctx.clip();
     const cols = Math.ceil(w / blockSize);
     for (let i = 0; i < cols; i++) {
         const cx = x + i * blockSize;
@@ -227,6 +246,7 @@ function drawBlock(x, y, w, h, type) {
             }
         }
     }
+    ctx.restore();
 }
 
 function drawFragilePlatformOverlay(p) {
@@ -349,18 +369,46 @@ function drawPixelTree(ctx2d, x, y, type, hp) {
 }
 
 function drawChest(x, y, opened) {
-    const size = blockSize * 0.8;
-    ctx.fillStyle = "#795548";
-    ctx.fillRect(x, y, size, size);
-    ctx.fillStyle = "#3E2723";
-    ctx.strokeRect(x, y, size, size);
-    ctx.fillStyle = "#FFC107";
+    const s = blockSize * 0.8;
     if (opened) {
-        ctx.fillRect(x + size * 0.38, y + size * 0.12, size * 0.25, size * 0.12);
-        ctx.fillStyle = "#000";
-        ctx.fillText("?", x + size * 0.25, y + size * 0.62);
+        // 打开的宝箱 - 箱体
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.4, s, s * 0.6);
+        ctx.fillStyle = "#6D4E2F";
+        ctx.fillRect(x + 1, y + s * 0.42, s - 2, 2); // 箱体顶部线
+        // 打开的盖子 - 向后翻
+        ctx.fillStyle = "#A0804A";
+        ctx.fillRect(x - 2, y, s + 4, s * 0.35);
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.28, s, 3);
+        // 金属扣 - 盖子上
+        ctx.fillStyle = "#FFC107";
+        ctx.fillRect(x + s * 0.35, y + s * 0.2, s * 0.3, s * 0.1);
+        // 箱内金光
+        ctx.fillStyle = "rgba(255, 215, 0, 0.5)";
+        ctx.fillRect(x + 3, y + s * 0.45, s - 6, s * 0.25);
+        // 箱内物品闪光
+        ctx.fillStyle = "#FFD700";
+        ctx.fillRect(x + s * 0.2, y + s * 0.5, s * 0.15, s * 0.12);
+        ctx.fillRect(x + s * 0.55, y + s * 0.48, s * 0.2, s * 0.14);
     } else {
-        ctx.fillRect(x + size * 0.38, y + size * 0.45, size * 0.25, size * 0.15);
+        // 关闭的宝箱 - 箱体
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.35, s, s * 0.65);
+        // 盖子
+        ctx.fillStyle = "#A0804A";
+        ctx.fillRect(x - 1, y, s + 2, s * 0.4);
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.33, s, 3);
+        // 金属锁扣
+        ctx.fillStyle = "#FFC107";
+        ctx.fillRect(x + s * 0.38, y + s * 0.28, s * 0.24, s * 0.18);
+        ctx.fillStyle = "#E5A800";
+        ctx.fillRect(x + s * 0.42, y + s * 0.34, s * 0.16, s * 0.08);
+        // 边框暗线
+        ctx.strokeStyle = "#5D3E1F";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, s, s);
     }
 }
 
@@ -460,6 +508,11 @@ function drawParticle(p) {
     } else if (p.type === "end_particle") {
         ctx.globalAlpha = Math.min(1, p.life / 60);
         ctx.fillStyle = p.color || "#CE93D8";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.globalAlpha = 1;
+    } else if (p.type === "dig_debris") {
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color || "#5d4037";
         ctx.fillRect(p.x, p.y, p.size, p.size);
         ctx.globalAlpha = 1;
     }

@@ -54,12 +54,27 @@ function switchWeapon() {
 }
 
 function updateWeaponUI() {
-    const el = document.getElementById("weapon-info");
+    updateEquipStatus();
+}
+
+function updateEquipStatus() {
+    const el = document.getElementById("equip-status");
     if (!el) return;
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
     const arrows = getArrowCount();
-    const arrowText = weapon.type === "ranged" ? ` | 🏹 ${arrows}` : "";
-    el.innerText = `武器: ${weapon.emoji} ${weapon.name}${arrowText}`;
+    const arrowText = weapon.type === "ranged" ? ` 🏹${arrows}` : "";
+    let armorText = "🛡️无";
+    if (playerEquipment.armor) {
+        const armor = ARMOR_TYPES[playerEquipment.armor];
+        const dur = Math.max(0, Math.min(100, Math.round(Number(playerEquipment.armorDurability) || 0)));
+        armorText = `🛡️${armor.name} ${dur}%`;
+    }
+    el.innerText = `${weapon.emoji}${weapon.name}${arrowText} ${armorText}`;
+    if (playerEquipment.armor) {
+        el.classList.add("hud-box-active");
+    } else {
+        el.classList.remove("hud-box-active");
+    }
 }
 
 function startBowCharge() {
@@ -98,55 +113,159 @@ function releaseBowShot(forceCharge = null) {
     playerWeapons.chargeTime = 0;
 }
 
+// 挖掘碎片粒子
+function emitDigParticles(x, y, type) {
+    const colors = {
+        grass: ["#5d4037", "#4CAF50"], snow: ["#1e3f66", "#fff"],
+        stone: ["#757575", "#424242"], sand: ["#FDD835", "#E6C02E"],
+        netherrack: ["#5E1B1B", "#8B0000"], end_stone: ["#D4C99E", "#BDB76B"]
+    };
+    const palette = colors[type] || colors.grass;
+    for (let i = 0; i < 8; i++) {
+        const px = x + Math.random() * blockSize;
+        const py = y + Math.random() * blockSize * 0.5;
+        const c = palette[Math.floor(Math.random() * palette.length)];
+        const p = {
+            x: px, y: py, size: 3 + Math.random() * 4,
+            velX: (Math.random() - 0.5) * 4, velY: -1 - Math.random() * 3,
+            color: c, life: 1, remove: false,
+            type: "dig_debris",
+            update() {
+                this.x += this.velX;
+                this.y += this.velY;
+                this.velY += 0.15;
+                this.life -= 0.025;
+                if (this.life <= 0) this.remove = true;
+            }
+        };
+        particles.push(p);
+    }
+}
+
 function digGroundBlock() {
     const weapon = WEAPONS.pickaxe;
     const dir = player.facingRight ? 1 : -1;
-    const targetX = player.x + (dir > 0 ? player.width + 6 : -6);
-    const blockX = Math.floor(targetX / blockSize) * blockSize;
+    const reachX = player.x + (dir > 0 ? player.width + 10 : -10);
+    const playerBottom = player.y + player.height;
+    const playerCenterY = player.y + player.height / 2;
 
-    // Find target platform: prefer ground, then nearest floating platform
-    let targetIdx = platforms.findIndex(p => p.y === groundY && blockX >= p.x && blockX < p.x + p.width);
-    let targetY = groundY;
-    if (targetIdx === -1) {
-        // Search for floating platforms near the player
-        let bestDist = Infinity;
-        const playerCenterY = player.y + player.height / 2;
-        for (let i = 0; i < platforms.length; i++) {
-            const p = platforms[i];
-            if (p.remove) continue;
-            if (blockX < p.x || blockX >= p.x + p.width) continue;
-            const dist = Math.abs(p.y - playerCenterY);
-            if (dist < blockSize * 2.5 && dist < bestDist) {
-                bestDist = dist;
-                targetIdx = i;
-                targetY = p.y;
-            }
+    // 1. 优先找玩家接触的平台（脚下站着的、或面前碰到的）
+    let target = null;
+    let bestPriority = Infinity;
+    for (let i = 0; i < platforms.length; i++) {
+        const p = platforms[i];
+        if (p.remove) continue;
+        // 检查平台是否在挖掘方向上
+        const pRight = p.x + p.width;
+        // 玩家脚下的平台（站着的）
+        const standingOn = Math.abs(playerBottom - p.y) < 6 &&
+            player.x + player.width > p.x && player.x < pRight;
+        // 面前方向的平台
+        const inFront = reachX >= p.x && reachX < pRight &&
+            Math.abs(p.y - playerCenterY) < blockSize * 2.5;
+        if (!standingOn && !inFront) continue;
+        // 优先级：面前接触的 > 脚下的，非地面 > 地面
+        let priority = 10;
+        if (inFront && p.y !== groundY) priority = 0;      // 面前悬浮方块最优先
+        else if (standingOn && p.y !== groundY) priority = 1; // 脚下悬浮方块
+        else if (inFront) priority = 2;                      // 面前地面
+        else if (standingOn) priority = 3;                    // 脚下地面
+        if (priority < bestPriority) {
+            bestPriority = priority;
+            target = { idx: i, platform: p };
         }
     }
 
-    const key = `${blockX},${targetY}`;
+    if (!target) {
+        playerWeapons.attackCooldown = weapon.cooldown;
+        return;
+    }
+
+    const p = target.platform;
+    // 如果平台小于一个blockSize，直接整个移除
+    if (p.width <= blockSize) {
+        emitDigParticles(p.x, p.y, p.type);
+        platforms.splice(target.idx, 1);
+        // 藏宝方块检测
+        let smallTreasure = false;
+        if (typeof treasureBlocks !== 'undefined') {
+            for (let ti = treasureBlocks.length - 1; ti >= 0; ti--) {
+                const tb = treasureBlocks[ti];
+                if (Math.abs(tb.x - p.x) < blockSize && Math.abs(tb.y - p.y) < blockSize) {
+                    treasureBlocks.splice(ti, 1);
+                    chests.push(new Chest(p.x + blockSize * 0.1, p.y));
+                    showFloatingText("✨ 藏宝方块!", p.x + p.width / 2, p.y - 60, "#FFD700");
+                    smallTreasure = true;
+                    break;
+                }
+            }
+        }
+        if (!smallTreasure) {
+            showFloatingText("🕳️ 挖掉了", p.x + p.width / 2, p.y - 50);
+        }
+        if (typeof triggerGravityCheck === "function") {
+            triggerGravityCheck(p.x, p.x + p.width, p.y);
+        }
+        playerWeapons.attackCooldown = weapon.cooldown;
+        return;
+    }
+    // 计算挖掘位置：standingOn 用玩家中心X，inFront 用 reachX
+    let rawDigX;
+    if (bestPriority === 1 || bestPriority === 3) {
+        rawDigX = player.x + player.width / 2;
+    } else {
+        rawDigX = reachX;
+    }
+    // 对齐到平台自身的 blockSize 网格（相对平台起点），并限制在平台范围内
+    let digX = p.x + Math.floor((rawDigX - p.x) / blockSize) * blockSize;
+    digX = Math.max(p.x, Math.min(digX, p.x + p.width - blockSize));
+
+    // 悬浮平台与地面统一逻辑：挖一格
+    const key = `${digX},${p.y}`;
     const hit = (digHits.get(key) || 0) + 1;
     digHits.set(key, hit);
-    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, targetY - 40);
-
     if (hit < weapon.digHits) {
+        showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, digX + blockSize / 2, p.y - 40);
         playerWeapons.attackCooldown = weapon.cooldown;
         return;
     }
-
-    if (targetIdx === -1) {
-        playerWeapons.attackCooldown = weapon.cooldown;
-        return;
+    const cutLeft = digX;
+    const cutRight = Math.min(digX + blockSize, p.x + p.width);
+    const leftWidth = cutLeft - p.x;
+    const rightWidth = (p.x + p.width) - cutRight;
+    emitDigParticles(digX, p.y, p.type);
+    platforms.splice(target.idx, 1);
+    if (leftWidth > 4) {
+        const lp = new Platform(p.x, p.y, leftWidth, p.height, p.type);
+        if (p.fragile && typeof lp.makeFragile === "function") lp.makeFragile(p.maxSteps);
+        platforms.push(lp);
     }
-    const p = platforms[targetIdx];
-    const leftWidth = blockX - p.x;
-    const rightStart = blockX + blockSize;
-    const rightWidth = (p.x + p.width) - rightStart;
-    platforms.splice(targetIdx, 1);
-    if (leftWidth > 0) platforms.push(new Platform(p.x, p.y, leftWidth, p.height, p.type));
-    if (rightWidth > 0) platforms.push(new Platform(rightStart, p.y, rightWidth, p.height, p.type));
+    if (rightWidth > 4) {
+        const rp = new Platform(cutRight, p.y, rightWidth, p.height, p.type);
+        if (p.fragile && typeof rp.makeFragile === "function") rp.makeFragile(p.maxSteps);
+        platforms.push(rp);
+    }
     digHits.delete(key);
-    showFloatingText("🕳️ 挖掉了", blockX + blockSize / 2, targetY - 50);
+    // 藏宝方块检测：挖到藏宝位置时生成宝箱
+    let isTreasure = false;
+    if (typeof treasureBlocks !== 'undefined') {
+        for (let ti = treasureBlocks.length - 1; ti >= 0; ti--) {
+            const tb = treasureBlocks[ti];
+            if (Math.abs(tb.x - digX) < blockSize && Math.abs(tb.y - p.y) < blockSize) {
+                treasureBlocks.splice(ti, 1);
+                chests.push(new Chest(digX + blockSize * 0.1, p.y));
+                showFloatingText("✨ 藏宝方块!", digX + blockSize / 2, p.y - 60, "#FFD700");
+                isTreasure = true;
+                break;
+            }
+        }
+    }
+    if (!isTreasure) {
+        showFloatingText("🕳️ 挖掉了", digX + blockSize / 2, p.y - 50);
+    }
+    if (typeof triggerGravityCheck === "function") {
+        triggerGravityCheck(cutLeft, cutRight, p.y);
+    }
     playerWeapons.attackCooldown = weapon.cooldown;
 }
 

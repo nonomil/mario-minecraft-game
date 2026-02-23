@@ -42,6 +42,81 @@ function emitGameParticle(type, x, y) {
     return created;
 }
 
+// --- 实体重力系统 ---
+const ENTITY_GRAVITY = 0.3;
+const ENTITY_MAX_FALL_SPEED = 8;
+
+function findSupportingPlatform(entityX, entityWidth, entityBottom) {
+    let bestPlatform = null;
+    let bestY = Infinity;
+    for (let i = 0; i < platforms.length; i++) {
+        const p = platforms[i];
+        if (p.remove) continue;
+        if (entityX + entityWidth <= p.x || entityX >= p.x + p.width) continue;
+        if (p.y < entityBottom - 2) continue;
+        if (p.y < bestY) {
+            bestY = p.y;
+            bestPlatform = p;
+        }
+    }
+    return bestPlatform;
+}
+
+function updateEntityGravity(entity) {
+    const entityBottom = entity.y + entity.height;
+    const support = findSupportingPlatform(entity.x, entity.width, entityBottom);
+    // Landed on platform
+    if (support && entityBottom >= support.y - 2 && entityBottom <= support.y + 4) {
+        entity.y = support.y - entity.height;
+        entity.velY = 0;
+        entity.falling = false;
+        return;
+    }
+    // Landed on ground
+    const groundLimit = groundY - entity.height;
+    if (entity.y >= groundLimit) {
+        entity.y = groundLimit;
+        entity.velY = 0;
+        entity.falling = false;
+        return;
+    }
+    // No support — fall
+    entity.falling = true;
+    entity.velY = Math.min(entity.velY + ENTITY_GRAVITY, ENTITY_MAX_FALL_SPEED);
+    entity.y += entity.velY;
+    // Clamp to ground
+    if (entity.y >= groundLimit) {
+        entity.y = groundLimit;
+        entity.velY = 0;
+        entity.falling = false;
+    } else if (support && entity.y + entity.height >= support.y) {
+        entity.y = support.y - entity.height;
+        entity.velY = 0;
+        entity.falling = false;
+    }
+}
+
+function triggerGravityCheck(digLeft, digRight, platformY) {
+    items.forEach(item => {
+        if (item.collected) return;
+        const cx = item.x + item.width / 2;
+        const bottom = item.y + item.height;
+        if (cx >= digLeft && cx <= digRight && Math.abs(bottom - platformY) < blockSize) {
+            item.falling = true;
+            item.velY = 0;
+        }
+    });
+    chests.forEach(chest => {
+        if (chest.opened) return;
+        const cx = chest.x + chest.width / 2;
+        const bottom = chest.y + chest.height;
+        if (cx >= digLeft && cx <= digRight && Math.abs(bottom - platformY) < blockSize) {
+            chest.falling = true;
+            chest.velY = 0;
+        }
+    });
+}
+
 function update() {
     if (paused) return;
     if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
@@ -397,7 +472,17 @@ function update() {
     }
 
     items.forEach(item => {
-        item.floatY = Math.sin(gameFrame / 20) * 5;
+        if (item.collected) return;
+        // 重力更新
+        if (item.falling || item.velY !== 0) {
+            updateEntityGravity(item);
+        }
+        // 浮动动画（下落时停止）
+        if (!item.falling) {
+            item.floatY = Math.sin(gameFrame / 20) * 5;
+        } else {
+            item.floatY = 0;
+        }
         if (rectIntersect(player.x, player.y, player.width, player.height, item.x, item.y + item.floatY, 30, 30)) {
             item.collected = true;
             addScore(gameConfig.scoring.word);
@@ -408,6 +493,13 @@ function update() {
             speakWord(item.wordObj);
             showFloatingText(item.wordObj.zh, item.x, item.y);
             maybeTriggerLearningChallenge(item.wordObj);
+        }
+    });
+
+    // 宝箱重力更新
+    chests.forEach(chest => {
+        if (chest.falling || chest.velY !== 0) {
+            updateEntityGravity(chest);
         }
     });
 
@@ -1136,17 +1228,7 @@ function getArmorDefense() {
 }
 
 function updateArmorUI() {
-    const el = document.getElementById("armor-status");
-    if (!el) return;
-    if (playerEquipment.armor) {
-        const armor = ARMOR_TYPES[playerEquipment.armor];
-        const dur = Math.max(0, Math.min(100, Math.round(Number(playerEquipment.armorDurability) || 0)));
-        el.innerText = `🛡️ ${armor.name} ${dur}%`;
-        el.classList.add("hud-box-active");
-    } else {
-        el.innerText = "🛡️ 无";
-        el.classList.remove("hud-box-active");
-    }
+    if (typeof updateEquipStatus === "function") updateEquipStatus();
 }
 
 function showArmorSelectUI() {
@@ -1294,10 +1376,11 @@ function handleInteraction(interactMode = "tap") {
     let minDist = 60;
     const now = Date.now();
     for (let c of chests) {
-        const d = Math.abs((player.x + player.width / 2) - (c.x + c.width / 2));
-        if (d < minDist) {
+        const dx = Math.abs((player.x + player.width / 2) - (c.x + c.width / 2));
+        const dy = Math.abs((player.y + player.height) - (c.y + c.height));
+        if (dx < minDist && dy < blockSize * 1.5) {
             nearestChest = c;
-            minDist = d;
+            minDist = dx;
         }
     }
     if (!nearestChest) return;

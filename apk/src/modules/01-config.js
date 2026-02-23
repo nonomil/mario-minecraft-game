@@ -360,7 +360,7 @@ const WEAPONS = {
         knockback: 0,
         type: "dig",
         emoji: "⛏️",
-        digHits: 3
+        digHits: 1
     },
     bow: {
         id: "bow",
@@ -473,6 +473,7 @@ let chests = [];
 let items = [];
 let enemies = [];
 let golems = [];
+let treasureBlocks = []; // 藏宝方块位置 {x, y, groundType}
 const MAX_GOLEMS = 3;
 let playerPositionHistory = [];
 let projectiles = [];

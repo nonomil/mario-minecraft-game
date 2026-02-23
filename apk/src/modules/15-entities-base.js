@@ -74,6 +74,9 @@ class Platform extends Entity {
         // Break after a short warning window.
         if (this.breakTimer > 30) {
             this.remove = true;
+            if (typeof triggerGravityCheck === "function") {
+                triggerGravityCheck(this.x, this.x + this.width, this.y);
+            }
         }
     }
 }
@@ -104,9 +107,12 @@ class Chest extends Entity {
         this.opened = false;
         this.lastClickTime = 0;
         this.pendingArmor = null;
+        this.velY = 0;
+        this.falling = false;
     }
     open() {
         if (this.opened) return;
+        if (this.falling) return;
         this.opened = true;
         const diff = getDifficultyState();
         const lootCfg = getLootConfig();
@@ -207,6 +213,8 @@ class Item extends Entity {
         this.wordObj = wordObj;
         this.collected = false;
         this.floatY = 0;
+        this.velY = 0;
+        this.falling = false;
     }
 }
 

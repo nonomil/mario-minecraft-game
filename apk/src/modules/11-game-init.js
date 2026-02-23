@@ -111,6 +111,7 @@ function startLevel(idx) {
     particles = [];
     enemies = [];
     golems = [];
+    treasureBlocks = [];
     if (typeof resetPlayerPoisonStatus === "function") resetPlayerPoisonStatus();
     digHits.clear();
     resetProjectiles();
@@ -543,21 +544,77 @@ function generatePlatform(startX, length, groundYValue) {
 
     generateBiomeDecorations(startX, groundYValue, newWidth, biome);
 
+    // 藏宝方块：5%概率在地面生成一个金色斑点方块，挖开出宝箱
+    if (startX > 500 && length >= 4 && Math.random() < 0.05) {
+        const tbOffset = 1 + Math.floor(Math.random() * (length - 2));
+        const tbX = startX + tbOffset * blockSize;
+        treasureBlocks.push({ x: tbX, y: groundYValue, groundType: groundType });
+    }
+
     const floatChance = (gameConfig.spawn.floatingPlatformChance || 0) * (platformCfg.floatingChanceMult || 1);
     const floatItemChance = (gameConfig.spawn.floatingItemChance || 0) * (platformCfg.floatingItemChanceMult || 1);
-    if (length > 5 && Math.random() < floatChance) {
-        const floatLen = 2 + Math.floor(Math.random() * 3);
-        const maxJump = estimateMaxJumpHeightPx() * 0.85;
-        const minOffset = Math.max(50, Number(platformCfg.floatingMinOffset) || 100);
-        const maxExtra = Math.max(0, Number(platformCfg.floatingMaxExtra) || 80);
-        const maxOffset = Math.max(60, Math.min(minOffset + maxExtra, maxJump - 12));
-        const baseOffset = Math.min(minOffset, maxOffset);
-        const extra = Math.max(0, maxOffset - baseOffset);
-        const floatY = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
-        const floatX = startX + blockSize + Math.floor(Math.random() * (length - floatLen) * blockSize);
+    // 可能生成1-2个悬浮平台，间距和高度各不相同
+    const maxFloats = length >= 12 ? 2 : 1;
+    let floatUsedRanges = []; // 记录已用的X范围，避免重叠
+    for (let fi = 0; fi < maxFloats; fi++) {
+        if (Math.random() >= floatChance) continue;
+        if (length <= 5) continue;
+        // 加权随机：短平台多，长平台少
+        const floatRoll = Math.random();
+        let floatLen;
+        if (floatRoll < 0.35) {
+            floatLen = 2 + Math.floor(Math.random() * 2); // 2-3格 (35%)
+        } else if (floatRoll < 0.70) {
+            floatLen = 4 + Math.floor(Math.random() * 2); // 4-5格 (35%)
+        } else {
+            floatLen = 6 + Math.floor(Math.random() * 3); // 6-8格 (30%)
+        }
+        floatLen = Math.min(floatLen, length - 1);
+        const treeH = blockSize * 2.8; // 树高度，与 Tree class 一致
+        const maxJump = estimateMaxJumpHeightPx();
+        const rawMinOffset = Math.max(blockSize * 2, Number(platformCfg.floatingMinOffset) || 100);
+        const maxOffset = Math.min(rawMinOffset + 150, maxJump * 0.95);
+        // 每个平台独立随机高度（宽范围：低到高）
+        const heightRange = Math.max(30, maxOffset - rawMinOffset);
+        let thisOffset = rawMinOffset + Math.random() * heightRange;
+        let floatY = Math.round((groundYValue - thisOffset) / (blockSize / 2)) * (blockSize / 2);
+        // 计算X位置，确保与已有悬浮平台保持间距
+        const floatWidthPx = floatLen * blockSize;
+        const minSpacing = blockSize * 3;
+        let floatX = startX + blockSize + Math.floor(Math.random() * Math.max(1, (length - floatLen) * blockSize));
+        // 检查与已有平台的间距
+        let tooClose = false;
+        for (const range of floatUsedRanges) {
+            if (floatX + floatWidthPx + minSpacing > range[0] && floatX < range[1] + minSpacing) {
+                tooClose = true;
+                break;
+            }
+        }
+        if (tooClose) continue;
+        // 检查是否与树干涉，如果干涉则移到树顶上方（检查所有树）
+        const floatRight = floatX + floatWidthPx;
+        let treeAdjusted = true;
+        while (treeAdjusted) {
+            treeAdjusted = false;
+            for (const t of trees) {
+                if (t.remove) continue;
+                if (t.x + t.width <= floatX || t.x >= floatRight) continue;
+                const floatBottom = floatY + blockSize;
+                if (floatY < t.y + t.height && floatBottom > t.y) {
+                    floatY = t.y - blockSize;
+                    treeAdjusted = true;
+                }
+            }
+        }
+        // 确保不超出跳跃范围
+        const minReachableY = groundYValue - maxJump * 0.95;
+        if (floatY < minReachableY) {
+            floatY = Math.round(minReachableY / (blockSize / 2)) * (blockSize / 2);
+        }
+        floatUsedRanges.push([floatX, floatX + floatWidthPx]);
         const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
         const floatType = floatTypes[Math.floor(Math.random() * floatTypes.length)] || groundType;
-        const floatPlatform = new Platform(floatX, floatY, floatLen * blockSize, blockSize, floatType);
+        const floatPlatform = new Platform(floatX, floatY, floatWidthPx, blockSize, floatType);
         if (biome.id === "nether" && Math.random() < 0.45 && typeof floatPlatform.makeFragile === "function") {
             floatPlatform.makeFragile(3);
         }
@@ -567,6 +624,26 @@ function generatePlatform(startX, length, groundYValue) {
             const word = pickWordForSpawn();
             items.push(new Item(floatItemX, floatY - 50, word));
             registerWordItemSpawn(floatItemX);
+        }
+        // 悬浮平台上生成宝箱（4格以上，25%概率）
+        if (floatLen >= 4 && Math.random() < 0.25) {
+            let chestOffsetBlocks;
+            if (floatLen >= 6) {
+                const center = Math.floor(floatLen / 2);
+                chestOffsetBlocks = center - 1 + Math.floor(Math.random() * 2);
+            } else {
+                chestOffsetBlocks = 1 + Math.floor(Math.random() * (floatLen - 2));
+            }
+            const chestX = floatX + chestOffsetBlocks * blockSize + blockSize * 0.1;
+            chests.push(new Chest(chestX, floatY));
+            // 口袋宝箱：6+格平台，宝箱两侧加墙壁方块形成"口袋"
+            if (floatLen >= 6 && chestOffsetBlocks >= 1 && chestOffsetBlocks < floatLen - 1) {
+                const wallY = floatY - blockSize;
+                const leftWallX = floatX + (chestOffsetBlocks - 1) * blockSize;
+                const rightWallX = floatX + (chestOffsetBlocks + 1) * blockSize;
+                platforms.push(new Platform(leftWallX, wallY, blockSize, blockSize, floatType));
+                platforms.push(new Platform(rightWallX, wallY, blockSize, blockSize, floatType));
+            }
         }
     }
 
@@ -658,6 +735,23 @@ function generatePlatform(startX, length, groundYValue) {
             if (gateWord) wordGates.push(new WordGate(objectX, groundYValue - 20, gateWord));
         } else if (rand < enemyChance) {
             spawnEnemyByDifficulty(objectX, groundYValue - 32);
+        }
+    }
+
+    // 宝藏柱：地面上垂直方块柱，顶部有宝箱或单词（10%概率）
+    if (startX > 600 && length >= 6 && Math.random() < 0.10) {
+        const pillarX = startX + blockSize * 2 + Math.floor(Math.random() * Math.max(1, (length - 4) * blockSize));
+        const pillarHeight = 2 + Math.floor(Math.random() * 2); // 2-3格高
+        for (let ph = 1; ph <= pillarHeight; ph++) {
+            platforms.push(new Platform(pillarX, groundYValue - ph * blockSize, blockSize, blockSize, groundType));
+        }
+        const topY = groundYValue - pillarHeight * blockSize;
+        if (Math.random() < 0.7) {
+            chests.push(new Chest(pillarX + blockSize * 0.1, topY));
+        } else if (canSpawnWordItemAt(pillarX)) {
+            const word = pickWordForSpawn();
+            items.push(new Item(pillarX + blockSize * 0.2, topY - 40, word));
+            registerWordItemSpawn(pillarX);
         }
     }
 
@@ -812,10 +906,10 @@ function generateBiomeDecorations(x, yPos, width, biome) {
                 spawnDecoration("bush", obj => obj.reset(decorX, yPos - 20), () => new Bush(decorX, yPos - 20));
                 break;
             case "flower":
-                spawnDecoration("flower", obj => obj.reset(decorX, yPos - 18), () => new Flower(decorX, yPos - 18));
+                spawnDecoration("flower", obj => obj.reset(decorX, yPos - 36), () => new Flower(decorX, yPos - 36));
                 break;
             case "mushroom":
-                spawnDecoration("mushroom", obj => obj.reset(decorX, yPos - 20), () => new Mushroom(decorX, yPos - 20));
+                spawnDecoration("mushroom", obj => obj.reset(decorX, yPos - 36), () => new Mushroom(decorX, yPos - 36));
                 break;
             case "vine":
                 spawnDecoration("vine", obj => obj.reset(decorX, yPos - 80, 40 + Math.random() * 30), () => new Vine(decorX, yPos - 80, 40 + Math.random() * 30));
@@ -872,19 +966,19 @@ function generateBiomeDecorations(x, yPos, width, biome) {
                 spawnBiomeTree(decorX, yPos, biome);
                 break;
             case "shell":
-                spawnDecoration("shell", obj => obj.reset(decorX, yPos - 10), () => new Shell(decorX, yPos - 10));
+                spawnDecoration("shell", obj => obj.reset(decorX, yPos - 18), () => new Shell(decorX, yPos - 18));
                 break;
             case "starfish":
-                spawnDecoration("starfish", obj => obj.reset(decorX, yPos - 12), () => new Starfish(decorX, yPos - 12));
+                spawnDecoration("starfish", obj => obj.reset(decorX, yPos - 30), () => new Starfish(decorX, yPos - 30));
                 break;
             case "seaweed":
-                spawnDecoration("seaweed", obj => obj.reset(decorX, yPos - 30), () => new Seaweed(decorX, yPos - 30));
+                spawnDecoration("seaweed", obj => obj.reset(decorX, yPos - 60), () => new Seaweed(decorX, yPos - 60));
                 break;
             case "large_seaweed":
-                spawnDecoration("large_seaweed", obj => obj.reset(decorX, yPos - 70), () => new LargeSeaweed(decorX, yPos - 70));
+                spawnDecoration("large_seaweed", obj => obj.reset(decorX, yPos - 110), () => new LargeSeaweed(decorX, yPos - 110));
                 break;
             case "coral":
-                spawnDecoration("coral", obj => obj.reset(decorX, yPos - 15), () => new CoralDecor(decorX, yPos - 15));
+                spawnDecoration("coral", obj => obj.reset(decorX, yPos - 35), () => new CoralDecor(decorX, yPos - 35));
                 break;
             case "boat":
                 spawnDecoration("boat", obj => obj.reset(decorX, yPos - 18), () => new BoatDecor(decorX, yPos - 18));
