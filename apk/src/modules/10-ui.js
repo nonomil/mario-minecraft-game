@@ -41,7 +41,7 @@ function setOverlay(visible, mode) {
             updateStartOverlayActionState();
             setStartOverlayPage("intro");
             clearStartOverlayTimer();
-            startOverlayTimer = setTimeout(() => setStartOverlayPage("setup"), START_OVERLAY_INTRO_MS);
+            wireIntroConfirmButton();
             if (title) title.innerText = "Minecraft 单词游戏";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
         } else if (mode === "pause") {
@@ -110,6 +110,18 @@ function setOverlay(visible, mode) {
         const btnLeaderboard = document.getElementById("btn-overlay-leaderboard");
         if (btnLeaderboard) btnLeaderboard.style.display = "none";
     }
+}
+function wireIntroConfirmButton() {
+    const btn = document.getElementById("btn-overlay-intro-confirm");
+    if (!btn || btn.dataset.wired) return;
+    btn.dataset.wired = "1";
+    btn.addEventListener("click", () => {
+        setStartOverlayPage("setup");
+        wireStartOverlayAccountActions();
+        renderStartOverlayAccounts();
+        const input = document.getElementById("overlay-username-input");
+        if (input) setTimeout(() => input.focus(), 100);
+    });
 }
 function triggerGameOver() {
     paused = true;
@@ -324,6 +336,9 @@ function resumeGameFromOverlay() {
     // Prevent an immediate mobile viewport change from reopening the start overlay.
     viewportIgnoreUntilMs = nowMs() + 2000;
     if (overlayMode === "start") {
+        // If still on intro page, don't skip - user must click confirm
+        const introPage = document.querySelector(".overlay-page-intro.active");
+        if (introPage) return;
         if (!currentAccount) {
             showToast("请先选择或创建档案");
             setStartOverlayPage("setup");

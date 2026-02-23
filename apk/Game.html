@@ -432,7 +432,11 @@
             <button class="game-btn game-btn-small" id="btn-save-progress-close">关闭</button>
         </div>
         <div class="profile-stats">
-            <div>档案名: <strong id="save-progress-name"></strong></div>
+            <div id="save-progress-name-row">档案名: <strong id="save-progress-name"></strong></div>
+            <div id="save-progress-input-row" style="display:none;">
+                <label>输入档案名:</label>
+                <input class="overlay-input" id="save-progress-name-input" type="text" placeholder="输入昵称" maxlength="20" style="width:100%;margin-top:6px;">
+            </div>
             <div>当前积分: <span id="save-progress-score"></span></div>
             <div>已学词数: <span id="save-progress-words"></span></div>
             <div>钻石: <span id="save-progress-diamonds"></span></div>

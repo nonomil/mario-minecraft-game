@@ -29,6 +29,15 @@ function ensureStartOverlayContent() {
             <div class="overlay-page overlay-page-intro active" data-page="intro">
                 <div class="overlay-intro-title">Minecraft 单词游戏</div>
                 <div class="overlay-intro-sub">在冒险中学习单词，闯关解锁更多词库与装备。</div>
+                <div style="text-align:left;margin:12px auto;max-width:320px;font-size:14px;line-height:1.8;color:#ddd;">
+                    <div style="margin-bottom:8px;color:#fff;font-weight:bold;">🎮 操作说明</div>
+                    <div>⬅️➡️ 移动 &nbsp; ⬆️ 跳跃（可二段跳）</div>
+                    <div>⚔️ J 攻击 &nbsp; 🔄 K 切换武器</div>
+                    <div>💎 Z 使用钻石 &nbsp; 📦 Y 互动/开箱</div>
+                    <div style="margin-top:10px;color:#fff;font-weight:bold;">⚙️ 温馨提示</div>
+                    <div>游戏速度、单词词库选择、学习设置等均可在右上角 <strong>⚙️ 设置</strong> 中调整。</div>
+                </div>
+                <button class="game-btn" id="btn-overlay-intro-confirm" style="margin-top:8px;">确定</button>
             </div>
             <div class="overlay-page overlay-page-setup" data-page="setup">
                 <div class="overlay-account">
@@ -40,8 +49,6 @@ function ensureStartOverlayContent() {
                     <div class="overlay-account-hint">已有档案：选择继续/重玩/删除</div>
                     <div id="overlay-accounts-container" class="account-list"></div>
                 </div>
-                <div class="overlay-hints-title">操作说明</div>
-                <div class="overlay-hints-text">${START_OVERLAY_HINT_HTML}</div>
             </div>
         </div>
     `;
@@ -249,13 +256,6 @@ async function loginWithAccount(account, options) {
     updateStartOverlayActionState();
     // If start() already finished wiring handlers, boot the game loop on first successful login.
     if (bootReady && !startOverlayVisible) bootGameLoopIfNeeded();
-
-    // First-launch: prompt user to select vocab pack
-    if (!hasSeenVocabPrompt() && storage.getAccountList().length <= 1) {
-        setTimeout(() => {
-            if (typeof showVocabPromptModal === "function") showVocabPromptModal();
-        }, 500);
-    }
 }
 
 function bootGameLoopIfNeeded() {
@@ -518,21 +518,32 @@ function wireProfileModal() {
 // --- Save Progress Modal ---
 
 function showSaveProgressModal() {
-    if (!currentAccount) { showToast("请先登录账号"); return; }
     const modal = document.getElementById("save-progress-modal");
     if (!modal) return;
+    const nameRow = document.getElementById("save-progress-name-row");
+    const inputRow = document.getElementById("save-progress-input-row");
+    const nameInput = document.getElementById("save-progress-name-input");
     const nameEl = document.getElementById("save-progress-name");
     const scoreEl = document.getElementById("save-progress-score");
     const wordsEl = document.getElementById("save-progress-words");
     const diamondsEl = document.getElementById("save-progress-diamonds");
-    if (nameEl) nameEl.innerText = currentAccount.username;
+    if (currentAccount) {
+        if (nameRow) nameRow.style.display = "";
+        if (inputRow) inputRow.style.display = "none";
+        if (nameEl) nameEl.innerText = currentAccount.username;
+    } else {
+        if (nameRow) nameRow.style.display = "none";
+        if (inputRow) inputRow.style.display = "";
+        if (nameInput) nameInput.value = "";
+    }
     if (scoreEl) scoreEl.innerText = score;
-    if (wordsEl) wordsEl.innerText = currentAccount.vocabulary?.learnedWords?.length || 0;
+    if (wordsEl) wordsEl.innerText = currentAccount?.vocabulary?.learnedWords?.length || 0;
     if (diamondsEl) diamondsEl.innerText = inventory.diamond || 0;
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
     pausedByModal = true;
     paused = true;
+    if (!currentAccount && nameInput) setTimeout(() => nameInput.focus(), 100);
 }
 
 function hideSaveProgressModal() {
@@ -544,6 +555,18 @@ function hideSaveProgressModal() {
 }
 
 function confirmSaveProgress() {
+    if (!currentAccount) {
+        const nameInput = document.getElementById("save-progress-name-input");
+        const username = (nameInput?.value || "").trim();
+        if (!username) {
+            showToast("请输入档案名");
+            nameInput?.focus();
+            return;
+        }
+        const existing = storage.getAccountList().find(a => a.username === username);
+        const account = existing || storage.createAccount(username);
+        loginWithAccount(account, { mode: "continue" });
+    }
     saveCurrentProgress();
     showToast("💾 进度已保存");
     hideSaveProgressModal();
