@@ -1228,9 +1228,9 @@ function handleTraderBuySunscreen() {
     return false;
   }
   inventory.diamond -= cost;
-  setVillageBuff("sunscreen", 180000);
+  setVillageBuff("sunscreen", 420000);
   if (typeof updateInventoryUI === "function") updateInventoryUI();
-  showToast("🧴 防晒霜已生效（180秒）");
+  showToast("🧴 防晒霜已生效（7分钟）");
   showFloatingText("🧴 防晒中", player.x, player.y - 36, "#FFD54F");
   return true;
 }

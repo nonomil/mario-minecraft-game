@@ -547,7 +547,7 @@ const ARMOR_DURATION_MINUTES = {
     leather: 3,   // 木盔甲（皮革）
     chainmail: 4,
     iron: 4,
-    gold: 5,
+    gold: 3,
     diamond: 6,
     netherite: 7
 };
@@ -594,7 +594,7 @@ function tickArmorDurabilityByTime() {
     const loss = (dt / durationMs) * 100;
     if (loss <= 0) return;
 
-    playerEquipment.armorDurability = Math.max(0, Math.round((Number(playerEquipment.armorDurability) - loss) * 10) / 10);
+    playerEquipment.armorDurability = Math.max(0, Number(playerEquipment.armorDurability) - loss);
     playerEquipment.armorLastDurabilityTick = now;
     if (playerEquipment.armorDurability <= 0) {
         breakEquippedArmor(armorId);
@@ -652,6 +652,15 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     if (hasArmor) {
         if (actualDamage <= 0) {
             showFloatingText("🛡️ 格挡", player.x, player.y - 24, "#80DEEA");
+        }
+        // Hit-based durability loss per armor type
+        const hitDurabilityCost = {
+            leather: 8, chainmail: 6, iron: 5, gold: 5, diamond: 3, netherite: 2
+        };
+        const cost = hitDurabilityCost[armorId] || 5;
+        playerEquipment.armorDurability = Math.max(0, playerEquipment.armorDurability - cost);
+        if (playerEquipment.armorDurability <= 0) {
+            breakEquippedArmor(armorId);
         }
     }
     updateArmorUI();
@@ -752,7 +761,18 @@ function renderInventoryModal() {
                 </div>
             `).join("")
             : `<div class="inventory-empty">暂无装备</div>`;
-        inventoryContentEl.innerHTML = `${currentArmorHtml}${armorSectionHtml}${weaponHtml}`;
+        // Sunscreen buff display
+        let sunscreenHtml = "";
+        if (typeof hasVillageBuff === "function" && hasVillageBuff("sunscreen")) {
+            const buffs = typeof getPlayerBuffStore === "function" ? getPlayerBuffStore() : {};
+            const remaining = Math.max(0, (buffs.sunscreen?.expiresAt || 0) - Date.now());
+            const mins = Math.floor(remaining / 60000);
+            const secs = Math.floor((remaining % 60000) / 1000);
+            sunscreenHtml = `<div class="inventory-equipment" style="margin-top:6px;">
+                <div>🧴 防晒霜 剩余 ${mins}:${String(secs).padStart(2, "0")}</div>
+            </div>`;
+        }
+        inventoryContentEl.innerHTML = `${currentArmorHtml}${sunscreenHtml}${armorSectionHtml}${weaponHtml}`;
         return;
     }
 

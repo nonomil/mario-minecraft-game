@@ -5,9 +5,10 @@
 
 function drawSteve(x, y, facingRight, attacking) {
     const s = player.width / 26;
-    ctx.fillStyle = "#00AAAA";
+    const hasSunscreen = typeof hasSunscreenBuff === "function" && hasSunscreenBuff();
+    ctx.fillStyle = hasSunscreen ? "#FFFFFF" : "#00AAAA";
     ctx.fillRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
-    ctx.fillStyle = "#0000AA";
+    ctx.fillStyle = hasSunscreen ? "#EEEEEE" : "#0000AA";
     ctx.fillRect(x + 6 * s, y + 40 * s, 14 * s, 12 * s);
     ctx.fillStyle = "#F5Bca9";
     ctx.fillRect(x + 3 * s, y, 20 * s, 20 * s);

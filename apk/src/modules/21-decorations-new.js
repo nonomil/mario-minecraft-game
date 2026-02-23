@@ -689,23 +689,52 @@ function renderNewBiomeDecorations(ctx, camX, renderCamX = camX) {
 // ============ 装饰渲染函数 ============
 function renderCherryTree(ctx, d, camX) {
     const dx = d.x - camX;
+    const w = d.width;
+    const h = d.height;
     // 树干
     ctx.fillStyle = "#8B4513";
-    ctx.fillRect(dx + d.width * 0.42, d.y + d.height * 0.52, d.width * 0.18, d.height * 0.48);
+    ctx.fillRect(dx + w * 0.42, d.y + h * 0.52, w * 0.18, h * 0.48);
 
-    // 树冠基底（绿色）
+    // 树冠 — 三角形层叠（3层，从下到上逐渐变小）
     ctx.fillStyle = "#5A8F3C";
+    // 底层三角
     ctx.beginPath();
-    ctx.arc(dx + d.width * 0.34, d.y + d.height * 0.37, d.width * 0.24, 0, Math.PI * 2);
-    ctx.arc(dx + d.width * 0.5, d.y + d.height * 0.28, d.width * 0.3, 0, Math.PI * 2);
-    ctx.arc(dx + d.width * 0.66, d.y + d.height * 0.37, d.width * 0.24, 0, Math.PI * 2);
+    ctx.moveTo(dx + w * 0.5, d.y + h * 0.18);
+    ctx.lineTo(dx + w * 0.08, d.y + h * 0.48);
+    ctx.lineTo(dx + w * 0.92, d.y + h * 0.48);
+    ctx.closePath();
+    ctx.fill();
+    // 中层三角
+    ctx.beginPath();
+    ctx.moveTo(dx + w * 0.5, d.y + h * 0.08);
+    ctx.lineTo(dx + w * 0.15, d.y + h * 0.35);
+    ctx.lineTo(dx + w * 0.85, d.y + h * 0.35);
+    ctx.closePath();
+    ctx.fill();
+    // 顶层三角
+    ctx.beginPath();
+    ctx.moveTo(dx + w * 0.5, d.y);
+    ctx.lineTo(dx + w * 0.22, d.y + h * 0.22);
+    ctx.lineTo(dx + w * 0.78, d.y + h * 0.22);
+    ctx.closePath();
     ctx.fill();
 
-    // 樱花覆盖层（半透明）
-    ctx.globalAlpha = 0.55;
-    ctx.fillStyle = "#7CA858";
+    // 樱花覆盖层（半透明粉色）
+    ctx.globalAlpha = 0.45;
+    ctx.fillStyle = "#FFB7C5";
+    // 底层粉色
     ctx.beginPath();
-    ctx.arc(dx + d.width * 0.5, d.y + d.height * 0.33, d.width * 0.28, 0, Math.PI * 2);
+    ctx.moveTo(dx + w * 0.5, d.y + h * 0.2);
+    ctx.lineTo(dx + w * 0.12, d.y + h * 0.46);
+    ctx.lineTo(dx + w * 0.88, d.y + h * 0.46);
+    ctx.closePath();
+    ctx.fill();
+    // 中层粉色
+    ctx.beginPath();
+    ctx.moveTo(dx + w * 0.5, d.y + h * 0.1);
+    ctx.lineTo(dx + w * 0.18, d.y + h * 0.33);
+    ctx.lineTo(dx + w * 0.82, d.y + h * 0.33);
+    ctx.closePath();
     ctx.fill();
     ctx.globalAlpha = 1;
 
@@ -714,7 +743,7 @@ function renderCherryTree(ctx, d, camX) {
     ctx.lineWidth = 2;
     const branchOffsets = Array.isArray(d.branchOffsets) ? d.branchOffsets : [];
     for (const branch of branchOffsets) {
-        const startX = dx + d.width * 0.5;
+        const startX = dx + w * 0.5;
         const startY = d.y + branch.y;
         const endX = startX + branch.x;
         const endY = startY - branch.len * 0.55;
@@ -724,29 +753,11 @@ function renderCherryTree(ctx, d, camX) {
         ctx.stroke();
     }
 
-    // 多色花瓣点缀
-    const blossomOffsets = Array.isArray(d.blossomOffsets) ? d.blossomOffsets : [];
-    for (const spot of blossomOffsets) {
-        const size = spot.size || 3;
-        ctx.fillStyle = spot.color || "#FFC0CB";
-        ctx.beginPath();
-        ctx.ellipse(
-            dx + d.width / 2 + spot.x,
-            d.y + d.height * 0.35 + spot.y,
-            size,
-            size * (0.72 + Math.random() * 0.2),
-            Math.random() * Math.PI,
-            0,
-            Math.PI * 2
-        );
-        ctx.fill();
-    }
-
     // 花瓣飘落
     if (Math.random() < 0.02 && cherryPetalParticles.length < 120) {
         cherryPetalParticles.push({
-            x: d.x + d.width * (0.25 + Math.random() * 0.5),
-            y: d.y + d.height * (0.15 + Math.random() * 0.25),
+            x: d.x + w * (0.25 + Math.random() * 0.5),
+            y: d.y + h * (0.15 + Math.random() * 0.25),
             vx: (Math.random() - 0.5) * 0.45,
             vy: 0.35 + Math.random() * 0.3,
             phase: Math.random() * Math.PI * 2,

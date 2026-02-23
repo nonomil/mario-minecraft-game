@@ -103,30 +103,50 @@ function digGroundBlock() {
     const dir = player.facingRight ? 1 : -1;
     const targetX = player.x + (dir > 0 ? player.width + 6 : -6);
     const blockX = Math.floor(targetX / blockSize) * blockSize;
-    const key = `${blockX}`;
+
+    // Find target platform: prefer ground, then nearest floating platform
+    let targetIdx = platforms.findIndex(p => p.y === groundY && blockX >= p.x && blockX < p.x + p.width);
+    let targetY = groundY;
+    if (targetIdx === -1) {
+        // Search for floating platforms near the player
+        let bestDist = Infinity;
+        const playerCenterY = player.y + player.height / 2;
+        for (let i = 0; i < platforms.length; i++) {
+            const p = platforms[i];
+            if (p.remove) continue;
+            if (blockX < p.x || blockX >= p.x + p.width) continue;
+            const dist = Math.abs(p.y - playerCenterY);
+            if (dist < blockSize * 2.5 && dist < bestDist) {
+                bestDist = dist;
+                targetIdx = i;
+                targetY = p.y;
+            }
+        }
+    }
+
+    const key = `${blockX},${targetY}`;
     const hit = (digHits.get(key) || 0) + 1;
     digHits.set(key, hit);
-    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, groundY - 40);
+    showFloatingText(`⛏️ ${hit}/${weapon.digHits}`, blockX + blockSize / 2, targetY - 40);
 
     if (hit < weapon.digHits) {
         playerWeapons.attackCooldown = weapon.cooldown;
         return;
     }
 
-    const idx = platforms.findIndex(p => p.y === groundY && blockX >= p.x && blockX < p.x + p.width);
-    if (idx === -1) {
+    if (targetIdx === -1) {
         playerWeapons.attackCooldown = weapon.cooldown;
         return;
     }
-    const p = platforms[idx];
+    const p = platforms[targetIdx];
     const leftWidth = blockX - p.x;
     const rightStart = blockX + blockSize;
     const rightWidth = (p.x + p.width) - rightStart;
-    platforms.splice(idx, 1);
+    platforms.splice(targetIdx, 1);
     if (leftWidth > 0) platforms.push(new Platform(p.x, p.y, leftWidth, p.height, p.type));
     if (rightWidth > 0) platforms.push(new Platform(rightStart, p.y, rightWidth, p.height, p.type));
     digHits.delete(key);
-    showFloatingText("🕳️ 深坑", blockX + blockSize / 2, groundY - 50);
+    showFloatingText("🕳️ 挖掉了", blockX + blockSize / 2, targetY - 50);
     playerWeapons.attackCooldown = weapon.cooldown;
 }
 

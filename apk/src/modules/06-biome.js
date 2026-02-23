@@ -590,16 +590,23 @@ function emitBiomeParticle(type, x, y) {
     return particle;
 }
 
+function applyEnvironmentalDamage(hpLoss, msg, color) {
+    playerHp = Math.max(0, playerHp - hpLoss);
+    if (typeof updateHpUI === "function") updateHpUI();
+    if (msg) showFloatingText(msg, player.x + player.width / 2, player.y - 30, color || '#FF4500');
+    if (playerHp <= 0 && typeof triggerGameOver === "function") triggerGameOver();
+}
+
 function updateExtremeHeatEnvironment() {
     const now = Date.now();
-    const inHeatBiome = currentBiome === "nether" || currentBiome === "volcano";
-    const hasFireResistance = hasHeatProtection();
+    const inHeatBiome = currentBiome === "nether" || currentBiome === "volcano" || currentBiome === "desert";
+    const hasProtection = hasHeatProtection();
     if (!inHeatBiome) {
         biomeHeatDotTimerMs = 0;
         biomeHeatLastTickMs = now;
         return;
     }
-    if (hasFireResistance) {
+    if (hasProtection) {
         biomeHeatDotTimerMs = 0;
         biomeHeatLastTickMs = now;
         return;
@@ -617,11 +624,13 @@ function updateExtremeHeatEnvironment() {
     const deltaMs = Math.max(0, Math.min(250, now - biomeHeatLastTickMs));
     biomeHeatLastTickMs = now;
     biomeHeatDotTimerMs += deltaMs;
-    // 真实时间每 60 秒掉 0.5 血，避免 FPS 波动影响。
+    // 每 60 秒固定掉 1 格血（绕过护甲/难度缩放）
     if (biomeHeatDotTimerMs >= 60000) {
         biomeHeatDotTimerMs -= 60000;
-        damagePlayer(0.5, player.x, 30);
-        showFloatingText(BIOME_MESSAGES.heatDamage, player.x + player.width / 2, player.y - 30, '#FF4500');
+        const msg = currentBiome === "desert"
+            ? "☀️ 太热了！去村庄买防晒霜"
+            : "🔥 地狱灼烧！需要防晒霜";
+        applyEnvironmentalDamage(1, msg, currentBiome === "desert" ? "#FFB300" : "#FF4500");
     }
 }
 
