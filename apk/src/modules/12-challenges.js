@@ -11,10 +11,15 @@ function dropItem(type, x, y) {
 }
 
 function bumpWordDisplay() {
-    const el = document.getElementById("word-display");
-    if (!el) return;
-    el.style.transform = "scale(1.15)";
-    setTimeout(() => { el.style.transform = "scale(1)"; }, 160);
+    const block = document.getElementById("word-display-block")
+        || document.getElementById("word-display");
+    if (!block) return;
+    block.classList.remove("word-display-animate");
+    void block.offsetWidth;
+    block.classList.add("word-display-animate");
+    setTimeout(() => {
+        block.classList.remove("word-display-animate");
+    }, 260);
 }
 
 function showWordCard(wordObj) {
@@ -657,9 +662,16 @@ function triggerWordGateChallenge(gate) {
 }
 
 function updateWordUI(wordObj) {
-    const el = document.getElementById("word-display");
-    if (!el) return;
-    el.innerText = wordObj ? [wordObj.en, wordObj.zh].filter(Boolean).join(" ") : "Start!";
+    const titleEl = document.getElementById("word-display");
+    const subEl = document.getElementById("word-display-zh");
+    if (!titleEl) return;
+    if (!wordObj) {
+        titleEl.innerText = "Start!";
+        if (subEl) subEl.innerText = "";
+        return;
+    }
+    titleEl.innerText = wordObj.en || "";
+    if (subEl) subEl.innerText = wordObj.zh || "";
 }
 
 function speakWord(wordObj) {
