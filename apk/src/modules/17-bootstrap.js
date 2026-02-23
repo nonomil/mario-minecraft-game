@@ -71,6 +71,16 @@ async function start() {
             resumeGameFromOverlay();
         }, { passive: false });
     }
+    const overlaySkipBtn = document.getElementById("btn-overlay-skip");
+    if (overlaySkipBtn) {
+        overlaySkipBtn.addEventListener("click", resumeGameFromOverlay);
+    }
+    const overlayPickBtn = document.getElementById("btn-overlay-pick-account");
+    if (overlayPickBtn) {
+        overlayPickBtn.addEventListener("click", () => {
+            showLoginScreen();
+        });
+    }
     const overlayScorebtn = document.getElementById("btn-overlay-score-revive");
     if (overlayScorebtn) {
         overlayScorebtn.addEventListener("click", () => {

@@ -2,6 +2,7 @@
  * 08-account.js - 账号系统、登录、成就
  * 从 main.js 拆分 (原始行 1621-2101)
  */
+let selectedAccountId = null;
 function clearStartOverlayTimer() {
     if (startOverlayTimer) {
         clearTimeout(startOverlayTimer);
@@ -64,7 +65,7 @@ function renderStartOverlayAccounts() {
         if (b.id === storedId) return 1;
         return 0;
     });
-    renderAccountList(container, sortedAccounts, storedId);
+    renderAccountList(container, sortedAccounts, storedId, selectedAccountId);
 }
 
 function wireStartOverlayAccountActions() {
@@ -106,6 +107,51 @@ function isStartOverlayVisible() {
     return !!overlay && overlay.classList.contains("visible") && overlayMode === "start";
 }
 
+function refreshLoginScreenUI() {
+    const loginForm = document.getElementById("login-form");
+    const accountList = document.getElementById("account-list");
+    const accountsContainer = document.getElementById("accounts-container");
+    if (!loginForm || !accountList || !accountsContainer) return;
+    const storedId = storage.getCurrentAccountId();
+    const accounts = storage.getAccountList();
+    const sortedAccounts = [...accounts].sort((a, b) => {
+        if (a.id === storedId) return -1;
+        if (b.id === storedId) return 1;
+        return 0;
+    });
+    if (selectedAccountId && !accounts.find(a => a.id === selectedAccountId)) {
+        selectedAccountId = storedId || null;
+    }
+    if (!selectedAccountId && storedId) selectedAccountId = storedId;
+    renderAccountList(accountsContainer, sortedAccounts, storedId, selectedAccountId);
+    if (accounts.length) {
+        loginForm.style.display = "none";
+        accountList.style.display = "block";
+    } else {
+        loginForm.style.display = "block";
+        accountList.style.display = "none";
+    }
+}
+
+function selectAccountForLogin(accountId) {
+    selectedAccountId = accountId || null;
+    refreshLoginScreenUI();
+}
+
+function showLoginScreen() {
+    const screen = document.getElementById("login-screen");
+    if (!screen) return;
+    refreshLoginScreenUI();
+    screen.classList.add("visible");
+    paused = true;
+    pausedByModal = true;
+    setOverlay(false);
+    const input = document.getElementById("username-input");
+    if (input && document.getElementById("login-form")?.style.display !== "none") {
+        setTimeout(() => input.focus(), 100);
+    }
+}
+
 async function initLoginScreen() {
     const screen = document.getElementById("login-screen");
     if (!screen) return;
@@ -115,36 +161,39 @@ async function initLoginScreen() {
     const usernameInput = document.getElementById("username-input");
     const btnLogin = document.getElementById("btn-login");
     const btnNewAccount = document.getElementById("btn-new-account");
-    const storedId = storage.getCurrentAccountId();
-    const accounts = storage.getAccountList();
-    const sortedAccounts = [...accounts].sort((a, b) => {
-        if (a.id === storedId) return -1;
-        if (b.id === storedId) return 1;
-        return 0;
-    });
+    const btnLoginConfirm = document.getElementById("btn-login-confirm");
 
-    renderAccountList(accountsContainer, sortedAccounts, storedId);
-    if (accounts.length) {
-        loginForm.style.display = "none";
-        accountList.style.display = "block";
-    } else {
-        loginForm.style.display = "block";
-        accountList.style.display = "none";
-    }
-
-    ensureStartOverlayContent();
-    renderStartOverlayAccounts();
-    wireStartOverlayAccountActions();
+    selectedAccountId = storage.getCurrentAccountId() || null;
+    refreshLoginScreenUI();
     screen.classList.remove("visible");
     paused = true;
     pausedByModal = true;
     setOverlay(true, "start");
 
+    function handleConfirmLogin() {
+        const username = (usernameInput?.value || "").trim();
+        if (username) {
+            const existing = storage.getAccountList().find(a => a.username === username);
+            const account = existing || storage.createAccount(username);
+            loginWithAccount(account, { mode: "continue" });
+            return;
+        }
+        if (selectedAccountId) {
+            const account = storage.getAccountList().find(a => a.id === selectedAccountId);
+            if (account) {
+                loginWithAccount(account, { mode: "continue" });
+                return;
+            }
+        }
+        showToast("???????????");
+        if (usernameInput) usernameInput.focus();
+    }
+
     if (btnLogin) {
         btnLogin.addEventListener("click", () => {
             const username = (usernameInput?.value || "").trim();
             if (!username) {
-                showToast("请输入用户名");
+                showToast("??????");
                 return;
             }
             const existing = storage.getAccountList().find(a => a.username === username);
@@ -153,15 +202,22 @@ async function initLoginScreen() {
         });
     }
 
+    if (btnLoginConfirm) {
+        btnLoginConfirm.addEventListener("click", handleConfirmLogin);
+    }
+
     if (btnNewAccount) {
         btnNewAccount.addEventListener("click", () => {
-            loginForm.style.display = "block";
-            accountList.style.display = "none";
+            selectedAccountId = null;
+            if (loginForm) loginForm.style.display = "block";
+            if (accountList) accountList.style.display = "none";
+            if (usernameInput) setTimeout(() => usernameInput.focus(), 100);
         });
     }
 }
 
-function renderAccountList(container, accounts, storedId) {
+
+function renderAccountList(container, accounts, storedId, selectedId) {
     if (!container) return;
     container.innerHTML = "";
     if (!accounts.length) {
@@ -170,7 +226,7 @@ function renderAccountList(container, accounts, storedId) {
     }
     accounts.forEach(account => {
         const div = document.createElement("div");
-        div.className = "account-item";
+        div.className = "account-item" + (selectedId && account.id === selectedId ? " selected" : "");
         div.innerHTML = `
             <div class="account-avatar">用户</div>
             <div class="account-info">
@@ -186,7 +242,7 @@ function renderAccountList(container, accounts, storedId) {
             </div>
         `;
 
-        div.querySelector(".account-info")?.addEventListener("click", () => loginWithAccount(account, { mode: "continue" }));
+        div.addEventListener("click", () => selectAccountForLogin(account.id));
         div.querySelector(".btn-account-continue")?.addEventListener("click", e => {
             e.stopPropagation();
             loginWithAccount(account, { mode: "continue" });
@@ -202,7 +258,7 @@ function renderAccountList(container, accounts, storedId) {
             e.stopPropagation();
             if (confirm(`确定删除账号 "${account.username}" 吗？`)) {
                 storage.deleteAccount(account.id);
-                renderAccountList(container, storage.getAccountList(), storage.getCurrentAccountId());
+                renderAccountList(container, storage.getAccountList(), storage.getCurrentAccountId(), selectedAccountId);
             }
         });
 
