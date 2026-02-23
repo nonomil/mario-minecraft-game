@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -87,7 +87,7 @@ body {
 }
 
 .overlay-title {
-    font-size: clamp(22px, 4vw, 34px);
+    font-size: clamp(18px, 3vw, 24px);
     font-weight: 900;
     margin-bottom: 10px;
     color: #FFD700;
@@ -95,7 +95,7 @@ body {
 }
 
 .overlay-text {
-    font-size: clamp(7.7px, 1.65vw, 11px);
+    font-size: clamp(12px, 2vw, 14px);
     font-weight: 900;
     line-height: 1.6;
     margin-bottom: 14px;
@@ -109,6 +109,8 @@ body {
 
 .overlay-start {
     text-align: left;
+    font-size: clamp(12px, 2.2vw, 16px);
+    font-weight: 700;
 }
 
 .overlay-start .overlay-page {
@@ -123,6 +125,17 @@ body {
     font-size: clamp(20px, 4vw, 28px);
     font-weight: 900;
     margin-bottom: 6px;
+    color: #fff;
+    text-align: left;
+}
+
+.overlay-intro-hero {
+    text-align: center;
+    font-size: clamp(22px, 4.5vw, 32px);
+    font-weight: 900;
+    margin-bottom: 10px;
+    color: #FFD700;
+    text-shadow: 2px 2px 0 #000;
 }
 
 .overlay-intro-sub {
@@ -130,6 +143,33 @@ body {
     font-weight: 700;
     opacity: 0.95;
     line-height: 1.6;
+}
+
+
+.overlay-section {
+    margin-top: 12px;
+}
+
+.overlay-section-title {
+    font-weight: 900;
+    margin-bottom: 6px;
+    color: #fff;
+}
+
+.overlay-key-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    font-size: clamp(12px, 2.1vw, 16px);
+    margin-bottom: 4px;
+}
+
+.overlay-key-row span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 170px;
 }
 
 .overlay-account {
@@ -207,13 +247,23 @@ body {
     margin-top: 12px;
 }
 
+
+.overlay-buttons.overlay-buttons-duo {
+    flex-direction: row;
+}
+
+.overlay-buttons.overlay-buttons-duo .overlay-btn {
+    width: auto;
+    flex: 1;
+}
+
 #btn-overlay-score-revive {
     background: linear-gradient(135deg, #ffd700, #ffaa00);
     color: #333;
     border: none;
     padding: 12px 18px;
     border-radius: 10px;
-    font-size: clamp(11px, 2vw, 14px);
+    font-size: clamp(12px, 2vw, 14px);
     font-weight: 900;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -262,9 +312,9 @@ body {
  }
 
 .learning-modal-header {
-    font-size: clamp(22px, 3vw, 32px);
+    font-size: clamp(18px, 2.5vw, 24px);
     font-weight: 900;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     color: #FFD54F;
     display: flex;
     align-items: center;
@@ -279,9 +329,9 @@ body {
 }
 
 .learning-modal-question {
-    font-size: clamp(18px, 2.5vw, 26px);
-    margin-bottom: 16px;
-    min-height: 48px;
+    font-size: clamp(15px, 2.2vw, 20px);
+    margin-bottom: 12px;
+    min-height: 40px;
     white-space: normal;
     overflow-wrap: anywhere;
 }
@@ -293,7 +343,7 @@ body {
 }
 
 .challenge-fill-word {
-    font-size: clamp(28px, 5vw, 44px);
+    font-size: clamp(22px, 4vw, 34px);
     letter-spacing: 6px;
     word-spacing: 2px;
     line-height: 1.2;
@@ -306,55 +356,59 @@ body {
 }
 
 .challenge-fill-word.phrase {
-    font-size: clamp(18px, 3.2vw, 28px);
+    font-size: clamp(16px, 2.8vw, 24px);
     letter-spacing: 1px;
     word-spacing: 6px;
     line-height: 1.35;
 }
 
 .challenge-fill-word.long {
-    font-size: clamp(20px, 3.8vw, 30px);
+    font-size: clamp(16px, 3vw, 24px);
     letter-spacing: 1px;
     line-height: 1.35;
 }
 
 .challenge-fill-word.xlong {
-    font-size: clamp(16px, 3vw, 24px);
+    font-size: clamp(13px, 2.5vw, 20px);
     letter-spacing: 0.5px;
     line-height: 1.42;
 }
 
 .challenge-fill-hint {
-    font-size: 16px;
+    font-size: 14px;
     opacity: 0.9;
 }
 
 .challenge-fill-zh {
-    font-size: 18px;
+    font-size: 15px;
     color: #FFE082;
 }
 
 .learning-modal-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
     margin-bottom: 14px;
 }
 
 .learning-modal-options button {
-    padding: 6px 10px;
+    padding: 8px 10px;
     border-radius: 12px;
     border: 2px solid rgba(255, 255, 255, 0.6);
     background: linear-gradient(180deg, #333, #111);
     color: #fff;
-    font-size: 16px;
-    font-weight: 800;
+    font-size: clamp(13px, 2.2vw, 16px);
+    font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s ease, background 0.2s ease;
     word-break: break-word;
     overflow-wrap: break-word;
-    min-height: 36px;
+    min-height: 40px;
     line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
  }
 
 .learning-modal-options button.correct {
@@ -373,7 +427,7 @@ body {
 }
 
 .learning-modal-options .letter-option {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 900;
     background: linear-gradient(135deg, #667eea, #764ba2);
 }
@@ -425,13 +479,13 @@ body {
 }
 
 .match-timer {
-    font-size: 28px;
+    font-size: clamp(16px, 2.5vw, 20px);
     font-weight: 900;
     color: #ffd700;
 }
 
 .word-match-subtitle {
-    font-size: 16px;
+    font-size: 14px;
     color: #f0f0f0;
     margin-bottom: 10px;
 }
@@ -555,23 +609,31 @@ canvas {
     touch-action: manipulation;
 }
 
+.hud-wrapper {
+    pointer-events: auto;
+    z-index: 11;
+}
+
 .hud-top {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: clamp(8px, 2vh, 18px);
+    flex-wrap: nowrap;
+    gap: 5px;
+    padding: 4px 8px;
 }
 
 .hud-box {
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.55);
     color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 18px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: clamp(11px, 1.8vw, 14px);
     font-weight: bold;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 1.5px solid rgba(255,255,255,0.25);
     text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
 }
 
 .hud-box-clickable {
@@ -615,10 +677,19 @@ canvas {
     color: #FFB74D;
 }
 
-#word-display {
+#word-display, .word-display-float {
+    position: absolute;
+    top: 62px;
+    left: 50%;
+    transform: translateX(-50%);
     color: #FFD700;
-    font-size: 24px;
+    font-size: clamp(18px, 3.5vw, 26px);
+    font-weight: 900;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    pointer-events: none;
+    z-index: 10;
     transition: transform 0.2s;
+    white-space: nowrap;
 }
 
 .inventory-bar {
@@ -690,33 +761,33 @@ canvas {
 }
 
 .btn-group {
-    position: absolute;
-    top: 60px;
-    right: 15px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: auto;
-}
-
-.btn-group-left {
-    position: absolute;
-    top: 60px;
-    left: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 2px 8px 4px;
     pointer-events: auto;
 }
 
 .game-btn {
-    background: #4CAF50;
+    background: rgba(0,0,0,0.55);
     color: white;
-    border: 2px solid #fff;
-    padding: 5px 10px;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    padding: 3px 0;
     cursor: pointer;
+    border-radius: 6px;
+    flex: 1;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: clamp(11px, 1.8vw, 14px);
     font-weight: bold;
-    border-radius: 4px;
+    line-height: 1;
+}
+
+.btn-icon {
+    font-size: clamp(14px, 2.2vw, 18px);
 }
 
 .game-btn:active {
@@ -732,11 +803,11 @@ canvas {
     color: #fff;
     padding: 20px 40px;
     border-radius: 10px;
-    font-size: 32px;
+    font-size: 22px;
     font-weight: bold;
     display: none;
     text-align: center;
-    border: 4px solid #FFD700;
+    border: 3px solid #FFD700;
     z-index: 100;
 }
 
@@ -766,7 +837,7 @@ canvas {
 }
 
 .word-card-en {
-    font-size: 54px;
+    font-size: clamp(28px, 5vw, 40px);
     font-weight: 900;
     color: #FFD700;
     letter-spacing: 1px;
@@ -775,7 +846,7 @@ canvas {
 
 .word-card-zh {
     margin-top: 8px;
-    font-size: 36px;
+    font-size: clamp(20px, 3.5vw, 28px);
     font-weight: 900;
     color: #FFFFFF;
     text-shadow: 2px 2px 0 #000;
@@ -940,7 +1011,7 @@ canvas {
 }
 
 .settings-title {
-    font-size: 22px;
+    font-size: clamp(16px, 2.5vw, 20px);
     font-weight: 900;
     margin-bottom: 10px;
 }
@@ -954,12 +1025,12 @@ canvas {
 }
 
 .settings-label {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
 }
 
 .settings-hint {
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.5;
     opacity: 0.9;
 }
@@ -975,7 +1046,7 @@ canvas {
     border: 2px solid rgba(255,255,255,0.35);
     background: rgba(0,0,0,0.35);
     color: #fff;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 .settings-input {
@@ -985,7 +1056,7 @@ canvas {
     border: 2px solid rgba(255,255,255,0.35);
     background: rgba(0,0,0,0.35);
     color: #fff;
-    font-size: 15px;
+    font-size: 14px;
 }
 
 #vocab-preview {
@@ -1039,7 +1110,7 @@ canvas {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 22px;
+    font-size: clamp(16px, 2.5vw, 20px);
     font-weight: 900;
     margin-bottom: 12px;
 }
@@ -1133,7 +1204,7 @@ canvas {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 22px;
+    font-size: clamp(16px, 2.5vw, 20px);
     font-weight: 900;
     margin-bottom: 12px;
     color: #FFD700;
@@ -1408,7 +1479,7 @@ canvas {
 }
 
 .achievement-icon {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .profile-modal {
@@ -1779,3 +1850,4 @@ canvas {
     transform: translateY(0);
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
+

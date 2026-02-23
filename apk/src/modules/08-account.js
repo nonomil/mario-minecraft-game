@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 08-account.js - 账号系统、登录、成就
  * 从 main.js 拆分 (原始行 1621-2101)
  */
@@ -26,18 +26,27 @@ function ensureStartOverlayContent() {
     if (document.getElementById("overlay-start")) return;
     text.innerHTML = `
         <div class="overlay-start" id="overlay-start">
-            <div class="overlay-page overlay-page-intro active" data-page="intro">
-                <div class="overlay-intro-title">Minecraft 单词游戏</div>
-                <div class="overlay-intro-sub">在冒险中学习单词，闯关解锁更多词库与装备。</div>
-                <div style="text-align:left;margin:12px auto;max-width:320px;font-size:14px;line-height:1.8;color:#ddd;">
-                    <div style="margin-bottom:8px;color:#fff;font-weight:bold;">🎮 操作说明</div>
-                    <div>⬅️➡️ 移动 &nbsp; ⬆️ 跳跃（可二段跳）</div>
-                    <div>⚔️ J 攻击 &nbsp; 🔄 K 切换武器</div>
-                    <div>💎 Z 使用钻石 &nbsp; 📦 Y 互动/开箱</div>
-                    <div style="margin-top:10px;color:#fff;font-weight:bold;">⚙️ 温馨提示</div>
-                    <div>游戏速度、单词词库选择、学习设置等均可在右上角 <strong>⚙️ 设置</strong> 中调整。</div>
+                        <div class="overlay-page overlay-page-intro active" data-page="intro">
+                <div class="overlay-intro-sub">在冒险中学习单词，闯关解锁更多词库与装备。挑战关卡，获取奖励与新武器。</div>
+                <div class="overlay-section">
+                    <div class="overlay-section-title">🎮 操作说明</div>
+                    <div class="overlay-key-row">
+                        <span>⬅️ ➡️ 移动</span>
+                        <span>⬆️ 跳跃（可二段跳）</span>
+                    </div>
+                    <div class="overlay-key-row">
+                        <span>⚔️ J 攻击</span>
+                        <span>🔄 K 切换武器</span>
+                    </div>
+                    <div class="overlay-key-row">
+                        <span>💎 Z 使用钻石</span>
+                        <span>📦 Y 互动/开箱</span>
+                    </div>
                 </div>
-                <button class="game-btn" id="btn-overlay-intro-confirm" style="margin-top:8px;">确定</button>
+                <div class="overlay-section">
+                    <div class="overlay-section-title">⚙️ 温馨提示</div>
+                    <div class="overlay-hints-text">游戏速度、单词词库选择、学习设置等均可在右上角 ⚙️ 设置 中调整。</div>
+                </div>
             </div>
             <div class="overlay-page overlay-page-setup" data-page="setup">
                 <div class="overlay-account">
@@ -539,6 +548,8 @@ function showSaveProgressModal() {
     if (scoreEl) scoreEl.innerText = score;
     if (wordsEl) wordsEl.innerText = currentAccount?.vocabulary?.learnedWords?.length || 0;
     if (diamondsEl) diamondsEl.innerText = inventory.diamond || 0;
+    const btnViewProfile = document.getElementById("btn-save-view-profile");
+    if (btnViewProfile) btnViewProfile.style.display = currentAccount ? "" : "none";
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
     pausedByModal = true;
@@ -583,3 +594,4 @@ function markVocabPromptSeen() {
     try { window.localStorage.setItem("mmwg:vocabPromptSeen", "1"); }
     catch {}
 }
+
