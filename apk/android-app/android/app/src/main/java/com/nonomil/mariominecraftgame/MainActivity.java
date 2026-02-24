@@ -1,5 +1,6 @@
 package com.nonomil.mariominecraftgame;
 
+import android.graphics.Insets;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ public class MainActivity extends BridgeActivity {
     super.onCreate(savedInstanceState);
     setupFullscreen();
     applyImmersiveMode();
+    wireWindowInsetsToCssSafeArea();
   }
 
   @Override
@@ -34,6 +36,63 @@ public class MainActivity extends BridgeActivity {
     }
     // 设置全屏标志（移除 FLAG_LAYOUT_NO_LIMITS 避免内容超出屏幕）
     window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+  }
+
+  private void wireWindowInsetsToCssSafeArea() {
+    final View decorView = getWindow().getDecorView();
+    decorView.setOnApplyWindowInsetsListener(
+        (v, insets) -> {
+          int top = 0, right = 0, bottom = 0, left = 0;
+
+          if (Build.VERSION.SDK_INT >= 30) {
+            Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
+            Insets cutout = insets.getInsets(WindowInsets.Type.displayCutout());
+            Insets gestures = insets.getInsets(WindowInsets.Type.systemGestures());
+
+            top = Math.max(bars.top, cutout.top);
+            right = Math.max(bars.right, cutout.right);
+            bottom = Math.max(Math.max(bars.bottom, cutout.bottom), gestures.bottom);
+            left = Math.max(bars.left, cutout.left);
+          } else {
+            // Pre-Android 11: best effort. Gesture insets aren't available here.
+            top = insets.getSystemWindowInsetTop();
+            right = insets.getSystemWindowInsetRight();
+            bottom = insets.getSystemWindowInsetBottom();
+            left = insets.getSystemWindowInsetLeft();
+          }
+
+          pushSafeAreaToWeb(top, right, bottom, left);
+          return insets;
+        });
+
+    // Ensure we apply once after view is attached, then keep updating on inset changes.
+    decorView.post(decorView::requestApplyInsets);
+  }
+
+  private void pushSafeAreaToWeb(int topPx, int rightPx, int bottomPx, int leftPx) {
+    if (bridge == null || bridge.getWebView() == null) return;
+
+    final String js =
+        "(function(){try{"
+            + "var dpr=window.devicePixelRatio||1;"
+            + "var t="
+            + topPx
+            + ",r="
+            + rightPx
+            + ",b="
+            + bottomPx
+            + ",l="
+            + leftPx
+            + ";"
+            + "var root=document.documentElement;"
+            + "if(!root){return;}"
+            + "root.style.setProperty('--safe-top',(t/dpr)+'px');"
+            + "root.style.setProperty('--safe-right',(r/dpr)+'px');"
+            + "root.style.setProperty('--safe-bottom',(b/dpr)+'px');"
+            + "root.style.setProperty('--safe-left',(l/dpr)+'px');"
+            + "}catch(e){}})();";
+
+    bridge.getWebView().post(() -> bridge.getWebView().evaluateJavascript(js, null));
   }
 
   private void applyImmersiveMode() {
