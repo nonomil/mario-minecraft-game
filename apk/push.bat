@@ -1,4 +1,5 @@
 ﻿@echo off
+@echo off
 setlocal EnableExtensions
 chcp 65001 >nul 2>&1
 
@@ -22,6 +23,7 @@ REM -----------------------------
 set "MODE="
 set "DRY_RUN=0"
 set "ASSUME_YES=0"
+set "NO_PAUSE=0"
 
 :parse_args
 if "%~1"=="" goto :args_done
@@ -41,6 +43,11 @@ if /i "%~1"=="--mode" (
     shift
     goto :parse_args
 )
+if /i "%~1"=="--no-pause" (
+    set "NO_PAUSE=1"
+    shift
+    goto :parse_args
+)
 echo [警告] 未识别参数: %~1
 shift
 goto :parse_args
@@ -56,8 +63,7 @@ for /f "delims=" %%A in ('git rev-parse --show-toplevel 2^>nul') do set "REPO_RO
 if not defined REPO_ROOT (
     echo [错误] 当前目录不是 Git 仓库。
     echo.
-    pause
-    exit /b 1
+    call :exit_with_pause 1
 )
 
 for /f "delims=" %%A in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set "CURRENT_BRANCH=%%A"
@@ -77,8 +83,7 @@ if /i not "%CURRENT_BRANCH%"=="%BRANCH%" (
             echo [已取消] 你可以先切换到 main 分支再推送：
             echo   git switch %BRANCH%
             echo.
-            pause
-            exit /b 1
+            call :exit_with_pause 1
         )
         echo.
     )
@@ -88,15 +93,14 @@ for /f "delims=" %%A in ('git remote get-url %REMOTE% 2^>nul') do set "ORIGIN_UR
 if not defined ORIGIN_URL_RAW (
     echo [修复] 未找到远端 %REMOTE% ，正在添加默认仓库地址...
     if "%DRY_RUN%"=="1" (
-        echo [干跑] git remote add %REMOTE% https://github.com/nonomil/mario-minecraft-game.git
+        echo [DRY-RUN] git remote add %REMOTE% https://github.com/nonomil/mario-minecraft-game.git
     ) else (
         git remote add %REMOTE% https://github.com/nonomil/mario-minecraft-game.git
     )
     if not "%DRY_RUN%"=="1" if errorlevel 1 (
         echo [错误] 添加远端失败。
         echo.
-        pause
-        exit /b 1
+        call :exit_with_pause 1
     )
     set "ORIGIN_URL_RAW=https://github.com/nonomil/mario-minecraft-game.git"
 )
@@ -109,15 +113,14 @@ if not "%ORIGIN_URL%"=="%ORIGIN_URL_RAW%" (
     echo   原始: %ORIGIN_URL_RAW%
     echo   修复: %ORIGIN_URL%
     if "%DRY_RUN%"=="1" (
-        echo [干跑] git remote set-url %REMOTE% "%ORIGIN_URL%"
+        echo [DRY-RUN] git remote set-url %REMOTE% "%ORIGIN_URL%"
     ) else (
         git remote set-url %REMOTE% "%ORIGIN_URL%"
     )
     if not "%DRY_RUN%"=="1" if errorlevel 1 (
         echo [错误] 更新远端 URL 失败。
         echo.
-        pause
-        exit /b 1
+        call :exit_with_pause 1
     )
 )
 
@@ -129,9 +132,9 @@ REM 模式选择 + 自动检测 127.0.0.1:1080
 REM -----------------------------
 if not defined MODE (
     echo [选择] 请选择推送模式：
-    echo   1）自动检测（推荐）：检测 127.0.0.1:1080，有代理则走代理，否则直连
-    echo   2）强制代理：使用 127.0.0.1:1080
-    echo   3）强制直连：不使用代理
+    echo   1. 自动检测 推荐: 检测 127.0.0.1:1080，有代理则走代理，否则直连
+    echo   2. 强制代理: 使用 127.0.0.1:1080
+    echo   3. 强制直连: 不使用代理
     echo.
     choice /c 123 /n /t 5 /d 1 /m "请输入 1/2/3（5 秒后默认 1）: "
     if errorlevel 3 set "MODE=direct"
@@ -164,8 +167,7 @@ if /i "%MODE%"=="auto" (
     echo [错误] --mode 参数无效: %MODE%
     echo [提示] 允许值: auto / proxy / direct
     echo.
-    pause
-    exit /b 1
+    call :exit_with_pause 1
 )
 echo.
 
@@ -173,8 +175,7 @@ REM -----------------------------
 REM Dry-run: 不执行网络操作，仅打印将执行的命令
 REM -----------------------------
 if "%DRY_RUN%"=="1" (
-    echo [干跑] 已启用 --dry-run，不会执行 git fetch / git push。
-    echo [干跑] 将执行：
+    echo [DRY-RUN] 已启用 --dry-run，不会执行 git fetch / git push。
     echo   git -c http.version=HTTP/1.1 fetch %REMOTE% %BRANCH% --prune
     echo   git rev-list --left-right --count %REMOTE%/%BRANCH%...HEAD
     echo   git log %REMOTE%/%BRANCH%..HEAD --oneline
@@ -221,8 +222,7 @@ if "%FETCH_OK%"=="1" (
     if "%AHEAD%"=="0" if "%BEHIND%"=="0" (
         echo [信息] 没有需要推送的提交，本地已是最新。
         echo.
-        pause
-        exit /b 0
+        call :exit_with_pause 0
     )
 )
 
@@ -237,8 +237,7 @@ if not "%BEHIND%"=="0" (
     echo 如果你确定要覆盖远端历史（不推荐）：
     echo   git push --force-with-lease %REMOTE% HEAD:%BRANCH%
     echo.
-    pause
-    exit /b 1
+    call :exit_with_pause 1
 )
 
 echo [检查] 等待推送的提交：
@@ -306,8 +305,7 @@ echo   git config http.proxy http://127.0.0.1:1080
 echo   git config https.proxy http://127.0.0.1:1080
 echo   git config http.sslBackend openssl
 echo.
-pause
-exit /b 1
+call :exit_with_pause 1
 
 :push_success
 echo.
@@ -318,5 +316,10 @@ echo.
 echo GitHub Actions 将自动开始构建（如果本次提交影响 apk/ 或 workflow）。
 echo Actions 地址: https://github.com/nonomil/mario-minecraft-game/actions
 echo.
+call :exit_with_pause 0
+
+:exit_with_pause
+set "EXIT_CODE=%~1"
+if "%NO_PAUSE%"=="1" exit /b %EXIT_CODE%
 pause
-exit /b 0
+exit /b %EXIT_CODE%
