@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 setlocal EnableExtensions
 chcp 65001 >nul 2>&1
 
@@ -9,24 +9,91 @@ cd /d "%~dp0"
 
 echo.
 echo ========================================
-echo   Push Code To GitHub
+echo   推送代码到 GitHub
 echo ========================================
 echo.
 
+REM -----------------------------
+REM 参数解析
+REM 支持:
+REM   --mode auto|proxy|direct
+REM   --dry-run
+REM -----------------------------
+set "MODE="
+set "DRY_RUN=0"
+set "ASSUME_YES=0"
+
+:parse_args
+if "%~1"=="" goto :args_done
+if /i "%~1"=="--dry-run" (
+    set "DRY_RUN=1"
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--yes" (
+    set "ASSUME_YES=1"
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--mode" (
+    set "MODE=%~2"
+    shift
+    shift
+    goto :parse_args
+)
+echo [警告] 未识别参数: %~1
+shift
+goto :parse_args
+
+:args_done
+
+if "%MMWG_PUSH_DEBUG%"=="1" (
+    echo [调试] MODE=%MODE% DRY_RUN=%DRY_RUN% ASSUME_YES=%ASSUME_YES%
+    echo.
+)
+
 for /f "delims=" %%A in ('git rev-parse --show-toplevel 2^>nul') do set "REPO_ROOT=%%A"
 if not defined REPO_ROOT (
-    echo [ERROR] Current folder is not a git repository.
+    echo [错误] 当前目录不是 Git 仓库。
     echo.
     pause
     exit /b 1
 )
 
+for /f "delims=" %%A in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set "CURRENT_BRANCH=%%A"
+if not defined CURRENT_BRANCH set "CURRENT_BRANCH=?"
+if /i not "%CURRENT_BRANCH%"=="%BRANCH%" (
+    echo [提示] 当前分支: %CURRENT_BRANCH%
+    echo [提示] 目标远端分支: %REMOTE%/%BRANCH%
+    echo.
+    echo [注意] 若继续，将把当前提交（HEAD）推送到远端 %BRANCH%，可能触发 GitHub Actions。
+    if "%ASSUME_YES%"=="1" (
+        echo [确认] 已指定 --yes，继续执行。
+        echo.
+    ) else (
+        choice /c YN /n /m "是否继续？（Y/N）: "
+        if errorlevel 2 (
+            echo.
+            echo [已取消] 你可以先切换到 main 分支再推送：
+            echo   git switch %BRANCH%
+            echo.
+            pause
+            exit /b 1
+        )
+        echo.
+    )
+)
+
 for /f "delims=" %%A in ('git remote get-url %REMOTE% 2^>nul') do set "ORIGIN_URL_RAW=%%A"
 if not defined ORIGIN_URL_RAW (
-    echo [FIX] Missing %REMOTE% remote. Adding default repository URL...
-    git remote add %REMOTE% https://github.com/nonomil/mario-minecraft-game.git
-    if errorlevel 1 (
-        echo [ERROR] Failed to add remote.
+    echo [修复] 未找到远端 %REMOTE% ，正在添加默认仓库地址...
+    if "%DRY_RUN%"=="1" (
+        echo [干跑] git remote add %REMOTE% https://github.com/nonomil/mario-minecraft-game.git
+    ) else (
+        git remote add %REMOTE% https://github.com/nonomil/mario-minecraft-game.git
+    )
+    if not "%DRY_RUN%"=="1" if errorlevel 1 (
+        echo [错误] 添加远端失败。
         echo.
         pause
         exit /b 1
@@ -38,110 +105,203 @@ set "ORIGIN_URL=%ORIGIN_URL_RAW%"
 set "ORIGIN_URL=%ORIGIN_URL:`=%"
 
 if not "%ORIGIN_URL%"=="%ORIGIN_URL_RAW%" (
-    echo [FIX] Sanitizing remote URL...
-    echo   Raw:   %ORIGIN_URL_RAW%
-    echo   Fixed: %ORIGIN_URL%
-    git remote set-url %REMOTE% "%ORIGIN_URL%"
-    if errorlevel 1 (
-        echo [ERROR] Failed to update remote URL.
+    echo [修复] 正在清理远端 URL...
+    echo   原始: %ORIGIN_URL_RAW%
+    echo   修复: %ORIGIN_URL%
+    if "%DRY_RUN%"=="1" (
+        echo [干跑] git remote set-url %REMOTE% "%ORIGIN_URL%"
+    ) else (
+        git remote set-url %REMOTE% "%ORIGIN_URL%"
+    )
+    if not "%DRY_RUN%"=="1" if errorlevel 1 (
+        echo [错误] 更新远端 URL 失败。
         echo.
         pause
         exit /b 1
     )
 )
 
-echo [INFO] %REMOTE%: %ORIGIN_URL%
+echo [信息] %REMOTE%: %ORIGIN_URL%
 echo.
 
-echo [SYNC] Fetching latest %REMOTE%/%BRANCH%...
+REM -----------------------------
+REM 模式选择 + 自动检测 127.0.0.1:1080
+REM -----------------------------
+if not defined MODE (
+    echo [选择] 请选择推送模式：
+    echo   1）自动检测（推荐）：检测 127.0.0.1:1080，有代理则走代理，否则直连
+    echo   2）强制代理：使用 127.0.0.1:1080
+    echo   3）强制直连：不使用代理
+    echo.
+    choice /c 123 /n /t 5 /d 1 /m "请输入 1/2/3（5 秒后默认 1）: "
+    if errorlevel 3 set "MODE=direct"
+    if errorlevel 2 set "MODE=proxy"
+    if errorlevel 1 set "MODE=auto"
+    echo.
+)
+
+set "PROXY_OK=0"
+for /f "delims=" %%P in ('powershell -NoProfile -Command "$ok=0; try { $c=New-Object System.Net.Sockets.TcpClient; $iar=$c.BeginConnect('127.0.0.1',1080,$null,$null); if ($iar.AsyncWaitHandle.WaitOne(200,$false) -and $c.Connected) { $ok=1 }; $c.Close() } catch {}; Write-Output $ok" 2^>nul') do set "PROXY_OK=%%P"
+if not "%PROXY_OK%"=="1" set "PROXY_OK=0"
+
+set "MODE=%MODE: =%"
+if /i "%MODE%"=="auto" (
+    echo [模式] 自动检测: 检测本地代理 127.0.0.1:1080...
+    if "%PROXY_OK%"=="1" (
+        echo [模式] 已检测到代理端口 1080 正在监听，将使用代理推送。
+        set "PRIMARY=proxy"
+    ) else (
+        echo [模式] 未检测到代理端口 1080，将使用直连推送。
+        set "PRIMARY=direct"
+    )
+) else if /i "%MODE%"=="proxy" (
+    echo [模式] 强制代理: 127.0.0.1:1080
+    set "PRIMARY=proxy"
+) else if /i "%MODE%"=="direct" (
+    echo [模式] 强制直连
+    set "PRIMARY=direct"
+) else (
+    echo [错误] --mode 参数无效: %MODE%
+    echo [提示] 允许值: auto / proxy / direct
+    echo.
+    pause
+    exit /b 1
+)
+echo.
+
+REM -----------------------------
+REM Dry-run: 不执行网络操作，仅打印将执行的命令
+REM -----------------------------
+if "%DRY_RUN%"=="1" (
+    echo [干跑] 已启用 --dry-run，不会执行 git fetch / git push。
+    echo [干跑] 将执行：
+    echo   git -c http.version=HTTP/1.1 fetch %REMOTE% %BRANCH% --prune
+    echo   git rev-list --left-right --count %REMOTE%/%BRANCH%...HEAD
+    echo   git log %REMOTE%/%BRANCH%..HEAD --oneline
+    if /i "%PRIMARY%"=="proxy" (
+        echo   git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+    ) else (
+        echo   git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
+    )
+    echo.
+    exit /b 0
+)
+
+echo [同步] 正在拉取最新的 %REMOTE%/%BRANCH%...
+set "FETCH_OK=0"
 git -c http.version=HTTP/1.1 fetch %REMOTE% %BRANCH% --prune
 if errorlevel 1 (
-    echo [WARN] Fetch failed via direct HTTPS.
-    echo [WARN] Continuing with push retries to diagnose connectivity.
+    echo [警告] fetch 失败（可能是网络或认证问题）。
+    echo [警告] 将继续尝试推送，以便输出更明确的失败原因。
 ) else (
-    echo [SYNC] Fetch succeeded.
+    set "FETCH_OK=1"
+    echo [同步] fetch 成功。
 )
 echo.
 
 set "AHEAD=0"
 set "BEHIND=0"
-for /f "tokens=1,2" %%A in ('git rev-list --left-right --count %REMOTE%/%BRANCH%...HEAD 2^>nul') do (
-    set "BEHIND=%%A"
-    set "AHEAD=%%B"
+if "%FETCH_OK%"=="1" (
+    for /f "tokens=1,2" %%A in ('git rev-list --left-right --count %REMOTE%/%BRANCH%...HEAD 2^>nul') do (
+        set "BEHIND=%%A"
+        set "AHEAD=%%B"
+    )
 )
 
-echo [CHECK] Branch status vs %REMOTE%/%BRANCH%:
-echo   Ahead:  %AHEAD%
-echo   Behind: %BEHIND%
+echo [检查] 相对 %REMOTE%/%BRANCH% 的分支状态：
+if "%FETCH_OK%"=="1" (
+    echo   Ahead:  %AHEAD%
+    echo   Behind: %BEHIND%
+) else (
+    echo   （fetch 失败，无法可靠计算 Ahead/Behind）
+)
 echo.
 
-if "%AHEAD%"=="0" if "%BEHIND%"=="0" (
-    echo [INFO] Nothing to push. Local branch is up to date.
-    echo.
-    pause
-    exit /b 0
+if "%FETCH_OK%"=="1" (
+    if "%AHEAD%"=="0" if "%BEHIND%"=="0" (
+        echo [信息] 没有需要推送的提交，本地已是最新。
+        echo.
+        pause
+        exit /b 0
+    )
 )
 
 if not "%BEHIND%"=="0" (
-    echo [BLOCKED] Local branch is behind %REMOTE%/%BRANCH%.
-    echo Push would be rejected as non-fast-forward.
+    echo [阻止] 本地提交落后于 %REMOTE%/%BRANCH%，推送会被拒绝（non-fast-forward）。
     echo.
-    echo Suggested fix:
+    echo 建议操作：
     echo   git fetch %REMOTE% %BRANCH%
     echo   git rebase %REMOTE%/%BRANCH%
-    echo   git push %REMOTE% %BRANCH%
+    echo   git push %REMOTE% HEAD:%BRANCH%
     echo.
-    echo If you intentionally want to overwrite remote history:
-    echo   git push --force-with-lease %REMOTE% %BRANCH%
+    echo 如果你确定要覆盖远端历史（不推荐）：
+    echo   git push --force-with-lease %REMOTE% HEAD:%BRANCH%
     echo.
     pause
     exit /b 1
 )
 
-echo [CHECK] Commits waiting to push:
+echo [检查] 等待推送的提交：
 git log %REMOTE%/%BRANCH%..HEAD --oneline 2>nul
 if errorlevel 1 (
-    echo [INFO] Unable to diff against %REMOTE%/%BRANCH%.
+    echo [信息] 无法对比 %REMOTE%/%BRANCH%（可能缺少远端引用）。
 )
 echo.
 
-echo [PUSH] Pushing to GitHub...
-git -c http.version=HTTP/1.1 push %REMOTE% %BRANCH%
+echo [推送] 正在推送到 GitHub...
+
+if /i "%PRIMARY%"=="proxy" (
+    goto :push_with_proxy
+) else (
+    goto :push_direct
+)
+
+:push_direct
+git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :push_success
 
 echo.
-echo [RETRY 1] First push failed. Retrying with schannel backend...
-git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% %BRANCH%
+echo [重试 1] 直连推送失败，尝试使用 schannel 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :push_success
+
+if /i "%MODE%"=="auto" if "%PROXY_OK%"=="1" (
+    echo.
+    echo [重试 2] 自动模式：检测到本地代理，尝试走代理推送...
+    goto :push_with_proxy
+)
+goto :push_failed
+
+:push_with_proxy
+echo.
+echo [代理] 使用代理 (http://127.0.0.1:1080) + openssl 推送...
+git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :push_success
 
 echo.
-echo [RETRY 2] Retrying with proxy (127.0.0.1:1080) and openssl...
-git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% %BRANCH%
+echo [重试] 代理推送失败，尝试 socks5 代理...
+git -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :push_success
 
-echo.
-echo [RETRY 3] Retrying with socks5 proxy...
-git -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 push %REMOTE% %BRANCH%
-if not errorlevel 1 goto :push_success
-
+:push_failed
 echo.
 echo ========================================
-echo   Push Failed
+echo   推送失败
 echo ========================================
 echo.
-echo All retry attempts failed.
+echo 所有尝试都失败了。
 echo.
-echo Possible causes:
-echo 1. Network cannot reach github.com:443
-echo 2. Proxy/VPN not running (check port 1080)
-echo 3. Authentication issue
+echo 可能原因：
+echo 1. 网络无法连接 github.com:443
+echo 2. 代理/VPN 未启动（检查 127.0.0.1:1080）
+echo 3. 认证问题（Git 凭据/Token）
 echo.
-echo Quick checks:
-echo - Ensure v2ray is running on port 1080
-echo - Test: curl -x http://127.0.0.1:1080 https://github.com
-echo - Run: git remote -v
+echo 快速检查：
+echo - 确保代理软件已启动并监听 1080 端口
+echo - 测试：curl -x http://127.0.0.1:1080 https://github.com
+echo - 查看远端：git remote -v
 echo.
-echo Successful proxy config that worked:
+echo 参考：可用的 Git 代理配置（示例）：
 echo   git config http.proxy http://127.0.0.1:1080
 echo   git config https.proxy http://127.0.0.1:1080
 echo   git config http.sslBackend openssl
@@ -152,11 +312,11 @@ exit /b 1
 :push_success
 echo.
 echo ========================================
-echo   Push Succeeded
+echo   推送成功
 echo ========================================
 echo.
-echo GitHub Actions should start automatically.
-echo Actions URL: https://github.com/nonomil/mario-minecraft-game/actions
+echo GitHub Actions 将自动开始构建（如果本次提交影响 apk/ 或 workflow）。
+echo Actions 地址: https://github.com/nonomil/mario-minecraft-game/actions
 echo.
 pause
 exit /b 0
