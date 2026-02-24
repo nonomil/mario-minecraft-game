@@ -43,6 +43,7 @@ async function start() {
     wireAudioUnlock();
     applyBgmSetting();
 
+    installSafeAreaChangeWatcher();
     applySettingsToUI();
     window.addEventListener("resize", scheduleApplySettingsToUI);
     window.addEventListener("orientationchange", scheduleApplySettingsToUI);
@@ -70,6 +71,16 @@ async function start() {
             e.preventDefault();
             resumeGameFromOverlay();
         }, { passive: false });
+    }
+    const overlaySkipBtn = document.getElementById("btn-overlay-skip");
+    if (overlaySkipBtn) {
+        overlaySkipBtn.addEventListener("click", resumeGameFromOverlay);
+    }
+    const overlayPickBtn = document.getElementById("btn-overlay-pick-account");
+    if (overlayPickBtn) {
+        overlayPickBtn.addEventListener("click", () => {
+            showLoginScreen();
+        });
     }
     const overlayScorebtn = document.getElementById("btn-overlay-score-revive");
     if (overlayScorebtn) {
@@ -110,10 +121,15 @@ async function start() {
     if (vocabPromptModal) vocabPromptModal.addEventListener("click", e => { if (e.target === vocabPromptModal) hideVocabPromptModal(); });
     const overlay = document.getElementById("screen-overlay");
     if (overlay) {
-        overlay.addEventListener("click", e => { if (e.target === overlay) resumeGameFromOverlay(); });
+        overlay.addEventListener("click", e => {
+            if (e.target !== overlay) return;
+            if (overlayMode === "start") return;
+            resumeGameFromOverlay();
+        });
         overlay.addEventListener("pointerdown", e => {
             if (e.target !== overlay) return;
             e.preventDefault();
+            if (overlayMode === "start") return;
             resumeGameFromOverlay();
         }, { passive: false });
     }
@@ -214,13 +230,51 @@ async function start() {
 
     bootReady = true;
     const loginVisible = document.getElementById("login-screen")?.classList.contains("visible");
-    if (!loginVisible) {
+    const startOverlayVisible = document.getElementById("screen-overlay")?.classList.contains("visible")
+        && overlayMode === "start";
+    if (!loginVisible && !startOverlayVisible) {
         bootGameLoopIfNeeded();
     }
     return;
 }
 
 start();
+
+function installSafeAreaChangeWatcher() {
+    if (typeof window === "undefined") return;
+    if (window.__mmwgSafeAreaWatcherInstalled) return;
+    window.__mmwgSafeAreaWatcherInstalled = true;
+
+    const root = document.documentElement;
+    if (!root) return;
+    if (typeof MutationObserver === "undefined") return;
+
+    const readSignature = () => {
+        const cs = getComputedStyle(root);
+        const top = cs.getPropertyValue("--safe-top").trim();
+        const right = cs.getPropertyValue("--safe-right").trim();
+        const bottom = cs.getPropertyValue("--safe-bottom").trim();
+        const left = cs.getPropertyValue("--safe-left").trim();
+        return `${top}|${right}|${bottom}|${left}`;
+    };
+
+    let lastSignature = readSignature();
+    const observer = new MutationObserver(() => {
+        const next = readSignature();
+        if (next === lastSignature) return;
+        lastSignature = next;
+        if (typeof scheduleApplySettingsToUI === "function") {
+            scheduleApplySettingsToUI();
+            return;
+        }
+        if (typeof applySettingsToUI === "function") {
+            applySettingsToUI();
+        }
+    });
+
+    observer.observe(root, { attributes: true, attributeFilter: ["style"] });
+    window.__mmwgSafeAreaWatcher = observer;
+}
 
 // Minimal test hook for Playwright. Kept small to avoid coupling gameplay to tests.
 // (Top-level `let` bindings are not readable from Playwright `page.evaluate()`, so expose closures instead.)
