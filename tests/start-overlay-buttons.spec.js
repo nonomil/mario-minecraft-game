@@ -38,3 +38,16 @@ test("skip button boots the game loop (no account required)", async ({ page, bas
 
   await page.waitForFunction(() => window.MMWG_TEST_API.getState().startedOnce === true, null, { timeout: 5_000 });
 });
+
+test("account setup page shows confirm buttons (not intro buttons)", async ({ page, baseURL }) => {
+  await page.goto(`${baseURL}/apk/Game.html`, { waitUntil: "domcontentloaded" });
+
+  await page.waitForFunction(() => Boolean(window.MMWG_TEST_API && window.MMWG_TEST_API.getState().bootReady === true));
+
+  await page.locator("#btn-overlay-pick-account").click();
+
+  await expect(page.locator(".overlay-page-setup")).toHaveClass(/active/);
+
+  await expect(page.locator("#btn-overlay-skip")).toBeHidden();
+  await expect(page.locator("#btn-overlay-action")).toBeVisible();
+});

@@ -18,6 +18,7 @@ function setStartOverlayPage(page) {
     });
     const title = document.getElementById("overlay-title");
     if (title) title.innerText = page === "intro" ? "Minecraft 单词游戏" : "选择档案";
+    if (typeof updateStartOverlayButtons === "function") updateStartOverlayButtons();
 }
 
 function ensureStartOverlayContent() {

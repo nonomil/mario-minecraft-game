@@ -23,6 +23,29 @@ function getSessionWordSummaryHtml(limit = 6) {
     return `<br><br>🧠 本局高频词: ${parts.join(" · ")}`;
 }
 
+function updateStartOverlayButtons() {
+    if (overlayMode !== "start") return;
+    const overlay = document.getElementById("screen-overlay");
+    if (!overlay) return;
+
+    const btn = document.getElementById("btn-overlay-action");
+    const btnSkip = document.getElementById("btn-overlay-skip");
+    const btnPick = document.getElementById("btn-overlay-pick-account");
+    const btnWrap = overlay.querySelector(".overlay-buttons");
+
+    const introActive = !!document.querySelector(".overlay-page-intro.active");
+    const setupActive = !!document.querySelector(".overlay-page-setup.active");
+
+    if (btnWrap) btnWrap.classList.add("overlay-buttons-duo");
+
+    if (btnSkip) btnSkip.style.display = introActive ? "block" : "none";
+    if (btnPick) {
+        btnPick.style.display = "block";
+        btnPick.innerText = setupActive ? "创建新账号" : "选择档案";
+    }
+    if (btn) btn.style.display = setupActive ? "block" : "none";
+}
+
 function setOverlay(visible, mode) {
     const overlay = document.getElementById("screen-overlay");
     if (!overlay) return;
@@ -53,12 +76,9 @@ function setOverlay(visible, mode) {
             clearStartOverlayTimer();
             wireIntroConfirmButton();
             if (title) title.innerText = "Minecraft 单词游戏";
-            if (btn) btn.style.display = "none";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
             if (btnLeaderboard) btnLeaderboard.style.display = "none";
-            if (btnSkip) btnSkip.style.display = "block";
-            if (btnPick) btnPick.style.display = "block";
-            if (btnWrap) btnWrap.classList.add("overlay-buttons-duo");
+            updateStartOverlayButtons();
         } else if (mode === "pause") {
             if (title) title.innerText = "已暂停";
             if (text) text.innerHTML = START_OVERLAY_HINT_HTML;

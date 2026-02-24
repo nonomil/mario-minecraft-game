@@ -85,7 +85,28 @@ async function start() {
     const overlayPickBtn = document.getElementById("btn-overlay-pick-account");
     if (overlayPickBtn) {
         overlayPickBtn.addEventListener("click", () => {
-            showLoginScreen();
+            if (overlayMode === "start") {
+                const introPage = document.querySelector(".overlay-page-intro.active");
+                if (introPage) {
+                    setStartOverlayPage("setup");
+                    wireStartOverlayAccountActions();
+                    renderStartOverlayAccounts();
+                    const input = document.getElementById("overlay-username-input");
+                    if (input) setTimeout(() => input.focus(), 100);
+                    return;
+                }
+
+                const input = document.getElementById("overlay-username-input");
+                if (input) {
+                    const username = (input.value || "").trim();
+                    if (username) {
+                        document.getElementById("btn-overlay-create")?.click();
+                    } else {
+                        input.focus();
+                    }
+                }
+                return;
+            }
         });
     }
     const overlayScorebtn = document.getElementById("btn-overlay-score-revive");
