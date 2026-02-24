@@ -5,9 +5,17 @@
 - 修复顶部状态栏与控制按钮区域的尺寸/对齐差异。
 - 单词展示改为英文/中文分行展示，匹配新 HUD 容器结构。
 - 补齐 HUD 相关元素 ID，确保交互与状态更新正确绑定。
+- HUD/单词/触控按钮字体与尺寸对齐 v1.18.42（更大、更易读）。
 
 ### Tests
 - 新增 HUD 布局回归用例，防止 APK 与网页布局再次偏移。
+- 新增 HUD 字体与触控按钮尺寸回归用例。
+- 新增悬浮/云/微平台高度与堆叠限制回归用例（本机端口权限受限，未执行）。
+
+### Platform Constraints
+- 悬浮平台高度不超过屏幕高度 50%。
+- 微平台允许 1-2 格纵向堆叠，禁止 3+。
+- 云平台高度不超过屏幕高度 50%。
 
 ### Release Metadata
 - Version bump: push 后由 GitHub Actions 自动 patch 递增（`apk/version.json`、`apk/package.json`、`apk/android-app/package.json`、`apk/android-app/android/app/build.gradle`）。

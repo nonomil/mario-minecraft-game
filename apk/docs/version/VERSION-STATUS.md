@@ -7,7 +7,7 @@
 
 ## Git State
 - Branch: `main`
-- Includes HUD 布局对齐（`hud-grid` 结构 + 单词分行展示 + 交互 ID 补齐）。
+- Includes HUD 字体/触控按钮尺寸对齐 + 平台高度/堆叠限制。
 
 ## Records Check
 - Updated: `apk/docs/version/CHANGELOG.md`
@@ -15,4 +15,4 @@
 - Updated: `apk/docs/version/Progress.md`
 
 ## Validation Snapshot
-- 未在本机执行自动化测试（将由 GitHub Actions 构建验证）。
+- 本机 Playwright 端口 4173 权限受限，未执行自动化测试（由 GitHub Actions 构建验证）。

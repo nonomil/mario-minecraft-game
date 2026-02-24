@@ -451,6 +451,26 @@ class CloudPlatform extends Platform {
     }
 }
 
+function ensurePlatformTestStats() {
+    if (typeof globalThis === "undefined") return null;
+    if (!globalThis.__MMWG_TEST_HOOKS__) {
+        globalThis.__MMWG_TEST_HOOKS__ = {};
+    }
+    if (!globalThis.__MMWG_TEST_HOOKS__.platformStats) {
+        globalThis.__MMWG_TEST_HOOKS__.platformStats = {
+            maxFloatingHeightRatio: 0,
+            maxMicroStackHeight: 0,
+            maxCloudStackHeight: 0
+        };
+    }
+    if (typeof globalThis.__MMWG_TEST_HOOKS__.getPlatformStats !== "function") {
+        globalThis.__MMWG_TEST_HOOKS__.getPlatformStats = () => ({
+            ...globalThis.__MMWG_TEST_HOOKS__.platformStats
+        });
+    }
+    return globalThis.__MMWG_TEST_HOOKS__.platformStats;
+}
+
 // ============ 新群系装饰工厂 ============
 function spawnBiomeDecoration(biomeId, x, y, groundY) {
     let decor = null;
@@ -577,9 +597,19 @@ function spawnDeepDarkDecoration(x, y, groundY) {
 function spawnSkyDimensionDecoration(x, y, groundY) {
     // 云端平台作为特殊平台生成
     if (Math.random() < 0.4) {
-        const cloudY = groundY - 80 - Math.random() * 60;
+        let cloudY = groundY - 80 - Math.random() * 60;
+        if (typeof canvas !== "undefined" && canvas && canvas.height) {
+            const minHeightClamp = groundY - canvas.height * 0.5;
+            if (cloudY < minHeightClamp) {
+                cloudY = minHeightClamp;
+            }
+        }
         const cloud = new CloudPlatform(x, cloudY, 80 + Math.random() * 60);
         platforms.push(cloud);
+        const platformStats = ensurePlatformTestStats();
+        if (platformStats) {
+            platformStats.maxCloudStackHeight = Math.max(platformStats.maxCloudStackHeight || 0, 1);
+        }
     }
 }
 

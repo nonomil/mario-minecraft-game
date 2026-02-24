@@ -308,6 +308,26 @@ function ensureFollowUpMetrics() {
     return globalThis.__MMWG_FOLLOWUP_METRICS;
 }
 
+function ensurePlatformTestStats() {
+    if (typeof globalThis === "undefined") return null;
+    if (!globalThis.__MMWG_TEST_HOOKS__) {
+        globalThis.__MMWG_TEST_HOOKS__ = {};
+    }
+    if (!globalThis.__MMWG_TEST_HOOKS__.platformStats) {
+        globalThis.__MMWG_TEST_HOOKS__.platformStats = {
+            maxFloatingHeightRatio: 0,
+            maxMicroStackHeight: 0,
+            maxCloudStackHeight: 0
+        };
+    }
+    if (typeof globalThis.__MMWG_TEST_HOOKS__.getPlatformStats !== "function") {
+        globalThis.__MMWG_TEST_HOOKS__.getPlatformStats = () => ({
+            ...globalThis.__MMWG_TEST_HOOKS__.platformStats
+        });
+    }
+    return globalThis.__MMWG_TEST_HOOKS__.platformStats;
+}
+
 function resetFollowUpMetrics() {
     const m = ensureFollowUpMetrics();
     m.pickCalls = 0;
@@ -524,6 +544,8 @@ function generatePlatform(startX, length, groundYValue) {
     const platformCfg = biome.platform || {};
     const groundType = biome.groundType || level.ground;
     const newWidth = length * blockSize;
+    const halfScreenHeight = canvas && canvas.height ? canvas.height * 0.5 : null;
+    const minHeightClamp = halfScreenHeight ? (groundYValue - halfScreenHeight) : null;
     console.log('Platform config:', { groundType, newWidth, biomeId: biome.id });
     let merged = false;
     for (let i = platforms.length - 1; i >= 0; i--) {
@@ -608,8 +630,19 @@ function generatePlatform(startX, length, groundYValue) {
         }
         // 确保不超出跳跃范围
         const minReachableY = groundYValue - maxJump * 0.95;
-        if (floatY < minReachableY) {
-            floatY = Math.round(minReachableY / (blockSize / 2)) * (blockSize / 2);
+        let minClampY = minReachableY;
+        if (minHeightClamp != null) {
+            minClampY = Math.max(minClampY, minHeightClamp);
+        }
+        if (floatY < minClampY) {
+            floatY = Math.round(minClampY / (blockSize / 2)) * (blockSize / 2);
+        }
+        const platformStats = ensurePlatformTestStats();
+        if (platformStats && canvas && canvas.height) {
+            const heightRatio = (groundYValue - floatY) / canvas.height;
+            if (Number.isFinite(heightRatio)) {
+                platformStats.maxFloatingHeightRatio = Math.max(platformStats.maxFloatingHeightRatio || 0, heightRatio);
+            }
         }
         floatUsedRanges.push([floatX, floatX + floatWidthPx]);
         const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
@@ -657,7 +690,8 @@ function generatePlatform(startX, length, groundYValue) {
         const microType = platformCfg.microPlatformType || "grass";
         const pattern = String(platformCfg.microPattern || "stair").toLowerCase();
         const maxJumpBlocks = Math.max(1, Math.floor((estimateMaxJumpHeightPx() * 0.85) / blockSize));
-        const maxRiseBlocks = Math.max(1, Math.min(maxJumpBlocks, Number(platformCfg.microMaxRiseBlocks) || 2));
+        const configuredMaxRise = Math.max(1, Math.min(maxJumpBlocks, Number(platformCfg.microMaxRiseBlocks) || 2));
+        const maxRiseBlocks = Math.min(2, configuredMaxRise);
 
         if (pattern === "stair") {
             const steps = Math.max(1, Math.min(count, maxRiseBlocks));
@@ -674,6 +708,10 @@ function generatePlatform(startX, length, groundYValue) {
                         microPlatform.makeFragile(3);
                     }
                     platforms.push(microPlatform);
+                }
+                const platformStats = ensurePlatformTestStats();
+                if (platformStats) {
+                    platformStats.maxMicroStackHeight = Math.max(platformStats.maxMicroStackHeight || 0, steps);
                 }
                 const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(topX)) {
@@ -694,12 +732,19 @@ function generatePlatform(startX, length, groundYValue) {
             for (let i = 0; i < count; i++) {
                 let mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
                 mx = Math.floor(mx / blockSize) * blockSize;
-                const my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
+                let my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
+                if (minHeightClamp != null && my < minHeightClamp) {
+                    my = Math.round(minHeightClamp / (blockSize / 2)) * (blockSize / 2);
+                }
                 const microPlatform = new Platform(mx, my, blockSize, blockSize, microType);
                 if (biome.id === "nether" && Math.random() < 0.5 && typeof microPlatform.makeFragile === "function") {
                     microPlatform.makeFragile(3);
                 }
                 platforms.push(microPlatform);
+                const platformStats = ensurePlatformTestStats();
+                if (platformStats) {
+                    platformStats.maxMicroStackHeight = Math.max(platformStats.maxMicroStackHeight || 0, 1);
+                }
                 const spawnX = mx + blockSize / 2;
                 if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(spawnX)) {
                     const word = pickWordForSpawn();

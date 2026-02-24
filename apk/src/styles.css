@@ -669,7 +669,7 @@ canvas {
 .word-display-title {
     color: #FFD700;
     font-weight: 900;
-    font-size: clamp(18px, 3.2vw, 28px);
+    font-size: 24px;
     letter-spacing: 0.18em;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
@@ -677,7 +677,7 @@ canvas {
 .word-display-sub {
     color: #fff6c2;
     font-weight: 700;
-    font-size: clamp(12px, 2vw, 18px);
+    font-size: 16px;
     text-shadow: 1px 1px 0 #000;
 }
 
@@ -718,13 +718,13 @@ canvas {
 }
 
 .hud-box {
-    background: rgba(0,0,0,0.55);
+    background: rgba(0,0,0,0.5);
     color: white;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: clamp(11px, 1.8vw, 14px);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 18px;
     font-weight: bold;
-    border: 1.5px solid rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.3);
     text-shadow: 1px 1px 0 #000;
     white-space: nowrap;
     flex: 1;
@@ -774,6 +774,7 @@ canvas {
 
 #word-display {
     color: #FFD700;
+    font-size: 24px;
 }
 
 .word-display-float {
@@ -782,7 +783,7 @@ canvas {
     left: 50%;
     transform: translateX(-50%);
     color: #FFD700;
-    font-size: clamp(18px, 3.5vw, 26px);
+    font-size: 24px;
     font-weight: 900;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     pointer-events: none;
