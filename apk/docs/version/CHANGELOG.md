@@ -1,4 +1,19 @@
-﻿## v1.18.46 (2026-02-23)
+﻿## v1.18.53 (2026-02-24)
+
+### HUD 布局对齐（APK）
+- 对齐 `apk/Game.html` 与 hud-layout 版本的 HUD 结构（`hud-grid` 三列布局）。
+- 修复顶部状态栏与控制按钮区域的尺寸/对齐差异。
+- 单词展示改为英文/中文分行展示，匹配新 HUD 容器结构。
+- 补齐 HUD 相关元素 ID，确保交互与状态更新正确绑定。
+
+### Tests
+- 新增 HUD 布局回归用例，防止 APK 与网页布局再次偏移。
+
+### Release Metadata
+- Version bump: push 后由 GitHub Actions 自动 patch 递增（`apk/version.json`、`apk/package.json`、`apk/android-app/package.json`、`apk/android-app/android/app/build.gradle`）。
+
+---
+## v1.18.46 (2026-02-23)
 
 ### 开局弹窗与发布链路
 - 开局弹窗标题去重，仅保留顶部主标题。

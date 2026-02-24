@@ -1,13 +1,13 @@
-﻿# Version Status (2026-02-23)
+﻿# Version Status (2026-02-24)
 
 ## Current Baseline
 - Local version file: `apk/version.json`
-- versionName: **1.18.46**
-- versionCode/buildNumber: **46**
+- versionName: **1.18.53**
+- versionCode/buildNumber: **53**
 
 ## Git State
 - Branch: `main`
-- Includes start overlay title de-dup + intro copy update, plus APK build sync (build + sync before Gradle).
+- Includes HUD 布局对齐（`hud-grid` 结构 + 单词分行展示 + 交互 ID 补齐）。
 
 ## Records Check
 - Updated: `apk/docs/version/CHANGELOG.md`
@@ -15,4 +15,4 @@
 - Updated: `apk/docs/version/Progress.md`
 
 ## Validation Snapshot
-- Manual: verified web/APK parity after build + sync.
+- 未在本机执行自动化测试（将由 GitHub Actions 构建验证）。
