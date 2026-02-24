@@ -1,4 +1,39 @@
-﻿## v1.18.53 (2026-02-24)
+﻿## v1.18.56 (2026-02-25)
+
+### APK 触控按钮与图标回退对齐
+- 将 APK 触控区 7 个按钮图标回退到 `v1.18.42` 的目标样式（`⬅️ ➡️ 🚪 🧰 🔁 ⤴️ 🗡️`）。
+- 修正 HUD 顶部“重读/暂停”按钮图标为 `🔊`，与目标版本一致。
+- 保持 `touch-controls` 布局参数不变（按钮尺寸 `96px`，手机端底部偏移 `clamp(...)`），确保位置与大小稳定。
+
+### APK/WebView 缩放一致性
+- 移除 `apk/src/styles.css` 中新增的 `-webkit-text-size-adjust` / `text-size-adjust`，避免 WebView 下 emoji 图标缩放差异导致的视觉偏移。
+
+### Release Pipeline
+- 更新 `.github/workflows/android.yml`：Release 文案改为优先读取 `apk/docs/release/发布说明-v<version>.md`，避免 GitHub Releases 长期复用旧描述。
+- 新增发布说明文档：`v1.18.54`、`v1.18.55`、`v1.18.56`。
+
+---
+## v1.18.55 (2026-02-24)
+
+### 发布链路与脚本可用性
+- 修复 `apk/push.bat` 菜单输出与自动化参数兼容性，支持 `--mode auto --yes --no-pause` 流程。
+- 清理批处理输出异常，确保 dry-run 与实推送日志可读。
+
+### Release Metadata
+- 自动版本递增到 `1.18.55`（`versionCode/buildNumber = 55`）。
+
+---
+## v1.18.54 (2026-02-24)
+
+### HUD 与平台限制同步发布
+- 发布 HUD/触控按钮尺寸与布局对齐修复（基于 `v1.18.53` 相关改动）。
+- 同步平台高度与堆叠限制约束，保障移动端可视与可达性。
+
+### Release Metadata
+- 自动版本递增到 `1.18.54`（`versionCode/buildNumber = 54`）。
+
+---
+## v1.18.53 (2026-02-24)
 
 ### HUD 布局对齐（APK）
 - 对齐 `apk/Game.html` 与 hud-layout 版本的 HUD 结构（`hud-grid` 三列布局）。
@@ -1024,5 +1059,6 @@
 - `npm run vocab:db:publish`
 
 ---
+
 
 

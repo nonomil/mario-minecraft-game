@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -30,8 +30,6 @@ body {
     padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
     box-sizing: border-box;
     font-family: "Verdana", sans-serif;
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;

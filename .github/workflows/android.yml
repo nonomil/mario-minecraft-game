@@ -1,4 +1,4 @@
-name: Build Android APK
+﻿name: Build Android APK
 
 on:
   push:
@@ -157,42 +157,53 @@ jobs:
           path: apk/android-app/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
 
+      - name: Prepare release notes
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES_FILE="apk/docs/release/发布说明-v${VERSION}.md"
+          OUT_FILE="apk/.release-notes.md"
+
+          {
+            echo "## Mario Minecraft Game v${VERSION}"
+            echo
+            echo "### 版本信息"
+            echo "- Version: ${{ steps.version.outputs.version }}"
+            echo "- VersionCode: ${{ steps.version.outputs.versionCode }}"
+            echo "- BuildNumber: ${{ steps.version.outputs.buildNumber }}"
+            echo "- Commit: ${{ github.sha }}"
+            echo
+            echo "### 下载文件"
+            echo "- Debug APK: \`mario-minecraft-game-${VERSION}-debug.apk\`"
+            echo "- Release APK: \`mario-minecraft-game-${VERSION}-release.apk\`"
+            echo
+            echo "### 安装说明"
+            echo "1. 下载 APK 文件"
+            echo "2. 在 Android 设备开启“允许安装未知来源应用”"
+            echo "3. 安装 APK"
+            echo
+            echo "### 本次更新"
+            if [ -f "$NOTES_FILE" ]; then
+              cat "$NOTES_FILE"
+            else
+              echo "- 未找到版本说明文件：$NOTES_FILE"
+              echo "- 请查看 apk/docs/version/CHANGELOG.md 获取更新详情。"
+            fi
+          } > "$OUT_FILE"
+
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ steps.version.outputs.version }}
           name: Mario Minecraft Game v${{ steps.version.outputs.version }}
-          body: |
-            ## Mario Minecraft Game v${{ steps.version.outputs.version }}
-
-            ### 版本信息
-            - Version: ${{ steps.version.outputs.version }}
-            - VersionCode: ${{ steps.version.outputs.versionCode }}
-            - BuildNumber: ${{ steps.version.outputs.buildNumber }}
-            - Commit: ${{ github.sha }}
-
-            ### 下载文件
-            - Debug APK: `mario-minecraft-game-${{ steps.version.outputs.version }}-debug.apk`
-            - Release APK: `mario-minecraft-game-${{ steps.version.outputs.version }}-release.apk`
-
-            ### 安装说明
-            1. 下载 APK 文件
-            2. 在 Android 设备开启“允许安装未知来源应用”
-            3. 安装 APK
-
-            ### 本次更新（游戏优化 0220-3）
-            - 修复室内与交易操作“要长按/点两次”问题，提升单击稳定性。
-            - 交互键和切换武器键增加去重复触发保护，减少误触发。
-            - 室内宝箱触发增加冷却，避免和门口自动离开逻辑冲突。
-            - 新增主角护甲外观叠层，装备后角色形象实时变化。
-            - 护甲减伤按护甲类型固定值优先，钻石护甲格挡体感更明确。
-            - 同步版本号、版本记录与发布说明。
+          bodyFile: apk/.release-notes.md
           artifacts: |
             apk/android-app/android/app/build/outputs/apk/debug/*.apk,
             apk/android-app/android/app/build/outputs/apk/release/*.apk
           allowUpdates: true
           removeArtifacts: true
           makeLatest: true
+
 
       - name: Commit version changes
         run: |
