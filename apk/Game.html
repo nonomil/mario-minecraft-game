@@ -30,24 +30,37 @@
     <canvas id="gameCanvas" width="800" height="600"></canvas>
 
         <div id="ui-layer">
-        <div class="hud-top">
-            <div class="hud-box">🪙 金币: <span id="score">0</span></div>
-            <div class="hud-box" id="hp"></div>
-            <div class="hud-box" id="word-display">Start!</div>
-            <div class="hud-box" id="level-info">🌲 森林</div>
-            <div class="hud-box" id="weapon-info">⚔️ 石剑</div>
-            <div class="hud-box hud-box-clickable" id="armor-status">🛡️ 无</div>
-        </div>
+        <div class="hud-grid">
+            <div class="hud-column hud-left">
+                <div class="hud-row">
+                    <div class="hud-box" id="hp"></div>
+                    <div class="hud-box">🪙 金币: <span id="score">0</span></div>
+                </div>
+                <div class="hud-row">
+                    <button class="game-btn hud-btn" id="btn-inventory">🎒 背包</button>
+                    <button class="game-btn hud-btn" id="btn-save-progress">💾 存档</button>
+                </div>
+            </div>
 
-        <div class="btn-group-left">
-            <button class="game-btn" id="btn-inventory">🎒 背包</button>
-        </div>
+            <div class="hud-column hud-center">
+                <div class="word-display-block" id="word-display-block" aria-live="polite">
+                    <div id="word-display" class="word-display-title">Start!</div>
+                    <div id="word-display-zh" class="word-display-sub"></div>
+                </div>
+            </div>
 
-        <div class="btn-group">
-            <button class="game-btn" id="btn-settings">⚙️ 设置</button>
-            <button class="game-btn" id="btn-profile">📋 档案</button>
-            <button class="game-btn" id="btn-save-progress">💾 存档</button>
-            <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
+            <div class="hud-column hud-right">
+                <div class="hud-row">
+                    <div class="hud-box" id="equip-status">⚔️ 石剑</div>
+                    <div class="hud-box" id="level-info">🌲 森林</div>
+                    <div class="hud-box hud-box-clickable" id="armor-status">🛡️ 无</div>
+                </div>
+                <div class="hud-row">
+                    <button class="game-btn hud-btn" id="btn-settings">⚙️ 设置</button>
+                    <button class="game-btn hud-btn" id="btn-profile">📋 档案</button>
+                    <button class="game-btn hud-btn" id="btn-repeat-pause">⏯ 重读/暂停</button>
+                </div>
+            </div>
         </div>
 
         <div class="inventory-bar">
@@ -98,8 +111,8 @@
             📦 打开宝箱  ⛏️ 采集
         </div>
         <div class="overlay-buttons">
-            <button class="overlay-btn" id="btn-overlay-skip">&#x8DF3;&#x8FC7;</button>
-            <button class="overlay-btn" id="btn-overlay-pick-account">&#x9009;&#x62E9;&#x6863;&#x6848;</button>
+            <button class="overlay-btn overlay-btn-secondary" id="btn-overlay-skip">&#x8DF3;&#x8FC7;</button>
+            <button class="overlay-btn overlay-btn-primary" id="btn-overlay-pick-account">&#x9009;&#x62E9;&#x6863;&#x6848;</button>
             <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
             <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">积分复活</button>
             <button class="overlay-btn overlay-leaderboard" id="btn-overlay-leaderboard" style="display:none;">🏆 排行榜</button>

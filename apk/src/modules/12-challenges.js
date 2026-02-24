@@ -659,7 +659,21 @@ function triggerWordGateChallenge(gate) {
 function updateWordUI(wordObj) {
     const el = document.getElementById("word-display");
     if (!el) return;
-    el.innerText = wordObj ? [wordObj.en, wordObj.zh].filter(Boolean).join(" ") : "Start!";
+    const en = wordObj?.en ? String(wordObj.en) : "Start!";
+    const zh = wordObj?.zh ? String(wordObj.zh) : "";
+    el.innerText = en;
+
+    const zhEl = document.getElementById("word-display-zh");
+    if (zhEl) zhEl.innerText = zh;
+
+    const block = document.getElementById("word-display-block");
+    if (block) {
+        block.classList.remove("word-display-animate");
+        // Force a reflow to restart animation.
+        // eslint-disable-next-line no-unused-expressions
+        block.offsetHeight;
+        block.classList.add("word-display-animate");
+    }
 }
 
 function speakWord(wordObj) {
