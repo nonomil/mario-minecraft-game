@@ -30,6 +30,8 @@ body {
     padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
     box-sizing: border-box;
     font-family: "Verdana", sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;

@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
+import android.webkit.WebSettings;
 
 import com.getcapacitor.BridgeActivity;
 
@@ -17,6 +18,7 @@ public class MainActivity extends BridgeActivity {
     super.onCreate(savedInstanceState);
     setupFullscreen();
     applyImmersiveMode();
+    applyWebViewDefaults();
     wireWindowInsetsToCssSafeArea();
   }
 
@@ -36,6 +38,13 @@ public class MainActivity extends BridgeActivity {
     }
     // 设置全屏标志（移除 FLAG_LAYOUT_NO_LIMITS 避免内容超出屏幕）
     window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+  }
+
+  private void applyWebViewDefaults() {
+    if (bridge == null || bridge.getWebView() == null) return;
+    WebSettings settings = bridge.getWebView().getSettings();
+    if (settings == null) return;
+    settings.setTextZoom(100);
   }
 
   private void wireWindowInsetsToCssSafeArea() {

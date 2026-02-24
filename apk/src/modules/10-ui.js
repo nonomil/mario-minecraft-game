@@ -29,7 +29,17 @@ function setOverlay(visible, mode) {
     const title = document.getElementById("overlay-title");
     const text = document.getElementById("overlay-text");
     const btn = document.getElementById("btn-overlay-action");
+    const btnSkip = document.getElementById("btn-overlay-skip");
+    const btnPick = document.getElementById("btn-overlay-pick-account");
     const btnScoreRevive = document.getElementById("btn-overlay-score-revive");
+    const btnLeaderboard = document.getElementById("btn-overlay-leaderboard");
+    const btnWrap = overlay.querySelector(".overlay-buttons");
+
+    const hideStartButtons = () => {
+        if (btnSkip) btnSkip.style.display = "none";
+        if (btnPick) btnPick.style.display = "none";
+        if (btnWrap) btnWrap.classList.remove("overlay-buttons-duo");
+    };
     if (visible) {
         overlay.classList.add("visible");
         overlay.setAttribute("aria-hidden", "false");
@@ -43,12 +53,20 @@ function setOverlay(visible, mode) {
             clearStartOverlayTimer();
             wireIntroConfirmButton();
             if (title) title.innerText = "Minecraft 单词游戏";
+            if (btn) btn.style.display = "none";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLeaderboard) btnLeaderboard.style.display = "none";
+            if (btnSkip) btnSkip.style.display = "block";
+            if (btnPick) btnPick.style.display = "block";
+            if (btnWrap) btnWrap.classList.add("overlay-buttons-duo");
         } else if (mode === "pause") {
             if (title) title.innerText = "已暂停";
             if (text) text.innerHTML = START_OVERLAY_HINT_HTML;
             if (btn) btn.innerText = "继续";
+            if (btn) btn.style.display = "block";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLeaderboard) btnLeaderboard.style.display = "none";
+            hideStartButtons();
         } else if (mode === "error") {
             if (title) title.innerText = "Error";
             if (text) {
@@ -60,7 +78,10 @@ function setOverlay(visible, mode) {
                 text.innerHTML = "A fatal error occurred. The game is paused. Please reload." + detail;
             }
             if (btn) btn.innerText = "Reload";
+            if (btn) btn.style.display = "block";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLeaderboard) btnLeaderboard.style.display = "none";
+            hideStartButtons();
         } else if (mode === "gameover") {
             const diamonds = getDiamondCount();
             if (title) title.innerText = "💀 游戏结束";
@@ -78,6 +99,7 @@ function setOverlay(visible, mode) {
                 const cfg = getReviveConfig();
                 const diamondCost = Number(cfg.diamondCost) || 10;
                 btn.innerText = diamonds >= diamondCost ? `💎${diamondCost} 复活` : "重新开始";
+                btn.style.display = "block";
             }
             if (btnScoreRevive) {
                 const cfg = getReviveConfig();
@@ -90,13 +112,16 @@ function setOverlay(visible, mode) {
                     : `积分复活 (需要${scoreCost}分)`;
             }
             // Show leaderboard button on gameover
-            const btnLeaderboard = document.getElementById("btn-overlay-leaderboard");
             if (btnLeaderboard) btnLeaderboard.style.display = "block";
+            hideStartButtons();
         } else {
             if (title) title.innerText = "准备开始";
             if (text) text.innerHTML = START_OVERLAY_HINT_HTML;
             if (btn) btn.innerText = "开始游戏";
+            if (btn) btn.style.display = "block";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLeaderboard) btnLeaderboard.style.display = "none";
+            hideStartButtons();
         }
     } else {
         overlay.classList.remove("visible");
@@ -107,8 +132,8 @@ function setOverlay(visible, mode) {
         }
         overlayMode = "start";
         if (btnScoreRevive) btnScoreRevive.style.display = "none";
-        const btnLeaderboard = document.getElementById("btn-overlay-leaderboard");
         if (btnLeaderboard) btnLeaderboard.style.display = "none";
+        hideStartButtons();
     }
 }
 function wireIntroConfirmButton() {
