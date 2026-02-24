@@ -29,3 +29,12 @@ test("start overlay uses skip + pick-account buttons (matches desktop Game.html)
   await expect(page.locator("#btn-overlay-action")).toBeHidden();
 });
 
+test("skip button boots the game loop (no account required)", async ({ page, baseURL }) => {
+  await page.goto(`${baseURL}/apk/Game.html`, { waitUntil: "domcontentloaded" });
+
+  await page.waitForFunction(() => Boolean(window.MMWG_TEST_API && window.MMWG_TEST_API.getState().bootReady === true));
+
+  await page.locator("#btn-overlay-skip").click();
+
+  await page.waitForFunction(() => window.MMWG_TEST_API.getState().startedOnce === true, null, { timeout: 5_000 });
+});

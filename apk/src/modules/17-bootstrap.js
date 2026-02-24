@@ -74,7 +74,13 @@ async function start() {
     }
     const overlaySkipBtn = document.getElementById("btn-overlay-skip");
     if (overlaySkipBtn) {
-        overlaySkipBtn.addEventListener("click", resumeGameFromOverlay);
+        overlaySkipBtn.addEventListener("click", () => {
+            if (typeof skipStartOverlay === "function") {
+                skipStartOverlay();
+                return;
+            }
+            resumeGameFromOverlay();
+        });
     }
     const overlayPickBtn = document.getElementById("btn-overlay-pick-account");
     if (overlayPickBtn) {

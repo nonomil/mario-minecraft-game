@@ -416,6 +416,27 @@ function resumeGameFromOverlay() {
     repeatPauseState = "repeat";
 }
 
+function skipStartOverlay() {
+    // "跳过" is allowed to bypass intro + account selection.
+    viewportIgnoreUntilMs = nowMs() + 2000;
+    if (overlayMode !== "start") {
+        resumeGameFromOverlay();
+        return;
+    }
+
+    if (!startedOnce) {
+        bootGameLoopIfNeeded();
+    } else {
+        paused = false;
+        pausedByModal = false;
+        setOverlay(false);
+    }
+
+    const btnMix = document.getElementById("btn-repeat-pause");
+    if (btnMix) btnMix.innerText = "🔊 重读";
+    repeatPauseState = "repeat";
+}
+
 function getReviveConfig() {
     const revive = (gameConfig && gameConfig.revive) || {};
     return {
