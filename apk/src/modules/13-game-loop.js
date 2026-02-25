@@ -506,6 +506,11 @@ function update() {
     wordGates.forEach(gate => {
         if (gate.cooldown > 0) gate.cooldown--;
         if (gate.locked && gate.cooldown <= 0 && rectIntersect(player.x, player.y, player.width, player.height, gate.x, gate.y, gate.width, gate.height)) {
+            if (progress && !progress.shownWordGateTip) {
+                showToast("路被词语闸门拦住了！答对单词才能继续前进");
+                progress.shownWordGateTip = true;
+                saveProgress();
+            }
             triggerWordGateChallenge(gate);
         }
     });
@@ -729,22 +734,19 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const armorId = playerEquipment.armor;
     const hasArmor = !!(armorId && playerEquipment.armorDurability > 0);
     const reductionByArmor = {
-        leather: 0.2,
-        chainmail: 0.35,
-        iron: 0.55,
-        gold: 0.65,
-        diamond: 1.0,
-        netherite: 1.0
+        leather:   0.25,  // 皮革：减伤 25%
+        chainmail: 0.40,  // 锁链：减伤 40%
+        iron:      0.55,  // 铁甲：减伤 55%
+        gold:      0.35,  // 黄金：减伤 35%（防御弱，耐久低，参考 Minecraft 原版）
+        diamond:   0.75,  // 钻石：减伤 75%（强但不无敌）
+        netherite: 0.82   // 下界合金：减伤 82%（最强，仍会掉血）
     };
     const baseReduction = Math.min(0.6, defense * 0.12);
     const armorReduction = reductionByArmor[armorId];
     const reduction = hasArmor ? (Number.isFinite(armorReduction) ? armorReduction : baseReduction) : baseReduction;
-    const minDamage = hasArmor ? 0 : 1;
+    const minDamage = 1;  // 有无护甲都至少受 1 点伤害，钻石/下界合金不再无敌
     const actualDamage = Math.max(minDamage, Math.round(scaledDamage * (1 - reduction)));
     if (hasArmor) {
-        if (actualDamage <= 0) {
-            showFloatingText("🛡️ 格挡", player.x, player.y - 24, "#80DEEA");
-        }
         // Hit-based durability loss per armor type
         const hitDurabilityCost = {
             leather: 8, chainmail: 6, iron: 5, gold: 5, diamond: 3, netherite: 2

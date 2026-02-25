@@ -1,4 +1,21 @@
-﻿## v1.18.56 (2026-02-25)
+﻿## v1.19.0 (2026-02-25)
+
+### Quick Win（游戏性 + 学习性）
+- 高级学习设置英文标签全部中文化：`Adaptive follow / Repeat Bias / Reinforce wrong / Balanced / Follow-up Stats`。
+- 单词卡时长新增 `2秒` 与 `3秒` 选项，默认展示时长由 `0.9s` 调整为 `1.2s`。
+- 词库轮换修复：`switchToNextPackInOrder` 在重置进度时同步清空 `runCounts`，避免长期轮换偏斜。
+- Word Gate 参数调整：`spawnChance 0.08 -> 0.18`，`minScore 500 -> 150`，并新增首次触发教学提示。
+- 普通宝箱掉落权重调整：`word_card` 下调至 `8`（并降低数量区间），提升实体物资掉落体感。
+- 护甲减伤平衡已同步：黄金/钻石/下界合金减伤重新设定，且有甲时也至少受 `1` 点伤害。
+
+### Version Metadata
+- `apk/package.json` -> `1.19.0`
+- `apk/android-app/package.json` -> `1.19.0`
+- `apk/version.json` -> `versionCode/buildNumber 58`, `versionName 1.19.0`
+- `apk/android-app/android/app/build.gradle` -> `versionCode 58`, `versionName 1.19.0`
+
+---
+## v1.18.56 (2026-02-25)
 
 ### APK 触控按钮与图标回退对齐
 - 将 APK 触控区 7 个按钮图标回退到 `v1.18.42` 的目标样式（`⬅️ ➡️ 🚪 🧰 🔁 ⤴️ 🗡️`）。
@@ -1059,6 +1076,8 @@
 - `npm run vocab:db:publish`
 
 ---
+
+
 
 
 
