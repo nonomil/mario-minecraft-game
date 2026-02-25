@@ -11,7 +11,7 @@ async function boot(page) {
     await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
     window.MMWG_TEST_API.actions.bootGameLoopIfNeeded();
     paused = false;
-    pausedByModal = false;
+    if (typeof pauseStack === "number") pauseStack = 0;
     if (typeof setOverlay === "function") setOverlay(false);
   });
 }

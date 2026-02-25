@@ -394,8 +394,8 @@ function resumeGameFromOverlay() {
         if (!startedOnce) {
             bootGameLoopIfNeeded();
         } else {
-            paused = false;
-            pausedByModal = false;
+            if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+            else paused = false;
             setOverlay(false);
         }
     } else if (overlayMode === "gameover") {
@@ -404,14 +404,14 @@ function resumeGameFromOverlay() {
             playerHp = playerMaxHp;
             updateHpUI();
             updateDiamondUI();
-            paused = false;
-            pausedByModal = false;
+            if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+            else paused = false;
             startedOnce = true;
             setOverlay(false);
         } else {
             initGame();
-            paused = false;
-            pausedByModal = false;
+            if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+            else paused = false;
             startedOnce = true;
             setOverlay(false);
         }
@@ -420,14 +420,14 @@ function resumeGameFromOverlay() {
             location.reload();
         } catch {
             initGame();
-            paused = false;
-            pausedByModal = false;
+            if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+            else paused = false;
             startedOnce = true;
             setOverlay(false);
         }
     } else {
-        paused = false;
-        pausedByModal = false;
+        if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+        else paused = false;
         startedOnce = true;
         setOverlay(false);
     }
@@ -447,8 +447,8 @@ function skipStartOverlay() {
     if (!startedOnce) {
         bootGameLoopIfNeeded();
     } else {
-        paused = false;
-        pausedByModal = false;
+        if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+        else paused = false;
         setOverlay(false);
     }
 

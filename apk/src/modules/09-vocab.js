@@ -477,9 +477,9 @@ function applySettingsToUI() {
 
     if (viewportChanged && startedOnce) {
         if (nowMs() < viewportIgnoreUntilMs) return;
-        if (startOverlayActive || pausedByModal) return;
-        paused = true;
-        pausedByModal = true;
+        if (startOverlayActive || (typeof isModalPauseActive === "function" && isModalPauseActive())) return;
+        if (typeof pushPause === "function") pushPause();
+        else paused = true;
         setOverlay(true, "pause");
         showToast("已适配屏幕，已暂停游戏");
     }
@@ -507,8 +507,8 @@ function showVocabPromptModal() {
     }
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
-    pausedByModal = true;
-    paused = true;
+    if (typeof pushPause === "function") pushPause();
+    else paused = true;
 }
 
 function hideVocabPromptModal() {
@@ -517,7 +517,8 @@ function hideVocabPromptModal() {
     modal.classList.remove("visible");
     modal.setAttribute("aria-hidden", "true");
     if (typeof markVocabPromptSeen === "function") markVocabPromptSeen();
-    if (pausedByModal) { pausedByModal = false; paused = false; }
+    if (typeof popPause === "function") popPause();
+    else paused = false;
 }
 
 async function confirmVocabPrompt() {

@@ -164,8 +164,8 @@ function wireSettingsModal() {
 
     function open() {
         if (!modal) return;
-        pausedByModal = !paused;
-        paused = true;
+        if (typeof pushPause === "function") pushPause();
+        else paused = true;
         fill();
         modal.classList.add("visible");
         modal.setAttribute("aria-hidden", "false");
@@ -176,8 +176,8 @@ function wireSettingsModal() {
         closeAdvanced();
         modal.classList.remove("visible");
         modal.setAttribute("aria-hidden", "true");
-        if (pausedByModal) paused = false;
-        pausedByModal = false;
+        if (typeof popPause === "function") popPause();
+        else paused = false;
     }
 
     function resetProgress() {

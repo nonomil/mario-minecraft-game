@@ -85,6 +85,12 @@ function computeDifficultyState() {
         enemySpawnMult = clamp(enemySpawnMult, 0.4, maxSpawn);
     }
 
+    // 花香护体 buff：敌人攻击频率降低30%
+    if (typeof gameState !== 'undefined' && gameState.flowerBuffTimer > 0) {
+        enemyDamageMult *= 0.7;
+        enemySpawnMult *= 0.7;
+    }
+
     return {
         name: tier.name || "普通",
         minScore: tier.minScore ?? 0,

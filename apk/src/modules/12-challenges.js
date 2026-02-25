@@ -464,8 +464,8 @@ function startLearningChallenge(wordObj, forcedType, origin) {
     payload.wordObj = wordObj;
     currentLearningChallenge = payload;
     challengeOrigin = origin || null;
-    challengePausedBefore = paused;
-    paused = true;
+    if (typeof pushPause === "function") pushPause();
+    else paused = true;
     showLearningChallenge(payload);
     challengeDeadline = Date.now() + (LEARNING_CONFIG.challenge.timeLimit || 10000);
     updateChallengeTimerDisplay();
@@ -611,7 +611,8 @@ function completeLearningChallenge(correct) {
             challengeOrigin.remove = true;
             showToast("💠 词语闸门已解锁！");
         }
-        paused = challengePausedBefore;
+        if (typeof popPause === "function") popPause();
+        else paused = false;
         currentLearningChallenge = null;
         challengeOrigin = null;
     } else {
@@ -620,7 +621,6 @@ function completeLearningChallenge(correct) {
         }
         if (settings.learningMode) {
             const retryWord = wordObj;
-            const resumePausedState = challengePausedBefore;
             const savedOrigin = challengeOrigin;
             showChallengeCorrection(retryWord);
             showFloatingText("📕 再试一次", player.x, player.y - 40);
@@ -628,7 +628,8 @@ function completeLearningChallenge(correct) {
                 hideLearningChallenge();
                 currentLearningChallenge = null;
                 challengeOrigin = null;
-                paused = resumePausedState;
+                if (typeof popPause === "function") popPause();
+                else paused = false;
                 startLearningChallenge(retryWord, null, savedOrigin);
             }, 2500);
             return;
@@ -641,7 +642,8 @@ function completeLearningChallenge(correct) {
         showChallengeCorrection(wordObj);
         setTimeout(() => {
             hideLearningChallenge();
-            paused = challengePausedBefore;
+            if (typeof popPause === "function") popPause();
+            else paused = false;
             currentLearningChallenge = null;
             challengeOrigin = null;
         }, 2000);

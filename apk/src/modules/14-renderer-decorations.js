@@ -117,17 +117,40 @@ function drawBush(bush) {
 function drawFlower(flower) {
     const x = flower.x;
     const y = flower.y;
-    ctx.fillStyle = "#4CAF50";
-    ctx.fillRect(x + 5, y + 8, 2, 10);
+    const w = flower.width || 12;
+    const h = flower.height || 18;
+    const stemX = x + Math.floor(w * 0.5) - 1;
+    const blossomY = y + 4;
+    const stemTopY = blossomY + 2;
+    const groundLineY = y + h;
+
+    ctx.fillStyle = "#2E7D32";
+    ctx.fillRect(stemX, stemTopY, 3, Math.max(6, groundLineY - stemTopY));
+
+    // Small side leaves to avoid "floating icon" feel.
+    ctx.fillStyle = "#43A047";
+    ctx.beginPath();
+    ctx.moveTo(stemX + 1, y + 10);
+    ctx.lineTo(stemX - 4, y + 12);
+    ctx.lineTo(stemX + 1, y + 14);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(stemX + 2, y + 12);
+    ctx.lineTo(stemX + 7, y + 10);
+    ctx.lineTo(stemX + 2, y + 15);
+    ctx.closePath();
+    ctx.fill();
+
     ctx.fillStyle = flower.color;
     for (let i = 0; i < 4; i++) {
         const angle = (Math.PI / 2) * i;
         const px = x + 6 + Math.cos(angle) * 4;
-        const py = y + 6 + Math.sin(angle) * 4;
+        const py = blossomY + Math.sin(angle) * 4;
         ctx.fillRect(px, py, 4, 4);
     }
     ctx.fillStyle = "#FFEB3B";
-    ctx.fillRect(x + 5, y + 5, 3, 3);
+    ctx.fillRect(x + 5, blossomY - 1, 3, 3);
 }
 
 function drawMushroom(mushroom) {

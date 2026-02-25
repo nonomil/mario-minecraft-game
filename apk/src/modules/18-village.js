@@ -573,7 +573,7 @@ function updateVillageInteriorMode() {
     villageInteriorState.buildingType === "word_house" &&
     villageInteriorState.challengeStarted &&
     !village._challengeRunning &&
-    !pausedByModal
+    !(typeof isModalPauseActive === "function" && isModalPauseActive())
   ) {
     exitVillageInterior("🏠 挑战结束，已离开词屋");
     return;
@@ -750,7 +750,7 @@ function renderVillageInterior(ctx) {
 
 function triggerVillageInteriorAutoDoor(village) {
   if (!isVillageInteriorActive() || !village || !player) return false;
-  if (paused || pausedByModal) return false;
+  if (paused || (typeof isModalPauseActive === "function" && isModalPauseActive())) return false;
   const now = Date.now();
   if (now < Number(villageInteriorState.autoTriggerCooldownUntil || 0)) return false;
 
@@ -822,7 +822,7 @@ function triggerVillageInteriorAutoAction(village) {
   // Word-house quiz now requires explicit long-press trigger.
   return false;
   if (!isVillageInteriorActive() || !village || !player) return false;
-  if (paused || pausedByModal) return false;
+  if (paused || (typeof isModalPauseActive === "function" && isModalPauseActive())) return false;
   if (villageInteriorState.buildingType !== "word_house") return false;
   if (village.questCompleted || village._challengeRunning || villageInteriorState.challengeStarted) return false;
   const now = Date.now();
@@ -864,7 +864,7 @@ function isInteriorBuildingType(type) {
 function tryAutoEnterVillageInterior(village) {
   if (!village || !player) return false;
   if (isVillageInteriorActive()) return false;
-  if (paused || pausedByModal) return false;
+  if (paused || (typeof isModalPauseActive === "function" && isModalPauseActive())) return false;
   const now = Date.now();
   if (now < Number(villageInteriorState.autoEnterBlockUntil || 0)) return false;
   const nearby = getNearbyBuilding(village, 2);
@@ -995,17 +995,33 @@ function handleVillageInteriorInteraction(interactMode = "tap") {
 }
 
 const TRADER_MATERIAL_PRICES = {
+  // 常见材料
   iron: 2,
   gold: 3,
   coal: 1,
-  shell: 2,
-  starfish: 4,
+  stick: 1,
+  arrow: 1,       // 5个才值1钻，在卖出逻辑里按5个一组处理
+  // 食物
+  beef: 2,
+  mutton: 2,
+  mushroom: 1,
+  mushroom_stew: 3,
+  flower: 1,
+  // 战斗消耗品
   gunpowder: 2,
   rotten_flesh: 1,
   string: 1,
+  shell: 2,
+  snow_block: 1,
+  // 稀有材料
   ender_pearl: 5,
   sculk_vein: 4,
-  echo_shard: 6
+  echo_shard: 6,
+  starfish: 4,
+  pumpkin: 1,
+  // 传说级（高价收购）
+  dragon_egg: 30,
+  totem: 25
 };
 
 const TRADER_ARMOR_PRICES = {
@@ -1022,10 +1038,10 @@ function openVillageTrader(village) {
     showToast("🧑‍🌾 商人暂不可用");
     return false;
   }
-  if (pausedByModal) return false;
+  if (typeof isModalPauseActive === "function" && isModalPauseActive()) return false;
   traderPrevPaused = !!paused;
-  pausedByModal = true;
-  paused = true;
+  if (typeof pushPause === "function") pushPause();
+  else paused = true;
   const modal = ensureVillageTraderModal();
   renderVillageTraderMain(modal, village);
   modal.style.display = "flex";
@@ -1059,10 +1075,9 @@ function closeVillageTrader() {
     modal.style.display = "none";
     modal.setAttribute("aria-hidden", "true");
   }
-  if (pausedByModal) {
-    paused = traderPrevPaused;
-    pausedByModal = false;
-  }
+  if (typeof popPause === "function") popPause();
+  else paused = false;
+  if (traderPrevPaused) paused = true;
 }
 
 function bindTraderTap(target, handler) {
@@ -1132,7 +1147,11 @@ function renderTraderSellMaterials(modal, village) {
   sellable.forEach(({ itemId, price, count, label }) => {
     const btn = document.createElement("button");
     btn.className = "game-btn";
-    btn.textContent = `${label}（库存${count}，单价${price}💎）`;
+    const icon = (typeof ITEM_ICONS !== 'undefined' && ITEM_ICONS[itemId]) || '';
+    const priceText = itemId === 'arrow'
+      ? `5个=1💎`
+      : `单价${price}💎`;
+    btn.textContent = `${icon} ${label}（库存${count}，${priceText}）`;
     bindTraderTap(btn, () => renderTraderSellCount(modal, village, itemId, price, count, label));
     list?.appendChild(btn);
   });
@@ -1170,6 +1189,20 @@ function renderTraderSellCount(modal, village, itemId, unitPrice, maxCount, labe
 
 function sellMaterialByTrader(itemId, unitPrice, requestedCount) {
   const maxCount = Number(inventory?.[itemId]) || 0;
+  // arrow 按5个一组出售
+  if (itemId === 'arrow') {
+    const groups = Math.floor(Math.min(maxCount, requestedCount) / 5);
+    if (groups <= 0) {
+      showToast("🛒 箭矢不足5个");
+      return false;
+    }
+    const sellCount = groups * 5;
+    inventory.arrow -= sellCount;
+    inventory.diamond = (Number(inventory.diamond) || 0) + groups;
+    if (typeof updateInventoryUI === "function") updateInventoryUI();
+    showToast(`💎 售出箭矢 x${sellCount}，获得${groups}钻石`);
+    return true;
+  }
   const sellCount = Math.max(0, Math.min(maxCount, Number(requestedCount) || 0));
   if (sellCount <= 0) {
     showToast("🛒 没有可出售数量");

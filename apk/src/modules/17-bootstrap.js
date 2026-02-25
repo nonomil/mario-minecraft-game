@@ -171,6 +171,7 @@ async function start() {
         }
         return false;
     }
+    const modalPauseActive = () => (typeof isModalPauseActive === "function" && isModalPauseActive());
 
     window.addEventListener("keydown", e => {
         if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) e.preventDefault();
@@ -198,15 +199,15 @@ async function start() {
         if (isAttack) handleAttack("press");
         if (isWeaponSwitch && !e.repeat) switchWeapon();
         if (isUseDiamond) useDiamondForHp();
-        if (isInteract && !e.repeat && !pausedByModal && !paused) handleInteraction();
-        if (isDecorInteract && !e.repeat && !pausedByModal && !paused) handleDecorationInteract();
+        if (isInteract && !e.repeat && !paused && !modalPauseActive()) handleInteraction();
+        if (isDecorInteract && !e.repeat && !paused && !modalPauseActive()) handleDecorationInteract();
         if (!inInput && e.key >= "1" && e.key <= "9") {
             selectedSlot = parseInt(e.key, 10) - 1;
             updateInventoryUI();
             const itemKey = HOTBAR_ITEMS[selectedSlot];
             showToast(`选择: ${ITEM_LABELS[itemKey] || itemKey || "空"}`);
         }
-        if (isPause && startedOnce && !pausedByModal) {
+        if (isPause && startedOnce && !modalPauseActive()) {
             if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
                 if (typeof exitVillageInterior === "function") {
                     exitVillageInterior("🏠 离开房屋");
@@ -251,7 +252,7 @@ async function start() {
             paused = true;
             const btnPause = document.getElementById("btn-pause");
             if (btnPause) btnPause.innerText = "▶️ 继续";
-            if (!pausedByModal) setOverlay(true, "pause");
+            if (!modalPauseActive()) setOverlay(true, "pause");
         }
     });
 
@@ -313,7 +314,8 @@ function registerTestApi() {
         getState() {
             return {
                 paused,
-                pausedByModal,
+                pauseStack: typeof pauseStack === "number" ? pauseStack : 0,
+                modalPaused: (typeof isModalPauseActive === "function" && isModalPauseActive()),
                 startedOnce,
                 bootReady,
                 score,
@@ -342,7 +344,10 @@ function registerTestApi() {
             if (typeof patch.score === "number") score = patch.score;
             if (typeof patch.levelScore === "number") levelScore = patch.levelScore;
             if (typeof patch.paused === "boolean") paused = patch.paused;
-            if (typeof patch.pausedByModal === "boolean") pausedByModal = patch.pausedByModal;
+            if (typeof patch.pauseStack === "number" && typeof pauseStack === "number") {
+                pauseStack = Math.max(0, Math.floor(patch.pauseStack));
+                if (pauseStack > 0) paused = true;
+            }
             if (typeof patch.playerHp === "number") playerHp = patch.playerHp;
             if (typeof patch.playerMaxHp === "number") playerMaxHp = patch.playerMaxHp;
             if (typeof patch.playerInvincibleTimer === "number") playerInvincibleTimer = patch.playerInvincibleTimer;

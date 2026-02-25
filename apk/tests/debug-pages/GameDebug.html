@@ -152,7 +152,7 @@
           if (typeof w.resumeGameFromOverlay === "function") w.resumeGameFromOverlay();
           if (typeof w.setOverlay === "function") w.setOverlay(false);
           if (typeof w.paused !== "undefined") w.paused = false;
-          if (typeof w.pausedByModal !== "undefined") w.pausedByModal = false;
+          if (typeof w.pauseStack === "number") w.pauseStack = 0;
         } catch (e) {
           console.warn("ensureRunning failed:", e);
         }

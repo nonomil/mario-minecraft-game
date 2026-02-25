@@ -13,7 +13,7 @@ async function openGameAndBoot(page) {
     await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
     window.MMWG_TEST_API.actions.bootGameLoopIfNeeded();
     if (typeof window.paused !== "undefined") window.paused = false;
-    if (typeof window.pausedByModal !== "undefined") window.pausedByModal = false;
+    if (typeof window.pauseStack === "number") window.pauseStack = 0;
     if (typeof window.setOverlay === "function") window.setOverlay(false);
   });
 
@@ -33,7 +33,7 @@ async function spawnVillageAndFocus(page) {
     if (typeof resumeGameFromOverlay === "function") resumeGameFromOverlay();
     if (typeof setOverlay === "function") setOverlay(false);
     if (typeof paused !== "undefined") paused = false;
-    if (typeof pausedByModal !== "undefined") pausedByModal = false;
+    if (typeof pauseStack === "number") pauseStack = 0;
 
     if (typeof settings !== "undefined" && settings) settings.villageEnabled = true;
     const interval = Number(villageConfig?.spawnScoreInterval) || 500;

@@ -9,7 +9,7 @@ async function login(page, name) {
     await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
     window.MMWG_TEST_API.actions.bootGameLoopIfNeeded();
     paused = false;
-    pausedByModal = false;
+    if (typeof pauseStack === "number") pauseStack = 0;
   }, name);
 }
 

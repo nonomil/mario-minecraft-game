@@ -19,6 +19,8 @@ REM 参数解析
 REM 支持:
 REM   --mode auto|proxy|direct
 REM   --dry-run
+REM   --yes
+REM   --no-pause
 REM -----------------------------
 set "MODE="
 set "DRY_RUN=0"
@@ -64,29 +66,53 @@ if not defined REPO_ROOT (
     echo [错误] 当前目录不是 Git 仓库。
     echo.
     call :exit_with_pause 1
+    exit /b 1
 )
 
 for /f "delims=" %%A in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set "CURRENT_BRANCH=%%A"
 if not defined CURRENT_BRANCH set "CURRENT_BRANCH=?"
 if /i not "%CURRENT_BRANCH%"=="%BRANCH%" (
-    echo [提示] 当前分支: %CURRENT_BRANCH%
-    echo [提示] 目标远端分支: %REMOTE%/%BRANCH%
+    echo [信息] 当前分支: %CURRENT_BRANCH%
+    echo [信息] 将自动执行以下步骤后推送到 %REMOTE%/%BRANCH%：
+    echo   1^) git switch %BRANCH%
+    echo   2^) git -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+    echo   3^) git merge --no-ff %CURRENT_BRANCH%
+    echo   4^) git push %REMOTE% HEAD:%BRANCH%
     echo.
-    echo [注意] 若继续，将把当前提交（HEAD）推送到远端 %BRANCH%，可能触发 GitHub Actions。
     if "%ASSUME_YES%"=="1" (
-        echo [确认] 已指定 --yes，继续执行。
+        echo [确认] 已指定 --yes，自动继续。
         echo.
     ) else (
-        choice /c YN /n /m "是否继续？（Y/N）: "
+        choice /c YN /n /m "是否继续自动流程？（Y/N）: "
         if errorlevel 2 (
             echo.
-            echo [已取消] 你可以先切换到 main 分支再推送：
-            echo   git switch %BRANCH%
+            echo [已取消] 未执行推送。
             echo.
             call :exit_with_pause 1
+            exit /b 1
         )
         echo.
     )
+
+    call :prepare_main_from_branch "%CURRENT_BRANCH%"
+    if errorlevel 1 (
+        echo.
+        call :exit_with_pause 1
+        exit /b 1
+    )
+
+    if "%DRY_RUN%"=="1" (
+        set "CURRENT_BRANCH=%BRANCH%"
+    ) else (
+        for /f "delims=" %%A in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set "CURRENT_BRANCH=%%A"
+    )
+)
+
+if /i not "%CURRENT_BRANCH%"=="%BRANCH%" (
+    echo [错误] 当前分支仍为 %CURRENT_BRANCH%，未处于 %BRANCH%，已停止推送。
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
 )
 
 for /f "delims=" %%A in ('git remote get-url %REMOTE% 2^>nul') do set "ORIGIN_URL_RAW=%%A"
@@ -101,6 +127,7 @@ if not defined ORIGIN_URL_RAW (
         echo [错误] 添加远端失败。
         echo.
         call :exit_with_pause 1
+        exit /b 1
     )
     set "ORIGIN_URL_RAW=https://github.com/nonomil/mario-minecraft-game.git"
 )
@@ -121,6 +148,7 @@ if not "%ORIGIN_URL%"=="%ORIGIN_URL_RAW%" (
         echo [错误] 更新远端 URL 失败。
         echo.
         call :exit_with_pause 1
+        exit /b 1
     )
 )
 
@@ -168,6 +196,7 @@ if /i "%MODE%"=="auto" (
     echo [提示] 允许值: auto / proxy / direct
     echo.
     call :exit_with_pause 1
+    exit /b 1
 )
 echo.
 
@@ -223,6 +252,7 @@ if "%FETCH_OK%"=="1" (
         echo [信息] 没有需要推送的提交，本地已是最新。
         echo.
         call :exit_with_pause 0
+        exit /b 0
     )
 )
 
@@ -238,6 +268,7 @@ if not "%BEHIND%"=="0" (
     echo   git push --force-with-lease %REMOTE% HEAD:%BRANCH%
     echo.
     call :exit_with_pause 1
+    exit /b 1
 )
 
 echo [检查] 等待推送的提交：
@@ -306,6 +337,7 @@ echo   git config https.proxy http://127.0.0.1:1080
 echo   git config http.sslBackend openssl
 echo.
 call :exit_with_pause 1
+exit /b 1
 
 :push_success
 echo.
@@ -317,6 +349,59 @@ echo GitHub Actions 将自动开始构建（如果本次提交影响 apk/ 或 wo
 echo Actions 地址: https://github.com/nonomil/mario-minecraft-game/actions
 echo.
 call :exit_with_pause 0
+exit /b 0
+
+:prepare_main_from_branch
+set "SOURCE_BRANCH=%~1"
+if not defined SOURCE_BRANCH (
+    echo [错误] 未提供来源分支，无法执行自动流程。
+    exit /b 1
+)
+
+if "%DRY_RUN%"=="1" (
+    echo [DRY-RUN] 自动流程预览：
+    echo   git switch %BRANCH%
+    echo   git -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+    echo   git merge --no-ff %SOURCE_BRANCH%
+    echo.
+    exit /b 0
+)
+
+set "DIRTY=0"
+for /f "delims=" %%A in ('git status --porcelain 2^>nul') do set "DIRTY=1"
+if "%DIRTY%"=="1" (
+    echo [阻止] 检测到未提交改动，无法自动切换分支。
+    echo [提示] 请先提交或暂存后重试：
+    echo   git add -A ^&^& git commit -m "..."
+    echo   或 git stash -u
+    exit /b 1
+)
+
+echo [流程] 切换到 %BRANCH%...
+git switch %BRANCH%
+if errorlevel 1 (
+    echo [错误] 切换到 %BRANCH% 失败。
+    exit /b 1
+)
+
+echo [流程] 更新本地 %BRANCH%（ff-only）...
+git -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+if errorlevel 1 (
+    echo [错误] pull --ff-only 失败，请先手动处理本地 %BRANCH% 状态。
+    exit /b 1
+)
+
+echo [流程] 合并 %SOURCE_BRANCH% -> %BRANCH%...
+git merge --no-ff %SOURCE_BRANCH%
+if errorlevel 1 (
+    echo [错误] 合并失败，可能存在冲突。
+    echo [提示] 请先解决冲突并提交，然后重新运行 push.bat。
+    exit /b 1
+)
+
+echo [流程] 自动合并完成，继续推送。
+echo.
+exit /b 0
 
 :exit_with_pause
 set "EXIT_CODE=%~1"

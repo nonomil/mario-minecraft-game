@@ -951,7 +951,7 @@ function generateBiomeDecorations(x, yPos, width, biome) {
                 spawnDecoration("bush", obj => obj.reset(decorX, yPos - 20), () => new Bush(decorX, yPos - 20));
                 break;
             case "flower":
-                spawnDecoration("flower", obj => obj.reset(decorX, yPos - 36), () => new Flower(decorX, yPos - 36));
+                spawnDecoration("flower", obj => obj.reset(decorX, yPos - 18), () => new Flower(decorX, yPos - 18));
                 break;
             case "mushroom":
                 spawnDecoration("mushroom", obj => obj.reset(decorX, yPos - 36), () => new Mushroom(decorX, yPos - 36));
