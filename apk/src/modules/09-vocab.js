@@ -6,7 +6,7 @@ function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
     if (typeof merged.challengeEnabled !== "boolean") merged.challengeEnabled = defaultSettings.challengeEnabled ?? true;
     if (typeof merged.challengeFrequency !== "number") merged.challengeFrequency = defaultSettings.challengeFrequency ?? 0.3;
-    if (typeof merged.wordCardDuration !== "number") merged.wordCardDuration = defaultSettings.wordCardDuration ?? 900;
+    if (typeof merged.wordCardDuration !== "number") merged.wordCardDuration = defaultSettings.wordCardDuration ?? 1200;
     if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;
     if (typeof merged.speechZhRate !== "number") merged.speechZhRate = defaultSettings.speechZhRate ?? 0.9;
     if (typeof merged.speechZhEnabled !== "boolean") merged.speechZhEnabled = defaultSettings.speechZhEnabled ?? true;
@@ -34,7 +34,7 @@ function normalizeSettings(raw) {
     if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
     merged.biomeSwitchStepScore = Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 300));
     merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
-    merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 900));
+    merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 1200));
     merged.phraseFollowGapCount = Math.max(0, Math.min(6, Number(merged.phraseFollowGapCount) || 2));
     merged.phraseFollowDirectRatio = clamp(Number(merged.phraseFollowDirectRatio) || 0.7, 0, 1);
     merged.wordRepeatWindow = Math.max(1, Math.min(20, Number(merged.wordRepeatWindow) || 6));
@@ -427,6 +427,10 @@ function switchToNextPackInOrder() {
         }
     }
     progress.vocab = {};
+    if (!vocabState || typeof vocabState !== "object") vocabState = {};
+    // Reset historical run weights to avoid long-term pack selection bias.
+    vocabState.runCounts = {};
+    saveVocabState();
     saveProgress();
     const first = ids[0] || "auto";
     if (!keepAuto) {

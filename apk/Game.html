@@ -160,6 +160,8 @@
                 <option value="900">标准(0.9秒)</option>
                 <option value="1200">长(1.2秒)</option>
                 <option value="1500">更长(1.5秒)</option>
+                <option value="2000">较长(2秒)</option>
+                <option value="3000">很长(3秒，适合低年级)</option>
             </select>
         </div>
         <div class="settings-row">
@@ -309,19 +311,19 @@
         </div>
 
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-phrase-follow-adaptive"> Adaptive follow (mastery-based)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-phrase-follow-adaptive"> 自适应跟随（根据掌握程度自动调节）</label>
         </div>
 
         <div class="settings-row">
-            <div class="settings-label">Repeat Bias</div>
+            <div class="settings-label">重复策略</div>
             <select class="settings-select" id="opt-word-repeat-bias">
-                <option value="reinforce_wrong">Reinforce wrong (Recommended)</option>
-                <option value="balanced">Balanced</option>
+                <option value="reinforce_wrong">优先复习答错的词（推荐）</option>
+                <option value="balanced">均衡复习</option>
             </select>
         </div>
 
-        <div class="settings-row settings-row-keys">
-            <div class="settings-label">Follow-up Stats</div>
+        <div class="settings-row settings-row-keys" style="display:none;">
+            <div class="settings-label">跟随统计</div>
             <div id="opt-word-follow-stats" class="settings-hint">calls=0, served=0, hitRate=0.00</div>
         </div>
 

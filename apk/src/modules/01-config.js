@@ -674,13 +674,13 @@ const DEFAULT_CHEST_TABLES = {
         { item: "coal", weight: 10, min: 1, max: 3 },
         { item: "arrow", weight: 10, min: 2, max: 6 },
         { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
-        { item: "flower", weight: 6, min: 1, max: 2 },
+        { item: "flower", weight: 9, min: 1, max: 2 },
         { item: "mushroom", weight: 6, min: 1, max: 2 },
-        { item: "beef", weight: 8, min: 1, max: 2 },
-        { item: "mutton", weight: 8, min: 1, max: 2 },
+        { item: "beef", weight: 12, min: 1, max: 2 },
+        { item: "mutton", weight: 12, min: 1, max: 2 },
         { item: "hp", weight: 8, min: 1, max: 1 },
         { item: "score", weight: 7, min: 10, max: 25 },
-        { item: "word_card", weight: 25, min: 5, max: 10 },
+        { item: "word_card", weight: 8, min: 3, max: 6 },
         { item: "empty", weight: 10, min: 0, max: 0 }
     ],
     rare: [
@@ -726,8 +726,8 @@ const LEARNING_CONFIG = {
         }
     },
     wordGate: {
-        spawnChance: 0.08,
-        minScore: 500
+        spawnChance: 0.18,
+        minScore: 150
     },
     wordMatch: {
         wordCount: 5,
