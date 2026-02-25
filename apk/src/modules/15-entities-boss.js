@@ -1026,8 +1026,9 @@ class BlazeBoss extends Boss {
             this.minions.push({
                 x: this.x + (i === 0 ? -80 : 80),
                 y: this.y,
-                hp: 8, maxHp: 8,
-                width: 24, height: 32,
+                type: "blaze_mini",
+                hp: 2, maxHp: 2,
+                width: 20, height: 20,
                 speed: 2.5,
                 attackTimer: 0,
                 alive: true
@@ -1151,8 +1152,31 @@ class BlazeBoss extends Boss {
         this.minions.forEach(m => {
             if (!m.alive) return;
             const mx = m.x - camX;
-            ctx.fillStyle = '#FF8C00';
-            ctx.fillRect(mx, m.y, m.width, m.height);
+            if (m.type === "blaze_mini") {
+                const cx = mx + m.width / 2;
+                const cy = m.y + m.height / 2;
+                ctx.beginPath();
+                ctx.arc(cx, cy, m.width / 2, 0, Math.PI * 2);
+                ctx.fillStyle = "#FF6D00";
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, m.width / 4, 0, Math.PI * 2);
+                ctx.fillStyle = "#FFEB3B";
+                ctx.fill();
+
+                for (let i = 0; i < 3; i++) {
+                    const px = cx + (Math.random() - 0.5) * m.width;
+                    const py = cy - m.height / 2 - Math.random() * 8;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, ${100 + Math.floor(Math.random() * 100)}, 0, 0.8)`;
+                    ctx.fill();
+                }
+            } else {
+                ctx.fillStyle = "#FF8C00";
+                ctx.fillRect(mx, m.y, m.width, m.height);
+            }
             // 小血条
             const hpPct = m.hp / m.maxHp;
             ctx.fillStyle = '#F44336';
