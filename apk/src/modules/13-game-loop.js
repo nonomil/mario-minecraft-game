@@ -708,8 +708,13 @@ function breakEquippedArmor(armorId) {
     playerEquipment.armorDurability = 0;
     playerEquipment.armorEquippedAt = 0;
     playerEquipment.armorLastDurabilityTick = 0;
+    if (Array.isArray(armorInventory)) {
+        armorInventory = armorInventory.filter((entry) => String(entry?.id || "") !== String(armorId || ""));
+    }
     showToast(`${broken?.name || "盔甲"} 已失效`);
     updateArmorUI();
+    if (typeof updateInventoryUI === "function") updateInventoryUI();
+    if (typeof updateInventoryModal === "function") updateInventoryModal();
 }
 
 function tickArmorDurabilityByTime() {

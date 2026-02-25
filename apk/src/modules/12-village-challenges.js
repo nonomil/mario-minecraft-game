@@ -144,28 +144,54 @@ function getVillageRewardConfig() {
 }
 
 function buildVillageChallengeWords(village, questionCount) {
-  const biomeWords = typeof getVillageWords === "function" ? getVillageWords(village.biomeId) : [];
-  const normalized = Array.isArray(biomeWords)
+  const count = Math.max(1, Number(questionCount) || 1);
+  const seen = new Set();
+  const selected = [];
+
+  const pushUnique = (word) => {
+    const en = String(word?.en || "").trim().toLowerCase();
+    if (!en || seen.has(en)) return false;
+    seen.add(en);
+    selected.push(word);
+    return true;
+  };
+
+  const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
+  const sessionWords = Array.isArray(sessionCollectedWords)
+    ? sessionCollectedWords
+        .map(resolveVillageChallengeWord)
+        .filter((w) => !!w && !!String(w.en || "").trim())
+    : [];
+
+  const biomeWords = typeof getVillageWords === "function" ? getVillageWords(village?.biomeId) : [];
+  const normalizedBiomeWords = Array.isArray(biomeWords)
     ? biomeWords.map(resolveVillageChallengeWord).filter((w) => !!w && !!String(w.en || "").trim())
     : [];
 
-  const fallback = Array.isArray(wordDatabase)
+  const fallbackWords = Array.isArray(wordDatabase)
     ? wordDatabase.map(resolveVillageChallengeWord).filter((w) => !!w && !!String(w.en || "").trim())
     : [];
 
-  const pool = normalized.length ? normalized : fallback;
-  if (!pool.length) return [];
+  for (const word of shuffle(sessionWords)) {
+    if (selected.length >= count) break;
+    pushUnique(word);
+  }
+  for (const word of shuffle(normalizedBiomeWords)) {
+    if (selected.length >= count) break;
+    pushUnique(word);
+  }
+  for (const word of shuffle(fallbackWords)) {
+    if (selected.length >= count) break;
+    pushUnique(word);
+  }
 
-  const selected = [];
-  const shuffledPool = [...pool].sort(() => Math.random() - 0.5);
-  let idx = 0;
-  while (selected.length < questionCount) {
-    if (idx >= shuffledPool.length) {
-      idx = 0;
-      shuffledPool.sort(() => Math.random() - 0.5);
-    }
-    selected.push(shuffledPool[idx]);
-    idx++;
+  if (!selected.length) return [];
+  if (selected.length >= count) return selected.slice(0, count);
+
+  const replay = [...selected];
+  while (selected.length < count) {
+    selected.push(replay[selected.length % replay.length]);
   }
   return selected;
 }

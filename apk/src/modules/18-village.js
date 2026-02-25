@@ -1004,9 +1004,13 @@ const TRADER_MATERIAL_PRICES = {
   // 食物
   beef: 2,
   mutton: 2,
+  chicken: 1,
+  fish: 1,
   mushroom: 1,
   mushroom_stew: 3,
   flower: 1,
+  bone: 1,
+  feather: 1,
   // 战斗消耗品
   gunpowder: 2,
   rotten_flesh: 1,
@@ -1021,7 +1025,8 @@ const TRADER_MATERIAL_PRICES = {
   pumpkin: 1,
   // 传说级（高价收购）
   dragon_egg: 30,
-  totem: 25
+  totem: 20,
+  nether_star: 25
 };
 
 const TRADER_ARMOR_PRICES = {
