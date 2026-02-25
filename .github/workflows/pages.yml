@@ -2,6 +2,9 @@ name: GitHub Pages
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -23,13 +26,14 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-          cache-dependency-path: android-app/package-lock.json
+          cache-dependency-path: apk/android-app/package-lock.json
 
       - name: Install npm dependencies
-        working-directory: android-app
+        working-directory: apk/android-app
         run: npm ci
 
       - name: Build offline HTML and sync to webDir
+        working-directory: apk
         run: node scripts/sync-web.js
 
       - name: Configure Pages
@@ -40,7 +44,7 @@ jobs:
         if: ${{ github.event.repository.has_pages }}
         uses: actions/upload-pages-artifact@v3
         with:
-          path: android-app/web
+          path: apk/android-app/web
 
   deploy:
     runs-on: ubuntu-latest
