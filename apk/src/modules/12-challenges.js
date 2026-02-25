@@ -54,8 +54,13 @@ function recordWordProgress(wordObj) {
     if (!activeVocabPackId) return;
     const pr = getPackProgress(activeVocabPackId);
     if (!pr.total) pr.total = Array.isArray(wordDatabase) ? wordDatabase.length : 0;
-    if (!pr.unique[en]) {
-        pr.unique[en] = 1;
+    const hadEntry = !!pr.unique[en];
+    const entry = normalizeWordEntry(pr.unique[en]);
+    entry.seen = hadEntry ? Math.max(1, Number(entry.seen) || 0) + 1 : 1;
+    entry.lastSeen = Date.now();
+    pr.unique[en] = entry;
+
+    if (!hadEntry) {
         pr.uniqueCount = (pr.uniqueCount || 0) + 1;
         onWordCollected(wordObj);
         if (pr.total && pr.uniqueCount >= pr.total) {
@@ -67,9 +72,9 @@ function recordWordProgress(wordObj) {
             switchToNextPackInOrder();
             return;
         }
-        saveProgress();
         updateVocabProgressUI();
     }
+    saveProgress();
 }
 
 function registerCollectedWord(wordObj) {
@@ -85,6 +90,62 @@ function getUniqueSessionWords() {
         seen.add(w.en);
         return true;
     });
+}
+
+function escapeSessionWordText(value) {
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+function escapeSessionWordAttr(value) {
+    return escapeSessionWordText(value).replace(/"/g, "&quot;");
+}
+
+function speakSessionWordByText(encodedEn) {
+    const en = decodeURIComponent(String(encodedEn || ""));
+    if (!en) return;
+    let picked = null;
+    if (Array.isArray(sessionCollectedWords)) {
+        for (let i = sessionCollectedWords.length - 1; i >= 0; i--) {
+            const word = sessionCollectedWords[i];
+            if (word?.en && String(word.en) === en) {
+                picked = word;
+                break;
+            }
+        }
+    }
+    if (!picked && Array.isArray(wordDatabase)) {
+        picked = wordDatabase.find(word => word?.en && String(word.en) === en) || null;
+    }
+    if (typeof speakWord === "function") {
+        speakWord(picked || { en, zh: "" });
+    }
+}
+
+function buildSessionWordsSummary() {
+    const words = getUniqueSessionWords();
+    if (!words.length) return "";
+    const items = words
+        .map(word => {
+            const en = String(word?.en || "").trim();
+            if (!en) return "";
+            const encodedEn = encodeURIComponent(en);
+            const zh = escapeSessionWordAttr(String(word?.zh || "").trim());
+            const enText = escapeSessionWordText(en);
+            return `<button type="button" class="session-word" onclick="speakSessionWordByText('${encodedEn}')" title="${zh}">${enText}</button>`;
+        })
+        .filter(Boolean)
+        .join("");
+    if (!items) return "";
+    return (
+        `<div class="session-words-summary">` +
+        `<div class="session-words-title">本局接触词汇（共 ${words.length} 个）</div>` +
+        `<div class="session-words-list">${items}</div>` +
+        `<div class="session-words-hint">点击词条可朗读复习</div>` +
+        `</div>`
+    );
 }
 
 function normalizeChallengeTextSpacing(text) {
@@ -590,6 +651,28 @@ function useLearningChallengeHint() {
     }, 2000);
 }
 
+function writeChallengeResultToProgress(wordObj, quality) {
+    if (!wordObj?.en || !activeVocabPackId) return;
+    const pr = getPackProgress(activeVocabPackId);
+    const en = String(wordObj.en);
+    const isNew = !pr.unique[en];
+    const entry = normalizeWordEntry(pr.unique[en]);
+    entry.seen = Math.max(1, Number(entry.seen) || 1);
+    entry.lastSeen = Date.now();
+    if (quality === "wrong") {
+        entry.wrong = (Number(entry.wrong) || 0) + 1;
+        entry.quality = "wrong";
+    } else {
+        entry.correct = (Number(entry.correct) || 0) + 1;
+        entry.quality = quality === "correct_fast" ? "correct_fast" : "correct_slow";
+    }
+    pr.unique[en] = entry;
+    if (isNew) {
+        pr.uniqueCount = (pr.uniqueCount || 0) + 1;
+    }
+    saveProgress();
+}
+
 function completeLearningChallenge(correct) {
     if (!currentLearningChallenge) return;
     clearLearningChallengeTimer();
@@ -598,8 +681,10 @@ function completeLearningChallenge(correct) {
     const timeLimit = LEARNING_CONFIG.challenge.timeLimit || 10000;
     const elapsed = Math.max(0, timeLimit - Math.max(0, challengeDeadline - Date.now()));
     if (correct) {
+        const quality = elapsed < 3000 ? "correct_fast" : "correct_slow";
+        writeChallengeResultToProgress(wordObj, quality);
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
-            wordPicker.updateWordQuality(wordObj.en, elapsed < 3000 ? "correct_fast" : "correct_slow");
+            wordPicker.updateWordQuality(wordObj.en, quality);
         }
         hideLearningChallenge();
         addScore(reward.correct.score);
@@ -616,6 +701,7 @@ function completeLearningChallenge(correct) {
         currentLearningChallenge = null;
         challengeOrigin = null;
     } else {
+        writeChallengeResultToProgress(wordObj, "wrong");
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
             wordPicker.updateWordQuality(wordObj.en, "wrong");
         }

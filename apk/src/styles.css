@@ -102,6 +102,61 @@ body {
     text-shadow: 2px 2px 0 #000;
 }
 
+.session-words-summary {
+    margin-top: 12px;
+    text-align: center;
+}
+
+.session-words-title {
+    font-size: 12px;
+    color: #bdbdbd;
+    margin-bottom: 6px;
+}
+
+.session-words-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    max-width: 100%;
+}
+
+.session-word {
+    border: 1px solid rgba(127, 255, 127, 0.45);
+    background: #1f4620;
+    color: #9dff9d;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.session-word:active {
+    background: #2a5e2b;
+}
+
+.session-words-hint {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #8f8f8f;
+}
+
+@media (max-width: 600px) {
+    .session-words-list {
+        gap: 5px;
+    }
+
+    .session-word {
+        max-width: 92%;
+        padding: 4px 8px;
+        font-size: 11px;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+}
+
 .overlay-btn:disabled {
     opacity: 0.55;
     cursor: not-allowed;
