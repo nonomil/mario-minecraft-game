@@ -69,9 +69,84 @@ function saveVocabState() {
     if (storage) storage.saveJson("mmwg:vocabState", vocabState);
 }
 
+const WORD_QUALITY_DEFAULT = "new";
+const WORD_QUALITY_SET = new Set(["new", "correct_fast", "correct_slow", "wrong"]);
+
+function toNonNegativeInt(value, fallback = 0) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.max(0, Math.floor(n));
+}
+
+function normalizeWordEntry(value) {
+    const now = Date.now();
+    if (value && typeof value === "object") {
+        const seen = Math.max(1, toNonNegativeInt(value.seen, 1));
+        const correct = toNonNegativeInt(value.correct, 0);
+        const wrong = toNonNegativeInt(value.wrong, 0);
+        const lastSeenRaw = Number(value.lastSeen);
+        const qualityRaw = String(value.quality || "").trim();
+        const quality = WORD_QUALITY_SET.has(qualityRaw)
+            ? qualityRaw
+            : (wrong > 0 ? "wrong" : (correct > 0 ? "correct_slow" : WORD_QUALITY_DEFAULT));
+        return {
+            seen,
+            correct,
+            wrong,
+            lastSeen: Number.isFinite(lastSeenRaw) && lastSeenRaw > 0 ? lastSeenRaw : now,
+            quality
+        };
+    }
+
+    const seenLegacy = Math.max(1, toNonNegativeInt(value, 1));
+    return {
+        seen: seenLegacy,
+        correct: 0,
+        wrong: 0,
+        lastSeen: now,
+        quality: WORD_QUALITY_DEFAULT
+    };
+}
+
+function normalizePackProgressEntry(entry) {
+    const out = entry && typeof entry === "object" ? entry : {};
+    if (!out.unique || typeof out.unique !== "object") out.unique = {};
+
+    Object.keys(out.unique).forEach(word => {
+        out.unique[word] = normalizeWordEntry(out.unique[word]);
+    });
+
+    if (typeof out.uniqueCount !== "number") {
+        out.uniqueCount = Object.keys(out.unique).length;
+    } else {
+        out.uniqueCount = Math.max(out.uniqueCount, Object.keys(out.unique).length);
+    }
+    if (typeof out.total !== "number") out.total = 0;
+    if (typeof out.completed !== "boolean") out.completed = false;
+    return out;
+}
+
+function replayPackQualityToWordPicker(packId) {
+    if (!packId || !wordPicker || typeof wordPicker.updateWordQuality !== "function") return;
+    const pack = progress?.vocab?.[packId];
+    if (!pack?.unique || typeof pack.unique !== "object") return;
+
+    Object.entries(pack.unique).forEach(([word, entry]) => {
+        const normalized = normalizeWordEntry(entry);
+        pack.unique[word] = normalized;
+        if (normalized.quality && normalized.quality !== WORD_QUALITY_DEFAULT) {
+            wordPicker.updateWordQuality(word, normalized.quality);
+        }
+    });
+}
+
 function normalizeProgress(raw) {
     const p = raw && typeof raw === "object" ? raw : {};
     if (!p.vocab || typeof p.vocab !== "object") p.vocab = {};
+
+    Object.keys(p.vocab).forEach(packId => {
+        p.vocab[packId] = normalizePackProgressEntry(p.vocab[packId]);
+    });
     return p;
 }
 
@@ -251,12 +326,7 @@ function getPackProgress(packId) {
     if (!packId) return null;
     const v = progress.vocab;
     if (!v[packId]) v[packId] = { unique: {}, uniqueCount: 0, total: 0, completed: false };
-    const entry = v[packId];
-    if (!entry.unique || typeof entry.unique !== "object") entry.unique = {};
-    if (typeof entry.uniqueCount !== "number") entry.uniqueCount = Object.keys(entry.unique).length;
-    if (typeof entry.total !== "number") entry.total = 0;
-    if (typeof entry.completed !== "boolean") entry.completed = false;
-    return entry;
+    return normalizePackProgressEntry(v[packId]);
 }
 
 function updateVocabProgressUI() {
@@ -400,6 +470,11 @@ async function setActiveVocabPack(selection) {
             const pr = getPackProgress(pack.id);
             pr.total = target.length;
             saveProgress();
+
+            if (typeof buildWordPicker === "function") {
+                wordPicker = buildWordPicker();
+            }
+            replayPackQualityToWordPicker(pack.id);
         }
     } catch {
     }

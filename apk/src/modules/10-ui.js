@@ -107,13 +107,16 @@ function setOverlay(visible, mode) {
             if (title) title.innerText = "💀 游戏结束";
             if (text) {
                 const level = Math.max(1, Math.floor(score / 1000) + 1);
+                const sessionSummary = typeof buildSessionWordsSummary === "function"
+                    ? buildSessionWordsSummary()
+                    : getSessionWordSummaryHtml();
                 text.innerHTML =
                     `📚 学习单词: ${getLearnedWordCount()}<br>` +
                     `💎 钻石: ${diamonds}<br>` +
                     `⭐ 当前积分: ${score}<br>` +
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
                     `🏅 玩家等级: ${level}` +
-                    getSessionWordSummaryHtml();
+                    sessionSummary;
             }
             if (btn) {
                 const cfg = getReviveConfig();
