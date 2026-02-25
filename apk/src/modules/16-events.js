@@ -22,6 +22,7 @@ function wireSettingsModal() {
     const optWordFollowStats = document.getElementById("opt-word-follow-stats");
 
     const optLearningMode = document.getElementById("opt-learning-mode");
+    const optChallengeEnabled = document.getElementById("opt-challenge-enabled");
     const optChallengeMode = document.getElementById("opt-challenge-mode");
     const optChallengeFreq = document.getElementById("opt-challenge-freq");
     const optWordCardDuration = document.getElementById("opt-word-card-duration");
@@ -124,7 +125,8 @@ function wireSettingsModal() {
 
     function fill() {
         if (optLearningMode) optLearningMode.checked = !!settings.learningMode;
-        if (optChallengeMode) optChallengeMode.checked = !!settings.challengeEnabled;
+        if (optChallengeEnabled) optChallengeEnabled.checked = !!settings.challengeEnabled;
+        if (optChallengeMode) optChallengeMode.checked = !!settings.challengeMode;
         if (optChallengeFreq) {
             const desiredFreq = String(settings.challengeFrequency ?? 0.3);
             optChallengeFreq.value = desiredFreq;
@@ -186,7 +188,8 @@ function wireSettingsModal() {
 
     async function save() {
         if (optLearningMode) settings.learningMode = !!optLearningMode.checked;
-        if (optChallengeMode) settings.challengeEnabled = !!optChallengeMode.checked;
+        if (optChallengeEnabled) settings.challengeEnabled = !!optChallengeEnabled.checked;
+        if (optChallengeMode) settings.challengeMode = !!optChallengeMode.checked;
         if (optChallengeFreq) settings.challengeFrequency = Number(optChallengeFreq.value || 0.3);
         if (optWordCardDuration) settings.wordCardDuration = Number(optWordCardDuration.value || 900);
         if (optSpeech) settings.speechEnabled = !!optSpeech.checked;

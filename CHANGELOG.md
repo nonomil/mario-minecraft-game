@@ -1,5 +1,19 @@
 # 更新日志
 
+## [1.21.0] - 2026-02-25
+
+### Features
+- Learning challenge trigger now adapts to word mastery: first-seen words trigger less, wrong words trigger more, mastered words trigger less.
+- Added challenge mode switch (`settings.challengeMode`): wrong answers deduct score only when this mode is enabled.
+- Learning performance now links to DDA: wrong streak softens pressure and can force translate challenge type; correct streak increases challenge frequency.
+
+### Improvements
+- Multi-blank distractors now use similar-letter strategy instead of random letters.
+- Beginner difficulty score bands expanded (0-1000, 1000-2500, 2500-4500, 4500-7000, 7000+).
+- Invincibility frames increased from 120 to 180.
+
+---
+
 ## [1.20.0] - 2026-02-25
 
 ### 修复

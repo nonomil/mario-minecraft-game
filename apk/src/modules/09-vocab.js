@@ -5,6 +5,7 @@
 function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
     if (typeof merged.challengeEnabled !== "boolean") merged.challengeEnabled = defaultSettings.challengeEnabled ?? true;
+    if (typeof merged.challengeMode !== "boolean") merged.challengeMode = defaultSettings.challengeMode ?? false;
     if (typeof merged.challengeFrequency !== "number") merged.challengeFrequency = defaultSettings.challengeFrequency ?? 0.3;
     if (typeof merged.wordCardDuration !== "number") merged.wordCardDuration = defaultSettings.wordCardDuration ?? 1200;
     if (typeof merged.speechEnRate !== "number") merged.speechEnRate = defaultSettings.speechEnRate ?? 0.8;

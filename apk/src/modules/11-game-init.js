@@ -45,6 +45,7 @@ function initGame() {
     lastDamageFrame = 0;
     difficultyState = null;
     sessionCollectedWords = [];
+    if (typeof resetLearningStreaks === "function") resetLearningStreaks();
     followUpQueue = [];
     resetFollowUpMetrics();
     if (typeof resetBiomeGateState === "function") resetBiomeGateState();

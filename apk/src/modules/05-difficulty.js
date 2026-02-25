@@ -60,9 +60,31 @@ function computeDifficultyState() {
     let chestRareBoost = Number(tier.chestRareBoost) || 0;
     let chestRollBonus = Number(tier.chestRollBonus) || 0;
     const scoreMultiplier = Number(tier.scoreMultiplier) || 1;
+    const baseChallengeFrequency = clamp(Number(settings.challengeFrequency ?? 0.3) || 0.3, 0.05, 0.9);
+    let effectiveChallengeFrequency = baseChallengeFrequency;
+    let forcedChallengeType = null;
+    const streaks = (typeof getLearningStreaks === "function")
+        ? (getLearningStreaks() || { correct: 0, wrong: 0 })
+        : { correct: 0, wrong: 0 };
 
     if (settings.learningMode) {
         enemyDamageMult *= 0.85;
+
+        const correctStreak = Math.max(0, Number(streaks.correct) || 0);
+        const wrongStreak = Math.max(0, Number(streaks.wrong) || 0);
+        if (correctStreak >= 3) {
+            effectiveChallengeFrequency = Math.min(0.9, effectiveChallengeFrequency + 0.08);
+        }
+        if (wrongStreak >= 2) {
+            forcedChallengeType = "translate";
+            effectiveChallengeFrequency = Math.max(0.1, effectiveChallengeFrequency - 0.1);
+        }
+        if (wrongStreak >= 4) {
+            enemyDamageMult *= 0.9;
+        }
+        if (correctStreak >= 5) {
+            forcedChallengeType = null;
+        }
     }
 
     if (dda.enabled) {
@@ -101,7 +123,13 @@ function computeDifficultyState() {
         chestSpawnMult,
         chestRareBoost,
         chestRollBonus,
-        scoreMultiplier
+        scoreMultiplier,
+        effectiveChallengeFrequency,
+        forcedChallengeType,
+        streaks: {
+            correct: Math.max(0, Number(streaks.correct) || 0),
+            wrong: Math.max(0, Number(streaks.wrong) || 0)
+        }
     };
 }
 

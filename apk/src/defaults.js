@@ -204,6 +204,7 @@ window.MMWG_DEFAULTS = {
     settings: {
         learningMode: true,
         challengeEnabled: true,
+        challengeMode: false,
         challengeFrequency: 0.3,
         wordCardDuration: 900,
         wordGateEnabled: true,

@@ -1,7 +1,10 @@
-﻿/**
+/**
  * 12-challenges.js - 单词收集与学习挑战
  * 从 main.js 拆分 (原始行 3401-3817)
  */
+let sessionCorrectStreak = 0;
+let sessionWrongStreak = 0;
+
 function dropItem(type, x, y) {
     if (!inventory[type] && inventory[type] !== 0) inventory[type] = 0;
     inventory[type]++;
@@ -253,8 +256,25 @@ function generateMultiBlankChallenge(wordObj) {
         return out;
     };
     const options = [missing];
+    let guard = 0;
+    while (options.length < 4 && guard < 24) {
+        guard++;
+        const fake = positions.map(pos => {
+            const correct = en[pos];
+            const alts = generateLetterOptions(correct, 4).filter(letter => letter !== correct);
+            if (!alts.length) return "x";
+            const pickIndex = (guard + options.length + pos) % alts.length;
+            return alts[pickIndex];
+        }).join("");
+        if (!options.includes(fake)) options.push(fake);
+    }
+    let fallbackSeed = 0;
     while (options.length < 4) {
-        const fake = positions.map(() => "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)]).join("");
+        fallbackSeed++;
+        const fake = positions.map((_, idx) => {
+            const alphabet = "abcdefghijklmnopqrstuvwxyz";
+            return alphabet[(fallbackSeed + idx * 11) % alphabet.length];
+        }).join("");
         if (!options.includes(fake)) options.push(fake);
     }
     const missingDisplay = formatMissingWithGaps(missing, positions);
@@ -437,9 +457,27 @@ function shouldTriggerLearningChallenge(wordObj) {
     if (!settings.learningMode) return false;
     if (!settings.challengeEnabled || currentLearningChallenge) return false;
     if (!wordObj || !wordObj.en) return false;
-    const freq = Number(settings.challengeFrequency ?? 0.3);
-    if (Math.random() >= Math.max(0.1, Math.min(0.9, freq))) return false;
-    return true;
+
+    const dynamicState = (typeof getDifficultyState === "function") ? getDifficultyState() : null;
+    const rawFreq = Number(dynamicState?.effectiveChallengeFrequency ?? settings.challengeFrequency ?? 0.3);
+    const freq = Math.max(0.05, Math.min(0.9, rawFreq));
+    const seenCount = sessionWordCounts[wordObj.en] || 0;
+    let quality = null;
+    if (wordPicker && typeof wordPicker.getWordStats === "function") {
+        const stats = wordPicker.getWordStats(wordObj.en);
+        quality = stats?.quality || null;
+    } else if (wordPicker && typeof wordPicker.getWordQuality === "function") {
+        quality = wordPicker.getWordQuality(wordObj.en) || null;
+    }
+
+    // First encounter: reduce interruptions and allow initial exposure.
+    if (seenCount <= 1) return Math.random() < Math.max(0.05, freq * 0.4);
+    // Wrong-quality words: increase challenge frequency for remediation.
+    if (quality === "wrong") return Math.random() < Math.min(0.85, freq * 2);
+    // Fast mastered words: reduce challenge frequency to avoid over-repetition.
+    if (quality === "correct_fast") return Math.random() < Math.max(0.05, freq * 0.6);
+
+    return Math.random() < freq;
 }
 
 function maybeTriggerLearningChallenge(wordObj) {
@@ -451,6 +489,9 @@ function maybeTriggerLearningChallenge(wordObj) {
 
 function pickChallengeType(forced) {
     if (forced && CHALLENGE_TYPES[forced]) return forced;
+    const dynamicState = (typeof getDifficultyState === "function") ? getDifficultyState() : null;
+    const adaptiveForced = dynamicState?.forcedChallengeType;
+    if (adaptiveForced && CHALLENGE_TYPES[adaptiveForced]) return adaptiveForced;
     return CHALLENGE_TYPE_KEYS[Math.floor(Math.random() * CHALLENGE_TYPE_KEYS.length)];
 }
 
@@ -598,6 +639,8 @@ function completeLearningChallenge(correct) {
     const timeLimit = LEARNING_CONFIG.challenge.timeLimit || 10000;
     const elapsed = Math.max(0, timeLimit - Math.max(0, challengeDeadline - Date.now()));
     if (correct) {
+        sessionCorrectStreak++;
+        sessionWrongStreak = 0;
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
             wordPicker.updateWordQuality(wordObj.en, elapsed < 3000 ? "correct_fast" : "correct_slow");
         }
@@ -616,39 +659,40 @@ function completeLearningChallenge(correct) {
         currentLearningChallenge = null;
         challengeOrigin = null;
     } else {
+        sessionWrongStreak++;
+        sessionCorrectStreak = 0;
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
             wordPicker.updateWordQuality(wordObj.en, "wrong");
         }
-        if (settings.learningMode) {
-            const retryWord = wordObj;
-            const savedOrigin = challengeOrigin;
-            showChallengeCorrection(retryWord);
+        const penalty = Number(reward?.wrong?.scorePenalty) || 0;
+        if (settings.challengeMode && penalty > 0) {
+            addScore(-penalty);
+            showFloatingText("❌ 挑战失败", player.x, player.y - 40);
+        } else {
             showFloatingText("📕 再试一次", player.x, player.y - 40);
-            setTimeout(() => {
-                hideLearningChallenge();
-                currentLearningChallenge = null;
-                challengeOrigin = null;
-                if (typeof popPause === "function") popPause();
-                else paused = false;
-                startLearningChallenge(retryWord, null, savedOrigin);
-            }, 2500);
-            return;
         }
-        addScore(-reward.wrong.scorePenalty);
-        showFloatingText("❌ 挑战失败", player.x, player.y - 40);
-        if (challengeOrigin && challengeOrigin instanceof WordGate) {
-            challengeOrigin.cooldown = 180;
-        }
-        showChallengeCorrection(wordObj);
+        const retryWord = wordObj;
+        const savedOrigin = challengeOrigin;
+        showChallengeCorrection(retryWord);
         setTimeout(() => {
             hideLearningChallenge();
-            if (typeof popPause === "function") popPause();
-            else paused = false;
             currentLearningChallenge = null;
             challengeOrigin = null;
-        }, 2000);
+            if (typeof popPause === "function") popPause();
+            else paused = false;
+            startLearningChallenge(retryWord, null, savedOrigin);
+        }, 2500);
         return;
     }
+}
+
+function getLearningStreaks() {
+    return { correct: sessionCorrectStreak, wrong: sessionWrongStreak };
+}
+
+function resetLearningStreaks() {
+    sessionCorrectStreak = 0;
+    sessionWrongStreak = 0;
 }
 
 function triggerWordGateChallenge(gate) {

@@ -69,13 +69,13 @@
     },
     "difficulty": {
         "damageUnit": 20,
-        "invincibleFrames": 120,
+        "invincibleFrames": 180,
         "tiers": [
-            { "name": "新手", "minScore": 0, "maxScore": 500, "enemyDamage": 0.8, "enemyHp": 0.85, "enemySpawn": 0.75, "chestSpawn": 1.1, "chestRareBoost": 0.25, "chestRollBonus": 0.08, "scoreMultiplier": 1.0 },
-            { "name": "简单", "minScore": 500, "maxScore": 1500, "enemyDamage": 1.0, "enemyHp": 1.0, "enemySpawn": 0.95, "chestSpawn": 1.0, "chestRareBoost": 0.1, "chestRollBonus": 0.04, "scoreMultiplier": 1.0 },
-            { "name": "普通", "minScore": 1500, "maxScore": 3000, "enemyDamage": 1.15, "enemyHp": 1.1, "enemySpawn": 1.05, "chestSpawn": 0.95, "chestRareBoost": 0.0, "chestRollBonus": 0.0, "scoreMultiplier": 1.05 },
-            { "name": "困难", "minScore": 3000, "maxScore": 5000, "enemyDamage": 1.4, "enemyHp": 1.25, "enemySpawn": 1.2, "chestSpawn": 0.9, "chestRareBoost": -0.1, "chestRollBonus": -0.02, "scoreMultiplier": 1.1 },
-            { "name": "地狱", "minScore": 5000, "maxScore": 999999, "enemyDamage": 1.8, "enemyHp": 1.5, "enemySpawn": 1.35, "chestSpawn": 0.85, "chestRareBoost": -0.2, "chestRollBonus": -0.04, "scoreMultiplier": 1.2 }
+            { "name": "新手", "minScore": 0, "maxScore": 1000, "enemyDamage": 0.8, "enemyHp": 0.85, "enemySpawn": 0.75, "chestSpawn": 1.1, "chestRareBoost": 0.25, "chestRollBonus": 0.08, "scoreMultiplier": 1.0 },
+            { "name": "简单", "minScore": 1000, "maxScore": 2500, "enemyDamage": 1.0, "enemyHp": 1.0, "enemySpawn": 0.95, "chestSpawn": 1.0, "chestRareBoost": 0.1, "chestRollBonus": 0.04, "scoreMultiplier": 1.0 },
+            { "name": "普通", "minScore": 2500, "maxScore": 4500, "enemyDamage": 1.15, "enemyHp": 1.1, "enemySpawn": 1.05, "chestSpawn": 0.95, "chestRareBoost": 0.0, "chestRollBonus": 0.0, "scoreMultiplier": 1.05 },
+            { "name": "困难", "minScore": 4500, "maxScore": 7000, "enemyDamage": 1.4, "enemyHp": 1.25, "enemySpawn": 1.2, "chestSpawn": 0.9, "chestRareBoost": -0.1, "chestRollBonus": -0.02, "scoreMultiplier": 1.1 },
+            { "name": "地狱", "minScore": 7000, "maxScore": 999999, "enemyDamage": 1.8, "enemyHp": 1.5, "enemySpawn": 1.35, "chestSpawn": 0.85, "chestRareBoost": -0.2, "chestRollBonus": -0.04, "scoreMultiplier": 1.2 }
         ],
         "dda": {
             "enabled": true,
