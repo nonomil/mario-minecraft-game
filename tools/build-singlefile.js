@@ -1,8 +1,17 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function readText(filePath) {
   return fs.readFileSync(filePath, "utf8");
+}
+
+function exists(filePath) {
+  return fs.existsSync(filePath);
 }
 
 function readJson(filePath) {
@@ -52,7 +61,7 @@ function decodeUnicodeEscapes(str) {
 
 function extractVocabFilesFromManifest(manifestJs) {
   const files = [];
-  // Match vocab files listed in manifest "files" arrays
+  // Match both "file:" and strings in "files:" arrays
   const re = /"(words\/vocabs\/[^"]+\.js)"/g;
   let m;
   while ((m = re.exec(manifestJs))) {
@@ -69,15 +78,6 @@ function makeInlineStyle(css) {
   return `<style>\n${css}\n</style>`;
 }
 
-function inlineLocalScripts(html, projectRoot) {
-  return html.replace(/<script src="([^"]+)"><\/script>/g, (full, src) => {
-    if (/^https?:\/\//i.test(src)) return full;
-    const localPath = path.join(projectRoot, src);
-    if (!fs.existsSync(localPath)) return full;
-    return makeInlineScript(readText(localPath));
-  });
-}
-
 function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const templateHtml = readText(templateHtmlPath);
 
@@ -86,8 +86,46 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const storageJs = readText(path.join(projectRoot, "src", "storage.js"));
   const manifestJs = readText(path.join(projectRoot, "words", "vocabs", "manifest.js"));
 
+  // Read all module files in order (must match Game.html script tag order)
+  const moduleFiles = [
+    "01-config.js", "02-utils.js", "03-audio.js", "04-weapons.js",
+    "05-difficulty.js", "06-biome.js", "07-viewport.js", "08-account.js",
+    "09-vocab.js", "10-ui.js",
+    "15-entities-base.js", "15-entities-decorations.js",
+    "15-entities-particles.js", "15-entities-combat.js", "15-entities-boss.js",
+    "18-village.js", "18-village-render.js", "18-interaction-chains.js", "19-biome-visuals.js",
+    "20-enemies-new.js",
+    "21-decorations-new.js",
+    "11-game-init.js", "12-challenges.js", "12-village-challenges.js",
+    "13-game-loop.js", "14-renderer-main.js", "14-renderer-entities.js",
+    "14-renderer-decorations.js", "16-events.js",
+    "17-bootstrap.js"
+  ];
+  const moduleScripts = moduleFiles.map(f => {
+    const content = readText(path.join(projectRoot, "src", "modules", f));
+    return makeInlineScript(content);
+  }).join("\n");
+
   const vocabFiles = extractVocabFilesFromManifest(manifestJs);
-  const vocabScripts = vocabFiles.map((f) => makeInlineScript(readText(path.join(projectRoot, f)))).join("\n");
+  const missingVocabFiles = [];
+  const vocabScripts = vocabFiles
+    .map((f) => {
+      const absPath = path.join(projectRoot, f);
+      if (!exists(absPath)) {
+        missingVocabFiles.push(f);
+        return "";
+      }
+      return makeInlineScript(readText(absPath));
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  if (missingVocabFiles.length > 0) {
+    console.warn(
+      `[build-singlefile] Missing vocab files (${missingVocabFiles.length}), skipped inlining:\n` +
+      missingVocabFiles.map((f) => `  - ${f}`).join("\n")
+    );
+  }
 
   const embeddedJson = {
     "config/game.json": readJson(path.join(projectRoot, "config", "game.json")),
@@ -95,6 +133,7 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
     "config/levels.json": readJson(path.join(projectRoot, "config", "levels.json")),
     "config/biomes.json": readJson(path.join(projectRoot, "config", "biomes.json")),
     "words/words-base.json": readJson(path.join(projectRoot, "words", "words-base.json")),
+    "config/village.json": readJson(path.join(projectRoot, "config", "village.json")),
   };
 
   const preludeScript = buildPreludeDataScript(embeddedJson);
@@ -124,7 +163,19 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
     `${makeInlineScript(manifestJs)}\n${vocabScripts}\n${makeInlineScript(preludeScript)}`,
     "manifest script"
   );
-  html = inlineLocalScripts(html, projectRoot);
+
+  // Replace all module script tags with inline scripts
+  moduleFiles.forEach(f => {
+    const pattern = `<script src="src/modules/${f}"></script>`;
+    if (html.indexOf(pattern) !== -1) {
+      html = html.replace(pattern, makeInlineScript(readText(path.join(projectRoot, "src", "modules", f))));
+    }
+  });
+
+  // Hard check: fail build if any module script src remains un-inlined
+  if (/<script[^>]+src="src\/modules\/[^"]+"/i.test(html)) {
+    throw new Error("build-singlefile: unresolved module script src remains in output HTML");
+  }
 
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, html, "utf8");
