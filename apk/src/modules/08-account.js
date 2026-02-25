@@ -147,7 +147,7 @@ async function initLoginScreen() {
     wireStartOverlayAccountActions();
     screen.classList.remove("visible");
     paused = true;
-    pausedByModal = true;
+    if (typeof clearModalPauseStack === "function") clearModalPauseStack(false);
     setOverlay(true, "start");
 
     if (btnLogin) {
@@ -253,10 +253,10 @@ async function loginWithAccount(account, options) {
     }
     if (startOverlayVisible) {
         paused = true;
-        pausedByModal = true;
+        if (typeof clearModalPauseStack === "function") clearModalPauseStack(false);
     } else {
-        paused = false;
-        pausedByModal = false;
+        if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+        else paused = false;
     }
     showToast(`欢迎回来 ${account.username}`);
     startAutoSave();
@@ -273,8 +273,8 @@ function bootGameLoopIfNeeded() {
     applySettingsToUI();
     initGame();
     updateWordUI(null);
-    paused = false;
-    pausedByModal = false;
+    if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+    else paused = false;
     startedOnce = true;
     viewportIgnoreUntilMs = nowMs() + 3000;
     setOverlay(false);
@@ -464,18 +464,16 @@ function showProfileModal() {
     renderAchievements();
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
-    pausedByModal = true;
-    paused = true;
+    if (typeof pushPause === "function") pushPause();
+    else paused = true;
 }
 
 function hideProfileModal() {
     if (!profileModalEl) return;
     profileModalEl.classList.remove("visible");
     profileModalEl.setAttribute("aria-hidden", "true");
-    if (pausedByModal) {
-        pausedByModal = false;
-        paused = false;
-    }
+    if (typeof popPause === "function") popPause();
+    else paused = false;
 }
 
 function renderAchievements() {
@@ -553,8 +551,8 @@ function showSaveProgressModal() {
     if (btnViewProfile) btnViewProfile.style.display = currentAccount ? "" : "none";
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
-    pausedByModal = true;
-    paused = true;
+    if (typeof pushPause === "function") pushPause();
+    else paused = true;
     if (!currentAccount && nameInput) setTimeout(() => nameInput.focus(), 100);
 }
 
@@ -563,7 +561,8 @@ function hideSaveProgressModal() {
     if (!modal) return;
     modal.classList.remove("visible");
     modal.setAttribute("aria-hidden", "true");
-    if (pausedByModal) { pausedByModal = false; paused = false; }
+    if (typeof popPause === "function") popPause();
+    else paused = false;
 }
 
 function confirmSaveProgress() {

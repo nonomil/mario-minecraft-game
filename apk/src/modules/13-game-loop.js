@@ -17,6 +17,29 @@ function isEntityNearCamera(entity, margin = blockSize * 2) {
     return entity.x > cameraX - margin && entity.x < cameraX + canvas.width + margin;
 }
 
+let pauseStack = 0;
+
+function pushPause() {
+    pauseStack += 1;
+    paused = true;
+    return pauseStack;
+}
+
+function popPause() {
+    pauseStack = Math.max(0, pauseStack - 1);
+    if (pauseStack === 0) paused = false;
+    return pauseStack;
+}
+
+function isModalPauseActive() {
+    return pauseStack > 0;
+}
+
+function clearModalPauseStack(resumeGame = true) {
+    pauseStack = 0;
+    if (resumeGame) paused = false;
+}
+
 function emitGameParticle(type, x, y) {
     if (typeof emitBiomeParticle === "function") {
         const pooled = emitBiomeParticle(type, x, y);
@@ -331,18 +354,24 @@ function update() {
     if (typeof player._stuckFrames === "undefined") player._stuckFrames = 0;
     if (typeof player._lastStuckX === "undefined") player._lastStuckX = player.x;
     const hasInput = keys.right || keys.left || keys.up || keys.jump;
-    if (hasInput && Math.abs(player.x - player._lastStuckX) < 0.5 && player.grounded) {
-        player._stuckFrames++;
+    if (hasInput && player.grounded) {
+        if (Math.abs(player.x - player._lastStuckX) < 0.5) {
+            player._stuckFrames++;
+            // 不更新 _lastStuckX，保持记录卡住起始位置
+        } else {
+            player._stuckFrames = 0;
+            player._lastStuckX = player.x;  // 正常移动时才更新
+        }
         if (player._stuckFrames > 45) {
-            // 强制向前推一点
-            player.y = player.y - blockSize * 0.8;
+            player.y -= blockSize * 0.8;
             player.velY = -2;
             player._stuckFrames = 0;
+            player._lastStuckX = player.x;
         }
     } else {
         player._stuckFrames = 0;
+        player._lastStuckX = player.x;
     }
-    player._lastStuckX = player.x;
 
     let targetCamX = player.x - cameraOffsetX;
     if (targetCamX < 0) targetCamX = 0;
@@ -550,6 +579,24 @@ function update() {
         if (gameState.luckyStarTimer <= 0) {
             gameState.luckyStarActive = false;
             showToast('🌟 幸运星效果结束');
+        }
+    }
+
+    // 花香护体计时器
+    if (typeof gameState !== 'undefined' && gameState.flowerBuffTimer > 0) {
+        gameState.flowerBuffTimer--;
+        if (gameState.flowerBuffTimer <= 0) {
+            showToast('🌸 花香护体效果结束');
+        }
+    }
+
+    // 雪块临时平台倒计时
+    for (let p of platforms) {
+        if (p && p.type === "snow_temp" && !p.remove) {
+            p.tempTimer--;
+            if (p.tempTimer <= 0) {
+                p.remove = true;
+            }
         }
     }
 
@@ -763,6 +810,20 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     updateHpUI();
     showFloatingText(`-${penalty}分`, player.x, player.y);
     if (playerHp <= 0 || score <= 0) {
+        // 检查图腾复活
+        if (playerHp <= 0 && inventory.totem > 0) {
+            inventory.totem -= 1;
+            playerHp = 3;
+            playerInvincibleTimer = 180; // 3秒无敌
+            for (let i = 0; i < 20; i++) {
+                emitGameParticle("ember", player.x + Math.random() * player.width, player.y + Math.random() * player.height);
+            }
+            showFloatingText('🗿 图腾复活!', player.x, player.y - 50, '#FFD700');
+            showToast('🗿 复活图腾生效！HP恢复3❤️');
+            updateHpUI();
+            updateInventoryUI();
+            return;
+        }
         triggerGameOver();
     }
 }
@@ -910,8 +971,7 @@ function setInventoryTab(tab) {
 
 function showInventoryModal() {
     if (!inventoryModalEl) return;
-    pausedByModal = !paused;
-    paused = true;
+    pushPause();
     inventoryModalEl.classList.add("visible");
     inventoryModalEl.setAttribute("aria-hidden", "false");
     renderInventoryModal();
@@ -921,8 +981,7 @@ function hideInventoryModal() {
     if (!inventoryModalEl) return;
     inventoryModalEl.classList.remove("visible");
     inventoryModalEl.setAttribute("aria-hidden", "true");
-    if (pausedByModal) paused = false;
-    pausedByModal = false;
+    popPause();
 }
 
 function updateInventoryModal() {
@@ -1096,6 +1155,72 @@ function useInventoryItem(itemKey) {
         }
         renderInventoryModal();
         return;
+    } else if (itemKey === "echo_shard") {
+        // 回响碎片 x3 -> 合成复活图腾
+        if (count < 3) {
+            showToast("❌ 需要3个回响碎片");
+            return;
+        }
+        inventory.echo_shard -= 3;
+        if (!inventory.totem) inventory.totem = 0;
+        inventory.totem += 1;
+        showFloatingText("🗿 合成图腾!", player.x, player.y - 40, "#FFD700");
+        showToast("🔷 回响碎片×3 → 🗿 复活图腾");
+        used = true;
+    } else if (itemKey === "mushroom") {
+        // 蘑菇 x2 -> 合成蘑菇煲
+        if (count < 2) {
+            showToast("❌ 需要2个蘑菇");
+            return;
+        }
+        inventory.mushroom -= 2;
+        if (!inventory.mushroom_stew) inventory.mushroom_stew = 0;
+        inventory.mushroom_stew += 1;
+        showFloatingText("🍲 合成蘑菇煲!", player.x, player.y - 40, "#CD853F");
+        showToast("🍄 蘑菇×2 → 🍲 蘑菇煲");
+        used = true;
+    } else if (itemKey === "stick") {
+        // 木棍 x5 + 蜘蛛丝 x3 -> 合成弓
+        if (count < 5) {
+            showToast(`❌ 需要5根木棍（当前${count}根）`);
+            return;
+        }
+        if ((inventory.string || 0) < 3) {
+            showToast(`❌ 还需要3根蜘蛛丝（当前${inventory.string || 0}根）`);
+            return;
+        }
+        inventory.stick -= 5;
+        inventory.string -= 3;
+        inventory.bow = (inventory.bow || 0) + 1;
+        showFloatingText("🏹 合成弓!", player.x, player.y - 40, "#8B4513");
+        showToast("🥢×5 + 🕸️×3 → 🏹 弓");
+        used = true;
+    } else if (itemKey === "flower") {
+        // 花朵 -> 花香护体30秒，敌人攻击频率-30%
+        inventory.flower -= 1;
+        if (typeof gameState === 'undefined') window.gameState = {};
+        gameState.flowerBuffTimer = 1800; // 30秒 @60fps
+        itemCooldownTimers.flower = ITEM_COOLDOWNS.flower;
+        showFloatingText("🌸 花香护体!", player.x, player.y - 40, "#FF69B4");
+        showToast("🌸 花香护体激活 (30秒，敌人攻击减缓)");
+        used = true;
+    } else if (itemKey === "snow_block") {
+        // 雪块 -> 在脚下放置临时平台5秒
+        inventory.snow_block -= 1;
+        const tempPlatform = {
+            x: player.x - 10,
+            y: player.y + player.height,
+            width: player.width + 20,
+            height: 16,
+            color: "#B0E0E6",
+            tempTimer: 300, // 5秒 @60fps
+            remove: false,
+            type: "snow_temp"
+        };
+        platforms.push(tempPlatform);
+        showFloatingText("🧊 临时平台!", player.x, player.y - 30, "#B0E0E6");
+        showToast("🧊 雪块平台放置 (5秒后消失)");
+        used = true;
     }
     // 食物使用（牛肉、羊肉、蘑菇煲）
     else if (FOOD_TYPES[itemKey]) {
@@ -1283,8 +1408,7 @@ function showArmorSelectUI() {
     }
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
-    pausedByModal = !paused;
-    paused = true;
+    pushPause();
 }
 
 function hideArmorSelectUI() {
@@ -1292,12 +1416,7 @@ function hideArmorSelectUI() {
     if (!modal) return;
     modal.classList.remove("visible");
     modal.setAttribute("aria-hidden", "true");
-    if (pausedByModal) {
-        paused = false;
-        pausedByModal = false;
-    } else {
-        paused = false;
-    }
+    popPause();
 }
 
 const RECIPES = {
@@ -1361,13 +1480,13 @@ function spawnGolem(type) {
 
 function handleInteraction(interactMode = "tap") {
     if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
-        if (paused || pausedByModal) return;
+        if (paused || isModalPauseActive()) return;
         if (typeof handleVillageInteriorInteraction === "function") {
             handleVillageInteriorInteraction(interactMode);
         }
         return;
     }
-    if (paused || pausedByModal) return;
+    if (paused || isModalPauseActive()) return;
     // v1.8.3 村庄建筑交互优先
     if (playerInVillage && currentVillage && typeof checkVillageBuildings === 'function') {
       const handled = checkVillageBuildings(currentVillage, interactMode);

@@ -39,7 +39,6 @@ let lastWord = null;
 let wordPicker = null;
 let followUpQueue = [];
 let paused = false;
-let pausedByModal = false;
 let startedOnce = false;
 let vocabManifest = window.MMWG_VOCAB_MANIFEST || null;
 let vocabPackOrder = [];
@@ -56,7 +55,6 @@ let currentLearningChallenge = null;
 let challengeTimerId = null;
 let challengeDeadline = 0;
 let challengeOrigin = null;
-let challengePausedBefore = false;
 let challengeModalEl = null;
 let challengeQuestionEl = null;
 let challengeOptionsEl = null;
@@ -142,7 +140,8 @@ const INVENTORY_TEMPLATE = {
     echo_shard: 0,
     beef: 0,
     mutton: 0,
-    mushroom_stew: 0
+    mushroom_stew: 0,
+    totem: 0
 };
 let inventory = { ...INVENTORY_TEMPLATE };
 let selectedSlot = 0;
@@ -164,23 +163,29 @@ let itemCooldownTimers = {}; // { itemKey: remainingFrames }
 
 // 物品描述（用于Tooltip）
 const ITEM_DESCRIPTIONS = {
-    gunpowder: { desc: "投掷炸弹，爆炸范围120px，造成30伤害", cost: "消耗: 1个", cd: "冷却: 5秒" },
-    ender_pearl: { desc: "向前方传送200px，穿越障碍物", cost: "消耗: 1个", cd: "冷却: 8秒" },
-    string: { desc: "放置蛛网陷阱，减速敌人80%持续5秒", cost: "消耗: 2个", cd: "冷却: 6秒" },
-    dragon_egg: { desc: "释放全屏龙息，对所有敌人造成50伤害", cost: "消耗: 1个", cd: "冷却: 12秒" },
-    shell: { desc: "激活2秒无敌护盾，抵挡所有伤害", cost: "消耗: 3个", cd: "冷却: 20秒" },
-    starfish: { desc: "30秒内宝箱稀有度提升一级", cost: "消耗: 1个", cd: "冷却: 90秒" },
-    coal: { desc: "放置光源，照亮周围区域8秒", cost: "消耗: 1个", cd: "冷却: 3秒" },
-    rotten_flesh: { desc: "投掷腐肉吸引附近敌人", cost: "消耗: 1个", cd: "冷却: 4秒" },
-    flower: { desc: "5秒内持续回血，共回复2❤️", cost: "消耗: 2个", cd: "冷却: 10秒" },
-    gold: { desc: "猪灵交易，获得随机物品", cost: "消耗: 1个", cd: "无冷却" },
-    diamond: { desc: "立即回复1❤️生命值", cost: "消耗: 1个", cd: "无冷却" },
-    pumpkin: { desc: "召唤雪傀儡辅助战斗", cost: "消耗: 1个", cd: "无冷却" },
-    iron: { desc: "召唤铁傀儡强力护卫", cost: "消耗: 3个", cd: "无冷却" },
-    mushroom: { desc: "合成蘑菇煲回血食物", cost: "消耗: 2个", cd: "无冷却" },
-    stick: { desc: "修复当前护甲20%耐久", cost: "消耗: 3个", cd: "无冷却" },
-    snow_block: { desc: "召唤雪傀儡的材料之一", cost: "合成材料", cd: "无冷却" },
-    sculk_vein: { desc: "幽匿碎片，可制作静音鞋", cost: "合成材料", cd: "无冷却" }
+    gunpowder:    { desc: "投掷炸弹，爆炸范围120px，造成30伤害", cost: "消耗: 1个", cd: "冷却: 5秒" },
+    ender_pearl:  { desc: "向前方传送200px，穿越障碍物+60秒隐身", cost: "消耗: 1个", cd: "冷却: 8秒" },
+    string:       { desc: "放置蛛网陷阱，减速敌人80%持续5秒", cost: "消耗: 2个", cd: "冷却: 6秒" },
+    dragon_egg:   { desc: "释放全屏龙息，对所有敌人造成50伤害", cost: "消耗: 1个", cd: "冷却: 12秒" },
+    totem:        { desc: "被动：HP归零时自动触发，回复3❤️并获得3秒无敌", cost: "自动消耗: 1个", cd: "被动触发" },
+    flower:       { desc: "花香护体30秒，敌人攻击频率降低30%", cost: "消耗: 1个", cd: "冷却: 10秒" },
+    mushroom:     { desc: "2个蘑菇合成1个蘑菇煲（回复2❤️）", cost: "消耗: 2个", cd: "无冷却" },
+    stick:        { desc: "5根木棍+3根蜘蛛丝合成弓🏹", cost: "消耗: 5个+蜘蛛丝3个", cd: "无冷却" },
+    snow_block:   { desc: "在脚下放置临时平台，5秒后消失", cost: "消耗: 1个", cd: "无冷却" },
+    echo_shard:   { desc: "3个回响碎片合成复活图腾🗿", cost: "消耗: 3个", cd: "无冷却" },
+    shell:        { desc: "激活2秒无敌护盾，抵挡所有伤害", cost: "消耗: 3个", cd: "冷却: 20秒" },
+    starfish:     { desc: "30秒内宝箱稀有度提升一级", cost: "消耗: 1个", cd: "冷却: 90秒" },
+    coal:         { desc: "放置火把，照亮周围区域8秒", cost: "消耗: 1个", cd: "冷却: 3秒" },
+    rotten_flesh: { desc: "投掷腐肉吸引附近敌人聚集", cost: "消耗: 1个", cd: "冷却: 4秒" },
+    gold:         { desc: "猪灵交易，随机获得铁/箭/末影珍珠", cost: "消耗: 1个", cd: "无冷却" },
+    diamond:      { desc: "立即回复1❤️生命值", cost: "消耗: 1个", cd: "无冷却" },
+    pumpkin:      { desc: "召唤雪傀儡辅助战斗（需背包有雪块×2）", cost: "消耗: 1个", cd: "无冷却" },
+    iron:         { desc: "召唤铁傀儡强力护卫", cost: "消耗: 3个", cd: "无冷却" },
+    sculk_vein:   { desc: "幽匿碎片×5合成静音靴，移动不触发敌人", cost: "消耗: 5个", cd: "无冷却" },
+    beef:         { desc: "立即回复1❤️生命值", cost: "消耗: 1个", cd: "食物冷却: 3秒" },
+    mutton:       { desc: "立即回复1❤️生命值", cost: "消耗: 1个", cd: "食物冷却: 3秒" },
+    mushroom_stew:{ desc: "立即回复2❤️生命值", cost: "消耗: 1个", cd: "食物冷却: 3秒" },
+    arrow:        { desc: "弓的弹药，射箭时自动消耗", cost: "弹药", cd: "无冷却" }
 };
 
 const HOTBAR_ITEMS = ["diamond", "pumpkin", "iron", "stick", "stone_sword", "iron_pickaxe", "bow", "arrow"];
@@ -209,7 +214,8 @@ const ITEM_LABELS = {
     echo_shard: "回响碎片",
     beef: "牛肉",
     mutton: "羊肉",
-    mushroom_stew: "蘑菇煲"
+    mushroom_stew: "蘑菇煲",
+    totem: "复活图腾"
 };
 const ITEM_ICONS = {
     diamond: "💎",
@@ -237,6 +243,7 @@ const ITEM_ICONS = {
     beef: "🥩",
     mutton: "🍖",
     mushroom_stew: "🍲",
+    totem: "🗿",
     hp: "❤️",
     max_hp: "💖",
     score: "🪙",
@@ -250,7 +257,7 @@ const ITEM_ICONS = {
 };
 const INVENTORY_CATEGORIES = {
     items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow"],
-    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "flower", "mushroom", "sculk_vein", "echo_shard", "beef", "mutton", "mushroom_stew"],
+    materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "totem", "flower", "mushroom", "sculk_vein", "echo_shard", "beef", "mutton", "mushroom_stew"],
     equipment: []
 };
 const SPEED_LEVELS = {
@@ -427,7 +434,7 @@ const ARMOR_TYPES = {
 const FOOD_TYPES = {
     beef: { heal: 1, icon: "🥩", name: "牛肉", color: "#8B4513" },
     mutton: { heal: 1, icon: "🍖", name: "羊肉", color: "#DEB887" },
-    mushroom_stew: { heal: 1, icon: "🍲", name: "蘑菇煲", color: "#CD853F" },
+    mushroom_stew: { heal: 2, icon: "🍲", name: "蘑菇煲", color: "#CD853F" },
     raw_fish: { heal: 1, icon: "🐟", name: "生鱼", color: "#87CEEB" }
 };
 let playerEquipment = { armor: null, armorDurability: 0, armorEquippedAt: 0, armorLastDurabilityTick: 0 };
@@ -667,48 +674,58 @@ const DEFAULT_CHEST_RARITIES = [
 ];
 const DEFAULT_CHEST_TABLES = {
     common: [
-        { item: "iron", weight: 18, min: 1, max: 3 },
-        { item: "pumpkin", weight: 12, min: 1, max: 2 },
-        { item: "stick", weight: 12, min: 1, max: 3 },
-        { item: "diamond", weight: 2, min: 1, max: 1 },
-        { item: "coal", weight: 10, min: 1, max: 3 },
-        { item: "arrow", weight: 10, min: 2, max: 6 },
-        { item: "rotten_flesh", weight: 8, min: 1, max: 3 },
-        { item: "flower", weight: 9, min: 1, max: 2 },
-        { item: "mushroom", weight: 6, min: 1, max: 2 },
-        { item: "beef", weight: 12, min: 1, max: 2 },
-        { item: "mutton", weight: 12, min: 1, max: 2 },
-        { item: "hp", weight: 8, min: 1, max: 1 },
-        { item: "score", weight: 7, min: 10, max: 25 },
-        { item: "word_card", weight: 8, min: 3, max: 6 },
-        { item: "empty", weight: 10, min: 0, max: 0 }
+        { item: "iron",         weight: 15, min: 1, max: 3 },
+        { item: "coal",         weight: 10, min: 1, max: 3 },
+        { item: "arrow",        weight: 10, min: 2, max: 6 },
+        { item: "beef",         weight: 10, min: 1, max: 2 },
+        { item: "mutton",       weight: 10, min: 1, max: 2 },
+        { item: "stick",        weight: 10, min: 3, max: 5 },
+        { item: "flower",       weight: 8,  min: 1, max: 2 },
+        { item: "mushroom",     weight: 8,  min: 2, max: 3 },
+        { item: "rotten_flesh", weight: 6,  min: 1, max: 2 },
+        { item: "pumpkin",      weight: 6,  min: 1, max: 1 },
+        { item: "snow_block",   weight: 5,  min: 1, max: 2 },
+        { item: "diamond",      weight: 3,  min: 1, max: 1 },
+        { item: "hp",           weight: 6,  min: 1, max: 1 },
+        { item: "word_card",    weight: 8,  min: 3, max: 6 },
+        { item: "score",        weight: 5,  min: 10, max: 25 },
+        { item: "empty",        weight: 8,  min: 0, max: 0 }
     ],
     rare: [
-        { item: "diamond", weight: 3, min: 1, max: 1 },
-        { item: "stone_sword", weight: 7, min: 1, max: 1 },
-        { item: "iron_pickaxe", weight: 5, min: 1, max: 1 },
-        { item: "ender_pearl", weight: 4, min: 1, max: 1 },
-        { item: "iron", weight: 8, min: 2, max: 4 },
-        { item: "arrow", weight: 8, min: 4, max: 8 },
-        { item: "mushroom_stew", weight: 6, min: 1, max: 2 },
-        { item: "hp", weight: 8, min: 1, max: 1 },
-        { item: "score", weight: 8, min: 20, max: 40 },
-        { item: "word_card", weight: 15, min: 10, max: 20 }
+        { item: "diamond",      weight: 5,  min: 1, max: 1 },
+        { item: "stone_sword",  weight: 8,  min: 1, max: 1 },
+        { item: "iron_pickaxe", weight: 6,  min: 1, max: 1 },
+        { item: "ender_pearl",  weight: 5,  min: 1, max: 1 },
+        { item: "gunpowder",    weight: 6,  min: 1, max: 2 },
+        { item: "string",       weight: 6,  min: 2, max: 3 },
+        { item: "shell",        weight: 5,  min: 3, max: 3 },
+        { item: "snow_block",   weight: 5,  min: 1, max: 2 },
+        { item: "mushroom_stew",weight: 6,  min: 1, max: 2 },
+        { item: "iron",         weight: 6,  min: 2, max: 4 },
+        { item: "hp",           weight: 8,  min: 1, max: 1 },
+        { item: "score",        weight: 8,  min: 20, max: 40 },
+        { item: "word_card",    weight: 12, min: 8, max: 15 }
     ],
     epic: [
-        { item: "max_hp", weight: 6, min: 1, max: 1 },
-        { item: "diamond", weight: 4, min: 1, max: 1 },
-        { item: "ender_pearl", weight: 5, min: 1, max: 2 },
-        { item: "iron_pickaxe", weight: 6, min: 1, max: 1 },
-        { item: "score", weight: 8, min: 40, max: 80 },
-        { item: "word_card", weight: 10, min: 15, max: 25 }
+        { item: "max_hp",       weight: 8,  min: 1, max: 1 },
+        { item: "diamond",      weight: 6,  min: 1, max: 2 },
+        { item: "ender_pearl",  weight: 6,  min: 1, max: 2 },
+        { item: "iron_pickaxe", weight: 5,  min: 1, max: 1 },
+        { item: "sculk_vein",   weight: 6,  min: 3, max: 5 },
+        { item: "echo_shard",   weight: 6,  min: 2, max: 3 },
+        { item: "starfish",     weight: 5,  min: 1, max: 1 },
+        { item: "gold",         weight: 5,  min: 1, max: 2 },
+        { item: "score",        weight: 8,  min: 40, max: 80 },
+        { item: "word_card",    weight: 8,  min: 12, max: 20 }
     ],
     legendary: [
-        { item: "max_hp", weight: 8, min: 1, max: 2 },
-        { item: "diamond", weight: 5, min: 1, max: 2 },
-        { item: "dragon_egg", weight: 4, min: 1, max: 1 },
-        { item: "ender_pearl", weight: 6, min: 2, max: 3 },
-        { item: "score", weight: 10, min: 80, max: 150 }
+        { item: "max_hp",       weight: 10, min: 1, max: 2 },
+        { item: "dragon_egg",   weight: 6,  min: 1, max: 1 },
+        { item: "totem",        weight: 6,  min: 1, max: 1 },
+        { item: "ender_pearl",  weight: 6,  min: 2, max: 3 },
+        { item: "echo_shard",   weight: 5,  min: 3, max: 3 },
+        { item: "diamond",      weight: 5,  min: 2, max: 3 },
+        { item: "score",        weight: 8,  min: 80, max: 150 }
     ]
 };
 const DEFAULT_CHEST_ROLLS = {

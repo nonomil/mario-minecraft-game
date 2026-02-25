@@ -48,12 +48,16 @@ function restorePauseStateFromSession(session) {
   if (!session) return;
   if (session.prevPaused) {
     paused = true;
-    pausedByModal = !!session.prevPausedByModal;
-    if (!pausedByModal && typeof setOverlay === "function") setOverlay(true, "pause");
+    if (typeof pauseStack === "number") {
+      pauseStack = Math.max(0, Number(session.prevPauseStack) || 0);
+    }
+    if ((typeof isModalPauseActive !== "function" || !isModalPauseActive()) && typeof setOverlay === "function") {
+      setOverlay(true, "pause");
+    }
     return;
   }
-  paused = false;
-  pausedByModal = false;
+  if (typeof clearModalPauseStack === "function") clearModalPauseStack(true);
+  else paused = false;
   if (typeof setOverlay === "function") setOverlay(false);
 }
 
@@ -82,12 +86,12 @@ function beginVillageChallengeSession(village, onComplete) {
     village,
     onComplete: typeof onComplete === "function" ? onComplete : null,
     prevPaused: !!paused,
-    prevPausedByModal: !!pausedByModal
+    prevPauseStack: typeof pauseStack === "number" ? pauseStack : 0
   };
   villageChallengeSession = session;
   village._challengeRunning = true;
-  paused = true;
-  pausedByModal = true;
+  if (typeof pushPause === "function") pushPause();
+  else paused = true;
   return session;
 }
 

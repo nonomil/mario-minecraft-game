@@ -16,8 +16,13 @@ function scheduleNextFrame() {
                     window.__MMWG_LAST_ERROR = (e && e.stack) ? String(e.stack) : String(e && e.message ? e.message : e);
                 }
             } catch {}
-            paused = true;
-            pausedByModal = true;
+            if (typeof isModalPauseActive === "function" && isModalPauseActive()) {
+                paused = true;
+            } else if (typeof pushPause === "function") {
+                pushPause();
+            } else {
+                paused = true;
+            }
             try { setOverlay(true, "error"); } catch {}
         }
     });

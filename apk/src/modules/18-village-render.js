@@ -263,7 +263,7 @@ function drawVillageInteractHint(ctx, village) {
   if (!village || !Array.isArray(village.buildings) || typeof player === "undefined" || !player) return;
   if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
   if (typeof paused !== "undefined" && paused) return;
-  if (typeof pausedByModal !== "undefined" && pausedByModal) return;
+  if (typeof isModalPauseActive === "function" && isModalPauseActive()) return;
 
   const centerX = player.x + (Number(player.width) || 0) * 0.5;
   let hint = "";

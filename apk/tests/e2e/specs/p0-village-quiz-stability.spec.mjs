@@ -11,7 +11,7 @@ async function openGameAndBoot(page) {
     await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
     window.MMWG_TEST_API.actions.bootGameLoopIfNeeded();
     if (typeof paused !== "undefined") paused = false;
-    if (typeof pausedByModal !== "undefined") pausedByModal = false;
+    if (typeof pauseStack === "number") pauseStack = 0;
     if (typeof setOverlay === "function") setOverlay(false);
   });
 
@@ -107,12 +107,12 @@ test("P0 village quiz should not render undefined and should recover from exit",
     const after = Number(gameFrame) || 0;
     return {
       paused: !!paused,
-      pausedByModal: !!pausedByModal,
+      pauseStack: typeof pauseStack === "number" ? pauseStack : 0,
       frameDelta: after - before
     };
   });
 
   expect(resume.paused).toBeFalsy();
-  expect(resume.pausedByModal).toBeFalsy();
+  expect(resume.pauseStack).toBe(0);
   expect(resume.frameDelta).toBeGreaterThan(10);
 });
