@@ -653,8 +653,10 @@ function renderVillageInterior(ctx) {
   ctx.font = "bold 13px sans-serif";
   ctx.fillText("\u95e8\u53e3\uff08\u81ea\u52a8\u79bb\u5f00\uff09", doorPx, floorY - 22);
   const actionHeader = buildingType === "bed_house"
-    ? "\u5e8a\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
-    : (buildingType === "word_house" ? "\u5355\u8bcd\u4e66\uff08\u6309\u5b9d\u7bb1\u952e\uff09" : "\u5546\u4eba\uff08\u6309\u5b9d\u7bb1\u952e\uff09");
+    ? "\ud83d\udecf\ufe0f \u5e8a\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
+    : (buildingType === "word_house"
+      ? "\ud83d\udcd8 \u5355\u8bcd\u4e66\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
+      : "\ud83e\uddd1\u200d\ud83c\udf3e \u5546\u4eba\uff08\u77ed\u6309\u5b9d\u7bb1\u952e\uff09");
   ctx.fillText(actionHeader, actionPx, floorY - 22);
 
   const steveX = playerPx - (Number(player?.width) || 26) * 0.5;
@@ -680,8 +682,12 @@ function renderVillageInterior(ctx) {
   ctx.font = "18px sans-serif";
   if (buildingType === "bed_house") {
     drawVillageBed(ctx, panelX + 80, panelY + panelH - 110, colors);
-    ctx.fillText("", panelX + 28, panelY + 96);
-    ctx.fillText("", panelX + 28, panelY + 128);
+    ctx.fillStyle = "#1E1E1E";
+    ctx.font = "16px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("\u70b9\u51fb \ud83d\uddc3\ufe0f \u5b9d\u7bb1\u6309\u94ae", panelX + 28, panelY + 96);
+    ctx.fillText("\u4e0a\u5e8a\u7761\u89c9", panelX + 28, panelY + 120);
+    ctx.fillText("\u6062\u590d\u6ee1\u8840 \u2764\ufe0f", panelX + 28, panelY + 144);
   }
   // Requirement update: keep door as auto-exit, bed/word use chest-key trigger.
   ctx.fillStyle = colors.plank || "#B8945A";
@@ -714,6 +720,12 @@ function renderVillageInterior(ctx) {
     ctx.fillRect(bookX + 26, bookY + 4, 18, 24);
     ctx.fillStyle = "rgba(0,0,0,0.25)";
     ctx.fillRect(bookX + 23, bookY + 2, 2, 28);
+    ctx.fillStyle = "#1E1E1E";
+    ctx.font = "15px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("\u70b9\u51fb \ud83d\uddc3\ufe0f \u5b9d\u7bb1", actionPx, floorY - 68);
+    ctx.fillText("\u5f00\u59cb\u5355\u8bcd\u6d4b\u8bd5", actionPx, floorY - 50);
+    ctx.fillText("\u7b54\u5bf9\u83b7\u53d6 \ud83d\udc8e \u94bb\u77f3", actionPx, floorY - 32);
   }
   if (buildingType === "trader_house") {
     const npcX = actionPx - 16;
@@ -738,10 +750,11 @@ function renderVillageInterior(ctx) {
     ? "\u5e8a"
     : (buildingType === "word_house" ? "\u5355\u8bcd\u4e66" : "\u5546\u4eba");
   ctx.fillText(actionName, actionPx, floorY - 24);
-  ctx.fillText("\u6309\u5b9d\u7bb1\u952e\u89e6\u53d1", actionPx, floorY - 8);
+  const actionHint = buildingType === "trader_house" ? "\u77ed\u6309\u5b9d\u7bb1\u952e" : "\u6309\u5b9d\u7bb1\u952e\u89e6\u53d1";
+  ctx.fillText(actionHint, actionPx, floorY - 8);
   const actionDesc = buildingType === "bed_house"
-    ? "\u4f11\u606f\u56de\u8840"
-    : (buildingType === "word_house" ? "\u5f00\u59cb\u5355\u8bcd\u6d4b\u9a8c" : "\u5f00\u542f\u4ea4\u6613\u5bf9\u8bdd");
+    ? "\u4f11\u606f\u56de\u8840 \u2764\ufe0f"
+    : (buildingType === "word_house" ? "\u5f00\u59cb\u5355\u8bcd\u6d4b\u9a8c \ud83d\udc8e" : "\u77ed\u6309 \ud83d\uddc3\ufe0f \u5f00\u542f\u4ea4\u6613");
   ctx.fillText(actionDesc, actionPx, floorY + 8);
 
   ctx.textAlign = "left";
@@ -875,7 +888,6 @@ function tryAutoEnterVillageInterior(village) {
   if (Math.abs(centerX - doorCenter) > autoRange) return false;
   if (village._lastAutoEnterAt && now - village._lastAutoEnterAt < 1000) return false;
   village._lastAutoEnterAt = now;
-  if (nearby.type === "trader_house") return false;
   if (!isInteriorBuildingType(nearby.type)) return false;
   return enterVillageInterior(village, nearby);
 }
@@ -1036,6 +1048,16 @@ const TRADER_ARMOR_PRICES = {
   diamond: 40
 };
 
+const TRADER_BUY_ITEMS = [
+  { id: "sunscreen", label: "\u9632\u6652\u971c \ud83e\uddf4", cost: 5, type: "buff" },
+  { id: "arrow", label: "\u7bad \u00d710 \ud83c\udff9", cost: 3, type: "item", amount: 10 },
+  { id: "stone_sword", label: "\u77f3\u5251 \u2694\ufe0f", cost: 8, type: "item", amount: 1 },
+  { id: "iron_sword", label: "\u94c1\u5251 \ud83d\udde1\ufe0f", cost: 15, type: "item", amount: 1 },
+  { id: "bow", label: "\u5f13 \ud83c\udff9", cost: 12, type: "item", amount: 1 },
+  { id: "gunpowder", label: "\u706b\u836f \u00d75 \ud83d\udca5", cost: 4, type: "item", amount: 5 },
+  { id: "ender_pearl", label: "\u672b\u5f71\u73cd\u73e0 \u00d73 \ud83d\udfe3", cost: 10, type: "item", amount: 3 }
+];
+
 let traderPrevPaused = false;
 
 function openVillageTrader(village) {
@@ -1123,6 +1145,26 @@ function renderVillageTraderMain(modal, village) {
     handleTraderBuySunscreen();
     renderVillageTraderMain(modal, village);
   });
+  bindTraderTap(body.querySelector("#trader-btn-close"), closeVillageTrader);
+}
+
+function renderVillageTraderMain(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const diamondCount = Number(inventory?.diamond) || 0;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">🧑‍🌾 商人交易</h3>
+    <p style="margin:0 0 12px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button id="trader-btn-sell" class="game-btn">卖材料换钻石 💎</button>
+      <button id="trader-btn-armor" class="game-btn">用钻石买盔甲 🛡️</button>
+      <button id="trader-btn-materials" class="game-btn">用钻石买材料和武器 ⚔️</button>
+      <button id="trader-btn-close" class="game-btn">关闭</button>
+    </div>
+  `;
+  bindTraderTap(body.querySelector("#trader-btn-sell"), () => renderTraderSellMaterials(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-armor"), () => renderTraderBuyArmor(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-materials"), () => renderTraderBuyMaterials(modal, village));
   bindTraderTap(body.querySelector("#trader-btn-close"), closeVillageTrader);
 }
 
@@ -1270,6 +1312,52 @@ function handleTraderBuySunscreen() {
   if (typeof updateInventoryUI === "function") updateInventoryUI();
   showToast("🧴 防晒霜已生效（7分钟）");
   showFloatingText("🧴 防晒中", player.x, player.y - 36, "#FFD54F");
+  return true;
+}
+
+function renderTraderBuyMaterials(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const diamondCount = Number(inventory?.diamond) || 0;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">用钻石买材料和武器 ⚔️</h3>
+    <p style="margin:0 0 8px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
+    <div id="trader-buy-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="margin-top:12px;">
+      <button id="trader-btn-back-main" class="game-btn">返回</button>
+    </div>
+  `;
+  const list = body.querySelector("#trader-buy-list");
+  TRADER_BUY_ITEMS.forEach(({ id, label, cost, type, amount }) => {
+    const btn = document.createElement("button");
+    btn.className = "game-btn";
+    btn.textContent = `${label}（${cost}💎）`;
+    bindTraderTap(btn, () => {
+      handleTraderBuyMaterialItem(id, cost, type, amount);
+      renderTraderBuyMaterials(modal, village);
+    });
+    list?.appendChild(btn);
+  });
+  bindTraderTap(body.querySelector("#trader-btn-back-main"), () => renderVillageTraderMain(modal, village));
+}
+
+function handleTraderBuyMaterialItem(id, cost, type, amount = 1) {
+  const diamonds = Number(inventory?.diamond) || 0;
+  if (diamonds < cost) {
+    showToast("💎 钻石不足");
+    return false;
+  }
+  inventory.diamond -= cost;
+  if (type === "buff" && id === "sunscreen") {
+    setVillageBuff("sunscreen", 420000);
+    showToast("🧴 防晒霜已生效（7分钟）");
+    showFloatingText("🧴 防晒中", player.x, player.y - 36, "#FFD54F");
+  } else {
+    inventory[id] = (Number(inventory[id]) || 0) + amount;
+    const label = ITEM_LABELS?.[id] || id;
+    showToast(`✅ 购买成功：${label} ×${amount}`);
+  }
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
   return true;
 }
 

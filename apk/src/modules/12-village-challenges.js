@@ -131,9 +131,9 @@ function resolveVillageChallengeWord(rawWord) {
 function getVillageQuestionCount() {
   if (typeof getVillageConfig === "function") {
     const cfg = getVillageConfig();
-    return Math.max(1, Number(cfg?.challengeQuestionCount) || 10);
+    return Math.max(1, Number(cfg?.challengeQuestionCount) || 5);
   }
-  return Math.max(1, Number(villageConfig?.challengeQuestionCount) || 10);
+  return Math.max(1, Number(villageConfig?.challengeQuestionCount) || 5);
 }
 
 function getVillageRewardConfig() {
