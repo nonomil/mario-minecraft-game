@@ -266,15 +266,15 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
-      - name: Publish GitHub Release (apk-latest)
+      - name: Publish GitHub Release
         if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/app-release.apk') != '' }}
         uses: ncipollo/release-action@v1
         with:
-          tag: apk-latest
-          name: Latest APK
-          allowUpdates: true
-          removeArtifacts: true
-          replacesArtifacts: true
-          body: Signed release APK.
+          tag: apk-${{ github.run_number }}
+          name: APK Build #${{ github.run_number }}
+          body: |
+            Signed release APK.
+            Commit: ${{ github.sha }}
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           artifacts: android-app/android/app/build/outputs/apk/release/app-release.apk
 
