@@ -1,6 +1,6 @@
 /**
- * 09-vocab.js - 璇嶆眹绯荤粺涓庤瘝搴撶鐞?
- * 浠?main.js 鎷嗗垎 (鍘熷琛?2103-2495)
+ * 09-vocab.js - 词汇系统与词库管理
+ * 从 main.js 拆分 (原始行 2103-2495)
  */
 function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
@@ -225,7 +225,7 @@ function parseCustomVocab(text) {
 }
 
 function registerCustomVocab(name, words) {
-    const cleanName = String(name || "鑷畾涔夎瘝搴?).trim() || "鑷畾涔夎瘝搴?;
+    const cleanName = String(name || "自定义词库).trim() || "自定义词库;
     const cleanWords = Array.isArray(words) ? words.filter(w => w?.en).map(w => ({
         standardized: String(w.en || "").trim(),
         chinese: String(w.zh || "").trim(),
@@ -270,27 +270,27 @@ function handleVocabFileImport(event) {
     reader.onload = (e) => {
         const words = parseCustomVocab(e?.target?.result || "");
         if (!words.length) {
-            alert("鏈В鏋愬埌鏈夋晥璇嶆潯锛屾牸寮忥細鑻辨枃,涓枃");
+            alert("未解析到有效词条，格式：英文,中文");
             return;
         }
-        const baseName = String(file.name || "鑷畾涔夎瘝搴?).replace(/\.[^.]+$/, "");
+        const baseName = String(file.name || "自定义词库).replace(/\.[^.]+$/, "");
         registerCustomVocab(baseName, words);
-        alert(`宸插鍏?${words.length} 涓瘝鏉);
+        alert(`已加入 ${words.length} 个词条`);
     };
     reader.readAsText(file, "utf-8");
 }
 
 function handleVocabTextImport() {
-    const text = prompt("璇风矘璐磋瘝搴撴枃鏈紙姣忚锛氳嫳鏂?涓枃[,鐭]锛夛細");
+    const text = prompt("请粘贴词库文本（每行：英文,中文[,短]）：");
     if (!text) return;
     const words = parseCustomVocab(text);
     if (!words.length) {
-        alert("鏈В鏋愬埌鏈夋晥璇嶆潯");
+        alert("未解析到有效词条");
         return;
     }
-    const name = prompt("璇嶅簱鍚嶇О锛?, "鑷畾涔夎瘝搴?) || "鑷畾涔夎瘝搴?;
+    const name = prompt("词库名称：, "自定义词库) || "自定义词库;
     registerCustomVocab(name, words);
-    alert(`宸插鍏?${words.length} 涓瘝鏉);
+    alert(`已加入 ${words.length} 个词条`);
 }
 
 window.parseCustomVocab = parseCustomVocab;
@@ -322,7 +322,7 @@ function renderVocabSelect() {
         group.appendChild(opt);
     };
 
-    add("auto", "闅忔満璇嶅簱锛堟寜绫诲埆杞崲锛?);
+    add("auto", "随机词库（按类别轮换）");
     const engine = ensureVocabEngine();
     if (!engine) return;
 
@@ -348,10 +348,10 @@ function renderVocabSelect() {
     // Define level order
     const levelOrder = ["basic", "intermediate", "advanced", "full"];
     const levelLabels = {
-        "basic": "鍒濈骇",
-        "intermediate": "涓骇",
-        "advanced": "楂樼骇",
-        "full": "瀹屾暣"
+        "basic": "初级",
+        "intermediate": "中级",
+        "advanced": "高级",
+        "full": "完整"
     };
 
     // Render grouped options
@@ -378,7 +378,7 @@ function renderVocabSelect() {
 }
 
 function getActivePackTitle() {
-    if (!activeVocabPackId) return "鑷姩璇嶅簱";
+    if (!activeVocabPackId) return "自动词库";
     const pack = vocabPacks[activeVocabPackId];
     return pack ? pack.title : activeVocabPackId;
 }
@@ -388,12 +388,12 @@ function updateVocabPreview(selection) {
     if (!preview) return;
     const key = selection || settings.vocabSelection || "auto";
     if (key === "auto") {
-        preview.innerHTML = `<strong>鑷姩杞崲</strong><br>鏍规嵁闃舵涓庨毦搴︽櫤鑳藉尮閰峘;
+        preview.innerHTML = `<strong>自动轮换</strong><br>根据阶段与难度智能匹配`;
         return;
     }
     const pack = vocabPacks[key];
     if (!pack) {
-        preview.innerText = "璇嶅簱鏁版嵁鏈氨缁?;
+        preview.innerText = "词库数据未就绪";
         return;
     }
     const details = [];
@@ -411,8 +411,8 @@ function showVocabSwitchEffect() {
     const title = getActivePackTitle();
     const px = player ? player.x : cameraX;
     const py = player ? player.y - 60 : canvas.height / 2;
-    showFloatingText(`鍒囨崲璇嶅簱锛?{title}`, px, py);
-    showToast(`宸插垏鎹㈣嚦 ${title}`);
+    showFloatingText(`切换词库：{title}`, px, py);
+    showToast(`已切换至 ${title}`);
 }
 
 function getPackProgress(packId) {
@@ -427,7 +427,7 @@ function updateVocabProgressUI() {
     if (!el) return;
     const engine = ensureVocabEngine();
     if (!engine || !activeVocabPackId) {
-        el.innerText = "鏈姞杞?;
+        el.innerText = "未加载;
         return;
     }
     const pack = vocabPacks[activeVocabPackId];
@@ -650,7 +650,7 @@ function applySettingsToUI() {
         if (typeof pushPause === "function") pushPause();
         else paused = true;
         setOverlay(true, "pause");
-        showToast("宸查€傞厤灞忓箷锛屽凡鏆傚仠娓告垙");
+        showToast("已适配屏幕，已暂停游戏");
     }
 }
 
@@ -698,6 +698,6 @@ async function confirmVocabPrompt() {
         await setActiveVocabPack(settings.vocabSelection);
     }
     hideVocabPromptModal();
-    showToast("馃摎 璇嶅簱宸茶缃?);
+    showToast("📚 词库已设置");
 }
 
