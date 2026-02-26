@@ -294,9 +294,14 @@ echo [重试 1] 直连推送失败，尝试使用 schannel 后端重试...
 git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :push_success
 
+echo.
+echo [重试 2] 直连推送失败，尝试使用 openssl 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :push_success
+
 if /i "%MODE%"=="auto" if "%PROXY_OK%"=="1" (
     echo.
-    echo [重试 2] 自动模式：检测到本地代理，尝试走代理推送...
+    echo [重试 3] 自动模式：检测到本地代理，尝试走代理推送...
     goto :push_with_proxy
 )
 goto :push_failed
@@ -320,17 +325,17 @@ echo ========================================
 echo.
 echo 所有尝试都失败了。
 echo.
-echo 可能原因：
-echo 1. 网络无法连接 github.com:443
-echo 2. 代理/VPN 未启动（检查 127.0.0.1:1080）
-echo 3. 认证问题（Git 凭据/Token）
+echo Possible causes:
+echo 1. Network cannot reach github.com:443
+echo 2. Proxy/VPN not running (127.0.0.1:1080)
+echo 3. Auth issue (credentials/token)
 echo.
-echo 快速检查：
-echo - 确保代理软件已启动并监听 1080 端口
-echo - 测试：curl -x http://127.0.0.1:1080 https://github.com
-echo - 查看远端：git remote -v
+echo Quick checks:
+echo - Ensure proxy is running and listening on port 1080
+echo - Test: curl -x http://127.0.0.1:1080 https://github.com
+echo - Remote: git remote -v
 echo.
-echo 参考：可用的 Git 代理配置（示例）：
+echo Git proxy config examples:
 echo   git config http.proxy http://127.0.0.1:1080
 echo   git config https.proxy http://127.0.0.1:1080
 echo   git config http.sslBackend openssl
