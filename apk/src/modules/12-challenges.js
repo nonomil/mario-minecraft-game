@@ -69,7 +69,8 @@ function recordWordProgress(wordObj) {
     const pr = getPackProgress(activeVocabPackId);
     if (!pr.total) pr.total = Array.isArray(wordDatabase) ? wordDatabase.length : 0;
     const hadEntry = !!pr.unique[en];
-    const entry = normalizeWordEntry(pr.unique[en]);
+    const _normalize = typeof normalizeWordEntry === "function" ? normalizeWordEntry : (v) => ({ seen: Math.max(1, Number(v) || 1), correct: 0, wrong: 0, lastSeen: Date.now(), quality: "new" });
+    const entry = _normalize(pr.unique[en]);
     entry.seen = hadEntry ? Math.max(1, Number(entry.seen) || 0) + 1 : 1;
     entry.lastSeen = Date.now();
     pr.unique[en] = entry;
@@ -709,7 +710,8 @@ function writeChallengeResultToProgress(wordObj, quality) {
     const pr = getPackProgress(activeVocabPackId);
     const en = String(wordObj.en);
     const isNew = !pr.unique[en];
-    const entry = normalizeWordEntry(pr.unique[en]);
+    const _normalize = typeof normalizeWordEntry === "function" ? normalizeWordEntry : (v) => ({ seen: Math.max(1, Number(v) || 1), correct: 0, wrong: 0, lastSeen: Date.now(), quality: "new" });
+    const entry = _normalize(pr.unique[en]);
     entry.seen = Math.max(1, Number(entry.seen) || 1);
     entry.lastSeen = Date.now();
     if (quality === "wrong") {
