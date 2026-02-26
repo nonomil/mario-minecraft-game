@@ -23,3 +23,8 @@ const dst = path.join(dstDir, "index.html");
 
 fs.mkdirSync(dstDir, { recursive: true });
 fs.copyFileSync(src, dst);
+
+const buildDir = path.join(repoRoot, "build");
+fs.rmSync(buildDir, { recursive: true, force: true });
+fs.mkdirSync(buildDir, { recursive: true });
+fs.cpSync(dstDir, buildDir, { recursive: true });
