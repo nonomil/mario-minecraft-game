@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>我的世界：单词大冒险 (宝箱增强版)</title>
-    <style>
+    <title>宸插簾寮?- 璇蜂娇鐢?apk/Game.html</title>`r`n    <style>
 :root {
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
@@ -1340,23 +1339,36 @@ canvas {
 
 
 </style>
+    <style>
+        body { background: #1a1a2e; color: #eee; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .notice { text-align: center; max-width: 480px; padding: 40px; }
+        .notice h1 { color: #ff6b6b; font-size: 24px; }
+        .notice p { line-height: 1.8; color: #ccc; }
+        .notice a { color: #4ecdc4; text-decoration: underline; font-size: 18px; }
+    </style>
 </head>
 <body>
+    <div class="notice">
+        <h1>鈿狅笍 姝ゅ叆鍙ｅ凡搴熷純</h1>
+        <p>鏍圭洰褰曠増鏈笉鍐嶇淮鎶わ紝鎵€鏈夊紑鍙戝拰娴嬭瘯宸茶縼绉昏嚦 apk/ 鐩綍銆?/p>
+        <p><a href="apk/Game.html">馃憠 鐐瑰嚮杩涘叆 apk/Game.html</a></p>
+        <p style="margin-top:24px;font-size:13px;color:#888;">鏍圭洰褰曚唬鐮佷粎浣滃綊妗ｄ繚鐣欙紝鏂板姛鑳藉拰淇涓嶄細鍚屾鍒版澶勩€?/p>
+    </div>
 
 <div id="login-screen" class="login-screen visible">
     <div class="login-container">
-        <h1 class="game-title">Minecraft 单词游戏</h1>
+        <h1 class="game-title">Minecraft 鍗曡瘝娓告垙</h1>
         <div id="login-form" class="login-form">
             <div class="form-group">
-                <label for="username-input">请输入用户名</label>
-                <input type="text" id="username-input" placeholder="昵称" maxlength="20">
+                <label for="username-input">璇疯緭鍏ョ敤鎴峰悕</label>
+                <input type="text" id="username-input" placeholder="鏄电О" maxlength="20">
             </div>
-            <button id="btn-login" class="game-btn">连接</button>
+            <button id="btn-login" class="game-btn">杩炴帴</button>
         </div>
         <div id="account-list" class="account-list">
-            <h3>已有账号</h3>
+            <h3>宸叉湁璐﹀彿</h3>
             <div id="accounts-container"></div>
-            <button id="btn-new-account" class="game-btn game-btn-small">创建新账号</button>
+            <button id="btn-new-account" class="game-btn game-btn-small">鍒涘缓鏂拌处鍙?/button>
         </div>
     </div>
 </div>
@@ -1366,34 +1378,34 @@ canvas {
     
         <div id="ui-layer">
         <div class="hud-top">
-            <div class="hud-box">🪙 金币: <span id="score">0</span></div>
+            <div class="hud-box">馃獧 閲戝竵: <span id="score">0</span></div>
             <div class="hud-box" id="hp"></div>
             <div class="hud-box" id="word-display">Start!</div>
-            <div class="hud-box" id="level-info">🌲 森林</div>
-            <div class="hud-box" id="weapon-info">⚔️ 石剑</div>
-            <div class="hud-box hud-box-clickable" id="armor-status">🛡️ 无</div>
-            <div class="hud-box hud-box-clickable" id="inventory-status">🎒 背包</div>
+            <div class="hud-box" id="level-info">馃尣 妫灄</div>
+            <div class="hud-box" id="weapon-info">鈿旓笍 鐭冲墤</div>
+            <div class="hud-box hud-box-clickable" id="armor-status">馃洝锔?鏃?/div>
+            <div class="hud-box hud-box-clickable" id="inventory-status">馃帓 鑳屽寘</div>
         </div>
         
         <div class="btn-group">
-            <button class="game-btn" id="btn-settings">⚙️ 设置</button>
-            <button class="game-btn" id="btn-profile">📋 档案</button>
-            <button class="game-btn" id="btn-repeat-pause">🔊 重读/暂停</button>
+            <button class="game-btn" id="btn-settings">鈿欙笍 璁剧疆</button>
+            <button class="game-btn" id="btn-profile">馃搵 妗ｆ</button>
+            <button class="game-btn" id="btn-repeat-pause">馃攰 閲嶈/鏆傚仠</button>
         </div>
 
         <div class="inventory-bar">
-            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="召唤傀儡 (X)">
-                <span class="inv-icon">🗿</span>
-                <span class="inv-label">召唤</span>
+            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="鍙敜鍌€鍎?(X)">
+                <span class="inv-icon">馃椏</span>
+                <span class="inv-label">鍙敜</span>
             </button>
-            <div class="inv-slot" title="钻石"><span class="inv-icon">💎</span><span class="inv-count" id="count-diamond">0</span></div>
-            <div class="inv-slot" title="南瓜"><span class="inv-icon">🎃</span><span class="inv-count" id="count-pumpkin">0</span></div>
-            <div class="inv-slot" title="铁块"><span class="inv-icon">🧱</span><span class="inv-count" id="count-iron">0</span></div>
-            <div class="inv-slot" title="木棍"><span class="inv-icon">🥢</span><span class="inv-count" id="count-stick">0</span></div>
-            <div class="inv-slot" title="石剑"><span class="inv-icon">⚔️</span><span class="inv-count" id="count-stone_sword">0</span></div>
-            <div class="inv-slot" title="铁镐"><span class="inv-icon">⛏️</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
-            <div class="inv-slot" title="弓"><span class="inv-icon">🏹</span><span class="inv-count" id="count-bow">0</span></div>
-            <div class="inv-slot" title="箭矢"><span class="inv-icon">🏹</span><span class="inv-count" id="count-arrow">0</span></div>
+            <div class="inv-slot" title="閽荤煶"><span class="inv-icon">馃拵</span><span class="inv-count" id="count-diamond">0</span></div>
+            <div class="inv-slot" title="鍗楃摐"><span class="inv-icon">馃巸</span><span class="inv-count" id="count-pumpkin">0</span></div>
+            <div class="inv-slot" title="閾佸潡"><span class="inv-icon">馃П</span><span class="inv-count" id="count-iron">0</span></div>
+            <div class="inv-slot" title="鏈ㄦ"><span class="inv-icon">馃ア</span><span class="inv-count" id="count-stick">0</span></div>
+            <div class="inv-slot" title="鐭冲墤"><span class="inv-icon">鈿旓笍</span><span class="inv-count" id="count-stone_sword">0</span></div>
+            <div class="inv-slot" title="閾侀晲"><span class="inv-icon">鉀忥笍</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
+            <div class="inv-slot" title="寮?><span class="inv-icon">馃徆</span><span class="inv-count" id="count-bow">0</span></div>
+            <div class="inv-slot" title="绠煝"><span class="inv-icon">馃徆</span><span class="inv-count" id="count-arrow">0</span></div>
         </div>
 
         <div id="toast">Level Up!</div>
@@ -1408,16 +1420,16 @@ canvas {
 
         <div id="touch-controls" aria-hidden="true">
             <div class="touch-left">
-                <button class="touch-btn" data-action="left">⬅️</button>
-                <button class="touch-btn" data-action="right">➡️</button>
+                <button class="touch-btn" data-action="left">猬咃笍</button>
+                <button class="touch-btn" data-action="right">鉃★笍</button>
             </div>
             <div class="touch-right">
-                <button class="touch-btn" data-action="use-diamond">💎</button>
-                <button class="touch-btn" data-action="interact">🧰</button>
-                <button class="touch-btn" data-action="switch">🔁</button>
+                <button class="touch-btn" data-action="use-diamond">馃拵</button>
+                <button class="touch-btn" data-action="interact">馃О</button>
+                <button class="touch-btn" data-action="switch">馃攣</button>
                 <span class="touch-spacer"></span>
-                <button class="touch-btn" data-action="jump">⤴️</button>
-                <button class="touch-btn" data-action="attack">🗡️</button>
+                <button class="touch-btn" data-action="jump">猡达笍</button>
+                <button class="touch-btn" data-action="attack">馃棥锔?/button>
             </div>
         </div>
     </div>
@@ -1425,170 +1437,170 @@ canvas {
 
 <div id="screen-overlay" class="screen-overlay" aria-hidden="true">
     <div class="overlay-card">
-        <div class="overlay-title" id="overlay-title">准备开始</div>
+        <div class="overlay-title" id="overlay-title">鍑嗗寮€濮?/div>
                         <div class="overlay-text" id="overlay-text">
-            ⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>
-            ⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>
-            📦 打开宝箱  ⛏️ 采集
+            猬咃笍鉃★笍 绉诲姩  猬嗭笍 璺?鍙簩娈佃烦)<br>
+            鈿旓笍 鏀诲嚮  馃攧 鍒囨崲姝﹀櫒  馃拵 浣跨敤閽荤煶<br>
+            馃摝 鎵撳紑瀹濈  鉀忥笍 閲囬泦
         </div>
         <div class="overlay-buttons">
-            <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
-            <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">积分复活</button>
+            <button class="overlay-btn" id="btn-overlay-action">寮€濮嬫父鎴?/button>
+            <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">绉垎澶嶆椿</button>
         </div>
     </div>
 </div>
 
 <div id="settings-modal" aria-hidden="true">
-    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="游戏设置">
-        <div class="settings-title">游戏设置</div>
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="娓告垙璁剧疆">
+        <div class="settings-title">娓告垙璁剧疆</div>
 
         <div class="settings-actions settings-actions-top">
-            <button class="game-btn" id="btn-settings-save">保存</button>
+            <button class="game-btn" id="btn-settings-save">淇濆瓨</button>
         </div>
 
         <div class="settings-row settings-row-keys">
-            <div class="settings-label">操作提示</div>
+            <div class="settings-label">鎿嶄綔鎻愮ず</div>
                                     <div class="settings-hint">
-                ⬅️➡️ 移动  ⬆️ 跳(可二段跳)<br>
-            ⚔️ 攻击  🔄 切换武器  💎 使用钻石<br>
-            📦 打开宝箱  ⛏️ 采集
+                猬咃笍鉃★笍 绉诲姩  猬嗭笍 璺?鍙簩娈佃烦)<br>
+            鈿旓笍 鏀诲嚮  馃攧 鍒囨崲姝﹀櫒  馃拵 浣跨敤閽荤煶<br>
+            馃摝 鎵撳紑瀹濈  鉀忥笍 閲囬泦
             </div>
         </div>
 
 
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 学习模式(更少干扰)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 瀛︿範妯″紡(鏇村皯骞叉壈)</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-challenge-mode"> 学习挑战(随机弹出)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-challenge-mode"> 瀛︿範鎸戞垬(闅忔満寮瑰嚭)</label>
         </div>
         <div class="settings-row">
-            <div class="settings-label">挑战频率</div>
+            <div class="settings-label">鎸戞垬棰戠巼</div>
             <select class="settings-select" id="opt-challenge-frequency">
-                <option value="0.15">很少</option>
-                <option value="0.3">适中</option>
-                <option value="0.5">频繁</option>
+                <option value="0.15">寰堝皯</option>
+                <option value="0.3">閫備腑</option>
+                <option value="0.5">棰戠箒</option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">词卡显示时长</div>
+            <div class="settings-label">璇嶅崱鏄剧ず鏃堕暱</div>
             <select class="settings-select" id="opt-word-card-duration">
-                <option value="600">短 (0.6秒)</option>
-                <option value="900">中 (0.9秒)</option>
-                <option value="2000">长 (2秒)</option>
-                <option value="3000">很长 (3秒)</option>
+                <option value="600">鐭?(0.6绉?</option>
+                <option value="900">涓?(0.9绉?</option>
+                <option value="2000">闀?(2绉?</option>
+                <option value="3000">寰堥暱 (3绉?</option>
             </select>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
+            <label class="settings-label"><input type="checkbox" id="opt-speech"> 鏈楄鍗曡瘝</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-speech-zh-enabled"> 朗读中文释义</label>
+            <label class="settings-label"><input type="checkbox" id="opt-speech-zh-enabled"> 鏈楄涓枃閲婁箟</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
+            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 鑳屾櫙闊充箰</label>
         </div>
         <div class="settings-row">
-            <div class="settings-label">英文语速</div>
+            <div class="settings-label">鑻辨枃璇€?/div>
             <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">中文语速</div>
+            <div class="settings-label">涓枃璇€?/div>
             <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">界面大小</div>
+            <div class="settings-label">鐣岄潰澶у皬</div>
             <input class="settings-range" id="opt-ui-scale" type="range" min="0.8" max="1.4" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">显示模式</div>
+            <div class="settings-label">鏄剧ず妯″紡</div>
             <select class="settings-select" id="opt-device-mode">
-                <option value="auto">自动</option>
-                <option value="phone">手机</option>
-                <option value="tablet">平板</option>
+                <option value="auto">鑷姩</option>
+                <option value="phone">鎵嬫満</option>
+                <option value="tablet">骞虫澘</option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">屏幕方向</div>
+            <div class="settings-label">灞忓箷鏂瑰悜</div>
             <select class="settings-select" id="opt-orientation-lock">
-                <option value="auto">自动</option>
-                <option value="portrait">竖屏</option>
-                <option value="landscape">横屏</option>
+                <option value="auto">鑷姩</option>
+                <option value="portrait">绔栧睆</option>
+                <option value="landscape">妯睆</option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">动作速度</div>
+            <div class="settings-label">鍔ㄤ綔閫熷害</div>
             <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
         </div>
         <div class="settings-row">
-            <div class="settings-label">移动速度</div>
+            <div class="settings-label">绉诲姩閫熷害</div>
             <select class="settings-select" id="opt-speed">
-                <option value="slow">慢（练习）</option>
-                <option value="normal">普通</option>
-                <option value="fast">快（挑战）</option>
+                <option value="slow">鎱紙缁冧範锛?/option>
+                <option value="normal">鏅€?/option>
+                <option value="fast">蹇紙鎸戞垬锛?/option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">游戏难度</div>
+            <div class="settings-label">娓告垙闅惧害</div>
             <select class="settings-select" id="opt-difficulty">
-                <option value="auto">自动(随积分)</option>
-                <option value="新手">新手</option>
-                <option value="简单">简单</option>
-                <option value="普通">普通</option>
-                <option value="困难">困难</option>
-                <option value="地狱">地狱</option>
+                <option value="auto">鑷姩(闅忕Н鍒?</option>
+                <option value="鏂版墜">鏂版墜</option>
+                <option value="绠€鍗?>绠€鍗?/option>
+                <option value="鏅€?>鏅€?/option>
+                <option value="鍥伴毦">鍥伴毦</option>
+                <option value="鍦扮嫳">鍦扮嫳</option>
             </select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">环境切换周期(分数)</div>
+            <div class="settings-label">鐜鍒囨崲鍛ㄦ湡(鍒嗘暟)</div>
             <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-touch"> 屏幕按键</label>
+            <label class="settings-label"><input type="checkbox" id="opt-touch"> 灞忓箷鎸夐敭</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 单词不重复(轮换)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 鍗曡瘝涓嶉噸澶?杞崲)</label>
         </div>
 
         <div class="settings-row">
-            <div class="settings-label">词库</div>
+            <div class="settings-label">璇嶅簱</div>
             <select class="settings-select" id="opt-vocab"></select>
         </div>
         <div class="settings-row">
-            <div class="settings-label">词库预览</div>
-            <div id="vocab-preview" class="settings-hint">自动轮换词库</div>
+            <div class="settings-label">璇嶅簱棰勮</div>
+            <div id="vocab-preview" class="settings-hint">鑷姩杞崲璇嶅簱</div>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-show-image"> 显示图片</label>
+            <label class="settings-label"><input type="checkbox" id="opt-show-image"> 鏄剧ず鍥剧墖</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-word-gate"> 词语闸门(触发额外挑战)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-word-gate"> 璇嶈闂搁棬(瑙﹀彂棰濆鎸戞垬)</label>
         </div>
         <div class="settings-row">
-            <label class="settings-label"><input type="checkbox" id="opt-word-match"> 词语匹配复活(结束时)</label>
+            <label class="settings-label"><input type="checkbox" id="opt-word-match"> 璇嶈鍖归厤澶嶆椿(缁撴潫鏃?</label>
         </div>
 
         <div class="settings-row settings-row-keys">
-            <div class="settings-label">按键(逗号分隔): 跳跃,攻击,交互,切换,使用钻石</div>
+            <div class="settings-label">鎸夐敭(閫楀彿鍒嗛殧): 璺宠穬,鏀诲嚮,浜や簰,鍒囨崲,浣跨敤閽荤煶</div>
             <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
         </div>
 
         <div class="settings-row settings-row-progress">
-            <div class="settings-label">词库轮换</div>
-            <div class="settings-progress" id="progress-vocab">未加载</div>
-            <button class="game-btn game-btn-danger" id="btn-reset-progress">重置轮换</button>
+            <div class="settings-label">璇嶅簱杞崲</div>
+            <div class="settings-progress" id="progress-vocab">鏈姞杞?/div>
+            <button class="game-btn game-btn-danger" id="btn-reset-progress">閲嶇疆杞崲</button>
         </div>
 
         <div class="settings-actions">
-            <button class="game-btn" id="btn-settings-close">关闭</button>
+            <button class="game-btn" id="btn-settings-close">鍏抽棴</button>
         </div>
     </div>
 </div>
 <div id="armor-select-modal" class="armor-modal" aria-hidden="true">
     <div class="armor-modal-content">
         <div class="armor-modal-header">
-            <span>盔甲仓库</span>
-            <button class="game-btn game-btn-small" id="btn-armor-close">关闭</button>
+            <span>鐩旂敳浠撳簱</span>
+            <button class="game-btn game-btn-small" id="btn-armor-close">鍏抽棴</button>
         </div>
         <div class="armor-list"></div>
     </div>
@@ -1597,13 +1609,13 @@ canvas {
 <div id="inventory-modal" class="inventory-modal" aria-hidden="true">
     <div class="inventory-panel">
         <div class="inventory-header">
-            <span>🎒 背包</span>
-            <button class="game-btn game-btn-small" id="btn-inventory-close">关闭</button>
+            <span>馃帓 鑳屽寘</span>
+            <button class="game-btn game-btn-small" id="btn-inventory-close">鍏抽棴</button>
         </div>
         <div class="inventory-tabs">
-            <button class="inventory-tab active" data-tab="items">物品</button>
-            <button class="inventory-tab" data-tab="materials">材料</button>
-            <button class="inventory-tab" data-tab="equipment">装备</button>
+            <button class="inventory-tab active" data-tab="items">鐗╁搧</button>
+            <button class="inventory-tab" data-tab="materials">鏉愭枡</button>
+            <button class="inventory-tab" data-tab="equipment">瑁呭</button>
         </div>
         <div class="inventory-content" id="inventory-content"></div>
     </div>
@@ -1612,16 +1624,16 @@ canvas {
 <div id="challenge-modal" class="learning-modal" aria-hidden="true">
     <div class="learning-modal-content">
         <div class="learning-modal-header">
-            <span>学习挑战</span>
+            <span>瀛︿範鎸戞垬</span>
         </div>
         <div class="learning-modal-question" id="challenge-question"></div>
         <div class="learning-modal-options" id="challenge-options"></div>
         <div class="learning-modal-input" id="challenge-input-wrapper">
-            <input type="text" id="challenge-input" placeholder="输入英文或中文" autocomplete="off">
+            <input type="text" id="challenge-input" placeholder="杈撳叆鑻辨枃鎴栦腑鏂? autocomplete="off">
         </div>
         <div class="learning-modal-footer">
             <div class="learning-modal-timer" id="challenge-timer">10</div>
-            <button class="game-btn game-btn-small" id="challenge-repeat">再听一次</button>
+            <button class="game-btn game-btn-small" id="challenge-repeat">鍐嶅惉涓€娆?/button>
         </div>
     </div>
 </div>
@@ -1629,18 +1641,18 @@ canvas {
 <div id="word-match-screen" class="learning-modal" aria-hidden="true">
     <div class="learning-modal-content word-match-content">
         <div class="word-match-header">
-            <h2>词语匹配复活</h2>
+            <h2>璇嶈鍖归厤澶嶆椿</h2>
             <div class="match-timer" id="match-timer">30</div>
         </div>
-        <p class="word-match-subtitle" id="match-subtitle">将英文与中文拉线连对，只有1次机会</p>
+        <p class="word-match-subtitle" id="match-subtitle">灏嗚嫳鏂囦笌涓枃鎷夌嚎杩炲锛屽彧鏈?娆℃満浼?/p>
         <div class="match-container">
             <div class="match-column" id="match-left"></div>
             <svg class="match-lines" id="match-lines" xmlns="http://www.w3.org/2000/svg"></svg>
             <div class="match-column" id="match-right"></div>
         </div>
         <div class="match-footer">
-            <div>已连线: <span id="match-count">0</span>/<span id="match-total">0</span></div>
-            <button class="game-btn" id="btn-match-submit">提交复活</button>
+            <div>宸茶繛绾? <span id="match-count">0</span>/<span id="match-total">0</span></div>
+            <button class="game-btn" id="btn-match-submit">鎻愪氦澶嶆椿</button>
         </div>
         <div id="match-result" class="match-result"></div>
     </div>
@@ -1649,34 +1661,34 @@ canvas {
 <div id="profile-modal" class="profile-modal" aria-hidden="true">
     <div class="profile-modal-content">
         <div class="profile-header">
-            <h2 id="profile-username">玩家档案</h2>
-            <button class="game-btn game-btn-small" id="btn-profile-close">关闭</button>
+            <h2 id="profile-username">鐜╁妗ｆ</h2>
+            <button class="game-btn game-btn-small" id="btn-profile-close">鍏抽棴</button>
         </div>
         <div class="profile-stats">
-            <div>游戏次数: <span id="profile-games">0</span></div>
-            <div>最高积分: <span id="profile-highscore">0</span></div>
-            <div>已学词数: <span id="profile-words">0</span></div>
-            <div>游玩时长: <span id="profile-playtime">0 分钟</span></div>
-            <!-- v1.6.4 新增：答题统计 -->
-            <div>📝 答题统计: <span id="profile-challenge-stats">-</span></div>
+            <div>娓告垙娆℃暟: <span id="profile-games">0</span></div>
+            <div>鏈€楂樼Н鍒? <span id="profile-highscore">0</span></div>
+            <div>宸插璇嶆暟: <span id="profile-words">0</span></div>
+            <div>娓哥帺鏃堕暱: <span id="profile-playtime">0 鍒嗛挓</span></div>
+            <!-- v1.6.4 鏂板锛氱瓟棰樼粺璁?-->
+            <div>馃摑 绛旈缁熻: <span id="profile-challenge-stats">-</span></div>
         </div>
-        <!-- v1.6.4 新增：单词本按钮 -->
+        <!-- v1.6.4 鏂板锛氬崟璇嶆湰鎸夐挳 -->
         <div style="text-align:center;margin:15px 0;">
-            <button id="btn-vocab-book" class="game-btn">📖 我的单词本</button>
+            <button id="btn-vocab-book" class="game-btn">馃摉 鎴戠殑鍗曡瘝鏈?/button>
         </div>
         <div class="profile-achievements">
-            <h3>成就</h3>
+            <h3>鎴愬氨</h3>
             <div id="achievements-container"></div>
         </div>
     </div>
 </div>
 
-<!-- v1.6.4 新增：单词本模态框 -->
+<!-- v1.6.4 鏂板锛氬崟璇嶆湰妯℃€佹 -->
 <div id="vocab-book-modal" class="profile-modal" aria-hidden="true">
     <div class="profile-modal-content vocab-book">
         <div class="profile-header">
-            <h2>📖 我的单词本</h2>
-            <button class="game-btn game-btn-small" id="btn-close-vocab-book">关闭</button>
+            <h2>馃摉 鎴戠殑鍗曡瘝鏈?/h2>
+            <button class="game-btn game-btn-small" id="btn-close-vocab-book">鍏抽棴</button>
         </div>
         <div id="vocab-book-list" class="vocab-book-list"></div>
     </div>
@@ -3265,7 +3277,112 @@ window.MMWG_STORAGE = {
       "en": "sky",
       "zh": "天空"
     }
-  ]
+  ],
+  "config/village.json": {
+    "enabled": true,
+    "spawnScoreInterval": 500,
+    "villageWidth": 800,
+    "safeZone": true,
+    "restHealFull": true,
+    "challengeQuestionCount": 3,
+    "challengeReward": {
+      "perfect": {
+        "score": 100,
+        "diamonds": 1
+      },
+      "partial": {
+        "score": 50,
+        "diamonds": 0
+      }
+    },
+    "npcSpeed": 0.3,
+    "npcGreetDistance": 80,
+    "maxActiveVillages": 3,
+    "buildings": {
+      "bed_house": {
+        "w": 80,
+        "h": 60,
+        "offset": 100
+      },
+      "word_house": {
+        "w": 100,
+        "h": 80,
+        "offset": 300
+      },
+      "save_stone": {
+        "w": 40,
+        "h": 50,
+        "offset": 550
+      },
+      "special": {
+        "w": 80,
+        "h": 60,
+        "offset": 700
+      }
+    },
+    "biomeWords": {
+      "forest": [
+        "tree",
+        "leaf",
+        "bird",
+        "flower",
+        "grass",
+        "wood",
+        "deer",
+        "owl"
+      ],
+      "snow": [
+        "snow",
+        "ice",
+        "cold",
+        "coat",
+        "hat",
+        "scarf",
+        "ski",
+        "sled"
+      ],
+      "desert": [
+        "sand",
+        "sun",
+        "hot",
+        "water",
+        "cactus",
+        "camel",
+        "oasis",
+        "dry"
+      ],
+      "mountain": [
+        "rock",
+        "iron",
+        "gold",
+        "pick",
+        "cave",
+        "stone",
+        "gem",
+        "ore"
+      ],
+      "ocean": [
+        "fish",
+        "wave",
+        "boat",
+        "shell",
+        "whale",
+        "coral",
+        "swim",
+        "sea"
+      ],
+      "nether": [
+        "fire",
+        "red",
+        "lava",
+        "dark",
+        "flame",
+        "ash",
+        "smoke",
+        "glow"
+      ]
+    }
+  }
 };
   const originalFetch = window.fetch ? window.fetch.bind(window) : null;
   window.fetch = function(input, init){
@@ -3291,7 +3408,7 @@ window.MMWG_STORAGE = {
   };
 })();
 </script>
-<!-- main.js 模块化拆分 (原 main.js 按功能拆分为以下模块) -->
+<!-- main.js 妯″潡鍖栨媶鍒?(鍘?main.js 鎸夊姛鑳芥媶鍒嗕负浠ヤ笅妯″潡) -->
 <script>
 /**
  * 01-config.js - 全局状态、常量、模板定义
@@ -3648,8 +3765,11 @@ let playerPositionHistory = [];
 let projectiles = [];
 let digHits = new Map();
 let bossSpawned = false;
-let bossArena = null;
 let villageConfig = {};
+let activeVillages = [];
+let villageSpawnedForScore = {};
+let playerInVillage = false;
+let currentVillage = null;
 let playerInvincibleTimer = 0;
 let overlayMode = "start";
 const START_OVERLAY_INTRO_MS = 1600;
@@ -11424,7 +11544,7 @@ class Boss {
 }
 
 // BOSS 战场管理器
-const bossArena = {
+globalThis.bossArena = globalThis.bossArena || {
     active: false,
     boss: null,
     victoryTimer: 0,
@@ -12988,7 +13108,35 @@ function createVillage(startX, biomeId, index) {
     );
   }
 
+  // Spawn word items and chests inside village
+  spawnVillageItems(village);
+
   return village;
+}
+
+function spawnVillageItems(village) {
+  if (typeof pickWordForSpawn !== 'function') return;
+  if (typeof Item === 'undefined') return;
+  const vx = village.x;
+  const w = village.width || 800;
+  // Spawn 3-5 word items spread across village
+  const wordCount = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < wordCount; i++) {
+    const ix = vx + 80 + (i * (w - 160) / wordCount) + Math.random() * 40;
+    const word = pickWordForSpawn();
+    if (word) {
+      items.push(new Item(ix, groundY - 60, word));
+      if (typeof registerWordItemSpawn === 'function') registerWordItemSpawn(ix);
+    }
+  }
+  // Spawn 1-2 chests
+  if (typeof Chest !== 'undefined') {
+    const chestCount = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < chestCount; i++) {
+      const cx = vx + 200 + i * 300 + Math.random() * 80;
+      chests.push(new Chest(cx, groundY));
+    }
+  }
 }
 
 function cleanupVillages(playerX) {
@@ -13105,6 +13253,14 @@ function updateVillages() {
         v.visited = true;
         const biomeName = getBiomeName(v.biomeId);
         showToast(`🏘️ 进入${biomeName}村庄`);
+        // Remove enemies inside village area
+        if (typeof enemies !== 'undefined' && Array.isArray(enemies)) {
+          for (let i = enemies.length - 1; i >= 0; i--) {
+            if (enemies[i].x >= v.x && enemies[i].x <= v.x + v.width) {
+              enemies.splice(i, 1);
+            }
+          }
+        }
       }
       // v1.8.1 更新村民 (v1.8.1)
       updateVillageNPCs(v);
@@ -13299,10 +13455,227 @@ function saveVillageProgress(village) {
 </script>
 <script>
 /**
- * 18-village-render.js - Village rendering
- * v1.8.0
+ * 18-village-render.js - Village rendering (Minecraft style)
+ * Draws village as background environment with stone/wood block buildings
  */
 
+// Block colors per biome
+const VILLAGE_BLOCK_COLORS = {
+  forest: { stone: '#8B8B8B', plank: '#B8945A', log: '#6B4226', glass: '#A8D8EA', roof: '#2E7D32', path: '#6D4C41' },
+  snow: { stone: '#C8C8C8', plank: '#D7CCC8', log: '#5D4037', glass: '#B3E5FC', roof: '#1565C0', path: '#B0BEC5' },
+  desert: { stone: '#D2B48C', plank: '#DEB887', log: '#8B7355', glass: '#FFE0B2', roof: '#FF8F00', path: '#BCAAA4' },
+  mountain: { stone: '#696969', plank: '#8B7D6B', log: '#4A4A4A', glass: '#B0C4DE', roof: '#455A64', path: '#607D8B' },
+  ocean: { stone: '#5F9EA0', plank: '#87CEEB', log: '#2F4F4F', glass: '#E0F7FA', roof: '#0277BD', path: '#4DB6AC' },
+  nether: { stone: '#8B0000', plank: '#4A0028', log: '#2C0014', glass: '#FF6F00', roof: '#880E4F', path: '#6A1B9A' }
+};
+
+function getVillageColors(biomeId) {
+  return VILLAGE_BLOCK_COLORS[biomeId] || VILLAGE_BLOCK_COLORS.forest;
+}
+
+// Draw a single Minecraft-style block (stone/plank with grid lines)
+function drawBlock_village(ctx, x, y, w, h, color, borderColor) {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = borderColor || 'rgba(0,0,0,0.2)';
+  ctx.lineWidth = 0.5;
+  ctx.strokeRect(x, y, w, h);
+}
+
+// Draw a Minecraft-style house using blocks
+function drawBlockHouse(ctx, bx, by, w, h, colors, type) {
+  const bs = 10; // block size
+  const cols = Math.floor(w / bs);
+  const rows = Math.floor(h / bs);
+  // Walls - stone/plank blocks
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const isEdge = c === 0 || c === cols - 1;
+      const color = isEdge ? colors.log : colors.plank;
+      drawBlock_village(ctx, bx + c * bs, by + r * bs, bs, bs, color);
+    }
+  }
+  // Roof - triangle of blocks
+  const roofRows = Math.ceil(cols / 2);
+  for (let r = 0; r < roofRows; r++) {
+    const startC = r;
+    const endC = cols - r;
+    for (let c = startC; c < endC; c++) {
+      drawBlock_village(ctx, bx + c * bs, by - (r + 1) * bs, bs, bs, colors.roof);
+    }
+  }
+  // Door
+  const doorW = Math.max(1, Math.floor(cols / 4));
+  const doorH = Math.min(3, rows - 1);
+  const doorStartC = Math.floor((cols - doorW) / 2);
+  for (let r = rows - doorH; r < rows; r++) {
+    for (let c = doorStartC; c < doorStartC + doorW; c++) {
+      drawBlock_village(ctx, bx + c * bs, by + r * bs, bs, bs, '#3E2723');
+    }
+  }
+  // Windows (glass blocks)
+  if (cols >= 6) {
+    const winY = by + bs;
+    drawBlock_village(ctx, bx + bs, winY, bs, bs, colors.glass);
+    drawBlock_village(ctx, bx + (cols - 2) * bs, winY, bs, bs, colors.glass);
+  }
+  // Icon label
+  const icons = { bed_house: '🛏️', word_house: '📖', save_stone: '💾' };
+  const icon = icons[type] || '🏠';
+  ctx.font = `${14 * (worldScale?.x || 1)}px serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText(icon, bx + w / 2, by - roofRows * bs - 4);
+  ctx.textAlign = 'left';
+}
+
+// Draw a bed inside the bed_house area
+function drawVillageBed(ctx, bx, by, colors) {
+  // Bed frame (wood)
+  ctx.fillStyle = colors.log;
+  ctx.fillRect(bx, by, 30, 8);
+  // Pillow (white)
+  ctx.fillStyle = '#FFF';
+  ctx.fillRect(bx, by - 4, 10, 4);
+  // Blanket (red)
+  ctx.fillStyle = '#D32F2F';
+  ctx.fillRect(bx + 10, by - 3, 20, 3);
+}
+
+// Draw village path (cobblestone)
+function drawVillagePath(ctx, village) {
+  const sx = village.x;
+  const w = village.width || 800;
+  const colors = getVillageColors(village.biomeId);
+  const bs = 12;
+  const pathY = groundY;
+  // Cobblestone path
+  ctx.fillStyle = colors.path;
+  ctx.fillRect(sx, pathY, w, 8);
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i < w; i += bs) {
+    ctx.strokeRect(sx + i, pathY, bs, 8);
+  }
+}
+
+// Draw a well (stone blocks + water)
+function drawVillageWell(ctx, x) {
+  const sx = x;
+  const wy = groundY - 24;
+  // Stone base
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      drawBlock_village(ctx, sx + c * 8, wy + r * 8, 8, 8, '#8B8B8B');
+    }
+  }
+  // Water inside
+  ctx.fillStyle = 'rgba(33,150,243,0.6)';
+  ctx.fillRect(sx + 8, wy + 8, 8, 8);
+  // Roof posts
+  ctx.fillStyle = '#6B4226';
+  ctx.fillRect(sx + 2, wy - 16, 3, 16);
+  ctx.fillRect(sx + 19, wy - 16, 3, 16);
+  // Roof
+  ctx.fillStyle = '#5D4037';
+  ctx.fillRect(sx, wy - 20, 24, 4);
+}
+
+// Draw a lamp post
+function drawVillageLamp(ctx, x, colors) {
+  const sx = x;
+  const ly = groundY - 40;
+  ctx.fillStyle = colors.log;
+  ctx.fillRect(sx + 3, ly, 4, 40);
+  // Lantern
+  ctx.fillStyle = '#FFEB3B';
+  ctx.globalAlpha = 0.8 + Math.sin(Date.now() / 300) * 0.2;
+  ctx.fillRect(sx, ly - 4, 10, 8);
+  ctx.globalAlpha = 1.0;
+  // Glow
+  ctx.fillStyle = 'rgba(255,235,59,0.15)';
+  ctx.beginPath();
+  ctx.arc(sx + 5, ly, 20, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// Draw a fence section
+function drawVillageFence(ctx, x, colors) {
+  const sx = x;
+  const fy = groundY - 18;
+  ctx.fillStyle = colors.log;
+  ctx.fillRect(sx, fy, 3, 18);
+  ctx.fillRect(sx + 14, fy, 3, 18);
+  ctx.fillRect(sx + 28, fy, 3, 18);
+  ctx.fillStyle = colors.plank;
+  ctx.fillRect(sx, fy + 4, 31, 3);
+  ctx.fillRect(sx, fy + 12, 31, 3);
+}
+
+// Draw village entrance sign
+function drawVillageSign(ctx, x, biomeName) {
+  const sx = x;
+  const sy = groundY - 50;
+  // Post
+  ctx.fillStyle = '#6B4226';
+  ctx.fillRect(sx + 12, sy + 20, 4, 30);
+  // Sign board
+  ctx.fillStyle = '#B8945A';
+  ctx.fillRect(sx, sy, 28, 18);
+  ctx.strokeStyle = '#5D4037';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(sx, sy, 28, 18);
+  // Text
+  ctx.fillStyle = '#3E2723';
+  ctx.font = 'bold 7px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Village', sx + 14, sy + 12);
+  ctx.textAlign = 'left';
+}
+
+// Draw NPC (Minecraft villager style)
+function drawVillageNPC(ctx, npc) {
+  if (!npc) return;
+  const sx = npc.x;
+  const sy = groundY - 28;
+  const legOff = npc.animFrame === 0 ? 0 : 2;
+  // Body (brown robe)
+  ctx.fillStyle = '#8B4513';
+  ctx.fillRect(sx, sy + 8, 14, 14);
+  // Head (skin)
+  ctx.fillStyle = '#D2A679';
+  ctx.fillRect(sx + 2, sy, 10, 10);
+  // Nose (big villager nose)
+  ctx.fillStyle = '#C49A6C';
+  ctx.fillRect(sx + 5, sy + 4, 4, 4);
+  // Eyes
+  ctx.fillStyle = '#3E2723';
+  const eyeX = npc.facingRight ? sx + 7 : sx + 3;
+  ctx.fillRect(eyeX, sy + 3, 2, 2);
+  // Legs
+  ctx.fillStyle = '#5D4037';
+  ctx.fillRect(sx + 1 + legOff, sy + 22, 5, 6);
+  ctx.fillRect(sx + 8 - legOff, sy + 22, 5, 6);
+  // Speech bubble
+  if (npc.showBubble) {
+    const bw = 70, bh = 16;
+    const bx = sx + 7 - bw / 2;
+    const by = sy - bh - 6;
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.strokeStyle = '#555';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') ctx.roundRect(bx, by, bw, bh, 3);
+    else ctx.rect(bx, by, bw, bh);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#333';
+    ctx.font = '9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(npc.bubbleText || '', sx + 7, by + 12);
+    ctx.textAlign = 'left';
+  }
+}
+
+// Main village draw function
 function drawVillages(ctx) {
   if (!settings?.villageEnabled) return;
   if (!Array.isArray(activeVillages)) return;
@@ -13310,290 +13683,89 @@ function drawVillages(ctx) {
     if (!village) continue;
     if (village.x + village.width < cameraX - 100) continue;
     if (village.x > cameraX + canvas.width + 100) continue;
-    drawVillageGround(ctx, village);
+    drawVillageBackground(ctx, village);
+    drawVillagePath(ctx, village);
     drawVillageDecorations(ctx, village);
     if (Array.isArray(village.buildings)) {
       for (const building of village.buildings) {
-        drawVillageBuilding(ctx, building, village.style || {});
+        const colors = getVillageColors(village.biomeId);
+        drawBlockHouse(ctx, building.x, groundY - building.h, building.w, building.h, colors, building.type);
+        // Draw bed next to bed_house
+        if (building.type === 'bed_house') {
+          drawVillageBed(ctx, building.x + building.w + 8, groundY - 10, colors);
+        }
       }
     }
     if (Array.isArray(village.npcs)) {
-      for (const npc of village.npcs) {
-        drawVillageNPC(ctx, npc);
-      }
+      for (const npc of village.npcs) drawVillageNPC(ctx, npc);
     }
+    // Village name banner
+    drawVillageBanner(ctx, village);
   }
 }
 
-function drawVillageNPC(ctx, npc) {
-  if (!npc) return;
-  const sx = npc.x - cameraX;
-  const sy = groundY - 24;
-  const legOffset = npc.animFrame === 0 ? 0 : 2;
-
-  ctx.fillStyle = "#8B4513";
-  ctx.fillRect(sx, sy, 16, 24);
-
-  ctx.fillStyle = "#FFF";
-  const eyeX = npc.facingRight ? sx + 10 : sx + 3;
-  ctx.fillRect(eyeX, sy + 4, 4, 4);
-
-  ctx.fillStyle = "#5D4037";
-  ctx.fillRect(sx + 2 + legOffset, sy + 20, 5, 4);
-  ctx.fillRect(sx + 9 + legOffset, sy + 20, 5, 4);
-
-  if (npc.showBubble) {
-    const bubbleW = 80;
-    const bubbleH = 20;
-    const bubbleX = sx + 8 - bubbleW / 2;
-    const bubbleY = sy - bubbleH - 8;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    if (typeof ctx.roundRect === "function") {
-      ctx.roundRect(bubbleX, bubbleY, bubbleW, bubbleH, 4);
-    } else {
-      ctx.rect(bubbleX, bubbleY, bubbleW, bubbleH);
-    }
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "#000";
-    ctx.font = "10px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(npc.bubbleText || "", sx + 8, bubbleY + 14);
-    ctx.textAlign = "left";
+// Draw soft background tint for village area
+function drawVillageBackground(ctx, village) {
+  const sx = village.x;
+  const w = village.width || 800;
+  // Soft warm overlay
+  ctx.fillStyle = 'rgba(255,248,225,0.12)';
+  ctx.fillRect(sx, 0, w, groundY);
+  // Entrance/exit pillars (stone blocks)
+  const colors = getVillageColors(village.biomeId);
+  const pillarH = 60;
+  for (let r = 0; r < pillarH; r += 10) {
+    drawBlock_village(ctx, sx, groundY - pillarH + r, 10, 10, colors.stone);
+    drawBlock_village(ctx, sx + w - 10, groundY - pillarH + r, 10, 10, colors.stone);
   }
+  // Torch on pillars
+  ctx.fillStyle = '#FFEB3B';
+  ctx.globalAlpha = 0.7 + Math.sin(Date.now() / 250) * 0.3;
+  ctx.fillRect(sx + 2, groundY - pillarH - 6, 6, 6);
+  ctx.fillRect(sx + w - 8, groundY - pillarH - 6, 6, 6);
+  ctx.globalAlpha = 1.0;
 }
 
-function drawVillageGround(ctx, village) {
-  if (!village) return;
-  const sx = village.x - cameraX;
-  const w = village.width || 0;
-  const groundColor = village.style?.groundColor || "#6D4C41";
-  ctx.fillStyle = groundColor;
-  ctx.fillRect(sx, groundY, w, 6);
-  ctx.strokeStyle = "rgba(0,0,0,0.2)";
-  ctx.lineWidth = 1;
-  for (let i = 0; i < w; i += 20) {
-    ctx.strokeRect(sx + i, groundY, 20, 6);
-  }
-  ctx.fillStyle = "rgba(255,255,255,0.15)";
-  ctx.fillRect(sx, groundY - 300, 4, 300);
-  ctx.fillRect(sx + w - 4, groundY - 300, 4, 300);
-}
-
-function drawVillageBuilding(ctx, building, style) {
-  if (!building) return;
-  const sx = building.x - cameraX;
-  const sy = groundY - building.h;
-  const colors = style?.buildingColors || {};
-  const wall = colors.wall || "#8D6E63";
-  const roof = colors.roof || "#5D4037";
-  const door = colors.door || "#3E2723";
-
-  ctx.fillStyle = wall;
-  ctx.fillRect(sx, sy, building.w, building.h);
-  ctx.strokeStyle = "rgba(0,0,0,0.15)";
-  ctx.lineWidth = 1;
-  for (let row = 0; row < building.h; row += 10) {
-    ctx.beginPath();
-    ctx.moveTo(sx, sy + row);
-    ctx.lineTo(sx + building.w, sy + row);
-    ctx.stroke();
-  }
-
-  ctx.fillStyle = roof;
-  ctx.beginPath();
-  ctx.moveTo(sx - 8, sy);
-  ctx.lineTo(sx + building.w / 2, sy - 25);
-  ctx.lineTo(sx + building.w + 8, sy);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle = door;
-  const doorW = 16;
-  const doorH = Math.min(30, building.h - 5);
-  ctx.fillRect(sx + building.w / 2 - doorW / 2, sy + building.h - doorH, doorW, doorH);
-
-  if (building.w >= 60) {
-    ctx.fillStyle = "#FFEB3B";
-    ctx.globalAlpha = 0.8;
-    ctx.fillRect(sx + 8, sy + 8, 12, 12);
-    if (building.w >= 80) {
-      ctx.fillRect(sx + building.w - 20, sy + 8, 12, 12);
-    }
-    ctx.globalAlpha = 1.0;
-  }
-
-  const icons = {
-    bed_house: "🛏️",
-    word_house: "📎",
-    save_stone: "🧱",
-    library: "📘",
-    hot_spring: "♨️",
-    water_station: "🚧",
-    blacksmith: "⚒️",
-    lighthouse: "🗼",
-    brewing_stand: "⚙️"
-  };
-  const icon = icons[building.type] || "🏠";
-  const iconSize = 16 * (worldScale?.x || 1);
-  ctx.font = `${iconSize}px serif`;
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#fff";
-  ctx.fillText(icon, sx + building.w / 2, sy - 30);
-  ctx.textAlign = "left";
-
-  switch (building.type) {
-    case "library":
-      for (let i = 0; i < 3; i++) {
-        ctx.fillStyle = "#8B4513";
-        ctx.fillRect(sx + 10 + i * 8, sy - 60 + i * 8, 8, 12);
-      }
-      ctx.fillStyle = "#5D4037";
-      ctx.fillRect(sx + 14, sy - 64, 4, 24);
-      break;
-    case "hot_spring":
-      ctx.fillStyle = "rgba(255,255,255,0.3)";
-      ctx.beginPath();
-      ctx.arc(sx + building.w / 2, sy - 30, 10, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-    case "water_station":
-      ctx.fillStyle = "#4FC3F7";
-      ctx.fillRect(sx + 8, sy - 40, 16, 20);
-      ctx.fillStyle = "#0277BD";
-      ctx.fillRect(sx + 10, sy - 40, 12, 12);
-      break;
-    case "blacksmith":
-      ctx.fillStyle = "#795548";
-      ctx.fillRect(sx + 6, sy - 30, building.w - 12, 8);
-      ctx.fillStyle = "#3E2723";
-      ctx.fillRect(sx + 16, sy - 24, 16, 12);
-      break;
-    case "lighthouse":
-      for (let i = 0; i < 3; i++) {
-        ctx.fillStyle = `rgba(255, 255, ${200 + i * 55}, ${Math.random() * 0.3 + 0.2})`;
-        ctx.fillRect(sx + 12 + i * 4, sy - 70 - i * 6, 8, 8);
-      }
-      ctx.fillStyle = "#FFEB3B";
-      ctx.fillRect(sx + 12, sy - 58, building.w - 20, 8);
-      break;
-    case "brewing_stand":
-      ctx.fillStyle = "#880E4F";
-      ctx.fillRect(sx + 10, sy - 35, 12, 20);
-      ctx.fillStyle = "#A52A2A";
-      ctx.fillRect(sx + 26, sy - 35, 8, 12);
-      break;
-  }
-}
-
+// Draw village decorations
 function drawVillageDecorations(ctx, village) {
-  if (!village || !Array.isArray(village.decorations)) return;
-  for (const deco of village.decorations) {
-    if (!deco) continue;
-    const sx = deco.x - cameraX;
-    const sy = groundY;
-    switch (deco.type) {
-      case "well":
-        ctx.fillStyle = "#78909C";
-        ctx.fillRect(sx, sy - 20, 20, 20);
-        ctx.fillStyle = "#42A5F5";
-        ctx.fillRect(sx + 3, sy - 17, 14, 10);
-        break;
-      case "farm":
-        ctx.fillStyle = "#5D4037";
-        ctx.fillRect(sx, sy - 4, 30, 4);
-        ctx.fillStyle = "#66BB6A";
-        for (let i = 0; i < 5; i++) ctx.fillRect(sx + 2 + i * 6, sy - 12, 4, 8);
-        break;
-      case "fence":
-        ctx.fillStyle = "#8D6E63";
-        for (let i = 0; i < 3; i++) {
-          ctx.fillRect(sx + i * 12, sy - 18, 3, 18);
-        }
-        ctx.fillRect(sx, sy - 14, 26, 3);
-        ctx.fillRect(sx, sy - 6, 26, 3);
-        break;
-      default:
-        ctx.fillStyle = "#9E9E9E";
-        ctx.fillRect(sx, sy - 12, 12, 12);
-        ctx.fillStyle = "#FFF";
-        ctx.font = "8px monospace";
-        ctx.fillText((deco.type || "?").charAt(0).toUpperCase(), sx + 2, sy - 3);
-        break;
-    }
-  }
+  if (!village) return;
+  const colors = getVillageColors(village.biomeId);
+  const vx = village.x;
+  const w = village.width || 800;
+  // Entrance sign
+  drawVillageSign(ctx, vx + 20, village.biomeId);
+  // Well in center
+  drawVillageWell(ctx, vx + w / 2 - 12);
+  // Lamp posts
+  drawVillageLamp(ctx, vx + 160, colors);
+  drawVillageLamp(ctx, vx + w - 180, colors);
+  // Fences at edges
+  drawVillageFence(ctx, vx + 40, colors);
+  drawVillageFence(ctx, vx + w - 70, colors);
 }
 
-function drawVillageSaveStone(ctx, building, village) {
-  if (!building || !village) return;
-  const sx = building.x - cameraX;
-  const sy = groundY - building.h;
-
-  ctx.fillStyle = "#708090";
-  ctx.fillRect(sx, sy, building.w, building.h);
-
-  ctx.fillStyle = "#9E9E9E";
-  ctx.fillRect(sx, sy, building.w, 8);
-
-  ctx.fillStyle = village.saved ? "#4CAF50" : "#AAA";
-  ctx.font = "bold 20px sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText(village.saved ? "🧱" : "?", sx + building.w / 2, sy + 20);
-
-  ctx.strokeStyle = village.saved ? "#66BB6A" : "#888";
-  ctx.lineWidth = 3;
-  ctx.strokeRect(sx + 2, sy + 2, building.w - 4, building.h - 4);
-  ctx.textAlign = "left";
-}
-
-function drawVillageSpecialBuilding(ctx, building) {
-  if (!building) return;
-  const sx = building.x - cameraX;
-  const sy = groundY - building.h;
-
-  switch (building.type) {
-    case "library":
-      for (let i = 0; i < 3; i++) {
-        ctx.fillStyle = "#8B4513";
-        ctx.fillRect(sx + 8 + i * 8, sy - 60 - i * 12, 8, 16);
-      }
-      ctx.fillStyle = "#5D4037";
-      ctx.fillRect(sx + 12, sy - 64, 10, 24);
-      break;
-    case "hot_spring":
-      ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-      ctx.beginPath();
-      ctx.arc(sx + 12, sy - 30, 8, 0, Math.PI * 2);
-      ctx.fill();
-      break;
-    case "water_station":
-      ctx.fillStyle = "#4FC3F7";
-      ctx.fillRect(sx + 10, sy - 30, 12, 20);
-      break;
-    case "blacksmith":
-      ctx.fillStyle = "#795548";
-      ctx.fillRect(sx + 8, sy - 24, 16, 12);
-      break;
-    case "lighthouse":
-      for (let i = 0; i < 3; i++) {
-        ctx.fillStyle = i === 0 ? "rgba(255, 255, 0, 0.8)" : "rgba(255, 255, 255, 0.6)";
-        ctx.fillRect(sx + 8 + i * 6, sy - 50 + i * 10, 4, 10);
-      }
-      break;
-    case "brewing_stand":
-      ctx.fillStyle = "#880E4F";
-      ctx.fillRect(sx + 8, sy - 20, 8, 16);
-      break;
-    default:
-      for (let i = 0; i < 3; i++) {
-        ctx.fillStyle = "#8B4513";
-        ctx.fillRect(sx + 8 + i * 8, sy - 60 - i * 12, 8, 16);
-      }
-      break;
+// Draw village name banner at top
+function drawVillageBanner(ctx, village) {
+  const sx = village.x;
+  const w = village.width || 800;
+  const cx = sx + w / 2;
+  const biomeName = typeof getBiomeName === 'function' ? getBiomeName(village.biomeId) : village.biomeId;
+  const text = `🏘️ ${biomeName}村庄`;
+  ctx.font = `bold ${12 * (worldScale?.x || 1)}px sans-serif`;
+  ctx.textAlign = 'center';
+  // Background bar
+  const tw = ctx.measureText(text).width + 16;
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  if (typeof ctx.roundRect === 'function') {
+    ctx.beginPath();
+    ctx.roundRect(cx - tw / 2, 8, tw, 22, 6);
+    ctx.fill();
+  } else {
+    ctx.fillRect(cx - tw / 2, 8, tw, 22);
   }
+  ctx.fillStyle = '#FFF';
+  ctx.fillText(text, cx, 24);
+  ctx.textAlign = 'left';
 }
 
 </script>
@@ -14239,3 +14411,4 @@ registerTestApi();
 </script>
 </body>
 </html>
+

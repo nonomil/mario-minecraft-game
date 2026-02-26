@@ -171,6 +171,55 @@ function wireIntroConfirmButton() {
         if (input) setTimeout(() => input.focus(), 100);
     });
 }
+function proceedToGameOver() {
+    setOverlay(true, "gameover");
+}
+
+function showGameReview(results) {
+    const screen = document.getElementById("review-screen");
+    const list = document.getElementById("review-word-list");
+    const flash = document.getElementById("review-flash-cards");
+    const btn = document.getElementById("review-continue-btn");
+    const rows = Array.isArray(results) ? results : [];
+    if (!screen || !list || !flash || !btn || rows.length === 0) {
+        proceedToGameOver();
+        return;
+    }
+
+    list.innerHTML = rows.map((item) => {
+        const ok = !!item.correct;
+        const bg = ok ? "#1f6f3d" : "#7a2f2f";
+        const text = String(item.word || "");
+        return `<span style="padding:6px 10px;border-radius:8px;background:${bg};">${text} ${ok ? "✓" : "✗"}</span>`;
+    }).join("");
+
+    const wrongRows = rows.filter(item => !item.correct);
+    let idx = 0;
+    const flashWrong = () => {
+        if (idx >= wrongRows.length) {
+            flash.innerHTML = "";
+            return;
+        }
+        const item = wrongRows[idx++];
+        flash.innerHTML = `<div style="font-size:26px;font-weight:700;">${item.word || ""}</div><div style="opacity:.75;">${item.zh || ""}</div>`;
+        setTimeout(flashWrong, 1200);
+    };
+    if (wrongRows.length > 0) flashWrong();
+    else flash.innerHTML = `<div style="opacity:.9;">本局答题表现不错，继续冲刺！</div>`;
+
+    screen.style.display = "block";
+    const closeReview = () => {
+        screen.style.display = "none";
+        window._sessionWordResults = [];
+        proceedToGameOver();
+    };
+    btn.onclick = closeReview;
+    setTimeout(() => {
+        if (screen.style.display !== "none") closeReview();
+    }, 8000);
+}
+window.showGameReview = showGameReview;
+
 function triggerGameOver() {
     paused = true;
     showToast("💀 生命耗尽");
@@ -178,7 +227,7 @@ function triggerGameOver() {
     if (maybeLaunchWordMatchRevive()) {
         return;
     }
-    setOverlay(true, "gameover");
+    showGameReview(window._sessionWordResults || []);
 }
 function maybeLaunchWordMatchRevive() {
     if (!settings.wordMatchEnabled || wordMatchActive || !matchLeftEl || !matchRightEl) return false;

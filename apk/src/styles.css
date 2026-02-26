@@ -1723,6 +1723,83 @@ canvas {
     flex: 1;
 }
 
+/* Optimization 0226: mobile touch area */
+.touch-btn {
+    min-width: 64px;
+    min-height: 64px;
+    touch-action: manipulation;
+}
+
+#touch-left-zone {
+    min-width: 160px;
+    min-height: 120px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+#btn-attack {
+    min-width: 72px;
+    min-height: 72px;
+}
+
+/* Optimization 0226: learning stats */
+#learning-stats-panel {
+    margin-top: 10px;
+}
+
+.stats-summary {
+    display: flex;
+    gap: 8px;
+}
+
+.stat-card {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(76, 175, 80, 0.15);
+    text-align: center;
+}
+
+.weak-words-section {
+    margin-top: 10px;
+}
+
+.weak-word-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.weak-word-item .error-rate {
+    color: #ff7070;
+}
+
+.weak-word-empty {
+    opacity: 0.8;
+}
+
+/* Optimization 0226: achievement progress */
+.ach-progress-bar {
+    height: 6px;
+    margin-top: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+}
+
+.ach-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+}
+
+.ach-progress-text {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
 /* Leaderboard Styles */
 .leaderboard-save-section {
     margin-bottom: 20px;

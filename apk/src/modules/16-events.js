@@ -2,6 +2,12 @@
  * 16-events.js - 事件绑定与输入处理
  * 从 main.js 拆分 (原始行 7076-7401)
  */
+window._inputLocked = false;
+function setInputLocked(locked) {
+    window._inputLocked = !!locked;
+}
+window.setInputLocked = setInputLocked;
+
 function wireSettingsModal() {
     const modal = document.getElementById("settings-modal");
     const btnOpen = document.getElementById("btn-settings");
@@ -478,9 +484,18 @@ function wireTouchControls() {
         }, { passive: false });
     }
 
-    bindHold("left", () => { keys.left = true; }, () => { keys.left = false; });
-    bindHold("right", () => { keys.right = true; }, () => { keys.right = false; });
-    bindTap("jump", () => { jumpBuffer = gameConfig.jump.bufferFrames; });
+    bindHold("left", () => {
+        if (window._inputLocked) return;
+        keys.left = true;
+    }, () => { keys.left = false; });
+    bindHold("right", () => {
+        if (window._inputLocked) return;
+        keys.right = true;
+    }, () => { keys.right = false; });
+    bindTap("jump", () => {
+        if (window._inputLocked) return;
+        jumpBuffer = gameConfig.jump.bufferFrames;
+    });
     bindTap("attack", () => { handleAttack("tap"); });
     bindTap("interact", () => { handleInteraction("tap"); });
     bindTap("interior-exit", () => {
