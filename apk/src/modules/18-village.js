@@ -1131,29 +1131,6 @@ function renderVillageTraderMain(modal, village) {
   const diamondCount = Number(inventory?.diamond) || 0;
   body.innerHTML = `
     <h3 style="margin:0 0 12px;color:#FFD54F;">🧑‍🌾 商人交易</h3>
-    <p style="margin:0 0 12px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b></p>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <button id="trader-btn-sell" class="game-btn">卖材料换钻石</button>
-      <button id="trader-btn-armor" class="game-btn">买盔甲</button>
-      <button id="trader-btn-sunscreen" class="game-btn">买防晒霜（5💎）</button>
-      <button id="trader-btn-close" class="game-btn">关闭</button>
-    </div>
-  `;
-  bindTraderTap(body.querySelector("#trader-btn-sell"), () => renderTraderSellMaterials(modal, village));
-  bindTraderTap(body.querySelector("#trader-btn-armor"), () => renderTraderBuyArmor(modal, village));
-  bindTraderTap(body.querySelector("#trader-btn-sunscreen"), () => {
-    handleTraderBuySunscreen();
-    renderVillageTraderMain(modal, village);
-  });
-  bindTraderTap(body.querySelector("#trader-btn-close"), closeVillageTrader);
-}
-
-function renderVillageTraderMain(modal, village) {
-  const body = modal.querySelector("#village-trader-body");
-  if (!body) return;
-  const diamondCount = Number(inventory?.diamond) || 0;
-  body.innerHTML = `
-    <h3 style="margin:0 0 12px;color:#FFD54F;">🧑‍🌾 商人交易</h3>
     <p style="margin:0 0 12px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button id="trader-btn-sell" class="game-btn">卖材料换钻石 💎</button>

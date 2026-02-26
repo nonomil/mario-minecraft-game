@@ -225,7 +225,7 @@ function parseCustomVocab(text) {
 }
 
 function registerCustomVocab(name, words) {
-    const cleanName = String(name || "自定义词库).trim() || "自定义词库;
+    const cleanName = String(name || "自定义词库").trim() || "自定义词库";
     const cleanWords = Array.isArray(words) ? words.filter(w => w?.en).map(w => ({
         standardized: String(w.en || "").trim(),
         chinese: String(w.zh || "").trim(),
@@ -273,7 +273,7 @@ function handleVocabFileImport(event) {
             alert("未解析到有效词条，格式：英文,中文");
             return;
         }
-        const baseName = String(file.name || "自定义词库).replace(/\.[^.]+$/, "");
+        const baseName = String(file.name || "自定义词库").replace(/\.[^.]+$/, "");
         registerCustomVocab(baseName, words);
         alert(`已加入 ${words.length} 个词条`);
     };
@@ -288,7 +288,7 @@ function handleVocabTextImport() {
         alert("未解析到有效词条");
         return;
     }
-    const name = prompt("词库名称：, "自定义词库) || "自定义词库;
+    const name = prompt("词库名称：", "自定义词库") || "自定义词库";
     registerCustomVocab(name, words);
     alert(`已加入 ${words.length} 个词条`);
 }
@@ -427,7 +427,7 @@ function updateVocabProgressUI() {
     if (!el) return;
     const engine = ensureVocabEngine();
     if (!engine || !activeVocabPackId) {
-        el.innerText = "未加载;
+        el.innerText = "未加载";
         return;
     }
     const pack = vocabPacks[activeVocabPackId];
