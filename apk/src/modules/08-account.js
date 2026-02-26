@@ -462,6 +462,8 @@ function showProfileModal() {
     if (profileWordsEl) profileWordsEl.innerText = currentAccount.vocabulary?.learnedWords?.length || 0;
     if (profileGamesEl) profileGamesEl.innerText = currentAccount.stats?.gamesPlayed || 0;
     renderAchievements();
+    const learningPanelEl = document.getElementById("learning-stats-panel");
+    if (learningPanelEl) learningPanelEl.innerHTML = renderLearningStats(currentAccount);
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
     if (typeof pushPause === "function") pushPause();
@@ -483,12 +485,17 @@ function renderAchievements() {
     Object.values(ACHIEVEMENTS).forEach(achievement => {
         const div = document.createElement("div");
         const isUnlocked = unlocked.has(achievement.id);
+        const progress = getAchievementProgress(achievement.id, currentAccount?.stats || {});
         div.className = `achievement-item ${isUnlocked ? "unlocked" : "locked"}`;
         div.innerHTML = `
             <div class="achievement-icon">${isUnlocked ? achievement.icon : "🔒"}</div>
             <div class="achievement-content">
                 <div class="achievement-name">${achievement.name}</div>
                 <div class="achievement-desc">${achievement.desc}</div>
+                ${!isUnlocked && progress ? `
+                <div class="ach-progress-bar"><div class="ach-progress-fill" style="width:${progress.percent}%"></div></div>
+                <div class="ach-progress-text">${progress.current} / ${progress.target}</div>
+                ` : ""}
             </div>
         `;
         achievementsContainerEl.appendChild(div);
@@ -509,6 +516,8 @@ function wireProfileModal() {
     const modal = document.getElementById("profile-modal");
     const btnClose = document.getElementById("btn-profile-close");
     const btnSaveLeaderboard = document.getElementById("btn-profile-save-leaderboard");
+    const btnExportSave = document.getElementById("btn-export-save");
+    const btnImportSave = document.getElementById("btn-import-save");
     if (btnClose) btnClose.addEventListener("click", hideProfileModal);
     if (btnSaveLeaderboard) {
         btnSaveLeaderboard.addEventListener("click", () => {
@@ -516,6 +525,8 @@ function wireProfileModal() {
             if (typeof saveProfileScoreToLeaderboard === "function") saveProfileScoreToLeaderboard();
         });
     }
+    if (btnExportSave) btnExportSave.addEventListener("click", handleExportSave);
+    if (btnImportSave) btnImportSave.addEventListener("click", handleImportSave);
     if (modal) {
         modal.addEventListener("click", e => {
             if (e.target === modal) hideProfileModal();
@@ -594,4 +605,93 @@ function markVocabPromptSeen() {
     try { window.localStorage.setItem("mmwg:vocabPromptSeen", "1"); }
     catch {}
 }
+
+function handleExportSave() {
+    if (typeof exportSaveCode !== "function") {
+        alert("当前版本不支持导出存档码");
+        return;
+    }
+    const code = exportSaveCode();
+    if (!code) {
+        alert("导出失败，请重试");
+        return;
+    }
+    navigator.clipboard.writeText(code).then(() => {
+        showToast("存档码已复制到剪贴板");
+    }).catch(() => {
+        prompt("请复制以下存档码：", code);
+    });
+}
+
+function handleImportSave() {
+    if (typeof importSaveCode !== "function") {
+        alert("当前版本不支持导入存档码");
+        return;
+    }
+    const code = prompt("请粘贴存档码：");
+    if (!code) return;
+    try {
+        importSaveCode(code);
+        alert("导入成功，页面将刷新。");
+        location.reload();
+    } catch {
+        alert("存档码无效，请检查后重试。");
+    }
+}
+
+function getWeakWords(wordStats, limit = 5) {
+    const rows = Object.entries(wordStats || {}).map(([word, stat]) => {
+        const correct = Number(stat?.correct) || 0;
+        const wrong = Number(stat?.wrong) || 0;
+        const total = correct + wrong;
+        const errorRate = total > 0 ? wrong / total : 0;
+        return { word, correct, wrong, errorRate };
+    });
+    return rows
+        .filter(item => item.wrong > 0)
+        .sort((a, b) => b.errorRate - a.errorRate)
+        .slice(0, Math.max(1, limit));
+}
+
+function renderLearningStats(account) {
+    const stats = account?.vocabulary?.wordStats || {};
+    const weak = getWeakWords(stats, 5);
+    const learned = account?.vocabulary?.learnedWords?.length || 0;
+    const mastered = Object.values(stats).filter(s => (Number(s?.correct) || 0) >= 3 && (Number(s?.wrong) || 0) === 0).length;
+    const weakHtml = weak.length
+        ? weak.map(item => (
+            `<div class="weak-word-item">` +
+            `<span>${item.word}</span>` +
+            `<span class="error-rate">${Math.round(item.errorRate * 100)}%</span>` +
+            `</div>`
+        )).join("")
+        : `<div class="weak-word-empty">暂无弱词，继续保持！</div>`;
+
+    return (
+        `<div class="stats-summary">` +
+        `<div class="stat-card">已学 <strong>${learned}</strong></div>` +
+        `<div class="stat-card">掌握 <strong>${mastered}</strong></div>` +
+        `</div>` +
+        `<div class="weak-words-section">` +
+        `<h3>弱词清单</h3>` +
+        weakHtml +
+        `</div>`
+    );
+}
+
+function getAchievementProgress(id, accountStats) {
+    const def = ACHIEVEMENTS && ACHIEVEMENTS[id] ? ACHIEVEMENTS[id] : null;
+    if (!def) return null;
+    const mappedKey = def.metric || def.id || "";
+    const currentRaw = Number(accountStats?.[mappedKey]) || 0;
+    const target = Math.max(1, Number(def.target) || 1);
+    const current = Math.min(currentRaw, target);
+    return { current, target, percent: Math.floor((current / target) * 100) };
+}
+
+window.handleExportSave = handleExportSave;
+window.handleImportSave = handleImportSave;
+window.getWeakWords = getWeakWords;
+window.renderLearningStats = renderLearningStats;
+window.getAchievementProgress = getAchievementProgress;
 

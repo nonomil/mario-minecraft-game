@@ -4,6 +4,17 @@
  */
 let sessionCorrectStreak = 0;
 let sessionWrongStreak = 0;
+window._sessionWordResults = window._sessionWordResults || [];
+
+function recordWordResult(wordObj, correct) {
+    if (!wordObj?.en) return;
+    window._sessionWordResults.push({
+        word: String(wordObj.en || ""),
+        zh: String(wordObj.zh || ""),
+        correct: !!correct,
+        time: Date.now()
+    });
+}
 
 function dropItem(type, x, y) {
     if (!inventory[type] && inventory[type] !== 0) inventory[type] = 0;
@@ -566,6 +577,7 @@ function startLearningChallenge(wordObj, forcedType, origin) {
     payload.wordObj = wordObj;
     currentLearningChallenge = payload;
     challengeOrigin = origin || null;
+    if (typeof setInputLocked === "function") setInputLocked(true);
     if (typeof pushPause === "function") pushPause();
     else paused = true;
     showLearningChallenge(payload);
@@ -719,6 +731,7 @@ function completeLearningChallenge(correct) {
     clearLearningChallengeTimer();
     const reward = LEARNING_CONFIG.challenge.rewards;
     const wordObj = currentLearningChallenge.wordObj;
+    recordWordResult(wordObj, !!correct);
     const timeLimit = LEARNING_CONFIG.challenge.timeLimit || 10000;
     const elapsed = Math.max(0, timeLimit - Math.max(0, challengeDeadline - Date.now()));
     if (correct) {
@@ -741,6 +754,7 @@ function completeLearningChallenge(correct) {
         }
         if (typeof popPause === "function") popPause();
         else paused = false;
+        if (typeof setInputLocked === "function") setInputLocked(false);
         currentLearningChallenge = null;
         challengeOrigin = null;
     } else {
@@ -766,6 +780,7 @@ function completeLearningChallenge(correct) {
             challengeOrigin = null;
             if (typeof popPause === "function") popPause();
             else paused = false;
+            if (typeof setInputLocked === "function") setInputLocked(false);
             startLearningChallenge(retryWord, null, savedOrigin);
         }, 2500);
         return;

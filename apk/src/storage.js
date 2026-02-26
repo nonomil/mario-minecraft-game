@@ -147,3 +147,34 @@ window.MMWG_STORAGE = {
         this.saveJson("mmwg_leaderboard", []);
     }
 };
+
+function exportSaveCode() {
+    try {
+        const data = {};
+        Object.keys(window.localStorage || {}).forEach((key) => {
+            if (!String(key).startsWith("mmwg")) return;
+            data[key] = window.localStorage.getItem(key);
+        });
+        return btoa(encodeURIComponent(JSON.stringify(data)));
+    } catch (err) {
+        console.warn("exportSaveCode failed", err);
+        return "";
+    }
+}
+
+function importSaveCode(code) {
+    if (!code) throw new Error("empty code");
+    const decoded = decodeURIComponent(atob(String(code).trim()));
+    const payload = JSON.parse(decoded);
+    if (!payload || typeof payload !== "object") {
+        throw new Error("invalid payload");
+    }
+    Object.entries(payload).forEach(([key, value]) => {
+        if (!String(key).startsWith("mmwg")) return;
+        window.localStorage.setItem(key, String(value ?? ""));
+    });
+    return true;
+}
+
+window.exportSaveCode = exportSaveCode;
+window.importSaveCode = importSaveCode;
