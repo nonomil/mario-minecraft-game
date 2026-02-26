@@ -266,15 +266,87 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+      - name: Resolve release metadata
+        if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/app-release.apk') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f "apk/version.json" ]; then
+            VERSION="$(node -p "require('./apk/version.json').versionName")"
+            VERSION_CODE="$(node -p "require('./apk/version.json').versionCode")"
+            BUILD_NUMBER="$(node -p "require('./apk/version.json').buildNumber")"
+          else
+            VERSION="$(node -p "require('./android-app/package.json').version")"
+            VERSION_CODE="unknown"
+            BUILD_NUMBER="unknown"
+          fi
+
+          echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION_CODE=$VERSION_CODE" >> "$GITHUB_ENV"
+          echo "RELEASE_BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_ENV"
+
+      - name: Generate release notes
+        if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/app-release.apk') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          VERSION="${RELEASE_VERSION:-unknown}"
+          NOTES_INDEX_FILE="apk/docs/release/release-notes.md"
+          OUT_FILE="apk/.release-notes.md"
+
+          {
+            echo "## Mario Minecraft Game v${VERSION}"
+            echo
+            echo "### Version Info"
+            echo "- Version: ${RELEASE_VERSION}"
+            echo "- VersionCode: ${RELEASE_VERSION_CODE}"
+            echo "- BuildNumber: ${RELEASE_BUILD_NUMBER}"
+            echo "- Commit: ${{ github.sha }}"
+            echo
+            echo "### Downloads"
+            echo "- Debug APK: \`app-debug.apk\`"
+            echo "- Release APK: \`app-release.apk\`"
+            echo
+            echo "### Install"
+            echo "1. Download APK file"
+            echo "2. Enable unknown source installation on Android"
+            echo "3. Install APK"
+            echo
+            echo "### What's New"
+            if [ -f "$NOTES_INDEX_FILE" ]; then
+              NOTES_SECTION="$(
+                awk -v ver="$VERSION" '
+                  BEGIN { in_section = 0 }
+                  /^##[[:space:]]+v[0-9]/ {
+                    if (in_section) exit
+                    if ($0 ~ ("^##[[:space:]]+v" ver "([[:space:]]|$)")) {
+                      in_section = 1
+                      next
+                    }
+                  }
+                  in_section { print }
+                ' "$NOTES_INDEX_FILE"
+              )"
+              if [ -n "$NOTES_SECTION" ]; then
+                echo "$NOTES_SECTION"
+              else
+                echo "- No section found for version v${VERSION} in ${NOTES_INDEX_FILE}"
+                echo "- Check apk/docs/version/CHANGELOG.md for full details."
+              fi
+            else
+              echo "- Notes file not found: ${NOTES_INDEX_FILE}"
+              echo "- Check apk/docs/version/CHANGELOG.md for full details."
+            fi
+          } > "$OUT_FILE"
+
       - name: Publish GitHub Release
         if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/app-release.apk') != '' }}
         uses: ncipollo/release-action@v1
         with:
-          tag: apk-${{ github.run_number }}
-          name: APK Build #${{ github.run_number }}
-          body: |
-            Signed release APK.
-            Commit: ${{ github.sha }}
-            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          tag: v${{ env.RELEASE_VERSION }}-build-${{ github.run_number }}
+          name: Mario Minecraft Game v${{ env.RELEASE_VERSION }} Build #${{ github.run_number }}
+          bodyFile: apk/.release-notes.md
           artifacts: android-app/android/app/build/outputs/apk/release/app-release.apk
 
