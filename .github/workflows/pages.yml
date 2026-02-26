@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "apk/**"
+      - ".github/workflows/pages.yml"
 
 permissions:
   contents: read
