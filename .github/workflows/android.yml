@@ -48,25 +48,6 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x android-app/android/gradlew
 
-      - name: Build Debug APK
-        shell: bash
-        working-directory: android-app/android
-        run: |
-          set -euo pipefail
-          attempts=3
-          for attempt in $(seq 1 "$attempts"); do
-            if ./gradlew --no-daemon assembleDebug; then
-              exit 0
-            fi
-            if [ "$attempt" -lt "$attempts" ]; then
-              sleep_seconds=$((attempt * 15))
-              echo "assembleDebug failed (attempt $attempt/$attempts), retrying in ${sleep_seconds}s..."
-              sleep "$sleep_seconds"
-            fi
-          done
-          echo "assembleDebug failed after ${attempts} attempts."
-          exit 1
-
       - name: Check signing secrets
         id: signing
         shell: bash
@@ -249,7 +230,6 @@ jobs:
         with:
           name: apk
           path: |
-            android-app/android/app/build/outputs/apk/debug/*.apk
             android-app/android/app/build/outputs/apk/release/*.apk
           if-no-files-found: ignore
           retention-days: 30
@@ -299,22 +279,21 @@ jobs:
           {
             echo "## Mario Minecraft Game v${VERSION}"
             echo
-            echo "### Version Info"
+            echo "### 版本信息"
             echo "- Version: ${RELEASE_VERSION}"
             echo "- VersionCode: ${RELEASE_VERSION_CODE}"
             echo "- BuildNumber: ${RELEASE_BUILD_NUMBER}"
             echo "- Commit: ${{ github.sha }}"
             echo
-            echo "### Downloads"
-            echo "- Debug APK: \`app-debug.apk\`"
-            echo "- Release APK: \`app-release.apk\`"
+            echo "### 下载文件"
+            echo "- Release APK: \`mario-minecraft-game-${VERSION}-release.apk\`"
             echo
-            echo "### Install"
-            echo "1. Download APK file"
-            echo "2. Enable unknown source installation on Android"
-            echo "3. Install APK"
+            echo "### 安装说明"
+            echo "1. 下载 APK 文件"
+            echo "2. 在 Android 设备开启“允许安装未知来源应用”"
+            echo "3. 安装 APK"
             echo
-            echo "### What's New"
+            echo "### 本次更新"
             if [ -f "$NOTES_INDEX_FILE" ]; then
               NOTES_SECTION="$(
                 awk -v ver="$VERSION" '
@@ -332,21 +311,29 @@ jobs:
               if [ -n "$NOTES_SECTION" ]; then
                 echo "$NOTES_SECTION"
               else
-                echo "- No section found for version v${VERSION} in ${NOTES_INDEX_FILE}"
-                echo "- Check apk/docs/version/CHANGELOG.md for full details."
+                echo "- 未找到版本说明：${NOTES_INDEX_FILE} 中的 v${VERSION} 段落。"
+                echo "- 请查看 apk/docs/version/CHANGELOG.md 获取更新详情。"
               fi
             else
-              echo "- Notes file not found: ${NOTES_INDEX_FILE}"
-              echo "- Check apk/docs/version/CHANGELOG.md for full details."
+              echo "- 未找到版本说明文件：${NOTES_INDEX_FILE}"
+              echo "- 请查看 apk/docs/version/CHANGELOG.md 获取更新详情。"
             fi
           } > "$OUT_FILE"
+
+      - name: Prepare release artifact
+        if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/app-release.apk') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp android-app/android/app/build/outputs/apk/release/app-release.apk "release/mario-minecraft-game-${RELEASE_VERSION}-release.apk"
 
       - name: Publish GitHub Release
         if: ${{ hashFiles('android-app/android/app/build/outputs/apk/release/app-release.apk') != '' }}
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ env.RELEASE_VERSION }}-build-${{ github.run_number }}
-          name: Mario Minecraft Game v${{ env.RELEASE_VERSION }} Build #${{ github.run_number }}
+          name: Mario Minecraft Game v${{ env.RELEASE_VERSION }}
           bodyFile: apk/.release-notes.md
-          artifacts: android-app/android/app/build/outputs/apk/release/app-release.apk
+          artifacts: release/mario-minecraft-game-${{ env.RELEASE_VERSION }}-release.apk
 

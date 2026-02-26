@@ -1,7 +1,7 @@
 ## v1.19.8
-- Game optimization 0226 fully integrated (save transfer, review flow, touch controls, vocab import, learning stats, achievement progress, PWA support).
-- CI release pipeline now reads notes from this single file by version section.
-- APK releases are published as unique tags per run, keeping each build traceable.
+- 完成游戏优化 0226 全量集成（存档导入导出、复盘流程、触控优化、词库导入、学习统计、成就进度、PWA 支持）。
+- 发布流程改为从本文件按版本段读取说明，减少重复修改工作流。
+- Release 保持每次构建唯一 tag，方便回溯与定位。
 
 ## v1.19.7
-- Stabilization and compatibility updates for APK build and release pipeline.
+- APK 构建与发布链路稳定性和兼容性修复。
