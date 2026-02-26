@@ -18,12 +18,15 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
-function replaceOnce(haystack, needle, replacement, label) {
-  const idx = haystack.indexOf(needle);
-  if (idx === -1) {
-    throw new Error(`Missing ${label || "pattern"}: ${needle}`);
+function replaceByRegexOrInsert(haystack, regex, replacement, fallbackNeedle, label) {
+  if (regex.test(haystack)) {
+    return haystack.replace(regex, replacement);
   }
-  return haystack.replace(needle, replacement);
+  if (fallbackNeedle && haystack.includes(fallbackNeedle)) {
+    console.warn(`[build-singlefile] Missing ${label}; inserted via fallback.`);
+    return haystack.replace(fallbackNeedle, `${replacement}\n${fallbackNeedle}`);
+  }
+  throw new Error(`Missing ${label} and fallback marker: ${fallbackNeedle || "(none)"}`);
 }
 
 function buildPreludeDataScript(data) {
@@ -119,28 +122,32 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const preludeScript = buildPreludeDataScript(embeddedJson);
 
   let html = templateHtml;
-  html = replaceOnce(
+  html = replaceByRegexOrInsert(
     html,
-    `<link rel="stylesheet" href="src/styles.css">`,
+    /<link\s+rel=["']stylesheet["']\s+href=["']src\/styles\.css["']\s*\/?>/i,
     makeInlineStyle(stylesCss),
+    "</head>",
     "stylesheet link"
   );
-  html = replaceOnce(
+  html = replaceByRegexOrInsert(
     html,
-    `<script src="src/defaults.js"></script>`,
+    /<script\s+src=["']src\/defaults\.js["']\s*><\/script>/i,
     makeInlineScript(defaultsJs),
+    "</body>",
     "defaults script"
   );
-  html = replaceOnce(
+  html = replaceByRegexOrInsert(
     html,
-    `<script src="src/storage.js"></script>`,
+    /<script\s+src=["']src\/storage\.js["']\s*><\/script>/i,
     makeInlineScript(storageJs),
+    "</body>",
     "storage script"
   );
-  html = replaceOnce(
+  html = replaceByRegexOrInsert(
     html,
-    `<script src="words/vocabs/manifest.js"></script>`,
+    /<script\s+src=["']words\/vocabs\/manifest\.js["']\s*><\/script>/i,
     `${makeInlineScript(manifestJs)}\n${vocabScripts}\n${makeInlineScript(preludeScript)}`,
+    "</body>",
     "manifest script"
   );
 
