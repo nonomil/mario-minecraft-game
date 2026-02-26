@@ -1,4 +1,3 @@
-﻿@echo off
 @echo off
 setlocal EnableExtensions
 chcp 65001 >nul 2>&1
@@ -222,7 +221,7 @@ set "FETCH_OK=0"
 git -c http.version=HTTP/1.1 fetch %REMOTE% %BRANCH% --prune
 if errorlevel 1 (
     echo [警告] fetch 失败（可能是网络或认证问题）。
-    echo [警告] 将继续尝试推送，以便输出更明确的失败原因。
+    echo [WARN] Continue with push to surface clearer failure cause.
 ) else (
     set "FETCH_OK=1"
     echo [同步] fetch 成功。
@@ -346,7 +345,7 @@ echo   推送成功
 echo ========================================
 echo.
 echo GitHub Actions 将自动开始构建（如果本次提交影响 apk/ 或 workflow）。
-echo Actions 地址: https://github.com/nonomil/mario-minecraft-game/actions
+echo(Actions 地址: https://github.com/nonomil/mario-minecraft-game/actions
 echo.
 call :exit_with_pause 0
 exit /b 0
