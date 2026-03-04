@@ -74,6 +74,19 @@ function makeInlineStyle(css) {
   return `<style>\n${css}\n</style>`;
 }
 
+function extractModuleScriptTagsFromHtml(html) {
+  const entries = [];
+  const re = /<script\b[^>]*\bsrc="(src\/modules\/[^"]+)"[^>]*>\s*<\/script>/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    const src = m[1];
+    if (!src.toLowerCase().startsWith("src/modules/")) continue;
+    const file = src.slice("src/modules/".length);
+    entries.push({ tag: m[0], file });
+  }
+  return entries;
+}
+
 function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const templateHtml = readText(templateHtmlPath);
 
@@ -82,25 +95,8 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
   const storageJs = readText(path.join(projectRoot, "src", "storage.js"));
   const manifestJs = readText(path.join(projectRoot, "words", "vocabs", "manifest.js"));
 
-  // Read all module files in order (must match Game.html script tag order)
-  const moduleFiles = [
-    "01-config.js", "02-utils.js", "03-audio.js", "04-weapons.js",
-    "05-difficulty.js", "06-biome.js", "07-viewport.js", "08-account.js",
-    "09-vocab.js", "10-ui.js",
-    "15-entities-base.js", "15-entities-decorations.js",
-    "15-entities-particles.js", "15-entities-combat.js", "15-entities-boss.js",
-    "18-village.js", "18-village-render.js", "18-interaction-chains.js", "19-biome-visuals.js",
-    "20-enemies-new.js",
-    "21-decorations-new.js",
-    "11-game-init.js", "12-challenges.js", "12-village-challenges.js",
-    "13-game-loop.js", "14-renderer-main.js", "14-renderer-entities.js",
-    "14-renderer-decorations.js", "16-events.js",
-    "17-bootstrap.js"
-  ];
-  const moduleScripts = moduleFiles.map(f => {
-    const content = readText(path.join(projectRoot, "src", "modules", f));
-    return makeInlineScript(content);
-  }).join("\n");
+  const moduleEntries = extractModuleScriptTagsFromHtml(templateHtml);
+  const moduleFiles = moduleEntries.map((e) => e.file);
 
   const vocabFiles = extractVocabFilesFromManifest(manifestJs);
   const vocabScripts = vocabFiles.map((f) => makeInlineScript(readText(path.join(projectRoot, f)))).join("\n");
@@ -142,12 +138,10 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
     "manifest script"
   );
 
-  // Replace all module script tags with inline scripts
-  moduleFiles.forEach(f => {
-    const pattern = `<script src="src/modules/${f}"></script>`;
-    if (html.indexOf(pattern) !== -1) {
-      html = html.replace(pattern, makeInlineScript(readText(path.join(projectRoot, "src", "modules", f))));
-    }
+  moduleEntries.forEach(({ tag, file }) => {
+    const jsPath = path.join(projectRoot, "src", "modules", file);
+    const content = readText(jsPath);
+    html = html.replace(tag, makeInlineScript(content));
   });
 
   // Hard check: fail build if any module script src remains un-inlined

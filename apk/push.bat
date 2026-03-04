@@ -549,7 +549,11 @@ if errorlevel 1 (
     exit /b 1
 )
 
-git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+if /i "%PRIMARY%"=="proxy" (
+    git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
+) else (
+    git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+)
 if errorlevel 1 (
     echo [错误] 主仓库 pull --ff-only 失败，请先手动处理主仓库 %BRANCH% 分支状态。
     echo.
