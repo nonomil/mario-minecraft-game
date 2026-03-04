@@ -1,0 +1,85 @@
+{
+  "scan_meta": {
+    "topic": "memory-system-index-refactor",
+    "mode": "M4",
+    "scope": ["scripts/memory.py", "references/config.md"],
+    "reference_docs": ["README.md", "references/config.md"],
+    "generated_at": "2026-02-26T12:00:00Z",
+    "stats": {
+      "modules": 1,
+      "entry_points": 5,
+      "public_apis": 5,
+      "core_data_structures": 4
+    }
+  },
+  "module_inventory": [
+    {
+      "path": "scripts/memory.py",
+      "responsibility": "实现索引、检索、增删查状态与清理命令",
+      "public_symbols": ["cmd_index", "cmd_search", "cmd_add", "cmd_status", "cmd_cleanup"],
+      "dependencies": ["sqlite3", "numpy", "sentence-transformers"]
+    }
+  ],
+  "entry_points": [
+    {
+      "name": "cmd_search",
+      "type": "cli-subcommand",
+      "trigger": "python scripts/memory.py search <query>",
+      "call_chain_top3": ["cmd_search", "hybrid_search", "vector_search"]
+    }
+  ],
+  "data_structures": [
+    {
+      "name": "chunks",
+      "fields": [
+        {
+          "name": "id",
+          "type": "text",
+          "purpose": "块主键 filepath:start-end"
+        },
+        {
+          "name": "embedding",
+          "type": "blob",
+          "purpose": "float32 向量数据"
+        }
+      ],
+      "source": "references/config.md"
+    }
+  ],
+  "data_flows": [
+    {
+      "name": "index_flow",
+      "input": "markdown files",
+      "stages": ["hash_compare", "chunk_markdown", "embed", "upsert_sqlite"],
+      "output": "sqlite rows in files/chunks/chunks_fts",
+      "side_effects": ["write sqlite", "remove stale rows"]
+    }
+  ],
+  "api_surface": [
+    {
+      "name": "hybrid_search",
+      "signature": "(conn, query, top_k, min_score) -> list[dict]",
+      "file_line": "scripts/memory.py:413",
+      "callers": ["cmd_search"],
+      "compatibility_strategy": "新增参数必须提供默认值"
+    }
+  ],
+  "reference_constraints": [
+    {
+      "source": "references/config.md",
+      "constraint": "CHUNK_MAX_CHARS=1600",
+      "impact": "调整分块策略时需同步重建索引",
+      "conflict_with": "",
+      "adopt": "references/config.md"
+    }
+  ],
+  "impact_matrix": [
+    {
+      "change_point": "chunk_markdown",
+      "direct_impact": "chunk text and boundaries changed",
+      "indirect_impact": "hybrid score and recall may drift",
+      "validation_point": "reindex + compare top_k query results",
+      "risk_level": "high"
+    }
+  ]
+}

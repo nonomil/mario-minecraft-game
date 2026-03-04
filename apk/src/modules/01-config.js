@@ -17,12 +17,47 @@ async function loadJsonWithFallback(path, fallback) {
     try {
         const response = await fetch(path, { cache: "no-store" });
         if (!response.ok) {
-            throw new Error("load failed");
+            console.warn(`Config load failed: ${path} (${response.status})`);
+            return JSON.parse(JSON.stringify(fallback));
         }
-        return await response.json();
-    } catch {
+        const data = await response.json();
+
+        // Validate config if schema available
+        if (fallback && typeof fallback === 'object') {
+            const validated = validateAndMergeConfig(data, fallback);
+            return validated;
+        }
+
+        return data;
+    } catch (error) {
+        console.error(`Config load error: ${path}`, error);
         return JSON.parse(JSON.stringify(fallback));
     }
+}
+
+// Validate and merge config with fallback
+function validateAndMergeConfig(config, fallback) {
+    if (!config || typeof config !== 'object') {
+        console.warn('Invalid config, using fallback');
+        return JSON.parse(JSON.stringify(fallback));
+    }
+
+    // Deep merge: fallback provides defaults, config overrides
+    const merged = JSON.parse(JSON.stringify(fallback));
+
+    function deepMerge(target, source) {
+        for (const key in source) {
+            if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                if (!target[key]) target[key] = {};
+                deepMerge(target[key], source[key]);
+            } else {
+                target[key] = source[key];
+            }
+        }
+    }
+
+    deepMerge(merged, config);
+    return merged;
 }
 
 const canvas = document.getElementById("gameCanvas");
@@ -266,25 +301,32 @@ const SPEED_LEVELS = {
     fast: 1.3
 };
 const ACHIEVEMENTS = {
-    first_word: { id: "first_word", name: "初识词语", desc: "学习第一个词", icon: "🎉", target: 1 },
-    words_10: { id: "words_10", name: "十词入门", desc: "学习 10 个词", icon: "📘", target: 10 },
-    words_50: { id: "words_50", name: "词语进阶", desc: "学习 50 个词", icon: "📗", target: 50 },
-    words_100: { id: "words_100", name: "词海探险", desc: "学习 100 个词", icon: "📙", target: 100 },
-    words_500: { id: "words_500", name: "词语大师", desc: "学习 500 个词", icon: "🏅", target: 500 },
-    pack_complete: { id: "pack_complete", name: "词库通关", desc: "完成一个词库", icon: "🗂️", target: 1 },
-    first_game: { id: "first_game", name: "首次出航", desc: "完成第一场游戏", icon: "🚀", target: 1 },
-    score_1000: { id: "score_1000", name: "千分进击", desc: "累积 1000 分", icon: "⭐", target: 1000 },
-    score_5000: { id: "score_5000", name: "突破 5000", desc: "累积 5000 分", icon: "🏆", target: 5000 },
-    enemies_100: { id: "enemies_100", name: "斩妖 100", desc: "击败 100 个敌人", icon: "⚔️", target: 100 },
-    chests_50: { id: "chests_50", name: "开宝 50", desc: "打开 50 个宝箱", icon: "📦", target: 50 },
-    diamond_collector: { id: "diamond_collector", name: "钻石收藏家", desc: "收集 100 颗钻石", icon: "💎", target: 100 },
-    armor_collector: { id: "armor_collector", name: "盔甲收藏家", desc: "收集全部 盔甲", icon: "🛡️", target: 6 }
+    first_word: { id: "first_word", name: "初识词语", desc: "学习第一个词", icon: "🎉", target: 1, metric: "learnedWords" },
+    words_10: { id: "words_10", name: "十词入门", desc: "学习 10 个词", icon: "📘", target: 10, metric: "learnedWords" },
+    words_50: { id: "words_50", name: "词语进阶", desc: "学习 50 个词", icon: "📗", target: 50, metric: "learnedWords" },
+    words_100: { id: "words_100", name: "词海探险", desc: "学习 100 个词", icon: "📙", target: 100, metric: "learnedWords" },
+    words_500: { id: "words_500", name: "词语大师", desc: "学习 500 个词", icon: "🏅", target: 500, metric: "learnedWords" },
+    pack_complete: { id: "pack_complete", name: "词库通关", desc: "完成一个词库", icon: "🗂️", target: 1, metric: "packsCompleted" },
+    first_game: { id: "first_game", name: "首次出航", desc: "完成第一场游戏", icon: "🚀", target: 1, metric: "gamesPlayed" },
+    score_1000: { id: "score_1000", name: "千分进击", desc: "累积 1000 分", icon: "⭐", target: 1000, metric: "highScore" },
+    score_5000: { id: "score_5000", name: "突破 5000", desc: "累积 5000 分", icon: "🏆", target: 5000, metric: "highScore" },
+    enemies_100: { id: "enemies_100", name: "斩妖 100", desc: "击败 100 个敌人", icon: "⚔️", target: 100, metric: "enemiesKilled" },
+    chests_50: { id: "chests_50", name: "开宝 50", desc: "打开 50 个宝箱", icon: "📦", target: 50, metric: "chestsOpened" },
+    diamond_collector: { id: "diamond_collector", name: "钻石收藏家", desc: "收集 100 颗钻石", icon: "💎", target: 100, metric: "diamondsCollected" },
+    armor_collector: { id: "armor_collector", name: "盔甲收藏家", desc: "收集全部 盔甲", icon: "🛡️", target: 6, metric: "armorCollected" },
+    streak_3: { id: "streak_3", name: "三日坚持", desc: "连续3天学习", icon: "🔥", target: 3, metric: "learningStreak" },
+    streak_7: { id: "streak_7", name: "七日坚持", desc: "连续7天学习", icon: "🌟", target: 7, metric: "learningStreak" },
+    perfect_run: { id: "perfect_run", name: "完美挑战", desc: "单次挑战全对", icon: "💯", target: 1, metric: "perfectRuns" },
+    night_owl: { id: "night_owl", name: "夜猫子", desc: "夜间学习（22:00-06:00）", icon: "🦉", target: 1, metric: "nightSessions" }
 };
 const ACHIEVEMENT_MAP = {
     words: ["first_word", "words_10", "words_50", "words_100", "words_500"],
     enemies: ["enemies_100"],
     chests: ["chests_50"],
-    score: ["score_1000", "score_5000"]
+    score: ["score_1000", "score_5000"],
+    streak: ["streak_3", "streak_7"],
+    perfect: ["perfect_run"],
+    night: ["night_owl"]
 };
 
 // ========== 文案集中管理 ==========

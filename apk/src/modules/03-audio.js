@@ -222,3 +222,79 @@ function playHitSfx(intensity = 1) {
     osc.start(now);
     osc.stop(now + 0.16);
 }
+
+function playChallengeCorrectSfx() {
+    if (!settings.sfxEnabled) return;
+    const ctx = ensureAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    // Play ascending notes for correct answer
+    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+    notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now + i * 0.1);
+        gain.gain.setValueAtTime(0.001, now + i * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.15, now + i * 0.1 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.2);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now + i * 0.1);
+        osc.stop(now + i * 0.1 + 0.21);
+    });
+}
+
+function playChallengeWrongSfx() {
+    if (!settings.sfxEnabled) return;
+    const ctx = ensureAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    // Play descending buzz for wrong answer
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(200, now);
+    osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.31);
+}
+
+function diagnoseTts() {
+    const hasSpeech = "speechSynthesis" in window;
+    const voices = hasSpeech && window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+    const voiceCount = voices ? voices.length : 0;
+
+    let providerHint = "unknown";
+    const nativeTts = getNativeTts();
+    if (nativeTts) {
+        providerHint = "native (Capacitor TTS)";
+    } else if (hasSpeech) {
+        providerHint = "web (speechSynthesis)";
+    } else {
+        providerHint = "none";
+    }
+
+    let error = null;
+    if (!hasSpeech && !nativeTts) {
+        error = "No TTS provider available";
+    } else if (hasSpeech && voiceCount === 0) {
+        error = "speechSynthesis available but no voices loaded";
+    }
+
+    return {
+        hasSpeech: hasSpeech,
+        audioUnlocked: audioUnlocked,
+        speechEnabled: !!settings.speechEnabled,
+        providerHint: providerHint,
+        voices: voiceCount,
+        error: error
+    };
+}
+
+window.diagnoseTts = diagnoseTts;

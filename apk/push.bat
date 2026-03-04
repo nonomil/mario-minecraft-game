@@ -1,5 +1,5 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 chcp 65001 >nul 2>&1
 
 set "REMOTE=origin"
@@ -25,11 +25,41 @@ set "MODE="
 set "DRY_RUN=0"
 set "ASSUME_YES=0"
 set "NO_PAUSE=0"
+set "ACTION=auto"
+set "MAIN_REPO="
+set "SYNC_ONLY=0"
+set "FORCE=0"
 
 :parse_args
 if "%~1"=="" goto :args_done
 if /i "%~1"=="--dry-run" (
     set "DRY_RUN=1"
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--publish-main" (
+    set "ACTION=publish-main"
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--push-current" (
+    set "ACTION=push-current"
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--main-repo" (
+    set "MAIN_REPO=%~2"
+    shift
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--sync-only" (
+    set "SYNC_ONLY=1"
+    shift
+    goto :parse_args
+)
+if /i "%~1"=="--force" (
+    set "FORCE=1"
     shift
     goto :parse_args
 )
@@ -56,7 +86,7 @@ goto :parse_args
 :args_done
 
 if "%MMWG_PUSH_DEBUG%"=="1" (
-    echo [调试] MODE=%MODE% DRY_RUN=%DRY_RUN% ASSUME_YES=%ASSUME_YES%
+    echo [调试] MODE=%MODE% DRY_RUN=%DRY_RUN% ASSUME_YES=%ASSUME_YES% ACTION=%ACTION% MAIN_REPO=%MAIN_REPO% SYNC_ONLY=%SYNC_ONLY% FORCE=%FORCE%
     echo.
 )
 
@@ -66,6 +96,32 @@ if not defined REPO_ROOT (
     echo.
     call :exit_with_pause 1
     exit /b 1
+)
+
+if not defined MAIN_REPO (
+    if defined MMWG_MAIN_REPO (
+        set "MAIN_REPO=%MMWG_MAIN_REPO%"
+    ) else (
+        set "MAIN_REPO=G:\UserCode\Mario_Minecraft\mario-minecraft-game_V1"
+    )
+)
+
+set "HAS_APK_LAYOUT=0"
+if exist "%REPO_ROOT%\apk\android-app\package.json" set "HAS_APK_LAYOUT=1"
+set "HAS_APK_ONLY_LAYOUT=0"
+if exist "%REPO_ROOT%\android-app\package.json" if not exist "%REPO_ROOT%\apk\android-app\package.json" set "HAS_APK_ONLY_LAYOUT=1"
+
+if /i "%ACTION%"=="auto" (
+    if "%HAS_APK_ONLY_LAYOUT%"=="1" (
+        set "ACTION=publish-main"
+    ) else (
+        set "ACTION=push-current"
+    )
+)
+
+if /i "%ACTION%"=="publish-main" (
+    call :publish_to_main_apk
+    exit /b %errorlevel%
 )
 
 for /f "delims=" %%A in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set "CURRENT_BRANCH=%%A"
@@ -405,6 +461,210 @@ if errorlevel 1 (
 
 echo [流程] 自动合并完成，继续推送。
 echo.
+exit /b 0
+
+:publish_to_main_apk
+echo [模式] 发布到主仓库 apk/ 并推送：%MAIN_REPO%
+echo.
+
+if not exist "%MAIN_REPO%\.git" (
+    echo [错误] 主仓库路径不是 Git 仓库：%MAIN_REPO%
+    echo [提示] 可用参数指定：--main-repo "G:\path\to\mario-minecraft-game_V1"
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+
+set "MAIN_APK_DIR=%MAIN_REPO%\apk"
+if not exist "%MAIN_APK_DIR%" (
+    echo [错误] 主仓库不存在 apk 目录：%MAIN_APK_DIR%
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+
+set "MAIN_APK_DIRTY=0"
+for /f "delims=" %%L in ('git -C "%MAIN_REPO%" status --porcelain -- apk 2^>nul') do set "MAIN_APK_DIRTY=1"
+if "%MAIN_APK_DIRTY%"=="1" if not "%FORCE%"=="1" (
+    echo [阻止] 主仓库 apk/ 存在未提交改动，已停止同步以避免覆盖本地修改。
+    echo [提示] 先在主仓库提交/暂存/清理 apk/ 的改动后再运行。
+    echo [提示] 如你确定要继续，可加参数 --force
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+
+if not defined MODE set "MODE=auto"
+
+set "PROXY_OK=0"
+for /f "delims=" %%P in ('powershell -NoProfile -Command "$ok=0; try { $c=New-Object System.Net.Sockets.TcpClient; $iar=$c.BeginConnect('127.0.0.1',1080,$null,$null); if ($iar.AsyncWaitHandle.WaitOne(200,$false) -and $c.Connected) { $ok=1 }; $c.Close() } catch {}; Write-Output $ok" 2^>nul') do set "PROXY_OK=%%P"
+if not "%PROXY_OK%"=="1" set "PROXY_OK=0"
+
+set "MODE=%MODE: =%"
+if /i "%MODE%"=="auto" (
+    if "%PROXY_OK%"=="1" (
+        set "PRIMARY=proxy"
+    ) else (
+        set "PRIMARY=direct"
+    )
+) else if /i "%MODE%"=="proxy" (
+    set "PRIMARY=proxy"
+) else if /i "%MODE%"=="direct" (
+    set "PRIMARY=direct"
+) else (
+    echo [错误] --mode 参数无效: %MODE%
+    echo [提示] 允许值: auto / proxy / direct
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+
+if "%DRY_RUN%"=="1" (
+    echo [DRY-RUN] 将执行以下操作（不落地、不推送）：
+    echo   git -C "%MAIN_REPO%" switch %BRANCH%
+    echo   git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+    echo   robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist"
+    echo   git -C "%MAIN_REPO%" add apk
+    echo   git -C "%MAIN_REPO%" diff --cached --quiet ^(若无变化则跳过提交^)
+    echo   git -C "%MAIN_REPO%" commit -m "sync(apk): publish from apk-only repo"
+    if "%SYNC_ONLY%"=="1" (
+        echo   ^(sync-only: 跳过 push^)
+    ) else (
+        if /i "%PRIMARY%"=="proxy" (
+            echo   git -C "%MAIN_REPO%" -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+        ) else (
+            echo   git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
+        )
+    )
+    echo.
+    exit /b 0
+)
+
+echo [流程] 切换主仓库到 %BRANCH% 并更新（ff-only）...
+git -C "%MAIN_REPO%" switch %BRANCH%
+if errorlevel 1 (
+    echo [错误] 主仓库切换分支失败：%BRANCH%
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+
+git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+if errorlevel 1 (
+    echo [错误] 主仓库 pull --ff-only 失败，请先手动处理主仓库 %BRANCH% 分支状态。
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+
+echo [同步] 复制当前仓库内容 -> 主仓库 apk/...
+robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist" >nul
+set "RC=%ERRORLEVEL%"
+if %RC% GEQ 8 (
+    echo [错误] robocopy 失败，错误码=%RC%
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+echo [同步] 文件同步完成。
+echo.
+
+echo [提交] 在主仓库暂存 apk/...
+git -C "%MAIN_REPO%" add apk
+if errorlevel 1 (
+    echo [错误] 主仓库 git add apk 失败。
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+
+git -C "%MAIN_REPO%" diff --cached --quiet
+if not errorlevel 1 (
+    echo [信息] apk/ 没有变化，跳过提交与推送。
+    echo.
+    call :exit_with_pause 0
+    exit /b 0
+)
+
+echo [提交] 提交同步结果...
+git -C "%MAIN_REPO%" commit -m "sync(apk): publish from apk-only repo"
+if errorlevel 1 (
+    echo [错误] 主仓库 commit 失败。
+    echo.
+    call :exit_with_pause 1
+    exit /b 1
+)
+echo.
+
+if "%SYNC_ONLY%"=="1" (
+    echo [完成] 已完成同步与提交（sync-only：未推送）。
+    echo.
+    call :exit_with_pause 0
+    exit /b 0
+)
+
+echo [推送] 推送主仓库到 %REMOTE%/%BRANCH%...
+pushd "%MAIN_REPO%" >nul
+
+if /i "%PRIMARY%"=="proxy" (
+    goto :publish_push_with_proxy
+) else (
+    goto :publish_push_direct
+)
+
+:publish_push_direct
+git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :publish_push_success
+
+echo.
+echo [重试 1] 直连推送失败，尝试使用 schannel 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :publish_push_success
+
+echo.
+echo [重试 2] 直连推送失败，尝试使用 openssl 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :publish_push_success
+
+if /i "%MODE%"=="auto" if "%PROXY_OK%"=="1" (
+    echo.
+    echo [重试 3] 自动模式：检测到本地代理，尝试走代理推送...
+    goto :publish_push_with_proxy
+)
+goto :publish_push_failed
+
+:publish_push_with_proxy
+echo.
+echo [代理] 使用代理 (http://127.0.0.1:1080) + openssl 推送...
+git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :publish_push_success
+
+echo.
+echo [重试] 代理推送失败，尝试 socks5 代理...
+git -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :publish_push_success
+
+:publish_push_failed
+popd >nul
+echo.
+echo ========================================
+echo   推送失败（主仓库）
+echo ========================================
+echo.
+call :exit_with_pause 1
+exit /b 1
+
+:publish_push_success
+popd >nul
+echo.
+echo ========================================
+echo   推送成功（主仓库）
+echo ========================================
+echo.
+echo GitHub Actions 将自动开始构建（针对 main/apk）。
+echo(Actions 地址: https://github.com/nonomil/mario-minecraft-game/actions
+echo.
+call :exit_with_pause 0
 exit /b 0
 
 :exit_with_pause

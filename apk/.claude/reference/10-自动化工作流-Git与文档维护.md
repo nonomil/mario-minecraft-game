@@ -1,0 +1,768 @@
+﻿# 09｜自动化工作流：安全防护 · Git 提交 · 任务文档 · CHANGELOG
+
+> **定位：** 配置成熟的自动化规则，防止破坏性操作、自动 git commit、维护任务 checkbox 和 CHANGELOG。 前置条件：已完成《02-环境配置》，Claude Code CLI 可正常运行。 **最近验证：2026-02-26**
+
+## 当前仓库落地状态（已实现）
+
+- 全局安全防护（`~/.claude/settings.json`）：
+  - 已启用 `PreToolUse` 删除命令拦截，覆盖 `Bash` / `Shell` / `PowerShell`
+  - 脚本：`C:/Users/Administrator/.claude/hooks/block-delete.py`
+- 项目级自动化（`.claude/settings.local.json`）：
+  - `Stop` Hook：`python .claude/scripts/auto_checkpoint_commit.py`
+  - `PostToolUse` Hook：`python .claude/scripts/append_changelog_draft.py`
+- 项目级 skill：
+  - `.claude/skills/commit/SKILL.md`
+  - `.claude/skills/changelog/SKILL.md`
+
+> 建议：把本文件作为“目标方案”，以上落地状态作为“当前实现”，后续按需升级到 `dcg` 或 `claudekit`。
+
+------
+## 0. 优先级：先装安全防护，再配自动化
+
+**强烈建议第一步先配安全防护**（第 1 节），防止 Codex/Claude 删除非项目文件。这是血的教训。 其余自动化功能（第 2-4 节）按需叠加。
+
+------
+
+## 1. 安全防护：阻止危险命令（必配）
+
+### 1.1 成熟方案对比
+
+| 方案                                 | 特点                                                         | 适合场景            |
+| ------------------------------------ | ------------------------------------------------------------ | ------------------- |
+| **dcg**（destructive_command_guard） | Rust 实现，<10μs，AST 级分析，能识别 heredoc 和内嵌脚本里的危险命令，不会误报 | 最推荐，生产级      |
+| **claude-code-damage-control**       | Python/YAML 配置，可视化 patterns，支持"询问确认"和"直接拒绝"两种模式 | 需要可定制 patterns |
+| **claude-rm-rf**                     | TypeScript/Bun，专注于删除命令，34 个测试用例                | 只需防删除，轻量    |
+| **官方示例 Hook**                    | 最简单，直接写进 settings.json                               | 理解原理，快速上手  |
+
+------
+
+### 1.2 方案 A：dcg（最推荐）
+
+**特点：** 三层分析管道，不会误报（`git commit -m "Fix rm -rf"` 里的 rm -rf 不会触发）；能识别 `python -c "os.remove(...)"` 这类嵌套删除。
+
+**安装（一键，自动注册为 PreToolUse hook）：**
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/destructive_command_guard/master/install.sh" | bash -s -- --easy-mode
+```
+
+**Windows 手动安装：**
+
+```bash
+# 下载 release 页面的 Windows 二进制
+# https://github.com/Dicklesworthstone/destructive_command_guard/releases
+# 放到 C:/Users/Administrator/.claude/hooks/dcg.exe
+
+# 在 ~/.claude/settings.json 注册
+```
+
+**覆盖的危险命令（开箱即用）：**
+
+- `rm -rf`、`rm -f`、递归删除变体
+- `git reset --hard`、`git clean -fd`、`git clean -f`
+- `git push --force`
+- `DROP TABLE`、`DELETE FROM` 无 WHERE
+- `chmod 777`、`curl | bash`（下载后直接执行脚本）
+- Python/JS 内嵌的 `os.remove`、`shutil.rmtree`
+
+**拦截后的输出示例：**
+
+```
+BLOCKED by dcg
+Reason: Destructive git command that discards uncommitted changes
+Rule: core.git:reset-hard
+Safe alternative: git stash
+Allow once: dcg allow-once abc12
+```
+
+**验证：**
+
+```bash
+echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf /tmp/test"}}' | dcg
+# 应该输出 BLOCKED
+```
+
+------
+
+### 1.3 方案 B：claude-code-damage-control（可定制 patterns）
+
+支持三种模式：直接拒绝、询问确认、零访问路径（完全不允许读写）。
+
+**安装：**
+
+```bash
+# 在 Claude Code 中：
+/plugin add disler/claude-code-damage-control
+# 或
+npx skills add disler/claude-code-damage-control -a claude-code -g
+```
+
+**核心配置文件 `patterns.yaml`（可自定义）：**
+
+```yaml
+bashToolPatterns:
+  # 直接拒绝
+  - pattern: '\brm\s+-[rRf]'
+    reason: rm with recursive or force flags
+  - pattern: '\bDELETE\s+FROM\s+\w+\s*;'
+    reason: DELETE without WHERE clause
+
+  # 询问确认（弹出权限对话框）
+  - pattern: 'pip install'
+    reason: Installing packages
+    ask: true
+
+# 完全禁止访问的路径
+zeroAccessPaths:
+  - ~/.ssh/
+  - ~/.aws/
+  - ~/.env
+  - C:/Users/Administrator/Documents  # 你的非项目目录
+  - D:/重要资料/                        # 你的非项目目录
+```
+
+**注册 hooks：**
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{"type": "command", "command": "uv run ~/.claude/hooks/damage-control/bash-tool-damage-control.py", "timeout": 5}]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{"type": "command", "command": "uv run ~/.claude/hooks/damage-control/edit-tool-damage-control.py", "timeout": 5}]
+      }
+    ]
+  }
+}
+```
+
+**测试：**
+
+```bash
+# 交互式测试
+python ~/.claude/hooks/damage-control/test-damage-control.py
+# 输入 rm -rf /tmp → 应该显示 BLOCKED
+```
+
+------
+
+### 1.4 方案 C：官方最简 Hook（理解原理用）
+
+官方文档提供的最简实现，直接写进 settings.json：
+
+**Windows（PowerShell）：**
+
+创建 `C:/Users/Administrator/.claude/hooks/block-delete.py`：
+
+```python
+import sys, json, re
+
+data = json.load(sys.stdin)
+cmd = data.get('tool_input', {}).get('command', '')
+
+patterns = [
+    r'rm\s+-[rRf]',
+    r'rd\s+/s',
+    r'rmdir\s+/s',
+    r'del\s+/[sfq]',
+    r'Remove-Item.*-Recurse',
+    r'Remove-Item.*-Force',
+    r'git\s+clean\s+-f',
+    r'git\s+reset\s+--hard',
+    r'shutil\.rmtree',
+    r'os\.remove\b',
+    r'os\.unlink\b',
+]
+
+for p in patterns:
+    if re.search(p, cmd, re.IGNORECASE):
+        print(json.dumps({
+            "hookSpecificOutput": {
+                "hookEventName": "PreToolUse",
+                "permissionDecision": "deny",
+                "permissionDecisionReason": f"危险命令已拦截，请人工确认后在终端手动执行：{cmd[:120]}"
+            }
+        }))
+        sys.exit(0)
+
+sys.exit(0)
+```
+
+**注册：**
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 C:/Users/Administrator/.claude/hooks/block-delete.py"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+------
+
+### 1.5 同时在 AGENTS.md 加兜底文字约束
+
+```markdown
+## 文件操作硬限制
+- 禁止删除任何文件或目录，无论理由是什么
+- 需要"清理"时，移动到 [项目目录]/tmp/，不要删除
+- 禁止执行：rm -rf、rd /s、Remove-Item -Recurse、git clean -f、git reset --hard
+- 需要安装大型依赖（>100MB）时，先询问用户确认下载路径，不要自行决定
+- 如果任务需要删除文件，停下来报告，等待用户确认
+```
+
+------
+
+## 2. 自动 git commit
+
+### 2.1 成熟工具：claudekit（推荐）
+
+claudekit 是专门为 Claude Code 设计的工具包，提供自动存档 checkpoint、代码质量 hooks、git 工作流命令等功能。
+
+**安装：**
+
+```bash
+npm install -g claudekit
+claudekit setup  # 在项目目录运行，自动配置 hooks
+```
+
+**claudekit 自动配置的 hooks：**
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {"type": "command", "command": "claudekit-hooks run create-checkpoint"}
+    ],
+    "SubagentStop": [
+      {"type": "command", "command": "claudekit-hooks run create-checkpoint"}
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [{"type": "command", "command": "claudekit-hooks run typecheck-changed"}]
+      }
+    ]
+  }
+}
+```
+
+`create-checkpoint` 会在每次会话结束时自动创建 git checkpoint commit，message 包含本次会话的操作摘要。
+
+**常用命令：**
+
+```bash
+/git:status    # 按类型分组展示变更，建议 commit 策略
+/git:commit    # 按项目规范创建 commit，含完整变更记录
+/git:checkout  # 智能分支创建，自动命名
+```
+
+------
+
+### 2.2 三种方式对比（从简到繁）
+
+| 方式               | 触发时机     | Message 质量 | 复杂度 | 推荐场景              |
+| ------------------ | ------------ | ------------ | ------ | --------------------- |
+| CLAUDE.md 指令     | AI 自判断    | ⭐⭐⭐⭐⭐        | 最低   | 首选，今天就用        |
+| Stop Hook（自写）  | 每次响应结束 | ⭐⭐（时间戳） | 低     | 保底，防漏提交        |
+| claudekit          | 每次会话结束 | ⭐⭐⭐⭐         | 中     | 推荐，自动 checkpoint |
+| claude-auto-commit | 手动触发     | ⭐⭐⭐⭐⭐        | 中     | 批量整理 commit       |
+| GitButler          | 每次文件修改 | ⭐⭐⭐⭐⭐        | 高     | 并行且共享文件冲突场景 |
+
+**推荐组合：** CLAUDE.md 指令（主）+ claudekit checkpoint（保底）
+
+------
+
+### 2.3 CLAUDE.md 指令（最简单，立即生效）
+
+加入 `~/.claude/CLAUDE.md`：
+
+```markdown
+## Git 提交规范
+- 完成每个逻辑工作单元后，主动 git add + git commit
+- 不要 push，除非明确被要求
+- 使用 Conventional Commits 格式（feat:/fix:/refactor:/docs:/test:/chore:）
+- commit message 描述"改了什么"和"为什么改"，不要写 "update files"
+```
+
+------
+
+### 2.4 Stop Hook 保底（直接写进 settings.json）
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && git add -A && git diff-index --quiet HEAD || git commit -m \"checkpoint: $(date '+%H:%M')\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+> **Windows 项目级等价配置（已在本仓库落地）：**
+>
+> 上方 bash 一行命令在 Windows 下不可用（`$CLAUDE_PROJECT_DIR`、`$(date)` 均为 bash 语法，`2>/dev/null` 在 cmd/PowerShell 下无效）。
+> 本仓库已用 Python 脚本替代，配置在 `.claude/settings.local.json`：
+>
+> ```json
+> {
+>   "hooks": {
+>     "Stop": [
+>       {
+>         "matcher": "*",
+>         "hooks": [
+>           {
+>             "type": "command",
+>             "async": true,
+>             "timeout": 30,
+>             "command": "python .claude/scripts/auto_checkpoint_commit.py"
+>           }
+>         ]
+>       }
+>     ]
+>   }
+> }
+> ```
+>
+> 脚本 [`.claude/scripts/auto_checkpoint_commit.py`](.claude/scripts/auto_checkpoint_commit.py) 通过 `os.getenv("CLAUDE_PROJECT_DIR")` 读取项目目录，跨平台兼容。支持 `--dry-run` 预览。
+
+------
+
+### 2.5 claude-auto-commit（AI 生成高质量 message）
+
+```bash
+npx claude-auto-commit          # 分析变更，AI 生成 message，自动 commit
+npx claude-auto-commit -n       # 不 push
+npx claude-auto-commit --dry-run  # 只预览 message
+npx claude-auto-commit -l en -c   # 英文 + Conventional Commits
+```
+
+------
+
+### 2.6 GitButler（并行 worktree 场景，进阶）
+
+不是必选项。你已经使用 `git worktree` 时，默认优先使用 worktree 物理隔离，不要先上 GitButler。
+
+仅在以下条件命中时再启用 GitButler：
+- 多个并行任务存在共享文件（如 `utils.py`、公共配置、共享 schema）
+- 连续多轮合并冲突，且冲突处理成本显著高于开发成本
+- 无法在规划阶段稳定做到文件级解耦
+
+下载：`https://gitbutler.com` → General Settings → 安装 CLI
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [{"matcher": "Edit|MultiEdit|Write", "hooks": [{"type": "command", "command": "but claude pre-tool"}]}],
+    "PostToolUse": [{"matcher": "Edit|MultiEdit|Write", "hooks": [{"type": "command", "command": "but claude post-tool"}]}],
+    "Stop": [{"matcher": "", "hooks": [{"type": "command", "command": "but claude stop"}]}]
+  }
+}
+```
+
+配合 CLAUDE.md 防冲突：
+
+```markdown
+## GitButler 集成
+- 不要手动执行 git commit，GitButler Hooks 会自动处理
+```
+
+------
+
+### 2.7 worktree-first 并行落地（推荐）
+
+你的并行流程建议固定为：
+
+1. Opus 先输出任务清单 + 文件影响范围表（每个任务允许改动路径）
+2. 为每个任务创建独立 worktree 与分支
+3. 各 worktree 内独立运行 Codex（checkpoint hook 保底）
+4. 合并按依赖顺序进行，先无共享文件任务，后共享文件任务
+5. 全量测试 + E2E 通过后再清理 worktree
+
+先复制模板，再由 Opus 填表：
+
+- 模板：`.claude/templates/parallel-impact-scope-template.md`
+- 产物：`docs/development/[feature]-impact-scope.md`
+- 复制命令（Windows PowerShell）：
+
+```powershell
+Copy-Item .claude/templates/parallel-impact-scope-template.md docs/development/[feature]-impact-scope.md
+```
+
+让 Opus 在拆任务时同步填充这张表，在 prompt 里加一句：
+
+```text
+同时输出文件影响范围表，列格式固定为：
+任务 | worktree | 允许改动路径 | 共享文件（无则填"-"）| owner（无共享文件则填"-"）。
+若存在共享文件，必须指定唯一 owner，并声明非 owner 禁止修改。
+```
+
+规则：
+- 无共享文件的任务可完全并行，无需额外协调
+- 有共享文件时必须指定唯一 owner，非 owner 任务不得修改共享文件
+- 合并出现冲突时，必须停下人工处理，不允许自动解冲突
+- 合并前必须先跑范围门禁脚本，不通过不得合并：
+
+```bash
+python .claude/scripts/verify_parallel_scope.py \
+  --table docs/development/[feature]-impact-scope.md \
+  --task task-a \
+  --base main
+```
+注：若仓库默认主分支不是 `main`，请替换为实际主分支（如 `master`/`develop`）。
+注：项目级 `PreToolUse(git merge*)` 已可自动触发该校验；此命令用于手动复核或排查。
+
+若自动门禁无法定位上下文，可设置：
+- `PARALLEL_SCOPE_TABLE`：impact scope 表路径
+- `PARALLEL_SCOPE_TASK`：任务名
+- `PARALLEL_SCOPE_BASE`：主分支名
+
+------
+
+## 3. 自动勾选任务文档 checkbox
+
+### 3.1 CLAUDE.md 指令（最简单）
+
+```markdown
+## 任务文档维护规则
+- 每完成一个任务步骤后，立即找到 docs/development/ 下对应的任务文档
+- 将已完成步骤的 `- [ ]` 改为 `- [x]`
+- git commit 前必须先更新 checkbox，确保文档状态与代码一致
+- 如果不确定对应哪个任务文档，询问用户
+```
+
+------
+
+### 3.2 claudekit check-todos Hook
+
+claudekit 内置 `check-todos` hook，在每次 Stop 时扫描项目中的 TODO/FIXME，并可结合任务文档 checkbox 检查：
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {"type": "command", "command": "claudekit-hooks run create-checkpoint"},
+      {"type": "command", "command": "claudekit-hooks run check-todos"}
+    ]
+  }
+}
+```
+
+------
+
+### 3.3 自定义 `/commit` Skill（你控制时机）
+
+创建 `~/.claude/skills/commit/SKILL.md`：
+
+```markdown
+---
+name: commit
+description: 更新任务 checkbox 并提交代码，完成一个任务单元时使用
+disable-model-invocation: true
+allowed-tools: Bash, Edit, Read, Glob
+---
+
+## 执行步骤
+
+1. **找到当前任务文档**
+   - 在 `docs/development/` 找最近修改的 `*-steps.md`
+
+2. **更新 checkbox**
+   - 已完成步骤：`- [ ]` → `- [x]`
+
+3. **确认变更范围**
+   - `git status` 查看变更文件
+   - 有范围外文件 → 停下来询问用户
+
+4. **生成并执行 commit**
+   - 格式：`<type>(<scope>): <description>`
+   - `git add -A && git commit -m "<message>"`
+   - 显示 commit hash
+
+## 注意事项
+- 不执行 git push，除非用户明确要求
+- 测试未通过 → 停止，提示先修复
+```
+
+使用：在 Claude Code 中输入 `/commit`
+
+------
+
+## 4. 自动维护 CHANGELOG
+
+### 4.1 Changelog Generator Skill
+
+```bash
+npx skills add vercel-labs/agent-skills --skill changelog-generator -a claude-code -g
+```
+
+使用：
+
+```bash
+> 基于最近的 git commits 更新 CHANGELOG.md，从上次 tag 到现在
+```
+
+------
+
+### 4.2 自定义 `/changelog` Skill
+
+创建 `~/.claude/skills/changelog/SKILL.md`：
+
+```markdown
+---
+name: changelog
+description: 从 git commits 生成或更新 CHANGELOG.md，发布前使用
+disable-model-invocation: true
+allowed-tools: Bash, Edit, Read
+---
+
+## 执行步骤
+
+1. 获取 commit 范围
+   - `git tag --sort=-version:refname | head -5`
+   - `git log <last-tag>..HEAD --oneline`
+
+2. 按类型分类（feat/fix/refactor/docs/perf）
+
+3. 生成条目格式：
+   ## [vX.Y.Z] - YYYY-MM-DD
+   ### Features
+   - 用户友好的描述
+
+4. 插入 CHANGELOG.md 顶部，保留历史
+
+5. 询问用户确认版本号后更新
+
+## 版本号规则
+- 有 feat → minor +1
+- 只有 fix → patch +1
+- breaking change → major +1
+```
+
+------
+
+### 4.3 PostToolUse Hook 自动追加草稿
+
+每次 commit 后自动追加到草稿文件，发布前再用 `/changelog` 整理：
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && git diff-index --quiet HEAD 2>/dev/null || LAST=$(git log -1 --pretty='%s' 2>/dev/null) && [ -n \"$LAST\" ] && echo \"- $(date '+%Y-%m-%d'): $LAST\" >> docs/changelog-draft.md"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+> **Windows 项目级等价配置（已在本仓库落地）：**
+>
+> 上方命令依赖 bash 变量替换和命令替换，在 Windows 下无法运行。
+> 本仓库已用 Python 脚本替代，同时覆盖 `Bash` / `Shell` / `PowerShell` 三个 matcher：
+>
+> ```json
+> {
+>   "hooks": {
+>     "PostToolUse": [
+>       {
+>         "matcher": "Bash(git commit*)",
+>         "hooks": [{"type": "command", "async": true, "timeout": 30,
+>                    "command": "python .claude/scripts/append_changelog_draft.py"}]
+>       },
+>       {
+>         "matcher": "Shell(git commit*)",
+>         "hooks": [{"type": "command", "async": true, "timeout": 30,
+>                    "command": "python .claude/scripts/append_changelog_draft.py"}]
+>       },
+>       {
+>         "matcher": "PowerShell(git commit*)",
+>         "hooks": [{"type": "command", "async": true, "timeout": 30,
+>                    "command": "python .claude/scripts/append_changelog_draft.py"}]
+>       }
+>     ]
+>   }
+> }
+> ```
+>
+> 脚本 [`.claude/scripts/append_changelog_draft.py`](.claude/scripts/append_changelog_draft.py) 读取最新 commit message 并追加到 `docs/changelog-draft.md`，跨平台兼容。支持 `--dry-run` 预览。
+
+------
+
+## 5. 推荐配置组合
+
+### 最小配置（今天就能用，30 分钟完成）
+
+**第一步：安装安全防护**
+
+```bash
+curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/destructive_command_guard/master/install.sh" | bash -s -- --easy-mode
+# Windows 用户：下载二进制 + 手动注册 hook（见 1.4 节）
+```
+
+**第二步：CLAUDE.md 加指令**
+
+```markdown
+## Git 提交规范
+- 完成每个逻辑工作单元后，主动 git add + git commit
+- 不要 push，除非明确要求
+- 使用 Conventional Commits 格式
+
+## 任务文档维护
+- 完成每个步骤后，更新 docs/development/ 下对应文档的 checkbox
+- commit 前必须先更新 checkbox
+
+## 文件操作限制
+- 禁止删除任何文件，需要清理时移动到项目/tmp/
+```
+
+**第三步：Stop Hook 保底** 在 `~/.claude/settings.json` 加（与安全防护 hook 合并）：
+
+**Linux/macOS：**
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{"type": "command", "command": "dcg"}]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && git add -A && git diff-index --quiet HEAD || git commit -m \"checkpoint: $(date '+%H:%M')\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**Windows（项目级，放 `.claude/settings.local.json`）：**
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "timeout": 30,
+            "command": "python .claude/scripts/auto_checkpoint_commit.py"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+> 需先创建 `.claude/scripts/auto_checkpoint_commit.py`，见 2.4 节。全局安全防护（`block-delete.py`）单独放 `~/.claude/settings.json`，见第 1 节。
+
+### 进阶叠加
+
+```
+更完整的安全防护（可定制 patterns）  →  claude-code-damage-control（1.3 节）
+自动 checkpoint + 代码质量检查        →  claudekit（2.1 节）
+/commit skill（checkbox + commit）   →  自建 skill（3.3 节）
+并行任务存在共享文件冲突风险          →  GitButler（2.6 节，按需启用）
+发布前整理 CHANGELOG                 →  /changelog skill（4.2 节）
+```
+
+------
+
+## 6. Hooks 配置位置与合并规则
+
+| 文件位置                      | 生效范围       | 是否提交 git   |
+| ----------------------------- | -------------- | -------------- |
+| `~/.claude/settings.json`     | 全局，所有项目 | 否（个人机器） |
+| `.claude/settings.json`       | 仅当前项目     | 是（团队共享） |
+| `.claude/settings.local.json` | 仅当前项目     | 否（个人配置） |
+
+**注意：** 多个文件的同类 hook 会合并执行，都会触发。安全防护建议放全局，项目质量检查放项目级。
+
+------
+
+## 7. 验证所有 Hook 是否生效
+
+```bash
+# 在 Claude Code 中：
+/hooks
+# 应该看到所有已配置的 hooks 列表
+
+# 测试安全防护：
+> 执行命令：rm -rf C:/test
+# 应该看到拦截提示，不会真正执行
+
+# 测试 Stop Hook：
+> 修改一个文件后结束对话
+# 应该看到自动 commit 记录
+git log --oneline -3
+```
+
+------
+
+## 8. 常见问题
+
+| 问题                   | 原因                   | 解决                                                      |
+| ---------------------- | ---------------------- | --------------------------------------------------------- |
+| dcg 安装后没有生效     | Windows 路径问题       | 用绝对路径 `C:/Users/.../.claude/hooks/dcg.exe`           |
+| Hook 没有触发          | settings.json 格式错误 | `cat ~/.claude/settings.json | python3 -m json.tool` 验证 |
+| checkpoint commit 太多 | Stop Hook 频率太高     | 改用 claudekit，它更智能判断是否需要 commit               |
+| checkbox 没有自动更新  | CLAUDE.md 路径配置不对 | 明确写出 docs/development/ 的绝对或相对路径               |
+| 多个 Hook 互相冲突     | 执行顺序问题           | 安全防护放 PreToolUse，commit 放 Stop，不会冲突           |
+
+------
+
+## 9. 相关文档
+
+| 文档                                                         | 用途                              |
+| ------------------------------------------------------------ | --------------------------------- |
+| `02-ClaudeCode+Codex-环境配置与协作规范.md`                  | CLAUDE.md、AGENTS.md 配置位置     |
+| `05-功能分支开发流程模板.md`                                 | commit 在哪个步骤触发             |
+| `08-社区Skills生态与NotebookLM集成.md`                       | superpowers、changelog skill 安装 |
+| `https://code.claude.com/docs/en/hooks`                      | Hooks 官方完整参考文档            |
+| `https://github.com/Dicklesworthstone/destructive_command_guard` | dcg 安装与配置                    |
+| `https://github.com/carlrannaberg/claudekit`                 | claudekit 完整文档                |
+| `https://gitbutler.com`                                      | GitButler 官网                    |
+
+

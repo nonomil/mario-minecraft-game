@@ -1,18 +1,21 @@
-﻿# Version Status (2026-02-24)
+# Version Status (2026-03-04)
 
 ## Current Baseline
-- Local version file: `apk/version.json`
-- versionName: **1.18.53**
-- versionCode/buildNumber: **53**
+- Local version file: `version.json`
+- versionName: **1.19.9**
+- versionCode/buildNumber: **64**
 
 ## Git State
-- Branch: `main`
-- Includes HUD 字体/触控按钮尺寸对齐 + 平台高度/堆叠限制。
+- Branch: `master`
+- Includes parallel task integration (A/B/C/D), core optimization (task1), and storage/config hardening (task2).
 
 ## Records Check
-- Updated: `apk/docs/version/CHANGELOG.md`
-- Updated: `apk/docs/version/VERSION-STATUS.md`
-- Updated: `apk/docs/version/Progress.md`
+- Updated: `docs/version/CHANGELOG.md`
+- Updated: `docs/version/VERSION-STATUS.md`
+- Updated: `docs/version/Progress.md`
+- Updated: `docs/release/release-notes.md`
+- Added: `docs/release/发布说明-v1.19.9.md`
 
 ## Validation Snapshot
-- 本机 Playwright 端口 4173 权限受限，未执行自动化测试（由 GitHub Actions 构建验证）。
+- ???????????????package/version/gradle/service worker??
+- ?????????????

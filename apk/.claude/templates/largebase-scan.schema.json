@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/largebase-scan.schema.json",
+  "title": "LargebaseScanData",
+  "type": "object",
+  "required": [
+    "scan_meta",
+    "module_inventory",
+    "entry_points",
+    "data_structures",
+    "data_flows",
+    "api_surface",
+    "reference_constraints",
+    "impact_matrix"
+  ],
+  "properties": {
+    "scan_meta": {
+      "type": "object",
+      "required": ["topic", "mode", "scope", "generated_at", "stats"],
+      "properties": {
+        "topic": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["M1", "M2", "M3", "M4"]
+        },
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reference_docs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "stats": {
+          "type": "object",
+          "required": ["modules", "entry_points", "public_apis", "core_data_structures"],
+          "properties": {
+            "modules": { "type": "integer", "minimum": 0 },
+            "entry_points": { "type": "integer", "minimum": 0 },
+            "public_apis": { "type": "integer", "minimum": 0 },
+            "core_data_structures": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "module_inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "responsibility"],
+        "properties": {
+          "path": { "type": "string" },
+          "responsibility": { "type": "string" },
+          "public_symbols": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "entry_points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "trigger"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "trigger": { "type": "string" },
+          "call_chain_top3": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "data_structures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "fields"],
+        "properties": {
+          "name": { "type": "string" },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "type", "purpose"],
+              "properties": {
+                "name": { "type": "string" },
+                "type": { "type": "string" },
+                "purpose": { "type": "string" }
+              }
+            }
+          },
+          "source": { "type": "string" }
+        }
+      }
+    },
+    "data_flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "input", "stages", "output"],
+        "properties": {
+          "name": { "type": "string" },
+          "input": { "type": "string" },
+          "stages": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "output": { "type": "string" },
+          "side_effects": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "api_surface": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "signature", "file_line"],
+        "properties": {
+          "name": { "type": "string" },
+          "signature": { "type": "string" },
+          "file_line": { "type": "string" },
+          "callers": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "compatibility_strategy": { "type": "string" }
+        }
+      }
+    },
+    "reference_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "constraint", "impact"],
+        "properties": {
+          "source": { "type": "string" },
+          "constraint": { "type": "string" },
+          "impact": { "type": "string" },
+          "conflict_with": { "type": "string" },
+          "adopt": { "type": "string" }
+        }
+      }
+    },
+    "impact_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["change_point", "direct_impact", "validation_point", "risk_level"],
+        "properties": {
+          "change_point": { "type": "string" },
+          "direct_impact": { "type": "string" },
+          "indirect_impact": { "type": "string" },
+          "validation_point": { "type": "string" },
+          "risk_level": { "type": "string", "enum": ["low", "medium", "high"] }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

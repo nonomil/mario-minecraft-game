@@ -19,6 +19,9 @@ function wireSettingsModal() {
     const advancedModal = document.getElementById("advanced-settings-modal");
     const btnAdvancedClose = document.getElementById("btn-advanced-settings-close");
     const btnAdvancedSave = document.getElementById("btn-advanced-settings-save");
+    const btnSpeechTest = document.getElementById("btn-speech-test");
+    const btnTtsSelfCheck = document.getElementById("btn-tts-self-check");
+    const ttsCheckResult = document.getElementById("tts-check-result");
     const optPhraseFollowMode = document.getElementById("opt-phrase-follow-mode");
     const optPhraseFollowDirectRatio = document.getElementById("opt-phrase-follow-direct-ratio");
     const optPhraseFollowGapCount = document.getElementById("opt-phrase-follow-gap-count");
@@ -37,6 +40,7 @@ function wireSettingsModal() {
     const optSpeechZh = document.getElementById("opt-speech-zh");
     const optSpeechZhEnabled = document.getElementById("opt-speech-zh-enabled");
     const optBgm = document.getElementById("opt-bgm");
+    const optSfx = document.getElementById("opt-sfx");
     const optUiScale = document.getElementById("opt-ui-scale");
     const optDeviceMode = document.getElementById("opt-device-mode");
     const optMotionScale = document.getElementById("opt-motion-scale");
@@ -149,6 +153,7 @@ function wireSettingsModal() {
         if (optSpeechZhEnabled) optSpeechZhEnabled.checked = !!settings.speechZhEnabled;
         if (optSpeechZh) optSpeechZh.disabled = !settings.speechZhEnabled;
         if (optBgm) optBgm.checked = !!settings.musicEnabled;
+        if (optSfx) optSfx.checked = settings.sfxEnabled !== false;
         if (optUiScale) optUiScale.value = String(settings.uiScale ?? 1.0);
         if (optDeviceMode) optDeviceMode.value = settings.deviceMode || "auto";
         if (optMotionScale) optMotionScale.value = String(settings.motionScale ?? 1.25);
@@ -203,6 +208,7 @@ function wireSettingsModal() {
         if (optSpeechZh) settings.speechZhRate = Number(optSpeechZh.value);
         if (optSpeechZhEnabled) settings.speechZhEnabled = !!optSpeechZhEnabled.checked;
         if (optBgm) settings.musicEnabled = !!optBgm.checked;
+        if (optSfx) settings.sfxEnabled = !!optSfx.checked;
         if (optUiScale) settings.uiScale = Number(optUiScale.value);
         if (optDeviceMode) settings.deviceMode = String(optDeviceMode.value || "auto");
         if (optMotionScale) settings.motionScale = Number(optMotionScale.value);
@@ -252,6 +258,46 @@ function wireSettingsModal() {
     if (btnAdvanced) btnAdvanced.addEventListener("click", openAdvanced);
     if (btnAdvancedClose) btnAdvancedClose.addEventListener("click", closeAdvanced);
     if (btnAdvancedSave) btnAdvancedSave.addEventListener("click", saveAdvanced);
+
+    if (btnSpeechTest) {
+        btnSpeechTest.addEventListener("click", () => {
+            if (!settings.speechEnabled) {
+                showToast("请先开启朗读功能");
+                return;
+            }
+            try {
+                speakWord({ en: "hello", zh: "你好" });
+                showToast("正在测试发音...");
+            } catch (err) {
+                showToast("发音测试失败: " + err.message);
+            }
+        });
+    }
+
+    if (btnTtsSelfCheck) {
+        btnTtsSelfCheck.addEventListener("click", () => {
+            if (typeof diagnoseTts !== "function") {
+                if (ttsCheckResult) ttsCheckResult.innerHTML = "<div style='color: red;'>诊断功能不可用</div>";
+                return;
+            }
+            const result = diagnoseTts();
+            if (ttsCheckResult) {
+                let html = "<div style='margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; font-size: 12px; text-align: left;'>";
+                html += "<div><strong>TTS 诊断结果：</strong></div>";
+                html += "<div>• 支持 speechSynthesis: " + (result.hasSpeech ? "✓" : "✗") + "</div>";
+                html += "<div>• 音频已解锁: " + (result.audioUnlocked ? "✓" : "✗") + "</div>";
+                html += "<div>• 朗读功能已开启: " + (result.speechEnabled ? "✓" : "✗") + "</div>";
+                html += "<div>• TTS 提供者: " + result.providerHint + "</div>";
+                html += "<div>• 可用语音数量: " + result.voices + "</div>";
+                if (result.error) {
+                    html += "<div style='color: #ff6b6b;'>• 错误: " + result.error + "</div>";
+                }
+                html += "</div>";
+                ttsCheckResult.innerHTML = html;
+            }
+        });
+    }
+
     if (btnResetProgress) {
         btnResetProgress.addEventListener("click", () => {
             if (!resetArmed) {

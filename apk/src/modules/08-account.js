@@ -464,6 +464,15 @@ function showProfileModal() {
     renderAchievements();
     const learningPanelEl = document.getElementById("learning-stats-panel");
     if (learningPanelEl) learningPanelEl.innerHTML = renderLearningStats(currentAccount);
+
+    // Wire weak words practice button after rendering
+    const btnWeakWordsPractice = document.getElementById("btn-weak-words-practice");
+    if (btnWeakWordsPractice) {
+        btnWeakWordsPractice.addEventListener("click", () => {
+            showToast("弱词专项练习功能即将上线");
+        });
+    }
+
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
     if (typeof pushPause === "function") pushPause();
@@ -518,6 +527,8 @@ function wireProfileModal() {
     const btnSaveLeaderboard = document.getElementById("btn-profile-save-leaderboard");
     const btnExportSave = document.getElementById("btn-export-save");
     const btnImportSave = document.getElementById("btn-import-save");
+    const btnProfileExportSave = document.getElementById("btn-profile-export-save");
+    const btnProfileImportSave = document.getElementById("btn-profile-import-save");
     if (btnClose) btnClose.addEventListener("click", hideProfileModal);
     if (btnSaveLeaderboard) {
         btnSaveLeaderboard.addEventListener("click", () => {
@@ -527,6 +538,8 @@ function wireProfileModal() {
     }
     if (btnExportSave) btnExportSave.addEventListener("click", handleExportSave);
     if (btnImportSave) btnImportSave.addEventListener("click", handleImportSave);
+    if (btnProfileExportSave) btnProfileExportSave.addEventListener("click", handleExportSave);
+    if (btnProfileImportSave) btnProfileImportSave.addEventListener("click", handleImportSave);
     if (modal) {
         modal.addEventListener("click", e => {
             if (e.target === modal) hideProfileModal();
@@ -653,11 +666,127 @@ function getWeakWords(wordStats, limit = 5) {
         .slice(0, Math.max(1, limit));
 }
 
+function get7DayLearningTrend(account) {
+    const dailyStats = account?.vocabulary?.dailyStats || {};
+    const result = [];
+    const now = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        const displayDate = `${date.getMonth() + 1}/${date.getDate()}`;
+        const count = dailyStats[dateStr] || 0;
+        result.push({ date: displayDate, count });
+    }
+
+    return result;
+}
+
+function getWeeklyStats(account) {
+    const dailyStats = account?.vocabulary?.dailyStats || {};
+    const wordStats = account?.vocabulary?.wordStats || {};
+    const now = new Date();
+
+    // 计算本周和上周的日期范围
+    const dayOfWeek = now.getDay();
+    const thisWeekStart = new Date(now);
+    thisWeekStart.setDate(now.getDate() - dayOfWeek);
+    thisWeekStart.setHours(0, 0, 0, 0);
+
+    const lastWeekStart = new Date(thisWeekStart);
+    lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+
+    const lastWeekEnd = new Date(thisWeekStart);
+    lastWeekEnd.setDate(thisWeekStart.getDate() - 1);
+
+    // 聚合本周数据
+    let thisWeekWords = 0;
+    let thisWeekCorrect = 0;
+    let thisWeekWrong = 0;
+
+    for (let d = new Date(thisWeekStart); d <= now; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        thisWeekWords += dailyStats[dateStr] || 0;
+    }
+
+    // 聚合上周数据
+    let lastWeekWords = 0;
+    let lastWeekCorrect = 0;
+    let lastWeekWrong = 0;
+
+    for (let d = new Date(lastWeekStart); d <= lastWeekEnd; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        lastWeekWords += dailyStats[dateStr] || 0;
+    }
+
+    // 计算正确率（从 wordStats 中获取，这里简化处理）
+    Object.values(wordStats).forEach(stat => {
+        thisWeekCorrect += Number(stat?.correct) || 0;
+        thisWeekWrong += Number(stat?.wrong) || 0;
+    });
+
+    const thisWeekTotal = thisWeekCorrect + thisWeekWrong;
+    const thisWeekAccuracy = thisWeekTotal > 0 ? Math.round((thisWeekCorrect / thisWeekTotal) * 100) : 0;
+
+    return {
+        thisWeek: { words: thisWeekWords, accuracy: thisWeekAccuracy },
+        lastWeek: { words: lastWeekWords, accuracy: 0 }
+    };
+}
+
 function renderLearningStats(account) {
     const stats = account?.vocabulary?.wordStats || {};
     const weak = getWeakWords(stats, 5);
     const learned = account?.vocabulary?.learnedWords?.length || 0;
     const mastered = Object.values(stats).filter(s => (Number(s?.correct) || 0) >= 3 && (Number(s?.wrong) || 0) === 0).length;
+
+    // Task 1: 计算学习统计正确率
+    let totalCorrect = 0;
+    let totalWrong = 0;
+    Object.values(stats).forEach(stat => {
+        totalCorrect += Number(stat?.correct) || 0;
+        totalWrong += Number(stat?.wrong) || 0;
+    });
+    const totalAttempts = totalCorrect + totalWrong;
+    const accuracyPercent = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+
+    // Task 2: 7天学习趋势
+    const dailyLearning = get7DayLearningTrend(account);
+    const trendHtml = dailyLearning.length > 0
+        ? dailyLearning.map(day => (
+            `<div class="trend-day-item">` +
+            `<span class="trend-date">${day.date}</span>` +
+            `<span class="trend-count">${day.count} 词</span>` +
+            `</div>`
+        )).join("")
+        : `<div class="trend-empty">暂无学习记录</div>`;
+
+    // Task 3: 本周 vs 上周对比
+    const weeklyStats = getWeeklyStats(account);
+    const thisWeek = weeklyStats.thisWeek;
+    const lastWeek = weeklyStats.lastWeek;
+    const hasLastWeekData = lastWeek.words > 0;
+
+    let comparisonHtml = '';
+    if (hasLastWeekData) {
+        const wordsDiff = thisWeek.words - lastWeek.words;
+        const wordsPercent = lastWeek.words > 0 ? Math.round((wordsDiff / lastWeek.words) * 100) : 0;
+        const wordsDirection = wordsDiff >= 0 ? '↑' : '↓';
+        const wordsChange = Math.abs(wordsPercent);
+
+        comparisonHtml = (
+            `<div class="weekly-comparison">` +
+            `<div class="comparison-item">` +
+            `本周学习 <strong>${thisWeek.words}</strong> 词 ` +
+            `<span class="comparison-change ${wordsDiff >= 0 ? 'positive' : 'negative'}">${wordsDirection} ${wordsChange}%</span> vs 上周` +
+            `</div>` +
+            `</div>`
+        );
+    } else {
+        comparisonHtml = `<div class="weekly-comparison">暂无对比数据</div>`;
+    }
+
     const weakHtml = weak.length
         ? weak.map(item => (
             `<div class="weak-word-item">` +
@@ -671,10 +800,17 @@ function renderLearningStats(account) {
         `<div class="stats-summary">` +
         `<div class="stat-card">已学 <strong>${learned}</strong></div>` +
         `<div class="stat-card">掌握 <strong>${mastered}</strong></div>` +
+        `<div class="stat-card">正确率 <strong>${accuracyPercent}%</strong></div>` +
+        `</div>` +
+        `<div class="trend-section">` +
+        `<h3>最近7天学习</h3>` +
+        trendHtml +
+        comparisonHtml +
         `</div>` +
         `<div class="weak-words-section">` +
         `<h3>弱词清单</h3>` +
         weakHtml +
+        `<button class="game-btn game-btn-small" id="btn-weak-words-practice" style="margin-top:12px;">🎯 弱词专项练习</button>` +
         `</div>`
     );
 }
@@ -682,8 +818,30 @@ function renderLearningStats(account) {
 function getAchievementProgress(id, accountStats) {
     const def = ACHIEVEMENTS && ACHIEVEMENTS[id] ? ACHIEVEMENTS[id] : null;
     if (!def) return null;
+
     const mappedKey = def.metric || def.id || "";
-    const currentRaw = Number(accountStats?.[mappedKey]) || 0;
+    let currentRaw = 0;
+
+    // 根据 metric 从不同的数据源获取当前值
+    if (mappedKey === "learnedWords") {
+        currentRaw = currentAccount?.vocabulary?.learnedWords?.length || 0;
+    } else if (mappedKey === "highScore") {
+        currentRaw = currentAccount?.progress?.highScore || 0;
+    } else if (mappedKey === "learningStreak") {
+        currentRaw = currentAccount?.stats?.learningStreak || 0;
+    } else if (mappedKey === "perfectRuns") {
+        currentRaw = currentAccount?.stats?.perfectRuns || 0;
+    } else if (mappedKey === "nightSessions") {
+        currentRaw = currentAccount?.stats?.nightSessions || 0;
+    } else if (mappedKey === "armorCollected") {
+        currentRaw = currentAccount?.inventory?.armorCollection?.length || 0;
+    } else if (mappedKey === "diamondsCollected") {
+        currentRaw = currentAccount?.stats?.diamondsCollected || 0;
+    } else {
+        // 默认从 accountStats 中获取
+        currentRaw = Number(accountStats?.[mappedKey]) || 0;
+    }
+
     const target = Math.max(1, Number(def.target) || 1);
     const current = Math.min(currentRaw, target);
     return { current, target, percent: Math.floor((current / target) * 100) };
@@ -692,6 +850,8 @@ function getAchievementProgress(id, accountStats) {
 window.handleExportSave = handleExportSave;
 window.handleImportSave = handleImportSave;
 window.getWeakWords = getWeakWords;
+window.get7DayLearningTrend = get7DayLearningTrend;
+window.getWeeklyStats = getWeeklyStats;
 window.renderLearningStats = renderLearningStats;
 window.getAchievementProgress = getAchievementProgress;
 

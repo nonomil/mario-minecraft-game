@@ -2,27 +2,92 @@
  * 15-entities-base.js - 碰撞检测与基础实体类
  * 从 15-entities.js 拆分
  */
+
+// 简单的空间分区缓存（用于减少碰撞检测次数）
+const spatialCache = {
+    enabled: false,
+    cellSize: 200,
+    grid: new Map(),
+    frame: 0
+};
+
+/**
+ * 启用空间分区优化
+ */
+function enableSpatialPartitioning(cellSize = 200) {
+    spatialCache.enabled = true;
+    spatialCache.cellSize = cellSize;
+    spatialCache.grid.clear();
+}
+
+/**
+ * 禁用空间分区优化
+ */
+function disableSpatialPartitioning() {
+    spatialCache.enabled = false;
+    spatialCache.grid.clear();
+}
+
+/**
+ * 获取实体所在的网格单元
+ */
+function getCellKey(x, y) {
+    const cellX = Math.floor(x / spatialCache.cellSize);
+    const cellY = Math.floor(y / spatialCache.cellSize);
+    return `${cellX},${cellY}`;
+}
+
+/**
+ * 获取实体周围的网格单元（包括自身和相邻8个）
+ */
+function getNearbyCells(x, y, width, height) {
+    const cells = new Set();
+    const x1 = x;
+    const y1 = y;
+    const x2 = x + width;
+    const y2 = y + height;
+
+    cells.add(getCellKey(x1, y1));
+    cells.add(getCellKey(x2, y1));
+    cells.add(getCellKey(x1, y2));
+    cells.add(getCellKey(x2, y2));
+
+    return Array.from(cells);
+}
+
 function colCheck(shapeA, shapeB) {
     return colCheckRect(shapeA.x, shapeA.y, shapeA.width, shapeA.height, shapeB.x, shapeB.y, shapeB.width, shapeB.height);
 }
 
 function colCheckRect(x1, y1, w1, h1, x2, y2, w2, h2) {
+    // Early exit: check if bounding boxes don't overlap at all
+    if (x1 + w1 <= x2 || x2 + w2 <= x1 || y1 + h1 <= y2 || y2 + h2 <= y1) {
+        return null;
+    }
+
     const vX = (x1 + w1 / 2) - (x2 + w2 / 2);
     const vY = (y1 + h1 / 2) - (y2 + h2 / 2);
     const hWidths = w1 / 2 + w2 / 2;
     const hHeights = h1 / 2 + h2 / 2;
-    if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
-        const oX = hWidths - Math.abs(vX);
-        const oY = hHeights - Math.abs(vY);
-        // 垂直重叠较小时优先判断为垂直碰撞（站在平台边缘不会被当成撞墙）
-        if (oX >= oY || oY < 8) {
-            if (vY > 0) return "t";
-            return "b";
-        }
-        if (vX > 0) return "l";
-        return "r";
+
+    const absVX = Math.abs(vX);
+    const absVY = Math.abs(vY);
+
+    // Early exit: no collision
+    if (absVX >= hWidths || absVY >= hHeights) {
+        return null;
     }
-    return null;
+
+    const oX = hWidths - absVX;
+    const oY = hHeights - absVY;
+
+    // 垂直重叠较小时优先判断为垂直碰撞（站在平台边缘不会被当成撞墙）
+    if (oX >= oY || oY < 8) {
+        if (vY > 0) return "t";
+        return "b";
+    }
+    if (vX > 0) return "l";
+    return "r";
 }
 
 function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) {

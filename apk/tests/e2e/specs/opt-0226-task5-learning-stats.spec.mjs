@@ -9,6 +9,7 @@ test("task5: weak words sorted by error rate", async ({ page }) => {
       dog: { correct: 0, wrong: 2 }
     }, 5)
   );
-  expect(weak[0].word).toBe("apple");
-  expect(weak.some((w) => w.word === "cat")).toBe(false);
+  expect(weak[0].word).toBe("dog");  // dog has 100% error rate (highest)
+  expect(weak[1].word).toBe("apple");  // apple has 75% error rate (second)
+  expect(weak.some((w) => w.word === "cat")).toBe(false);  // cat has 0% error rate (filtered out)
 });

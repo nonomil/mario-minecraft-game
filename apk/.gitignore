@@ -41,3 +41,9 @@ android-app/web/index.html
 *.lnk
 apks/
 words/db/reports/
+
+# Test artifacts (Playwright/E2E outputs)
+test-results/
+tests/e2e/test-results/
+playwright-report/
+tests/e2e/playwright-report/

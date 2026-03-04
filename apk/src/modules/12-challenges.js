@@ -739,6 +739,7 @@ function completeLearningChallenge(correct) {
     if (correct) {
         sessionCorrectStreak++;
         sessionWrongStreak = 0;
+        if (typeof playChallengeCorrectSfx === "function") playChallengeCorrectSfx();
         const quality = elapsed < 3000 ? "correct_fast" : "correct_slow";
         writeChallengeResultToProgress(wordObj, quality);
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
@@ -762,6 +763,7 @@ function completeLearningChallenge(correct) {
     } else {
         sessionWrongStreak++;
         sessionCorrectStreak = 0;
+        if (typeof playChallengeWrongSfx === "function") playChallengeWrongSfx();
         writeChallengeResultToProgress(wordObj, "wrong");
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
             wordPicker.updateWordQuality(wordObj.en, "wrong");
@@ -836,6 +838,34 @@ function speakWord(wordObj) {
     const zhText = settings.speechZhEnabled ? normalizeSpeechText(wordObj?.zh, "") : "";
     if (!enText && !zhText) return;
 
+    // Use TTS Provider if available
+    if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
+        const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
+        const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
+
+        if (enText && zhText) {
+            // Speak English first, then Chinese
+            window.MMWG_TTS.speak(enText, "en-US", { rate: enRate })
+                .then(() => window.MMWG_TTS.speak(zhText, "zh-CN", { rate: zhRate }))
+                .catch(() => {
+                    // Fallback to legacy implementation
+                    legacySpeakWord(wordObj, enText, zhText);
+                });
+        } else if (enText) {
+            window.MMWG_TTS.speak(enText, "en-US", { rate: enRate })
+                .catch(() => legacySpeakWord(wordObj, enText, zhText));
+        } else if (zhText) {
+            window.MMWG_TTS.speak(zhText, "zh-CN", { rate: zhRate })
+                .catch(() => legacySpeakWord(wordObj, enText, zhText));
+        }
+        return;
+    }
+
+    // Fallback to legacy implementation
+    legacySpeakWord(wordObj, enText, zhText);
+}
+
+function legacySpeakWord(wordObj, enText, zhText) {
     const nativeTts = getNativeTts();
     if (!audioUnlocked && !nativeTts) {
         speechPendingUnlockWord = wordObj;
@@ -916,7 +946,7 @@ function speakWord(wordObj) {
                 if (zhVoice) uZh.voice = zhVoice;
                 uZh.rate = clamp(Number(settings.speechZhRate) || 0.9, 0.5, 2.0);
                 uEn.onend = () => {
-                    try { window.speechSynthesis.speak(uZh); } catch {}
+                    try { window.speechSynthesis.speak(uZh); } catch (e) { /* ignore */ }
                 };
             }
 
@@ -933,4 +963,5 @@ function speakWord(wordObj) {
         zhText ? { text: zhText, lang: "zh-CN" } : null
     ]);
 }
+
 

@@ -701,3 +701,9 @@ async function confirmVocabPrompt() {
     showToast("📚 词库已设置");
 }
 
+function startWeakWordsPractice() {
+    return { status: "not_implemented" };
+}
+
+window.startWeakWordsPractice = startWeakWordsPractice;
+

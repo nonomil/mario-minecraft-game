@@ -184,12 +184,22 @@
             <label class="settings-label"><input type="checkbox" id="opt-bgm"> 背景音乐</label>
         </div>
         <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-sfx"> 挑战音效</label>
+        </div>
+        <div class="settings-row">
             <div class="settings-label">英文语速</div>
             <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
         </div>
         <div class="settings-row">
             <div class="settings-label">中文语速</div>
             <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
+        </div>
+        <div class="settings-row">
+            <button id="btn-speech-test" class="game-btn">🔊 测试发音</button>
+        </div>
+        <div class="settings-row">
+            <button id="btn-tts-self-check" class="game-btn">🔍 语音自检</button>
+            <div id="tts-check-result" class="tts-check-result"></div>
         </div>
         <div class="settings-row">
             <div class="settings-label">界面大小</div>
@@ -437,6 +447,8 @@
         </div>
         <div class="profile-actions">
             <button class="game-btn" id="btn-profile-save-leaderboard">保存并查看排行榜</button>
+            <button class="game-btn" id="btn-profile-export-save">📤 导出存档</button>
+            <button class="game-btn" id="btn-profile-import-save">📥 导入存档</button>
         </div>
     </div>
 </div>
@@ -504,6 +516,11 @@
 <script src="src/defaults.js"></script>
 <script src="src/storage.js"></script>
 <script src="words/vocabs/manifest.js"></script>
+<!-- TTS Provider 抽象层 -->
+<script src="src/tts/index.js"></script>
+<script src="src/tts/provider-web.js"></script>
+<script src="src/tts/provider-apk.js"></script>
+<script src="src/tts/provider-mini.js"></script>
 <!-- main.js 模块化拆分 (将 main.js 按功能拆分为以下模块) -->
 <script src="src/modules/01-config.js"></script>
 <script src="src/modules/02-utils.js"></script>
@@ -531,9 +548,11 @@
 <!-- 新群系装饰系统 -->
 <script src="src/modules/21-decorations-new.js"></script>
 <!-- 游戏逻辑和渲染模块 -->
-<script src="src/modules/11-game-init.js"></script>
 <script src="src/modules/12-challenges.js"></script>
+<script src="src/modules/11-game-init.js"></script>
 <script src="src/modules/12-village-challenges.js"></script>
+<script src="src/modules/22-performance.js"></script>
+<script src="src/modules/23-error-handler.js"></script>
 <script src="src/modules/13-game-loop.js"></script>
 <script src="src/modules/14-renderer-main.js"></script>
 <script src="src/modules/14-renderer-entities.js"></script>

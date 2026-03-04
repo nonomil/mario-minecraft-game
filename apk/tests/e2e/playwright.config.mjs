@@ -22,7 +22,7 @@ export default defineConfig({
     cwd: ".",
     url: "http://localhost:4173/Game.html",
     timeout: 120_000,
-    reuseExistingServer: true
+    reuseExistingServer: false
   }
 });
 

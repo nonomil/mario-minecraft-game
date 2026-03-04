@@ -2,6 +2,38 @@
  * 17-bootstrap.js - 启动入口与测试API
  * 从 main.js 拆分 (原始行 7402-7663)
  */
+
+function initializeTtsProvider() {
+    // Detect platform and initialize appropriate TTS provider
+    const platformTarget = window.MMWG_PLATFORM_TARGET || "web";
+
+    try {
+        if (platformTarget === "apk" || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+            // Use APK provider for Capacitor environment
+            if (typeof ApkTtsProvider !== "undefined") {
+                window.MMWG_TTS = new ApkTtsProvider();
+                console.log("[TTS] Initialized APK TTS Provider");
+                return;
+            }
+        } else if (platformTarget === "mini") {
+            // Use Mini provider for miniprogram environment
+            if (typeof MiniTtsProvider !== "undefined") {
+                window.MMWG_TTS = new MiniTtsProvider();
+                console.log("[TTS] Initialized Mini TTS Provider");
+                return;
+            }
+        }
+
+        // Default to Web provider
+        if (typeof WebTtsProvider !== "undefined") {
+            window.MMWG_TTS = new WebTtsProvider();
+            console.log("[TTS] Initialized Web TTS Provider");
+        }
+    } catch (err) {
+        console.error("[TTS] Failed to initialize TTS provider:", err);
+    }
+}
+
 async function start() {
     const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes, loadedVillage] = await Promise.all([
         loadJsonWithFallback("config/game.json", defaultGameConfig),
@@ -42,6 +74,9 @@ async function start() {
 
     wireAudioUnlock();
     applyBgmSetting();
+
+    // Initialize TTS Provider based on platform
+    initializeTtsProvider();
 
     installSafeAreaChangeWatcher();
     applySettingsToUI();
@@ -255,6 +290,13 @@ async function start() {
             if (!modalPauseActive()) setOverlay(true, "pause");
         }
     });
+
+    // Register Service Worker for PWA support
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => console.log('SW registered:', reg.scope))
+            .catch(err => console.warn('SW registration failed:', err));
+    }
 
     bootReady = true;
     const loginVisible = document.getElementById("login-screen")?.classList.contains("visible");

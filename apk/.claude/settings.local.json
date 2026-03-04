@@ -1,0 +1,58 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__codex__codex",
+      "mcp__codex__codex-reply",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(pytest*)",
+      "Bash(python -m pytest*)",
+      "Bash(test -d .git)",
+      "Bash(npm run test:e2e -- ui-analysis.spec.mjs)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git merge*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"import os, runpy, sys; from pathlib import Path; project_dir = Path(os.environ.get('CLAUDE_PROJECT_DIR') or os.getcwd()).resolve(); runner_path = (project_dir / '.claude' / 'scripts' / 'hook_runner.py').resolve(); sys.argv = [str(runner_path), '--script', '.claude/scripts/pre_merge_scope_guard.py']; runpy.run_path(str(runner_path), run_name='__main__')\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"import os, runpy, sys; from pathlib import Path; project_dir = Path(os.environ.get('CLAUDE_PROJECT_DIR') or os.getcwd()).resolve(); runner_path = (project_dir / '.claude' / 'scripts' / 'hook_runner.py').resolve(); sys.argv = [str(runner_path), '--script', '.claude/scripts/auto_checkpoint_commit.py']; runpy.run_path(str(runner_path), run_name='__main__')\"",
+            "timeout": 30,
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash(git commit*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -c \"import os, runpy, sys; from pathlib import Path; project_dir = Path(os.environ.get('CLAUDE_PROJECT_DIR') or os.getcwd()).resolve(); runner_path = (project_dir / '.claude' / 'scripts' / 'hook_runner.py').resolve(); sys.argv = [str(runner_path), '--script', '.claude/scripts/append_changelog_draft.py']; runpy.run_path(str(runner_path), run_name='__main__')\"",
+            "timeout": 30,
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}
