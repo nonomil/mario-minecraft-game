@@ -1,0 +1,49 @@
+.btn,
+.game-btn,
+.overlay-btn,
+.hud-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-md);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.btn-primary,
+.game-btn,
+.overlay-btn {
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.btn-sm {
+  min-height: 28px;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+.btn-md {
+  min-height: 36px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-base);
+}
+
+.btn-lg {
+  min-height: 44px;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-lg);
+}
+
+.btn:active,
+.game-btn:active,
+.overlay-btn:active,
+.hud-btn:active {
+  transform: scale(0.98);
+}
+
+.touch-btn {
+  border-radius: var(--radius-full);
+}

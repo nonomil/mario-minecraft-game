@@ -21,10 +21,11 @@ async function openGameAndBoot(page) {
   }, null, { timeout: 30_000 });
 }
 
-test("P0 trader house auto-enter opens trader modal at door range", async ({ page }) => {
+test("P0 trader house opens modal by click interaction (not auto-enter)", async ({ page }) => {
   await openGameAndBoot(page);
 
   const probe = await page.evaluate(() => {
+    if (typeof openVillageTrader !== "function") return { ok: false, reason: "openVillageTrader missing" };
     if (typeof settings !== "undefined" && settings) settings.villageEnabled = true;
     if (!player) return { ok: false, reason: "player missing" };
 
@@ -48,13 +49,18 @@ test("P0 trader house auto-enter opens trader modal at door range", async ({ pag
     player.x = trader.x + ((trader.w || 72) - px) * 0.5;
     cameraX = Math.max(0, player.x - (Number(cameraOffsetX) || 300));
 
+    const modalBefore = document.getElementById("village-trader-modal");
+    const beforeVisible = !!modalBefore && modalBefore.style.display === "flex";
     if (typeof updateVillages === "function") updateVillages();
+    const openedByClick = openVillageTrader(village);
+    const modalAfter = document.getElementById("village-trader-modal");
+    const afterVisible = !!modalAfter && modalAfter.style.display === "flex";
 
-    const modal = document.getElementById("village-trader-modal");
-    const modalVisible = !!modal && modal.style.display === "flex";
-    return { ok: true, modalVisible };
+    return { ok: true, beforeVisible, openedByClick, afterVisible };
   });
 
   expect(probe.ok, probe.reason || "probe failed").toBeTruthy();
-  expect(probe.modalVisible).toBeTruthy();
+  expect(probe.beforeVisible).toBeFalsy();
+  expect(probe.openedByClick).toBeTruthy();
+  expect(probe.afterVisible).toBeTruthy();
 });

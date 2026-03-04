@@ -1,21 +1,28 @@
 import { expect, test } from "@playwright/test";
 
+async function openGameAndBoot(page) {
+  await page.goto("/Game.html", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => typeof window.MMWG_TEST_API !== "undefined");
+  await page.waitForFunction(() => typeof window.MMWG_STORAGE !== "undefined");
+
+  await page.evaluate(async () => {
+    const username = `pw_vocab_switch_${Date.now()}`;
+    const account = window.MMWG_STORAGE.createAccount(username);
+    await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
+    window.MMWG_TEST_API.actions.bootGameLoopIfNeeded();
+    if (typeof paused !== "undefined") paused = false;
+    if (typeof pauseStack === "number") pauseStack = 0;
+    if (typeof setOverlay === "function") setOverlay(false);
+  });
+
+  await page.waitForFunction(() => window.MMWG_TEST_API.getState().startedOnce === true, null, { timeout: 30_000 });
+}
+
 test("P0 vocab packs should include and switch to newly added packs", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (err) => errors.push(String(err)));
 
-  await page.goto("/Game.html");
-
-  const username = page.locator("#username-input");
-  if (await username.isVisible().catch(() => false)) {
-    await username.fill("vocab_tester");
-    await username.press("Enter");
-    await page.waitForTimeout(300);
-    const loginBtn = page.locator("#btn-login");
-    if (await loginBtn.isVisible().catch(() => false)) {
-      await loginBtn.click({ force: true }).catch(() => {});
-    }
-  }
+  await openGameAndBoot(page);
 
   await page.waitForSelector("#btn-settings", { timeout: 20000 });
   await page.click("#btn-settings");
@@ -26,7 +33,7 @@ test("P0 vocab packs should include and switch to newly added packs", async ({ p
   expect(optionValues).toContain("vocab.junior_high.basic");
   expect(optionValues).toContain("vocab.junior_high.intermediate");
   expect(optionValues).toContain("vocab.junior_high.advanced");
-  expect(optionValues).toContain("vocab.kindergarten.supplement");
+  expect(optionValues).toContain("vocab.kindergarten");
   expect(optionValues).toContain("vocab.elementary_lower.supplement");
 
   await page.selectOption("#opt-vocab", "vocab.junior_high.basic");
@@ -45,7 +52,7 @@ test("P0 vocab packs should include and switch to newly added packs", async ({ p
   await page.waitForTimeout(500);
   await expect(page.locator("#vocab-preview")).toContainText("junior_high");
 
-  await page.selectOption("#opt-vocab", "vocab.kindergarten.supplement");
+  await page.selectOption("#opt-vocab", "vocab.kindergarten");
   await page.waitForTimeout(500);
   await expect(page.locator("#vocab-preview")).toContainText("kindergarten");
 

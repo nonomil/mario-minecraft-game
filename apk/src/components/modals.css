@@ -1,0 +1,25 @@
+.modal-overlay,
+#screen-overlay,
+#settings-modal,
+.learning-modal {
+  background: var(--color-bg-overlay);
+}
+
+.modal,
+.overlay-card,
+.settings-panel,
+.learning-modal-content,
+.armor-modal-content {
+  background: var(--color-bg-panel);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+}
+
+.modal-header,
+.overlay-title,
+.settings-title,
+.learning-modal-header,
+.armor-modal-header {
+  color: var(--color-accent);
+}

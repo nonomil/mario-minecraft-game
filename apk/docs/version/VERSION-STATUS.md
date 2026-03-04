@@ -1,21 +1,21 @@
-# Version Status (2026-03-04)
+﻿# Version Status (2026-03-04)
 
 ## Current Baseline
-- Local version file: `version.json`
+- Local version file: `apk/version.json`
 - versionName: **1.19.9**
 - versionCode/buildNumber: **64**
 
 ## Git State
-- Branch: `master`
-- Includes parallel task integration (A/B/C/D), core optimization (task1), and storage/config hardening (task2).
+- Branch: `main`
+- Includes parallel integration (A/B/C/D), performance optimization (Task1), and storage/config hardening (Task2).
 
 ## Records Check
-- Updated: `docs/version/CHANGELOG.md`
-- Updated: `docs/version/VERSION-STATUS.md`
-- Updated: `docs/version/Progress.md`
-- Updated: `docs/release/release-notes.md`
-- Added: `docs/release/发布说明-v1.19.9.md`
+- Updated: `apk/docs/version/CHANGELOG.md`
+- Updated: `apk/docs/version/VERSION-STATUS.md`
+- Updated: `apk/docs/version/Progress.md`
+- Updated: `apk/docs/release/release-notes.md`
+- Added/Updated: `apk/docs/release/发布说明-v1.19.9.md`
 
 ## Validation Snapshot
-- ???????????????package/version/gradle/service worker??
-- ?????????????
+- 单文件构建链路通过（不残留 `src/modules/*` 外链脚本）。
+- APK 构建与发布由 GitHub Actions 执行并产出 release apk。
