@@ -288,6 +288,32 @@ npx playwright test -c tests/e2e/playwright.config.mjs specs/p0-render-path.spec
 
 ---
 
+## UI 并行开发质量门禁（新增）
+
+用于 `feat/ui-*-v2` 并行分支合并前的统一检查。
+
+### 必跑用例
+
+```bash
+npm run test:e2e -- deep-ui-analysis.spec.mjs
+npm run test:e2e -- ui-analysis.spec.mjs
+```
+
+### 通过标准
+
+1. `deep-ui-analysis.spec.mjs` 全部通过
+2. `ui-analysis.spec.mjs` 全部通过
+3. deep-ui 报告中的截图统计与 `test-results/deep-ui/*.png` 实际数量一致
+4. `ui-analysis` 产出时间戳报告文件与 latest 报告文件
+
+### 失败处理
+
+1. 任一测试失败，停止合并列车
+2. 先修复 D 分支（测试口径）再继续合并 A/B/C
+3. 修复后必须完整重跑两套 UI 用例，不允许只跑单测
+
+---
+
 ## 已知问题
 
 1. `tests/p3-regression.spec.js` 最后 1 个测试被用户中断，需重跑确认

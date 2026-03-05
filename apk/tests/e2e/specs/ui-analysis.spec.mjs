@@ -230,8 +230,20 @@ test.describe("UI一致性分析", () => {
       await page.waitForTimeout(500);
     }
 
+    // 避免学习挑战弹窗遮挡设置按钮
+    const challengeModal = page.locator("#challenge-modal.visible");
+    if (await challengeModal.isVisible().catch(() => false)) {
+      const closeBtn = challengeModal.locator("#btn-challenge-close, .close-btn, button").first();
+      if (await closeBtn.isVisible().catch(() => false)) {
+        await closeBtn.click({ force: true });
+      } else {
+        await page.keyboard.press("Escape");
+      }
+      await page.waitForTimeout(200);
+    }
+
     // 打开设置
-    await page.click("#btn-settings");
+    await page.click("#btn-settings", { force: true });
     await page.waitForTimeout(1000);
 
     // 截图
@@ -242,7 +254,7 @@ test.describe("UI一致性分析", () => {
     await expect(settingsModal).toBeVisible();
 
     // 提取设置面板样式
-    const settingsPanel = page.locator(".settings-panel");
+    const settingsPanel = page.locator("#settings-modal .settings-panel").first();
     const panelStyles = await settingsPanel.evaluate((el) => {
       const computed = window.getComputedStyle(el);
       return {
@@ -259,7 +271,7 @@ test.describe("UI一致性分析", () => {
     uiData.modals.push(panelStyles);
 
     // 提取设置标题
-    const settingsTitle = page.locator(".settings-title");
+    const settingsTitle = page.locator("#settings-modal .settings-panel .settings-title").first();
     const titleText = await settingsTitle.textContent();
     const titleStyles = await settingsTitle.evaluate((el, txt) => {
       const computed = window.getComputedStyle(el);
@@ -424,8 +436,11 @@ test.describe("UI一致性分析", () => {
     };
 
     // 保存JSON报告
-    const reportPath = "test-results/ui-analysis-report.json";
+    const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const reportPath = `test-results/ui-analysis-report-${stamp}.json`;
+    const latestReportPath = "test-results/ui-analysis-report.latest.json";
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2), "utf-8");
+    fs.writeFileSync(latestReportPath, JSON.stringify(report, null, 2), "utf-8");
 
     // 输出控制台摘要
     console.log("\n========== UI一致性分析汇总 ==========");
@@ -450,6 +465,7 @@ test.describe("UI一致性分析", () => {
     console.log(`(前10个) ${report.consistency.paddings.values.slice(0, 10)}`);
 
     console.log(`\n报告已保存: ${reportPath}`);
+    console.log(`最新报告: ${latestReportPath}`);
     console.log("========================================\n");
   });
 });

@@ -1,5 +1,4 @@
 :root {
-  /* Color tokens */
   --color-primary: #4caf50;
   --color-primary-dark: #388e3c;
   --color-accent: #ffd700;
@@ -10,7 +9,6 @@
   --color-text-primary: #ffffff;
   --color-text-secondary: #e0e0e0;
 
-  /* Typography tokens */
   --font-family-base: "Verdana", "Microsoft YaHei", "微软雅黑", sans-serif;
   --font-family-display: "Arial", "Microsoft YaHei", "微软雅黑", sans-serif;
   --font-size-xs: 10px;
@@ -23,7 +21,6 @@
   --font-weight-medium: 600;
   --font-weight-bold: 700;
 
-  /* Spacing tokens (4px scale) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -32,14 +29,12 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  /* Radius tokens */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-full: 999px;
 
-  /* Layer tokens */
   --z-hud: 10;
   --z-overlay: 180;
   --z-modal: 200;

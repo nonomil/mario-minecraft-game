@@ -14,6 +14,11 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     dialogs: []
   };
 
+  async function captureScreenshot(page, name, path) {
+    await page.screenshot({ path, fullPage: true });
+    uiData.screenshots.push(name);
+  }
+
   test.beforeEach(async ({ page }) => {
     await page.goto("/Game.html");
     await page.waitForLoadState("domcontentloaded");
@@ -25,8 +30,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     await page.waitForTimeout(1000);
 
     // 截图：初始状态
-    await page.screenshot({ path: "test-results/deep-ui/01-initial-state.png", fullPage: true });
-    uiData.screenshots.push("01-initial-state");
+    await captureScreenshot(page, "01-initial-state", "test-results/deep-ui/01-initial-state.png");
 
     // 检查是否有登录界面
     const loginScreen = page.locator("#login-screen");
@@ -35,7 +39,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     if (isLoginVisible) {
       // 填写用户名
       await page.fill("#username-input", "深度测试用户");
-      await page.screenshot({ path: "test-results/deep-ui/02-login-filled.png", fullPage: true });
+      await captureScreenshot(page, "02-login-filled", "test-results/deep-ui/02-login-filled.png");
 
       // 点击登录
       await page.click("#btn-login");
@@ -43,8 +47,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     }
 
     // 截图：登录后状态
-    await page.screenshot({ path: "test-results/deep-ui/03-after-login.png", fullPage: true });
-    uiData.screenshots.push("03-after-login");
+    await captureScreenshot(page, "03-after-login", "test-results/deep-ui/03-after-login.png");
   });
 
   test("场景2: 初始弹窗和教程", async ({ page }) => {
@@ -56,7 +59,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     await expect(overlay).toBeVisible({ timeout: 5000 });
 
     // 截图：初始弹窗
-    await page.screenshot({ path: "test-results/deep-ui/04-initial-modal.png", fullPage: true });
+    await captureScreenshot(page, "04-initial-modal", "test-results/deep-ui/04-initial-modal.png");
 
     // 提取弹窗内容
     const modalData = await extractModalData(page, "#screen-overlay", "初始弹窗");
@@ -77,7 +80,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     }
 
     // 截图：进入游戏后
-    await page.screenshot({ path: "test-results/deep-ui/05-game-started.png", fullPage: true });
+    await captureScreenshot(page, "05-game-started", "test-results/deep-ui/05-game-started.png");
   });
 
   test("场景3: 游戏内HUD和单词显示", async ({ page }) => {
@@ -88,7 +91,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     await page.waitForTimeout(2000);
 
     // 截图：游戏主界面
-    await page.screenshot({ path: "test-results/deep-ui/06-game-main.png", fullPage: true });
+    await captureScreenshot(page, "06-game-main", "test-results/deep-ui/06-game-main.png");
 
     // 提取HUD元素
     const hudElements = await page.evaluate(() => {
@@ -147,7 +150,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     await page.waitForTimeout(1000);
 
     // 截图：设置界面
-    await page.screenshot({ path: "test-results/deep-ui/07-settings-modal.png", fullPage: true });
+    await captureScreenshot(page, "07-settings-modal", "test-results/deep-ui/07-settings-modal.png");
 
     // 提取设置界面数据
     const settingsData = await extractModalData(page, "#settings-modal", "设置界面");
@@ -160,7 +163,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
       await page.waitForTimeout(1000);
 
       // 截图：高级设置
-      await page.screenshot({ path: "test-results/deep-ui/08-advanced-settings.png", fullPage: true });
+      await captureScreenshot(page, "08-advanced-settings", "test-results/deep-ui/08-advanced-settings.png");
 
       // 关闭高级设置
       await page.keyboard.press("Escape");
@@ -181,7 +184,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     await page.waitForTimeout(1000);
 
     // 截图：背包界面
-    await page.screenshot({ path: "test-results/deep-ui/09-inventory.png", fullPage: true });
+    await captureScreenshot(page, "09-inventory", "test-results/deep-ui/09-inventory.png");
 
     // 提取背包数据
     const inventoryData = await page.evaluate(() => {
@@ -229,7 +232,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     await page.waitForTimeout(1000);
 
     // 截图：档案界面
-    await page.screenshot({ path: "test-results/deep-ui/10-profile.png", fullPage: true });
+    await captureScreenshot(page, "10-profile", "test-results/deep-ui/10-profile.png");
 
     // 提取档案数据
     const profileData = await extractModalData(page, "#profile-modal", "档案界面");
@@ -262,7 +265,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
 
     if (wordCardTriggered) {
       await page.waitForTimeout(500);
-      await page.screenshot({ path: "test-results/deep-ui/11-word-card.png", fullPage: true });
+      await captureScreenshot(page, "11-word-card", "test-results/deep-ui/11-word-card.png");
 
       // 提取单词卡片样式
       const wordCardData = await page.evaluate(() => {
@@ -323,7 +326,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
 
     if (challengeTriggered) {
       await page.waitForTimeout(500);
-      await page.screenshot({ path: "test-results/deep-ui/12-learning-challenge.png", fullPage: true });
+      await captureScreenshot(page, "12-learning-challenge", "test-results/deep-ui/12-learning-challenge.png");
 
       const challengeData = await extractModalData(page, ".learning-modal", "学习挑战");
       uiData.modals.push(challengeData);
@@ -341,7 +344,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
       await page.waitForTimeout(1000);
 
       // 截图：护甲选择
-      await page.screenshot({ path: "test-results/deep-ui/13-armor-select.png", fullPage: true });
+      await captureScreenshot(page, "13-armor-select", "test-results/deep-ui/13-armor-select.png");
 
       const armorData = await extractModalData(page, "#armor-select-modal", "护甲选择");
       uiData.modals.push(armorData);
@@ -369,7 +372,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
 
     if (toastTriggered) {
       await page.waitForTimeout(300);
-      await page.screenshot({ path: "test-results/deep-ui/14-toast.png", fullPage: true });
+      await captureScreenshot(page, "14-toast", "test-results/deep-ui/14-toast.png");
 
       const toastData = await page.evaluate(() => {
         const toast = document.querySelector('#toast');
@@ -399,7 +402,7 @@ test.describe("深度UI测试 - 完整游戏流程", () => {
     await page.waitForTimeout(1000);
 
     // 截图：移动端视图
-    await page.screenshot({ path: "test-results/deep-ui/15-mobile-view.png", fullPage: true });
+    await captureScreenshot(page, "15-mobile-view", "test-results/deep-ui/15-mobile-view.png");
 
     // 提取触摸按钮
     const touchButtons = await page.evaluate(() => {

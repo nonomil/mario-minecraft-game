@@ -1,0 +1,10 @@
+:root {
+  --color-primary: #4caf50;
+  --color-primary-dark: #388e3c;
+  --color-accent: #ffd700;
+  --color-bg-overlay: rgba(0, 0, 0, 0.55);
+  --color-bg-panel: rgba(20, 20, 20, 0.95);
+  --color-border-primary: rgba(255, 255, 255, 0.4);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e0e0e0;
+}

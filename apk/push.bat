@@ -549,20 +549,30 @@ if errorlevel 1 (
     exit /b 1
 )
 
+set "MAIN_PULL_TRIES=0"
+:main_repo_pull_retry
+set /a MAIN_PULL_TRIES+=1
 if /i "%PRIMARY%"=="proxy" (
     git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
 ) else (
     git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
 )
-if errorlevel 1 (
-    echo [错误] 主仓库 pull --ff-only 失败，请先手动处理主仓库 %BRANCH% 分支状态。
-    echo.
-    call :exit_with_pause 1
-    exit /b 1
-)
+if not errorlevel 1 goto main_repo_pull_ok
+if %MAIN_PULL_TRIES% GEQ 3 goto main_repo_pull_fail
+echo [警告] 主仓库 pull --ff-only 失败，准备重试（%MAIN_PULL_TRIES%/3）...
+timeout /t 3 /nobreak >nul
+goto main_repo_pull_retry
+
+:main_repo_pull_fail
+echo [错误] 主仓库 pull --ff-only 失败，请先手动处理主仓库 %BRANCH% 分支状态。
+echo.
+call :exit_with_pause 1
+exit /b 1
+
+:main_repo_pull_ok
 
 echo [同步] 复制当前仓库内容 -> 主仓库 apk/...
-robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist" >nul
+robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist" ".claude" ".trae" ".github" "docs\\plan" /XF "主仓库" >nul
 set "RC=%ERRORLEVEL%"
 if %RC% GEQ 8 (
     echo [错误] robocopy 失败，错误码=%RC%

@@ -1,0 +1,8 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-md);
+}

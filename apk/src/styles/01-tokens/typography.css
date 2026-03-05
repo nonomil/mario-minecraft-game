@@ -1,0 +1,11 @@
+:root {
+  --font-family-base: "Verdana", "Microsoft YaHei", "微软雅黑", sans-serif;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-weight-normal: 400;
+  --font-weight-medium: 600;
+  --font-weight-bold: 700;
+}
