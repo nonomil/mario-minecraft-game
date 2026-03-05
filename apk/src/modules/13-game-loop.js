@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 13-game-loop.js - 游戏主循环、背包、装备
  * 从 main.js 拆分（原始行 3818-4571）
  */
@@ -18,6 +18,8 @@ function isEntityNearCamera(entity, margin = blockSize * 2) {
 }
 
 let pauseStack = 0;
+let inventoryPauseHeld = false;
+let armorPauseHeld = false;
 
 function pushPause() {
     pauseStack += 1;
@@ -884,8 +886,21 @@ function getInventoryEntries(keys) {
         .filter(entry => entry.count > 0);
 }
 
+function applyInventoryTabLayoutClass() {
+    if (!inventoryContentEl) return;
+    inventoryContentEl.classList.remove(
+        "inventory-tab-items",
+        "inventory-tab-materials",
+        "inventory-tab-equipment",
+        "inventory-tab-collectibles"
+    );
+    const safeTab = INVENTORY_CATEGORIES[inventoryTab] ? inventoryTab : "items";
+    inventoryContentEl.classList.add(`inventory-tab-${safeTab}`);
+}
+
 function renderInventoryModal() {
     if (!inventoryContentEl) return;
+    applyInventoryTabLayoutClass();
     if (inventoryTab === "equipment") {
         const armorLabel = playerEquipment.armor ? (ARMOR_TYPES[playerEquipment.armor]?.name || playerEquipment.armor) : "无";
         const armorDur = playerEquipment.armor ? `${Math.round(Number(playerEquipment.armorDurability) || 0)}%` : "--";
@@ -896,17 +911,17 @@ function renderInventoryModal() {
             return `<div class="inventory-item" onclick="window.equipArmorFromBackpack && window.equipArmorFromBackpack('${entry.id}')">
                 <div class="inventory-item-left">
                     <div class="inventory-item-icon">${icon}</div>
-                    <div>${name} (${Math.round(Number(entry.durability) || 0)}%)</div>
+                    <div class="inventory-item-name">${name} (${Math.round(Number(entry.durability) || 0)}%)</div>
                 </div>
                 <div class="inventory-item-count">装备</div>
             </div>`;
         }).join("");
         const weapons = getInventoryEntries(["stone_sword", "iron_pickaxe", "bow", "arrow"]);
         const currentArmorHtml = `
-            <div class="inventory-equipment">
+            <div class="inventory-equipment inventory-item-wide">
                 <div>🛡️ 当前护甲：${armorLabel}</div>
                 <div>耐久：${armorDur}</div>
-                ${playerEquipment.armor ? `<div class="inventory-item" onclick="window.unequipArmorFromBackpack && window.unequipArmorFromBackpack()" style="cursor:pointer;margin-top:4px"><div class="inventory-item-left"><div>卸下护甲</div></div></div>` : ""}
+                ${playerEquipment.armor ? `<div class="inventory-item inventory-item-wide" onclick="window.unequipArmorFromBackpack && window.unequipArmorFromBackpack()" style="cursor:pointer;margin-top:4px"><div class="inventory-item-left"><div class="inventory-item-name">卸下护甲</div></div></div>` : ""}
             </div>
         `;
         const armorSectionHtml = armorListHtml || `<div class="inventory-empty">无库存护甲</div>`;
@@ -915,7 +930,7 @@ function renderInventoryModal() {
                 <div class="inventory-item" data-item="${entry.key}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
                     <div class="inventory-item-left">
                         <div class="inventory-item-icon">${entry.icon}</div>
-                        <div>${entry.label}</div>
+                        <div class="inventory-item-name">${entry.label}</div>
                     </div>
                     <div class="inventory-item-count">${entry.count}</div>
                 </div>
@@ -928,7 +943,7 @@ function renderInventoryModal() {
             const remaining = Math.max(0, (buffs.sunscreen?.expiresAt || 0) - Date.now());
             const mins = Math.floor(remaining / 60000);
             const secs = Math.floor((remaining % 60000) / 1000);
-            sunscreenHtml = `<div class="inventory-equipment" style="margin-top:6px;">
+            sunscreenHtml = `<div class="inventory-equipment inventory-item-wide" style="margin-top:6px;">
                 <div>🧴 防晒霜 剩余 ${mins}:${String(secs).padStart(2, "0")}</div>
             </div>`;
         }
@@ -945,7 +960,6 @@ function renderInventoryModal() {
     inventoryContentEl.innerHTML = entries.map(entry => {
         const isFood = !!FOOD_TYPES[entry.key];
         const isHealItem = isFood || entry.key === "diamond";
-        const isSummon = entry.key === "pumpkin" || entry.key === "iron";
         const fullHp = playerHp >= playerMaxHp;
         const onCooldown = isFood && foodCooldown > 0;
         const disabled = (isHealItem && fullHp) || onCooldown;
@@ -957,7 +971,7 @@ function renderInventoryModal() {
         return `<div class="inventory-item" data-item="${entry.key}" style="${style}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
             <div class="inventory-item-left">
                 <div class="inventory-item-icon">${entry.icon}</div>
-                <div>${entry.label}${hint}${onCooldown ? ' ⏳' : ''}</div>
+                <div class="inventory-item-name">${entry.label}${hint}${onCooldown ? ' ⏳' : ''}</div>
             </div>
             <div class="inventory-item-count">${entry.count}</div>
         </div>`;
@@ -976,7 +990,9 @@ function setInventoryTab(tab) {
 
 function showInventoryModal() {
     if (!inventoryModalEl) return;
+    if (inventoryModalEl.classList.contains("visible")) return;
     pushPause();
+    inventoryPauseHeld = true;
     inventoryModalEl.classList.add("visible");
     inventoryModalEl.setAttribute("aria-hidden", "false");
     renderInventoryModal();
@@ -984,9 +1000,13 @@ function showInventoryModal() {
 
 function hideInventoryModal() {
     if (!inventoryModalEl) return;
+    if (!inventoryModalEl.classList.contains("visible") && !inventoryPauseHeld) return;
     inventoryModalEl.classList.remove("visible");
     inventoryModalEl.setAttribute("aria-hidden", "true");
-    popPause();
+    if (inventoryPauseHeld) {
+        popPause();
+        inventoryPauseHeld = false;
+    }
 }
 
 function updateInventoryModal() {
@@ -1015,11 +1035,13 @@ function useInventoryItem(itemKey) {
     // 技能物品使用
     if (itemKey === "gunpowder") {
         // 火药炸弹
+        if (!Array.isArray(bombs) || typeof Bomb !== "function") {
+            showToast("❌ 炸药功能暂不可用");
+            return;
+        }
         inventory.gunpowder -= 1;
         const direction = player.facingRight ? 1 : -1;
-        if (typeof bombs !== 'undefined') {
-            bombs.push(new Bomb(player.x + player.width / 2, player.y, direction));
-        }
+        bombs.push(new Bomb(player.x + player.width / 2, player.y, direction));
         itemCooldownTimers.gunpowder = ITEM_COOLDOWNS.gunpowder;
         showToast("💣 投掷炸弹");
         used = true;
@@ -1090,8 +1112,10 @@ function useInventoryItem(itemKey) {
         let hitCount = 0;
         enemies.forEach(e => {
             if (!e.remove && e.x > cameraX - 100 && e.x < cameraX + canvas.width + 100) {
-                e.takeDamage(50);
-                hitCount++;
+                if (typeof e.takeDamage === "function") {
+                    e.takeDamage(50);
+                    hitCount++;
+                }
             }
         });
         // 龙息粒子效果
@@ -1413,7 +1437,10 @@ function showArmorSelectUI() {
     }
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
-    pushPause();
+    if (!armorPauseHeld) {
+        pushPause();
+        armorPauseHeld = true;
+    }
 }
 
 function hideArmorSelectUI() {
@@ -1421,7 +1448,10 @@ function hideArmorSelectUI() {
     if (!modal) return;
     modal.classList.remove("visible");
     modal.setAttribute("aria-hidden", "true");
-    popPause();
+    if (armorPauseHeld) {
+        popPause();
+        armorPauseHeld = false;
+    }
 }
 
 const RECIPES = {

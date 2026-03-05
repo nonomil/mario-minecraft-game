@@ -585,7 +585,7 @@ class Bomb {
         // 伤害敌人
         enemies.forEach(e => {
             const dist = Math.hypot(e.x - this.x, e.y - this.y);
-            if (dist < explosionRadius) {
+            if (dist < explosionRadius && typeof e.takeDamage === "function") {
                 e.takeDamage(30);
             }
         });
@@ -593,7 +593,11 @@ class Bomb {
         trees.forEach(t => {
             const dist = Math.hypot(t.x - this.x, t.y - this.y);
             if (dist < explosionRadius) {
-                t.takeDamage(999);
+                if (typeof t.takeDamage === "function") {
+                    t.takeDamage(999);
+                } else {
+                    t.remove = true;
+                }
             }
         });
         // 爆炸粒子

@@ -365,7 +365,7 @@ body {
 
 .learning-modal-content,
 .word-match-content {
-    width: min(640px, 92vw);
+    width: min(520px, 88vw);
     background: rgba(12, 12, 12, 0.95);
     border-radius: 20px;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.85);
@@ -1407,32 +1407,89 @@ canvas {
 
 .inventory-content {
     display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
     gap: 10px;
     max-height: calc(60vh - 120px);
-    overflow-y: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     scroll-behavior: smooth;
     padding-bottom: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.55) rgba(255, 255, 255, 0.15);
+}
+
+.inventory-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.inventory-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+}
+
+.inventory-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 215, 0, 0.75));
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.inventory-content.inventory-tab-items {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+}
+
+.inventory-content.inventory-tab-materials,
+.inventory-content.inventory-tab-collectibles {
+    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+}
+
+.inventory-content.inventory-tab-equipment {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 }
 
 .inventory-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
+    display: grid;
+    grid-template-rows: auto auto;
+    justify-items: center;
+    align-content: start;
+    gap: 8px;
+    padding: 10px 8px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     border: 2px solid rgba(255, 255, 255, 0.15);
-    min-height: 48px;
+    min-height: 108px;
     touch-action: manipulation;
 }
 
 .inventory-item-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
     font-weight: 700;
+    width: 100%;
+    text-align: center;
+}
+
+.inventory-item-name {
+    font-size: 12px;
+    line-height: 1.25;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.inventory-item-count {
+    font-size: 12px;
+    font-weight: 800;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 999px;
+    padding: 3px 8px;
+}
+
+.inventory-item-wide,
+.inventory-content .inventory-empty,
+.inventory-content .inventory-equipment {
+    grid-column: 1 / -1;
 }
 
 .inventory-item-icon {
