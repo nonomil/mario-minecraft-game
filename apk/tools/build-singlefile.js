@@ -101,6 +101,59 @@ function parseTagAttributes(tag) {
   return attrs;
 }
 
+function resolveCssImportPath(fromCssPath, rawHref) {
+  const href = normalizeRelPath(rawHref);
+  const fromDir = path.dirname(fromCssPath);
+  const abs = path.resolve(fromDir, href);
+  return abs;
+}
+
+function inlineCssImports(css, cssPath, projectRoot, visiting) {
+  const key = path.resolve(cssPath);
+  if (visiting.has(key)) {
+    return "";
+  }
+  visiting.add(key);
+
+  const importRe = /@import\s+(?:url\(\s*)?(?:(["'])([^"']+)\1|([^;\s)]+))(?:\s*\))?\s*([^;]*);/gi;
+  let out = "";
+  let lastIndex = 0;
+  let m;
+  while ((m = importRe.exec(css))) {
+    out += css.slice(lastIndex, m.index);
+    lastIndex = importRe.lastIndex;
+
+    const href = (m[2] || m[3] || "").trim();
+    const media = (m[4] || "").trim();
+    const abs = resolveCssImportPath(cssPath, href);
+
+    const relToRoot = path.relative(projectRoot, abs);
+    const isInsideRoot = relToRoot && !relToRoot.startsWith("..") && !path.isAbsolute(relToRoot);
+    if (!isInsideRoot) {
+      out += m[0];
+      continue;
+    }
+    if (!abs.toLowerCase().endsWith(".css")) {
+      out += m[0];
+      continue;
+    }
+
+    const importedCssRaw = readText(abs);
+    const importedCss = inlineCssImports(importedCssRaw, abs, projectRoot, visiting);
+    if (!importedCss.trim()) {
+      continue;
+    }
+    if (media) {
+      out += `@media ${media} {\n${importedCss}\n}\n`;
+    } else {
+      out += `${importedCss}\n`;
+    }
+  }
+  out += css.slice(lastIndex);
+  visiting.delete(key);
+  return out;
+}
+
 function inlineLocalStylesheets(html, projectRoot) {
   const re = /<link\b[^>]*>/gi;
   let out = html;
@@ -122,7 +175,8 @@ function inlineLocalStylesheets(html, projectRoot) {
 
   for (const { tag, hrefRaw, href } of candidates) {
     const cssPath = path.join(projectRoot, ...href.split("/"));
-    const css = readText(cssPath);
+    const cssRaw = readText(cssPath);
+    const css = inlineCssImports(cssRaw, cssPath, projectRoot, new Set());
     out = out.replace(tag, makeInlineStyle(css));
     replacedCount += 1;
   }
