@@ -2,6 +2,10 @@
  * 04-weapons.js - 武器与战斗系统
  * 从 main.js 拆分 (原始行 826-965)
  */
+
+// 火焰区域系统
+let fireZones = [];
+
 function getArrowCount() {
     return Number(inventory.arrow) || 0;
 }
@@ -361,4 +365,71 @@ function performMeleeAttack(weapon) {
     }
 
     playerWeapons.attackCooldown = weapon.cooldown;
+}
+
+// ============ 火药地面火焰系统 ============
+function createGroundFire(centerX, centerY, forwardRange, width, duration) {
+    const dir = player.facingRight ? 1 : -1;
+    const startX = centerX;
+    const endX = centerX + dir * forwardRange;
+    const fireCount = Math.floor(forwardRange / 20); // 每20px一个火焰
+
+    for (let i = 0; i <= fireCount; i++) {
+        const x = startX + (endX - startX) * (i / fireCount);
+        const y = groundY - 10; // 地面位置
+
+        // 创建火焰区域
+        const fireZone = {
+            x: x,
+            y: y,
+            width: 20,
+            height: 20,
+            duration: duration,
+            damagePerFrame: 0.1,
+            type: "fire",
+            particleTimer: 0
+        };
+
+        fireZones.push(fireZone);
+
+        // 生成初始火焰粒子
+        if (typeof particles !== 'undefined' && typeof EmberParticle !== 'undefined') {
+            for (let j = 0; j < 3; j++) {
+                particles.push(new EmberParticle(x + Math.random() * 20, y));
+            }
+        }
+    }
+}
+
+function updateFireZones() {
+    if (!fireZones || fireZones.length === 0) return;
+
+    for (const zone of fireZones) {
+        zone.duration--;
+
+        // 对范围内敌人造成伤害
+        if (typeof enemies !== 'undefined') {
+            for (const enemy of enemies) {
+                if (enemy.remove) continue;
+                if (rectIntersect(enemy.x, enemy.y, enemy.width, enemy.height, zone.x, zone.y, zone.width, zone.height)) {
+                    // 使用现有 debuff 系统
+                    if (typeof enemy.addDebuff === 'function') {
+                        enemy.addDebuff("burn", 60, { damagePerFrame: zone.damagePerFrame });
+                    } else {
+                        // 降级方案：直接伤害
+                        enemy.hp -= zone.damagePerFrame;
+                    }
+                }
+            }
+        }
+
+        // 生成持续粒子
+        zone.particleTimer++;
+        if (zone.particleTimer % 10 === 0 && typeof particles !== 'undefined' && typeof EmberParticle !== 'undefined') {
+            particles.push(new EmberParticle(zone.x + Math.random() * zone.width, zone.y));
+        }
+    }
+
+    // 清理过期火焰
+    fireZones = fireZones.filter(z => z.duration > 0);
 }

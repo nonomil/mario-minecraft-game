@@ -44,6 +44,16 @@ class Projectile extends Entity {
                     return;
                 }
             }
+            // 检查 dragonList 碰撞
+            if (typeof dragonList !== 'undefined') {
+                for (const d of dragonList) {
+                    if (!d.remove && rectIntersect(this.x, this.y, this.width, this.height, d.x, d.y, d.width, d.height)) {
+                        d.takeDamage(this.damage);
+                        this.remove = true;
+                        return;
+                    }
+                }
+            }
         } else if (this.faction === "golem") {
             for (const e of enemyList) {
                 if (!e.remove && rectIntersect(this.x, this.y, this.width, this.height, e.x, e.y, e.width, e.height)) {
@@ -99,6 +109,62 @@ class DragonFireball extends Projectile {
         this.damage = 30;
         this.width = 16;
         this.height = 16;
+    }
+}
+
+// ============ EnderDragonFireball 类 ============
+class EnderDragonFireball extends Projectile {
+    constructor(x, y, targetX, targetY) {
+        super(x, y, targetX, targetY, 3, "player");
+        this.damage = 25;
+        this.aoeRadius = 30;
+        this.width = 16;
+        this.height = 16;
+    }
+
+    update(playerRef, golemList, enemyList) {
+        this.x += this.velX;
+        this.y += this.velY;
+        this.lifetime--;
+
+        // 检测敌人碰撞
+        for (const e of enemyList) {
+            if (!e.remove && rectIntersect(this.x, this.y, this.width, this.height, e.x, e.y, e.width, e.height)) {
+                // 直接伤害
+                e.takeDamage(this.damage);
+                if (typeof showFloatingText === 'function') {
+                    showFloatingText(`-${this.damage}`, e.x, e.y - 10);
+                }
+
+                // AOE 伤害
+                for (const target of enemyList) {
+                    if (target.remove || target === e) continue;
+                    const dist = Math.hypot(target.x - this.x, target.y - this.y);
+                    if (dist <= this.aoeRadius) {
+                        const aoeDamage = Math.round(this.damage * 0.5);
+                        target.takeDamage(aoeDamage);
+                        if (typeof showFloatingText === 'function') {
+                            showFloatingText(`-${aoeDamage}`, target.x, target.y - 10);
+                        }
+                    }
+                }
+
+                this.remove = true;
+                return;
+            }
+        }
+
+        // BOSS 碰撞检测（复用现有逻辑）
+        if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
+            const b = bossArena.boss;
+            if (rectIntersect(this.x, this.y, this.width, this.height, b.x, b.y, b.width, b.height)) {
+                b.takeDamage(this.damage);
+                this.remove = true;
+                return;
+            }
+        }
+
+        if (this.lifetime <= 0) this.remove = true;
     }
 }
 
@@ -579,6 +645,91 @@ class Golem extends Entity {
             this.y = playerRef.y;
             this.stuckCounter = 0;
         }
+    }
+}
+
+// ============ EnderDragon 类 ============
+class EnderDragon extends Entity {
+    constructor(x, y) {
+        super(x, y, 64, 48); // 尺寸：64x48
+        this.hp = 30;
+        this.maxHp = 30;
+        this.speed = 2.5;
+        this.faction = "golem"; // 友军阵营
+        this.rideable = true;
+        this.rider = null;
+        this.fireballCooldown = 0;
+        this.velX = 0;
+        this.velY = 0;
+        this.color = "#8B00FF"; // 紫色
+    }
+
+    takeDamage(amount) {
+        this.hp -= amount;
+        if (typeof showFloatingText === 'function') {
+            showFloatingText(`-${amount}`, this.x, this.y - 10);
+        }
+        if (this.hp <= 0) this.die();
+    }
+
+    die() {
+        this.remove = true;
+        // 如果有骑手，通知下龙（由 13-game-loop.js 处理）
+        if (typeof showToast === 'function') {
+            showToast("💀 末影龙已死亡");
+        }
+    }
+
+    update(playerRef) {
+        // 如果有骑手，由骑手控制移动（在 13-game-loop.js 中处理）
+        if (this.rider) {
+            return;
+        }
+
+        // 无骑手时：悬停在玩家附近
+        const targetX = playerRef.x + 100;
+        const targetY = playerRef.y - 80;
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist > 20) {
+            this.velX = (dx / dist) * this.speed;
+            this.velY = (dy / dist) * this.speed;
+            this.x += this.velX;
+            this.y += this.velY;
+        }
+
+        // 边界限制（需要 cameraX, canvas, groundY 全局变量）
+        if (typeof cameraX !== 'undefined' && typeof canvas !== 'undefined') {
+            this.x = Math.max(cameraX - 50, Math.min(this.x, cameraX + canvas.width + 50));
+        }
+        if (typeof groundY !== 'undefined') {
+            this.y = Math.max(50, Math.min(this.y, groundY - this.height - 50));
+        }
+
+        // 冷却计时
+        if (this.fireballCooldown > 0) {
+            this.fireballCooldown--;
+        }
+    }
+
+    shootFireball(targetX, targetY) {
+        if (this.fireballCooldown > 0) return false;
+
+        const fireball = new EnderDragonFireball(
+            this.x + this.width / 2,
+            this.y + this.height / 2,
+            targetX,
+            targetY
+        );
+
+        if (typeof projectiles !== 'undefined') {
+            projectiles.push(fireball);
+        }
+
+        this.fireballCooldown = 60; // 1秒冷却
+        return true;
     }
 }
 

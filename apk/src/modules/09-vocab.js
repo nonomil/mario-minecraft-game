@@ -647,6 +647,15 @@ function applySettingsToUI() {
         touch.dataset.deviceMode = resolvedDevice;
     }
 
+    const secondarySpeechInput = document.getElementById("opt-speech-zh-enabled");
+    const secondarySpeechLabel = secondarySpeechInput?.closest("label");
+    if (secondarySpeechLabel) {
+        const suffixText = getCurrentLanguageMode() === "chinese" ? " 朗读英文释义" : " 朗读中文释义";
+        const textNode = Array.from(secondarySpeechLabel.childNodes || []).find(node => node && node.nodeType === Node.TEXT_NODE);
+        if (textNode) textNode.nodeValue = suffixText;
+        else secondarySpeechLabel.append(document.createTextNode(suffixText));
+    }
+
     if (viewportChanged && startedOnce) {
         if (nowMs() < viewportIgnoreUntilMs) return;
         if (startOverlayActive || (typeof isModalPauseActive === "function" && isModalPauseActive())) return;

@@ -37,13 +37,13 @@ function showWordCard(wordObj) {
     const en = document.getElementById("word-card-en");
     const zh = document.getElementById("word-card-zh");
     const phrase = document.getElementById("word-card-phrase");
-    if (en) en.innerText = wordObj.en;
-    if (zh) zh.innerText = wordObj.zh;
+    const displayContent = getWordDisplayContentSafe(wordObj);
+    if (en) en.innerText = displayContent.primaryText || "";
+    if (zh) zh.innerText = displayContent.secondaryText || "";
     if (phrase) {
-        const phraseText = String(wordObj?.phrase || "").trim();
-        const phraseZh = String(wordObj?.phraseZh || wordObj?.phraseTranslation || "").trim();
+        const phraseText = formatWordDisplayPair(displayContent.phrasePrimary, displayContent.phraseSecondary, " · ");
         if (phraseText) {
-            phrase.innerText = phraseZh ? `${phraseText} · ${phraseZh}` : phraseText;
+            phrase.innerText = phraseText;
             phrase.style.display = "block";
         } else {
             phrase.innerText = "";
@@ -139,17 +139,49 @@ function speakSessionWordByText(encodedEn) {
     }
 }
 
+function getWordDisplayContentSafe(wordObj) {
+    const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
+    if (displayContent) return displayContent;
+    const englishText = normalizeSpeechText(wordObj?.en, wordObj?.word);
+    const chineseText = normalizeSpeechText(wordObj?.zh, wordObj?.chinese);
+    const phraseText = String(wordObj?.phrase || "").trim();
+    const phraseTranslation = String(wordObj?.phraseZh || wordObj?.phraseTranslation || "").trim();
+    if (getLanguageModeSafe() === "chinese") {
+        return {
+            primaryText: chineseText || englishText,
+            secondaryText: englishText,
+            phrasePrimary: phraseTranslation,
+            phraseSecondary: phraseText
+        };
+    }
+    return {
+        primaryText: englishText || chineseText,
+        secondaryText: chineseText,
+        phrasePrimary: phraseText,
+        phraseSecondary: phraseTranslation
+    };
+}
+
+function formatWordDisplayPair(primary, secondary, separator) {
+    const first = String(primary || "").trim();
+    const second = String(secondary || "").trim();
+    if (first && second) return `${first}${separator}${second}`;
+    return first || second;
+}
+
 function buildSessionWordsSummary() {
     const words = getUniqueSessionWords();
     if (!words.length) return "";
     const items = words
         .map(word => {
             const en = String(word?.en || "").trim();
-            if (!en) return "";
+            const displayContent = getWordDisplayContentSafe(word);
+            const buttonText = String(displayContent.primaryText || en).trim();
+            if (!buttonText) return "";
             const encodedEn = encodeURIComponent(en);
-            const zh = escapeSessionWordAttr(String(word?.zh || "").trim());
-            const enText = escapeSessionWordText(en);
-            return `<button type="button" class="session-word" onclick="speakSessionWordByText('${encodedEn}')" title="${zh}">${enText}</button>`;
+            const secondaryText = escapeSessionWordAttr(String(displayContent.secondaryText || word?.zh || "").trim());
+            const primaryText = escapeSessionWordText(buttonText);
+            return `<button type="button" class="session-word" onclick="speakSessionWordByText('${encodedEn}')" title="${secondaryText}">${primaryText}</button>`;
         })
         .filter(Boolean)
         .join("");
@@ -549,21 +581,24 @@ function generateChineseScrambleDistractors(correctZh, count) {
 
 const CHALLENGE_TYPES = {
     translate(wordObj) {
-        const options = generateChallengeOptions(wordObj, "zh", LEARNING_CONFIG.challenge.baseOptions);
+        const promptText = getChallengeOptionValue(wordObj, "primary");
+        const answerText = getChallengeOptionValue(wordObj, "secondary") || promptText;
+        const options = generateChallengeOptions(wordObj, "secondary", LEARNING_CONFIG.challenge.baseOptions);
         return {
             mode: "options",
-            question: `Translate "${wordObj.en}"`,
+            question: `Translate "${promptText}"`,
             options,
-            answer: wordObj.zh || wordObj.en
+            answer: answerText
         };
     },
     listen(wordObj) {
-        const options = generateChallengeOptions(wordObj, "en", LEARNING_CONFIG.challenge.baseOptions);
+        const answerText = getChallengeOptionValue(wordObj, "primary");
+        const options = generateChallengeOptions(wordObj, "primary", LEARNING_CONFIG.challenge.baseOptions);
         return {
             mode: "options",
-            question: "听音选择正确的单词",
+            question: "听音选择正确的词语",
             options,
-            answer: wordObj.en
+            answer: answerText
         };
     },
     fill_blank(wordObj) {
@@ -581,14 +616,30 @@ const CHALLENGE_TYPE_KEYS = ["translate", "listen", "fill_blank", "multi_blank",
 
 function generateChallengeOptions(wordObj, key, count) {
     const distinct = pickDistinctWords(wordObj, count);
-    const baseValue = key === "zh" ? wordObj.zh || wordObj.en : wordObj.en;
-    const options = [{ text: baseValue, value: baseValue, correct: true }];
+    const baseValue = getChallengeOptionValue(wordObj, key);
+    const optionLang = getChallengeOptionLang(key);
+    const options = [{ text: baseValue, value: baseValue, correct: true, lang: optionLang }];
     distinct.forEach(entry => {
-        const value = key === "zh" ? entry.zh || entry.en : entry.en || entry.zh;
+        const value = getChallengeOptionValue(entry, key);
         if (!value) return;
-        options.push({ text: value, value, correct: false });
+        options.push({ text: value, value, correct: false, lang: optionLang });
     });
     return shuffle(options).slice(0, Math.max(2, options.length));
+}
+
+function getChallengeOptionValue(wordObj, key) {
+    const displayContent = getWordDisplayContentSafe(wordObj);
+    if (key === "primary") return String(displayContent.primaryText || "").trim();
+    if (key === "secondary") return String(displayContent.secondaryText || "").trim();
+    if (key === "zh") return String(wordObj?.zh || wordObj?.en || "").trim();
+    return String(wordObj?.en || wordObj?.zh || "").trim();
+}
+
+function getChallengeOptionLang(key) {
+    const mode = getLanguageModeSafe();
+    if (key === "primary") return mode === "chinese" ? "zh-CN" : "en-US";
+    if (key === "secondary") return mode === "chinese" ? "en-US" : "zh-CN";
+    return key === "zh" ? "zh-CN" : "en-US";
 }
 
 function pickDistinctWords(wordObj, count) {
@@ -784,15 +835,16 @@ function showLearningChallenge(challenge) {
                 // Add hover/focus event to speak the option
                 const speakOption = () => {
                     if (!settings.speechEnabled) return;
-                    const languageMode = getLanguageModeSafe();
                     const text = option.text;
+                    const optionLang = typeof option.lang === "string" && option.lang
+                        ? option.lang
+                        : (/^[\u3400-\u9FFF]+$/.test(String(text || "").trim()) ? "zh-CN" : "en-US");
 
                     if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
-                        const lang = languageMode === "chinese" ? "zh-CN" : "en-US";
-                        const rate = languageMode === "chinese"
+                        const rate = String(optionLang).toLowerCase().startsWith("zh")
                             ? clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0)
                             : clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
-                        window.MMWG_TTS.speak(text, lang, { rate });
+                        window.MMWG_TTS.speak(text, optionLang, { rate });
                     }
                 };
 
@@ -862,18 +914,17 @@ function showChallengeCorrection(wordObj) {
     correctionDiv.style.borderRadius = "8px";
     correctionDiv.style.background = "rgba(76,175,80,0.2)";
 
-    const en = String(wordObj.en || "").trim();
-    const zh = String(wordObj.zh || "").trim();
-    const phrase = String(wordObj.phrase || "").trim();
-    const phraseZh = String(wordObj.phraseZh || wordObj.phraseTranslation || "").trim();
+    const displayContent = getWordDisplayContentSafe(wordObj);
+    const answerText = formatWordDisplayPair(displayContent.primaryText, displayContent.secondaryText, " = ");
+    const phraseText = formatWordDisplayPair(displayContent.phrasePrimary, displayContent.phraseSecondary, " · ");
     const hintLetters = String(currentLearningChallenge?.hintLettersDisplay || "").trim();
     const hintLine = hintLetters ? `<div style="color:#90CAF9;font-size:12px;margin-top:4px;">缺失字母: ${hintLetters}</div>` : "";
 
     correctionDiv.innerHTML =
         `<div style="color:#4CAF50;font-size:14px;">正确答案</div>` +
-        `<div style="color:#FFF;font-size:18px;font-weight:bold;margin-top:4px;">${en}${zh ? ` = ${zh}` : ""}</div>` +
+        `<div style="color:#FFF;font-size:18px;font-weight:bold;margin-top:4px;">${answerText}</div>` +
         hintLine +
-        (phrase ? `<div style="color:#FFD54F;font-size:12px;margin-top:4px;">${phrase}${phraseZh ? ` · ${phraseZh}` : ""}</div>` : "");
+        (phraseText ? `<div style="color:#FFD54F;font-size:12px;margin-top:4px;">${phraseText}</div>` : "");
     challengeQuestionEl.appendChild(correctionDiv);
 
     if (challengeOptionsEl) {
@@ -1087,19 +1138,35 @@ function checkChallengeMilestoneRewards(count) {
 }
 
 function getSpeakPayload(wordObj) {
+    return getSpeakSequence(wordObj)[0] || { text: "", lang: "en-US", rate: 1.0 };
+}
+
+function getSpeakSequence(wordObj) {
     const mode = getLanguageModeSafe();
+    const englishText = normalizeSpeechText(wordObj?.en, wordObj?.word);
+    const chineseText = normalizeSpeechText(wordObj?.zh, wordObj?.chinese);
+    const englishRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
+    const chineseRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
+    const sequence = [];
+
     if (mode === "chinese") {
-        return {
-            text: normalizeSpeechText(wordObj?.zh, wordObj?.chinese),
-            lang: "zh-CN",
-            rate: clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0)
-        };
+        if (chineseText) sequence.push({ text: chineseText, lang: "zh-CN", rate: chineseRate });
+        if (settings.speechZhEnabled && englishText) sequence.push({ text: englishText, lang: "en-US", rate: englishRate });
+        if (!sequence.length && englishText) sequence.push({ text: englishText, lang: "en-US", rate: englishRate });
+        return sequence;
     }
-    return {
-        text: normalizeSpeechText(wordObj?.en, wordObj?.word),
-        lang: "en-US",
-        rate: clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0)
-    };
+
+    if (englishText) sequence.push({ text: englishText, lang: "en-US", rate: englishRate });
+    if (settings.speechZhEnabled && chineseText) sequence.push({ text: chineseText, lang: "zh-CN", rate: chineseRate });
+    if (!sequence.length && chineseText) sequence.push({ text: chineseText, lang: "zh-CN", rate: chineseRate });
+    return sequence;
+}
+
+function speakWithProviderSequence(sequence) {
+    return sequence.reduce(
+        (chain, item) => chain.then(() => window.MMWG_TTS.speak(item.text, item.lang, { rate: item.rate })),
+        Promise.resolve()
+    );
 }
 
 function speakWord(wordObj) {
@@ -1110,83 +1177,38 @@ function speakWord(wordObj) {
 
     if (!settings.speechEnabled) return;
 
-    const mode = getLanguageModeSafe();
-    const enText = normalizeSpeechText(wordObj?.en, wordObj?.word);
-    const zhText = settings.speechZhEnabled ? normalizeSpeechText(wordObj?.zh, "") : "";
+    const sequence = getSpeakSequence(wordObj);
+    if (!sequence.length) return;
 
-    // In Chinese mode, only speak Chinese
-    if (mode === "chinese") {
-        if (!zhText) return;
-
-        if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
-            const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-            window.MMWG_TTS.speak(zhText, "zh-CN", { rate: zhRate })
-                .catch(() => legacySpeakWord(wordObj, "", zhText));
-        } else {
-            legacySpeakWord(wordObj, "", zhText);
-        }
-        return;
-    }
-
-    // In English mode, speak English first, then Chinese if enabled
-    if (!enText && !zhText) return;
-
-    // Use TTS Provider if available
     if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
-        const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
-        const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-
-        if (enText && zhText) {
-            // Speak English first, then Chinese
-            window.MMWG_TTS.speak(enText, "en-US", { rate: enRate })
-                .then(() => window.MMWG_TTS.speak(zhText, "zh-CN", { rate: zhRate }))
-                .catch(() => {
-                    // Fallback to legacy implementation
-                    legacySpeakWord(wordObj, enText, zhText);
-                });
-        } else if (enText) {
-            window.MMWG_TTS.speak(enText, "en-US", { rate: enRate })
-                .catch(() => legacySpeakWord(wordObj, enText, zhText));
-        } else if (zhText) {
-            window.MMWG_TTS.speak(zhText, "zh-CN", { rate: zhRate })
-                .catch(() => legacySpeakWord(wordObj, enText, zhText));
-        }
+        speakWithProviderSequence(sequence).catch(() => legacySpeakWord(wordObj, sequence));
         return;
     }
 
-    // Fallback to legacy implementation
-    legacySpeakWord(wordObj, enText, zhText);
+    legacySpeakWord(wordObj, sequence);
 }
 
-function legacySpeakWord(wordObj, enText, zhText) {
+function legacySpeakWord(wordObj, sequence) {
+    const speakItems = Array.isArray(sequence) ? sequence.filter(item => item && item.text) : [];
+    if (!speakItems.length) return;
     const nativeTts = getNativeTts();
     if (!audioUnlocked && !nativeTts) {
         speechPendingUnlockWord = wordObj;
         return;
     }
     if (nativeTts) {
+        const speakAt = index => {
+            const item = speakItems[index];
+            if (!item) return Promise.resolve(true);
+            const promise = speakNativeTts(nativeTts, item.text, item.lang, item.rate);
+            if (!promise) return Promise.resolve(false);
+            return Promise.resolve(promise)
+                .then(() => speakAt(index + 1))
+                .catch(() => (index + 1 < speakItems.length ? speakAt(index + 1) : false));
+        };
         const speak = () => {
-            const enRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
-            const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
-            // 先说英文，英文结束后再说中文
-            if (enText) {
-                const enPromise = speakNativeTts(nativeTts, enText, "en-US", enRate);
-                if (enPromise && zhText) {
-                    enPromise.then(() => {
-                        speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
-                    }).catch(() => {
-                        // 英文失败也尝试说中文
-                        speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
-                    });
-                    return true;
-                } else if (enPromise) {
-                    return true;
-                }
-            }
-            if (zhText) {
-                return !!speakNativeTts(nativeTts, zhText, "zh-CN", zhRate);
-            }
-            return false;
+            speakAt(0);
+            return true;
         };
         try {
             if (typeof nativeTts.stop === "function") {
@@ -1216,34 +1238,23 @@ function legacySpeakWord(wordObj, enText, zhText) {
             window.speechSynthesis.cancel();
             window.speechSynthesis.resume();
 
-            if (!enText && zhText) {
-                const onlyZh = new SpeechSynthesisUtterance(zhText);
-                onlyZh.lang = "zh-CN";
-                const zhVoice = pickVoice("zh");
-                if (zhVoice) onlyZh.voice = zhVoice;
-                onlyZh.rate = clamp(Number(settings.speechZhRate) || 0.9, 0.5, 2.0);
-                window.speechSynthesis.speak(onlyZh);
-                return;
-            }
+            const utterances = speakItems.map(item => {
+                const utterance = new SpeechSynthesisUtterance(item.text);
+                utterance.lang = item.lang;
+                const voice = pickVoice(String(item.lang || "").toLowerCase().startsWith("zh") ? "zh" : "en");
+                if (voice) utterance.voice = voice;
+                utterance.rate = typeof item.rate === "number" ? item.rate : 1.0;
+                return utterance;
+            });
+            const speakUtteranceAt = index => {
+                const utterance = utterances[index];
+                if (!utterance) return;
+                utterance.onend = () => speakUtteranceAt(index + 1);
+                utterance.onerror = () => speakUtteranceAt(index + 1);
+                window.speechSynthesis.speak(utterance);
+            };
 
-            const uEn = new SpeechSynthesisUtterance(enText);
-            uEn.lang = "en-US";
-            const enVoice = pickVoice("en");
-            if (enVoice) uEn.voice = enVoice;
-            uEn.rate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
-
-            if (zhText) {
-                const uZh = new SpeechSynthesisUtterance(zhText);
-                uZh.lang = "zh-CN";
-                const zhVoice = pickVoice("zh");
-                if (zhVoice) uZh.voice = zhVoice;
-                uZh.rate = clamp(Number(settings.speechZhRate) || 0.9, 0.5, 2.0);
-                uEn.onend = () => {
-                    try { window.speechSynthesis.speak(uZh); } catch (e) { /* ignore */ }
-                };
-            }
-
-            window.speechSynthesis.speak(uEn);
+            speakUtteranceAt(0);
             return;
         } catch {
             // Fall back to online audio below.
@@ -1251,10 +1262,7 @@ function legacySpeakWord(wordObj, enText, zhText) {
     }
 
     // Online fallback (may be blocked by autoplay policies until the first user gesture).
-    playOnlineTtsSequence([
-        enText ? { text: enText, lang: "en" } : null,
-        zhText ? { text: zhText, lang: "zh-CN" } : null
-    ]);
+    playOnlineTtsSequence(speakItems.map(item => ({ text: item.text, lang: item.lang })));
 }
 
 

@@ -6,10 +6,10 @@
 ## 流程进度
 - [x] Phase 1：Plan 文档生成，用户确认内容
 - [x] Phase 2：工程审查完成（见 2026-03-06-engineering-review.md）
-- [ ] Phase 3：交叉 Review 收敛，用户确认定稿
-- [ ] Phase 4：各 worktree 独立 steps 文档生成，用户确认
-- [ ] Phase 4.5：解耦审查通过，用户确认
-- [ ] Phase 6：用户说"开始开发"，进入执行阶段
+- [x] Phase 3：跳过（Codex 连接问题）
+- [x] Phase 4：各 worktree 独立 steps 文档生成，用户确认
+- [x] Phase 4.5：解耦审查通过，用户确认
+- [x] Phase 6：用户说"开始"，进入执行阶段
 
 ## 需求理解
 

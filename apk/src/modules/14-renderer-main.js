@@ -134,7 +134,7 @@ function draw() {
     chests.forEach(c => drawChest(c.x, c.y, c.opened));
 
     items.forEach(i => {
-        if (!i.collected) drawItem(i.x, i.y + i.floatY, i.wordObj.en);
+        if (!i.collected) drawItem(i.x, i.y + i.floatY, getWorldWordDisplayText(i.wordObj));
     });
 
     wordGates.forEach(gate => drawWordGate(gate));
@@ -510,6 +510,15 @@ function drawItem(x, y, text) {
     ctx.fillText(displayText, cx, y - size * 0.2);
 }
 
+function getWorldWordDisplayText(wordObj) {
+    const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
+    const primaryText = String(displayContent?.primaryText || "").trim();
+    if (primaryText) return primaryText;
+    const fallbackChinese = String(wordObj?.zh || wordObj?.chinese || "").trim();
+    const fallbackEnglish = String(wordObj?.en || wordObj?.word || "").trim();
+    return fallbackChinese || fallbackEnglish;
+}
+
 function drawWordGate(gate) {
     if (!gate || gate.remove) return;
     ctx.save();
@@ -522,7 +531,7 @@ function drawWordGate(gate) {
     ctx.fillStyle = "#fff";
     ctx.font = "bold 16px Verdana";
     ctx.textAlign = "center";
-    ctx.fillText(gate.wordObj?.en || "词语", gate.x + gate.width / 2, gate.y + 28);
+    ctx.fillText(getWorldWordDisplayText(gate.wordObj) || "词语", gate.x + gate.width / 2, gate.y + 28);
     ctx.font = "14px Verdana";
     ctx.fillText(gate.locked ? "词语闸门" : "已解锁", gate.x + gate.width / 2, gate.y + gate.height - 12);
     ctx.restore();
