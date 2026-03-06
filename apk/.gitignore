@@ -42,8 +42,11 @@ android-app/web/index.html
 apks/
 words/db/reports/
 
-# Test artifacts (Playwright/E2E outputs)
+# Playwright/E2E
 test-results/
 tests/e2e/test-results/
 playwright-report/
 tests/e2e/playwright-report/
+
+# Worktrees
+.worktrees/

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.12] - 2026-03-06
+### Added
+- Further optimization of font sizes for mobile readability.
+- 10-second delay for the "Hint" button in all quiz/challenge modules to improve learning outcomes.
+- Service Worker update for v1.19.12 cache management and offline support.
+- Experimental: Bilingual learning mode base architecture, including new Chinese character vocabularies and E2E test framework.
+
 ## [1.19.11] - 2026-03-06
 ### Added
 - Font size optimization for overlay titles, text, and buttons to improve readability on mobile devices.
