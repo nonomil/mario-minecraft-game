@@ -16,6 +16,16 @@
 <div id="login-screen" class="login-screen">
     <div class="login-container">
         <h1 class="game-title">Minecraft 单词游戏</h1>
+
+        <!-- Language Mode Selection (integrated into login screen) -->
+        <div id="language-mode-selection" class="language-mode-selection" style="margin-bottom: 20px;">
+            <div style="text-align:center;margin-bottom:12px;color:#ccc;">🌍 选择学习模式</div>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button class="game-btn" id="btn-language-mode-english" style="flex:1;">🇬🇧 英语学习</button>
+                <button class="game-btn" id="btn-language-mode-chinese" style="flex:1;">🇨🇳 汉字学习</button>
+            </div>
+        </div>
+
         <div id="login-form" class="login-form">
             <div class="form-group">
                 <label for="username-input">请输入用户名</label>
@@ -529,21 +539,6 @@
         <div class="profile-actions">
             <button class="game-btn" id="btn-vocab-prompt-confirm">确认选择</button>
             <button class="game-btn game-btn-small" id="btn-vocab-prompt-skip">跳过(使用自动)</button>
-        </div>
-    </div>
-</div>
-
-<div id="language-mode-onboarding-modal" class="profile-modal" aria-hidden="true">
-    <div class="profile-modal-content">
-        <div class="profile-header">
-            <h2>🌍 选择学习模式</h2>
-        </div>
-        <div class="profile-stats">
-            <p style="margin:0 0 12px;color:#ccc;">请选择您的学习语言模式，进度将分别记录。</p>
-            <div style="display:flex;gap:12px;justify-content:center;margin:20px 0;">
-                <button class="game-btn" id="btn-language-mode-english" style="flex:1;">🇬🇧 英语学习</button>
-                <button class="game-btn" id="btn-language-mode-chinese" style="flex:1;">🇨🇳 汉字学习</button>
-            </div>
         </div>
     </div>
 </div>

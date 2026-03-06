@@ -829,12 +829,26 @@ function triggerWordGateChallenge(gate) {
 function updateWordUI(wordObj) {
     const el = document.getElementById("word-display");
     if (!el) return;
-    const en = wordObj?.en ? String(wordObj.en) : "Start!";
-    const zh = wordObj?.zh ? String(wordObj.zh) : "";
-    el.innerText = en;
 
-    const zhEl = document.getElementById("word-display-zh");
-    if (zhEl) zhEl.innerText = zh;
+    // Use bilingual display functions to get correct content based on language mode
+    const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
+
+    if (displayContent) {
+        // In Chinese mode: primaryText is Chinese, secondaryText is English
+        // In English mode: primaryText is English, secondaryText is Chinese
+        el.innerText = displayContent.primaryText || "Start!";
+
+        const zhEl = document.getElementById("word-display-zh");
+        if (zhEl) zhEl.innerText = displayContent.secondaryText || "";
+    } else {
+        // Fallback to old behavior if BilingualVocab not available
+        const en = wordObj?.en ? String(wordObj.en) : "Start!";
+        const zh = wordObj?.zh ? String(wordObj.zh) : "";
+        el.innerText = en;
+
+        const zhEl = document.getElementById("word-display-zh");
+        if (zhEl) zhEl.innerText = zh;
+    }
 
     const block = document.getElementById("word-display-block");
     if (block) {

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.14] - 2026-03-06
+### Fixed
+- **Chinese Mode Display**: Fixed word display to show Chinese characters correctly in Chinese mode
+  - `updateWordUI` now uses `BilingualVocab.getDisplayContent()` for proper language-based display
+  - Chinese mode: Shows Chinese characters as primary text, English as secondary
+  - English mode: Shows English as primary text, Chinese as secondary
+- **Language Selection UX**: Integrated language selection into login screen
+  - Removed separate language onboarding modal popup
+  - Language selection buttons now appear directly in login screen
+  - Automatically hides after user makes selection
+- **Test Suite**: Fixed E2E tests to use correct API access pattern
+  - All tests now use `window.MMWG_TEST_API.getState().settings` instead of direct `window.settings`
+  - Added comprehensive Chinese mode test suite (6 tests, all passing)
+
+### Changed
+- Language mode selection is now part of the login flow instead of a separate modal
+- Bootstrap logic updated to show/hide language selection based on existing preference
+
 ## [1.19.13] - 2026-03-06
 ### Added
 - **Bilingual Learning Mode**: Complete dual-language learning system

@@ -518,13 +518,16 @@ function initializeLanguageModeOnboarding() {
 
     const mode = storage ? storage.loadJson("mmwg:settings", {}).languageMode : null;
     const hasMode = mode === "english" || mode === "chinese";
-    if (hasMode) return;
 
-    const modal = document.getElementById("language-mode-onboarding-modal");
-    if (!modal) return;
-
-    modal.classList.add("visible");
-    modal.setAttribute("aria-hidden", "false");
+    // Show/hide language selection in login screen based on whether mode is already set
+    const languageSelection = document.getElementById("language-mode-selection");
+    if (languageSelection) {
+        if (hasMode) {
+            languageSelection.style.display = "none";
+        } else {
+            languageSelection.style.display = "block";
+        }
+    }
 
     const onSelect = (nextMode) => {
         const normalized = nextMode === "chinese" ? "chinese" : "english";
@@ -532,8 +535,10 @@ function initializeLanguageModeOnboarding() {
             settings.languageMode = normalized;
             saveSettings();
         }
-        modal.classList.remove("visible");
-        modal.setAttribute("aria-hidden", "true");
+        // Hide language selection after selection
+        if (languageSelection) {
+            languageSelection.style.display = "none";
+        }
     };
 
     const enBtn = document.getElementById("btn-language-mode-english");
