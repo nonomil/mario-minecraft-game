@@ -638,9 +638,22 @@ function showLearningChallenge(challenge) {
     if (challengeRepeatBtn) {
         challengeRepeatBtn.style.display = challenge.type === "listen" ? "inline-flex" : "none";
     }
+    // 提示按钮初始隐藏，10秒后显示
     if (challengeHintBtn) {
-        challengeHintBtn.style.display = "inline-flex";
+        challengeHintBtn.style.display = "none";
         challengeHintBtn.disabled = false;
+
+        // 清除旧的提示按钮定时器
+        if (window._challengeHintTimerId) {
+            clearTimeout(window._challengeHintTimerId);
+        }
+
+        // 10秒后显示提示按钮
+        window._challengeHintTimerId = setTimeout(() => {
+            if (challengeHintBtn && currentLearningChallenge) {
+                challengeHintBtn.style.display = "inline-flex";
+            }
+        }, 10000);
     }
 }
 
@@ -660,6 +673,12 @@ function clearLearningChallengeTimer() {
 function hideLearningChallenge() {
     if (challengeModalEl) challengeModalEl.classList.remove("visible");
     if (challengeInputEl) challengeInputEl.value = "";
+
+    // 清除提示按钮定时器
+    if (window._challengeHintTimerId) {
+        clearTimeout(window._challengeHintTimerId);
+        window._challengeHintTimerId = null;
+    }
 }
 
 function showChallengeCorrection(wordObj) {

@@ -1,3 +1,10 @@
+## v1.19.11（发布日期：2026-03-06）
+- 类型：PATCH（UI 优化 + 测验机制调整）
+- APK 版本：versionName = 1.19.11，versionCode = 66（buildNumber = 66）
+- 主要完成项：
+  - UI 字体大小优化，长遮罩层增加滚动条。
+  - 测验提示延迟设置为 10 秒。
+
 ## v1.19.10（发布日期：2026-03-06）
 - 类型：FEATURE（消耗性装备系统 + 长按触发机制 + Debuff 系统）
 - APK 版本：versionName = 1.19.10，versionCode = 65（buildNumber = 65）

@@ -1,3 +1,12 @@
+## v1.19.11 (2026-03-06)
+
+### Added
+- Font size optimization for overlay titles, text, and buttons to improve readability on mobile devices.
+- Scrollbars added to long content overlays (Settings, Save selection, etc.).
+- 10-second delay for the "Hint" button in word quizzes to encourage player recall.
+
+---
+
 ## v1.19.10 (2026-03-06)
 
 ### 消耗性装备系统 (Consumable Equipment System)

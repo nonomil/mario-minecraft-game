@@ -2,12 +2,13 @@
 
 ## Current Baseline
 - Local version file: `apk/version.json`
-- versionName: **1.19.10**
-- versionCode/buildNumber: **65**
+- versionName: **1.19.11**
+- versionCode/buildNumber: **66**
 
 ## Git State
 - Branch: `main`
-- Includes Consumable Equipment System, Long-Press mechanism, and Debuff system integration.
+- Includes font size optimization for overlays, scrollbars for long content, and 10s quiz hint delay.
+- Previous (v1.19.10): Consumable Equipment System, Long-Press mechanism, and Debuff system integration.
 
 
 ## Records Check

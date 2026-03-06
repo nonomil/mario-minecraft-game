@@ -75,6 +75,13 @@ function closeVillageChallengeSession(session, opts = {}) {
 
 function cancelVillageChallenge(session, toastText) {
   if (!isVillageChallengeActive(session)) return;
+
+  // 清除所有提示按钮定时器
+  if (session._villageHintTimers) {
+    session._villageHintTimers.forEach(timerId => clearTimeout(timerId));
+    session._villageHintTimers = [];
+  }
+
   if (toastText) showToast(toastText);
   closeVillageChallengeSession(session, { callComplete: false });
 }
@@ -323,7 +330,7 @@ function showVillageQuestion(session, words, progress, onAnswer) {
       <div class="village-question-word">${questionEn}</div>
       <p class="village-question-hint">请选择对应的中文含义</p>
       <div class="village-question-controls">
-        <button id="btn-village-question-hint" class="game-btn game-btn-small">提示</button>
+        <button id="btn-village-question-hint" class="game-btn game-btn-small" style="display:none;">提示</button>
         <button id="btn-village-challenge-exit" class="game-btn game-btn-small village-btn-muted">退出挑战</button>
       </div>
       <div id="village-challenge-options" class="village-options-grid">
@@ -341,6 +348,19 @@ function showVillageQuestion(session, words, progress, onAnswer) {
 
   const btnHint = modal.querySelector("#btn-village-question-hint");
   const optionButtons = Array.from(modal.querySelectorAll(".village-opt-btn"));
+
+  // 10秒后显示提示按钮
+  if (btnHint) {
+    const hintTimerId = setTimeout(() => {
+      if (btnHint && isVillageChallengeActive(session)) {
+        btnHint.style.display = "inline-block";
+      }
+    }, 10000);
+
+    // 保存定时器ID以便清理
+    if (!session._villageHintTimers) session._villageHintTimers = [];
+    session._villageHintTimers.push(hintTimerId);
+  }
 
   btnHint?.addEventListener("click", () => {
     if (!isVillageChallengeActive(session) || progress.hintUsedCurrent) return;
@@ -388,6 +408,12 @@ function showVillageQuestion(session, words, progress, onAnswer) {
 
 function finishVillageChallenge(session, village, correct, total, diamondsEarned) {
   if (!isVillageChallengeActive(session)) return;
+
+  // 清除所有提示按钮定时器
+  if (session._villageHintTimers) {
+    session._villageHintTimers.forEach(timerId => clearTimeout(timerId));
+    session._villageHintTimers = [];
+  }
 
   const reward = getVillageRewardConfig();
   const isPerfect = correct === total;
