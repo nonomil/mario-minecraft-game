@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.13] - 2026-03-06
+### Added
+- **Bilingual Learning Mode**: Complete dual-language learning system
+  - Language mode selection: English learning (🇬🇧) and Chinese character learning (🇨🇳)
+  - First-launch onboarding modal for language preference
+  - Language mode settings in Settings panel with pinyin display toggle
+  - Chinese vocabulary pack: Kindergarten Chinese characters (幼儿园汉字)
+  - Bilingual vocabulary functions: word filtering, display transformation, and mode detection
+  - Data migration system for bilingual mode (v2.2.0)
+  - Pinyin generation tool for Chinese vocabulary
+
+### Changed
+- **TTS Language Switching**: Speech synthesis now respects language mode
+  - Chinese mode: Only speaks Chinese pronunciation
+  - English mode: Speaks English first, then Chinese (if enabled)
+  - Language-aware speech rate settings
+- **Vocabulary Manifest**: Converted to browser-compatible format
+  - Changed from CommonJS to window global for browser support
+  - Maintains Node.js compatibility for build tools
+
+### Fixed
+- Browser compatibility issues with vocabulary manifest loading
+- Test suite handling of login/game screen states
+- localStorage state management in E2E tests
+
+### Testing
+- Added 8 comprehensive E2E tests for bilingual mode
+  - Language mode onboarding flow
+  - Settings UI integration
+  - Vocabulary pack availability
+  - Function availability checks
+
 ## [1.19.12] - 2026-03-06
 ### Added
 - Further optimization of font sizes for mobile readability.

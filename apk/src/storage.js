@@ -398,6 +398,76 @@ function calculateChecksum(data) {
     }
 }
 
+// Bilingual mode data migration (v2.1.0 → v2.2.0)
+function checkBilingualMigrationNeeded() {
+    try {
+        const currentDataVersion = localStorage.getItem('dataVersion');
+        return currentDataVersion !== '2.2.0';
+    } catch (error) {
+        console.warn('Check bilingual migration failed:', error);
+        return false;
+    }
+}
+
+function copyStorageKey(fromKey, toKey, fallbackValue) {
+    const toValue = localStorage.getItem(toKey);
+    if (toValue !== null) {
+        return;
+    }
+
+    const fromValue = localStorage.getItem(fromKey);
+    if (fromValue !== null) {
+        localStorage.setItem(toKey, fromValue);
+        return;
+    }
+
+    if (typeof fallbackValue !== 'undefined') {
+        localStorage.setItem(toKey, JSON.stringify(fallbackValue));
+    }
+}
+
+function migrateToBilingualV2_2_0() {
+    const currentDataVersion = localStorage.getItem('dataVersion');
+    if (currentDataVersion === '2.2.0') {
+        console.log('Skip bilingual migration: already at dataVersion 2.2.0');
+        return true;
+    }
+
+    console.log('Migrating to bilingual v2.2.0...');
+
+    // Copy existing progress to English mode
+    copyStorageKey('kgProgress', 'englishProgress_kg', {});
+    copyStorageKey('wordGameProgress', 'englishProgress_game', {});
+
+    // Initialize Chinese mode progress
+    if (localStorage.getItem('chineseProgress_kg') === null) {
+        localStorage.setItem('chineseProgress_kg', JSON.stringify({}));
+    }
+    if (localStorage.getItem('chineseProgress_game') === null) {
+        localStorage.setItem('chineseProgress_game', JSON.stringify({}));
+    }
+
+    // Set default language mode to English
+    if (localStorage.getItem('languageMode') === null) {
+        localStorage.setItem('languageMode', 'english');
+    }
+
+    // Set default pinyin display to true
+    if (localStorage.getItem('showPinyin') === null) {
+        localStorage.setItem('showPinyin', 'true');
+    }
+
+    localStorage.setItem('dataVersion', '2.2.0');
+    console.log('Bilingual migration completed');
+    return true;
+}
+
+function initializeBilingualMigration() {
+    if (checkBilingualMigrationNeeded()) {
+        migrateToBilingualV2_2_0();
+    }
+}
+
 window.exportSaveCode = exportSaveCode;
 window.importSaveCode = importSaveCode;
 window.checkStorageQuota = checkStorageQuota;
@@ -405,3 +475,4 @@ window.diagnoseStorage = diagnoseStorage;
 window.createBackup = createBackup;
 window.getBackups = getBackups;
 window.restoreFromBackup = restoreFromBackup;
+window.initializeBilingualMigration = initializeBilingualMigration;

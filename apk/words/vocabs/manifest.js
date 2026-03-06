@@ -1,12 +1,21 @@
-﻿module.exports = [
-  {
-    id: 'vocab.kindergarten.hanzi',
-    name: '幼儿园汉字',
-    stage: 'kindergarten',
-    mode: 'chinese',
-    type: 'hanzi',
-    path: 'words/vocabs/06_汉字/幼儿园汉字.js',
-    enabled: true,
-    version: '1.0.0'
-  }
-];
+﻿// Browser-compatible vocabulary manifest
+window.vocabManifest = window.vocabManifest || { version: '2.2.0', packs: [] };
+
+// Add Chinese vocabulary pack
+window.vocabManifest.packs.push({
+  id: 'vocab.kindergarten.hanzi',
+  title: '幼儿园汉字',
+  stage: 'kindergarten',
+  difficulty: 'basic',
+  level: 'full',
+  weight: 1,
+  mode: 'chinese',
+  type: 'hanzi',
+  file: 'words/vocabs/06_汉字/幼儿园汉字.js',
+  globals: ['kindergartenHanzi']
+});
+
+// Node.js compatibility (for build tools)
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = window.vocabManifest.packs;
+}

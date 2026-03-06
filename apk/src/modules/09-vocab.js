@@ -707,3 +707,85 @@ function startWeakWordsPractice() {
 
 window.startWeakWordsPractice = startWeakWordsPractice;
 
+// --- Bilingual vocabulary support ---
+
+function normalizeWordContent(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const word = String(raw.word || raw.en || raw.standardized || "").trim();
+    if (!word) return null;
+    const mode = String(raw.mode || "bilingual").trim().toLowerCase();
+    const normalizedMode = (mode === "english" || mode === "chinese" || mode === "bilingual") ? mode : "bilingual";
+    return {
+        ...raw,
+        word,
+        chinese: String(raw.chinese || raw.zh || "").trim(),
+        pinyin: String(raw.pinyin || "").trim(),
+        phonetic: String(raw.phonetic || raw.uk || raw.us || "").trim(),
+        phrase: String(raw.phrase || "").trim(),
+        phraseTranslation: String(raw.phraseTranslation || raw.phraseZh || "").trim(),
+        difficulty: String(raw.difficulty || "basic").trim(),
+        stage: String(raw.stage || "").trim(),
+        mode: normalizedMode
+    };
+}
+
+function getCurrentLanguageMode() {
+    const mode = settings.languageMode;
+    if (mode === "chinese" || mode === "bilingual") return mode;
+    return "english";
+}
+
+function shouldKeepByMode(wordObj, languageMode) {
+    const mode = String((wordObj && wordObj.mode) || "bilingual").toLowerCase();
+    if (mode === "bilingual") return true;
+    if (languageMode === "chinese") return mode === "chinese";
+    if (languageMode === "bilingual") return mode === "english" || mode === "chinese";
+    return mode === "english";
+}
+
+function filterWordsByLanguageMode(words, languageMode) {
+    if (!Array.isArray(words)) return [];
+    return words.filter(item => item && shouldKeepByMode(item, languageMode));
+}
+
+function getDisplayContent(wordObj) {
+    const safeWord = normalizeWordContent(wordObj) || {
+        word: "",
+        chinese: "",
+        pinyin: "",
+        phonetic: "",
+        phrase: "",
+        phraseTranslation: ""
+    };
+    const languageMode = getCurrentLanguageMode();
+    const primaryEnglish = safeWord.word;
+    const primaryChinese = safeWord.chinese;
+
+    if (languageMode === "chinese") {
+        return {
+            id: primaryEnglish,
+            primaryText: primaryChinese || primaryEnglish,
+            secondaryText: primaryEnglish,
+            phoneticText: safeWord.pinyin,
+            phrasePrimary: safeWord.phraseTranslation,
+            phraseSecondary: safeWord.phrase
+        };
+    }
+
+    return {
+        id: primaryEnglish,
+        primaryText: primaryEnglish,
+        secondaryText: primaryChinese,
+        phoneticText: safeWord.phonetic,
+        phrasePrimary: safeWord.phrase,
+        phraseSecondary: safeWord.phraseTranslation
+    };
+}
+
+window.BilingualVocab = {
+    normalizeWordContent,
+    getCurrentLanguageMode,
+    filterWordsByLanguageMode,
+    getDisplayContent
+};
+

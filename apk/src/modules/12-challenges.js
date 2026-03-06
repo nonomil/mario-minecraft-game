@@ -846,6 +846,27 @@ function updateWordUI(wordObj) {
     }
 }
 
+function getLanguageModeSafe() {
+    const mode = settings.languageMode || "english";
+    return mode === "chinese" ? "chinese" : "english";
+}
+
+function getSpeakPayload(wordObj) {
+    const mode = getLanguageModeSafe();
+    if (mode === "chinese") {
+        return {
+            text: normalizeSpeechText(wordObj?.zh, wordObj?.chinese),
+            lang: "zh-CN",
+            rate: clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0)
+        };
+    }
+    return {
+        text: normalizeSpeechText(wordObj?.en, wordObj?.word),
+        lang: "en-US",
+        rate: clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0)
+    };
+}
+
 function speakWord(wordObj) {
     lastWord = wordObj;
     updateWordUI(wordObj);
@@ -853,8 +874,26 @@ function speakWord(wordObj) {
     showWordCard(wordObj);
 
     if (!settings.speechEnabled) return;
+
+    const mode = getLanguageModeSafe();
     const enText = normalizeSpeechText(wordObj?.en, wordObj?.word);
     const zhText = settings.speechZhEnabled ? normalizeSpeechText(wordObj?.zh, "") : "";
+
+    // In Chinese mode, only speak Chinese
+    if (mode === "chinese") {
+        if (!zhText) return;
+
+        if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
+            const zhRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
+            window.MMWG_TTS.speak(zhText, "zh-CN", { rate: zhRate })
+                .catch(() => legacySpeakWord(wordObj, "", zhText));
+        } else {
+            legacySpeakWord(wordObj, "", zhText);
+        }
+        return;
+    }
+
+    // In English mode, speak English first, then Chinese if enabled
     if (!enText && !zhText) return;
 
     // Use TTS Provider if available

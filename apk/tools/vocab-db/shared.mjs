@@ -47,14 +47,52 @@ export function toLearnType(word, phrase) {
 
 export function parseManifest() {
     const code = fs.readFileSync(manifestPath, "utf8");
-    const sandbox = { window: {}, globalThis: {} };
+    const sandbox = { window: {}, globalThis: {}, module: { exports: {} }, exports: {} };
     vm.createContext(sandbox);
     vm.runInContext(code, sandbox, { filename: manifestPath });
-    const manifest = sandbox.window.MMWG_VOCAB_MANIFEST || sandbox.globalThis.MMWG_VOCAB_MANIFEST;
-    if (!manifest || !Array.isArray(manifest.packs)) {
-        throw new Error("Invalid manifest format: missing MMWG_VOCAB_MANIFEST.packs");
+    const rawManifest =
+        sandbox.window.MMWG_VOCAB_MANIFEST ||
+        sandbox.globalThis.MMWG_VOCAB_MANIFEST ||
+        sandbox.module.exports ||
+        sandbox.exports;
+    const manifest = normalizeManifest(rawManifest);
+    if (!manifest || !Array.isArray(manifest.packs) || manifest.packs.length === 0) {
+        throw new Error("Invalid manifest format: no usable packs found");
     }
     return manifest;
+}
+
+function normalizeManifest(rawManifest) {
+    if (Array.isArray(rawManifest)) {
+        return {
+            version: "1.0.0",
+            packs: rawManifest
+                .map((pack, index) => normalizePack(pack, index))
+                .filter((pack) => Array.isArray(pack.files) && pack.files.length > 0)
+        };
+    }
+    if (rawManifest && typeof rawManifest === "object" && Array.isArray(rawManifest.packs)) {
+        return {
+            ...rawManifest,
+            packs: rawManifest.packs
+                .map((pack, index) => normalizePack(pack, index))
+                .filter((pack) => Array.isArray(pack.files) && pack.files.length > 0)
+        };
+    }
+    return null;
+}
+
+function normalizePack(pack, index) {
+    if (!pack || typeof pack !== "object") return null;
+    const files = Array.isArray(pack.files)
+        ? pack.files
+        : (pack.file ? [pack.file] : (pack.path ? [pack.path] : []));
+    return {
+        ...pack,
+        id: String(pack.id || `pack-${index + 1}`),
+        stage: String(pack.stage || ""),
+        files: files.map((item) => String(item || "")).filter(Boolean)
+    };
 }
 
 function findArrayAssignment(code) {
@@ -132,6 +170,16 @@ function findArrayAssignment(code) {
 
 export function loadVocabArrayFromFile(absFilePath) {
     const code = fs.readFileSync(absFilePath, "utf8");
+    const sandbox = { module: { exports: undefined }, exports: {} };
+    vm.createContext(sandbox);
+    vm.runInContext(code, sandbox, { filename: absFilePath });
+    const exportedWords = sandbox.module.exports ?? sandbox.exports;
+    if (Array.isArray(exportedWords)) {
+        return {
+            variableName: "module.exports",
+            words: exportedWords
+        };
+    }
     const found = findArrayAssignment(code);
     if (!found) {
         throw new Error(`Cannot find top-level vocab array assignment in ${absFilePath}`);

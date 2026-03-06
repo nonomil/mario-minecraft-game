@@ -62,6 +62,8 @@ function wireSettingsModal() {
     const optWordMatch = document.getElementById("opt-word-match");
     const optSpeed = document.getElementById("opt-speed");
     const optKeys = document.getElementById("opt-keys");
+    const optLanguageMode = document.getElementById("opt-language-mode");
+    const optShowPinyin = document.getElementById("opt-show-pinyin");
     let resetArmed = false;
     let resetTimer = null;
     let advancedModalVisible = false;
@@ -171,6 +173,8 @@ function wireSettingsModal() {
         if (optWordMatch) optWordMatch.checked = !!settings.wordMatchEnabled;
         if (optSpeed) optSpeed.value = settings.movementSpeedLevel || "normal";
         if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact, keyBindings.switch, keyBindings.useDiamond].join(",");
+        if (optLanguageMode) optLanguageMode.value = settings.languageMode || "english";
+        if (optShowPinyin) optShowPinyin.checked = settings.showPinyin !== false;
         if (progressVocab) updateVocabProgressUI();
         if (optVocab) updateVocabPreview(optVocab.value);
     }
@@ -222,6 +226,8 @@ function wireSettingsModal() {
         if (optWordMatch) settings.wordMatchEnabled = !!optWordMatch.checked;
         if (optSpeed) settings.movementSpeedLevel = String(optSpeed.value || "normal");
         if (optKeys) settings.keyCodes = String(optKeys.value || "");
+        if (optLanguageMode) settings.languageMode = String(optLanguageMode.value || "english");
+        if (optShowPinyin) settings.showPinyin = !!optShowPinyin.checked;
 
         settings = normalizeSettings(settings);
         const parsed = parseKeyCodes(settings.keyCodes);

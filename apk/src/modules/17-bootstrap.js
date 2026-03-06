@@ -509,3 +509,46 @@ function registerTestApi() {
 }
 
 registerTestApi();
+
+// Language mode onboarding
+function initializeLanguageModeOnboarding() {
+    if (typeof window.initializeBilingualMigration === "function") {
+        window.initializeBilingualMigration();
+    }
+
+    const mode = storage ? storage.loadJson("mmwg:settings", {}).languageMode : null;
+    const hasMode = mode === "english" || mode === "chinese";
+    if (hasMode) return;
+
+    const modal = document.getElementById("language-mode-onboarding-modal");
+    if (!modal) return;
+
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+
+    const onSelect = (nextMode) => {
+        const normalized = nextMode === "chinese" ? "chinese" : "english";
+        if (settings) {
+            settings.languageMode = normalized;
+            saveSettings();
+        }
+        modal.classList.remove("visible");
+        modal.setAttribute("aria-hidden", "true");
+    };
+
+    const enBtn = document.getElementById("btn-language-mode-english");
+    const zhBtn = document.getElementById("btn-language-mode-chinese");
+
+    if (enBtn) {
+        enBtn.addEventListener("click", () => onSelect("english"));
+    }
+    if (zhBtn) {
+        zhBtn.addEventListener("click", () => onSelect("chinese"));
+    }
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeLanguageModeOnboarding);
+} else {
+    setTimeout(initializeLanguageModeOnboarding, 100);
+}
