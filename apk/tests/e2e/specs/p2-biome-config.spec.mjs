@@ -7,7 +7,7 @@ test("P2 biome switch config should match expected balance values", async ({ req
 
   expect(cfg.switch.stepScore).toBe(300);
   expect(cfg.switch.minStay.volcano).toEqual({ score: 320, timeSec: 70 });
-  expect(cfg.switch.minStay.nether).toEqual({ score: 360, timeSec: 75 });
+  expect(cfg.switch.minStay.nether).toEqual({ score: 380, timeSec: 80 });
 });
 
 test("P2 settings slider min should prevent flash switching", async ({ request }) => {

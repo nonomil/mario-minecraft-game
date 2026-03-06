@@ -1,0 +1,61 @@
+{
+  "gunpowder": {
+    "name": "炸药",
+    "icon": "💣",
+    "effect": {
+      "type": "explosion",
+      "radius": 150,
+      "damage": 30,
+      "debuff": {
+        "type": "burn",
+        "duration": 180,
+        "damagePerSecond": 0.1
+      },
+      "particles": {
+        "type": "fire",
+        "count": 20,
+        "color": ["#FF4500", "#FF6347"]
+      }
+    }
+  },
+  "ender_pearl": {
+    "name": "末影珍珠",
+    "icon": "🔮",
+    "effect": {
+      "type": "teleport",
+      "range": 250,
+      "particles": {
+        "type": "sparkle",
+        "count": 30,
+        "color": ["#9B59B6", "#8E44AD"]
+      }
+    }
+  },
+  "string": {
+    "name": "蜘蛛丝",
+    "icon": "🕸️",
+    "effect": {
+      "type": "trap",
+      "radius": 100,
+      "debuff": {
+        "type": "slow",
+        "duration": 300,
+        "speedMult": 0.2
+      }
+    }
+  },
+  "dragon_egg": {
+    "name": "龙蛋",
+    "icon": "🥚",
+    "effect": {
+      "type": "dragon_breath",
+      "radius": 9999,
+      "damage": 50,
+      "particles": {
+        "type": "purple_flame",
+        "count": 50,
+        "color": ["#8B00FF", "#9932CC"]
+      }
+    }
+  }
+}

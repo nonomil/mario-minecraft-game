@@ -34,6 +34,81 @@ function initializeTtsProvider() {
     }
 }
 
+// ============================================
+// 消耗品配置加载（新增）
+// ============================================
+
+/**
+ * 默认消耗品配置（fallback）
+ */
+function getDefaultConsumablesConfig() {
+    return {
+        "gunpowder": {
+            "name": "炸药",
+            "icon": "💣",
+            "effect": {
+                "type": "explosion",
+                "radius": 150,
+                "damage": 30,
+                "debuff": {
+                    "type": "burn",
+                    "duration": 180,
+                    "damagePerSecond": 0.1
+                }
+            }
+        },
+        "ender_pearl": {
+            "name": "末影珍珠",
+            "icon": "🔮",
+            "effect": {
+                "type": "teleport",
+                "range": 250
+            }
+        },
+        "string": {
+            "name": "蜘蛛丝",
+            "icon": "🕸️",
+            "effect": {
+                "type": "trap",
+                "radius": 100,
+                "debuff": {
+                    "type": "slow",
+                    "duration": 300,
+                    "speedMult": 0.2
+                }
+            }
+        },
+        "dragon_egg": {
+            "name": "龙蛋",
+            "icon": "🥚",
+            "effect": {
+                "type": "dragon_breath",
+                "radius": 9999,
+                "damage": 50
+            }
+        }
+    };
+}
+
+/**
+ * 加载消耗品配置
+ */
+async function loadConsumablesConfig() {
+    try {
+        const response = await fetch('config/consumables.json', { cache: "no-store" });
+        if (!response.ok) {
+            console.warn('[Config] Failed to load consumables.json, using defaults');
+            CONSUMABLES_CONFIG = getDefaultConsumablesConfig();
+            return;
+        }
+        CONSUMABLES_CONFIG = await response.json();
+        console.log('[Config] Loaded consumables.json:', Object.keys(CONSUMABLES_CONFIG).length, 'items');
+    } catch (error) {
+        console.warn('[Config] Error loading consumables.json:', error);
+        CONSUMABLES_CONFIG = getDefaultConsumablesConfig();
+    }
+}
+
 async function start() {
     const [loadedGame, loadedControls, loadedLevels, loadedWords, loadedBiomes, loadedVillage] = await Promise.all([
         loadJsonWithFallback("config/game.json", defaultGameConfig),
@@ -43,6 +118,9 @@ async function start() {
         loadJsonWithFallback("config/biomes.json", { switch: DEFAULT_BIOME_SWITCH, biomes: DEFAULT_BIOME_CONFIGS }),
         loadJsonWithFallback("config/village.json", { enabled: true }).catch(() => ({ enabled: true }))
     ]);
+
+    // ===== 新增：加载消耗品配置 =====
+    await loadConsumablesConfig();
 
     gameConfig = mergeDeep(defaultGameConfig, loadedGame);
     difficultyConfigCache = null;

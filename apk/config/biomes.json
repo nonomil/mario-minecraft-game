@@ -506,6 +506,42 @@
                 { "round": 3, "types": ["warden_scout", "sculk_crawler", "warden"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.3 }
             ]
         },
+        "end": {
+            "id": "end",
+            "name": "End",
+            "color": "#9C27B0",
+            "groundType": "end_stone",
+            "decorations": {
+                "end_crystal": 0.15,
+                "chorus_plant": 0.2
+            },
+            "treeTypes": {},
+            "effects": {
+                "particles": "end_particles",
+                "ambient": "#1A0A2E",
+                "skyColors": ["#0D0015", "#1A0A2E", "#2D1B4E"],
+                "gravityMultiplier": 0.65,
+                "jumpMultiplier": 1.5,
+                "weather": [
+                    "clear"
+                ]
+            },
+            "spawnWeight": {
+                "min": 3800,
+                "max": 5500
+            },
+            "platform": {
+                "floatingChanceMult": 1.3,
+                "floatingGroundTypes": [
+                    "end_stone"
+                ]
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["endermite"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["endermite", "shulker"], "spawnRate": 0.8, "poison": false, "eliteChance": 0.2 },
+                { "round": 3, "types": ["endermite", "shulker", "enderman"], "spawnRate": 1.0, "poison": false, "eliteChance": 0.3 }
+            ]
+        },
         "sky_dimension": {
             "id": "sky_dimension",
             "name": "Sky Dimension",

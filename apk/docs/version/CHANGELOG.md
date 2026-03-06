@@ -1,3 +1,20 @@
+## v1.19.10 (2026-03-06)
+
+### 消耗性装备系统 (Consumable Equipment System)
+- 新增：主界面新增消耗品槽位。
+- 新增：长按攻击键（800ms）触发消耗品，带动画反馈。
+- 新增：Debuff 系统支持燃烧、减速效果。
+- 优化：粒子池对象池化，降低频繁 GC。
+- 修复：修复长按逻辑在触控端的兼容性问题。
+
+### Version Metadata
+- `package.json` -> `1.19.10`
+- `android-app/package.json` -> `1.19.10`
+- `version.json` -> `versionCode/buildNumber 65`, `versionName 1.19.10`
+- `android-app/android/app/build.gradle` -> `versionCode 65`, `versionName 1.19.10`
+
+---
+
 ## v1.19.9 (2026-03-04)
 
 ### 并行开发合入（A/B/C/D）

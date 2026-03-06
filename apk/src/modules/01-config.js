@@ -803,3 +803,17 @@ let difficultyState = null;
 let difficultyConfigCache = null;
 let lootConfigCache = null;
 let lastDamageFrame = 0;
+
+// ============================================
+// 消耗品系统全局变量（新增）
+// ============================================
+
+// 消耗品配置（从 config/consumables.json 加载）
+let CONSUMABLES_CONFIG = {};
+
+// 当前装备的消耗品状态
+let equippedConsumable = {
+    itemKey: null,      // 当前装备的材料 key（如 "gunpowder"）
+    count: 0,           // 剩余数量
+    icon: null          // 图标 emoji
+};

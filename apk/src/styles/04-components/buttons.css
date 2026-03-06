@@ -1,8 +1,116 @@
+/* Button base styles */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-1);
+
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  text-align: center;
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+
+  transition: all 0.2s ease;
+
+  border: none;
+  background: none;
+  outline: none;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Button sizes */
+.btn-sm {
+  height: 28px;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
+}
+
+.btn-md {
+  height: 36px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
   border-radius: var(--radius-md);
 }
+
+.btn-lg {
+  height: 44px;
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-lg);
+}
+
+/* Button variants */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-primary-dark);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-light);
+}
+
+.btn-accent {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+  color: #333;
+  border: none;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.5);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text-primary);
+  border: 2px solid var(--color-border-secondary);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--color-border-primary);
+}
+
+.btn-hud {
+  background: var(--color-bg-overlay);
+  color: var(--color-text-primary);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+}
+
+.btn-hud:hover {
+  background: var(--color-bg-secondary);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-touch {
+  width: var(--touch-btn-size);
+  height: var(--touch-btn-size);
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.16);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 30px;
+}
+
+.btn-touch:active {
+  transform: scale(0.92);
+}
+

@@ -638,3 +638,42 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// ============================================
+// 消耗品槽 UI 更新（新增）
+// ============================================
+
+/**
+ * 更新消耗品槽 UI 显示
+ */
+function updateConsumableUI() {
+    const statusEl = document.getElementById("consumable-status");
+    const iconEl = document.getElementById("consumable-icon");
+    const nameEl = document.getElementById("consumable-name");
+    const countEl = document.getElementById("consumable-count");
+
+    // 未装备消耗品时隐藏
+    if (!equippedConsumable.itemKey) {
+        if (statusEl) {
+            statusEl.style.display = "none";
+            statusEl.classList.remove("active");
+        }
+        return;
+    }
+
+    // 获取配置
+    const config = CONSUMABLES_CONFIG[equippedConsumable.itemKey];
+    if (!config) {
+        console.warn('[UI] Unknown consumable:', equippedConsumable.itemKey);
+        return;
+    }
+
+    // 更新 UI 元素
+    if (statusEl) {
+        statusEl.style.display = "block";
+        statusEl.classList.add("active");
+    }
+    if (iconEl) iconEl.innerText = config.icon;
+    if (nameEl) nameEl.innerText = config.name;
+    if (countEl) countEl.innerText = `x${equippedConsumable.count}`;
+}

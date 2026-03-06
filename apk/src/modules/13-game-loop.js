@@ -1015,6 +1015,61 @@ function updateInventoryModal() {
 }
 
 // 背包物品使用函数
+// ============================================
+// 消耗品装备槽逻辑（新增）
+// ============================================
+
+/**
+ * 装备消耗品到槽位
+ * @param {string} itemKey - 材料 key（如 "gunpowder"）
+ * @returns {boolean} 是否装备成功
+ */
+function equipConsumable(itemKey) {
+    const count = Number(inventory[itemKey]) || 0;
+    if (count <= 0) {
+        showToast("❌ 没有该物品");
+        return false;
+    }
+
+    const config = CONSUMABLES_CONFIG[itemKey];
+    if (!config) {
+        console.warn('[Consumable] Unknown item:', itemKey);
+        return false;
+    }
+
+    equippedConsumable = {
+        itemKey: itemKey,
+        count: count,
+        icon: config.icon
+    };
+
+    updateConsumableUI();
+    showToast(`✅ 装备: ${config.icon} ${config.name}`);
+    return true;
+}
+
+/**
+ * 使用已装备的消耗品
+ */
+function useEquippedConsumable() {
+    if (!equippedConsumable.itemKey) {
+        showToast("❌ 未装备消耗品");
+        return;
+    }
+
+    // 调用现有的 useInventoryItem 函数
+    useInventoryItem(equippedConsumable.itemKey);
+
+    // 更新装备槽状态
+    equippedConsumable.count = Number(inventory[equippedConsumable.itemKey]) || 0;
+    if (equippedConsumable.count <= 0) {
+        showToast("⚠️ 消耗品已用完");
+        equippedConsumable = { itemKey: null, count: 0, icon: null };
+    }
+
+    updateConsumableUI();
+}
+
 function useInventoryItem(itemKey) {
     const count = Number(inventory[itemKey]) || 0;
     if (count <= 0) {
@@ -1310,6 +1365,30 @@ function useInventoryItem(itemKey) {
         updateHpUI();
         updateInventoryUI();
         updateInventoryModal(); // 刷新背包显示
+    }
+
+    // ============================================
+    // 新增：根据配置应用 Debuff
+    // ============================================
+    const config = CONSUMABLES_CONFIG[itemKey];
+    if (config && config.effect && config.effect.debuff) {
+        const debuff = config.effect.debuff;
+        const effectRadius = config.effect.radius || 150;
+
+        // 对范围内敌人应用 debuff
+        enemies.forEach(enemy => {
+            const dist = Math.hypot(enemy.x - player.x, enemy.y - player.y);
+            if (dist < effectRadius && typeof enemy.addDebuff === "function") {
+                enemy.addDebuff(
+                    debuff.type,
+                    debuff.duration,
+                    {
+                        damagePerFrame: debuff.damagePerSecond ? debuff.damagePerSecond / 60 : 0,
+                        speedMult: debuff.speedMult || 1.0
+                    }
+                );
+            }
+        });
     }
 }
 

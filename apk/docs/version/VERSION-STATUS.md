@@ -1,13 +1,14 @@
-﻿# Version Status (2026-03-04)
+# Version Status (2026-03-06)
 
 ## Current Baseline
 - Local version file: `apk/version.json`
-- versionName: **1.19.9**
-- versionCode/buildNumber: **64**
+- versionName: **1.19.10**
+- versionCode/buildNumber: **65**
 
 ## Git State
 - Branch: `main`
-- Includes parallel integration (A/B/C/D), performance optimization (Task1), and storage/config hardening (Task2).
+- Includes Consumable Equipment System, Long-Press mechanism, and Debuff system integration.
+
 
 ## Records Check
 - Updated: `apk/docs/version/CHANGELOG.md`

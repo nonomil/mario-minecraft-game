@@ -129,6 +129,10 @@ class Enemy extends Entity {
         this.velY = 0;
         this.grounded = false;
         this.webbed = 0; // 蛛网减速计时器
+
+        // ===== 新增：Debuff 系统状态 =====
+        this.debuffs = [];           // Debuff 数组
+        this.originalSpeed = null;   // 保存原始速度用于减速恢复
     }
 
     takeDamage(amount) {
@@ -146,6 +150,75 @@ class Enemy extends Entity {
         }
         addScore(this.scoreValue);
         recordEnemyKill(this.type);
+    }
+
+    // ===== 新增：添加 Debuff 方法 =====
+    addDebuff(type, duration, params = {}) {
+        // 防止同类型 debuff 叠加
+        const existing = this.debuffs.find(d => d.type === type);
+        if (existing) {
+            // 刷新持续时间，取最大值
+            existing.duration = Math.max(existing.duration, duration);
+            return;
+        }
+
+        // 减速效果：保存原始速度（仅首次）
+        if (type === "slow" && this.originalSpeed === null) {
+            this.originalSpeed = this.speed;
+        }
+
+        // 添加新 debuff
+        this.debuffs.push({
+            type: type,
+            duration: duration,
+            damagePerFrame: params.damagePerFrame || 0,
+            speedMult: params.speedMult || 1.0,
+            particleTimer: 0
+        });
+    }
+
+    // ===== 新增：更新 Debuff 状态 =====
+    updateDebuffs() {
+        // 过滤过期 debuff
+        this.debuffs = this.debuffs.filter(d => {
+            d.duration--;
+            if (d.duration <= 0) return false;
+
+            // 燃烧效果：持续伤害 + 粒子
+            if (d.type === "burn") {
+                this.hp -= d.damagePerFrame;
+                d.particleTimer++;
+
+                // 每 10 帧生成一个火焰粒子
+                if (d.particleTimer % 10 === 0) {
+                    // 使用现有的 EmberParticle 类（已存在于 15-entities-particles.js）
+                    if (typeof particles !== 'undefined' && typeof EmberParticle !== 'undefined') {
+                        const ember = new EmberParticle(
+                            this.x + this.width / 2 + (Math.random() - 0.5) * this.width,
+                            this.y + Math.random() * this.height
+                        );
+                        particles.push(ember);
+                    }
+                }
+            }
+
+            return true;
+        });
+
+        // 减速效果：应用速度修正
+        const slowDebuff = this.debuffs.find(d => d.type === "slow");
+        if (slowDebuff && this.originalSpeed !== null) {
+            this.speed = this.originalSpeed * slowDebuff.speedMult;
+        } else if (!slowDebuff && this.originalSpeed !== null) {
+            // 减速结束，恢复原始速度
+            this.speed = this.originalSpeed;
+            this.originalSpeed = null;
+        }
+
+        // 检查燃烧致死
+        if (this.hp <= 0 && !this.remove) {
+            this.die();
+        }
     }
 
     update(playerRef) {
@@ -174,6 +247,9 @@ class Enemy extends Entity {
         if (this.attackCooldown > 0) this.attackCooldown--;
         if (this.teleportCooldown > 0) this.teleportCooldown--;
         if (this.webbed > 0) this.webbed--;
+
+        // ===== 新增：更新 Debuff 状态 =====
+        this.updateDebuffs();
     }
 
     applyGravity() {

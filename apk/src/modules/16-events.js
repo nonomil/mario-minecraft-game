@@ -530,6 +530,122 @@ function wireTouchControls() {
         }, { passive: false });
     }
 
+    /**
+     * 绑定短按/长按双重检测
+     * @param {string} action - 按钮的 data-action 属性值
+     * @param {Function} onTap - 短按回调（< holdThreshold）
+     * @param {Function} onHold - 长按回调（≥ holdThreshold）
+     * @param {number} holdThreshold - 长按阈值（毫秒）
+     */
+    function bindTapOrHold(action, onTap, onHold, holdThreshold = 800) {
+        const btn = root.querySelector(`[data-action="${action}"]`);
+        if (!btn) return;
+
+        let pressStartTime = 0;
+        let holdTimer = null;
+        let isHolding = false;
+        let progressEl = btn.querySelector('.hold-progress');
+
+        // 如果按钮内没有进度条元素，创建一个
+        if (!progressEl) {
+            progressEl = document.createElement('div');
+            progressEl.className = 'hold-progress';
+            progressEl.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                opacity: 0.6;
+                pointer-events: none;
+                display: none;
+                z-index: 1;
+            `;
+            btn.appendChild(progressEl);
+        }
+
+        const startPress = (e) => {
+            if (e) e.preventDefault();
+            pressStartTime = Date.now();
+            isHolding = false;
+
+            // 显示进度条动画
+            if (progressEl) {
+                progressEl.style.display = 'block';
+                progressEl.style.animation = `hold-fill ${holdThreshold}ms linear`;
+            }
+
+            holdTimer = setTimeout(() => {
+                isHolding = true;
+                onHold();
+                // 隐藏进度条
+                if (progressEl) {
+                    progressEl.style.display = 'none';
+                    progressEl.style.animation = '';
+                }
+            }, holdThreshold);
+        };
+
+        const endPress = (e) => {
+            if (e) e.preventDefault();
+            clearTimeout(holdTimer);
+
+            // 隐藏进度条
+            if (progressEl) {
+                progressEl.style.display = 'none';
+                progressEl.style.animation = '';
+            }
+
+            const duration = Date.now() - pressStartTime;
+            if (!isHolding && duration < holdThreshold) {
+                onTap(); // 短按触发普通攻击
+            }
+        };
+
+        const cancelPress = (e) => {
+            if (e) e.preventDefault();
+            clearTimeout(holdTimer);
+            if (progressEl) {
+                progressEl.style.display = 'none';
+                progressEl.style.animation = '';
+            }
+        };
+
+        // 检测手指移出按钮区域
+        const checkMove = (e) => {
+            if (!e.touches || e.touches.length === 0) return;
+            const touch = e.touches[0];
+            const rect = btn.getBoundingClientRect();
+            if (touch.clientX < rect.left || touch.clientX > rect.right ||
+                touch.clientY < rect.top || touch.clientY > rect.bottom) {
+                cancelPress(e);
+            }
+        };
+
+        // 优先使用 Pointer Events（更好的跨平台支持）
+        const supportsPointer = (typeof window !== "undefined") && ("PointerEvent" in window);
+        if (supportsPointer) {
+            btn.addEventListener("pointerdown", e => {
+                startPress(e);
+                try { btn.setPointerCapture(e.pointerId); } catch {}
+            }, { passive: false });
+            btn.addEventListener("pointerup", endPress, { passive: false });
+            btn.addEventListener("pointercancel", cancelPress, { passive: false });
+            btn.addEventListener("lostpointercapture", cancelPress);
+            return;
+        }
+
+        // Fallback for older browsers
+        btn.addEventListener("touchstart", startPress, { passive: false });
+        btn.addEventListener("touchend", endPress, { passive: false });
+        btn.addEventListener("touchcancel", cancelPress, { passive: false });
+        btn.addEventListener("touchmove", checkMove, { passive: false });
+        btn.addEventListener("mousedown", startPress, { passive: false });
+        btn.addEventListener("mouseup", endPress, { passive: false });
+        btn.addEventListener("mouseleave", cancelPress);
+    }
+
     bindHold("left", () => {
         if (window._inputLocked) return;
         keys.left = true;
@@ -542,7 +658,18 @@ function wireTouchControls() {
         if (window._inputLocked) return;
         jumpBuffer = gameConfig.jump.bufferFrames;
     });
-    bindTap("attack", () => { handleAttack("tap"); });
+    // 使用 bindTapOrHold 替代 bindTap，支持长按使用消耗品
+    bindTapOrHold("attack",
+        () => { handleAttack("tap"); },  // 短按：普通攻击
+        () => {                           // 长按：使用消耗品
+            if (typeof useEquippedConsumable === "function") {
+                useEquippedConsumable();
+            } else {
+                console.warn("[Input] useEquippedConsumable not defined yet (will be implemented in task-3)");
+            }
+        },
+        800  // 长按阈值 800ms
+    );
     bindTap("interact", () => { handleInteraction("tap"); });
     bindTap("interior-exit", () => {
         if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {

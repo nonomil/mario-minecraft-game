@@ -782,3 +782,108 @@ let bombs = [];
 let webTraps = [];
 let fleshBaits = [];
 let torches = [];
+
+// ===== 新增：粒子池机制 =====
+
+/**
+ * 粒子池 - 复用粒子对象以提升性能
+ */
+class ParticlePool {
+    constructor(ParticleClass, initialSize = 20) {
+        this.ParticleClass = ParticleClass;
+        this.pool = [];
+        this.active = [];
+
+        // 预创建粒子对象
+        for (let i = 0; i < initialSize; i++) {
+            this.pool.push(new ParticleClass(0, 0));
+        }
+    }
+
+    /**
+     * 获取粒子（从池中复用或新建）
+     */
+    get(x, y) {
+        let particle;
+        if (this.pool.length > 0) {
+            particle = this.pool.pop();
+            particle.reset(x, y);
+        } else {
+            particle = new this.ParticleClass(x, y);
+        }
+        this.active.push(particle);
+        return particle;
+    }
+
+    /**
+     * 回收粒子到池中
+     */
+    update() {
+        this.active = this.active.filter(p => {
+            if (p.remove || p.life <= 0) {
+                p.remove = false;
+                this.pool.push(p);
+                return false;
+            }
+            return true;
+        });
+    }
+
+    /**
+     * 清空所有活跃粒子
+     */
+    clear() {
+        this.pool.push(...this.active);
+        this.active = [];
+    }
+}
+
+// 全局粒子池实例
+const particlePools = {
+    ember: new ParticlePool(EmberParticle, 30),
+    explosion: new ParticlePool(ExplosionParticle, 20),
+    sparkle: new ParticlePool(SparkleParticle, 20),
+    bubble: new ParticlePool(BubbleParticle, 15),
+    dust: new ParticlePool(DustParticle, 15),
+    leaf: new ParticlePool(LeafParticle, 15),
+    snowflake: new ParticlePool(Snowflake, 15),
+    rain: new ParticlePool(RainParticle, 20),
+    end: new ParticlePool(EndParticle, 15)
+};
+
+/**
+ * 获取粒子（优先从池中获取）
+ * @param {string} type - 粒子类型
+ * @param {number} x - X 坐标
+ * @param {number} y - Y 坐标
+ * @returns {Particle} 粒子实例
+ */
+function getPooledParticle(type, x, y) {
+    const pool = particlePools[type];
+    if (pool) {
+        return pool.get(x, y);
+    }
+    // 降级：直接创建（用于未池化的粒子类型）
+    console.warn(`Particle type "${type}" not pooled, creating new instance`);
+    return new Particle(x, y, type);
+}
+
+/**
+ * 更新所有粒子池（回收过期粒子）
+ * 应在游戏主循环中调用
+ */
+function updateParticlePools() {
+    for (const key in particlePools) {
+        particlePools[key].update();
+    }
+}
+
+/**
+ * 清空所有粒子池
+ */
+function clearParticlePools() {
+    for (const key in particlePools) {
+        particlePools[key].clear();
+    }
+}
+

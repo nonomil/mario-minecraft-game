@@ -1,11 +1,25 @@
 :root {
+  /* Font families */
   --font-family-base: "Verdana", "Microsoft YaHei", "微软雅黑", sans-serif;
+  --font-family-display: "Arial", "Microsoft YaHei", "微软雅黑", sans-serif;
+
+  /* Font sizes - 7 level scale */
+  --font-size-xs: 10px;
   --font-size-sm: 12px;
   --font-size-base: 14px;
   --font-size-lg: 16px;
   --font-size-xl: 20px;
   --font-size-2xl: 24px;
+  --font-size-3xl: 32px;
+
+  /* Font weights */
   --font-weight-normal: 400;
   --font-weight-medium: 600;
   --font-weight-bold: 700;
+  --font-weight-black: 900;
+
+  /* Line heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
 }

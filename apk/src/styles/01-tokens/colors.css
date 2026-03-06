@@ -1,10 +1,33 @@
 :root {
+  /* Primary colors */
   --color-primary: #4caf50;
   --color-primary-dark: #388e3c;
+  --color-primary-light: #81c784;
+
+  /* Accent colors */
   --color-accent: #ffd700;
+  --color-accent-dark: #ffa000;
+
+  /* Semantic colors */
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-error: #f44336;
+  --color-info: #2196f3;
+
+  /* Background colors */
   --color-bg-overlay: rgba(0, 0, 0, 0.55);
   --color-bg-panel: rgba(20, 20, 20, 0.95);
+  --color-bg-secondary: rgba(0, 0, 0, 0.75);
+  --color-bg-transparent: rgba(0, 0, 0, 0);
+
+  /* Border colors */
   --color-border-primary: rgba(255, 255, 255, 0.4);
+  --color-border-secondary: rgba(255, 255, 255, 0.2);
+  --color-border-focus: #ffd700;
+
+  /* Text colors */
   --color-text-primary: #ffffff;
   --color-text-secondary: #e0e0e0;
+  --color-text-tertiary: #bdbdbd;
+  --color-text-disabled: #757575;
 }

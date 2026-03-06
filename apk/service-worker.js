@@ -1,5 +1,5 @@
 // Versioned cache strategy - cache name bound to version.json
-let CACHE_NAME = "mmwg-v1.19.9"; // fallback if version.json fails to load
+let CACHE_NAME = "mmwg-v1.19.10"; // fallback if version.json fails to load
 
 const PRECACHE = [
   "./Game.html",
@@ -19,7 +19,7 @@ async function initCacheName() {
   try {
     const response = await fetch('./version.json');
     const versionData = await response.json();
-    CACHE_NAME = `mmwg-v${versionData.versionName || '1.19.9'}`;
+    CACHE_NAME = `mmwg-v${versionData.versionName || '1.19.10'}`;
     console.log('SW cache name:', CACHE_NAME);
   } catch (err) {
     console.warn('Failed to load version.json, using fallback cache name:', err);
