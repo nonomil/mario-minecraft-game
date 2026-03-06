@@ -268,6 +268,13 @@ function generateLetterOptions(correctLetter, count = 4) {
 }
 
 function generateFillBlankChallenge(wordObj) {
+    // Check language mode - use Chinese character challenges in Chinese mode
+    const languageMode = getLanguageModeSafe();
+    if (languageMode === "chinese") {
+        return generateChineseFillBlankChallenge(wordObj);
+    }
+
+    // English mode - original letter-based challenge
     const enRaw = normalizeChallengeTextSpacing(wordObj?.en).toLowerCase();
     if (/\s+/.test(enRaw)) {
         const phrasePayload = generatePhraseFillBlankChallenge(wordObj);
@@ -423,6 +430,13 @@ function generatePhraseUnscrambleDistractors(correctPhrase, count) {
 }
 
 function generateUnscrambleChallenge(wordObj) {
+    // Check language mode - use Chinese character scrambling in Chinese mode
+    const languageMode = getLanguageModeSafe();
+    if (languageMode === "chinese") {
+        return generateChineseUnscrambleChallenge(wordObj);
+    }
+
+    // English mode - original letter-based scrambling
     const enRaw = normalizeChallengeTextSpacing(wordObj?.en).toLowerCase();
     const isPhrase = /\s+/.test(enRaw);
 
@@ -476,6 +490,63 @@ function generateUnscrambleChallenge(wordObj) {
         answer: en
     };
 }
+
+// Chinese character unscramble challenge for Chinese mode
+function generateChineseUnscrambleChallenge(wordObj) {
+    const zhRaw = String(wordObj?.zh || wordObj?.chinese || "").trim();
+    if (zhRaw.length < 2) return generateChineseFillBlankChallenge(wordObj);
+
+    const chars = zhRaw.split("");
+    let scrambled = shuffle([...chars]);
+    let tries = 0;
+    while (scrambled.join("") === zhRaw && tries < 8) {
+        scrambled = shuffle([...chars]);
+        tries++;
+    }
+
+    const enHint = wordObj?.en ? String(wordObj.en) : "";
+
+    return {
+        mode: "fill_blank",
+        questionHtml:
+            `<div class="challenge-fill">` +
+            `<div class="${getChallengeWordDisplayClass(scrambled.join(" "))}" style="letter-spacing:8px;color:#FFD54F;">${scrambled.join(" ")}</div>` +
+            `<div class="challenge-fill-hint">重新排列汉字，拼出正确词组</div>` +
+            `<div class="challenge-fill-zh">${enHint}</div>` +
+            `</div>`,
+        options: shuffle([
+            { text: zhRaw, value: zhRaw, correct: true },
+            ...generateChineseScrambleDistractors(zhRaw, 3)
+        ]),
+        answer: zhRaw
+    };
+}
+
+function generateChineseScrambleDistractors(correctZh, count) {
+    const out = [];
+    const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
+    const candidates = shuffle(pool.filter(w => {
+        const zh = String(w?.zh || w?.chinese || "").trim();
+        return zh && zh !== correctZh && Math.abs(zh.length - correctZh.length) <= 1;
+    }));
+
+    for (const c of candidates) {
+        if (out.length >= count) break;
+        const v = String(c.zh || c.chinese || "").trim();
+        if (!out.some(x => x.value === v)) out.push({ text: v, value: v, correct: false });
+    }
+
+    // Generate fake scrambles if not enough
+    while (out.length < count) {
+        const fake = shuffle(correctZh.split("")).join("");
+        if (fake !== correctZh && !out.some(x => x.value === fake)) {
+            out.push({ text: fake, value: fake, correct: false });
+        }
+    }
+
+    return out;
+}
+
 const CHALLENGE_TYPES = {
     translate(wordObj) {
         const options = generateChallengeOptions(wordObj, "zh", LEARNING_CONFIG.challenge.baseOptions);
@@ -524,6 +595,87 @@ function pickDistinctWords(wordObj, count) {
     if (!Array.isArray(wordDatabase) || !wordDatabase.length) return [];
     const pool = wordDatabase.filter(w => w && w.en && w.en !== wordObj.en);
     return shuffle(pool).slice(0, Math.max(0, count));
+}
+
+// Chinese character fill_blank challenge for Chinese mode
+function generateChineseFillBlankChallenge(wordObj) {
+    const zhRaw = String(wordObj?.zh || wordObj?.chinese || "").trim();
+
+    // If it's a phrase (multiple characters), handle as phrase
+    if (zhRaw.length > 1) {
+        return generateChinesePhraseFillBlankChallenge(wordObj);
+    }
+
+    // Single character - not suitable for fill_blank
+    return null;
+}
+
+function generateChinesePhraseFillBlankChallenge(wordObj) {
+    const zhRaw = String(wordObj?.zh || wordObj?.chinese || "").trim();
+    if (zhRaw.length < 2) return null;
+
+    const chars = zhRaw.split("");
+    const minIndex = chars.length > 2 ? 1 : 0;
+    const maxIndex = chars.length > 2 ? chars.length - 2 : Math.max(0, chars.length - 1);
+    const missingIndex = Math.floor(Math.random() * (maxIndex - minIndex + 1)) + minIndex;
+    const missingChar = chars[missingIndex];
+
+    const wordDisplay = chars.map((char, i) => (i === missingIndex ? "_" : char)).join(" ");
+
+    // Generate similar Chinese character options
+    const options = generateChineseCharOptions(missingChar, zhRaw, 4);
+
+    const enHint = wordObj?.en ? String(wordObj.en) : "";
+
+    return {
+        mode: "fill_blank",
+        questionHtml:
+            `<div class="challenge-fill">` +
+            `<div class="${getChallengeWordDisplayClass(wordDisplay)}">${wordDisplay}</div>` +
+            `<div class="challenge-fill-hint">缺少哪个汉字？</div>` +
+            `<div class="challenge-fill-zh">${enHint}</div>` +
+            `</div>`,
+        options: shuffle(options).map(char => ({ text: char, value: char, correct: char === missingChar })),
+        answer: missingChar
+    };
+}
+
+function generateChineseCharOptions(correctChar, fullWord, count) {
+    const options = [correctChar];
+
+    // Try to get similar characters from vocabulary
+    const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
+    const candidates = [];
+
+    for (const w of pool) {
+        const zh = String(w?.zh || w?.chinese || "").trim();
+        if (!zh) continue;
+        for (const char of zh.split("")) {
+            if (char !== correctChar && !candidates.includes(char) && !fullWord.includes(char)) {
+                candidates.push(char);
+            }
+        }
+    }
+
+    // Shuffle and pick random characters
+    const shuffled = shuffle(candidates);
+    for (const char of shuffled) {
+        if (options.length >= count) break;
+        if (!options.includes(char)) options.push(char);
+    }
+
+    // If still not enough, use common Chinese characters as fallback
+    const commonChars = "的一是不了人我在有他这为之大来以个中上们到说国和地也子时道出而要于就下得可你年生自会那后能对着事其里所去行过家十用发天如然作方成者多日都三小军二无同么经法当起与好看学进种将还分此心前面又定见只主没公从";
+    let idx = 0;
+    while (options.length < count && idx < commonChars.length) {
+        const char = commonChars[idx];
+        if (!options.includes(char) && !fullWord.includes(char)) {
+            options.push(char);
+        }
+        idx++;
+    }
+
+    return options;
 }
 
 function shouldTriggerLearningChallenge(wordObj) {
@@ -628,6 +780,24 @@ function showLearningChallenge(challenge) {
                 if (len > 20) btn.style.fontSize = '10px';
                 else if (len > 15) btn.style.fontSize = '12px';
                 else if (len > 10) btn.style.fontSize = '14px';
+
+                // Add hover/focus event to speak the option
+                const speakOption = () => {
+                    if (!settings.speechEnabled) return;
+                    const languageMode = getLanguageModeSafe();
+                    const text = option.text;
+
+                    if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
+                        const lang = languageMode === "chinese" ? "zh-CN" : "en-US";
+                        const rate = languageMode === "chinese"
+                            ? clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0)
+                            : clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
+                        window.MMWG_TTS.speak(text, lang, { rate });
+                    }
+                };
+
+                btn.addEventListener("mouseenter", speakOption);
+                btn.addEventListener("focus", speakOption);
                 btn.addEventListener("click", () => {
                     completeLearningChallenge(option.correct);
                 });
@@ -822,6 +992,12 @@ function resetLearningStreaks() {
 function triggerWordGateChallenge(gate) {
     if (!gate || !gate.wordObj || gate.locked === false) return;
     if (currentLearningChallenge) return;
+
+    // Speak the word when word gate is triggered
+    if (settings.speechEnabled && gate.wordObj) {
+        speakWord(gate.wordObj);
+    }
+
     startLearningChallenge(gate.wordObj, "fill_blank", gate);
     gate.cooldown = 60;
 }

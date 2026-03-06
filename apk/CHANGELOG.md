@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.15] - 2026-03-06
+### Added
+- **Chinese Mode Challenges**: Language-specific challenge types
+  - Chinese mode: Character-based fill_blank (缺少哪个汉字？) instead of letter-based
+  - Chinese mode: Character scrambling (重新排列汉字) instead of letter scrambling
+  - Challenges automatically adapt based on language mode setting
+- **Voice Prompts for Word Gates**: TTS speaks the word when player encounters a word gate
+- **Challenge Option Voice Hints**: Hover or focus on options to hear them spoken
+  - Helps users choose the correct answer, especially for Chinese characters
+  - Respects language mode and speech settings
+
+### Changed
+- Challenge generation now checks language mode and generates appropriate challenge types
+- Fill_blank and unscramble challenges have separate implementations for English and Chinese modes
+
 ## [1.19.14] - 2026-03-06
 ### Fixed
 - **Chinese Mode Display**: Fixed word display to show Chinese characters correctly in Chinese mode
