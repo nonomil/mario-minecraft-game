@@ -938,6 +938,15 @@ function completeLearningChallenge(correct) {
         addScore(reward.correct.score);
         inventory.diamond = (inventory.diamond || 0) + (reward.correct.diamond || 0);
         updateInventoryUI();
+
+        // Track challenge success count
+        if (!progress.challengeSuccessCount) progress.challengeSuccessCount = 0;
+        progress.challengeSuccessCount++;
+        saveProgress();
+
+        // Check for milestone rewards
+        checkChallengeMilestoneRewards(progress.challengeSuccessCount);
+
         showFloatingText("🎉 挑战成功", player.x, player.y - 40);
         if (challengeOrigin && challengeOrigin instanceof WordGate) {
             challengeOrigin.locked = false;
@@ -1039,6 +1048,42 @@ function updateWordUI(wordObj) {
 function getLanguageModeSafe() {
     const mode = settings.languageMode || "english";
     return mode === "chinese" ? "chinese" : "english";
+}
+
+function checkChallengeMilestoneRewards(count) {
+    if (!LEARNING_CONFIG.challenge.milestones) return;
+
+    const milestones = LEARNING_CONFIG.challenge.milestones;
+    const milestone = milestones.find(m => m.count === count);
+
+    if (!milestone) return;
+
+    const reward = milestone.reward;
+
+    if (reward.type === "item") {
+        // Award item
+        if (!inventory[reward.item]) inventory[reward.item] = 0;
+        inventory[reward.item] += reward.amount || 1;
+        updateInventoryUI();
+        showToast(reward.message);
+        showFloatingText(`🎁 ${reward.amount}x`, player.x, player.y - 60, "#FFD700");
+    } else if (reward.type === "armor") {
+        // Award armor
+        if (typeof addArmorToInventory === "function") {
+            addArmorToInventory(reward.armorId);
+            showToast(reward.message);
+            showFloatingText("🛡️ 新盔甲!", player.x, player.y - 60, "#FFD700");
+        }
+    }
+
+    // Show special celebration for major milestones
+    if (count >= 100) {
+        for (let i = 0; i < 20; i++) {
+            if (typeof emitGameParticle === "function") {
+                emitGameParticle("ember", player.x + Math.random() * player.width, player.y + Math.random() * player.height);
+            }
+        }
+    }
 }
 
 function getSpeakPayload(wordObj) {

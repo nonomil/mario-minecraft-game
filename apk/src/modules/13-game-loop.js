@@ -522,7 +522,12 @@ function update() {
             }
             recordWordProgress(item.wordObj);
             speakWord(item.wordObj);
-            showFloatingText(item.wordObj.zh, item.x, item.y);
+
+            // Show floating text based on language mode
+            const displayContent = window.BilingualVocab?.getDisplayContent?.(item.wordObj);
+            const floatingText = displayContent ? displayContent.primaryText : (item.wordObj.zh || item.wordObj.en);
+            showFloatingText(floatingText, item.x, item.y);
+
             maybeTriggerLearningChallenge(item.wordObj);
         }
     });

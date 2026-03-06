@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汉语学习模式测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🇨🇳 汉语学习模式测试</h1>
+
+    <div class="test-section">
+        <h2>测试说明</h2>
+        <p>本页面用于测试汉语学习模式的功能是否正常。请按照以下步骤操作：</p>
+        <ol>
+            <li>打开游戏主页面 <code>Game.html</code></li>
+            <li>在档案选择界面，查看是否有"选择学习模式"选项</li>
+            <li>点击"🇨🇳 汉字学习"按钮</li>
+            <li>选择或创建一个档案，开始游戏</li>
+            <li>观察游戏中的单词显示</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>✅ 功能检查清单</h2>
+        <div id="checklist">
+            <div class="test-info">
+                <strong>1. UI 入口检查</strong>
+                <ul>
+                    <li>档案选择界面是否显示"🌍 选择学习模式"？</li>
+                    <li>是否有"🇬🇧 英语学习"和"🇨🇳 汉字学习"两个按钮？</li>
+                    <li>按钮下方是否显示"当前：xxx学习"？</li>
+                </ul>
+            </div>
+
+            <div class="test-info">
+                <strong>2. 汉字模式显示检查</strong>
+                <ul>
+                    <li>黄色圆圈上是否显示中文（如"微笑"而不是"smile"）？</li>
+                    <li>单词卡片是否显示中文+拼音？</li>
+                    <li>单词测验是否使用中文？</li>
+                    <li>单词闸门是否使用中文？</li>
+                    <li>复活连线是否使用中文？</li>
+                </ul>
+            </div>
+
+            <div class="test-info">
+                <strong>3. 设置面板检查</strong>
+                <ul>
+                    <li>点击"⚙️ 设置"，是否能看到"学习语言模式"下拉框？</li>
+                    <li>切换语言模式后，是否立即生效？</li>
+                    <li>"显示拼音"选项是否可以切换？</li>
+                    <li>保存设置后，刷新页面是否保持选择？</li>
+                </ul>
+            </div>
+
+            <div class="test-info">
+                <strong>4. TTS 语音检查</strong>
+                <ul>
+                    <li>汉字模式下，是否使用中文语音朗读？</li>
+                    <li>英语模式下，是否使用英文语音朗读？</li>
+                </ul>
+            </div>
+
+            <div class="test-info">
+                <strong>5. 词汇数据检查</strong>
+                <ul>
+                    <li>是否能正常加载汉字词库？</li>
+                    <li>词汇是否包含拼音标注？</li>
+                    <li>切换模式后，词汇是否正确切换？</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 代码修改总结</h2>
+        <div class="test-result test-pass">
+            <strong>✅ 已完成的修改：</strong>
+            <ul>
+                <li><strong>src/modules/08-account.js</strong>: 在档案选择界面添加学习模式选择UI和事件绑定</li>
+                <li><strong>词汇系统</strong>: BilingualVocab 模块已正确实现（src/modules/09-vocab.js）</li>
+                <li><strong>显示逻辑</strong>: updateWordUI 已使用 BilingualVocab.getDisplayContent()</li>
+                <li><strong>挑战系统</strong>: 已支持汉字模式（src/modules/12-challenges.js）</li>
+                <li><strong>TTS 系统</strong>: 已根据语言模式切换朗读语言</li>
+                <li><strong>设置保存</strong>: languageMode 和 showPinyin 已正确保存和加载</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 测试步骤</h2>
+        <button class="btn-primary" onclick="window.open('Game.html', '_blank')">打开游戏进行测试</button>
+        <button class="btn-success" onclick="showTestGuide()">显示详细测试指南</button>
+        <button class="btn-warning" onclick="checkLocalStorage()">检查 LocalStorage</button>
+        <div id="test-guide" style="display:none; margin-top:20px;"></div>
+        <div id="storage-info" style="margin-top:20px;"></div>
+    </div>
+
+    <script>
+        function showTestGuide() {
+            const guide = document.getElementById('test-guide');
+            guide.style.display = 'block';
+            guide.innerHTML = `
+                <div class="test-info">
+                    <h3>详细测试步骤：</h3>
+                    <ol>
+                        <li><strong>首次启动测试</strong>
+                            <ul>
+                                <li>清空 LocalStorage（按 F12 → Console → 输入 <code>localStorage.clear()</code>）</li>
+                                <li>刷新页面，观察是否显示档案选择界面</li>
+                                <li>检查是否有学习模式选择按钮</li>
+                            </ul>
+                        </li>
+                        <li><strong>汉字模式测试</strong>
+                            <ul>
+                                <li>点击"🇨🇳 汉字学习"按钮</li>
+                                <li>创建一个新档案（如"测试汉字"）</li>
+                                <li>开始游戏，观察黄色圆圈上的文字</li>
+                                <li>收集单词，查看单词卡片显示</li>
+                                <li>触发单词测验，检查是否使用中文</li>
+                            </ul>
+                        </li>
+                        <li><strong>模式切换测试</strong>
+                            <ul>
+                                <li>游戏中点击"⚙️ 设置"</li>
+                                <li>找到"学习语言模式"下拉框</li>
+                                <li>切换到"🇬🇧 英语学习"</li>
+                                <li>保存设置，观察游戏中的单词是否切换为英文</li>
+                                <li>再次切换回"🇨🇳 汉字学习"，验证是否正常</li>
+                            </ul>
+                        </li>
+                        <li><strong>拼音显示测试</strong>
+                            <ul>
+                                <li>在设置中勾选"显示拼音"</li>
+                                <li>保存设置，观察单词卡片是否显示拼音</li>
+                                <li>取消勾选，验证拼音是否隐藏</li>
+                                <li>刷新页面，检查设置是否保持</li>
+                            </ul>
+                        </li>
+                        <li><strong>TTS 语音测试</strong>
+                            <ul>
+                                <li>确保浏览器允许自动播放音频</li>
+                                <li>汉字模式下收集单词，听是否是中文朗读</li>
+                                <li>切换到英语模式，听是否是英文朗读</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            `;
+        }
+
+        function checkLocalStorage() {
+            const info = document.getElementById('storage-info');
+            const languageMode = localStorage.getItem('languageMode') ||
+                                JSON.parse(localStorage.getItem('mmwg:settings') || '{}').languageMode;
+            const showPinyin = localStorage.getItem('showPinyin') ||
+                              JSON.parse(localStorage.getItem('mmwg:settings') || '{}').showPinyin;
+
+            info.innerHTML = `
+                <div class="test-result ${languageMode ? 'test-pass' : 'test-fail'}">
+                    <strong>LocalStorage 状态：</strong><br>
+                    <code>languageMode: ${languageMode || '未设置'}</code><br>
+                    <code>showPinyin: ${showPinyin !== undefined ? showPinyin : '未设置'}</code><br>
+                    <br>
+                    <strong>完整设置：</strong><br>
+                    <pre>${JSON.stringify(JSON.parse(localStorage.getItem('mmwg:settings') || '{}'), null, 2)}</pre>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

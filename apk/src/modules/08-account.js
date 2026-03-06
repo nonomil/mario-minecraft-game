@@ -58,6 +58,16 @@ function ensureStartOverlayContent() {
                     </div>
                     <div class="overlay-account-hint">已有档案：选择继续/重玩/删除</div>
                     <div id="overlay-accounts-container" class="account-list"></div>
+
+                    <!-- Language Mode Selection -->
+                    <div id="overlay-language-mode-selection" class="overlay-language-mode-selection" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <div style="text-align:center;margin-bottom:12px;color:#ccc;font-size:14px;">🌍 选择学习模式</div>
+                        <div style="display:flex;gap:12px;justify-content:center;">
+                            <button class="game-btn game-btn-small" id="btn-overlay-language-english" style="flex:1;">🇬🇧 英语学习</button>
+                            <button class="game-btn game-btn-small" id="btn-overlay-language-chinese" style="flex:1;">🇨🇳 汉字学习</button>
+                        </div>
+                        <div id="overlay-language-current" style="text-align:center;margin-top:8px;font-size:12px;color:#999;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,6 +111,50 @@ function wireStartOverlayAccountActions() {
             btn?.click();
         });
     }
+
+    // Wire language mode selection buttons
+    const enBtn = document.getElementById("btn-overlay-language-english");
+    const zhBtn = document.getElementById("btn-overlay-language-chinese");
+    const currentDisplay = document.getElementById("overlay-language-current");
+
+    const updateLanguageModeDisplay = () => {
+        const mode = settings?.languageMode || "english";
+        if (currentDisplay) {
+            currentDisplay.innerText = mode === "chinese" ? "当前：汉字学习" : "当前：英语学习";
+        }
+        if (enBtn) {
+            enBtn.style.opacity = mode === "english" ? "1" : "0.6";
+            enBtn.style.fontWeight = mode === "english" ? "bold" : "normal";
+        }
+        if (zhBtn) {
+            zhBtn.style.opacity = mode === "chinese" ? "1" : "0.6";
+            zhBtn.style.fontWeight = mode === "chinese" ? "bold" : "normal";
+        }
+    };
+
+    if (enBtn) {
+        enBtn.addEventListener("click", () => {
+            if (settings) {
+                settings.languageMode = "english";
+                if (typeof saveSettings === "function") saveSettings();
+                updateLanguageModeDisplay();
+                showToast("已切换到英语学习模式");
+            }
+        });
+    }
+
+    if (zhBtn) {
+        zhBtn.addEventListener("click", () => {
+            if (settings) {
+                settings.languageMode = "chinese";
+                if (typeof saveSettings === "function") saveSettings();
+                updateLanguageModeDisplay();
+                showToast("已切换到汉字学习模式");
+            }
+        });
+    }
+
+    updateLanguageModeDisplay();
 }
 
 function updateStartOverlayActionState() {
@@ -751,6 +805,9 @@ function renderLearningStats(account) {
     const totalAttempts = totalCorrect + totalWrong;
     const accuracyPercent = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
 
+    // Get challenge success count from progress
+    const challengeSuccessCount = progress?.challengeSuccessCount || 0;
+
     // Task 2: 7天学习趋势
     const dailyLearning = get7DayLearningTrend(account);
     const trendHtml = dailyLearning.length > 0
@@ -801,6 +858,7 @@ function renderLearningStats(account) {
         `<div class="stat-card">已学 <strong>${learned}</strong></div>` +
         `<div class="stat-card">掌握 <strong>${mastered}</strong></div>` +
         `<div class="stat-card">正确率 <strong>${accuracyPercent}%</strong></div>` +
+        `<div class="stat-card">挑战成功 <strong>${challengeSuccessCount}</strong></div>` +
         `</div>` +
         `<div class="trend-section">` +
         `<h3>最近7天学习</h3>` +

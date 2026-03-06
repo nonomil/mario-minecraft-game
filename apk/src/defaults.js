@@ -239,6 +239,8 @@ window.MMWG_DEFAULTS = {
         keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ",
         villageEnabled: true,
         villageFrequency: 500,
-        villageAutoSave: true
+        villageAutoSave: true,
+        languageMode: "english",
+        showPinyin: true
     }
 };

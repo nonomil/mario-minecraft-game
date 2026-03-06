@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.17] - 2026-03-06
+### Changed
+- **Version Synchronization**: Unified version numbers across all configuration files (`package.json`, `version.json`, `build-info.json`)
+- **Release Preparation**: Updated build numbers and version codes for official release
+
+## [1.19.16] - 2026-03-06
+### Added
+- **Challenge Success Tracking**: Track all successful challenge completions
+  - `progress.challengeSuccessCount` persists across sessions
+  - Challenge count displayed in learning statistics panel
+- **Milestone Reward System**: 9 reward tiers for challenge achievements
+  - Item rewards at 10, 25, 100, 200 challenges (Iron, Diamonds, Pumpkins, Ender Pearls)
+  - Armor rewards at 50, 150, 300, 500, 1000 challenges (Leather → Netherite progression)
+  - Visual celebration effects for major milestones (≥100 challenges)
+  - Toast notifications with custom messages for each milestone
+- **Learning Stats Enhancement**: Added challenge success count to stats summary panel
+
+### Changed
+- `LEARNING_CONFIG.challenge` now includes `milestones` array with reward configurations
+- `completeLearningChallenge()` now tracks success count and checks for milestone rewards
+- `renderLearningStats()` displays challenge success count alongside other stats
+
 ## [1.19.15] - 2026-03-06
 ### Added
 - **Chinese Mode Challenges**: Language-specific challenge types

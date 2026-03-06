@@ -69,7 +69,7 @@ let levels = [...defaultLevels];
 let wordDatabase = [...defaultWords];
 let settings = storage ? storage.loadJson("mmwg:settings", defaultSettings) : JSON.parse(JSON.stringify(defaultSettings));
 let vocabState = storage ? storage.loadJson("mmwg:vocabState", { runCounts: {}, lastPackId: null }) : { runCounts: {}, lastPackId: null };
-let progress = storage ? storage.loadJson("mmwg:progress", { vocab: {} }) : { vocab: {} };
+let progress = storage ? storage.loadJson("mmwg:progress", { vocab: {}, challengeSuccessCount: 0 }) : { vocab: {}, challengeSuccessCount: 0 };
 let lastWord = null;
 let wordPicker = null;
 let followUpQueue = [];
@@ -782,7 +782,18 @@ const LEARNING_CONFIG = {
         rewards: {
             correct: { score: 20, diamond: 1 },
             wrong: { scorePenalty: 8 }
-        }
+        },
+        milestones: [
+            { count: 10, reward: { type: "item", item: "iron", amount: 3, message: "🎁 挑战10次成功！获得铁块×3" } },
+            { count: 25, reward: { type: "item", item: "diamond", amount: 5, message: "💎 挑战25次成功！获得钻石×5" } },
+            { count: 50, reward: { type: "armor", armorId: "leather", message: "🛡️ 挑战50次成功！获得皮革盔甲" } },
+            { count: 100, reward: { type: "item", item: "pumpkin", amount: 2, message: "🎃 挑战100次成功！获得南瓜×2" } },
+            { count: 150, reward: { type: "armor", armorId: "chainmail", message: "⛓️ 挑战150次成功！获得锁链盔甲" } },
+            { count: 200, reward: { type: "item", item: "ender_pearl", amount: 3, message: "🟣 挑战200次成功！获得末影珍珠×3" } },
+            { count: 300, reward: { type: "armor", armorId: "iron", message: "🛡️ 挑战300次成功！获得铁盔甲" } },
+            { count: 500, reward: { type: "armor", armorId: "diamond", message: "💎 挑战500次成功！获得钻石盔甲" } },
+            { count: 1000, reward: { type: "armor", armorId: "netherite", message: "🔥 挑战1000次成功！获得下界合金盔甲" } }
+        ]
     },
     wordGate: {
         spawnChance: 0.18,
