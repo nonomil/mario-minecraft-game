@@ -33,6 +33,102 @@ for (const boss of BOSSES) {
   });
 }
 
+test("GameDebug boss state should expose second-pass intent and reward metadata", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const blazeState = await getDebugState(page);
+
+  expect(blazeState.bossRewardKey).toBeTruthy();
+  expect(typeof blazeState.bossIntentKey).toBe("string");
+  expect(Array.isArray(blazeState.bossProjectileTypes)).toBeTruthy();
+  expect(typeof blazeState.bossVictoryReady).toBe("boolean");
+
+  await forceBoss(page, "warden");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const wardenState = await getDebugState(page);
+
+  expect(wardenState.bossRewardKey).toBeTruthy();
+  expect(typeof wardenState.bossIntentKey).toBe("string");
+  expect(Array.isArray(wardenState.bossProjectileTypes)).toBeTruthy();
+  expect(typeof wardenState.bossVictoryReady).toBe("boolean");
+});
+
+test("Boss victory should grant boss-specific reward drops", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+
+  const before = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    return {
+      score: w && typeof w.eval === "function" ? (Number(w.eval('typeof score !== "undefined" ? score : 0')) || 0) : (Number(w && w.score) || 0),
+      blazePowder: w && typeof w.eval === "function" ? (Number(w.eval('inventory && inventory.blaze_powder ? inventory.blaze_powder : 0')) || 0) : (Number(w && w.inventory && w.inventory.blaze_powder) || 0)
+    };
+  });
+
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (!boss) return;
+    boss.phaseInvulnerableTimer = 0;
+    boss.takeDamage(9999);
+  });
+  await tickGame(page, 4);
+
+  const after = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    return {
+      score: w && typeof w.eval === "function" ? (Number(w.eval('typeof score !== "undefined" ? score : 0')) || 0) : (Number(w && w.score) || 0),
+      blazePowder: w && typeof w.eval === "function" ? (Number(w.eval('inventory && inventory.blaze_powder ? inventory.blaze_powder : 0')) || 0) : (Number(w && w.inventory && w.inventory.blaze_powder) || 0)
+    };
+  });
+
+  expect(after.score).toBeGreaterThan(before.score);
+  expect(after.blazePowder).toBeGreaterThan(before.blazePowder);
+});
+
+test("Wither phase 3 should expose an air-pressure barrage intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither");
+  await setBossPhase(page, 3);
+  await tickGame(page, 80);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (boss && typeof boss.shootTrackingBalls === "function") boss.shootTrackingBalls(5);
+  });
+  const state = await getDebugState(page);
+
+  expect(state.bossType).toBe("WitherBoss");
+  expect(state.bossIntentKey).toBe("tracking_barrage");
+  expect(state.bossProjectileTypes).toContain("wither_tracking_orb");
+});
+
+test("Ghast phase 3 should expose an air-pressure bombardment intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "ghast");
+  await setBossPhase(page, 3);
+  await tickGame(page, 80);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    const playerRef = w && w.player ? w.player : { x: 0, y: 0, width: 0, height: 0 };
+    if (boss && typeof boss.shootFireball === "function") boss.shootFireball(playerRef, 3);
+  });
+  const state = await getDebugState(page);
+
+  expect(state.bossType).toBe("GhastBoss");
+  expect(state.bossIntentKey).toBe("bombardment");
+  expect(state.bossProjectileTypes).toContain("ghast_fireball_volley");
+});
+
 test("Blaze debug scene should expose upgraded visuals, projectiles, and minions", async ({ page }) => {
   await openDebugPage(page);
   await forceBoss(page, "blaze");
@@ -55,6 +151,12 @@ test("Wither skeleton debug scene should expose blocking and summoning states", 
   expect(["blocking", "patrol"]).toContain(blockingState.bossState);
 
   await setBossHpRatio(page, 0.2);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (boss && typeof boss.summonMinions === "function") boss.summonMinions();
+  });
   await tickGame(page, 10);
   const summonState = await getDebugState(page);
 
@@ -77,6 +179,74 @@ test("Biome selection control should switch to volcano and keep stay info availa
   expect(state.stay).toBeTruthy();
   expect(state.stay.minScore).toBeGreaterThan(0);
   expect(state.stay.minTimeSec).toBeGreaterThan(0);
+});
+
+test("Blaze phase 3 should expose a flame-ring pressure intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (boss && typeof boss.castFlameRing === "function") boss.castFlameRing();
+  });
+  const state = await getDebugState(page);
+
+  expect(state.bossType).toBe("BlazeBoss");
+  expect(state.bossIntentKey).toBe("flame_ring");
+  expect(state.bossProjectileTypes).toContain("blaze_ring_orb");
+});
+
+test("Wither skeleton phase 3 should expose a bone-wall pressure intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither_skeleton");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (boss && typeof boss.raiseBoneWall === "function") boss.raiseBoneWall();
+  });
+  const state = await getDebugState(page);
+
+  expect(state.bossType).toBe("WitherSkeletonBoss");
+  expect(state.bossIntentKey).toBe("bone_wall");
+  expect(state.bossProjectileTypes).toContain("bone_wall_shard");
+});
+
+test("Warden phase 3 should expose a darkness-pulse elite intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "warden");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (boss && typeof boss.emitDarkPulse === "function") boss.emitDarkPulse();
+  });
+  const state = await getDebugState(page);
+
+  expect(state.bossType).toBe("WardenBoss");
+  expect(state.bossIntentKey).toBe("dark_pulse");
+  expect(state.bossProjectileTypes).toContain("warden_dark_pulse");
+});
+
+test("Evoker phase 3 should expose a spellburst elite intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "evoker");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (boss && typeof boss.castSpellBurst === "function") boss.castSpellBurst();
+  });
+  const state = await getDebugState(page);
+
+  expect(state.bossType).toBe("EvokerBoss");
+  expect(state.bossIntentKey).toBe("spellburst");
+  expect(state.bossProjectileTypes).toContain("evoker_spellburst");
 });
 
 test("Warden debug scene should expose heavy attacks and upgraded visuals", async ({ page }) => {

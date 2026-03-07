@@ -38,6 +38,20 @@ const BOSS_REGISTRY = Object.freeze([
     { id: 'evoker', score: 12000, flying: false, debugCtor: 'EvokerBoss' }
 ]);
 
+const DEFAULT_BOSS_REWARDS = Object.freeze({
+    wither: Object.freeze({ key: 'wither_relic', drops: Object.freeze(['diamond', 'diamond', 'potion']) }),
+    ghast: Object.freeze({ key: 'ghast_tear_cache', drops: Object.freeze(['diamond', 'iron', 'potion']) }),
+    blaze: Object.freeze({ key: 'blaze_powder_cache', drops: Object.freeze(['blaze_powder', 'magma_cream']) }),
+    wither_skeleton: Object.freeze({ key: 'ashen_bone_cache', drops: Object.freeze(['coal', 'iron']) }),
+    warden: Object.freeze({ key: 'echo_cache', drops: Object.freeze(['echo_shard', 'sculk_vein']) }),
+    evoker: Object.freeze({ key: 'arcane_cache', drops: Object.freeze(['emerald', 'potion']) })
+});
+
+function getBossRewardConfig(type) {
+    const normalized = String(type || '').trim().toLowerCase();
+    return DEFAULT_BOSS_REWARDS[normalized] || Object.freeze({ key: `${normalized || 'boss'}_cache`, drops: Object.freeze(['iron']) });
+}
+
 function getBossMetaEntry(type) {
     const normalized = String(type || '').trim().toLowerCase();
     return BOSS_REGISTRY.find((entry) => entry.id === normalized) || BOSS_REGISTRY[0];
@@ -183,6 +197,10 @@ class Boss {
         this.type = config.id || 'boss';
         this.visualKey = config.visualKey || 'boss_v1';
         this.debugState = config.debugState || 'idle';
+        this.intentKey = config.intentKey || this.debugState || 'idle';
+        const rewardConfig = config.rewardConfig || getBossRewardConfig(this.type);
+        this.rewardKey = config.rewardKey || rewardConfig.key || `${this.type}_cache`;
+        this.rewardDrops = Array.isArray(config.rewardDrops) ? config.rewardDrops.slice() : Array.isArray(rewardConfig.drops) ? rewardConfig.drops.slice() : [];
         this.phaseInvulnerableTimer = 0;
     }
 
@@ -206,6 +224,28 @@ class Boss {
             this.phase = 3;
             this.onPhaseChange(3);
         }
+    }
+
+    setIntent(key) {
+        this.intentKey = String(key || 'idle');
+        return this.intentKey;
+    }
+
+    setReward(config = {}) {
+        const drops = Array.isArray(config.drops) ? config.drops.slice() : this.rewardDrops.slice();
+        this.rewardKey = String(config.key || this.rewardKey || `${this.type}_cache`);
+        this.rewardDrops = drops;
+        return { key: this.rewardKey, drops: this.rewardDrops.slice() };
+    }
+
+    getProjectileTypeSnapshot() {
+        if (!Array.isArray(this.bossProjectiles) || !this.bossProjectiles.length) return [];
+        const seen = new Set();
+        this.bossProjectiles.forEach((projectile) => {
+            const type = projectile && projectile.type ? String(projectile.type) : 'default';
+            if (type) seen.add(type);
+        });
+        return Array.from(seen);
     }
 // PLACEHOLDER_BOSS_METHODS
 
@@ -469,12 +509,22 @@ globalThis.bossArena = globalThis.bossArena || {
         if (this.victoryTimer > 0) return;
         this.victoryTimer = 1;
         this.viewportLocked = false;
-        // 奖励
+        const defeatedBoss = this.boss;
+        const rewardDrops = defeatedBoss && Array.isArray(defeatedBoss.rewardDrops) ? defeatedBoss.rewardDrops.slice() : [];
+        const rewardKey = defeatedBoss && defeatedBoss.rewardKey ? defeatedBoss.rewardKey : 'boss_cache';
+        const rewardName = defeatedBoss && defeatedBoss.name ? defeatedBoss.name : 'BOSS';
         score += 500;
         inventory.iron = (inventory.iron || 0) + 5;
         addArmorToInventory('diamond');
-        showFloatingText('🏆 BOSS DEFEATED!', player.x, player.y - 60, '#FFD700');
-        showToast('🏆 击败BOSS! 获得丰厚奖励!');
+        rewardDrops.forEach((itemKey) => {
+            if (!itemKey) return;
+            inventory[itemKey] = (inventory[itemKey] || 0) + 1;
+        });
+        showFloatingText('?? BOSS DEFEATED!', player.x, player.y - 60, '#FFD700');
+        if (rewardDrops.length) {
+            showFloatingText(`?? ${rewardDrops.join(' + ')}`, player.x, player.y - 88, '#FFE082');
+        }
+        showToast(`?? ??${rewardName}! ?? ${rewardKey} ??!`);
         const callback = this.currentEncounter && typeof this.currentEncounter.onVictory === "function"
             ? this.currentEncounter.onVictory
             : null;
@@ -621,6 +671,7 @@ class WitherBoss extends Boss {
 
     // 阶段一：每3秒1个黑球
     phaseOne(playerRef) {
+        this.setIntent('skull_shot');
         this.attackTimer++;
         if (this.attackTimer >= 180) {
             this.shootBlackBall(playerRef, 1);
@@ -630,7 +681,12 @@ class WitherBoss extends Boss {
 
     // 阶段二：每2秒3个扇形黑球 + 冲刺
     phaseTwo(playerRef) {
-        if (this.charging) { this.executeCharge(playerRef); return; }
+        if (this.charging) {
+            this.setIntent('charge_sweep');
+            this.executeCharge(playerRef);
+            return;
+        }
+        this.setIntent('fan_shot');
         this.attackTimer++;
         if (this.attackTimer >= 120) {
             this.shootBlackBall(playerRef, 3);
@@ -645,6 +701,7 @@ class WitherBoss extends Boss {
 
     // 阶段三：固定中央，每1秒5个追踪弹
     phaseThree(playerRef) {
+        this.setIntent('tracking_barrage');
         const centerX = playerRef.x;
         this.x += (centerX - this.x) * 0.03;
         this.x += (Math.random() - 0.5) * 4;
@@ -672,7 +729,8 @@ class WitherBoss extends Boss {
                 vy: Math.sin(angle + spread) * 4,
                 damage: this.phase >= 2 ? 2 : 1,
                 size: 12, color: '#1A1A1A',
-                tracking: false, life: 300
+                tracking: false, life: 300,
+                type: 'wither_orb'
             });
         }
     }
@@ -687,7 +745,8 @@ class WitherBoss extends Boss {
                 vx: Math.cos(angle) * 3,
                 vy: Math.sin(angle) * 3,
                 damage: 1, size: 10, color: '#4A0080',
-                tracking: true, trackDelay: 60, life: 300
+                tracking: true, trackDelay: 60, life: 300,
+                type: 'wither_tracking_orb'
             });
         }
     }
@@ -867,6 +926,7 @@ class GhastBoss extends Boss {
     updateBehavior(playerRef) {
         // 哭泣状态更新
         if (this.crying) {
+            this.setIntent('crying');
             this.cryTimer--;
             if (this.cryTimer % 10 === 0) {
                 this.particles.push({
@@ -881,6 +941,7 @@ class GhastBoss extends Boss {
 
         // 突进逻辑
         if (this.rushing) {
+            this.setIntent('rush');
             this.executeRush(playerRef);
             return;
         }
@@ -893,6 +954,7 @@ class GhastBoss extends Boss {
         this.y = 80 + Math.sin(this.moveAngle * 2) * 60;
 
         // 攻击
+        this.setIntent(this.phase >= 3 ? 'bombardment' : 'hover_fire');
         const interval = this.phase === 1 ? 150 : this.phase === 2 ? 90 : 60;
         this.attackTimer++;
         if (this.attackTimer >= interval) {
@@ -927,7 +989,8 @@ class GhastBoss extends Boss {
                 color: '#FF4500',
                 reflectable: true,
                 reflected: false,
-                tracking: false, life: 300
+                tracking: false, life: 300,
+                type: count >= 3 ? 'ghast_fireball_volley' : 'ghast_fireball'
             });
         }
     }
@@ -1084,10 +1147,13 @@ class BlazeBoss extends Boss {
         this.burstQueue = [];
         this.burstTimer = 0;
         this.fireColumnTimer = 0;
+        this.ringCooldown = 180;
     }
 
     updateBehavior(playerRef) {
         this.updateFloat();
+        const hasFlameRing = this.bossProjectiles.some((projectile) => projectile && projectile.type === 'blaze_ring_orb' && (projectile.life || 0) > 0);
+        this.setIntent(hasFlameRing ? 'flame_ring' : (this.phase >= 3 ? 'ember_pressure' : 'fireburst'));
         this.updateBurstQueue(playerRef);
         this.updateFireColumns(playerRef);
         this.updateMinions(playerRef);
@@ -1113,6 +1179,33 @@ class BlazeBoss extends Boss {
         if (this.phase >= 3 && !this.minionsSummoned) {
             this.summonMinions();
         }
+        if (this.phase >= 3) {
+            this.ringCooldown--;
+            if (this.ringCooldown <= 0) {
+                this.castFlameRing();
+                this.ringCooldown = 240;
+            }
+        }
+    }
+
+    castFlameRing() {
+        this.setIntent('flame_ring');
+        const cx = this.x + this.width / 2;
+        const cy = this.y + this.height / 2;
+        const count = 8;
+        for (let index = 0; index < count; index++) {
+            const angle = (Math.PI * 2 / count) * index;
+            this.bossProjectiles.push({
+                x: cx, y: cy,
+                vx: Math.cos(angle) * 3.2,
+                vy: Math.sin(angle) * 3.2,
+                damage: 1, size: 9,
+                color: '#FFB300',
+                tracking: false, life: 90,
+                type: 'blaze_ring_orb'
+            });
+        }
+        showFloatingText('?? ??!', cx, this.y - 20, '#FFB300');
     }
 // PLACEHOLDER_BLAZE_CONTINUE
 
@@ -1147,7 +1240,8 @@ class BlazeBoss extends Boss {
                 vy: Math.sin(angle) * 4,
                 damage: 1, size: 10,
                 color: '#FF4500',
-                tracking: false, life: 300
+                tracking: false, life: 300,
+                type: 'blaze_fireball'
             });
         }
         if (this.burstQueue.length === 0) this.burstTimer = 0;
@@ -1359,11 +1453,14 @@ class WitherSkeletonBoss extends Boss {
         this.vy = 0;
         this.gravity = 0.5;
         this.actionCooldown = 0;
+        this.boneWallCooldown = 150;
     }
 
     updateBehavior(playerRef) {
         this.facing = playerRef.x > this.x ? 1 : -1;
         const dist = Math.abs(playerRef.x - this.x);
+        const hasBoneWall = this.bossProjectiles.some((projectile) => projectile && projectile.type === 'bone_wall_shard' && (projectile.life || 0) > 0);
+        this.setIntent(hasBoneWall ? 'bone_wall' : (this.phase >= 3 ? 'bone_pressure' : this.state || 'patrol'));
 
         // 重力
         if (this.y < groundY - this.height) {
@@ -1403,7 +1500,34 @@ class WitherSkeletonBoss extends Boss {
         }
 
         if (this.hp / this.maxHp < 0.3) this.summonMinions();
+        if (this.phase >= 3) {
+            this.boneWallCooldown--;
+            if (this.boneWallCooldown <= 0 && this.state === 'patrol') {
+                this.raiseBoneWall();
+                this.boneWallCooldown = 220;
+            }
+        }
         this.updateMinions();
+    }
+
+    raiseBoneWall() {
+        this.setIntent('bone_wall');
+        const centerX = this.x + this.width / 2 + this.facing * 48;
+        const shardCount = 5;
+        for (let index = 0; index < shardCount; index++) {
+            this.bossProjectiles.push({
+                x: centerX + (index - 2) * 16,
+                y: groundY - 16 - index * 8,
+                vx: this.facing * 0.8,
+                vy: -0.2,
+                damage: 1, size: 8,
+                color: '#9E9E9E',
+                tracking: false, life: 80,
+                type: 'bone_wall_shard'
+            });
+        }
+        this.actionCooldown = Math.max(this.actionCooldown, 50);
+        showFloatingText('?? ??!', centerX, this.y - 24, '#BDBDBD');
     }
 // PLACEHOLDER_WSKEL_CONTINUE
 
@@ -1738,10 +1862,13 @@ class WardenBoss extends Boss {
         this.slamTimer = 0;
         this.sonicTimer = 180;
         this.chestPulse = 0;
+        this.darkPulseCooldown = 150;
     }
 
     updateBehavior(playerRef) {
         this.facing = playerRef.x > this.x ? 1 : -1;
+        const hasDarkPulse = this.bossProjectiles.some((projectile) => projectile && projectile.type === 'warden_dark_pulse' && (projectile.life || 0) > 0);
+        this.setIntent(hasDarkPulse ? 'dark_pulse' : (this.state || 'stalk'));
         this.chestPulse += this.phase >= 3 ? 0.18 : this.phase === 2 ? 0.14 : 0.1;
         if (this.actionCooldown > 0) this.actionCooldown--;
         this.sonicTimer++;
@@ -1778,6 +1905,14 @@ class WardenBoss extends Boss {
         }
         if (this.phase >= 2 && distance >= 116 && this.actionCooldown <= 0 && this.sonicTimer >= 180) {
             this.startSonicCast();
+        }
+        if (this.phase >= 3) {
+            this.darkPulseCooldown--;
+            if (this.darkPulseCooldown <= 0 && this.actionCooldown <= 0) {
+                this.emitDarkPulse();
+                this.darkPulseCooldown = 220;
+                this.actionCooldown = 50;
+            }
         }
     }
 
@@ -1841,6 +1976,27 @@ class WardenBoss extends Boss {
         });
     }
 
+    emitDarkPulse() {
+        this.setIntent('dark_pulse');
+        const centerX = this.x + this.width / 2;
+        const centerY = this.y + 42;
+        for (const direction of [-1, 1]) {
+            this.bossProjectiles.push({
+                x: centerX,
+                y: centerY,
+                vx: direction * 2.2,
+                vy: 0,
+                damage: 1,
+                size: 22,
+                color: '#4DD0E1',
+                tracking: false,
+                life: 55,
+                type: 'warden_dark_pulse'
+            });
+        }
+        showFloatingText('??', centerX, this.y - 28, '#80DEEA');
+    }
+
     renderProjectile(ctx, projectile, camX) {
         const drawX = projectile.x - camX;
         if (projectile.type === 'warden_shockwave') {
@@ -1859,6 +2015,14 @@ class WardenBoss extends Boss {
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(drawX, projectile.y, projectile.size * 0.55, 0, Math.PI * 2);
+            ctx.stroke();
+            return;
+        }
+        if (projectile.type === 'warden_dark_pulse') {
+            ctx.strokeStyle = 'rgba(77, 208, 225, 0.8)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(drawX, projectile.y, projectile.size, 0, Math.PI * 2);
             ctx.stroke();
             return;
         }
@@ -1958,10 +2122,13 @@ class EvokerBoss extends Boss {
         this.actionCooldown = 40;
         this.repositionTimer = 0;
         this.staffGlow = 0;
+        this.spellburstCooldown = 120;
     }
 
     updateBehavior(playerRef) {
         this.facing = playerRef.x > this.x ? 1 : -1;
+        const hasSpellburst = this.bossProjectiles.some((projectile) => projectile && projectile.type === 'evoker_spellburst' && (projectile.life || 0) > 0);
+        this.setIntent(hasSpellburst ? 'spellburst' : (this.state === 'casting' ? 'spellcast' : this.state || 'reposition'));
         this.staffGlow += this.phase >= 3 ? 0.2 : 0.14;
         if (this.actionCooldown > 0) this.actionCooldown--;
 
@@ -1988,6 +2155,16 @@ class EvokerBoss extends Boss {
             this.x += this.facing * this.moveSpeed * 0.5;
         }
 
+        if (this.phase >= 3) {
+            this.spellburstCooldown--;
+            if (this.spellburstCooldown <= 0 && this.actionCooldown <= 0) {
+                this.castSpellBurst();
+                this.spellburstCooldown = 180;
+                this.actionCooldown = 60;
+                return;
+            }
+        }
+
         if (this.actionCooldown <= 0) this.startCast();
     }
 
@@ -1996,6 +2173,28 @@ class EvokerBoss extends Boss {
         this.castTimer = this.phase >= 3 ? 22 : 28;
         this.actionCooldown = this.phase >= 3 ? 90 : 120;
         showFloatingText('?', this.x + this.width / 2, this.y - 26, '#D1C4E9');
+    }
+
+    castSpellBurst() {
+        this.setIntent('spellburst');
+        const centerX = this.x + this.width / 2;
+        const centerY = this.y + 30;
+        for (let index = 0; index < 6; index++) {
+            const angle = (Math.PI * 2 / 6) * index;
+            this.bossProjectiles.push({
+                x: centerX,
+                y: centerY,
+                vx: Math.cos(angle) * 2.6,
+                vy: Math.sin(angle) * 2.6,
+                damage: 1,
+                size: 10,
+                color: '#C7B5FF',
+                tracking: false,
+                life: 65,
+                type: 'evoker_spellburst'
+            });
+        }
+        showFloatingText('?', centerX, this.y - 22, '#D1C4E9');
     }
 
     castFangLine(playerRef) {
@@ -2027,8 +2226,18 @@ class EvokerBoss extends Boss {
     }
 
     renderProjectile(ctx, projectile, camX) {
-        if (projectile.type !== 'evoker_fang') return;
         const drawX = projectile.x - camX;
+        if (projectile.type === 'evoker_spellburst') {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(199, 181, 255, 0.85)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(drawX, projectile.y, projectile.size, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+            return;
+        }
+        if (projectile.type !== 'evoker_fang') return;
         const alpha = Math.min(1, projectile.life / 18);
         ctx.save();
         ctx.globalAlpha = alpha;

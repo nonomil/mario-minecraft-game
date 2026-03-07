@@ -54,3 +54,31 @@ export async function tickGame(page, frames = 1) {
     return window.MMDBG.getState();
   }, frames);
 }
+
+
+export async function enterDragonArena(page) {
+  return page.evaluate(() => {
+    window.MMDBG.enterDragonArena();
+    return window.MMDBG.getDragonArenaState ? window.MMDBG.getDragonArenaState() : window.MMDBG.getState();
+  });
+}
+
+export async function exitDragonArena(page) {
+  return page.evaluate(() => {
+    window.MMDBG.exitDragonArena();
+    return window.MMDBG.getDragonArenaState ? window.MMDBG.getDragonArenaState() : window.MMDBG.getState();
+  });
+}
+
+export async function getDragonArenaState(page) {
+  return page.evaluate(() => {
+    return window.MMDBG.getDragonArenaState ? window.MMDBG.getDragonArenaState() : window.MMDBG.getState();
+  });
+}
+
+export async function setDragonArenaPhase(page, phase) {
+  return page.evaluate((value) => {
+    window.MMDBG.setDragonArenaPhase(value);
+    return window.MMDBG.getDragonArenaState ? window.MMDBG.getDragonArenaState() : window.MMDBG.getState();
+  }, phase);
+}

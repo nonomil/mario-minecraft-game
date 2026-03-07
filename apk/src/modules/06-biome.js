@@ -67,7 +67,15 @@ function updateCurrentBiome() {
     }
 }
 
+function maybeEnterEndDragonArena(nextBiome) {
+    if (!nextBiome || nextBiome.id !== "end") return;
+    if (typeof endDragonArena === "undefined" || !endDragonArena || typeof endDragonArena.enter !== "function") return;
+    if (endDragonArena.active) return;
+    endDragonArena.enter({ state: "intro", phase: 1 });
+}
+
 function applyBiomeTransition(nextBiome, progressScore, hasFireResistance) {
+
     if (!nextBiome || !nextBiome.id) return;
     const prevBiome = currentBiome;
     recordBiomeStay(prevBiome, progressScore);
@@ -94,6 +102,7 @@ function applyBiomeTransition(nextBiome, progressScore, hasFireResistance) {
     if (currentBiome !== "nether") {
         netherEntryPenaltyArmed = true;
     }
+    maybeEnterEndDragonArena(nextBiome);
 }
 
 function updateWeatherForBiome(biome) {

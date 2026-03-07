@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.21] - 2026-03-07
+### Added
+- **Ender Dragon End Arena**: Added a dedicated End arena encounter with a separate `endDragonArena` lifecycle.
+- **Dragon Encounter UI & Debug Hooks**: Added dragon arena state exposure, helper APIs, and targeted Playwright coverage for entry, phases, crystals, hazards, and victory flow.
+
+### Changed
+- **End Biome Flow**: Entering the `end` biome now routes into the dedicated Ender Dragon battle flow instead of only exposing dragon features through debug-only paths.
+- **Version Synchronization**: Unified release metadata across `package.json`, `version.json`, `android-app/package.json`, `android-app/web/build-info.json`, `android-app/android/app/build.gradle`, and `service-worker.js`.
+
+### Fixed
+- **Android Version Drift**: Fixed `android-app/android/app/build.gradle` being out of sync with web/app release version files.
+
 ## [1.19.20] - 2026-03-07
 ### Added
 - **Dragon Summoning & Riding System**: Complete implementation of EnderDragon summoning and riding mechanics

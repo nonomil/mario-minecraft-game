@@ -439,6 +439,7 @@
           const steps = Math.max(1, Math.min(600, Number(frameCount) || 1));
           for (let index = 0; index < steps; index++) {
             if (w.bossArena && w.bossArena.active && w.bossArena.boss) w.bossArena.boss.update(w.player);
+            if (w.endDragonArena && w.endDragonArena.active && typeof w.endDragonArena.update === "function") w.endDragonArena.update(w.player);
           }
         });
       },
@@ -450,10 +451,57 @@
       prepareDragonLongPressSummon() {
         prepareDragonLongPressSummon();
       },
+      enterDragonArena() {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.enter === "function") {
+            w.endDragonArena.enter();
+          }
+        });
+      },
+      setDragonArenaPhase(phaseValue) {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.setPhase === "function") {
+            w.endDragonArena.setPhase(phaseValue);
+          }
+        });
+      },
+      damageDragonBoss(amount) {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.damageDragon === "function") {
+            w.endDragonArena.damageDragon(amount);
+          }
+        });
+      },
+      destroyDragonCrystal(index) {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.destroyCrystal === "function") {
+            w.endDragonArena.destroyCrystal(index);
+          }
+        });
+      },
+      forceDragonVictory() {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.forceVictory === "function") {
+            w.endDragonArena.forceVictory();
+          }
+        });
+      },
+      exitDragonArena() {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.exit === "function") {
+            w.endDragonArena.exit();
+          }
+        });
+      },
+      getDragonArenaState() {
+        return this.getState();
+      },
       getState() {
         const w = gw();
         if (!w) return { ready: false };
         const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+        const dragonArena = w.endDragonArena || null;
+        const dragonBoss = dragonArena && dragonArena.dragon ? dragonArena.dragon : null;
         const stay = typeof w.getBiomeStayDebugInfo === "function" ? w.getBiomeStayDebugInfo(Number(w.score) || 0) : null;
         return {
           ready: true,
@@ -469,10 +517,26 @@
           bossVisualKey: boss && boss.visualKey ? boss.visualKey : null,
           bossPhase: boss && boss.phase ? boss.phase : null,
           bossState: boss && boss.state ? boss.state : null,
+          bossIntentKey: boss && boss.intentKey ? boss.intentKey : '',
+          bossRewardKey: boss && boss.rewardKey ? boss.rewardKey : '',
+          bossVictoryReady: Boolean(boss && boss.alive === false),
           bossProjectileCount: boss && Array.isArray(boss.bossProjectiles) ? boss.bossProjectiles.length : 0,
+          bossProjectileTypes: boss && typeof boss.getProjectileTypeSnapshot === "function" ? boss.getProjectileTypeSnapshot() : (boss && Array.isArray(boss.bossProjectiles) ? Array.from(new Set(boss.bossProjectiles.map((entry) => entry && entry.type ? entry.type : 'default'))) : []),
           bossMinionCount: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).length : 0,
           bossMinionTypes: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).map((entry) => entry.type || "skeleton_minion") : [],
           dragonCount: Array.isArray(w.dragonList) ? w.dragonList.length : 0,
+          dragonArenaActive: Boolean(dragonArena && dragonArena.active),
+          dragonArenaState: dragonArena && dragonArena.active && dragonArena.state ? dragonArena.state : null,
+          dragonArenaPhase: dragonArena && dragonArena.active && dragonArena.phase ? dragonArena.phase : null,
+          dragonBossName: dragonArena && dragonArena.active && dragonBoss && dragonBoss.name ? dragonBoss.name : null,
+          dragonBossHp: dragonArena && dragonArena.active && dragonBoss ? Number(dragonBoss.hp) || 0 : 0,
+          dragonBossMaxHp: dragonArena && dragonArena.active && dragonBoss ? Number(dragonBoss.maxHp) || 0 : 0,
+          dragonBossIntentKey: dragonArena && dragonArena.active && dragonBoss && dragonBoss.intentKey ? dragonBoss.intentKey : '',
+          dragonCrystalCount: dragonArena && dragonArena.active && Array.isArray(dragonArena.crystals) ? dragonArena.crystals.length : 0,
+          dragonAliveCrystalCount: dragonArena && dragonArena.active && Array.isArray(dragonArena.crystals) ? dragonArena.crystals.filter((entry) => entry && entry.alive).length : 0,
+          dragonHazardCount: dragonArena && dragonArena.active && Array.isArray(dragonArena.hazards) ? dragonArena.hazards.length : 0,
+          dragonVictoryReady: Boolean(dragonArena && dragonArena.active && dragonArena.victoryReady),
+          dragonExitPortalReady: Boolean(dragonArena && dragonArena.active && dragonArena.exitPortalReady),
           ridingDragon: Boolean(w.ridingDragon),
           equippedConsumable: w.equippedConsumable && w.equippedConsumable.itemKey ? w.equippedConsumable.itemKey : null,
           stay
