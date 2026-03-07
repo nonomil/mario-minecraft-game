@@ -349,6 +349,9 @@ globalThis.bossArena = globalThis.bossArena || {
     gateBossRotationCursor: 0,
     weaponLockActive: false,
     weaponBeforeBoss: "sword",
+    lastEnvironmentPulseSerial: 0,
+    comboCooldowns: { volcanic: 0, shadow: 0, arcane: 0 },
+    environmentController: (typeof globalThis.bossEnvironmentController !== "undefined") ? globalThis.bossEnvironmentController : null,
 
 // PLACEHOLDER_ARENA_METHODS
 
@@ -440,6 +443,10 @@ globalThis.bossArena = globalThis.bossArena || {
         };
         if (options.markSpawned !== false) this.spawned[resolvedType] = true;
         this.boss = this.createBoss(resolvedType);
+        this.environmentController = (typeof globalThis.bossEnvironmentController !== "undefined") ? globalThis.bossEnvironmentController : this.environmentController;
+        if (this.environmentController && typeof this.environmentController.enter === "function") {
+            this.environmentController.enter(resolvedType, { source: this.currentEncounter.source || "manual" });
+        }
         this.lockWeaponForBossFight();
         const isFlyingBoss = !!this.getBossMeta(resolvedType).flying;
         let grantedRangedSupport = false;
@@ -496,7 +503,12 @@ globalThis.bossArena = globalThis.bossArena || {
     },
 
     exit() {
+        if (this.environmentController && typeof this.environmentController.exit === "function") {
+            this.environmentController.exit();
+        }
         this.unlockWeaponAfterBossFight();
+        this.lastEnvironmentPulseSerial = 0;
+        this.comboCooldowns = { volcanic: 0, shadow: 0, arcane: 0 };
         this.active = false;
         this.boss = null;
         this.currentEncounter = null;
@@ -542,8 +554,105 @@ globalThis.bossArena = globalThis.bossArena || {
         }
     },
 
+    applyEnvironmentEffects(snapshot = null) {
+        if (!this.active || typeof player === "undefined" || !player) return;
+        const environmentSnapshot = snapshot || (this.environmentController && typeof this.environmentController.getSnapshot === "function"
+            ? this.environmentController.getSnapshot()
+            : null);
+        if (!environmentSnapshot || !environmentSnapshot.active) return;
+        if (environmentSnapshot.theme === "storm") {
+            const windForce = Number(environmentSnapshot.windForce) || 0;
+            if (Math.abs(windForce) >= 0.01) {
+                const padding = 18;
+                const minX = (Number(this.leftWall) || 0) + padding;
+                const maxX = (Number(this.rightWall) || (canvas ? canvas.width : 0)) - (Number(player.width) || 0) - padding;
+                player.x += windForce * 2.4;
+                if (typeof player.velX === "number") player.velX += windForce * 0.35;
+                if (Number.isFinite(minX) && Number.isFinite(maxX) && maxX > minX) {
+                    player.x = Math.max(minX, Math.min(maxX, player.x));
+                }
+            }
+        }
+        if (environmentSnapshot.theme === "volcanic") {
+            const pulseSerial = Math.max(0, Number(environmentSnapshot.pulseSerial) || 0);
+            if (pulseSerial > 0 && pulseSerial !== this.lastEnvironmentPulseSerial) {
+                this.lastEnvironmentPulseSerial = pulseSerial;
+                player.y -= 16;
+                if (typeof damagePlayer === "function") damagePlayer(1, player.x, 0);
+                if (this.boss && typeof this.boss.castFlameRing === "function" && (this.comboCooldowns?.volcanic || 0) <= 0) {
+                    this.boss.castFlameRing();
+                    this.comboCooldowns.volcanic = 90;
+                    if (this.environmentController && typeof this.environmentController.triggerCombo === "function") {
+                        this.environmentController.triggerCombo("volcanic_ring", 48);
+                    }
+                }
+            }
+        }
+        if (environmentSnapshot.theme === "ashen") {
+            const inset = Math.max(0, Number(environmentSnapshot.safeZoneInset) || 0);
+            if (inset > 0) {
+                const minX = (Number(this.leftWall) || 0) + inset;
+                const maxX = (Number(this.rightWall) || (canvas ? canvas.width : 0)) - (Number(player.width) || 0) - inset;
+                if (Number.isFinite(minX) && Number.isFinite(maxX) && maxX > minX) {
+                    player.x = Math.max(minX, Math.min(maxX, player.x));
+                }
+            }
+        }
+        if (environmentSnapshot.theme === "darkness") {
+            if (typeof player.velX === "number") player.velX *= 0.82;
+        }
+        if (environmentSnapshot.theme === "shadow") {
+            const driftForce = Math.max(0, Number(environmentSnapshot.driftForce) || 0);
+            if (driftForce > 0) {
+                const arenaCenterX = (((Number(this.leftWall) || 0) + (Number(this.rightWall) || (canvas ? canvas.width : 0))) * 0.5) - ((Number(player.width) || 0) * 0.5);
+                const direction = arenaCenterX > player.x ? 1 : -1;
+                player.x += direction * driftForce * 2.2;
+                if (typeof player.velX === "number") player.velX += direction * driftForce * 0.25;
+                const farEdge = player.x > ((Number(this.leftWall) || 0) + ((Number(this.rightWall) || 0) - (Number(this.leftWall) || 0)) * 0.7) || player.x < ((Number(this.leftWall) || 0) + ((Number(this.rightWall) || 0) - (Number(this.leftWall) || 0)) * 0.3);
+                if (farEdge && this.boss && typeof this.boss.shootTrackingBalls === "function" && (this.comboCooldowns?.shadow || 0) <= 0) {
+                    this.boss.shootTrackingBalls(3);
+                    this.comboCooldowns.shadow = 90;
+                    if (this.environmentController && typeof this.environmentController.triggerCombo === "function") {
+                        this.environmentController.triggerCombo("shadow_barrage", 48);
+                    }
+                }
+            }
+        }
+        if (environmentSnapshot.theme === "arcane") {
+            const sealFrames = Math.max(0, Number(environmentSnapshot.sealFrames) || 0);
+            if (sealFrames > 0) {
+                const arenaWidth = Math.max(0, (Number(this.rightWall) || 0) - (Number(this.leftWall) || 0));
+                const sealThreshold = (Number(this.leftWall) || 0) + arenaWidth * 0.72;
+                if (player.x >= sealThreshold) {
+                    player.x -= 16 + sealFrames * 0.6;
+                    if (typeof player.velX === "number") player.velX *= 0.42;
+                    if (this.boss && typeof this.boss.castFangLine === "function" && (this.comboCooldowns?.arcane || 0) <= 0) {
+                        this.boss.castFangLine(player);
+                        this.comboCooldowns.arcane = 90;
+                        if (this.environmentController && typeof this.environmentController.triggerCombo === "function") {
+                            this.environmentController.triggerCombo("sigil_fangline", 48);
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    updateComboCooldowns() {
+        if (!this.comboCooldowns) this.comboCooldowns = { volcanic: 0, shadow: 0, arcane: 0 };
+        Object.keys(this.comboCooldowns).forEach((key) => {
+            if (this.comboCooldowns[key] > 0) this.comboCooldowns[key] -= 1;
+        });
+    },
+
     update() {
-        if (!this.active || !this.boss) return;
+        this.updateComboCooldowns();
+        if (!this.active || !this.boss) {
+            if (this.environmentController && typeof this.environmentController.update === "function") {
+                this.environmentController.update(this);
+            }
+            return;
+        }
         if (this.phaseFlashTimer > 0) this.phaseFlashTimer--;
         if (!this.boss.alive) {
             this.victoryTimer++;
@@ -551,6 +660,19 @@ globalThis.bossArena = globalThis.bossArena || {
             return;
         }
         this.boss.update(player);
+        let environmentSnapshot = null;
+        if (this.environmentController && typeof this.environmentController.update === "function") {
+            this.environmentController.update(this);
+            if (typeof this.environmentController.getSnapshot === "function") {
+                environmentSnapshot = this.environmentController.getSnapshot();
+            }
+        }
+        this.applyEnvironmentEffects(environmentSnapshot);
+    },
+
+    renderEnvironmentOverlay(ctx) {
+        if (!this.active || !this.environmentController || typeof this.environmentController.renderOverlay !== "function") return;
+        this.environmentController.renderOverlay(ctx);
     },
 
     renderBossHpBar(ctx) {
@@ -574,6 +696,14 @@ globalThis.bossArena = globalThis.bossArena || {
         ctx.font = 'bold 14px Verdana';
         ctx.textAlign = 'center';
         ctx.fillText(`${this.boss.name}（阶段${this.boss.phase}）`, canvas.width / 2, by - 6);
+        const environmentSnapshot = this.environmentController && typeof this.environmentController.getSnapshot === "function"
+            ? this.environmentController.getSnapshot()
+            : null;
+        if (environmentSnapshot && environmentSnapshot.environmentId) {
+            ctx.fillStyle = 'rgba(255,255,255,0.82)';
+            ctx.font = '12px Verdana';
+            ctx.fillText(`???${environmentSnapshot.label || environmentSnapshot.environmentId}`, canvas.width / 2, by + barH + 16);
+        }
         if (this.phaseFlashTimer > 0 && this.phaseBannerText) {
             const bannerAlpha = Math.min(1, this.phaseFlashTimer / 20);
             ctx.fillStyle = `rgba(255, 255, 255, ${bannerAlpha * 0.85})`;

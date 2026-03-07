@@ -74,9 +74,15 @@ function initGame() {
         bossArena.lockedCamX = 0;
         bossArena.leftWall = 0;
         bossArena.rightWall = 0;
+        bossArena.lastEnvironmentPulseSerial = 0;
+        bossArena.comboCooldowns = { volcanic: 0, shadow: 0, arcane: 0 };
         if (bossArena.spawned) {
             for (const k in bossArena.spawned) delete bossArena.spawned[k];
         }
+        bossArena.environmentController = (typeof bossEnvironmentController !== 'undefined') ? bossEnvironmentController : null;
+    }
+    if (typeof bossEnvironmentController !== 'undefined' && bossEnvironmentController && typeof bossEnvironmentController.reset === 'function') {
+        bossEnvironmentController.reset();
     }
     // Reset village state
     if (typeof activeVillages !== 'undefined') activeVillages = [];

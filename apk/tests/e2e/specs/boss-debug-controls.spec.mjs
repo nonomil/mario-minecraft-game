@@ -56,6 +56,140 @@ test("GameDebug boss state should expose second-pass intent and reward metadata"
   expect(typeof wardenState.bossVictoryReady).toBe("boolean");
 });
 
+test("Boss debug state should expose environment defaults before a fight starts", async ({ page }) => {
+  await openDebugPage(page);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentActive).toBeFalsy();
+  expect(state.bossEnvironmentId).toBeNull();
+  expect(state.bossEnvironmentState).toBe("idle");
+  expect(state.bossEnvironmentHazardCount).toBe(0);
+});
+
+test("Boss fights should attach a reusable environment snapshot", async ({ page }) => {
+  await openDebugPage(page);
+  const state = await forceBoss(page, "blaze");
+
+  expect(state.bossEnvironmentActive).toBeTruthy();
+  expect(state.bossEnvironmentId).toBe("blaze_core");
+  expect(state.bossEnvironmentState).toBe("engaged");
+  expect(state.bossEnvironmentHazardCount).toBe(0);
+});
+
+test("Boss environment snapshot should reset after leaving the fight", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "warden");
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (w && w.bossArena && typeof w.bossArena.exit === "function") {
+      w.bossArena.exit();
+    }
+  });
+  const state = await getDebugState(page);
+
+  expect(state.bossActive).toBeFalsy();
+  expect(state.bossEnvironmentActive).toBeFalsy();
+  expect(state.bossEnvironmentId).toBeNull();
+  expect(state.bossEnvironmentState).toBe("idle");
+});
+
+test("Ghast phase 3 environment should build storm pressure hazards", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "ghast");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentId).toBe("ghast_skydock");
+  expect(state.bossEnvironmentTheme).toBe("storm");
+  expect(state.bossEnvironmentIntensity).toBe(3);
+  expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+});
+
+test("Ghast storm environment should push the player with crosswind", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "ghast");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player) { player.x = 420; player.velX = 0; }');
+  });
+  await tickGame(page, 60);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentTheme).toBe("storm");
+  expect(Math.abs(state.bossEnvironmentWindForce)).toBeGreaterThan(0.05);
+  expect(Math.abs(state.playerX - 420)).toBeGreaterThan(1);
+});
+
+test("Blaze phase 3 environment should build volcanic pressure hazards", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentId).toBe("blaze_core");
+  expect(state.bossEnvironmentTheme).toBe("volcanic");
+  expect(state.bossEnvironmentIntensity).toBe(3);
+  expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+});
+
+test("Warden phase 3 environment should build darkness pressure hazards", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "warden");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentId).toBe("deep_dark");
+  expect(state.bossEnvironmentTheme).toBe("darkness");
+  expect(state.bossEnvironmentIntensity).toBe(3);
+  expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+});
+
+test("Wither phase 3 environment should build shadow pressure hazards", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentId).toBe("wither_necropolis");
+  expect(state.bossEnvironmentTheme).toBe("shadow");
+  expect(state.bossEnvironmentIntensity).toBe(3);
+  expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+});
+
+test("Wither skeleton phase 3 environment should build bone pressure hazards", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither_skeleton");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentId).toBe("bone_foundry");
+  expect(state.bossEnvironmentTheme).toBe("ashen");
+  expect(state.bossEnvironmentIntensity).toBe(3);
+  expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+});
+
+test("Evoker phase 3 environment should build arcane pressure hazards", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "evoker");
+  await setBossPhase(page, 3);
+  await tickGame(page, 40);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentId).toBe("totem_hall");
+  expect(state.bossEnvironmentTheme).toBe("arcane");
+  expect(state.bossEnvironmentIntensity).toBe(3);
+  expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+});
+
 test("Boss victory should grant boss-specific reward drops", async ({ page }) => {
   await openDebugPage(page);
   await forceBoss(page, "blaze");
@@ -179,6 +313,150 @@ test("Biome selection control should switch to volcano and keep stay info availa
   expect(state.stay).toBeTruthy();
   expect(state.stay.minScore).toBeGreaterThan(0);
   expect(state.stay.minTimeSec).toBeGreaterThan(0);
+});
+
+test("Blaze volcanic environment should trigger a heat pulse on the player", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player) { player.y = groundY - player.height; }');
+  });
+  const before = await getDebugState(page);
+  await tickGame(page, 50);
+  const after = await getDebugState(page);
+
+  expect(after.bossEnvironmentTheme).toBe("volcanic");
+  expect(after.bossEnvironmentPulseFrames).toBeGreaterThan(0);
+  expect(after.playerY).toBeLessThan(before.playerY);
+});
+
+test("Wither skeleton ashen environment should clamp the arena corridor", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither_skeleton");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player && typeof bossArena !== "undefined" && bossArena) { player.x = bossArena.leftWall + 6; player.velX = 0; }');
+  });
+  await tickGame(page, 20);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentTheme).toBe("ashen");
+  expect(state.bossEnvironmentSafeZoneInset).toBeGreaterThan(20);
+  expect(state.playerX).toBeGreaterThanOrEqual(state.bossEnvironmentSafeZoneInset);
+});
+
+test("Warden darkness environment should shrink vision and slow movement", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "warden");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player) { player.velX = 8; }');
+  });
+  await tickGame(page, 20);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentTheme).toBe("darkness");
+  expect(state.bossEnvironmentVisionRadius).toBeLessThan(120);
+  expect(Math.abs(state.playerVelX)).toBeLessThan(8);
+});
+
+test("Wither shadow environment should drag the player toward the arena center", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player && typeof bossArena !== "undefined" && bossArena) { player.x = bossArena.rightWall - player.width - 12; player.velX = 0; }');
+  });
+  const before = await getDebugState(page);
+  await tickGame(page, 30);
+  const after = await getDebugState(page);
+
+  expect(after.bossEnvironmentTheme).toBe("shadow");
+  expect(Math.abs(after.bossEnvironmentDriftForce)).toBeGreaterThan(0.05);
+  expect(after.playerX).toBeLessThan(before.playerX);
+});
+
+test("Evoker arcane environment should repel the player from the sigil edge", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "evoker");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player && typeof bossArena !== "undefined" && bossArena) { player.x = bossArena.rightWall - player.width - 12; player.velX = 6; }');
+  });
+  const before = await getDebugState(page);
+  await tickGame(page, 24);
+  const after = await getDebugState(page);
+
+  expect(after.bossEnvironmentTheme).toBe("arcane");
+  expect(after.bossEnvironmentSealFrames).toBeGreaterThan(0);
+  expect(after.playerX).toBeLessThan(before.playerX);
+});
+
+test("Blaze heat pulse should combo into a flame ring signature attack", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof bossArena !== "undefined" && bossArena && bossArena.boss) { bossArena.boss.ringCooldown = 999; }');
+  });
+  await tickGame(page, 50);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentComboKey).toBe("volcanic_ring");
+  expect(state.bossProjectileTypes).toContain("blaze_ring_orb");
+});
+
+test("Wither void drift should combo into a tracking barrage", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player && typeof bossArena !== "undefined" && bossArena) { player.x = bossArena.rightWall - player.width - 12; }');
+  });
+  await tickGame(page, 30);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentComboKey).toBe("shadow_barrage");
+  expect(state.bossProjectileTypes).toContain("wither_tracking_orb");
+});
+
+test("Evoker sigil seal should combo into a fang line signature attack", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "evoker");
+  await setBossPhase(page, 3);
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof player !== "undefined" && player && typeof bossArena !== "undefined" && bossArena) { player.x = bossArena.rightWall - player.width - 12; player.velX = 6; }');
+  });
+  await tickGame(page, 24);
+  const state = await getDebugState(page);
+
+  expect(state.bossEnvironmentComboKey).toBe("sigil_fangline");
+  expect(state.bossProjectileTypes).toContain("evoker_fang");
 });
 
 test("Blaze phase 3 should expose a flame-ring pressure intent", async ({ page }) => {

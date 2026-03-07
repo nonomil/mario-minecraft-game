@@ -414,8 +414,10 @@ function drawProjectile(proj) {
 
 // 渲染新BOSS系统
 function renderBossSystem() {
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active && typeof endDragonArena.renderEntities === 'function') {
+        endDragonArena.renderEntities(ctx, 0);
+    }
     if (typeof bossArena === 'undefined' || !bossArena.active) return;
-    // draw() already applied ctx.translate(-cameraX, 0), so pass 0 here to avoid double offset.
     bossArena.renderBoss(ctx, 0);
     bossArena.renderProjectiles(ctx, 0);
 }

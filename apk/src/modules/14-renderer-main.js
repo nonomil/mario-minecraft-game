@@ -84,6 +84,7 @@ function draw() {
     }
     const biome = getBiomeById(currentBiome);
     drawBackground(biome);
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active && typeof endDragonArena.renderBackground === 'function') endDragonArena.renderBackground(ctx);
     if (typeof renderBiomeVisuals === 'function') renderBiomeVisuals(ctx, cameraX);
     if (typeof renderOceanEnvironment === 'function') renderOceanEnvironment(ctx);
     if (typeof renderEndEnvironment === 'function') renderEndEnvironment(ctx);
@@ -219,11 +220,15 @@ function draw() {
     if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
     if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
     if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
+    if (typeof bossArena !== 'undefined' && bossArena && typeof bossArena.renderEnvironmentOverlay === 'function') {
+        bossArena.renderEnvironmentOverlay(ctx);
+    }
 
     // BOSS血条
     if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
         bossArena.renderBossHpBar(ctx);
     }
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active && typeof endDragonArena.renderHud === 'function') endDragonArena.renderHud(ctx);
 
     scheduleNextFrame();
 }

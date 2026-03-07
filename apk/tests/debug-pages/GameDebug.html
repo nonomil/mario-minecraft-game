@@ -438,7 +438,11 @@
         withGame((w) => {
           const steps = Math.max(1, Math.min(600, Number(frameCount) || 1));
           for (let index = 0; index < steps; index++) {
-            if (w.bossArena && w.bossArena.active && w.bossArena.boss) w.bossArena.boss.update(w.player);
+            if (w.bossArena && w.bossArena.active && typeof w.bossArena.update === "function") {
+              w.bossArena.update();
+            } else if (w.bossArena && w.bossArena.active && w.bossArena.boss) {
+              w.bossArena.boss.update(w.player);
+            }
             if (w.endDragonArena && w.endDragonArena.active && typeof w.endDragonArena.update === "function") w.endDragonArena.update(w.player);
           }
         });
@@ -500,6 +504,9 @@
         const w = gw();
         if (!w) return { ready: false };
         const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+        const bossEnvironment = w.bossArena && w.bossArena.environmentController && typeof w.bossArena.environmentController.getSnapshot === "function"
+          ? w.bossArena.environmentController.getSnapshot()
+          : (w.bossEnvironmentController && typeof w.bossEnvironmentController.getSnapshot === "function" ? w.bossEnvironmentController.getSnapshot() : null);
         const dragonArena = w.endDragonArena || null;
         const dragonBoss = dragonArena && dragonArena.dragon ? dragonArena.dragon : null;
         const stay = typeof w.getBiomeStayDebugInfo === "function" ? w.getBiomeStayDebugInfo(Number(w.score) || 0) : null;
@@ -507,6 +514,9 @@
           ready: true,
           score: Number(w.score) || 0,
           runBestScore: Number(w.runBestScore) || 0,
+          playerX: readGameExpr(w, 'typeof player !== "undefined" && player ? Number(player.x) || 0 : 0', 0),
+          playerY: readGameExpr(w, 'typeof player !== "undefined" && player ? Number(player.y) || 0 : 0', 0),
+          playerVelX: readGameExpr(w, 'typeof player !== "undefined" && player ? Number(player.velX) || 0 : 0', 0),
           biome: readGameExpr(w, 'typeof currentBiome !== "undefined" ? currentBiome : null', w.currentBiome || null),
           availableBosses: w.bossArena && typeof w.bossArena.getBossTypes === "function" ? w.bossArena.getBossTypes() : (w.bossArena && Array.isArray(w.bossArena.bossTypes) ? w.bossArena.bossTypes.slice() : []),
           bossActive: Boolean(w.bossArena && w.bossArena.active),
@@ -524,6 +534,22 @@
           bossProjectileTypes: boss && typeof boss.getProjectileTypeSnapshot === "function" ? boss.getProjectileTypeSnapshot() : (boss && Array.isArray(boss.bossProjectiles) ? Array.from(new Set(boss.bossProjectiles.map((entry) => entry && entry.type ? entry.type : 'default'))) : []),
           bossMinionCount: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).length : 0,
           bossMinionTypes: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).map((entry) => entry.type || "skeleton_minion") : [],
+          bossEnvironmentActive: Boolean(bossEnvironment && bossEnvironment.active),
+          bossEnvironmentId: bossEnvironment ? (bossEnvironment.environmentId || null) : null,
+          bossEnvironmentLabel: bossEnvironment ? (bossEnvironment.label || "") : "",
+          bossEnvironmentTheme: bossEnvironment ? (bossEnvironment.theme || "neutral") : "neutral",
+          bossEnvironmentState: bossEnvironment ? (bossEnvironment.state || "idle") : "idle",
+          bossEnvironmentHazardCount: bossEnvironment ? Math.max(0, Number(bossEnvironment.hazardCount) || 0) : 0,
+          bossEnvironmentIntensity: bossEnvironment ? Math.max(0, Number(bossEnvironment.intensity) || 0) : 0,
+          bossEnvironmentLastHazard: bossEnvironment ? (bossEnvironment.lastHazardKind || "") : "",
+          bossEnvironmentWindForce: bossEnvironment ? (Number(bossEnvironment.windForce) || 0) : 0,
+          bossEnvironmentPulseFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.pulseFrames) || 0) : 0,
+          bossEnvironmentSafeZoneInset: bossEnvironment ? Math.max(0, Number(bossEnvironment.safeZoneInset) || 0) : 0,
+          bossEnvironmentVisionRadius: bossEnvironment ? Math.max(0, Number(bossEnvironment.visionRadius) || 0) : 0,
+          bossEnvironmentDriftForce: bossEnvironment ? (Number(bossEnvironment.driftForce) || 0) : 0,
+          bossEnvironmentSealFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.sealFrames) || 0) : 0,
+          bossEnvironmentComboKey: bossEnvironment ? (bossEnvironment.comboKey || "") : "",
+          bossEnvironmentComboFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.comboFrames) || 0) : 0,
           dragonCount: Array.isArray(w.dragonList) ? w.dragonList.length : 0,
           dragonArenaActive: Boolean(dragonArena && dragonArena.active),
           dragonArenaState: dragonArena && dragonArena.active && dragonArena.state ? dragonArena.state : null,
@@ -537,6 +563,15 @@
           dragonHazardCount: dragonArena && dragonArena.active && Array.isArray(dragonArena.hazards) ? dragonArena.hazards.length : 0,
           dragonVictoryReady: Boolean(dragonArena && dragonArena.active && dragonArena.victoryReady),
           dragonExitPortalReady: Boolean(dragonArena && dragonArena.active && dragonArena.exitPortalReady),
+          dragonHudTitle: dragonArena && dragonArena.active && dragonArena.hudTitle ? dragonArena.hudTitle : '',
+          dragonPhaseLabel: dragonArena && dragonArena.active && dragonArena.phaseLabel ? dragonArena.phaseLabel : '',
+          dragonCrystalLabel: dragonArena && dragonArena.active && dragonArena.crystalLabel ? dragonArena.crystalLabel : '',
+          dragonObjectiveLabel: dragonArena && dragonArena.active && dragonArena.objectiveLabel ? dragonArena.objectiveLabel : '',
+          dragonStatusLabel: dragonArena && dragonArena.active && dragonArena.statusLabel ? dragonArena.statusLabel : '',
+          dragonBannerText: dragonArena && dragonArena.active && dragonArena.bannerText ? dragonArena.bannerText : '',
+          dragonPhasePulse: dragonArena && dragonArena.active ? Number(dragonArena.phasePulse) || 0 : 0,
+          dragonDamageFlash: dragonArena && dragonArena.active ? Number(dragonArena.damageFlash) || 0 : 0,
+          dragonPortalPulse: dragonArena && dragonArena.active ? Number(dragonArena.portalPulse) || 0 : 0,
           ridingDragon: Boolean(w.ridingDragon),
           equippedConsumable: w.equippedConsumable && w.equippedConsumable.itemKey ? w.equippedConsumable.itemKey : null,
           stay
