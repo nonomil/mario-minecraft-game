@@ -21,6 +21,12 @@ let pauseStack = 0;
 let inventoryPauseHeld = false;
 let armorPauseHeld = false;
 
+// 末影龙系统
+let dragonList = [];
+let ridingDragon = null;
+let skipPlayerGravity = false;
+let dismountInvincibleFrames = 0;
+
 function pushPause() {
     pauseStack += 1;
     paused = true;
@@ -205,6 +211,8 @@ function update() {
             );
         }
     } else {
+    // 骑乘时跳过玩家重力更新
+    if (!skipPlayerGravity) {
     if (keys.right) {
         if (player.velX < player.speed * camelSpeedMult) player.velX++;
         player.facingRight = true;
@@ -350,6 +358,7 @@ function update() {
         if (player.x < 0) player.x = 100;
         player.velY = 0;
     }
+    } // end skipPlayerGravity check
     } // end else (not underwater)
 
     // 卡住检测：如果玩家有输入但位置长时间不变，强制解卡
@@ -479,6 +488,22 @@ function update() {
         return true;
     });
 
+    if (typeof updateFireZones === 'function') {
+        updateFireZones();
+    }
+
+    // 更新末影龙
+    for (const dragon of dragonList) {
+        if (dragon.remove) continue;
+        dragon.update(player);
+    }
+    dragonList = dragonList.filter(d => !d.remove);
+
+    // 下龙无敌帧
+    if (dismountInvincibleFrames > 0) {
+        dismountInvincibleFrames--;
+    }
+
     enemies.forEach(e => {
         optimizedUpdate(e, () => e.update(player));
         if (e.remove || e.y > 900) return;
@@ -500,6 +525,56 @@ function update() {
             if (!inRange) p.remove = true;
             return !p.remove && inRange;
         });
+    }
+
+    // 骑乘逻辑
+    if (ridingDragon) {
+        // 检查末影龙是否还存在
+        if (ridingDragon.remove || !dragonList.includes(ridingDragon)) {
+            dismountRider(player);
+        } else {
+            // 同步玩家位置
+            player.x = ridingDragon.x + (ridingDragon.width - player.width) / 2;
+            player.y = ridingDragon.y - player.height;
+            player.velX = 0;
+            player.velY = 0;
+
+            // 控制末影龙移动
+            const moveSpeed = ridingDragon.speed;
+            if (keys.left) {
+                ridingDragon.x -= moveSpeed;
+                player.facingRight = false;
+            }
+            if (keys.right) {
+                ridingDragon.x += moveSpeed;
+                player.facingRight = true;
+            }
+            if (keys.up || keys.jump) {
+                ridingDragon.y -= moveSpeed;
+            }
+            if (keys.down) {
+                ridingDragon.y += moveSpeed;
+            }
+
+            // 边界限制
+            ridingDragon.x = Math.max(cameraX - 50, Math.min(ridingDragon.x, cameraX + canvas.width + 50));
+            ridingDragon.y = Math.max(50, Math.min(ridingDragon.y, groundY - ridingDragon.height - 50));
+
+            // 跳过玩家重力更新
+            skipPlayerGravity = true;
+        }
+    } else {
+        skipPlayerGravity = false;
+
+        // 检测上龙
+        for (const dragon of dragonList) {
+            if (rectIntersect(player.x, player.y, player.width, player.height, dragon.x, dragon.y, dragon.width, dragon.height)) {
+                ridingDragon = dragon;
+                dragon.rider = player;
+                showToast("🐉 骑乘末影龙");
+                break;
+            }
+        }
     }
 
     items.forEach(item => {
@@ -610,6 +685,59 @@ function update() {
     // Biomes are score-driven now; the old "next level / scene switch" caused conflicts.
     updateDifficultyState();
     gameFrame++;
+}
+
+function useDragonEgg() {
+    // 检查是否已有末影龙
+    if (dragonList.length > 0) {
+        showToast("⚠️ 已有末影龙存在");
+        return false;
+    }
+
+    // 检查龙蛋数量
+    if ((inventory.dragon_egg || 0) <= 0) {
+        showToast("❌ 没有龙蛋");
+        return false;
+    }
+
+    // 消耗龙蛋
+    inventory.dragon_egg--;
+    if (typeof updateInventoryUI === 'function') {
+        updateInventoryUI();
+    }
+
+    // 召唤末影龙
+    const dragon = new EnderDragon(player.x + 50, player.y - 100);
+    dragonList.push(dragon);
+    showToast("🐉 召唤末影龙");
+    return true;
+}
+
+function dismountRider(rider) {
+    if (!ridingDragon || !rider) return;
+
+    ridingDragon.rider = null;
+    ridingDragon = null;
+    skipPlayerGravity = false;
+
+    // 给予缓降效果
+    rider.velY = -2;
+
+    // 无敌帧
+    dismountInvincibleFrames = 60;
+    playerInvincibleTimer = Math.max(Number(playerInvincibleTimer) || 0, 60);
+
+    showToast("⬇️ 已下龙");
+}
+
+function dragonShootFireball() {
+    if (!ridingDragon) return false;
+
+    const dir = player.facingRight ? 1 : -1;
+    const targetX = ridingDragon.x + dir * 300;
+    const targetY = ridingDragon.y;
+
+    return ridingDragon.shootFireball(targetX, targetY);
 }
 
 function addScore(points) {
@@ -1167,25 +1295,10 @@ function useInventoryItem(itemKey) {
         showToast("🕯️ 放置火把");
         used = true;
     } else if (itemKey === "dragon_egg") {
-        // 龙蛋龙息
-        inventory.dragon_egg -= 1;
-        let hitCount = 0;
-        enemies.forEach(e => {
-            if (!e.remove && e.x > cameraX - 100 && e.x < cameraX + canvas.width + 100) {
-                if (typeof e.takeDamage === "function") {
-                    e.takeDamage(50);
-                    hitCount++;
-                }
-            }
-        });
-        // 龙息粒子效果
-        for (let i = 0; i < 30; i++) {
-            emitGameParticle("ember", cameraX + Math.random() * canvas.width, Math.random() * canvas.height);
+        used = useDragonEgg();
+        if (used) {
+            itemCooldownTimers.dragon_egg = ITEM_COOLDOWNS.dragon_egg;
         }
-        itemCooldownTimers.dragon_egg = ITEM_COOLDOWNS.dragon_egg;
-        showFloatingText(`🐉 龙息! (${hitCount}个敌人)`, player.x, player.y - 40, '#FF4500');
-        showToast("🐉 释放龙息");
-        used = true;
     } else if (itemKey === "starfish") {
         // 海星幸运星
         inventory.starfish -= 1;
@@ -1649,6 +1762,12 @@ function handleAttack(mode = "press") {
     if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
     if (playerWeapons.attackCooldown > 0) return;
     if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "attack");
+
+    if (ridingDragon) {
+        dragonShootFireball();
+        return;
+    }
+
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
 
     if (weapon.type === "ranged") {

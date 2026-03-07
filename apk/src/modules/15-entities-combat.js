@@ -673,7 +673,12 @@ class EnderDragon extends Entity {
     }
 
     die() {
+        const rider = this.rider;
         this.remove = true;
+        this.rider = null;
+        if (rider && typeof dismountRider === 'function') {
+            dismountRider(rider);
+        }
         // 如果有骑手，通知下龙（由 13-game-loop.js 处理）
         if (typeof showToast === 'function') {
             showToast("💀 末影龙已死亡");

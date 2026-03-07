@@ -62,6 +62,7 @@
       <label>数量</label>
       <input id="count" type="number" value="1" min="1">
       <button id="btnItem">给予物品</button>
+      <button id="btnDragonEquip">龙蛋并装备（长按攻击召唤）</button>
     </div>
     <div id="status" class="status">status: game iframe loading...</div>
   </div>
@@ -71,6 +72,7 @@
 
   <script>
     const gameFrame = document.getElementById("game");
+    gameFrame.src = `../../Game.html?debug_frame_ts=${Date.now()}`;
     const statusEl = document.getElementById("status");
     let debugGodMode = false;
     let patched = false;
@@ -90,6 +92,21 @@
       return w;
     }
 
+    function readGameExpr(w, expr, fallback = null) {
+      if (!w || typeof w.eval !== "function") return fallback;
+      try {
+        const value = w.eval(expr);
+        return value == null ? fallback : value;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function runGameExpr(w, expr) {
+      if (!w || typeof w.eval !== "function") return undefined;
+      return w.eval(expr);
+    }
+
     function renderStatus(w) {
       if (!w) {
         if (!iframeLoaded) {
@@ -107,9 +124,16 @@
           "如果长时间不变，请用本地 HTTP 打开（不要用 IDE 预览/file://）。";
         return;
       }
-      const biomeId = w.currentBiome || "n/a";
+      const biomeId = readGameExpr(w, 'typeof currentBiome !== "undefined" ? currentBiome : null', w.currentBiome || "n/a") || "n/a";
+      const scoreValue = Number(readGameExpr(w, 'typeof score !== "undefined" ? score : 0', w.score || 0)) || 0;
+      const runBestScoreValue = Number(readGameExpr(w, 'typeof runBestScore !== "undefined" ? runBestScore : 0', w.runBestScore || 0)) || 0;
+      const enemyCount = Number(readGameExpr(w, 'Array.isArray(enemies) ? enemies.length : 0', Array.isArray(w.enemies) ? w.enemies.length : 0)) || 0;
+      const dragonCount = Number(readGameExpr(w, 'Array.isArray(dragonList) ? dragonList.length : 0', Array.isArray(w.dragonList) ? w.dragonList.length : 0)) || 0;
+      const ridingDragon = Boolean(readGameExpr(w, '!!ridingDragon', Boolean(w.ridingDragon)));
+      const equippedConsumableKey = readGameExpr(w, 'equippedConsumable && equippedConsumable.itemKey ? equippedConsumable.itemKey : null', w.equippedConsumable && w.equippedConsumable.itemKey ? w.equippedConsumable.itemKey : null) || '-';
+      const equippedConsumableCount = Number(readGameExpr(w, 'equippedConsumable && equippedConsumable.count ? equippedConsumable.count : 0', w.equippedConsumable && w.equippedConsumable.count ? w.equippedConsumable.count : 0)) || 0;
       const stay = typeof w.getBiomeStayDebugInfo === "function"
-        ? w.getBiomeStayDebugInfo(Number(w.score) || 0)
+        ? w.getBiomeStayDebugInfo(scoreValue)
         : null;
       const rounds = typeof w.getBiomeVisitCountSnapshot === "function"
         ? w.getBiomeVisitCountSnapshot()
@@ -120,9 +144,13 @@
 
       statusEl.innerText =
         "biome=" + biomeId +
-        "  score=" + (Number(w.score) || 0) +
-        "  runBestScore=" + (Number(w.runBestScore) || 0) +
-        "  enemies=" + (Array.isArray(w.enemies) ? w.enemies.length : 0) + "\n" +
+        "  score=" + scoreValue +
+        "  runBestScore=" + runBestScoreValue +
+        "  enemies=" + enemyCount +
+        "  dragons=" + dragonCount +
+        "  ridingDragon=" + ridingDragon + "\n" +
+        "consumable: equipped=" + equippedConsumableKey +
+        "  count=" + equippedConsumableCount + "\n" +
         "stay: scoreInBiome=" + (stay ? Math.floor(stay.scoreInBiome) : "n/a") +
         "  timeInBiomeSec=" + (stay ? Math.floor(stay.timeInBiomeSec) : "n/a") +
         "  minScore=" + (stay ? stay.minScore : "n/a") +
@@ -173,13 +201,30 @@
       const biomeId = document.getElementById("biome").value;
       withGame(w => {
         patchGodMode(w);
-        const unlockScore = Number(w.getBiomeSwitchConfig?.().unlockScore?.[biomeId] ?? 0);
-        w.score = Math.max(Number(w.score) || 0, unlockScore);
-        w.runBestScore = Math.max(Number(w.runBestScore) || 0, unlockScore);
-        w.currentBiome = biomeId;
-        if (typeof w.updateWeatherForBiome === "function" && typeof w.getBiomeById === "function") {
-          w.updateWeatherForBiome(w.getBiomeById(biomeId));
-        }
+        runGameExpr(w, `(() => {
+          const biomeId = ${JSON.stringify(biomeId)};
+          const unlockScore = Number(typeof getBiomeSwitchConfig === "function"
+            ? (getBiomeSwitchConfig().unlockScore?.[biomeId] ?? 0)
+            : 0);
+          score = Math.max(Number(score) || 0, unlockScore);
+          runBestScore = Math.max(Number(runBestScore) || 0, unlockScore);
+          const nextBiome = typeof getBiomeById === "function" ? getBiomeById(biomeId) : null;
+          const progressScore = Math.max(
+            typeof getProgressScore === "function" ? (Number(getProgressScore()) || 0) : (Number(score) || 0),
+            unlockScore
+          );
+          if (nextBiome && typeof applyBiomeTransition === "function") {
+            applyBiomeTransition(nextBiome, progressScore, typeof hasHeatProtection === "function" ? hasHeatProtection() : false);
+          } else {
+            currentBiome = biomeId;
+            if (nextBiome && typeof updateWeatherForBiome === "function") {
+              updateWeatherForBiome(nextBiome);
+            }
+          }
+          const info = document.getElementById("level-info");
+          if (info && nextBiome && nextBiome.name) info.innerText = '生态: ' + nextBiome.name;
+          return currentBiome;
+        })()`);
       });
     }
 
@@ -201,11 +246,14 @@
       const s = Math.max(0, Number(document.getElementById("score").value) || 0);
       withGame(w => {
         patchGodMode(w);
-        w.score = s;
-        w.runBestScore = Math.max(Number(w.runBestScore) || 0, s);
-        const el = w.document.getElementById("score");
-        if (el) el.innerText = String(w.score);
-        if (typeof w.updateCurrentBiome === "function") w.updateCurrentBiome();
+        runGameExpr(w, `(() => {
+          score = ${s};
+          runBestScore = Math.max(Number(runBestScore) || 0, ${s});
+          const el = document.getElementById("score");
+          if (el) el.innerText = String(score);
+          if (typeof updateCurrentBiome === "function") updateCurrentBiome();
+          return score;
+        })()`);
       });
     }
 
@@ -231,12 +279,16 @@
       const enemyType = document.getElementById("enemy").value;
       withGame(w => {
         patchGodMode(w);
-        let e = null;
-        const x = (Number(w.player?.x) || 0) + 140;
-        const y = (Number(w.groundY) || 530) - 32;
-        if (typeof w.createBiomeEnemy === "function") e = w.createBiomeEnemy(enemyType, x, y);
-        if (!e && typeof w.Enemy === "function") e = new w.Enemy(x, y, enemyType);
-        if (e && Array.isArray(w.enemies)) w.enemies.push(e);
+        runGameExpr(w, `(() => {
+          const enemyType = ${JSON.stringify(enemyType)};
+          const x = (Number(player?.x) || 0) + 140;
+          const y = (Number(groundY) || 530) - 32;
+          let e = null;
+          if (typeof createBiomeEnemy === "function") e = createBiomeEnemy(enemyType, x, y);
+          if (!e && typeof Enemy === "function") e = new Enemy(x, y, enemyType);
+          if (e && Array.isArray(enemies)) enemies.push(e);
+          return e ? (e.type || enemyType) : null;
+        })()`);
       });
     }
 
@@ -275,9 +327,35 @@
       if (!item) return;
       withGame(w => {
         patchGodMode(w);
-        if (!w.inventory) return;
-        w.inventory[item] = (Number(w.inventory[item]) || 0) + count;
+        runGameExpr(w, `(() => {
+          const item = ${JSON.stringify(item)};
+          const count = ${count};
+          if (typeof inventory === "undefined" || !inventory) return 0;
+          inventory[item] = (Number(inventory[item]) || 0) + count;
+          return inventory[item];
+        })()`);
         if (typeof w.updateInventoryUI === "function") w.updateInventoryUI();
+      });
+    }
+
+    function prepareDragonLongPressSummon() {
+      ensureRunning();
+      withGame(w => {
+        patchGodMode(w);
+        runGameExpr(w, `(() => {
+          inventory.dragon_egg = (Number(inventory.dragon_egg) || 0) + 1;
+          if (typeof equipConsumable === "function") equipConsumable("dragon_egg");
+          if (typeof updateInventoryUI === "function") updateInventoryUI();
+          if (typeof updateConsumableUI === "function") updateConsumableUI();
+          if (typeof showToast === "function") {
+            showToast("🐉 已装备龙蛋，请长按攻击按钮召唤");
+          }
+          return {
+            dragonEgg: Number(inventory.dragon_egg) || 0,
+            equipped: equippedConsumable && equippedConsumable.itemKey ? equippedConsumable.itemKey : null,
+            equippedCount: equippedConsumable && equippedConsumable.count ? equippedConsumable.count : 0
+          };
+        })()`);
       });
     }
 
@@ -289,6 +367,7 @@
     document.getElementById("btnEnemy").addEventListener("click", spawnEnemy);
     document.getElementById("btnChallenge").addEventListener("click", triggerChallenge);
     document.getElementById("btnItem").addEventListener("click", giveItem);
+    document.getElementById("btnDragonEquip").addEventListener("click", prepareDragonLongPressSummon);
     document.getElementById("btnGod").addEventListener("click", function () {
       debugGodMode = !debugGodMode;
       this.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
@@ -333,6 +412,9 @@
         const btn = document.getElementById("btnGod");
         if (btn) btn.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
       },
+      prepareDragonLongPressSummon() {
+        prepareDragonLongPressSummon();
+      },
       getState() {
         const w = gw();
         if (!w) return { ready: false };
@@ -347,6 +429,9 @@
           bossLocked: Boolean(w.bossArena && w.bossArena.viewportLocked),
           bossType: boss && boss.constructor ? boss.constructor.name : null,
           bossName: boss && boss.name ? boss.name : null,
+          dragonCount: Array.isArray(w.dragonList) ? w.dragonList.length : 0,
+          ridingDragon: Boolean(w.ridingDragon),
+          equippedConsumable: w.equippedConsumable && w.equippedConsumable.itemKey ? w.equippedConsumable.itemKey : null,
           stay
         };
       }

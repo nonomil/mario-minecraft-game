@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.20] - 2026-03-07
+### Added
+- **Dragon Summoning & Riding System**: Complete implementation of EnderDragon summoning and riding mechanics
+  - EnderDragon entity with AI behavior and fireball attacks
+  - Dragon riding controls and physics integration
+  - Gunpowder ground fire effect enhancement
+  - Manual debug coverage for dragon summon functionality
+
+### Fixed
+- Touch control regressions in dragon summoning interface
+- Account selection overlay UI refinements
+
+## [1.19.19] - 2026-03-06
+### Changed
+- **Version Increment**: Incremented version to `1.19.19` and versionCode to `74` for continuous release.
+- **Maintenance**: General build configuration updates.
+
 ## [1.19.18] - 2026-03-06
 ### Changed
 - **Version Increment**: Incremented version to `1.19.18` and versionCode to `73` for continuous release.

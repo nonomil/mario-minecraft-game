@@ -27,7 +27,7 @@ function ensureStartOverlayContent() {
     if (document.getElementById("overlay-start")) return;
     text.innerHTML = `
         <div class="overlay-start" id="overlay-start">
-                        <div class="overlay-page overlay-page-intro active" data-page="intro">
+            <div class="overlay-page overlay-page-intro active" data-page="intro">
                 <div class="overlay-intro-sub">在冒险中学习单词，闯关解锁更多词库与装备。挑战关卡，获取奖励与新武器。</div>
                 <div class="overlay-section">
                     <div class="overlay-section-title">🎮 操作说明</div>
@@ -50,28 +50,56 @@ function ensureStartOverlayContent() {
                 </div>
             </div>
             <div class="overlay-page overlay-page-setup" data-page="setup">
-                <div class="overlay-account">
-                    <div class="overlay-account-title">输入档案</div>
-                    <div class="overlay-account-row">
-                        <input class="overlay-input" id="overlay-username-input" type="text" placeholder="输入昵称/档案名" maxlength="20">
-                        <button class="game-btn game-btn-small" id="btn-overlay-create">创建/进入</button>
-                    </div>
-                    <div class="overlay-account-hint">已有档案：选择继续/重玩/删除</div>
-                    <div id="overlay-accounts-container" class="account-list"></div>
-
-                    <!-- Language Mode Selection -->
-                    <div id="overlay-language-mode-selection" class="overlay-language-mode-selection" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <div style="text-align:center;margin-bottom:12px;color:#ccc;font-size:14px;">🌍 选择学习模式</div>
-                        <div style="display:flex;gap:12px;justify-content:center;">
-                            <button class="game-btn game-btn-small" id="btn-overlay-language-english" style="flex:1;">🇬🇧 英语学习</button>
-                            <button class="game-btn game-btn-small" id="btn-overlay-language-chinese" style="flex:1;">🇨🇳 汉字学习</button>
+                <div class="overlay-account overlay-account-shell">
+                    <div class="overlay-account-section">
+                        <div class="overlay-account-heading">
+                            <div class="overlay-account-title">输入档案</div>
+                            <div class="overlay-account-kicker">创建新账号，或输入已有档案名直接进入</div>
                         </div>
-                        <div id="overlay-language-current" style="text-align:center;margin-top:8px;font-size:12px;color:#999;"></div>
+                        <div class="overlay-account-row overlay-account-input-row">
+                            <input class="overlay-input overlay-account-input" id="overlay-username-input" type="text" placeholder="输入昵称/档案名" maxlength="20">
+                            <button class="game-btn overlay-account-submit" id="btn-overlay-create" type="button">创建/进入</button>
+                        </div>
+                    </div>
+                    <div class="overlay-account-section">
+                        <div class="overlay-account-section-header">
+                            <div class="overlay-account-subtitle">已有档案</div>
+                            <div class="overlay-account-hint">选择继续 / 重玩 / 删除</div>
+                        </div>
+                        <div id="overlay-accounts-container" class="account-list overlay-account-list"></div>
+                    </div>
+                    <div id="overlay-language-mode-selection" class="overlay-language-mode-selection overlay-account-section">
+                        <div class="overlay-account-section-header overlay-language-header">
+                            <div class="overlay-language-title">学习模式</div>
+                            <div id="overlay-language-current" class="overlay-language-current"></div>
+                        </div>
+                        <div class="overlay-language-grid">
+                            <button class="game-btn overlay-mode-btn" id="btn-overlay-language-english" type="button">
+                                <span class="overlay-mode-badge">GB</span>
+                                <span class="overlay-mode-copy">
+                                    <span class="overlay-mode-title">英语学习</span>
+                                    <span class="overlay-mode-desc">英文主显示 · 中文辅助</span>
+                                </span>
+                            </button>
+                            <button class="game-btn overlay-mode-btn" id="btn-overlay-language-chinese" type="button">
+                                <span class="overlay-mode-badge">CN</span>
+                                <span class="overlay-mode-copy">
+                                    <span class="overlay-mode-title">汉字学习</span>
+                                    <span class="overlay-mode-desc">中文主显示 · 英文辅助</span>
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     `;
+}
+
+function getAccountAvatarLabel(username) {
+    const safeName = String(username || "").trim();
+    if (!safeName) return "账";
+    return safeName.charAt(0).toUpperCase();
 }
 
 function renderStartOverlayAccounts() {
@@ -123,12 +151,12 @@ function wireStartOverlayAccountActions() {
             currentDisplay.innerText = mode === "chinese" ? "当前：汉字学习" : "当前：英语学习";
         }
         if (enBtn) {
-            enBtn.style.opacity = mode === "english" ? "1" : "0.6";
-            enBtn.style.fontWeight = mode === "english" ? "bold" : "normal";
+            enBtn.classList.toggle("is-active", mode === "english");
+            enBtn.setAttribute("aria-pressed", mode === "english" ? "true" : "false");
         }
         if (zhBtn) {
-            zhBtn.style.opacity = mode === "chinese" ? "1" : "0.6";
-            zhBtn.style.fontWeight = mode === "chinese" ? "bold" : "normal";
+            zhBtn.classList.toggle("is-active", mode === "chinese");
+            zhBtn.setAttribute("aria-pressed", mode === "chinese" ? "true" : "false");
         }
     };
 
@@ -234,23 +262,27 @@ function renderAccountList(container, accounts, storedId) {
     }
     accounts.forEach(account => {
         const div = document.createElement("div");
-        div.className = "account-item";
+        div.className = "account-item overlay-account-item";
         div.innerHTML = `
-            <div class="account-avatar">用户</div>
+            <div class="account-avatar" aria-hidden="true">${getAccountAvatarLabel(account.username)}</div>
             <div class="account-info">
-                <div class="account-name">${account.username}${storedId && account.id === storedId ? ' <span style="opacity:.7;font-weight:700;">(上次)</span>' : ""}</div>
+                <div class="account-name-row">
+                    <div class="account-name">${account.username}</div>
+                    ${storedId && account.id === storedId ? '<span class="account-pill">上次</span>' : ""}
+                </div>
                 <div class="account-stats">
-                    最高分: ${account.progress?.highScore || 0} · 已学: ${account.vocabulary?.learnedWords?.length || 0}
+                    <span class="account-stat-chip">最高分 <strong>${account.progress?.highScore || 0}</strong></span>
+                    <span class="account-stat-chip">已学 <strong>${account.vocabulary?.learnedWords?.length || 0}</strong></span>
                 </div>
             </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <button class="game-btn game-btn-small btn-account-continue" data-id="${account.id}">继续</button>
-                <button class="game-btn game-btn-small game-btn-danger btn-account-restart" data-id="${account.id}">重玩</button>
-                <button class="game-btn game-btn-small btn-delete-account" data-id="${account.id}">删除</button>
+            <div class="account-actions">
+                <button class="game-btn overlay-account-btn overlay-account-btn-primary btn-account-continue" data-id="${account.id}" type="button">继续</button>
+                <button class="game-btn overlay-account-btn overlay-account-btn-secondary btn-account-restart" data-id="${account.id}" type="button">重玩</button>
+                <button class="game-btn overlay-account-btn overlay-account-btn-danger btn-delete-account" data-id="${account.id}" type="button">删除</button>
             </div>
         `;
 
-        div.querySelector(".account-info")?.addEventListener("click", () => loginWithAccount(account, { mode: "continue" }));
+        div.addEventListener("click", () => loginWithAccount(account, { mode: "continue" }));
         div.querySelector(".btn-account-continue")?.addEventListener("click", e => {
             e.stopPropagation();
             loginWithAccount(account, { mode: "continue" });

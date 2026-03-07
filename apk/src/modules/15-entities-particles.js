@@ -582,6 +582,11 @@ class Bomb {
         this.exploded = true;
         this.remove = true;
         const explosionRadius = 120;
+
+        if (typeof createGroundFire === 'function') {
+            createGroundFire(this.x, this.y, 200, 20, 180);
+        }
+
         // 伤害敌人
         enemies.forEach(e => {
             const dist = Math.hypot(e.x - this.x, e.y - this.y);

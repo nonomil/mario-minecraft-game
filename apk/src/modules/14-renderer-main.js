@@ -155,6 +155,12 @@ function draw() {
 
     golems.forEach(g => drawGolem(g));
 
+    if (typeof dragonList !== 'undefined' && Array.isArray(dragonList)) {
+        dragonList.forEach(dragon => {
+            if (!dragon.remove) drawEnderDragon(dragon);
+        });
+    }
+
     if (projectiles.length) {
         projectiles.forEach(p => drawProjectile(p));
     }

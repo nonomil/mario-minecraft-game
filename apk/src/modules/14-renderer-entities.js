@@ -341,6 +341,34 @@ function drawGolem(golem) {
     drawHealthBar(x, y - 8, golem.width, golem.hp, golem.maxHp);
 }
 
+function drawEnderDragon(dragon) {
+    const x = dragon.x;
+    const y = dragon.y;
+    const w = dragon.width;
+    const h = dragon.height;
+
+    ctx.fillStyle = "#2B0A3D";
+    ctx.fillRect(x + w * 0.15, y + h * 0.25, w * 0.55, h * 0.45);
+
+    ctx.fillStyle = "#4B0082";
+    ctx.fillRect(x + w * 0.68, y + h * 0.18, w * 0.2, h * 0.22);
+    ctx.fillRect(x + w * 0.05, y + h * 0.15, w * 0.18, h * 0.12);
+    ctx.fillRect(x + w * 0.22, y + h * 0.08, w * 0.2, h * 0.12);
+    ctx.fillRect(x + w * 0.22, y + h * 0.56, w * 0.2, h * 0.12);
+
+    ctx.fillStyle = "#8A2BE2";
+    ctx.fillRect(x + w * 0.72, y + h * 0.26, w * 0.03, h * 0.05);
+    ctx.fillRect(x + w * 0.8, y + h * 0.26, w * 0.03, h * 0.05);
+
+    if (dragon.rider) {
+        ctx.strokeStyle = "#FFD54F";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - 2, y - 2, w + 4, h + 4);
+    }
+
+    drawHealthBar(x, y - 10, w, dragon.hp, dragon.maxHp);
+}
+
 function drawHealthBar(x, y, width, hp, maxHp) {
     const barWidth = width;
     const barHeight = 4;
@@ -369,13 +397,18 @@ function drawProjectile(proj) {
         ctx.fill();
         ctx.strokeStyle = "#E0E0E0";
         ctx.stroke();
-    } else if (proj instanceof DragonFireball) {
+    } else if (proj instanceof DragonFireball || proj instanceof EnderDragonFireball) {
         ctx.fillStyle = "#FF5722";
         ctx.beginPath();
         ctx.arc(proj.x, proj.y, 8, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = "#FF9800";
         ctx.stroke();
+        if (proj instanceof EnderDragonFireball) {
+            ctx.strokeStyle = "#BA68C8";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(proj.x - 10, proj.y - 10, 20, 20);
+        }
     }
 }
 

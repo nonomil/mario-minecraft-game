@@ -6,7 +6,9 @@ import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const rootDir = resolve(__dirname, '..');
+const cwdRoot = resolve(process.cwd());
+const scriptRoot = resolve(__dirname, '..');
+const rootDir = cwdRoot.endsWith('tests\e2e') ? resolve(cwdRoot, '..', '..') : scriptRoot;
 
 const mimeTypes = {
   '.html': 'text/html',
