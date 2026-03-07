@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const port = Number(process.env.MMWG_E2E_PORT || 4173);
+const baseURL = `http://127.0.0.1:${port}`;
+
 export default defineConfig({
   testDir: "./specs",
   timeout: 60_000,
@@ -9,7 +12,8 @@ export default defineConfig({
   workers: 1,
   reporter: [["list"], ["html", { open: "never", outputFolder: "test-results/playwright-report" }]],
   use: {
-    baseURL: "http://localhost:4173",
+    baseURL,
+    serviceWorkers: "block",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure"
@@ -18,11 +22,10 @@ export default defineConfig({
     { name: "chromium", use: { ...devices["Desktop Chrome"] } }
   ],
   webServer: {
-    command: "npm run serve",
-    cwd: ".",
-    url: "http://localhost:4173/Game.html",
+    command: `node tools/serve-apk.mjs --port ${port}`,
+    cwd: "../..",
+    url: `${baseURL}/Game.html`,
     timeout: 120_000,
     reuseExistingServer: false
   }
 });
-

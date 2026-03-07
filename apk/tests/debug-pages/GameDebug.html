@@ -36,7 +36,7 @@
       <input id="score" type="number" value="0" min="0" step="100">
       <button id="btnScore">设置分数</button>
       <label>BOSS</label>
-      <select id="boss"><option>wither</option><option>ghast</option><option>blaze</option><option>wither_skeleton</option></select>
+      <select id="boss"><option>wither</option><option>ghast</option><option>blaze</option><option>wither_skeleton</option><option>warden</option><option>evoker</option></select>
       <button id="btnBoss">触发BOSS</button>
       <button id="btnVillage">生成村庄</button>
       <button id="btnGod">无敌: OFF</button>
@@ -384,7 +384,7 @@
     window.MMDBG = {
       ready() {
         const w = gw();
-        return Boolean(w && w.bossArena && w.player && typeof w.updateCurrentBiome === "function");
+        return Boolean(w && w.bossArena);
       },
       ensureRunning,
       setBiome(id) {
@@ -407,6 +407,41 @@
         if (el && type) el.value = String(type);
         spawnBoss();
       },
+      setBossPhase(phaseValue) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          const targetPhase = Math.max(1, Math.min(3, Number(phaseValue) || 1));
+          if (targetPhase < boss.phase) boss.phase = 1;
+          while (boss.phase < targetPhase) {
+            boss.phase += 1;
+            if (typeof boss.onPhaseChange === "function") boss.onPhaseChange(boss.phase);
+          }
+        });
+      },
+      setBossHpRatio(ratioValue) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          const ratio = Math.max(0.05, Math.min(1, Number(ratioValue) || 1));
+          boss.hp = Math.max(1, Math.round(boss.maxHp * ratio));
+        });
+      },
+      setBossState(nextState) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          boss.state = String(nextState || "idle");
+        });
+      },
+      tick(frameCount) {
+        withGame((w) => {
+          const steps = Math.max(1, Math.min(600, Number(frameCount) || 1));
+          for (let index = 0; index < steps; index++) {
+            if (w.bossArena && w.bossArena.active && w.bossArena.boss) w.bossArena.boss.update(w.player);
+          }
+        });
+      },
       setGodMode(on) {
         debugGodMode = Boolean(on);
         const btn = document.getElementById("btnGod");
@@ -424,11 +459,19 @@
           ready: true,
           score: Number(w.score) || 0,
           runBestScore: Number(w.runBestScore) || 0,
-          biome: w.currentBiome || null,
+          biome: readGameExpr(w, 'typeof currentBiome !== "undefined" ? currentBiome : null', w.currentBiome || null),
+          availableBosses: w.bossArena && typeof w.bossArena.getBossTypes === "function" ? w.bossArena.getBossTypes() : (w.bossArena && Array.isArray(w.bossArena.bossTypes) ? w.bossArena.bossTypes.slice() : []),
           bossActive: Boolean(w.bossArena && w.bossArena.active),
           bossLocked: Boolean(w.bossArena && w.bossArena.viewportLocked),
           bossType: boss && boss.constructor ? boss.constructor.name : null,
+          bossId: boss && boss.type ? boss.type : null,
           bossName: boss && boss.name ? boss.name : null,
+          bossVisualKey: boss && boss.visualKey ? boss.visualKey : null,
+          bossPhase: boss && boss.phase ? boss.phase : null,
+          bossState: boss && boss.state ? boss.state : null,
+          bossProjectileCount: boss && Array.isArray(boss.bossProjectiles) ? boss.bossProjectiles.length : 0,
+          bossMinionCount: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).length : 0,
+          bossMinionTypes: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).map((entry) => entry.type || "skeleton_minion") : [],
           dragonCount: Array.isArray(w.dragonList) ? w.dragonList.length : 0,
           ridingDragon: Boolean(w.ridingDragon),
           equippedConsumable: w.equippedConsumable && w.equippedConsumable.itemKey ? w.equippedConsumable.itemKey : null,

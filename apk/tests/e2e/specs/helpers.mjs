@@ -25,3 +25,32 @@ export async function forceBoss(page, bossType) {
   }, bossType);
 }
 
+
+
+export async function setBossPhase(page, phase) {
+  return page.evaluate((value) => {
+    window.MMDBG.setBossPhase(value);
+    return window.MMDBG.getState();
+  }, phase);
+}
+
+export async function setBossHpRatio(page, ratio) {
+  return page.evaluate((value) => {
+    window.MMDBG.setBossHpRatio(value);
+    return window.MMDBG.getState();
+  }, ratio);
+}
+
+export async function setBossState(page, state) {
+  return page.evaluate((value) => {
+    window.MMDBG.setBossState(value);
+    return window.MMDBG.getState();
+  }, state);
+}
+
+export async function tickGame(page, frames = 1) {
+  return page.evaluate((value) => {
+    window.MMDBG.tick(value);
+    return window.MMDBG.getState();
+  }, frames);
+}
