@@ -660,6 +660,14 @@ function wireTouchControls() {
         if (window._inputLocked) return;
         keys.right = true;
     }, () => { keys.right = false; });
+    bindHold("up", () => {
+        if (window._inputLocked) return;
+        keys.up = true;
+    }, () => { keys.up = false; });
+    bindHold("down", () => {
+        if (window._inputLocked) return;
+        keys.down = true;
+    }, () => { keys.down = false; });
     bindTap("jump", () => {
         if (window._inputLocked) return;
         jumpBuffer = gameConfig.jump.bufferFrames;
@@ -668,6 +676,10 @@ function wireTouchControls() {
     bindTapOrHold("attack",
         () => { handleAttack("tap"); },  // 短按：普通攻击
         () => {                           // 长按：使用消耗品
+            if (typeof ridingDragon !== "undefined" && ridingDragon) {
+                dragonShootFireball();
+                return;
+            }
             if (typeof useEquippedConsumable === "function") {
                 useEquippedConsumable();
             } else {

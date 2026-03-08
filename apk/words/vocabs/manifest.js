@@ -177,15 +177,25 @@ window.vocabManifest.packs.push({
 // ========================================
 // Add getRaw() method to each pack
 // ========================================
+function resolveManifestGlobalArray(globalName) {
+  if (!globalName) return [];
+  const direct = window[globalName];
+  if (Array.isArray(direct)) return direct;
+  try {
+    const lexical = Function(`return (typeof ${globalName} !== 'undefined') ? ${globalName} : undefined;`)();
+    return Array.isArray(lexical) ? lexical : [];
+  } catch (_) {
+    return [];
+  }
+}
+
 window.vocabManifest.packs.forEach(pack => {
   if (!pack.getRaw) {
     pack.getRaw = function() {
       const words = [];
       if (Array.isArray(pack.globals)) {
         pack.globals.forEach(globalName => {
-          if (typeof window[globalName] !== 'undefined' && Array.isArray(window[globalName])) {
-            words.push(...window[globalName]);
-          }
+          words.push(...resolveManifestGlobalArray(globalName));
         });
       }
       return words;

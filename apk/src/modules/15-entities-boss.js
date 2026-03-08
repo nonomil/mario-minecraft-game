@@ -491,15 +491,24 @@ globalThis.bossArena = globalThis.bossArena || {
 
     createBoss(type) {
         const spawnX = player.x + 300;
+        let boss = null;
         switch (type) {
-            case 'wither': return new WitherBoss(spawnX);
-            case 'ghast': return new GhastBoss(spawnX);
-            case 'blaze': return new BlazeBoss(spawnX);
-            case 'wither_skeleton': return new WitherSkeletonBoss(spawnX);
-            case 'warden': return (typeof WardenBoss === 'function') ? new WardenBoss(spawnX) : new WitherSkeletonBoss(spawnX);
-            case 'evoker': return (typeof EvokerBoss === 'function') ? new EvokerBoss(spawnX) : new BlazeBoss(spawnX);
-            default: return new WitherBoss(spawnX);
+            case 'wither': boss = new WitherBoss(spawnX); break;
+            case 'ghast': boss = new GhastBoss(spawnX); break;
+            case 'blaze': boss = new BlazeBoss(spawnX); break;
+            case 'wither_skeleton': boss = new WitherSkeletonBoss(spawnX); break;
+            case 'warden': boss = (typeof WardenBoss === 'function') ? new WardenBoss(spawnX) : new WitherSkeletonBoss(spawnX); break;
+            case 'evoker': boss = (typeof EvokerBoss === 'function') ? new EvokerBoss(spawnX) : new BlazeBoss(spawnX); break;
+            default: boss = new WitherBoss(spawnX); break;
         }
+
+        if (typeof dragonList !== "undefined" && Array.isArray(dragonList) && dragonList.some(entry => entry && !entry.remove)) {
+            boss.maxHp = Math.round(boss.maxHp * 2);
+            boss.hp = boss.maxHp;
+            boss.dragonScaled = true;
+        }
+
+        return boss;
     },
 
     exit() {

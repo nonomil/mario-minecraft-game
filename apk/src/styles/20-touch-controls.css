@@ -17,13 +17,22 @@
 }
 
 /* 左侧控制区域 - 屏幕左侧中间 */
-.touch-left {
+#touch-left-zone.touch-left {
     position: absolute;
     left: 20px;
     bottom: calc(var(--safe-bottom) + var(--touch-left-bottom));
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
+    display: grid !important;
+    width: calc(var(--touch-btn-size) * 3 + 24px);
+    height: calc(var(--touch-btn-size) * 3 + 24px);
+    grid-template-columns: repeat(3, var(--touch-btn-size));
+    grid-template-rows: repeat(3, var(--touch-btn-size));
+    grid-template-areas:
+        ". up ."
+        "left . right"
+        ". down .";
+    gap: 12px !important;
+    align-items: center;
+    justify-items: center;
     pointer-events: auto;
 }
 
@@ -66,6 +75,27 @@
     align-items: center;
     justify-content: center;
     transition: all 0.15s ease;
+}
+
+.touch-btn-flight {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.touch-btn-up {
+    grid-area: up;
+}
+
+.touch-btn-left {
+    grid-area: left;
+}
+
+.touch-btn-right {
+    grid-area: right;
+}
+
+.touch-btn-down {
+    grid-area: down;
 }
 
 .touch-btn:active {

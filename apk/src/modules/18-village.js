@@ -1222,7 +1222,7 @@ const TRADER_BUY_ITEMS = [
   { id: "bow", label: "\u5f13 \ud83c\udff9", cost: 12, type: "item", amount: 1 },
   { id: "gunpowder", label: "\u706b\u836f \u00d75 \ud83d\udca5", cost: 4, type: "item", amount: 5 },
   { id: "ender_pearl", label: "\u672b\u5f71\u73cd\u73e0 \u00d73 \ud83d\udfe3", cost: 10, type: "item", amount: 3 },
-  { id: "dragon_egg", label: "龙蛋 🥚", cost: 5000, type: "item", amount: 1 }
+  { id: "dragon_egg", label: "龙蛋 🥚", cost: 100, type: "item", amount: 1 }
 ];
 
 let traderPrevPaused = false;

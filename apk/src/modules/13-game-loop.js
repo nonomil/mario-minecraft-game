@@ -26,6 +26,7 @@ let dragonList = [];
 let ridingDragon = null;
 let skipPlayerGravity = false;
 let dismountInvincibleFrames = 0;
+let dragonRemountCooldownFrames = 0;
 
 function pushPause() {
     pauseStack += 1;
@@ -503,6 +504,9 @@ function update() {
     if (dismountInvincibleFrames > 0) {
         dismountInvincibleFrames--;
     }
+    if (dragonRemountCooldownFrames > 0) {
+        dragonRemountCooldownFrames--;
+    }
 
     enemies.forEach(e => {
         optimizedUpdate(e, () => e.update(player));
@@ -544,10 +548,12 @@ function update() {
             if (keys.left) {
                 ridingDragon.x -= moveSpeed;
                 player.facingRight = false;
+                ridingDragon.facingRight = false;
             }
             if (keys.right) {
                 ridingDragon.x += moveSpeed;
                 player.facingRight = true;
+                ridingDragon.facingRight = true;
             }
             if (keys.up || keys.jump) {
                 ridingDragon.y -= moveSpeed;
@@ -558,7 +564,7 @@ function update() {
 
             // 边界限制
             ridingDragon.x = Math.max(cameraX - 50, Math.min(ridingDragon.x, cameraX + canvas.width + 50));
-            ridingDragon.y = Math.max(50, Math.min(ridingDragon.y, groundY - ridingDragon.height - 50));
+            ridingDragon.y = Math.max(50, Math.min(ridingDragon.y, groundY - ridingDragon.height));
 
             // 跳过玩家重力更新
             skipPlayerGravity = true;
@@ -567,13 +573,20 @@ function update() {
         skipPlayerGravity = false;
 
         // 检测上龙
+        if (dragonRemountCooldownFrames <= 0) {
         for (const dragon of dragonList) {
-            if (rectIntersect(player.x, player.y, player.width, player.height, dragon.x, dragon.y, dragon.width, dragon.height)) {
+            if (
+                typeof dragon.canAcceptRider === "function" &&
+                dragon.canAcceptRider() &&
+                rectIntersect(player.x, player.y, player.width, player.height, dragon.x, dragon.y, dragon.width, dragon.height)
+            ) {
                 ridingDragon = dragon;
-                dragon.rider = player;
-                showToast("🐉 骑乘末影龙");
+                if (typeof dragon.setRiddenState === "function") dragon.setRiddenState(player);
+                else dragon.rider = player;
+                showToast("🐉 骑乘末影龙：攻击键喷火，方向键上下飞，切换键下龙");
                 break;
             }
+        }
         }
     }
 
@@ -710,26 +723,34 @@ function useDragonEgg() {
 
     // 召唤末影龙
     const dragon = new EnderDragon(player.x + 50, player.y - 100);
+    if (typeof dragon.setStandbyState === "function") {
+        dragon.setStandbyState(player);
+    }
     dragonList.push(dragon);
-    showToast("🐉 召唤末影龙");
+    showToast("🐉 召唤末影龙，靠近即可上龙");
     return true;
 }
 
 function dismountRider(rider) {
     if (!ridingDragon || !rider) return;
 
-    ridingDragon.rider = null;
+    const dragon = ridingDragon;
+    dragon.rider = null;
     ridingDragon = null;
     skipPlayerGravity = false;
+    if (!dragon.remove && typeof dragon.setReturningState === "function") {
+        dragon.setReturningState(player);
+    }
 
     // 给予缓降效果
     rider.velY = -2;
 
     // 无敌帧
     dismountInvincibleFrames = 60;
+    dragonRemountCooldownFrames = 24;
     playerInvincibleTimer = Math.max(Number(playerInvincibleTimer) || 0, 60);
 
-    showToast("⬇️ 已下龙");
+    showToast("⬇️ 已下龙，末影龙回到身边");
 }
 
 function dragonShootFireball() {
@@ -1762,13 +1783,14 @@ function handleDecorationInteract() {
 
 function handleAttack(mode = "press") {
     if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
-    if (playerWeapons.attackCooldown > 0) return;
-    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "attack");
 
     if (ridingDragon) {
         dragonShootFireball();
         return;
     }
+
+    if (playerWeapons.attackCooldown > 0) return;
+    if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "attack");
 
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
 

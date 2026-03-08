@@ -346,26 +346,128 @@ function drawEnderDragon(dragon) {
     const y = dragon.y;
     const w = dragon.width;
     const h = dragon.height;
+    const flap = Math.sin((dragon.animationTime || 0) / 6) * h * 0.12;
+    const facingRight = dragon.facingRight !== false;
+    const outlineColor = "#04050A";
+    const bodyColor = "#101116";
+    const bodyShadeColor = "#1A1C24";
+    const wingMembraneColor = "#090A10";
+    const boneColor = "#C7CAD2";
+    const eyeColor = dragon.state === "ridden" ? "#FFD54F" : "#D94CFF";
+    const spineColor = "#70737D";
 
-    ctx.fillStyle = "#2B0A3D";
-    ctx.fillRect(x + w * 0.15, y + h * 0.25, w * 0.55, h * 0.45);
+    function fillOutlinedRect(px, py, pw, ph, fillColor) {
+        ctx.fillStyle = outlineColor;
+        ctx.fillRect(px - 2, py - 2, pw + 4, ph + 4);
+        ctx.fillStyle = fillColor;
+        ctx.fillRect(px, py, pw, ph);
+    }
 
-    ctx.fillStyle = "#4B0082";
-    ctx.fillRect(x + w * 0.68, y + h * 0.18, w * 0.2, h * 0.22);
-    ctx.fillRect(x + w * 0.05, y + h * 0.15, w * 0.18, h * 0.12);
-    ctx.fillRect(x + w * 0.22, y + h * 0.08, w * 0.2, h * 0.12);
-    ctx.fillRect(x + w * 0.22, y + h * 0.56, w * 0.2, h * 0.12);
+    function fillWing(points) {
+        ctx.fillStyle = outlineColor;
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], points[0][1]);
+        for (let index = 1; index < points.length; index += 1) {
+            ctx.lineTo(points[index][0], points[index][1]);
+        }
+        ctx.closePath();
+        ctx.fill();
 
-    ctx.fillStyle = "#8A2BE2";
-    ctx.fillRect(x + w * 0.72, y + h * 0.26, w * 0.03, h * 0.05);
-    ctx.fillRect(x + w * 0.8, y + h * 0.26, w * 0.03, h * 0.05);
+        ctx.fillStyle = wingMembraneColor;
+        ctx.beginPath();
+        ctx.moveTo(points[0][0], points[0][1]);
+        for (let index = 1; index < points.length; index += 1) {
+            ctx.lineTo(points[index][0], points[index][1]);
+        }
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    ctx.save();
+    ctx.translate(facingRight ? x + w : x, y);
+    if (facingRight) ctx.scale(-1, 1);
+
+    ctx.fillStyle = "rgba(4, 3, 10, 0.36)";
+    ctx.beginPath();
+    ctx.ellipse(w * 0.52, h * 0.95, w * 0.42, h * 0.12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    fillWing([
+        [w * 0.28, h * 0.3],
+        [-w * 0.32, -h * 0.48 - flap],
+        [-w * 0.52, -h * 0.26 - flap],
+        [-w * 0.4, h * 0.08],
+        [-w * 0.06, h * 0.14],
+        [w * 0.24, h * 0.06]
+    ]);
+    fillWing([
+        [w * 0.64, h * 0.24],
+        [w * 1.02, -h * 0.5 + flap],
+        [w * 1.22, -h * 0.24 + flap],
+        [w * 1.08, h * 0.12],
+        [w * 0.78, h * 0.18],
+        [w * 0.58, h * 0.08]
+    ]);
+
+    ctx.strokeStyle = boneColor;
+    ctx.lineWidth = Math.max(2, w * 0.045);
+    ctx.lineCap = "square";
+    ctx.beginPath();
+    ctx.moveTo(w * 0.28, h * 0.26);
+    ctx.lineTo(-w * 0.3, -h * 0.46 - flap);
+    ctx.moveTo(w * 0.28, h * 0.26);
+    ctx.lineTo(-w * 0.42, -h * 0.2 - flap);
+    ctx.moveTo(w * 0.28, h * 0.26);
+    ctx.lineTo(-w * 0.33, h * 0.04);
+    ctx.moveTo(w * 0.64, h * 0.22);
+    ctx.lineTo(w * 1.0, -h * 0.48 + flap);
+    ctx.moveTo(w * 0.64, h * 0.22);
+    ctx.lineTo(w * 1.14, -h * 0.18 + flap);
+    ctx.moveTo(w * 0.64, h * 0.22);
+    ctx.lineTo(w * 1.02, h * 0.02);
+    ctx.stroke();
+
+    fillOutlinedRect(w * 0.26, h * 0.22, w * 0.42, h * 0.28, bodyColor);
+    fillOutlinedRect(w * 0.12, h * 0.27, w * 0.18, h * 0.12, bodyShadeColor);
+    fillOutlinedRect(-w * 0.08, h * 0.16, w * 0.19, h * 0.15, bodyColor);
+    fillOutlinedRect(-w * 0.12, h * 0.23, w * 0.12, h * 0.08, bodyShadeColor);
+    fillOutlinedRect(w * 0.4, h * 0.48, w * 0.05, h * 0.28, bodyShadeColor);
+    fillOutlinedRect(w * 0.54, h * 0.48, w * 0.05, h * 0.26, bodyShadeColor);
+
+    for (let segment = 0; segment < 7; segment += 1) {
+        const segmentX = w * (0.69 + segment * 0.095);
+        const segmentY = h * (0.16 - segment * 0.045);
+        fillOutlinedRect(segmentX, segmentY, w * 0.1, h * 0.09, bodyColor);
+        ctx.fillStyle = spineColor;
+        ctx.fillRect(segmentX + w * 0.018, segmentY - h * 0.06, w * 0.05, h * 0.05);
+    }
+
+    for (let spine = 0; spine < 5; spine += 1) {
+        ctx.fillStyle = spineColor;
+        ctx.fillRect(w * (0.31 + spine * 0.08), h * 0.11, w * 0.05, h * 0.05);
+    }
+
+    ctx.fillStyle = bodyShadeColor;
+    ctx.fillRect(w * 0.36, h * 0.28, w * 0.15, h * 0.1);
+    ctx.fillRect(-w * 0.05, h * 0.22, w * 0.05, h * 0.05);
+    ctx.fillRect(-w * 0.09, h * 0.1, w * 0.04, h * 0.07);
+    ctx.fillRect(w * 0.02, h * 0.09, w * 0.04, h * 0.07);
+
+    ctx.fillStyle = boneColor;
+    ctx.fillRect(-w * 0.12, h * 0.08, w * 0.026, h * 0.18);
+    ctx.fillRect(0, h * 0.05, w * 0.026, h * 0.18);
+
+    ctx.fillStyle = eyeColor;
+    ctx.fillRect(-w * 0.09, h * 0.25, w * 0.04, h * 0.05);
+    ctx.fillRect(-w * 0.01, h * 0.25, w * 0.04, h * 0.05);
 
     if (dragon.rider) {
         ctx.strokeStyle = "#FFD54F";
         ctx.lineWidth = 2;
-        ctx.strokeRect(x - 2, y - 2, w + 4, h + 4);
+        ctx.strokeRect(-2, -2, w + 4, h + 4);
     }
 
+    ctx.restore();
     drawHealthBar(x, y - 10, w, dragon.hp, dragon.maxHp);
 }
 
