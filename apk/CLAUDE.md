@@ -231,7 +231,7 @@ git commit -m "feat/fix: [描述]"
 **必填参数（MANDATORY）**：
 ```javascript
 {
-  model: "gpt-5.3-codex",
+  model: "gpt-5.4",
   sandbox: "danger-full-access",
   "approval-policy": "on-failure",
   reasoning: "high" | "medium" | "low"  // 见下方 reasoning 选择规则
@@ -249,7 +249,7 @@ git commit -m "feat/fix: [描述]"
 ```javascript
 // 首次调用
 mcp__codex__codex({
-  model: "gpt-5.3-codex",
+  model: "gpt-5.4",
   sandbox: "danger-full-access",
   "approval-policy": "on-failure",
   reasoning: "high",  // 根据任务类型选择

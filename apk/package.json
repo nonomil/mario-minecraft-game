@@ -1,6 +1,6 @@
 {
   "name": "mario-minecraft-game-v1",
-  "version": "1.19.23",
+  "version": "1.19.24",
   "private": true,
   "type": "module",
   "scripts": {

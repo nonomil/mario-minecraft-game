@@ -125,7 +125,7 @@ test: add coverage for <scenario>
 
 ```javascript
 {
-  model: "gpt-5.3-codex",
+  model: "gpt-5.4",
   sandbox: "danger-full-access",
   "approval-policy": "on-failure"
 }
