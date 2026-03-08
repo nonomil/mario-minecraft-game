@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.23] - 2026-03-08
+### Fixed
+- **Village Interaction Regressions**: Resolved critical issues with village gate and trader interactions
+  - Fixed word gate toggle mechanism in village areas
+  - Corrected trader auto-enter behavior and sell grid functionality
+  - Improved word house trigger reliability
+  - Updated village challenge quiz flow to prevent state conflicts
+
+### Changed
+- **Village System Improvements**: Enhanced village interaction reliability (369 lines changed, 57 deletions)
+  - Refactored `18-village.js` for better state management (+81 lines)
+  - Updated `12-village-challenges.js` quiz interaction flow (+24 lines)
+  - Improved `13-game-loop.js` village state handling (+22 lines)
+  - Enhanced renderer integration in `14-renderer-main.js` (+1 line)
+  - Updated `config/village.json` configuration
+
+### Added
+- **E2E Test Coverage**: Comprehensive village interaction tests
+  - New test: `p0-village-trader-sell-grid.spec.mjs` (+81 lines)
+  - New test: `p0-village-wordgate-toggle.spec.mjs` (+59 lines)
+  - Enhanced: `p0-village-trader-auto-enter.spec.mjs` (+16 lines)
+  - Enhanced: `p0-village-wordhouse-trigger.spec.mjs` (+14 lines)
+- **Documentation**: Village gate and trader design and implementation plans
+  - `docs/plans/2026-03-08-village-gate-trader-design.md` (+49 lines)
+  - `docs/plans/2026-03-08-village-gate-trader-implementation.md` (+77 lines)
+
 ## [1.19.22] - 2026-03-08
 ### Added
 - **Boss Exclusive Environments**: Added dedicated arena environments for boss encounters

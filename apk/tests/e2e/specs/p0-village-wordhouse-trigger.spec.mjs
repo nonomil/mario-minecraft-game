@@ -21,7 +21,7 @@ async function openGameAndBoot(page) {
   }, null, { timeout: 30_000 });
 }
 
-test("P0 word house challenge can start by single interaction near action point", async ({ page }) => {
+test("P0 word house starts forced quiz by single interaction near action point", async ({ page }) => {
   await openGameAndBoot(page);
 
   const setup = await page.evaluate(() => {
@@ -49,7 +49,7 @@ test("P0 word house challenge can start by single interaction near action point"
 
     const actionX = (typeof getInteriorActionX === "function") ? getInteriorActionX("word_house") : (wh.x + wh.w * 0.3);
     player.x = actionX - ((Number(player.width) || 32) * 0.5);
-    if (typeof handleVillageInteriorInteraction === "function") handleVillageInteriorInteraction();
+    if (typeof handleVillageInteriorInteraction === "function") handleVillageInteriorInteraction("tap");
 
     return { ok: true };
   });
@@ -58,5 +58,13 @@ test("P0 word house challenge can start by single interaction near action point"
 
   const modal = page.locator("#village-challenge-modal");
   await expect(modal).toBeVisible({ timeout: 10_000 });
-  await expect(page.locator("#btn-village-challenge-start")).toBeVisible();
+  await expect(page.locator(".village-question-progress")).toHaveText(/第 1 \/ \d+ 题/);
+  await expect(page.locator("#btn-village-challenge-start")).toHaveCount(0);
+  await expect(page.locator("#btn-village-challenge-exit")).toHaveCount(0);
+
+  await page.evaluate(() => {
+    document.getElementById("village-challenge-modal")?.click();
+  });
+
+  await expect(page.locator(".village-question-progress")).toHaveText(/第 1 \/ \d+ 题/);
 });

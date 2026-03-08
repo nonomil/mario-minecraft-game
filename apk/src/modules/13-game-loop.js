@@ -614,17 +614,19 @@ function update() {
         }
     });
 
-    wordGates.forEach(gate => {
-        if (gate.cooldown > 0) gate.cooldown--;
-        if (gate.locked && gate.cooldown <= 0 && rectIntersect(player.x, player.y, player.width, player.height, gate.x, gate.y, gate.width, gate.height)) {
-            if (progress && !progress.shownWordGateTip) {
-                showToast("路被词语闸门拦住了！答对单词才能继续前进");
-                progress.shownWordGateTip = true;
-                saveProgress();
+    if (settings.wordGateEnabled !== false) {
+        wordGates.forEach(gate => {
+            if (gate.cooldown > 0) gate.cooldown--;
+            if (gate.locked && gate.cooldown <= 0 && rectIntersect(player.x, player.y, player.width, player.height, gate.x, gate.y, gate.width, gate.height)) {
+                if (progress && !progress.shownWordGateTip) {
+                    showToast("路被词语闸门拦住了！答对单词才能继续前进");
+                    progress.shownWordGateTip = true;
+                    saveProgress();
+                }
+                triggerWordGateChallenge(gate);
             }
-            triggerWordGateChallenge(gate);
-        }
-    });
+        });
+    }
     wordGates = wordGates.filter(gate => !gate.remove);
 
     if (player.isAttacking) {

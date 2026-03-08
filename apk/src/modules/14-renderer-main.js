@@ -532,6 +532,7 @@ function getWorldWordDisplayText(wordObj) {
 
 function drawWordGate(gate) {
     if (!gate || gate.remove) return;
+    if (settings?.wordGateEnabled === false) return;
     ctx.save();
     ctx.translate(0, 0);
     ctx.fillStyle = gate.locked ? "#FFA726" : "#4CAF50";

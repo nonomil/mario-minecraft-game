@@ -407,7 +407,11 @@ const INTERIOR_BUILDING_TYPES = new Set(["bed_house", "word_house", "trader_hous
 const INTERIOR_MOVE_SPEED_FACTOR = 0.5;
 const INTERIOR_HALF_RANGE = 72;
 const INTERIOR_DOOR_RANGE = 20;
-const INTERIOR_ACTION_RANGE = 22;
+const INTERIOR_ACTION_RANGES = {
+  bed_house: 30,
+  word_house: 34,
+  trader_house: 42
+};
 const villageInteriorState = {
   active: false,
   villageId: null,
@@ -458,6 +462,31 @@ function getInteriorActionX(type = villageInteriorState.buildingType) {
   if (type === "word_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.7);
   if (type === "trader_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.4);
   return center;
+}
+
+function getInteriorActionRange(type = villageInteriorState.buildingType) {
+  return Number(INTERIOR_ACTION_RANGES[type]) || 22;
+}
+
+function drawVillageInteriorHintCard(ctx, x, y, width, height, title, lines, accent = "#FFD54F") {
+  if (!ctx) return;
+  ctx.save();
+  ctx.fillStyle = "rgba(34, 34, 34, 0.88)";
+  ctx.fillRect(x, y, width, height);
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 3;
+  ctx.strokeRect(x, y, width, height);
+  ctx.fillStyle = accent;
+  ctx.fillRect(x, y, width, 8);
+  ctx.fillStyle = "#FFF8E1";
+  ctx.textAlign = "left";
+  ctx.font = "bold 18px sans-serif";
+  ctx.fillText(title, x + 14, y + 30);
+  ctx.font = "15px sans-serif";
+  lines.forEach((line, index) => {
+    ctx.fillText(line, x + 14, y + 56 + (index * 22));
+  });
+  ctx.restore();
 }
 
 function getInteriorMoveBounds() {
@@ -678,16 +707,25 @@ function renderVillageInterior(ctx) {
   ctx.textAlign = "left";
   ctx.fillText(title, panelX + 28, panelY + 48);
 
+  const hintPanelX = panelX + 28;
+  const hintPanelY = panelY + 76;
+  const hintPanelW = Math.min(240, panelW - 120);
+  const hintPanelH = 96;
+  const hintTitle = buildingType === "bed_house"
+    ? "🛏️ 休息点"
+    : (buildingType === "word_house" ? "📘 单词关卡" : "🧑‍🌾 商人交易");
+  const hintLines = buildingType === "bed_house"
+    ? ["短按 🧰 宝箱键即可休息", "恢复满血 ❤️"]
+    : (buildingType === "word_house"
+      ? ["短按 🧰 宝箱键开始测验", "必须完成本关才能继续前进"]
+      : ["较大范围内短按 🧰 宝箱键", "打开交易，卖材料换钻石"]);
+  const hintAccent = buildingType === "trader_house" ? "#81D4FA" : (buildingType === "word_house" ? "#64B5F6" : "#AED581");
+  drawVillageInteriorHintCard(ctx, hintPanelX, hintPanelY, hintPanelW, hintPanelH, hintTitle, hintLines, hintAccent);
+
   ctx.fillStyle = "#222";
   ctx.font = "18px sans-serif";
   if (buildingType === "bed_house") {
-    drawVillageBed(ctx, panelX + 80, panelY + panelH - 110, colors);
-    ctx.fillStyle = "#1E1E1E";
-    ctx.font = "16px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("\u70b9\u51fb \ud83d\uddc3\ufe0f \u5b9d\u7bb1\u6309\u94ae", panelX + 28, panelY + 96);
-    ctx.fillText("\u4e0a\u5e8a\u7761\u89c9", panelX + 28, panelY + 120);
-    ctx.fillText("\u6062\u590d\u6ee1\u8840 \u2764\ufe0f", panelX + 28, panelY + 144);
+    drawVillageBed(ctx, panelX + panelW - 170, panelY + panelH - 110, colors);
   }
   // Requirement update: keep door as auto-exit, bed/word use chest-key trigger.
   ctx.fillStyle = colors.plank || "#B8945A";
@@ -708,7 +746,6 @@ function renderVillageInterior(ctx) {
   ctx.fill();
 
   if (buildingType === "word_house") {
-    // Cover old table marker and render book only.
     ctx.fillStyle = colors.plank || "#B8945A";
     ctx.fillRect(actionPx - 56, floorY - 62, 112, 62);
     const bookX = actionPx - 24;
@@ -720,12 +757,6 @@ function renderVillageInterior(ctx) {
     ctx.fillRect(bookX + 26, bookY + 4, 18, 24);
     ctx.fillStyle = "rgba(0,0,0,0.25)";
     ctx.fillRect(bookX + 23, bookY + 2, 2, 28);
-    ctx.fillStyle = "#1E1E1E";
-    ctx.font = "15px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("\u70b9\u51fb \ud83d\uddc3\ufe0f \u5b9d\u7bb1", actionPx, floorY - 68);
-    ctx.fillText("\u5f00\u59cb\u5355\u8bcd\u6d4b\u8bd5", actionPx, floorY - 50);
-    ctx.fillText("\u7b54\u5bf9\u83b7\u53d6 \ud83d\udc8e \u94bb\u77f3", actionPx, floorY - 32);
   }
   if (buildingType === "trader_house") {
     const npcX = actionPx - 16;
@@ -746,16 +777,7 @@ function renderVillageInterior(ctx) {
   ctx.font = "bold 13px sans-serif";
   ctx.fillText("\u95e8", doorPx, floorY - 24);
   ctx.fillText("\u9760\u8fd1\u81ea\u52a8\u79bb\u5f00", doorPx, floorY - 8);
-  const actionName = buildingType === "bed_house"
-    ? "\u5e8a"
-    : (buildingType === "word_house" ? "\u5355\u8bcd\u4e66" : "\u5546\u4eba");
-  ctx.fillText(actionName, actionPx, floorY - 24);
-  const actionHint = buildingType === "trader_house" ? "\u77ed\u6309\u5b9d\u7bb1\u952e" : "\u6309\u5b9d\u7bb1\u952e\u89e6\u53d1";
-  ctx.fillText(actionHint, actionPx, floorY - 8);
-  const actionDesc = buildingType === "bed_house"
-    ? "\u4f11\u606f\u56de\u8840 \u2764\ufe0f"
-    : (buildingType === "word_house" ? "\u5f00\u59cb\u5355\u8bcd\u6d4b\u9a8c \ud83d\udc8e" : "\u77ed\u6309 \ud83d\uddc3\ufe0f \u5f00\u542f\u4ea4\u6613");
-  ctx.fillText(actionDesc, actionPx, floorY + 8);
+  ctx.fillText(buildingType === "bed_house" ? "床" : (buildingType === "word_house" ? "单词书" : "商人"), actionPx, floorY - 12);
 
   ctx.textAlign = "left";
   return true;
@@ -794,7 +816,7 @@ function triggerVillageInteriorChestAction(village, interactMode = "tap") {
   if (now < Number(villageInteriorState.actionTriggerCooldownUntil || 0)) return false;
   const type = villageInteriorState.buildingType;
   const centerX = getPlayerCenterX();
-  const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= INTERIOR_ACTION_RANGE;
+  const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= getInteriorActionRange(type);
   if (!nearAction) {
     const nearHint = type === "bed_house"
       ? "\u9760\u8fd1\u5e8a\u540e\u6309\u5b9d\u7bb1\u952e"
@@ -821,7 +843,7 @@ function triggerVillageInteriorChestAction(village, interactMode = "tap") {
       villageInteriorState.challengeStarted = true;
       startVillageChallenge(village, () => {
         village.questCompleted = true;
-      });
+      }, { forced: true, skipIntro: true });
       return true;
     }
   }
@@ -1162,7 +1184,7 @@ function renderTraderSellMaterials(modal, village) {
   }
   body.innerHTML = `
     <h3 style="margin:0 0 12px;color:#FFD54F;">出售材料</h3>
-    <div id="trader-sell-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="trader-sell-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;"></div>
     <div style="margin-top:12px;">
       <button id="trader-btn-back-main" class="game-btn">返回</button>
     </div>
@@ -1171,11 +1193,12 @@ function renderTraderSellMaterials(modal, village) {
   sellable.forEach(({ itemId, price, count, label }) => {
     const btn = document.createElement("button");
     btn.className = "game-btn";
+    btn.style.cssText = "min-height:68px;padding:12px 14px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;line-height:1.45;white-space:normal;";
     const icon = (typeof ITEM_ICONS !== 'undefined' && ITEM_ICONS[itemId]) || '';
     const priceText = itemId === 'arrow'
       ? `5个=1💎`
       : `单价${price}💎`;
-    btn.textContent = `${icon} ${label}（库存${count}，${priceText}）`;
+    btn.innerHTML = `<span style="font-weight:800;">${icon} ${label}</span><span style="font-size:13px;opacity:0.92;">库存 ${count} · ${priceText}</span>`;
     bindTraderTap(btn, () => renderTraderSellCount(modal, village, itemId, price, count, label));
     list?.appendChild(btn);
   });

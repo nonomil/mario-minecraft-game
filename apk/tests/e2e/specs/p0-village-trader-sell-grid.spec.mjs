@@ -1,4 +1,4 @@
-﻿import { expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 async function openGameAndBoot(page) {
   await page.goto("/Game.html", { waitUntil: "domcontentloaded" });
@@ -6,7 +6,7 @@ async function openGameAndBoot(page) {
   await page.waitForFunction(() => typeof window.MMWG_STORAGE !== "undefined");
 
   await page.evaluate(async () => {
-    const username = `pw_trader_auto_${Date.now()}`;
+    const username = `pw_trader_grid_${Date.now()}`;
     const account = window.MMWG_STORAGE.createAccount(username);
     await window.MMWG_TEST_API.actions.loginWithAccount(account, { mode: "continue" });
     window.MMWG_TEST_API.actions.bootGameLoopIfNeeded();
@@ -21,17 +21,23 @@ async function openGameAndBoot(page) {
   }, null, { timeout: 30_000 });
 }
 
-test("P0 trader house opens modal by short interaction from larger interior range", async ({ page }) => {
+test("P0 trader sell materials uses multi-column grid cards", async ({ page }) => {
   await openGameAndBoot(page);
 
-  const probe = await page.evaluate(() => {
-    if (typeof enterVillageInterior !== "function") return { ok: false, reason: "enterVillageInterior missing" };
-    if (typeof handleVillageInteriorInteraction !== "function") return { ok: false, reason: "handleVillageInteriorInteraction missing" };
+  const setup = await page.evaluate(() => {
+    if (typeof openVillageTrader !== "function") return { ok: false, reason: "openVillageTrader missing" };
+    if (typeof renderTraderSellMaterials !== "function") return { ok: false, reason: "renderTraderSellMaterials missing" };
     if (typeof settings !== "undefined" && settings) settings.villageEnabled = true;
     if (!player) return { ok: false, reason: "player missing" };
 
+    inventory.iron = 12;
+    inventory.gold = 8;
+    inventory.coal = 15;
+    inventory.arrow = 25;
+    inventory.bone = 7;
+
     const targetScore = Math.max(500, Number(villageConfig?.spawnScoreInterval) || 500);
-    player.x = 5200;
+    player.x = 7000;
     score = targetScore;
     runBestScore = Math.max(Number(runBestScore) || 0, targetScore);
     currentBiome = "forest";
@@ -43,28 +49,33 @@ test("P0 trader house opens modal by short interaction from larger interior rang
 
     maybeSpawnVillage(targetScore, player.x);
     const village = Array.isArray(activeVillages) ? activeVillages[0] : null;
-    const trader = village?.buildings?.find((b) => b?.type === "trader_house");
-    if (!village || !trader) return { ok: false, reason: "trader house missing" };
+    if (!village) return { ok: false, reason: "village missing" };
 
-    const entered = enterVillageInterior(village, trader);
-    if (!entered) return { ok: false, reason: "enter interior failed" };
-
-    const px = Number(player.width) || 32;
-    const actionX = (typeof getInteriorActionX === "function") ? getInteriorActionX("trader_house") : (trader.x + trader.w * 0.4);
-    const offsetFromCenter = 34;
-    player.x = actionX - (px * 0.5) - offsetFromCenter;
-
-    const modalBefore = document.getElementById("village-trader-modal");
-    const beforeVisible = !!modalBefore && modalBefore.style.display === "flex";
-    const openedByClick = handleVillageInteriorInteraction("tap");
-    const modalAfter = document.getElementById("village-trader-modal");
-    const afterVisible = !!modalAfter && modalAfter.style.display === "flex";
-
-    return { ok: true, beforeVisible, openedByClick, afterVisible };
+    openVillageTrader(village);
+    const modal = document.getElementById("village-trader-modal");
+    renderTraderSellMaterials(modal, village);
+    return { ok: true };
   });
 
-  expect(probe.ok, probe.reason || "probe failed").toBeTruthy();
-  expect(probe.beforeVisible).toBeFalsy();
-  expect(probe.openedByClick).toBeTruthy();
-  expect(probe.afterVisible).toBeTruthy();
+  expect(setup.ok, setup.reason || "setup failed").toBeTruthy();
+
+  const list = page.locator("#trader-sell-list");
+  await expect(list).toBeVisible();
+
+  const layout = await list.evaluate((node) => {
+    const style = window.getComputedStyle(node);
+    return {
+      display: style.display,
+      gridTemplateColumns: style.gridTemplateColumns,
+      childCount: node.children.length
+    };
+  });
+
+  expect(layout.childCount).toBeGreaterThanOrEqual(4);
+  expect(layout.display).toBe("grid");
+  expect(layout.gridTemplateColumns.split(" ").length).toBeGreaterThanOrEqual(2);
+
+  const firstButton = page.locator("#trader-sell-list .game-btn").first();
+  const box = await firstButton.boundingBox();
+  expect(box?.height || 0).toBeGreaterThanOrEqual(60);
 });

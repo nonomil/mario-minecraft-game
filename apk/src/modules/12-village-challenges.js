@@ -17,6 +17,7 @@ function getVillageChallengeModal() {
   modal.addEventListener("click", (e) => {
     if (e.target !== modal) return;
     if (!villageChallengeSession) return;
+    if (villageChallengeSession.options?.forced) return;
     cancelVillageChallenge(villageChallengeSession, "已退出村庄挑战");
   });
   document.body.appendChild(modal);
@@ -86,14 +87,15 @@ function cancelVillageChallenge(session, toastText) {
   closeVillageChallengeSession(session, { callComplete: false });
 }
 
-function beginVillageChallengeSession(village, onComplete) {
+function beginVillageChallengeSession(village, onComplete, options = {}) {
   if (!village || villageChallengeSession || village._challengeRunning) return null;
   const session = {
     id: `village_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     village,
     onComplete: typeof onComplete === "function" ? onComplete : null,
     prevPaused: !!paused,
-    prevPauseStack: typeof pauseStack === "number" ? pauseStack : 0
+    prevPauseStack: typeof pauseStack === "number" ? pauseStack : 0,
+    options: options && typeof options === "object" ? { ...options } : {}
   };
   villageChallengeSession = session;
   village._challengeRunning = true;
@@ -218,7 +220,7 @@ function buildVillageZhOptions(correctWord, wordsPool) {
     .sort(() => Math.random() - 0.5);
 }
 
-function startVillageChallenge(village, onComplete) {
+function startVillageChallenge(village, onComplete, options = {}) {
   if (!village) {
     console.warn("[Village Challenge] No village provided");
     return;
@@ -228,7 +230,7 @@ function startVillageChallenge(village, onComplete) {
     return;
   }
 
-  const session = beginVillageChallengeSession(village, onComplete);
+  const session = beginVillageChallengeSession(village, onComplete, options);
   if (!session) {
     showToast("村庄挑战进行中");
     return;
@@ -285,6 +287,10 @@ function startVillageChallenge(village, onComplete) {
 
 function showVillageChallengeIntro(session, biomeId, count, onStart) {
   if (!isVillageChallengeActive(session)) return;
+  if (session.options?.skipIntro) {
+    if (typeof onStart === "function") onStart();
+    return;
+  }
   const biomeName = typeof getBiomeName === "function" ? getBiomeName(biomeId) : biomeId;
   showVillageChallengeModal(`
     <div class="village-challenge-intro">
@@ -331,7 +337,7 @@ function showVillageQuestion(session, words, progress, onAnswer) {
       <p class="village-question-hint">请选择对应的中文含义</p>
       <div class="village-question-controls">
         <button id="btn-village-question-hint" class="game-btn game-btn-small" style="display:none;">提示</button>
-        <button id="btn-village-challenge-exit" class="game-btn game-btn-small village-btn-muted">退出挑战</button>
+        ${session.options?.forced ? "" : '<button id="btn-village-challenge-exit" class="game-btn game-btn-small village-btn-muted">退出挑战</button>'}
       </div>
       <div id="village-challenge-options" class="village-options-grid">
         ${options.map((opt) => `
@@ -342,9 +348,11 @@ function showVillageQuestion(session, words, progress, onAnswer) {
   `);
 
   const modal = getVillageChallengeModal();
-  modal.querySelector("#btn-village-challenge-exit")?.addEventListener("click", () => {
-    cancelVillageChallenge(session, "已退出村庄挑战");
-  });
+  if (!session.options?.forced) {
+    modal.querySelector("#btn-village-challenge-exit")?.addEventListener("click", () => {
+      cancelVillageChallenge(session, "已退出村庄挑战");
+    });
+  }
 
   const btnHint = modal.querySelector("#btn-village-question-hint");
   const optionButtons = Array.from(modal.querySelectorAll(".village-opt-btn"));
