@@ -1,3 +1,33 @@
+## v1.19.27 (2026-03-08)
+
+### 工具改进
+- 优化 push.bat 输出格式，移除不必要的成功 URL 显示。
+- 改进推送流程输出稳定性，确保信息清晰可读。
+
+### Version Metadata
+- `version.json` -> `versionCode/buildNumber 80`, `versionName 1.19.27`
+- `android-app/package.json` -> `1.19.27`
+- `android-app/android/app/build.gradle` -> `versionCode 80`, `versionName 1.19.27`
+- `android-app/web/build-info.json` -> `version 1.19.27`, `buildNumber 80`
+- `service-worker.js` -> cache `v1.19.27`
+- `Game.html` -> cache-busting `v1.19.27`
+
+---
+
+## v1.19.26 (2026-03-08)
+
+### Fixed
+- **Boss Debug Trigger**: 改进 GameDebug.html 中 BOSS 触发的可靠性。
+- **Boss Battle Text**: 修复 BOSS 战斗文本乱码，添加末影龙和门禁 BOSS 调试控制。
+- **Dev Server Caching**: 为开发服务器添加禁用缓存的 HTTP 响应头，防止迭代时加载旧资源。
+
+### Version Metadata
+- `version.json` -> `versionCode/buildNumber 79`, `versionName 1.19.26`
+- `android-app/package.json` -> `1.19.26`
+- `android-app/android/app/build.gradle` -> `versionCode 79`, `versionName 1.19.26`
+
+---
+
 ## v1.19.11 (2026-03-06)
 
 ### Added

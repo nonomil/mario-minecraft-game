@@ -539,6 +539,28 @@ if "%DRY_RUN%"=="1" (
     exit /b 0
 )
 
+REM -----------------------------
+REM 清理主仓库远端 URL（防止 URL 被反引号/引号/空格污染）
+REM -----------------------------
+for /f "delims=" %%U in ('git -C "%MAIN_REPO%" remote get-url %REMOTE% 2^>nul') do set "MAIN_ORIGIN_URL_RAW=%%U"
+if defined MAIN_ORIGIN_URL_RAW (
+    set "MAIN_ORIGIN_URL=!MAIN_ORIGIN_URL_RAW!"
+    set "MAIN_ORIGIN_URL=!MAIN_ORIGIN_URL:`=!"
+    set "MAIN_ORIGIN_URL=!MAIN_ORIGIN_URL: =!"
+    set "MAIN_ORIGIN_URL=!MAIN_ORIGIN_URL:"=!"
+    set "MAIN_ORIGIN_URL=!MAIN_ORIGIN_URL:'=!"
+    if not "!MAIN_ORIGIN_URL!"=="!MAIN_ORIGIN_URL_RAW!" (
+        if defined MAIN_ORIGIN_URL (
+            echo [修复] 主仓库远端 URL 已清理：
+            echo   原始: !MAIN_ORIGIN_URL_RAW!
+            echo   修复: !MAIN_ORIGIN_URL!
+            git -C "%MAIN_REPO%" remote set-url %REMOTE% "!MAIN_ORIGIN_URL!"
+        ) else (
+            echo [警告] 主仓库远端 URL 清理结果为空，已跳过 set-url。
+        )
+    )
+)
+
 echo [流程] 切换主仓库到 %BRANCH% 并更新（ff-only）...
 git -C "%MAIN_REPO%" switch %BRANCH%
 if errorlevel 1 (
@@ -553,8 +575,18 @@ set "MAIN_PULL_TRIES=0"
 set /a MAIN_PULL_TRIES+=1
 if /i "%PRIMARY%"=="proxy" (
     git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
+    if errorlevel 1 (
+        echo [重试] 主仓库代理 pull 失败，尝试 socks5 代理...
+        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 pull --ff-only %REMOTE% %BRANCH%
+    )
 ) else (
     git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
+    if errorlevel 1 (
+        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=schannel pull --ff-only %REMOTE% %BRANCH%
+    )
+    if errorlevel 1 (
+        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
+    )
 )
 if not errorlevel 1 goto main_repo_pull_ok
 if %MAIN_PULL_TRIES% GEQ 3 goto main_repo_pull_fail
