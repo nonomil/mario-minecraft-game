@@ -1,3 +1,26 @@
+## v1.19.29 (2026-03-09)
+
+### Fixed
+- **APK Vocabulary Pack Switching**: 修复APK版本词汇库切换不生效问题
+  - 在账号加载时立即应用词汇库设置
+  - 确保词汇库选择在APK环境下正确同步
+
+### Improved
+- **Mobile Dragon Riding Controls**: 优化移动端骑龙控制体验
+  - 地面状态：只显示左右移动按键
+  - 骑龙状态：自动显示上下飞行按键
+  - 下龙后：上下按键自动隐藏
+  - 新增触摸控制动态更新模块 (13-game-loop-dragon-controls.js)
+
+### Version Metadata
+- `android-app/package.json` -> `1.19.29`
+- `android-app/android/app/build.gradle` -> `versionCode 82`, `versionName 1.19.29`
+- `android-app/web/build-info.json` -> `version 1.19.29`, `buildNumber 82`
+- `service-worker.js` -> cache `v1.19.29`
+- `Game.html` -> cache-busting `v1.19.29`
+
+---
+
 ## v1.19.28 (2026-03-09)
 
 ### Fixed

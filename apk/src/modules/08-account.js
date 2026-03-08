@@ -390,6 +390,12 @@ function loadAccountData(account) {
     });
     if (account.vocabulary?.currentPack) {
         settings.vocabSelection = account.vocabulary.currentPack;
+        // 立即应用词汇库设置（修复APK版本切换不生效问题）
+        if (typeof setActiveVocabPack === "function") {
+            setActiveVocabPack(settings.vocabSelection).catch(err => {
+                console.warn("Failed to set vocab pack:", err);
+            });
+        }
     }
     inventory = { ...INVENTORY_TEMPLATE, ...(account.inventory?.items || {}) };
     playerEquipment = account.inventory?.equipment ? { ...account.inventory.equipment } : { armor: null, armorDurability: 0 };

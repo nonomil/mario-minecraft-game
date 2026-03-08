@@ -584,10 +584,6 @@ function update() {
                 if (typeof dragon.setRiddenState === "function") dragon.setRiddenState(player);
                 else dragon.rider = player;
                 showToast("🐉 骑乘末影龙：攻击键喷火，方向键上下飞，切换键下龙");
-                // 更新触摸控制（显示上下按键）
-                if (typeof updateDragonTouchControls === "function") {
-                    updateDragonTouchControls();
-                }
                 break;
             }
         }
@@ -760,11 +756,6 @@ function dismountRider(rider) {
     playerInvincibleTimer = Math.max(Number(playerInvincibleTimer) || 0, 60);
 
     showToast("⬇️ 已下龙，末影龙回到身边");
-    
-    // 更新触摸控制（隐藏上下按键）
-    if (typeof updateDragonTouchControls === "function") {
-        updateDragonTouchControls();
-    }
 }
 
 function dragonShootFireball() {
