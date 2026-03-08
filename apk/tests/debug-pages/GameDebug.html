@@ -39,6 +39,13 @@
       <select id="boss"><option value="wither">&#x51CB;&#x7075;</option><option value="ghast">&#x6076;&#x9B42;</option><option value="blaze">&#x70C8;&#x7130;&#x4EBA;</option><option value="wither_skeleton">&#x51CB;&#x7075;&#x9AB7;&#x9AC5;</option><option value="warden">&#x575A;&#x5B88;&#x8005;</option><option value="evoker">&#x5524;&#x9B54;&#x8005;</option><option value="ender_dragon">&#x672B;&#x5F71;&#x9F99;</option></select>
       <button id="btnBoss">触发BOSS（正常关卡）</button>
       <button id="btnBossGate">触发BOSS（门禁模式）</button>
+      <label>阶段</label>
+      <select id="bossPhase">
+        <option value="1">P1</option>
+        <option value="2">P2</option>
+        <option value="3" selected>P3</option>
+      </select>
+      <button id="btnBossPhase">设置BOSS阶段</button>
       <button id="btnEnderDragon">末影龙竞技场</button>
       <button id="btnVillage">生成村庄</button>
       <button id="btnGod">无敌: OFF</button>
@@ -162,6 +169,14 @@
       const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
       const bossName = boss && boss.name ? boss.name : "-";
       const bossPhase = boss && boss.phase ? boss.phase : "-";
+      const bossEnvironment = w.bossArena && w.bossArena.environmentController && typeof w.bossArena.environmentController.getSnapshot === "function"
+        ? w.bossArena.environmentController.getSnapshot()
+        : null;
+      const bossEnvironmentLabel = bossEnvironment ? (bossEnvironment.label || bossEnvironment.environmentId || "-") : "-";
+      const bossEnvironmentTheme = bossEnvironment ? (bossEnvironment.theme || "neutral") : "neutral";
+      const bossEnvironmentIntensity = bossEnvironment ? (Number(bossEnvironment.intensity) || 0) : 0;
+      const bossEnvironmentHazardCount = bossEnvironment ? (Number(bossEnvironment.hazardCount) || 0) : 0;
+      const bossEnvironmentStrength = bossEnvironment ? (Number(bossEnvironment.visualStrength) || 0) : 0;
 
       statusEl.innerText =
         "biome=" + biomeId +
@@ -181,6 +196,12 @@
         "  locked=" + Boolean(w.bossArena && w.bossArena.viewportLocked) +
         "  name=" + bossName +
         "  phase=" + bossPhase + "\n" +
+        "env: active=" + Boolean(bossEnvironment && bossEnvironment.active) +
+        "  label=" + bossEnvironmentLabel +
+        "  theme=" + bossEnvironmentTheme +
+        "  intensity=" + bossEnvironmentIntensity +
+        "  hazards=" + bossEnvironmentHazardCount +
+        "  strength=" + bossEnvironmentStrength.toFixed(2) + "\n" +
         "biomeVisitCount=" + (rounds ? JSON.stringify(rounds) : "n/a");
     }
 
@@ -438,6 +459,20 @@
       });
     }
 
+    function setBossPhaseFromInput() {
+      const phaseValue = document.getElementById("bossPhase").value;
+      withGame((w) => {
+        const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+        if (!boss) return;
+        const targetPhase = Math.max(1, Math.min(3, Number(phaseValue) || 1));
+        if (targetPhase < boss.phase) boss.phase = 1;
+        while (boss.phase < targetPhase) {
+          boss.phase += 1;
+          if (typeof boss.onPhaseChange === "function") boss.onPhaseChange(boss.phase);
+        }
+      });
+    }
+
     function prepareDragonLongPressSummon() {
       ensureRunning();
       withGame(w => {
@@ -464,6 +499,7 @@
     document.getElementById("btnScore").addEventListener("click", setScore);
     document.getElementById("btnBoss").addEventListener("click", spawnBoss);
     document.getElementById("btnBossGate").addEventListener("click", spawnBossGate);
+    document.getElementById("btnBossPhase").addEventListener("click", setBossPhaseFromInput);
     document.getElementById("btnEnderDragon").addEventListener("click", function() {
       enterDragonArenaDebug();
     });
@@ -510,11 +546,25 @@
         const el = document.getElementById("boss");
         if (el && type) el.value = String(type);
         spawnBoss();
+        setBossPhaseFromInput();
       },
       spawnBossGate(type) {
         const el = document.getElementById("boss");
         if (el && type) el.value = String(type);
         spawnBossGate();
+        setBossPhaseFromInput();
+      },
+      setBossPhase(phaseValue) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          const targetPhase = Math.max(1, Math.min(3, Number(phaseValue) || 1));
+          if (targetPhase < boss.phase) boss.phase = 1;
+          while (boss.phase < targetPhase) {
+            boss.phase += 1;
+            if (typeof boss.onPhaseChange === "function") boss.onPhaseChange(boss.phase);
+          }
+        });
       },
 
       setBossHpRatio(ratioValue) {
@@ -644,6 +694,7 @@
           bossEnvironmentSealFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.sealFrames) || 0) : 0,
           bossEnvironmentComboKey: bossEnvironment ? (bossEnvironment.comboKey || "") : "",
           bossEnvironmentComboFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.comboFrames) || 0) : 0,
+          bossEnvironmentVisualStrength: bossEnvironment ? Number(bossEnvironment.visualStrength || 0) : 0,
           dragonCount: Array.isArray(w.dragonList) ? w.dragonList.length : 0,
           dragonArenaActive: Boolean(dragonArena && dragonArena.active),
           dragonArenaState: dragonArena && dragonArena.active && dragonArena.state ? dragonArena.state : null,

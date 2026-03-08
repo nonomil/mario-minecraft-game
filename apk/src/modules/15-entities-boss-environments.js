@@ -2,7 +2,7 @@
     const ENVIRONMENT_DEFINITIONS = {
         wither: {
             id: "wither_necropolis",
-            label: "????",
+            label: "凋零冥殿",
             theme: "shadow",
             hazardProfile: {
                 phase2: { interval: 15, ttl: 24, kind: "grave_smoke" },
@@ -11,7 +11,7 @@
         },
         ghast: {
             id: "ghast_skydock",
-            label: "????",
+            label: "恶魂空港",
             theme: "storm",
             hazardProfile: {
                 phase2: { interval: 14, ttl: 22, kind: "gust_front" },
@@ -20,7 +20,7 @@
         },
         blaze: {
             id: "blaze_core",
-            label: "????",
+            label: "烈焰熔核",
             theme: "volcanic",
             hazardProfile: {
                 phase2: { interval: 14, ttl: 20, kind: "ember_wave" },
@@ -29,7 +29,7 @@
         },
         wither_skeleton: {
             id: "bone_foundry",
-            label: "????",
+            label: "骨冢铸场",
             theme: "ashen",
             hazardProfile: {
                 phase2: { interval: 16, ttl: 22, kind: "ash_burst" },
@@ -38,7 +38,7 @@
         },
         warden: {
             id: "deep_dark",
-            label: "????",
+            label: "幽匿深域",
             theme: "darkness",
             hazardProfile: {
                 phase2: { interval: 15, ttl: 22, kind: "dark_echo" },
@@ -47,7 +47,7 @@
         },
         evoker: {
             id: "totem_hall",
-            label: "????",
+            label: "图腾秘厅",
             theme: "arcane",
             hazardProfile: {
                 phase2: { interval: 15, ttl: 24, kind: "totem_glow" },
@@ -59,12 +59,12 @@
     const DEFAULT_THEME = "neutral";
     const DEFAULT_STATE = "idle";
     const MAX_PREVIEW_HAZARDS = 8;
-    const VOLCANIC_BASE_ALPHA = 0.16;
-    const DARKNESS_BASE_ALPHA = 0.22;
-    const SHADOW_BASE_ALPHA = 0.2;
-    const ASHEN_BASE_ALPHA = 0.18;
-    const ARCANE_BASE_ALPHA = 0.18;
-    const DEFAULT_BASE_ALPHA = 0.12;
+    const VOLCANIC_BASE_ALPHA = 0.24;
+    const DARKNESS_BASE_ALPHA = 0.3;
+    const SHADOW_BASE_ALPHA = 0.26;
+    const ASHEN_BASE_ALPHA = 0.24;
+    const ARCANE_BASE_ALPHA = 0.25;
+    const DEFAULT_BASE_ALPHA = 0.16;
 
     function normalizeBossType(type) {
         const normalized = String(type || "").trim().toLowerCase();
@@ -77,6 +77,30 @@
 
     function readHazardStage(phase) {
         return Math.max(2, Math.min(3, Number(phase) || 2));
+    }
+
+    function readThemeBaseAlpha(theme) {
+        if (theme === "volcanic") return VOLCANIC_BASE_ALPHA;
+        if (theme === "darkness") return DARKNESS_BASE_ALPHA;
+        if (theme === "shadow") return SHADOW_BASE_ALPHA;
+        if (theme === "ashen") return ASHEN_BASE_ALPHA;
+        if (theme === "arcane") return ARCANE_BASE_ALPHA;
+        return DEFAULT_BASE_ALPHA;
+    }
+
+    function readPhaseVisualBoost(intensity) {
+        const level = Math.max(0, Number(intensity) || 0);
+        if (level >= 3) return 0.09;
+        if (level >= 2) return 0.055;
+        if (level >= 1) return 0.035;
+        return 0;
+    }
+
+    function readOverlayStrength(theme, intensity, hazardCount) {
+        const baseAlpha = readThemeBaseAlpha(theme);
+        const phaseBoost = readPhaseVisualBoost(intensity);
+        const hazardBoost = Math.min(0.08, Math.max(0, Number(hazardCount) || 0) * 0.01);
+        return Math.min(0.72, baseAlpha + phaseBoost + hazardBoost);
     }
 
     const existing = global.bossEnvironmentController || {};
@@ -218,14 +242,16 @@
         },
         renderOverlay(ctx) {
             if (!this.active || !global.canvas) return;
-            const hazardBoost = Math.min(0.08, this.hazards.length * 0.01);
+            const hazardCount = Array.isArray(this.hazards) ? this.hazards.length : 0;
+            const overlayStrength = readOverlayStrength(this.theme, this.intensity, hazardCount);
+            const hazardBoost = Math.min(0.08, hazardCount * 0.01);
             if (this.theme === "volcanic") {
                 const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                gradient.addColorStop(0, `rgba(255, 120, 40, ${VOLCANIC_BASE_ALPHA + hazardBoost})`);
-                gradient.addColorStop(1, 'rgba(70, 10, 0, 0.08)');
+                gradient.addColorStop(0, `rgba(255, 120, 40, ${overlayStrength})`);
+                gradient.addColorStop(1, `rgba(70, 10, 0, ${Math.min(0.24, overlayStrength * 0.55)})`);
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                const emberCount = Math.min(6, this.hazards.length);
+                const emberCount = Math.max(4, Math.min(8, hazardCount + 3));
                 for (let index = 0; index < emberCount; index += 1) {
                     const cycle = (this.updateCount * (0.011 + index * 0.002)) + index * 0.17;
                     const progress = cycle - Math.floor(cycle);
@@ -245,7 +271,7 @@
             }
             if (this.theme === "darkness") {
                 ctx.save();
-                ctx.fillStyle = `rgba(6, 10, 16, ${DARKNESS_BASE_ALPHA + hazardBoost})`;
+                ctx.fillStyle = `rgba(6, 10, 16, ${overlayStrength})`;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.globalCompositeOperation = "destination-out";
                 const px = ((global.player && Number(global.player.x)) || 0) - ((typeof global.cameraX === "number" ? global.cameraX : 0)) + (((global.player && Number(global.player.width)) || 32) * 0.5);
@@ -263,11 +289,11 @@
             }
             if (this.theme === "storm") {
                 const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                gradient.addColorStop(0, `rgba(130, 150, 170, ${0.14 + hazardBoost})`);
-                gradient.addColorStop(1, 'rgba(40, 55, 78, 0.10)');
+                gradient.addColorStop(0, `rgba(130, 150, 170, ${Math.min(0.42, overlayStrength * 0.82)})`);
+                gradient.addColorStop(1, `rgba(40, 55, 78, ${Math.min(0.22, overlayStrength * 0.5)})`);
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                const streakCount = Math.min(6, this.hazards.length + 2);
+                const streakCount = Math.max(4, Math.min(8, hazardCount + 2));
                 for (let index = 0; index < streakCount; index += 1) {
                     const drift = (this.updateCount * 7 + index * 90) % (canvas.width + 220);
                     const startX = drift - 160;
@@ -282,7 +308,7 @@
                 return;
             }
             if (this.theme === "shadow") {
-                ctx.fillStyle = `rgba(18, 10, 30, ${SHADOW_BASE_ALPHA + hazardBoost})`;
+                ctx.fillStyle = `rgba(18, 10, 30, ${overlayStrength})`;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 const riftCount = Math.min(5, this.hazards.length + 1);
                 for (let index = 0; index < riftCount; index += 1) {
@@ -297,11 +323,11 @@
             }
             if (this.theme === "ashen") {
                 const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                gradient.addColorStop(0, `rgba(86, 86, 86, ${ASHEN_BASE_ALPHA + hazardBoost})`);
-                gradient.addColorStop(1, 'rgba(28, 28, 28, 0.08)');
+                gradient.addColorStop(0, `rgba(86, 86, 86, ${overlayStrength})`);
+                gradient.addColorStop(1, `rgba(28, 28, 28, ${Math.min(0.18, overlayStrength * 0.45)})`);
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
-                const shardCount = Math.min(7, this.hazards.length + 2);
+                const shardCount = Math.max(4, Math.min(8, hazardCount + 2));
                 for (let index = 0; index < shardCount; index += 1) {
                     const x = canvas.width * (0.08 + index * 0.12);
                     const y = canvas.height * (0.74 - (index % 3) * 0.08);
@@ -316,10 +342,10 @@
                 return;
             }
             if (this.theme === "arcane") {
-                ctx.fillStyle = `rgba(38, 18, 70, ${ARCANE_BASE_ALPHA + hazardBoost})`;
+                ctx.fillStyle = `rgba(38, 18, 70, ${overlayStrength})`;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 const sigilRadius = Math.min(canvas.width, canvas.height) * 0.16;
-                ctx.strokeStyle = `rgba(190, 120, 255, ${0.24 + hazardBoost})`;
+                ctx.strokeStyle = `rgba(190, 120, 255, ${Math.min(0.45, overlayStrength + 0.1)})`;
                 ctx.lineWidth = 4;
                 ctx.beginPath();
                 ctx.arc(canvas.width * 0.82, canvas.height * 0.24, sigilRadius, 0, Math.PI * 2);
@@ -380,7 +406,8 @@
                 driftForce: Number(this.driftForce) || 0,
                 sealFrames: Math.max(0, Number(this.sealFrames) || 0),
                 comboKey: this.comboKey || "",
-                comboFrames: Math.max(0, Number(this.comboFrames) || 0)
+                comboFrames: Math.max(0, Number(this.comboFrames) || 0),
+                visualStrength: readOverlayStrength(this.theme, this.intensity, Array.isArray(this.hazards) ? this.hazards.length : 0)
             };
         }
     });

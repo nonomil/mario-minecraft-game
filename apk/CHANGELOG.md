@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.28] - 2026-03-09
+### Fixed
+- **BOSS Environment System**: Fixed issues in BOSS exclusive environment controller.
+- **Debug Tools**: Improved GameDebug.html debugging functionality.
+- **E2E Tests**: Enhanced BOSS debug control test coverage.
+
+### Changed
+- **Release Pipeline**: Hardened publish-main pull logic for improved stability.
+- **Version Documentation**: Improved version documentation management.
+
 ## [1.19.26] - 2026-03-08
 ### Fixed
 - **Boss Debug Trigger**: Improved reliability of boss triggering from GameDebug.html.

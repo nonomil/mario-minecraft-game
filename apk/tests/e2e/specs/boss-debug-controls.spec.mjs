@@ -15,9 +15,17 @@ const PLANNED_BOSSES = ["wither", "ghast", "blaze", "wither_skeleton", "warden",
 test("GameDebug controls should expose a working MMDBG API", async ({ page }) => {
   await openDebugPage(page);
   const state = await getDebugState(page);
+  const debugApiShape = await page.evaluate(() => ({
+    hasSetBossPhase: typeof window.MMDBG?.setBossPhase === "function",
+    hasTick: typeof window.MMDBG?.tick === "function",
+    hasGetState: typeof window.MMDBG?.getState === "function"
+  }));
   expect(state.ready).toBeTruthy();
   expect(typeof state.score).toBe("number");
   expect(state.availableBosses).toEqual(PLANNED_BOSSES);
+  expect(debugApiShape.hasSetBossPhase).toBeTruthy();
+  expect(debugApiShape.hasTick).toBeTruthy();
+  expect(debugApiShape.hasGetState).toBeTruthy();
 });
 
 for (const boss of BOSSES) {
@@ -72,8 +80,24 @@ test("Boss fights should attach a reusable environment snapshot", async ({ page 
 
   expect(state.bossEnvironmentActive).toBeTruthy();
   expect(state.bossEnvironmentId).toBe("blaze_core");
+  expect(state.bossEnvironmentLabel).toBeTruthy();
+  expect(state.bossEnvironmentLabel.includes("?")).toBeFalsy();
   expect(state.bossEnvironmentState).toBe("engaged");
   expect(state.bossEnvironmentHazardCount).toBe(0);
+  expect(state.bossEnvironmentVisualStrength).toBeGreaterThan(0.22);
+});
+
+test("GameDebug should expose a visible boss phase control for manual verification", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+
+  await expect(page.locator("#bossPhase")).toBeVisible();
+  await expect(page.locator("#btnBossPhase")).toBeVisible();
+  await page.locator("#bossPhase").selectOption("3");
+  await page.locator("#btnBossPhase").click();
+
+  const state = await getDebugState(page);
+  expect(state.bossPhase).toBe(3);
 });
 
 test("Boss environment snapshot should reset after leaving the fight", async ({ page }) => {

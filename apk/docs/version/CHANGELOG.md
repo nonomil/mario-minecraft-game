@@ -1,3 +1,24 @@
+## v1.19.28 (2026-03-09)
+
+### Fixed
+- **BOSS Environment System**: 修复 BOSS 专属环境控制器相关问题。
+- **Debug Tools**: 改进 GameDebug.html 调试功能。
+- **E2E Tests**: 增强 BOSS 调试控制的 E2E 测试覆盖。
+
+### Changed
+- **Release Pipeline**: 强化 publish-main 拉取逻辑，提升发布稳定性。
+- **Version Documentation**: 完善版本文档管理。
+
+### Version Metadata
+- `version.json` -> `versionCode/buildNumber 81`, `versionName 1.19.28`
+- `android-app/package.json` -> `1.19.28`
+- `android-app/android/app/build.gradle` -> `versionCode 81`, `versionName 1.19.28`
+- `android-app/web/build-info.json` -> `version 1.19.28`, `buildNumber 81`
+- `service-worker.js` -> cache `v1.19.28`
+- `Game.html` -> cache-busting `v1.19.28`
+
+---
+
 ## v1.19.27 (2026-03-08)
 
 ### 工具改进
