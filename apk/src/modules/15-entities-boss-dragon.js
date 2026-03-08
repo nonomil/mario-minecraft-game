@@ -175,7 +175,7 @@
                 playerY: globalThis.player ? Number(globalThis.player.y) || 0 : null
             };
             this.returnContext = Object.assign({}, this.entryContext);
-            writeCurrentBiome("end_arena");
+            writeCurrentBiome("end");
             this.queueBanner("Enter the End Arena", 120);
             this.phasePulse = 0;
             this.damageFlash = 0;

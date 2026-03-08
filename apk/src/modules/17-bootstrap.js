@@ -371,9 +371,20 @@ async function start() {
 
     // Register Service Worker for PWA support
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./service-worker.js')
-            .then(reg => console.log('SW registered:', reg.scope))
-            .catch(err => console.warn('SW registration failed:', err));
+        const host = String(window.location?.hostname || '').toLowerCase();
+        const isLocalDev = host === 'localhost' || host === '127.0.0.1';
+        if (isLocalDev) {
+            navigator.serviceWorker.getRegistrations()
+                .then((registrations) => Promise.all(registrations.map((registration) => registration.unregister())))
+                .then(() => (typeof caches !== 'undefined' ? caches.keys() : []))
+                .then((keys) => Promise.all((keys || []).filter((key) => key.startsWith('mmwg-')).map((key) => caches.delete(key))))
+                .then(() => console.log('[SW] Local dev mode: cleared service workers and mmwg caches'))
+                .catch((err) => console.warn('[SW] Local dev cleanup failed:', err));
+        } else {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(reg => console.log('SW registered:', reg.scope))
+                .catch(err => console.warn('SW registration failed:', err));
+        }
     }
 
     bootReady = true;

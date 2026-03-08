@@ -489,6 +489,168 @@ function drawVillageInteriorHintCard(ctx, x, y, width, height, title, lines, acc
   ctx.restore();
 }
 
+function drawInteriorLabelGroup(ctx, centerX, topY, lines, color = "rgba(255,255,255,0.96)") {
+  if (!ctx || !Array.isArray(lines) || !lines.length) return;
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.font = "bold 15px sans-serif";
+  const lineGap = 20;
+  lines.forEach((line, index) => {
+    const y = topY + index * lineGap;
+    ctx.fillStyle = "rgba(0,0,0,0.28)";
+    ctx.fillText(line, centerX + 1, y + 1);
+    ctx.fillStyle = color;
+    ctx.fillText(line, centerX, y);
+  });
+  ctx.restore();
+}
+
+function drawBedHouseDecor(ctx, panelX, panelY, panelW, floorY, colors) {
+  const chestX = panelX + panelW - 208;
+  const chestY = floorY - 44;
+  ctx.fillStyle = "#6D4C41";
+  ctx.fillRect(chestX, chestY, 36, 24);
+  ctx.fillStyle = "#8D6E63";
+  ctx.fillRect(chestX + 2, chestY + 2, 32, 8);
+  ctx.fillStyle = "#FBC02D";
+  ctx.fillRect(chestX + 16, chestY + 10, 4, 6);
+
+  const tableX = panelX + 84;
+  const tableY = floorY - 34;
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(tableX, tableY, 26, 10);
+  ctx.fillRect(tableX + 3, tableY + 10, 4, 18);
+  ctx.fillRect(tableX + 19, tableY + 10, 4, 18);
+  ctx.fillStyle = "#FFEE58";
+  ctx.fillRect(tableX + 9, tableY - 14, 8, 14);
+  ctx.fillStyle = "rgba(255,238,88,0.28)";
+  ctx.beginPath();
+  ctx.arc(tableX + 13, tableY - 8, 16, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(panelX + panelW - 154, panelY + 92, 54, 8);
+  ctx.fillStyle = "#8BC34A";
+  ctx.fillRect(panelX + panelW - 146, panelY + 76, 16, 16);
+  ctx.fillStyle = "#8D6E63";
+  ctx.fillRect(panelX + panelW - 121, panelY + 74, 12, 18);
+}
+
+function drawWordHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors) {
+  const shelfX = actionPx - 60;
+  const shelfY = floorY - 80;
+  const shelfW = 120;
+  const shelfH = 80;
+
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(shelfX, shelfY, shelfW, shelfH);
+  ctx.fillStyle = colors.plank || "#B8945A";
+  ctx.fillRect(shelfX + 4, shelfY + 4, shelfW - 8, shelfH - 8);
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(shelfX, shelfY + 26, shelfW, 3);
+  ctx.fillRect(shelfX, shelfY + 52, shelfW, 3);
+
+  const bookColors = ["#1E88E5", "#D32F2F", "#388E3C", "#F57C00", "#7B1FA2"];
+  for (let i = 0; i < 5; i++) {
+    ctx.fillStyle = bookColors[i];
+    ctx.fillRect(shelfX + 8 + i * 22, shelfY + 8, 18, 16);
+  }
+  for (let i = 0; i < 5; i++) {
+    ctx.fillStyle = bookColors[(i + 2) % 5];
+    ctx.fillRect(shelfX + 8 + i * 22, shelfY + 32, 18, 18);
+  }
+
+  const noteX = panelX + panelW - 184;
+  const noteY = panelY + 110;
+  ctx.fillStyle = "#FFF8E1";
+  ctx.fillRect(noteX, noteY, 54, 40);
+  ctx.strokeStyle = "#BCAAA4";
+  ctx.strokeRect(noteX, noteY, 54, 40);
+  ctx.fillStyle = "#90CAF9";
+  ctx.fillRect(noteX + 6, noteY + 8, 42, 4);
+  ctx.fillRect(noteX + 6, noteY + 18, 30, 4);
+  ctx.fillRect(noteX + 6, noteY + 28, 36, 4);
+
+  const bookX = actionPx - 28;
+  const bookY = floorY - 50;
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(bookX + 2, bookY + 2, 56, 36);
+  ctx.fillStyle = "#1565C0";
+  ctx.fillRect(bookX, bookY, 56, 36);
+  ctx.fillStyle = "#FAFAFA";
+  ctx.fillRect(bookX + 6, bookY + 6, 22, 24);
+  ctx.fillRect(bookX + 30, bookY + 6, 22, 24);
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.fillRect(bookX + 27, bookY + 2, 2, 32);
+  ctx.fillStyle = "#FFD54F";
+  ctx.font = "bold 10px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("ABC", bookX + 28, bookY + 20);
+  ctx.textAlign = "left";
+}
+
+function drawTraderInteriorNpc(ctx, x, floorY) {
+  const robeW = 24;
+  const robeH = 44;
+  const headW = 18;
+  const headH = 18;
+  const robeX = x - robeW * 0.5;
+  const robeY = floorY - robeH;
+  const headX = x - headW * 0.5;
+  const headY = robeY - headH + 6;
+
+  ctx.fillStyle = "#1565C0";
+  ctx.fillRect(robeX, robeY, robeW, robeH);
+  ctx.fillStyle = "#1E88E5";
+  ctx.fillRect(robeX + 3, robeY + 4, robeW - 6, 12);
+  ctx.fillStyle = "#90CAF9";
+  ctx.fillRect(robeX + 7, robeY + 18, robeW - 14, 18);
+  ctx.fillStyle = "#0D47A1";
+  ctx.fillRect(robeX + 4, robeY + robeH, 6, 10);
+  ctx.fillRect(robeX + robeW - 10, robeY + robeH, 6, 10);
+
+  ctx.fillStyle = "#E9C8A7";
+  ctx.fillRect(headX, headY, headW, headH);
+  ctx.fillStyle = "#8D6E63";
+  ctx.fillRect(headX + 2, headY - 4, headW - 4, 7);
+  ctx.fillStyle = "#5D4037";
+  ctx.fillRect(headX + 8, headY + 8, 6, 8);
+  ctx.fillStyle = "#3E2723";
+  ctx.fillRect(headX + 4, headY + 7, 2, 2);
+  ctx.fillRect(headX + 12, headY + 7, 2, 2);
+}
+
+function drawTraderHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors) {
+  const rackX = panelX + 78;
+  const rackY = panelY + 118;
+  const rackW = 144;
+  const rackH = 96;
+
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(rackX, rackY, rackW, 8);
+  ctx.fillRect(rackX, rackY + 38, rackW, 7);
+  ctx.fillRect(rackX, rackY + 76, rackW, 7);
+  ctx.fillRect(rackX + 6, rackY, 8, rackH);
+  ctx.fillRect(rackX + rackW - 14, rackY, 8, rackH);
+
+  const itemColors = ["#8BC34A", "#FFB74D", "#90CAF9", "#A1887F", "#CE93D8"];
+  for (let i = 0; i < 5; i++) {
+    ctx.fillStyle = itemColors[i];
+    ctx.fillRect(rackX + 16 + i * 24, rackY + 10, 18, 20);
+    ctx.fillRect(rackX + 16 + i * 24, rackY + 48, 18, 18);
+  }
+  ctx.fillStyle = "#6D4C41";
+  ctx.fillRect(rackX + 22, rackY + 80, 26, 20);
+  ctx.fillRect(rackX + 62, rackY + 82, 34, 18);
+  ctx.fillRect(rackX + 108, rackY + 78, 22, 22);
+
+  ctx.fillStyle = "#BCAAA4";
+  ctx.fillRect(panelX + panelW - 192, floorY - 54, 30, 24);
+  ctx.fillRect(panelX + panelW - 154, floorY - 50, 24, 20);
+
+  drawTraderInteriorNpc(ctx, actionPx + 2, floorY - 2);
+}
+
 function getInteriorMoveBounds() {
   const centerX = Number(villageInteriorState.entryBuildingX) || 0;
   return {
@@ -677,16 +839,11 @@ function renderVillageInterior(ctx) {
   ctx.fillStyle = "rgba(0,0,0,0.3)";
   ctx.fillRect(doorPx - 10, floorY, 20, 8);
   ctx.fillRect(actionPx - 10, floorY, 20, 8);
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
-  ctx.textAlign = "center";
-  ctx.font = "bold 13px sans-serif";
-  ctx.fillText("\u95e8\u53e3\uff08\u81ea\u52a8\u79bb\u5f00\uff09", doorPx, floorY - 22);
   const actionHeader = buildingType === "bed_house"
     ? "\ud83d\udecf\ufe0f \u5e8a\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
     : (buildingType === "word_house"
       ? "\ud83d\udcd8 \u5355\u8bcd\u4e66\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
       : "\ud83e\uddd1\u200d\ud83c\udf3e \u5546\u4eba\uff08\u77ed\u6309\u5b9d\u7bb1\u952e\uff09");
-  ctx.fillText(actionHeader, actionPx, floorY - 22);
 
   const steveX = playerPx - (Number(player?.width) || 26) * 0.5;
   const steveY = floorY - (Number(player?.height) || 52);
@@ -724,15 +881,20 @@ function renderVillageInterior(ctx) {
 
   ctx.fillStyle = "#222";
   ctx.font = "18px sans-serif";
+  let bedBaseX = actionPx - 48;
+  let bedBaseY = floorY - 42;
   if (buildingType === "bed_house") {
-    drawVillageBed(ctx, panelX + panelW - 170, panelY + panelH - 110, colors);
+    bedBaseX = actionPx - 48;
+    bedBaseY = floorY - 42;
+    drawBedHouseDecor(ctx, panelX, panelY, panelW, floorY, colors);
+    drawVillageBed(ctx, bedBaseX, bedBaseY, colors);
   }
   // Requirement update: keep door as auto-exit, bed/word use chest-key trigger.
   ctx.fillStyle = colors.plank || "#B8945A";
   ctx.fillRect(panelX + 24, panelY + 72, panelW - 48, 86);
 
-  const doorW = 28;
-  const doorH = 52;
+  const doorW = 56;
+  const doorH = 96;
   const doorShapeX = doorPx - doorW * 0.5;
   const doorShapeY = floorY - doorH;
   ctx.fillStyle = "#6D4C41";
@@ -746,38 +908,26 @@ function renderVillageInterior(ctx) {
   ctx.fill();
 
   if (buildingType === "word_house") {
-    ctx.fillStyle = colors.plank || "#B8945A";
-    ctx.fillRect(actionPx - 56, floorY - 62, 112, 62);
-    const bookX = actionPx - 24;
-    const bookY = floorY - 44;
-    ctx.fillStyle = "#1E88E5";
-    ctx.fillRect(bookX, bookY, 48, 32);
-    ctx.fillStyle = "#E3F2FD";
-    ctx.fillRect(bookX + 4, bookY + 4, 18, 24);
-    ctx.fillRect(bookX + 26, bookY + 4, 18, 24);
-    ctx.fillStyle = "rgba(0,0,0,0.25)";
-    ctx.fillRect(bookX + 23, bookY + 2, 2, 28);
+    drawWordHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors);
   }
   if (buildingType === "trader_house") {
-    const npcX = actionPx - 16;
-    const npcY = floorY - 56;
-    ctx.fillStyle = "#6D4C41";
-    ctx.fillRect(npcX + 6, npcY + 20, 20, 24);
-    ctx.fillStyle = "#F2C9A0";
-    ctx.fillRect(npcX + 8, npcY + 4, 16, 16);
-    ctx.fillStyle = "#5D4037";
-    ctx.fillRect(npcX + 14, npcY + 12, 6, 6);
-    ctx.fillStyle = "#3E2723";
-    ctx.fillRect(npcX + 11, npcY + 10, 2, 2);
-    ctx.fillRect(npcX + 19, npcY + 10, 2, 2);
+    drawTraderHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors);
   }
 
-  ctx.fillStyle = "rgba(255,255,255,0.95)";
-  ctx.textAlign = "center";
-  ctx.font = "bold 13px sans-serif";
-  ctx.fillText("\u95e8", doorPx, floorY - 24);
-  ctx.fillText("\u9760\u8fd1\u81ea\u52a8\u79bb\u5f00", doorPx, floorY - 8);
-  ctx.fillText(buildingType === "bed_house" ? "床" : (buildingType === "word_house" ? "单词书" : "商人"), actionPx, floorY - 12);
+  if (buildingType === "bed_house") {
+    drawInteriorLabelGroup(ctx, actionPx, bedBaseY - 34, ["🛏️ 床", "按宝箱键休息"]);
+    drawInteriorLabelGroup(ctx, doorPx, doorShapeY - 36, ["门口", "靠近自动离开"]);
+  } else {
+    drawInteriorLabelGroup(ctx, doorPx, doorShapeY - 36, ["门口", "靠近自动离开"]);
+    drawInteriorLabelGroup(
+      ctx,
+      actionPx,
+      floorY - 62,
+      buildingType === "word_house"
+        ? ["📘 单词书", "按宝箱键开始"]
+        : ["🧑‍🌾 商人", "按宝箱键交易"]
+    );
+  }
 
   ctx.textAlign = "left";
   return true;
@@ -1077,7 +1227,8 @@ const TRADER_BUY_ITEMS = [
   { id: "iron_sword", label: "\u94c1\u5251 \ud83d\udde1\ufe0f", cost: 15, type: "item", amount: 1 },
   { id: "bow", label: "\u5f13 \ud83c\udff9", cost: 12, type: "item", amount: 1 },
   { id: "gunpowder", label: "\u706b\u836f \u00d75 \ud83d\udca5", cost: 4, type: "item", amount: 5 },
-  { id: "ender_pearl", label: "\u672b\u5f71\u73cd\u73e0 \u00d73 \ud83d\udfe3", cost: 10, type: "item", amount: 3 }
+  { id: "ender_pearl", label: "\u672b\u5f71\u73cd\u73e0 \u00d73 \ud83d\udfe3", cost: 10, type: "item", amount: 3 },
+  { id: "dragon_egg", label: "龙蛋 🥚", cost: 5000, type: "item", amount: 1 }
 ];
 
 let traderPrevPaused = false;
@@ -1107,7 +1258,7 @@ function ensureVillageTraderModal() {
   modal.style.display = "none";
   modal.setAttribute("aria-hidden", "true");
   modal.innerHTML = `
-    <div class="learning-modal-content" style="max-width: 560px;">
+    <div class="learning-modal-content" style="max-width: 760px;width:min(92vw,760px);max-height:72vh;overflow:hidden;padding:20px 22px;">
       <div id="village-trader-body"></div>
     </div>
   `;
@@ -1116,6 +1267,18 @@ function ensureVillageTraderModal() {
   });
   document.getElementById("game-container")?.appendChild(modal);
   return modal;
+}
+
+function getTraderSectionGridStyle() {
+  return "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch;";
+}
+
+function getTraderListGridStyle(minWidth = 180) {
+  return `display:grid;grid-template-columns:repeat(auto-fit,minmax(${minWidth}px,1fr));gap:12px;max-height:440px;overflow-y:auto;padding:8px;align-items:stretch;`;
+}
+
+function getTraderCardButtonStyle(accent = "#81C784") {
+  return `min-height:96px;padding:16px 14px;display:grid;place-items:center;text-align:center;gap:6px;transition:transform 0.2s;width:100%;border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.12));border-top:3px solid ${accent};`;
 }
 
 function closeVillageTrader() {
@@ -1154,11 +1317,11 @@ function renderVillageTraderMain(modal, village) {
   body.innerHTML = `
     <h3 style="margin:0 0 12px;color:#FFD54F;">🧑‍🌾 商人交易</h3>
     <p style="margin:0 0 12px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <button id="trader-btn-sell" class="game-btn">卖材料换钻石 💎</button>
-      <button id="trader-btn-armor" class="game-btn">用钻石买盔甲 🛡️</button>
-      <button id="trader-btn-materials" class="game-btn">用钻石买材料和武器 ⚔️</button>
-      <button id="trader-btn-close" class="game-btn">关闭</button>
+    <div style="${getTraderSectionGridStyle()}">
+      <button id="trader-btn-sell" class="game-btn" style="${getTraderCardButtonStyle("#4FC3F7")}"><div style="font-weight:bold;font-size:16px;">卖材料换钻石 💎</div><div style="font-size:13px;opacity:0.9;">把背包材料变成钻石</div></button>
+      <button id="trader-btn-armor" class="game-btn" style="${getTraderCardButtonStyle("#90CAF9")}"><div style="font-weight:bold;font-size:16px;">用钻石买盔甲 🛡️</div><div style="font-size:13px;opacity:0.9;">快速补充护甲装备</div></button>
+      <button id="trader-btn-materials" class="game-btn" style="${getTraderCardButtonStyle("#FFCC80")}"><div style="font-weight:bold;font-size:16px;">用钻石买材料和武器 ⚔️</div><div style="font-size:13px;opacity:0.9;">材料、武器和龙蛋</div></button>
+      <button id="trader-btn-close" class="game-btn" style="${getTraderCardButtonStyle("#B0BEC5")}"><div style="font-weight:bold;font-size:16px;">关闭</div><div style="font-size:13px;opacity:0.9;">离开当前交易页面</div></button>
     </div>
   `;
   bindTraderTap(body.querySelector("#trader-btn-sell"), () => renderTraderSellMaterials(modal, village));
@@ -1184,7 +1347,7 @@ function renderTraderSellMaterials(modal, village) {
   }
   body.innerHTML = `
     <h3 style="margin:0 0 12px;color:#FFD54F;">出售材料</h3>
-    <div id="trader-sell-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;"></div>
+    <div id="trader-sell-list" style="${getTraderListGridStyle(200)}"></div>
     <div style="margin-top:12px;">
       <button id="trader-btn-back-main" class="game-btn">返回</button>
     </div>
@@ -1193,7 +1356,7 @@ function renderTraderSellMaterials(modal, village) {
   sellable.forEach(({ itemId, price, count, label }) => {
     const btn = document.createElement("button");
     btn.className = "game-btn";
-    btn.style.cssText = "min-height:68px;padding:12px 14px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;line-height:1.45;white-space:normal;";
+    btn.style.cssText = "min-height:92px;padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;line-height:1.55;white-space:normal;border-top:3px solid #4FC3F7;";
     const icon = (typeof ITEM_ICONS !== 'undefined' && ITEM_ICONS[itemId]) || '';
     const priceText = itemId === 'arrow'
       ? `5个=1💎`
@@ -1265,9 +1428,11 @@ function sellMaterialByTrader(itemId, unitPrice, requestedCount) {
 function renderTraderBuyArmor(modal, village) {
   const body = modal.querySelector("#village-trader-body");
   if (!body) return;
+  const diamondCount = Number(inventory?.diamond) || 0;
   body.innerHTML = `
     <h3 style="margin:0 0 12px;color:#FFD54F;">购买盔甲</h3>
-    <div id="trader-armor-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <p style="margin:0 0 8px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
+    <div id="trader-armor-list" style="${getTraderListGridStyle(180)}"></div>
     <div style="margin-top:12px;">
       <button id="trader-btn-back-main" class="game-btn">返回</button>
     </div>
@@ -1277,7 +1442,8 @@ function renderTraderBuyArmor(modal, village) {
     const armorName = ARMOR_TYPES?.[armorId]?.name || armorId;
     const btn = document.createElement("button");
     btn.className = "game-btn";
-    btn.textContent = `${armorName}（${cost}💎）`;
+    btn.innerHTML = `<div style="font-weight:bold;margin-bottom:4px;">${armorName}</div><div style="font-size:14px;opacity:0.9;">${cost}💎</div>`;
+    btn.style.cssText = getTraderCardButtonStyle("#90CAF9");
     bindTraderTap(btn, () => {
       handleTraderBuyArmor(armorId, cost);
       renderTraderBuyArmor(modal, village);
@@ -1322,7 +1488,7 @@ function renderTraderBuyMaterials(modal, village) {
   body.innerHTML = `
     <h3 style="margin:0 0 12px;color:#FFD54F;">用钻石买材料和武器 ⚔️</h3>
     <p style="margin:0 0 8px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
-    <div id="trader-buy-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="trader-buy-list" style="${getTraderListGridStyle(180)}"></div>
     <div style="margin-top:12px;">
       <button id="trader-btn-back-main" class="game-btn">返回</button>
     </div>
@@ -1331,7 +1497,8 @@ function renderTraderBuyMaterials(modal, village) {
   TRADER_BUY_ITEMS.forEach(({ id, label, cost, type, amount }) => {
     const btn = document.createElement("button");
     btn.className = "game-btn";
-    btn.textContent = `${label}（${cost}💎）`;
+    btn.innerHTML = `<div style="font-weight:bold;margin-bottom:4px;">${label}</div><div style="font-size:14px;opacity:0.9;">${cost}💎</div>`;
+    btn.style.cssText = getTraderCardButtonStyle("#FFCC80");
     bindTraderTap(btn, () => {
       handleTraderBuyMaterialItem(id, cost, type, amount);
       renderTraderBuyMaterials(modal, village);

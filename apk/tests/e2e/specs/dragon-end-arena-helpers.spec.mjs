@@ -39,7 +39,7 @@ test("Dragon arena switches biome context and restores it on exit", async ({ pag
   });
 
   expect(state.before.biome).toBe("end");
-  expect(state.during.biome).toBe("end_arena");
+  expect(state.during.biome).toBe("end");
   expect(state.after.biome).toBe("end");
   expect(state.after.dragonArenaActive).toBeFalsy();
 });
@@ -55,6 +55,6 @@ test("Switching into the End biome auto-enters the dragon arena", async ({ page 
   });
 
   expect(state.dragonArenaActive).toBeTruthy();
-  expect(state.biome).toBe("end_arena");
+  expect(state.biome).toBe("end");
   expect(state.dragonBossName).toBe("Ender Dragon");
 });

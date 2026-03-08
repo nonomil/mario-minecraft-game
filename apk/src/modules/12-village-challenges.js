@@ -347,6 +347,16 @@ function showVillageQuestion(session, words, progress, onAnswer) {
     </div>
   `);
 
+  if (typeof speakWord === "function") {
+    speakWord({
+      en: word.en,
+      zh: word.zh,
+      phrase: word.phrase,
+      phraseZh: word.phraseTranslation,
+      phraseTranslation: word.phraseTranslation
+    });
+  }
+
   const modal = getVillageChallengeModal();
   if (!session.options?.forced) {
     modal.querySelector("#btn-village-challenge-exit")?.addEventListener("click", () => {
