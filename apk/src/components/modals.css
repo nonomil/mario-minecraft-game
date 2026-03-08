@@ -23,3 +23,13 @@
 .armor-modal-header {
   color: var(--color-accent);
 }
+
+.settings-section-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--color-accent);
+  margin-top: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-primary);
+}
