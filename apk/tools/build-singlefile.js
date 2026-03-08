@@ -197,7 +197,7 @@ function extractModuleScriptTagsFromHtml(html) {
   const re = /<script\b[^>]*\bsrc=(["'])(src\/modules\/[^"']+)\1[^>]*>\s*<\/script>/gi;
   let m;
   while ((m = re.exec(html))) {
-    const src = m[2];
+    const src = normalizeRelPath(m[2]);
     if (!src.toLowerCase().startsWith("src/modules/")) continue;
     const file = src.slice("src/modules/".length);
     entries.push({ tag: m[0], file });

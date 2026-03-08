@@ -493,8 +493,8 @@ function drawInteriorLabelGroup(ctx, centerX, topY, lines, color = "rgba(255,255
   if (!ctx || !Array.isArray(lines) || !lines.length) return;
   ctx.save();
   ctx.textAlign = "center";
-  ctx.font = "bold 15px sans-serif";
-  const lineGap = 20;
+  ctx.font = "bold 18px sans-serif";
+  const lineGap = 26;
   lines.forEach((line, index) => {
     const y = topY + index * lineGap;
     ctx.fillStyle = "rgba(0,0,0,0.28)";
@@ -503,6 +503,13 @@ function drawInteriorLabelGroup(ctx, centerX, topY, lines, color = "rgba(255,255
     ctx.fillText(line, centerX, y);
   });
   ctx.restore();
+}
+
+function getInteriorPromptLines(buildingType) {
+  if (buildingType === "bed_house") return ["← 走到床边", "🧰 按宝箱键休息"];
+  if (buildingType === "word_house") return ["← 走到书前", "🧰 按宝箱键开始"];
+  if (buildingType === "trader_house") return ["← 走到商人旁", "🧰 按宝箱键交易"];
+  return ["← 靠近目标", "🧰 按宝箱键互动"];
 }
 
 function drawBedHouseDecor(ctx, panelX, panelY, panelW, floorY, colors) {
@@ -537,27 +544,27 @@ function drawBedHouseDecor(ctx, panelX, panelY, panelW, floorY, colors) {
 }
 
 function drawWordHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors) {
-  const shelfX = actionPx - 60;
-  const shelfY = floorY - 80;
-  const shelfW = 120;
-  const shelfH = 80;
+  const shelfX = actionPx - 120;
+  const shelfY = floorY - 170;
+  const shelfW = 240;
+  const shelfH = 160;
 
   ctx.fillStyle = colors.log || "#5D4037";
   ctx.fillRect(shelfX, shelfY, shelfW, shelfH);
   ctx.fillStyle = colors.plank || "#B8945A";
-  ctx.fillRect(shelfX + 4, shelfY + 4, shelfW - 8, shelfH - 8);
+  ctx.fillRect(shelfX + 8, shelfY + 8, shelfW - 16, shelfH - 16);
   ctx.fillStyle = colors.log || "#5D4037";
-  ctx.fillRect(shelfX, shelfY + 26, shelfW, 3);
-  ctx.fillRect(shelfX, shelfY + 52, shelfW, 3);
+  ctx.fillRect(shelfX, shelfY + 52, shelfW, 6);
+  ctx.fillRect(shelfX, shelfY + 104, shelfW, 6);
 
   const bookColors = ["#1E88E5", "#D32F2F", "#388E3C", "#F57C00", "#7B1FA2"];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     ctx.fillStyle = bookColors[i];
-    ctx.fillRect(shelfX + 8 + i * 22, shelfY + 8, 18, 16);
+    ctx.fillRect(shelfX + 18 + i * 52, shelfY + 16, 32, 34);
   }
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     ctx.fillStyle = bookColors[(i + 2) % 5];
-    ctx.fillRect(shelfX + 8 + i * 22, shelfY + 32, 18, 18);
+    ctx.fillRect(shelfX + 18 + i * 52, shelfY + 70, 32, 40);
   }
 
   const noteX = panelX + panelW - 184;
@@ -571,21 +578,21 @@ function drawWordHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, color
   ctx.fillRect(noteX + 6, noteY + 18, 30, 4);
   ctx.fillRect(noteX + 6, noteY + 28, 36, 4);
 
-  const bookX = actionPx - 28;
-  const bookY = floorY - 50;
+  const bookX = actionPx - 44;
+  const bookY = floorY - 70;
   ctx.fillStyle = "rgba(0,0,0,0.2)";
-  ctx.fillRect(bookX + 2, bookY + 2, 56, 36);
+  ctx.fillRect(bookX + 4, bookY + 4, 88, 52);
   ctx.fillStyle = "#1565C0";
-  ctx.fillRect(bookX, bookY, 56, 36);
+  ctx.fillRect(bookX, bookY, 88, 52);
   ctx.fillStyle = "#FAFAFA";
-  ctx.fillRect(bookX + 6, bookY + 6, 22, 24);
-  ctx.fillRect(bookX + 30, bookY + 6, 22, 24);
+  ctx.fillRect(bookX + 10, bookY + 8, 32, 34);
+  ctx.fillRect(bookX + 46, bookY + 8, 32, 34);
   ctx.fillStyle = "rgba(0,0,0,0.3)";
-  ctx.fillRect(bookX + 27, bookY + 2, 2, 32);
+  ctx.fillRect(bookX + 42, bookY + 4, 4, 42);
   ctx.fillStyle = "#FFD54F";
-  ctx.font = "bold 10px sans-serif";
+  ctx.font = "bold 14px sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("ABC", bookX + 28, bookY + 20);
+  ctx.fillText("ABC", bookX + 44, bookY + 30);
   ctx.textAlign = "left";
 }
 
@@ -622,9 +629,9 @@ function drawTraderInteriorNpc(ctx, x, floorY) {
 
 function drawTraderHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors) {
   const rackX = panelX + 78;
-  const rackY = panelY + 118;
   const rackW = 144;
   const rackH = 96;
+  const rackY = floorY - rackH;
 
   ctx.fillStyle = colors.log || "#5D4037";
   ctx.fillRect(rackX, rackY, rackW, 8);
@@ -647,8 +654,6 @@ function drawTraderHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, col
   ctx.fillStyle = "#BCAAA4";
   ctx.fillRect(panelX + panelW - 192, floorY - 54, 30, 24);
   ctx.fillRect(panelX + panelW - 154, floorY - 50, 24, 20);
-
-  drawTraderInteriorNpc(ctx, actionPx + 2, floorY - 2);
 }
 
 function getInteriorMoveBounds() {
@@ -835,6 +840,7 @@ function renderVillageInterior(ctx) {
   const doorPx = toPanelX(getInteriorDoorX());
   const actionPx = toPanelX(getInteriorActionX(buildingType));
   const playerPx = toPanelX(getPlayerCenterX());
+  const entryPromptPx = toPanelX(Number(villageInteriorState.entryBuildingX) || 0);
 
   ctx.fillStyle = "rgba(0,0,0,0.3)";
   ctx.fillRect(doorPx - 10, floorY, 20, 8);
@@ -844,17 +850,6 @@ function renderVillageInterior(ctx) {
     : (buildingType === "word_house"
       ? "\ud83d\udcd8 \u5355\u8bcd\u4e66\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
       : "\ud83e\uddd1\u200d\ud83c\udf3e \u5546\u4eba\uff08\u77ed\u6309\u5b9d\u7bb1\u952e\uff09");
-
-  const steveX = playerPx - (Number(player?.width) || 26) * 0.5;
-  const steveY = floorY - (Number(player?.height) || 52);
-  if (typeof drawSteve === "function") {
-    drawSteve(steveX, steveY, !!player?.facingRight, false);
-  } else {
-    ctx.fillStyle = "#FFEE58";
-    ctx.fillRect(playerPx - 9, floorY - 26, 18, 24);
-    ctx.fillStyle = "#5D4037";
-    ctx.fillRect(playerPx - 9, floorY - 2, 18, 2);
-  }
 
   const title = buildingType === "bed_house"
     ? "\ud83c\udfe0 \u5e8a\u5c4b\u5ba4\u5185"
@@ -881,11 +876,11 @@ function renderVillageInterior(ctx) {
 
   ctx.fillStyle = "#222";
   ctx.font = "18px sans-serif";
-  let bedBaseX = actionPx - 48;
-  let bedBaseY = floorY - 42;
+  let bedBaseX = actionPx - 96;
+  let bedBaseY = floorY - 74;
   if (buildingType === "bed_house") {
-    bedBaseX = actionPx - 48;
-    bedBaseY = floorY - 42;
+    bedBaseX = actionPx - 96;
+    bedBaseY = floorY - 74;
     drawBedHouseDecor(ctx, panelX, panelY, panelW, floorY, colors);
     drawVillageBed(ctx, bedBaseX, bedBaseY, colors);
   }
@@ -912,21 +907,20 @@ function renderVillageInterior(ctx) {
   }
   if (buildingType === "trader_house") {
     drawTraderHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors);
+    drawTraderInteriorNpc(ctx, actionPx + 2, floorY + 8);
   }
 
-  if (buildingType === "bed_house") {
-    drawInteriorLabelGroup(ctx, actionPx, bedBaseY - 34, ["🛏️ 床", "按宝箱键休息"]);
-    drawInteriorLabelGroup(ctx, doorPx, doorShapeY - 36, ["门口", "靠近自动离开"]);
+  drawInteriorLabelGroup(ctx, entryPromptPx, floorY - 154, getInteriorPromptLines(buildingType));
+
+  const steveX = playerPx - (Number(player?.width) || 26) * 0.5;
+  const steveY = floorY - (Number(player?.height) || 52);
+  if (typeof drawSteve === "function") {
+    drawSteve(steveX, steveY, !!player?.facingRight, false);
   } else {
-    drawInteriorLabelGroup(ctx, doorPx, doorShapeY - 36, ["门口", "靠近自动离开"]);
-    drawInteriorLabelGroup(
-      ctx,
-      actionPx,
-      floorY - 62,
-      buildingType === "word_house"
-        ? ["📘 单词书", "按宝箱键开始"]
-        : ["🧑‍🌾 商人", "按宝箱键交易"]
-    );
+    ctx.fillStyle = "#FFEE58";
+    ctx.fillRect(playerPx - 9, floorY - 26, 18, 24);
+    ctx.fillStyle = "#5D4037";
+    ctx.fillRect(playerPx - 9, floorY - 2, 18, 2);
   }
 
   ctx.textAlign = "left";

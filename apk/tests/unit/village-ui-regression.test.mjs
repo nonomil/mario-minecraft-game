@@ -26,12 +26,12 @@ function testBedHouseInteriorUsesEnlargedBedWithLegs() {
 
   assert.deepEqual(
     calls[0]?.args,
-    [100, 200, 96, 28],
-    "床屋室内应使用肉眼可见的大床体尺寸 96x28"
+    [100, 200, 192, 56],
+    "床屋室内应继续放大到更有存在感的床体尺寸 192x56"
   );
 
-  const legCalls = calls.filter(({ args }) => args[2] === 6 && args[3] === 8);
-  assert.equal(legCalls.length, 2, "床屋室内应绘制两条床腿装饰");
+  const legCalls = calls.filter(({ args }) => args[2] === 10 && args[3] === 14);
+  assert.equal(legCalls.length, 2, "床屋室内应保留两条更粗更稳的床腿装饰");
 }
 
 function testBedHouseInteriorUsesLargerDoor() {
@@ -73,10 +73,11 @@ function testWordHouseUsesBookshelfAndLargerBook() {
   runScriptInContext(context, "src/modules/18-village.js");
 
   const helperSource = String(context.drawWordHouseDecor);
-  assert.match(helperSource, /const shelfX = actionPx - 60\b/, "单词屋应绘制书架背景");
-  assert.match(helperSource, /const shelfW = 120\b/, "单词屋书架宽度应为 120");
-  assert.match(helperSource, /const bookX = actionPx - 28\b/, "单词屋主书应比旧版更大更居中");
-  assert.match(helperSource, /fillText\("ABC", bookX \+ 28, bookY \+ 20\)/, "单词屋主书应显示 ABC 标记");
+  assert.match(helperSource, /const shelfX = actionPx - 120\b/, "单词屋书架应整体左移并放大到双倍体量");
+  assert.match(helperSource, /const shelfW = 240\b/, "单词屋书架宽度应提升到 240");
+  assert.match(helperSource, /const shelfH = 160\b/, "单词屋书架高度应提升到 160");
+  assert.match(helperSource, /const bookX = actionPx - 44\b/, "单词屋主书应继续放大并保持居中");
+  assert.match(helperSource, /fillText\("ABC", bookX \+ 44, bookY \+ 30\)/, "单词屋主书应按新尺寸居中显示 ABC 标记");
 }
 
 function testTraderUsesUnifiedTallTwoColumnLayout() {
@@ -111,6 +112,26 @@ function testInteriorUsesRaisedSpacedLabelsAndDecorHelpers() {
   assert.match(renderSource, /drawTraderHouseDecor\(/, "商人屋应补充货架装饰 helper");
 }
 
+function testInteriorLabelsUseCenteredEntryPrompts() {
+  const context = { console, Math, Date };
+  vm.createContext(context);
+  runScriptInContext(context, "src/modules/18-village.js");
+
+  const labelSource = String(context.drawInteriorLabelGroup);
+  const renderSource = String(context.renderVillageInterior);
+  const promptSource = String(context.getInteriorPromptLines);
+  assert.match(labelSource, /bold 18px sans-serif/, "室内提示文字应继续放大到 18px");
+  assert.match(labelSource, /const lineGap = 26;/, "室内提示行距应拉大到 26");
+  assert.match(promptSource, /← 走到床边/, "床屋提示应使用向左移动引导");
+  assert.match(promptSource, /🧰 按宝箱键休息/, "床屋提示应包含宝箱键图示");
+  assert.match(promptSource, /← 走到书前/, "单词屋提示应使用统一向左移动引导");
+  assert.match(promptSource, /🧰 按宝箱键开始/, "单词屋提示应包含宝箱键图示");
+  assert.match(promptSource, /← 走到商人旁/, "商人屋提示应使用统一向左移动引导");
+  assert.match(promptSource, /🧰 按宝箱键交易/, "商人屋提示应包含宝箱键图示");
+  assert.match(renderSource, /const entryPromptPx = toPanelX\(Number\(villageInteriorState\.entryBuildingX\) \|\| 0\);/, "室内提示应锚定到入场中心位置");
+  assert.match(renderSource, /drawInteriorLabelGroup\(ctx, entryPromptPx, floorY - 154, getInteriorPromptLines\(buildingType\)\);/, "三间屋提示应统一显示在初始主角站位头顶");
+}
+
 function testTraderNpcUsesTallerOfficialInspiredShape() {
   const context = { console, Math, Date };
   vm.createContext(context);
@@ -122,6 +143,19 @@ function testTraderNpcUsesTallerOfficialInspiredShape() {
   assert.match(source, /#1E88E5|#1565C0/, "商人应使用接近 wandering trader 的蓝色长袍配色");
 }
 
+
+function testInteriorDrawsPlayerAfterFurnitureAndTraderRackSitsOnFloor() {
+  const context = { console, Math, Date };
+  vm.createContext(context);
+  runScriptInContext(context, "src/modules/18-village.js");
+
+  const renderSource = String(context.renderVillageInterior);
+  const traderDecorSource = String(context.drawTraderHouseDecor);
+  assert.match(renderSource, /drawWordHouseDecor\([\s\S]*?drawTraderHouseDecor\([\s\S]*?drawInteriorLabelGroup\([\s\S]*?(?:drawSteve\(|ctx\.fillRect\(playerPx - 9, floorY - 26, 18, 24\))/, "室内人物应在家具和提示之后绘制，避免被床和书架遮住");
+  assert.match(traderDecorSource, /const rackH = 96;/, "商人货架应保留明确高度");
+  assert.match(traderDecorSource, /const rackY = floorY - rackH;/, "商人货架应贴地摆放，而不是悬空在中间");
+}
+
 function run() {
   testBedHouseInteriorUsesEnlargedBedWithLegs();
   testBedHouseInteriorUsesLargerDoor();
@@ -130,7 +164,9 @@ function run() {
   testWordHouseUsesBookshelfAndLargerBook();
   testTraderUsesUnifiedTallTwoColumnLayout();
   testInteriorUsesRaisedSpacedLabelsAndDecorHelpers();
+  testInteriorLabelsUseCenteredEntryPrompts();
   testTraderNpcUsesTallerOfficialInspiredShape();
+  testInteriorDrawsPlayerAfterFurnitureAndTraderRackSitsOnFloor();
   console.log("village UI regression checks passed");
 }
 

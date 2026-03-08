@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.26] - 2026-03-08
+### Fixed
+- **Boss Debug Trigger**: Improved reliability of boss triggering from GameDebug.html.
+- **Boss Battle Text**: Fixed garbled boss battle text and added debug controls for Ender Dragon and Word Gate boss.
+- **Dev Server Caching**: Added cache-disabling HTTP response headers for the development server to prevent stale assets during iteration.
+
+### Changed
+- **Version Synchronization**: Unified release metadata across `package.json`, `version.json`, `android-app/package.json`, `android-app/web/build-info.json`, `android-app/android/app/build.gradle`, `service-worker.js`, and `Game.html`.
+
+## [1.19.25] - 2026-03-08
+### Fixed
+- **Advanced Settings Button**: Replaced smart quotes in `Game.html` and fixed quote characters in the settings interface to restore Advanced Settings modal behavior.
+
+### Changed
+- **Settings UX**: Reorganized settings interface into main and advanced panels.
+
+## [1.19.24] - 2026-03-08
+### Added
+- **Vocab System Simplification**: Simplified vocab pack classification and improved manifest compatibility.
+
+### Fixed
+- **Vocab Loading**: Fixed multiple vocab loading issues caused by global variable name drift and stage label mismatches.
+
 ## [1.19.23] - 2026-03-08
 ### Fixed
 - **Village Interaction Regressions**: Resolved critical issues with village gate and trader interactions

@@ -76,29 +76,29 @@ function drawBlockHouse(ctx, bx, by, w, h, colors, type) {
 
 // Draw a bed inside the bed_house area
 function drawVillageBed(ctx, bx, by, colors) {
-  const bedWidth = 96;
-  const bedHeight = 28;
+  const bedWidth = 192;
+  const bedHeight = 56;
   const frameColor = '#6D4C41';
 
   ctx.fillStyle = frameColor;
   ctx.fillRect(bx, by, bedWidth, bedHeight);
 
   ctx.fillStyle = '#8D6E63';
-  ctx.fillRect(bx + 6, by + 4, 12, bedHeight + 2);
-  ctx.fillRect(bx + bedWidth - 10, by + 6, 8, bedHeight - 2);
+  ctx.fillRect(bx + 10, by + 8, 20, bedHeight + 4);
+  ctx.fillRect(bx + bedWidth - 18, by + 10, 14, bedHeight - 6);
 
   ctx.fillStyle = '#F5F5F5';
-  ctx.fillRect(bx + 10, by - 10, 30, 14);
+  ctx.fillRect(bx + 18, by - 18, 56, 26);
 
   ctx.fillStyle = '#C62828';
-  ctx.fillRect(bx + 38, by - 8, 50, 20);
+  ctx.fillRect(bx + 70, by - 14, 98, 34);
 
   ctx.fillStyle = '#EF5350';
-  ctx.fillRect(bx + 34, by + 10, 54, 12);
+  ctx.fillRect(bx + 62, by + 20, 106, 24);
 
   ctx.fillStyle = '#4E342E';
-  ctx.fillRect(bx, by + bedHeight, 6, 8);
-  ctx.fillRect(bx + bedWidth - 6, by + bedHeight, 6, 8);
+  ctx.fillRect(bx + 8, by + bedHeight, 10, 14);
+  ctx.fillRect(bx + bedWidth - 18, by + bedHeight, 10, 14);
 }
 
 // Draw village path (cobblestone)
