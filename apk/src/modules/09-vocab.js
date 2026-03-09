@@ -2,6 +2,50 @@
  * 09-vocab.js - 词汇系统与词库管理
  * 从 main.js 拆分 (原始行 2103-2495)
  */
+const LEGACY_VOCAB_SELECTION_ALIASES = Object.freeze({
+    "vocab.kindergarten": "vocab.kindergarten.full",
+    "vocab.kindergarten.basic": "vocab.kindergarten.full",
+    "vocab.kindergarten.supplement": "vocab.kindergarten.full",
+    "vocab.elementary_lower": "vocab.elementary.basic",
+    "vocab.elementary_lower.basic": "vocab.elementary.basic",
+    "vocab.elementary_lower.supplement": "vocab.elementary.full",
+    "vocab.elementary_upper": "vocab.elementary.intermediate",
+    "vocab.junior_high": "vocab.junior_high.full",
+    "vocab.junior_high.advanced": "vocab.junior_high.full",
+    "vocab.minecraft": "vocab.minecraft.full"
+});
+
+const LEGACY_VOCAB_STAGE_FALLBACKS = Object.freeze({
+    "vocab.kindergarten": "vocab.kindergarten.full",
+    "vocab.elementary": "vocab.elementary.full",
+    "vocab.junior_high": "vocab.junior_high.full",
+    "vocab.minecraft": "vocab.minecraft.full"
+});
+
+function normalizeVocabSelectionId(selection) {
+    const raw = String(selection || "").trim();
+    if (!raw || raw === "auto") return "auto";
+    return LEGACY_VOCAB_SELECTION_ALIASES[raw] || raw;
+}
+
+function resolveVocabSelectionId(selection) {
+    const normalized = normalizeVocabSelectionId(selection);
+    if (normalized === "auto") return "auto";
+
+    const engine = ensureVocabEngine();
+    if (!engine) return normalized;
+    if (vocabPacks[normalized]) return normalized;
+
+    const stageKey = normalized.split(".").slice(0, 2).join(".");
+    const stageFallback = LEGACY_VOCAB_STAGE_FALLBACKS[stageKey];
+    if (stageFallback && vocabPacks[stageFallback]) return stageFallback;
+
+    const pack = Array.isArray(vocabManifest?.packs)
+        ? vocabManifest.packs.find(item => item?.id && item.id.startsWith(`${stageKey}.`))
+        : null;
+    return pack?.id || "auto";
+}
+
 function normalizeSettings(raw) {
     const merged = mergeDeep(defaultSettings, raw || {});
     if (typeof merged.challengeEnabled !== "boolean") merged.challengeEnabled = defaultSettings.challengeEnabled ?? true;
@@ -36,6 +80,7 @@ function normalizeSettings(raw) {
     if (!["balanced", "reinforce_wrong"].includes(String(merged.wordRepeatBias || ""))) merged.wordRepeatBias = "reinforce_wrong";
     if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
     if (!["english", "chinese", "bilingual"].includes(String(merged.languageMode || ""))) merged.languageMode = "english";
+    merged.vocabSelection = normalizeVocabSelectionId(merged.vocabSelection);
     merged.biomeSwitchStepScore = Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 300));
     merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
     merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 1200));
@@ -375,7 +420,9 @@ function renderVocabSelect() {
         });
     });
 
-    sel.value = settings.vocabSelection || "auto";
+    const resolvedSelection = resolveVocabSelectionId(settings.vocabSelection || "auto");
+    sel.value = resolvedSelection;
+    if (sel.value !== resolvedSelection) sel.value = "auto";
     updateVocabPreview(sel.value);
 }
 
@@ -519,7 +566,17 @@ function normalizeRawWord(raw) {
 async function setActiveVocabPack(selection) {
     const engine = ensureVocabEngine();
     if (!engine) return false;
-    const pickId = selection === "auto" || !selection ? pickPackAuto() : selection;
+    const rawCurrentSelection = String(settings.vocabSelection || "auto").trim() || "auto";
+    const rawRequestedSelection = String(selection || rawCurrentSelection).trim() || "auto";
+    const requestedSelection = normalizeVocabSelectionId(rawRequestedSelection);
+    const resolvedSelection = resolveVocabSelectionId(requestedSelection);
+    const shouldPersistResolvedSelection =
+        rawCurrentSelection === rawRequestedSelection && rawCurrentSelection !== resolvedSelection;
+    if (shouldPersistResolvedSelection) {
+        settings.vocabSelection = resolvedSelection;
+        saveSettings();
+    }
+    const pickId = resolvedSelection === "auto" ? pickPackAuto() : resolvedSelection;
     const pack = pickId ? vocabPacks[pickId] : null;
     if (!pack) return false;
 

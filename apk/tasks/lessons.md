@@ -21,5 +21,6 @@
 - [2026-03-04] 测试策略 → 选择性测试会遗漏问题，应该运行完整测试套件 → 合并后必须运行所有相关测试（opt-0226-*.spec.mjs 全部 10 个），不能只挑选部分
 - [2026-03-04] 代码审查 → 合并时未仔细审查 Worktree D 的代码改动，导致语法错误进入主分支 → 合并前必须对每个 worktree 的代码进行语法检查和基本验证
 - [2026-03-04] 文档编码 → Windows GBK 终端链路 + `errors='replace'` 会把中文静默替换为 `?`/`�` 且不可逆 → 中文文档统一 UTF-8（建议 BOM），命令前设置 `PYTHONIOENCODING=utf-8`，禁止 replace 后写回
+- [2026-03-09] 词库切换失效 → 默认设置和历史账号仍保存 legacy pack id，manifest 已切换到新的 canonical id，导致 setActiveVocabPack 找不到词库且 activeVocabPackId 为空 → 默认值、启动链路、词库切换入口都必须统一做 id 归一化，并用回归测试覆盖旧存档迁移
 
 <!-- 教训条目追加到此处 -->

@@ -34,8 +34,27 @@ function testManifestResolvesConstDefinedPackGlobals() {
   );
 }
 
+function testDefaultVocabSelectionExistsInCurrentManifest() {
+  const context = { console };
+  context.window = context;
+  vm.createContext(context);
+
+  runInContext(context, "src/defaults.js");
+  runInContext(context, "words/vocabs/manifest.js");
+
+  const defaultSelection = context.window.MMWG_DEFAULTS?.settings?.vocabSelection;
+  const manifest = context.window.vocabManifest || context.window.MMWG_VOCAB_MANIFEST;
+
+  assert.ok(defaultSelection, "默认设置应声明 vocabSelection");
+  assert.ok(
+    manifest?.byId?.[defaultSelection],
+    `默认 vocabSelection 应指向 manifest 中存在的 pack，当前为 ${defaultSelection}`
+  );
+}
+
 function run() {
   testManifestResolvesConstDefinedPackGlobals();
+  testDefaultVocabSelectionExistsInCurrentManifest();
   console.log("vocab pack switch regression checks passed");
 }
 

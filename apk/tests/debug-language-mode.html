@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Language Mode Debug</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #222; color: #fff; }
+        .section { background: #333; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; font-size: 14px; cursor: pointer; }
+        pre { background: #111; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Language Mode Debug Tool</h1>
+    
+    <div class="section">
+        <h2>Step 1: Check LocalStorage</h2>
+        <button onclick="checkStorage()">检查存储</button>
+        <button onclick="clearStorage()">清除存储</button>
+        <pre id="storage-output"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Step 2: Set Language Mode</h2>
+        <button onclick="setMode('english')">设置为英语</button>
+        <button onclick="setMode('chinese')">设置为汉字</button>
+        <pre id="set-output"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Step 3: Test BilingualVocab</h2>
+        <button onclick="testVocab()">测试词汇显示</button>
+        <pre id="vocab-output"></pre>
+    </div>
+
+    <script src="src/storage.js"></script>
+    <script src="src/defaults.js"></script>
+    <script src="src/modules/02-utils.js"></script>
+    <script>
+        function checkStorage() {
+            const output = document.getElementById('storage-output');
+            const settings = localStorage.getItem('mmwg:settings');
+            output.textContent = 'Raw settings:\n' + settings + '\n\n';
+            
+            if (settings) {
+                const parsed = JSON.parse(settings);
+                output.textContent += 'Parsed settings:\n' + JSON.stringify(parsed, null, 2) + '\n\n';
+                output.textContent += 'languageMode: ' + parsed.languageMode + '\n';
+                output.textContent += 'showPinyin: ' + parsed.showPinyin;
+            } else {
+                output.textContent += 'No settings found in localStorage';
+            }
+        }
+
+        function clearStorage() {
+            localStorage.clear();
+            document.getElementById('storage-output').textContent = 'Storage cleared! Refresh the page.';
+        }
+
+        function setMode(mode) {
+            const output = document.getElementById('set-output');
+            const settings = JSON.parse(localStorage.getItem('mmwg:settings') || '{}');
+            settings.languageMode = mode;
+            localStorage.setItem('mmwg:settings', JSON.stringify(settings));
+            output.textContent = 'Set languageMode to: ' + mode + '\n\n' + JSON.stringify(settings, null, 2);
+        }
+
+        function testVocab() {
+            const output = document.getElementById('vocab-output');
+            
+            // Load vocab module
+            const script = document.createElement('script');
+            script.src = 'src/modules/09-vocab.js';
+            script.onload = () => {
+                const testWord = { en: 'cat', zh: '猫', word: 'cat', chinese: '猫' };
+                
+                if (window.BilingualVocab) {
+                    const mode = window.BilingualVocab.getCurrentLanguageMode();
+                    const display = window.BilingualVocab.getDisplayContent(testWord);
+                    
+                    output.textContent = 'Current mode: ' + mode + '\n\n';
+                    output.textContent += 'Test word: ' + JSON.stringify(testWord, null, 2) + '\n\n';
+                    output.textContent += 'Display content:\n' + JSON.stringify(display, null, 2);
+                } else {
+                    output.textContent = 'BilingualVocab not loaded!';
+                }
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html>

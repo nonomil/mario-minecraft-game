@@ -233,7 +233,7 @@ window.MMWG_DEFAULTS = {
         biomeSwitchStepScore: 300,
         gameDifficulty: "medium",
         vocabStage: "auto",
-        vocabSelection: "vocab.kindergarten",
+        vocabSelection: "vocab.kindergarten.full",
         vocabDifficulty: "auto",
         movementSpeedLevel: "normal",
         keyCodes: "Space,KeyJ,KeyY,KeyK,KeyZ",
