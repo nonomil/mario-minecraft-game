@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>简单诊断</title>
+</head>
+<body style="margin:20px; font-family:monospace;">
+    <h1>诊断结果</h1>
+    <div id="result"></div>
+    <script>
+        const result = document.getElementById('result');
+        result.innerHTML = '检查中...<br>';
+
+        // 检查 gameCanvas
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas) {
+            result.innerHTML += '✅ gameCanvas 元素存在<br>';
+        } else {
+            result.innerHTML += '✗ gameCanvas 元素不存在<br>';
+        }
+
+        // 检查全局变量
+        if (typeof window !== 'undefined') {
+            result.innerHTML += '✅ window 对象存在<br>';
+        } else {
+            result.innerHTML += '✗ window 对象不存在<br>';
+        }
+
+        // 检查脚本
+        const scripts = document.getElementsByTagName('script');
+        result.innerHTML += '✅ 找到 ' + scripts.length + ' 个 script 标签<br>';
+
+        // 检查 drawBlock
+        if (typeof drawBlock !== 'undefined') {
+            result.innerHTML += '✅ drawBlock 函数存在（来自某模块）<br>';
+        } else {
+            result.innerHTML += '✗ drawBlock 函数不存在<br>';
+        }
+
+        // 检查 initGame
+        if (typeof initGame !== 'undefined') {
+            result.innerHTML += '✅ initGame 函数存在（来自某模块）<br>';
+        } else {
+            result.innerHTML += '✗ initGame 函数不存在<br>';
+        }
+
+        // 结论
+        if (canvas && typeof window !== 'undefined' && scripts.length > 0) {
+            result.innerHTML += '<strong style="color:green">环境正常！模块应该能正常加载。</strong>';
+            result.innerHTML += '<br>请直接在实际游戏页面按 F12 刷新，然后查看浏览器控制台是否有错误信息。';
+        } else {
+            result.innerHTML += '<strong style="color:red">环境异常！找不到 canvas 或 window，脚本可能未加载。</strong>';
+            result.innerHTML += '<br>请确认文件路径是否正确：<strong>file:///G:/UserCode/Mario_Minecraft/mario-minecraft-game_V1/apk/Game.html</strong>';
+        }
+    </script>
+</body>
+</html>

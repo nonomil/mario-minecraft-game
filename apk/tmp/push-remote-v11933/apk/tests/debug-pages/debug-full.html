@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>完整游戏调试</title>
+    <style>
+        body { margin: 20px; font-family: monospace; }
+        #gameCanvas { border: 2px solid red; display: block; margin: 20px 0; }
+        #log { white-space: pre-wrap; background: #f0f0f0; padding: 10px; max-height: 400px; overflow-y: auto; }
+        .error { color: red; font-weight: bold; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>完整游戏初始化调试</h1>
+    <button onclick="runTest()">运行测试</button>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="log"></div>
+
+    <script src="src/defaults.js"></script>
+    <script src="src/storage.js"></script>
+    <script src="words/vocabs/manifest.js"></script>
+    <script src="src/modules/01-config.js"></script>
+    <script src="src/modules/02-utils.js"></script>
+    <script src="src/modules/03-audio.js"></script>
+    <script src="src/modules/04-weapons.js"></script>
+    <script src="src/modules/05-difficulty.js"></script>
+    <script src="src/modules/06-biome.js"></script>
+    <script src="src/modules/07-viewport.js"></script>
+    <script src="src/modules/11-game-init.js"></script>
+    <script src="src/modules/14-renderer-main.js"></script>
+    <script src="src/modules/15-entities-base.js"></script>
+
+    <script>
+        const log = document.getElementById('log');
+        function addLog(msg, type = 'normal') {
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = msg + '\n';
+            log.appendChild(span);
+            console.log(msg);
+        }
+
+        function runTest() {
+            log.innerHTML = '';
+            addLog('=== 开始完整调试 ===', 'success');
+
+            // 1. 检查基础变量
+            addLog('\n【步骤1】检查基础变量');
+            addLog('canvas: ' + (canvas ? 'OK' : 'FAIL'), canvas ? 'success' : 'error');
+            addLog('ctx: ' + (ctx ? 'OK' : 'FAIL'), ctx ? 'success' : 'error');
+            addLog('blockSize: ' + blockSize);
+            addLog('groundY: ' + groundY);
+            addLog('cameraX初始值: ' + cameraX);
+            addLog('platforms初始: ' + JSON.stringify(platforms));
+
+            // 2. 检查函数是否存在
+            addLog('\n【步骤2】检查关键函数');
+            addLog('generatePlatform: ' + (typeof generatePlatform === 'function' ? 'OK' : 'FAIL'), typeof generatePlatform === 'function' ? 'success' : 'error');
+            addLog('drawBlock: ' + (typeof drawBlock === 'function' ? 'OK' : 'FAIL'), typeof drawBlock === 'function' ? 'success' : 'error');
+            addLog('Platform类: ' + (typeof Platform === 'function' ? 'OK' : 'FAIL'), typeof Platform === 'function' ? 'success' : 'error');
+
+            // 3. 调用 generatePlatform
+            addLog('\n【步骤3】调用 generatePlatform(0, 12, ' + groundY + ')');
+            try {
+                generatePlatform(0, 12, groundY);
+                addLog('generatePlatform 调用成功', 'success');
+                addLog('platforms数组长度: ' + platforms.length);
+                platforms.forEach((p, idx) => {
+                    addLog('  平台' + idx + ': x=' + p.x + ', y=' + p.y + ', w=' + p.width + ', h=' + p.height + ', type=' + p.type);
+                });
+            } catch (e) {
+                addLog('generatePlatform 调用失败: ' + e.message, 'error');
+                addLog('错误堆栈: ' + e.stack, 'error');
+            }
+
+            // 4. 手动绘制测试
+            addLog('\n【步骤4】手动绘制测试');
+            try {
+                // 清空画布
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                addLog('背景绘制完成');
+
+                // 不使用相机偏移，直接绘制
+                addLog('cameraX当前值: ' + cameraX);
+                addLog('开始绘制 ' + platforms.length + ' 个平台（无相机偏移）');
+
+                platforms.forEach((p, idx) => {
+                    // 简单绘制草地方块
+                    ctx.fillStyle = '#5d4037';
+                    ctx.fillRect(p.x, p.y, p.width, p.height);
+                    ctx.fillStyle = '#4CAF50';
+                    ctx.fillRect(p.x, p.y, p.width, p.height / 3);
+                    addLog('  平台' + idx + ' 绘制完成');
+                });
+
+                addLog('所有平台绘制完成', 'success');
+            } catch (e) {
+                addLog('绘制失败: ' + e.message, 'error');
+                addLog('错误堆栈: ' + e.stack, 'error');
+            }
+
+            // 5. 使用相机偏移绘制测试
+            addLog('\n【步骤5】使用相机偏移绘制测试');
+            try {
+                ctx.save();
+                ctx.translate(-cameraX, 0);
+                addLog('应用相机偏移: -' + cameraX);
+
+                // 绘制一个红色矩形标记
+                ctx.fillStyle = 'red';
+                ctx.fillRect(0, 0, 50, 50);
+                addLog('红色标记绘制在 (0,0)');
+
+                ctx.restore();
+                addLog('相机偏移测试完成', 'success');
+            } catch (e) {
+                addLog('相机偏移测试失败: ' + e.message, 'error');
+            }
+
+            addLog('\n=== 调试完成 ===', 'success');
+            addLog('检查画布：');
+            addLog('- 应该看到蓝色背景');
+            addLog('- 应该看到底部的绿色地面（草地）');
+            addLog('- 应该看到左上角的红色方块（相机偏移测试）');
+        }
+
+        // 自动运行测试
+        window.addEventListener('load', () => {
+            setTimeout(runTest, 100);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+/* UI modular style entrypoint */
+
+/* 01 tokens */
+@import "./01-tokens/colors.css";
+@import "./01-tokens/typography.css";
+@import "./01-tokens/spacing.css";
+
+/* 04 components */
+@import "./04-components/buttons.css";
+@import "./04-components/modals.css";
+@import "./04-components/forms.css";
+
+/* Legacy fallback - keep old styles during staged migration */
+@import "../styles.css";

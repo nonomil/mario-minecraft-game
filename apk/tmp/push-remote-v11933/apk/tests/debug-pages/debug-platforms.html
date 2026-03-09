@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>平台调试</title>
+    <style>
+        body { margin: 20px; font-family: monospace; }
+        #gameCanvas { border: 2px solid red; display: block; margin: 20px 0; }
+        #log { white-space: pre-wrap; background: #f0f0f0; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>平台渲染调试</h1>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="log"></div>
+
+    <script src="src/defaults.js"></script>
+    <script src="src/storage.js"></script>
+    <script src="words/vocabs/manifest.js"></script>
+    <script src="src/modules/01-config.js"></script>
+    <script src="src/modules/02-utils.js"></script>
+    <script src="src/modules/15-entities-base.js"></script>
+
+    <script>
+        const log = document.getElementById('log');
+        function addLog(msg) {
+            log.textContent += msg + '\n';
+            console.log(msg);
+        }
+
+        addLog('=== 开始调试 ===');
+        addLog('canvas: ' + (canvas ? 'OK' : 'FAIL'));
+        addLog('ctx: ' + (ctx ? 'OK' : 'FAIL'));
+        addLog('blockSize: ' + blockSize);
+        addLog('groundY: ' + groundY);
+        addLog('platforms初始: ' + JSON.stringify(platforms));
+
+        // 手动创建一个平台
+        addLog('\n=== 创建测试平台 ===');
+        const testPlatform = new Platform(0, groundY, 600, blockSize, 'grass');
+        platforms.push(testPlatform);
+        addLog('创建平台: x=' + testPlatform.x + ', y=' + testPlatform.y + ', w=' + testPlatform.width + ', h=' + testPlatform.height);
+        addLog('platforms数组: ' + platforms.length + ' 个');
+
+        // 绘制测试
+        addLog('\n=== 开始绘制 ===');
+        ctx.fillStyle = '#87CEEB';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        addLog('背景绘制完成');
+
+        // 绘制平台
+        platforms.forEach((p, idx) => {
+            addLog('绘制平台 ' + idx + ': x=' + p.x + ', y=' + p.y + ', w=' + p.width + ', h=' + p.height + ', type=' + p.type);
+
+            // 简单绘制
+            ctx.fillStyle = '#5d4037';
+            ctx.fillRect(p.x, p.y, p.width, p.height);
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(p.x, p.y, p.width, p.height / 3);
+
+            addLog('平台 ' + idx + ' 绘制完成');
+        });
+
+        addLog('\n=== 调试完成 ===');
+        addLog('如果看到绿色地面，说明渲染正常');
+        addLog('如果只有蓝色背景，说明平台没有被绘制');
+    </script>
+</body>
+</html>

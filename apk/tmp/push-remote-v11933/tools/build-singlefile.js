@@ -1,0 +1,200 @@
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+function readText(filePath) {
+  return fs.readFileSync(filePath, "utf8");
+}
+
+function exists(filePath) {
+  return fs.existsSync(filePath);
+}
+
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function replaceByRegexOrInsert(haystack, regex, replacement, fallbackNeedle, label) {
+  if (regex.test(haystack)) {
+    return haystack.replace(regex, replacement);
+  }
+  if (fallbackNeedle && haystack.includes(fallbackNeedle)) {
+    console.warn(`[build-singlefile] Missing ${label}; inserted via fallback.`);
+    return haystack.replace(fallbackNeedle, `${replacement}\n${fallbackNeedle}`);
+  }
+  throw new Error(`Missing ${label} and fallback marker: ${fallbackNeedle || "(none)"}`);
+}
+
+function buildPreludeDataScript(data) {
+  const dataText = JSON.stringify(data, null, 2);
+  return `(() => {
+  const data = ${dataText};
+  const originalFetch = window.fetch ? window.fetch.bind(window) : null;
+  window.fetch = function(input, init){
+    const url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+    const key = url.replace(/^(\\.\\.\\/)+/, '');
+    if (data && Object.prototype.hasOwnProperty.call(data, key)) {
+      const body = JSON.stringify(data[key]);
+      return Promise.resolve(new Response(body, { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+    return originalFetch ? originalFetch(input, init) : Promise.reject(new Error('offline fetch blocked: ' + url));
+  };
+
+  const head = document.head;
+  const originalAppend = head.appendChild.bind(head);
+  head.appendChild = function(node){
+    try {
+      if (node && node.tagName === 'SCRIPT' && node.src && node.src.indexOf('words/vocabs/') !== -1) {
+        setTimeout(() => { if (typeof node.onload === 'function') node.onload(); }, 0);
+        return node;
+      }
+    } catch {}
+    return originalAppend(node);
+  };
+})();`;
+}
+
+function decodeUnicodeEscapes(str) {
+  return str.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+}
+
+function extractVocabFilesFromManifest(manifestJs) {
+  const files = [];
+  // Match both "file:" and strings in "files:" arrays
+  const re = /"(words\/vocabs\/[^"]+\.js)"/g;
+  let m;
+  while ((m = re.exec(manifestJs))) {
+    files.push(decodeUnicodeEscapes(m[1]));
+  }
+  return Array.from(new Set(files));
+}
+
+function makeInlineScript(content) {
+  return `<script>\n${content}\n</script>`;
+}
+
+function makeInlineStyle(css) {
+  return `<style>\n${css}\n</style>`;
+}
+
+function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
+  const templateHtml = readText(templateHtmlPath);
+
+  const stylesCss = readText(path.join(projectRoot, "src", "styles.css"));
+  const defaultsJs = readText(path.join(projectRoot, "src", "defaults.js"));
+  const storageJs = readText(path.join(projectRoot, "src", "storage.js"));
+  const manifestJs = readText(path.join(projectRoot, "words", "vocabs", "manifest.js"));
+
+  const vocabFiles = extractVocabFilesFromManifest(manifestJs);
+  const missingVocabFiles = [];
+  const vocabScripts = vocabFiles
+    .map((f) => {
+      const absPath = path.join(projectRoot, f);
+      if (!exists(absPath)) {
+        missingVocabFiles.push(f);
+        return "";
+      }
+      return makeInlineScript(readText(absPath));
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  if (missingVocabFiles.length > 0) {
+    console.warn(
+      `[build-singlefile] Missing vocab files (${missingVocabFiles.length}), skipped inlining:\n` +
+      missingVocabFiles.map((f) => `  - ${f}`).join("\n")
+    );
+  }
+
+  const embeddedJson = {
+    "config/game.json": readJson(path.join(projectRoot, "config", "game.json")),
+    "config/controls.json": readJson(path.join(projectRoot, "config", "controls.json")),
+    "config/levels.json": readJson(path.join(projectRoot, "config", "levels.json")),
+    "config/biomes.json": readJson(path.join(projectRoot, "config", "biomes.json")),
+    "words/words-base.json": readJson(path.join(projectRoot, "words", "words-base.json")),
+    "config/village.json": readJson(path.join(projectRoot, "config", "village.json")),
+  };
+
+  const preludeScript = buildPreludeDataScript(embeddedJson);
+
+  let html = templateHtml;
+  html = replaceByRegexOrInsert(
+    html,
+    /<link\s+rel=["']stylesheet["']\s+href=["']src\/styles\.css["']\s*\/?>/i,
+    makeInlineStyle(stylesCss),
+    "</head>",
+    "stylesheet link"
+  );
+  html = replaceByRegexOrInsert(
+    html,
+    /<script\s+src=["']src\/defaults\.js["']\s*><\/script>/i,
+    makeInlineScript(defaultsJs),
+    "</body>",
+    "defaults script"
+  );
+  html = replaceByRegexOrInsert(
+    html,
+    /<script\s+src=["']src\/storage\.js["']\s*><\/script>/i,
+    makeInlineScript(storageJs),
+    "</body>",
+    "storage script"
+  );
+  html = replaceByRegexOrInsert(
+    html,
+    /<script\s+src=["']words\/vocabs\/manifest\.js["']\s*><\/script>/i,
+    `${makeInlineScript(manifestJs)}\n${vocabScripts}\n${makeInlineScript(preludeScript)}`,
+    "</body>",
+    "manifest script"
+  );
+
+  const missingModuleFiles = [];
+  html = html.replace(/<script\s+src="src\/modules\/([^"]+)"><\/script>/g, (_match, moduleFile) => {
+    const relPath = `src/modules/${moduleFile}`;
+    const absPath = path.join(projectRoot, relPath);
+    if (!exists(absPath)) {
+      missingModuleFiles.push(relPath);
+      return makeInlineScript(
+        `console.warn(${JSON.stringify(`[build-singlefile] Missing module script skipped: ${relPath}`)});`
+      );
+    }
+    return makeInlineScript(readText(absPath));
+  });
+
+  if (missingModuleFiles.length > 0) {
+    console.warn(
+      `[build-singlefile] Missing module files (${missingModuleFiles.length}), skipped inlining:\n` +
+      missingModuleFiles.map((f) => `  - ${f}`).join("\n")
+    );
+  }
+
+  // Hard check: fail build if any module script src remains un-inlined
+  if (/<script[^>]+src="src\/modules\/[^"]+"/i.test(html)) {
+    throw new Error("build-singlefile: unresolved module script src remains in output HTML");
+  }
+
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
+  fs.writeFileSync(outPath, html, "utf8");
+}
+
+function main() {
+  const projectRoot = path.resolve(__dirname, "..");
+  const templateHtmlPath = path.join(projectRoot, "Game.html");
+
+  buildSingleFile({
+    projectRoot,
+    templateHtmlPath,
+    outPath: path.join(projectRoot, "out", "Game.offline.html"),
+  });
+
+  buildSingleFile({
+    projectRoot,
+    templateHtmlPath,
+    outPath: path.join(projectRoot, "out", "Minecraft_Mario_Words_Game.html"),
+  });
+}
+
+main();

@@ -1,0 +1,6 @@
+.form-field {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-primary);
+}

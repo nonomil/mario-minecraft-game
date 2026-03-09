@@ -1,0 +1,6 @@
+/* Split entry for modularized styles. Keep import order to preserve cascade. */
+@import url('./styles/00-base-and-layout.css');
+@import url('./styles/10-hud-and-panels.css');
+@import url('./styles/20-touch-controls.css');
+@import url('./styles/30-inventory-and-achievements.css');
+@import url('./styles/40-leaderboard-village-and-mobile.css');

@@ -1,0 +1,22 @@
+{
+  "name": "我的世界：单词大冒险",
+  "short_name": "单词冒险",
+  "description": "Minecraft 风格英语单词学习游戏",
+  "start_url": "/apk/Game.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#1a1a2e",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "docs/assets/app-icon-1024.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "docs/assets/app-icon-1024.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "scan_meta": {
+    "topic": "full-codebase-scan",
+    "mode": "M4",
+    "scope": ["src", "config", "docs"],
+    "reference_docs": [
+      "docs/scan/2026-03-04-full-codebase-scan/CODEBASE_MAP.md",
+      "CLAUDE.md"
+    ],
+    "generated_at": "2026-03-04T20:23:07Z",
+    "stats": {
+      "modules": 1,
+      "entry_points": 1,
+      "public_apis": 609,
+      "core_data_structures": 5
+    }
+  },
+  "module_inventory": [
+    {
+      "path": "src",
+      "responsibility": "游戏主模块，包含21个功能子模块（01-21）：配置、工具、音频、词汇、渲染、物理、玩家、敌人、道具、UI、生物群系、关卡、游戏循环、输入、相机、粒子、动画、碰撞、存档、成就、教程",
+      "public_symbols": ["clone", "exportSaveCode", "importSaveCode", "loadJsonWithFallback", "mergeDeep", "clamp", "parseKeyCodes", "ensureAudioContext", "ensureSpeechReady", "speakNativeTts", "setupBgm", "unlockAudio"],
+      "dependencies": []
+    }
+  ],
+  "entry_points": [
+    {
+      "name": "Game Loop",
+      "type": "html_js",
+      "trigger": "打开 Game.html",
+      "call_chain_top3": ["加载配置", "初始化游戏状态", "requestAnimationFrame 循环"]
+    }
+  ],
+  "data_structures": [
+    {
+      "name": "gameState",
+      "fields": [
+        {"name": "stage", "type": "string", "purpose": "游戏阶段"},
+        {"name": "score", "type": "number", "purpose": "当前分数"},
+        {"name": "lives", "type": "number", "purpose": "生命值"},
+        {"name": "level", "type": "number", "purpose": "当前关卡"},
+        {"name": "biome", "type": "string", "purpose": "当前生物群系"}
+      ],
+      "source": "src/modules/13-game-loop.js"
+    },
+    {
+      "name": "playerState",
+      "fields": [
+        {"name": "x", "type": "number", "purpose": "X坐标"},
+        {"name": "y", "type": "number", "purpose": "Y坐标"},
+        {"name": "vx", "type": "number", "purpose": "X速度"},
+        {"name": "vy", "type": "number", "purpose": "Y速度"},
+        {"name": "onGround", "type": "boolean", "purpose": "是否在地面"},
+        {"name": "canDoubleJump", "type": "boolean", "purpose": "是否可二段跳"}
+      ],
+      "source": "src/modules/07-player.js"
+    },
+    {
+      "name": "vocabPack",
+      "fields": [
+        {"name": "id", "type": "string", "purpose": "词汇包ID"},
+        {"name": "name", "type": "string", "purpose": "词汇包名称"},
+        {"name": "grade", "type": "string", "purpose": "年级"},
+        {"name": "words", "type": "array", "purpose": "单词列表"}
+      ],
+      "source": "src/modules/04-vocab.js"
+    },
+    {
+      "name": "config",
+      "fields": [
+        {"name": "physics", "type": "object", "purpose": "物理参数"},
+        {"name": "scoring", "type": "object", "purpose": "评分规则"},
+        {"name": "difficulty", "type": "object", "purpose": "难度设置"},
+        {"name": "controls", "type": "object", "purpose": "控制映射"}
+      ],
+      "source": "src/modules/01-config.js"
+    },
+    {
+      "name": "saveData",
+      "fields": [
+        {"name": "progress", "type": "object", "purpose": "游戏进度"},
+        {"name": "settings", "type": "object", "purpose": "用户设置"},
+        {"name": "achievements", "type": "array", "purpose": "成就列表"},
+        {"name": "stats", "type": "object", "purpose": "统计数据"}
+      ],
+      "source": "src/storage.js"
+    }
+  ],
+  "data_flows": [
+    {
+      "name": "game_initialization",
+      "input": "配置文件路径",
+      "stages": ["加载 config/*.json", "加载词汇包 manifest", "读取 LocalStorage 设置", "初始化游戏状态"],
+      "output": "gameState",
+      "side_effects": ["创建 AudioContext", "初始化 Canvas"]
+    },
+    {
+      "name": "game_loop",
+      "input": "用户输入 + 当前 gameState",
+      "stages": ["处理输入", "更新物理", "碰撞检测", "更新AI", "渲染"],
+      "output": "下一帧 gameState",
+      "side_effects": ["requestAnimationFrame 调度"]
+    },
+    {
+      "name": "vocab_learning",
+      "input": "玩家碰撞词汇卡片",
+      "stages": ["显示单词", "TTS 发音", "记录学习进度", "更新分数"],
+      "output": "更新后的 playerState",
+      "side_effects": ["写入 LocalStorage"]
+    },
+    {
+      "name": "save_game",
+      "input": "当前 gameState",
+      "stages": ["序列化状态", "压缩（可选）", "写入 LocalStorage"],
+      "output": "saveCode (Base64)",
+      "side_effects": ["LocalStorage 写入"]
+    }
+  ],
+  "api_surface": [
+    {
+      "name": "clone",
+      "signature": "clone(value)",
+      "file_line": "src/storage.js:45",
+      "callers": ["多处"],
+      "compatibility_strategy": "不可变，深拷贝逻辑"
+    },
+    {
+      "name": "exportSaveCode",
+      "signature": "exportSaveCode()",
+      "file_line": "src/storage.js:149",
+      "callers": ["UI导出按钮"],
+      "compatibility_strategy": "返回格式不可变（Base64）"
+    },
+    {
+      "name": "importSaveCode",
+      "signature": "importSaveCode(code)",
+      "file_line": "src/storage.js:163",
+      "callers": ["UI导入按钮"],
+      "compatibility_strategy": "必须向后兼容旧存档格式"
+    },
+    {
+      "name": "loadJsonWithFallback",
+      "signature": "loadJsonWithFallback(path, fallback)",
+      "file_line": "src/modules/01-config.js:14",
+      "callers": ["游戏初始化"],
+      "compatibility_strategy": "新增参数必须有默认值"
+    },
+    {
+      "name": "mergeDeep",
+      "signature": "mergeDeep(target, source)",
+      "file_line": "src/modules/02-utils.js:4",
+      "callers": ["配置合并"],
+      "compatibility_strategy": "不可变，递归合并逻辑"
+    },
+    {
+      "name": "speakNativeTts",
+      "signature": "speakNativeTts(tts, text, lang, rate)",
+      "file_line": "src/modules/03-audio.js:81",
+      "callers": ["词汇学习"],
+      "compatibility_strategy": "参数顺序不可变"
+    },
+    {
+      "name": "unlockAudio",
+      "signature": "unlockAudio()",
+      "file_line": "src/modules/03-audio.js:179",
+      "callers": ["用户首次交互"],
+      "compatibility_strategy": "必须在用户手势中调用"
+    }
+  ],
+  "reference_constraints": [
+    {
+      "source": "CLAUDE.md",
+      "constraint": "技术栈: Pure HTML5/CSS3/JavaScript (ES6), Canvas API, Web Audio/Speech Synthesis API, LocalStorage",
+      "impact": "扫描范围限定为前端代码，无后端",
+      "conflict_with": "",
+      "adopt": "CLAUDE.md"
+    },
+    {
+      "source": "CLAUDE.md",
+      "constraint": "核心模块: src/modules/01-21",
+      "impact": "扫描需覆盖所有21个模块",
+      "conflict_with": "",
+      "adopt": "CLAUDE.md"
+    },
+    {
+      "source": "CLAUDE.md",
+      "constraint": "配置驱动设计: config/*.json",
+      "impact": "扫描需包含配置文件",
+      "conflict_with": "",
+      "adopt": "CLAUDE.md"
+    },
+    {
+      "source": "CLAUDE.md",
+      "constraint": "游戏循环模式: 单体循环 13-game-loop.js",
+      "impact": "扫描需识别入口点",
+      "conflict_with": "",
+      "adopt": "CLAUDE.md"
+    }
+  ],
+  "impact_matrix": [
+    {
+      "change_point": "游戏循环 (13-game-loop.js)",
+      "direct_impact": "所有游戏逻辑的执行顺序和时序",
+      "indirect_impact": "物理、渲染、AI、输入处理的协调",
+      "validation_point": "端到端游戏测试 + 性能测试（FPS稳定性） + 各模块集成测试",
+      "risk_level": "high"
+    },
+    {
+      "change_point": "物理引擎 (06-physics.js)",
+      "direct_impact": "玩家移动、跳跃、碰撞行为",
+      "indirect_impact": "游戏手感、难度平衡、关卡可通过性",
+      "validation_point": "物理单元测试 + 跳跃/移动手感测试 + 关卡通关测试",
+      "risk_level": "high"
+    },
+    {
+      "change_point": "碰撞检测 (18-collision.js)",
+      "direct_impact": "玩家与敌人/道具/地形的交互",
+      "indirect_impact": "游戏公平性、得分系统、生命系统",
+      "validation_point": "碰撞边界测试 + 各类实体碰撞组合测试 + 边缘情况测试",
+      "risk_level": "high"
+    },
+    {
+      "change_point": "存储系统 (storage.js)",
+      "direct_impact": "存档保存/加载、设置持久化",
+      "indirect_impact": "用户进度、用户体验",
+      "validation_point": "存档导入/导出测试 + LocalStorage 配额测试 + 数据损坏恢复测试",
+      "risk_level": "medium"
+    }
+  ]
+}

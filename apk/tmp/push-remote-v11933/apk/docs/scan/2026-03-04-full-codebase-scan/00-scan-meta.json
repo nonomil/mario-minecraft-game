@@ -1,0 +1,24 @@
+{
+  "topic": "full-codebase-scan",
+  "mode": "M4",
+  "scope": ["src", "config", "docs"],
+  "reference_docs": [
+    "docs/scan/2026-03-04-full-codebase-scan/CODEBASE_MAP.md",
+    "CLAUDE.md"
+  ],
+  "generated_at": "2026-03-04T20:23:07Z",
+  "extraction_method": "local_ast_regex",
+  "ai_tokens_used": 0,
+  "supplemental_scan": false,
+  "stats": {
+    "total_files": 261,
+    "code_files": 34,
+    "doc_files": 217,
+    "modules": 1,
+    "functions": 609,
+    "classes": 0,
+    "entry_points": 1,
+    "public_apis": 609,
+    "core_data_structures": 5
+  }
+}

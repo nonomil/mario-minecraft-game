@@ -1,0 +1,16 @@
+{
+  "appId": "com.nonomil.mariominecraftgame",
+  "appName": "mario-minecraft-game",
+  "webDir": "web",
+  "android": {
+    "backgroundColor": "#1a1a1a",
+    "allowMixedContent": true
+  },
+  "plugins": {
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#1a1a1a"
+    }
+  }
+}
+

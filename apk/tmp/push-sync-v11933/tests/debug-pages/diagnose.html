@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>浏览器环境诊断</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #222; color: white; }
+        .info { color: #0f0; margin: 10px 0; }
+        .success { color: #0f0; font-weight: bold; }
+        .error { color: #f00; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>浏览器环境测试</h1>
+    <div id="info"></div>
+
+    <script>
+        const info = document.getElementById('info');
+        function log(msg) { info.innerHTML += msg + '<br>'; console.log(msg); }
+
+        log('开始测试...');
+        // 测试 localStorage
+        try {
+            localStorage.setItem('test_key', 'test_value');
+            const value = localStorage.getItem('test_key');
+            if (value === 'test_value') {
+                log('✓ localStorage: 正常');
+            } else {
+                log('✗ localStorage 失败: ' + value);
+            }
+        } catch(e) {
+            log('❌ localStorage 错误: ' + e.message);
+        }
+
+        // 测试 canvas
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas) {
+            log('✓ gameCanvas 元素存在');
+        } else {
+            log('✗ gameCanvas 元素不存在');
+        }
+
+        // 测试全局变量
+        log('window.MMWG_DEFAULTS: ' + (typeof window.MMWG_DEFAULTS));
+        log('window.MMWG_STORAGE: ' + (typeof window.MMWG_STORAGE));
+
+        // 测试关键函数
+        if (typeof drawBlock !== 'undefined') {
+            log('✗ drawBlock 存在（来自其他模块）');
+        } else {
+            log('✓ drawBlock 未定义');
+        }
+
+        if (typeof initGame !== 'undefined') {
+            log('✗ initGame 存在（来自其他模块）');
+        } else {
+            log('✓ initGame 未定义');
+        }
+
+        // 总结
+        log('<hr>');
+        log('<strong>诊断结果：</strong>');
+
+        let hasError = false;
+
+        if (!canvas) {
+            log('✗ gameCanvas 不存在 - 请确认是否在正确的页面');
+            hasError = true;
+        }
+
+        if (typeof window.MMWG_DEFAULTS === 'undefined') {
+            log('✗ defaults.js 未加载');
+            hasError = true;
+        }
+
+        if (typeof window.MMWG_STORAGE === 'undefined') {
+            log('✗ storage.js 未加载');
+            hasError = true;
+        }
+
+        // 检查是否是单文件问题
+        const scriptTags = document.getElementsByTagName('script');
+        log('找到 ' + scriptTags.length + ' 个 script 标签');
+
+        if (scriptTags.length === 0) {
+            log('✗ Game.html 没有 script 标签！请确认是否打开的是正确的文件');
+            hasError = true;
+        }
+
+        log('<hr>');
+        log('<strong>如果看到此消息，说明：</strong>');
+        log('1. 你打开的不是 Game.html（测试页面在 apk 文件夹内）');
+        log('2. 或者浏览器禁用了 JavaScript');
+        log('3. 或者文件路径错误');
+        log('');
+        log('<strong>请打开实际游戏页面：</strong> file:///G:/UserCode/Mario_Minecraft/mario-minecraft-game_V1/apk/Game.html');
+    </script>
+</body>
+</html>

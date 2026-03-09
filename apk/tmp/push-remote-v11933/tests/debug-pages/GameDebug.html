@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Game Debug</title>
+  <style>
+    :root { --bg:#0b1220; --panel:#121b2f; --line:#2a3653; --text:#dbe7ff; --muted:#92a4c8; --accent:#56b2ff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Consolas, "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
+    .debug-panel { padding: 10px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg,#16213a,#11192d); }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+    label { font-size: 12px; color: var(--muted); }
+    select, input, button { height: 30px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); padding: 0 8px; }
+    button { background: #1c2a47; cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    .status { font-size: 12px; color: #a9bee6; white-space: pre-wrap; }
+    .game-wrap { height: calc(100vh - 132px); }
+    iframe { width: 100%; height: 100%; border: 0; background: #000; }
+  </style>
+</head>
+<body>
+  <div class="debug-panel">
+    <div class="row">
+      <label>群系</label>
+      <select id="biome">
+        <option>forest</option><option>cherry_grove</option><option>snow</option><option>desert</option>
+        <option>mushroom_island</option><option>mountain</option><option>ocean</option><option>volcano</option>
+        <option>nether</option><option>deep_dark</option><option>end</option><option>sky_dimension</option>
+      </select>
+      <button id="btnBiome">切换群系</button>
+      <label>分数</label>
+      <input id="score" type="number" value="0" min="0" step="100">
+      <button id="btnScore">设置分数</button>
+      <label>BOSS</label>
+      <select id="boss"><option>wither</option><option>ghast</option><option>blaze</option><option>wither_skeleton</option></select>
+      <button id="btnBoss">触发BOSS</button>
+      <button id="btnVillage">生成村庄</button>
+      <button id="btnGod">无敌: OFF</button>
+    </div>
+    <div class="row">
+      <label>敌人</label>
+      <select id="enemy">
+        <option>zombie</option><option>skeleton</option><option>creeper</option><option>spider</option><option>enderman</option>
+        <option>piglin</option><option>bee</option><option>fox</option><option>spore_bug</option>
+        <option>magma_cube</option><option>fire_spirit</option><option>sculk_worm</option><option>shadow_stalker</option>
+      </select>
+      <button id="btnEnemy">生成敌人</button>
+      <label>物品</label>
+      <input id="item" type="text" value="diamond">
+      <label>数量</label>
+      <input id="count" type="number" value="1" min="1">
+      <button id="btnItem">给予物品</button>
+    </div>
+    <div id="status" class="status">status: waiting game iframe...</div>
+  </div>
+  <div class="game-wrap">
+    <iframe id="game" src="../../Game.html"></iframe>
+  </div>
+
+  <script>
+    const gameFrame = document.getElementById("game");
+    const statusEl = document.getElementById("status");
+    let debugGodMode = false;
+    let patched = false;
+
+    function gw() {
+      return gameFrame && gameFrame.contentWindow ? gameFrame.contentWindow : null;
+    }
+
+    function withGame(fn) {
+      const w = gw();
+      if (!w) return;
+      try { fn(w); } catch (e) { console.error(e); }
+    }
+
+    function patchGodMode(w) {
+      if (patched || !w || typeof w.damagePlayer !== "function") return;
+      const raw = w.damagePlayer;
+      w.damagePlayer = function () {
+        if (debugGodMode) return;
+        return raw.apply(this, arguments);
+      };
+      patched = true;
+    }
+
+    function setBiome() {
+      const biomeId = document.getElementById("biome").value;
+      withGame(w => {
+        patchGodMode(w);
+        const unlockScore = Number(w.getBiomeSwitchConfig?.().unlockScore?.[biomeId] ?? 0);
+        w.score = Math.max(Number(w.score) || 0, unlockScore);
+        w.runBestScore = Math.max(Number(w.runBestScore) || 0, unlockScore);
+        w.currentBiome = biomeId;
+        if (typeof w.updateWeatherForBiome === "function" && typeof w.getBiomeById === "function") {
+          w.updateWeatherForBiome(w.getBiomeById(biomeId));
+        }
+      });
+    }
+
+    function setScore() {
+      const s = Math.max(0, Number(document.getElementById("score").value) || 0);
+      withGame(w => {
+        patchGodMode(w);
+        w.score = s;
+        w.runBestScore = Math.max(Number(w.runBestScore) || 0, s);
+        const el = w.document.getElementById("score");
+        if (el) el.innerText = String(w.score);
+        if (typeof w.updateCurrentBiome === "function") w.updateCurrentBiome();
+      });
+    }
+
+    function spawnBoss() {
+      const boss = document.getElementById("boss").value;
+      withGame(w => {
+        patchGodMode(w);
+        if (w.bossArena && typeof w.bossArena.enter === "function") w.bossArena.enter(boss);
+      });
+    }
+
+    function spawnVillage() {
+      withGame(w => {
+        patchGodMode(w);
+        if (w.settings) w.settings.villageEnabled = true;
+        const interval = Number(w.villageConfig?.spawnScoreInterval) || 500;
+        const targetScore = Math.max(Number(w.getProgressScore?.() || 0), interval);
+        if (typeof w.maybeSpawnVillage === "function") w.maybeSpawnVillage(targetScore, Number(w.player?.x) || 0);
+      });
+    }
+
+    function spawnEnemy() {
+      const enemyType = document.getElementById("enemy").value;
+      withGame(w => {
+        patchGodMode(w);
+        let e = null;
+        const x = (Number(w.player?.x) || 0) + 140;
+        const y = (Number(w.groundY) || 530) - 32;
+        if (typeof w.createBiomeEnemy === "function") e = w.createBiomeEnemy(enemyType, x, y);
+        if (!e && typeof w.Enemy === "function") e = new w.Enemy(x, y, enemyType);
+        if (e && Array.isArray(w.enemies)) w.enemies.push(e);
+      });
+    }
+
+    function giveItem() {
+      const item = (document.getElementById("item").value || "").trim();
+      const count = Math.max(1, Number(document.getElementById("count").value) || 1);
+      if (!item) return;
+      withGame(w => {
+        patchGodMode(w);
+        if (!w.inventory) return;
+        w.inventory[item] = (Number(w.inventory[item]) || 0) + count;
+        if (typeof w.updateInventoryUI === "function") w.updateInventoryUI();
+      });
+    }
+
+    document.getElementById("btnBiome").addEventListener("click", setBiome);
+    document.getElementById("btnScore").addEventListener("click", setScore);
+    document.getElementById("btnBoss").addEventListener("click", spawnBoss);
+    document.getElementById("btnVillage").addEventListener("click", spawnVillage);
+    document.getElementById("btnEnemy").addEventListener("click", spawnEnemy);
+    document.getElementById("btnItem").addEventListener("click", giveItem);
+    document.getElementById("btnGod").addEventListener("click", function () {
+      debugGodMode = !debugGodMode;
+      this.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
+    });
+
+    setInterval(() => {
+      const w = gw();
+      if (!w) return;
+      patchGodMode(w);
+      statusEl.innerText =
+        "biome=" + (w.currentBiome || "n/a") +
+        "  score=" + (Number(w.score) || 0) +
+        "  runBestScore=" + (Number(w.runBestScore) || 0) +
+        "  villageEnabled=" + (w.settings?.villageEnabled) +
+        "  enemies=" + (Array.isArray(w.enemies) ? w.enemies.length : 0) +
+        "  bossActive=" + Boolean(w.bossArena?.active);
+    }, 500);
+  </script>
+</body>
+</html>

@@ -1,0 +1,397 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>宸插簾寮?- 璇蜂娇鐢?apk/Game.html</title>
+    <link rel="stylesheet" href="src/styles.css">
+    <style>
+        body { background: #1a1a2e; color: #eee; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .notice { text-align: center; max-width: 480px; padding: 40px; }
+        .notice h1 { color: #ff6b6b; font-size: 24px; }
+        .notice p { line-height: 1.8; color: #ccc; }
+        .notice a { color: #4ecdc4; text-decoration: underline; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="notice">
+        <h1>鈿狅笍 姝ゅ叆鍙ｅ凡搴熷純</h1>
+        <p>鏍圭洰褰曠増鏈笉鍐嶇淮鎶わ紝鎵€鏈夊紑鍙戝拰娴嬭瘯宸茶縼绉昏嚦 apk/ 鐩綍銆?/p>
+        <p><a href="apk/Game.html">馃憠 鐐瑰嚮杩涘叆 apk/Game.html</a></p>
+        <p style="margin-top:24px;font-size:13px;color:#888;">鏍圭洰褰曚唬鐮佷粎浣滃綊妗ｄ繚鐣欙紝鏂板姛鑳藉拰淇涓嶄細鍚屾鍒版澶勩€?/p>
+    </div>
+
+<div id="login-screen" class="login-screen visible">
+    <div class="login-container">
+        <h1 class="game-title">Minecraft 鍗曡瘝娓告垙</h1>
+        <div id="login-form" class="login-form">
+            <div class="form-group">
+                <label for="username-input">璇疯緭鍏ョ敤鎴峰悕</label>
+                <input type="text" id="username-input" placeholder="鏄电О" maxlength="20">
+            </div>
+            <button id="btn-login" class="game-btn">杩炴帴</button>
+        </div>
+        <div id="account-list" class="account-list">
+            <h3>宸叉湁璐﹀彿</h3>
+            <div id="accounts-container"></div>
+            <button id="btn-new-account" class="game-btn game-btn-small">鍒涘缓鏂拌处鍙?/button>
+        </div>
+    </div>
+</div>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+        <div id="ui-layer">
+        <div class="hud-top">
+            <div class="hud-box">馃獧 閲戝竵: <span id="score">0</span></div>
+            <div class="hud-box" id="hp"></div>
+            <div class="hud-box" id="word-display">Start!</div>
+            <div class="hud-box" id="level-info">馃尣 妫灄</div>
+            <div class="hud-box" id="weapon-info">鈿旓笍 鐭冲墤</div>
+            <div class="hud-box hud-box-clickable" id="armor-status">馃洝锔?鏃?/div>
+            <div class="hud-box hud-box-clickable" id="inventory-status">馃帓 鑳屽寘</div>
+        </div>
+        
+        <div class="btn-group">
+            <button class="game-btn" id="btn-settings">鈿欙笍 璁剧疆</button>
+            <button class="game-btn" id="btn-profile">馃搵 妗ｆ</button>
+            <button class="game-btn" id="btn-repeat-pause">馃攰 閲嶈/鏆傚仠</button>
+        </div>
+
+        <div class="inventory-bar">
+            <button class="inv-slot inv-slot-button" id="btn-summon-golem" title="鍙敜鍌€鍎?(X)">
+                <span class="inv-icon">馃椏</span>
+                <span class="inv-label">鍙敜</span>
+            </button>
+            <div class="inv-slot" title="閽荤煶"><span class="inv-icon">馃拵</span><span class="inv-count" id="count-diamond">0</span></div>
+            <div class="inv-slot" title="鍗楃摐"><span class="inv-icon">馃巸</span><span class="inv-count" id="count-pumpkin">0</span></div>
+            <div class="inv-slot" title="閾佸潡"><span class="inv-icon">馃П</span><span class="inv-count" id="count-iron">0</span></div>
+            <div class="inv-slot" title="鏈ㄦ"><span class="inv-icon">馃ア</span><span class="inv-count" id="count-stick">0</span></div>
+            <div class="inv-slot" title="鐭冲墤"><span class="inv-icon">鈿旓笍</span><span class="inv-count" id="count-stone_sword">0</span></div>
+            <div class="inv-slot" title="閾侀晲"><span class="inv-icon">鉀忥笍</span><span class="inv-count" id="count-iron_pickaxe">0</span></div>
+            <div class="inv-slot" title="寮?><span class="inv-icon">馃徆</span><span class="inv-count" id="count-bow">0</span></div>
+            <div class="inv-slot" title="绠煝"><span class="inv-icon">馃徆</span><span class="inv-count" id="count-arrow">0</span></div>
+        </div>
+
+        <div id="toast">Level Up!</div>
+        <div id="word-card" aria-hidden="true">
+            <div class="word-card-inner">
+                <div class="word-card-en" id="word-card-en"></div>
+                <div class="word-card-zh" id="word-card-zh"></div>
+                <div id="word-card-phrase" style="display:none;font-size:12px;color:#FFD54F;margin-top:4px;font-style:italic;"></div>
+                <img class="word-card-image" id="word-card-image" alt="" style="display:none;">
+            </div>
+        </div>
+
+        <div id="touch-controls" aria-hidden="true">
+            <div class="touch-left">
+                <button class="touch-btn" data-action="left">猬咃笍</button>
+                <button class="touch-btn" data-action="right">鉃★笍</button>
+            </div>
+            <div class="touch-right">
+                <button class="touch-btn" data-action="use-diamond">馃拵</button>
+                <button class="touch-btn" data-action="interact">馃О</button>
+                <button class="touch-btn" data-action="switch">馃攣</button>
+                <span class="touch-spacer"></span>
+                <button class="touch-btn" data-action="jump">猡达笍</button>
+                <button class="touch-btn" data-action="attack">馃棥锔?/button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="screen-overlay" class="screen-overlay" aria-hidden="true">
+    <div class="overlay-card">
+        <div class="overlay-title" id="overlay-title">鍑嗗寮€濮?/div>
+                        <div class="overlay-text" id="overlay-text">
+            猬咃笍鉃★笍 绉诲姩  猬嗭笍 璺?鍙簩娈佃烦)<br>
+            鈿旓笍 鏀诲嚮  馃攧 鍒囨崲姝﹀櫒  馃拵 浣跨敤閽荤煶<br>
+            馃摝 鎵撳紑瀹濈  鉀忥笍 閲囬泦
+        </div>
+        <div class="overlay-buttons">
+            <button class="overlay-btn" id="btn-overlay-action">寮€濮嬫父鎴?/button>
+            <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">绉垎澶嶆椿</button>
+        </div>
+    </div>
+</div>
+
+<div id="settings-modal" aria-hidden="true">
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-label="娓告垙璁剧疆">
+        <div class="settings-title">娓告垙璁剧疆</div>
+
+        <div class="settings-actions settings-actions-top">
+            <button class="game-btn" id="btn-settings-save">淇濆瓨</button>
+        </div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-label">鎿嶄綔鎻愮ず</div>
+                                    <div class="settings-hint">
+                猬咃笍鉃★笍 绉诲姩  猬嗭笍 璺?鍙簩娈佃烦)<br>
+            鈿旓笍 鏀诲嚮  馃攧 鍒囨崲姝﹀櫒  馃拵 浣跨敤閽荤煶<br>
+            馃摝 鎵撳紑瀹濈  鉀忥笍 閲囬泦
+            </div>
+        </div>
+
+
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-learning-mode"> 瀛︿範妯″紡(鏇村皯骞叉壈)</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-challenge-mode"> 瀛︿範鎸戞垬(闅忔満寮瑰嚭)</label>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">鎸戞垬棰戠巼</div>
+            <select class="settings-select" id="opt-challenge-frequency">
+                <option value="0.15">寰堝皯</option>
+                <option value="0.3">閫備腑</option>
+                <option value="0.5">棰戠箒</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">璇嶅崱鏄剧ず鏃堕暱</div>
+            <select class="settings-select" id="opt-word-card-duration">
+                <option value="600">鐭?(0.6绉?</option>
+                <option value="900">涓?(0.9绉?</option>
+                <option value="2000">闀?(2绉?</option>
+                <option value="3000">寰堥暱 (3绉?</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-speech"> 鏈楄鍗曡瘝</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-speech-zh-enabled"> 鏈楄涓枃閲婁箟</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-bgm"> 鑳屾櫙闊充箰</label>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">鑻辨枃璇€?/div>
+            <input class="settings-range" id="opt-speech-en" type="range" min="0.5" max="1.2" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">涓枃璇€?/div>
+            <input class="settings-range" id="opt-speech-zh" type="range" min="0.5" max="1.2" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">鐣岄潰澶у皬</div>
+            <input class="settings-range" id="opt-ui-scale" type="range" min="0.8" max="1.4" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">鏄剧ず妯″紡</div>
+            <select class="settings-select" id="opt-device-mode">
+                <option value="auto">鑷姩</option>
+                <option value="phone">鎵嬫満</option>
+                <option value="tablet">骞虫澘</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">灞忓箷鏂瑰悜</div>
+            <select class="settings-select" id="opt-orientation-lock">
+                <option value="auto">鑷姩</option>
+                <option value="portrait">绔栧睆</option>
+                <option value="landscape">妯睆</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">鍔ㄤ綔閫熷害</div>
+            <input class="settings-range" id="opt-motion-scale" type="range" min="0.8" max="1.8" step="0.05">
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">绉诲姩閫熷害</div>
+            <select class="settings-select" id="opt-speed">
+                <option value="slow">鎱紙缁冧範锛?/option>
+                <option value="normal">鏅€?/option>
+                <option value="fast">蹇紙鎸戞垬锛?/option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">娓告垙闅惧害</div>
+            <select class="settings-select" id="opt-difficulty">
+                <option value="auto">鑷姩(闅忕Н鍒?</option>
+                <option value="鏂版墜">鏂版墜</option>
+                <option value="绠€鍗?>绠€鍗?/option>
+                <option value="鏅€?>鏅€?/option>
+                <option value="鍥伴毦">鍥伴毦</option>
+                <option value="鍦扮嫳">鍦扮嫳</option>
+            </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">鐜鍒囨崲鍛ㄦ湡(鍒嗘暟)</div>
+            <input class="settings-range" id="opt-biome-step" type="range" min="50" max="1000" step="50">
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-touch"> 灞忓箷鎸夐敭</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-no-repeat"> 鍗曡瘝涓嶉噸澶?杞崲)</label>
+        </div>
+
+        <div class="settings-row">
+            <div class="settings-label">璇嶅簱</div>
+            <select class="settings-select" id="opt-vocab"></select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">璇嶅簱棰勮</div>
+            <div id="vocab-preview" class="settings-hint">鑷姩杞崲璇嶅簱</div>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-show-image"> 鏄剧ず鍥剧墖</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-word-gate"> 璇嶈闂搁棬(瑙﹀彂棰濆鎸戞垬)</label>
+        </div>
+        <div class="settings-row">
+            <label class="settings-label"><input type="checkbox" id="opt-word-match"> 璇嶈鍖归厤澶嶆椿(缁撴潫鏃?</label>
+        </div>
+
+        <div class="settings-row settings-row-keys">
+            <div class="settings-label">鎸夐敭(閫楀彿鍒嗛殧): 璺宠穬,鏀诲嚮,浜や簰,鍒囨崲,浣跨敤閽荤煶</div>
+            <input class="settings-input" id="opt-keys" type="text" value="Space,KeyJ,KeyY,KeyK,KeyZ">
+        </div>
+
+        <div class="settings-row settings-row-progress">
+            <div class="settings-label">璇嶅簱杞崲</div>
+            <div class="settings-progress" id="progress-vocab">鏈姞杞?/div>
+            <button class="game-btn game-btn-danger" id="btn-reset-progress">閲嶇疆杞崲</button>
+        </div>
+
+        <div class="settings-actions">
+            <button class="game-btn" id="btn-settings-close">鍏抽棴</button>
+        </div>
+    </div>
+</div>
+<div id="armor-select-modal" class="armor-modal" aria-hidden="true">
+    <div class="armor-modal-content">
+        <div class="armor-modal-header">
+            <span>鐩旂敳浠撳簱</span>
+            <button class="game-btn game-btn-small" id="btn-armor-close">鍏抽棴</button>
+        </div>
+        <div class="armor-list"></div>
+    </div>
+</div>
+
+<div id="inventory-modal" class="inventory-modal" aria-hidden="true">
+    <div class="inventory-panel">
+        <div class="inventory-header">
+            <span>馃帓 鑳屽寘</span>
+            <button class="game-btn game-btn-small" id="btn-inventory-close">鍏抽棴</button>
+        </div>
+        <div class="inventory-tabs">
+            <button class="inventory-tab active" data-tab="items">鐗╁搧</button>
+            <button class="inventory-tab" data-tab="materials">鏉愭枡</button>
+            <button class="inventory-tab" data-tab="equipment">瑁呭</button>
+        </div>
+        <div class="inventory-content" id="inventory-content"></div>
+    </div>
+</div>
+
+<div id="challenge-modal" class="learning-modal" aria-hidden="true">
+    <div class="learning-modal-content">
+        <div class="learning-modal-header">
+            <span>瀛︿範鎸戞垬</span>
+        </div>
+        <div class="learning-modal-question" id="challenge-question"></div>
+        <div class="learning-modal-options" id="challenge-options"></div>
+        <div class="learning-modal-input" id="challenge-input-wrapper">
+            <input type="text" id="challenge-input" placeholder="杈撳叆鑻辨枃鎴栦腑鏂? autocomplete="off">
+        </div>
+        <div class="learning-modal-footer">
+            <div class="learning-modal-timer" id="challenge-timer">10</div>
+            <button class="game-btn game-btn-small" id="challenge-repeat">鍐嶅惉涓€娆?/button>
+        </div>
+    </div>
+</div>
+
+<div id="word-match-screen" class="learning-modal" aria-hidden="true">
+    <div class="learning-modal-content word-match-content">
+        <div class="word-match-header">
+            <h2>璇嶈鍖归厤澶嶆椿</h2>
+            <div class="match-timer" id="match-timer">30</div>
+        </div>
+        <p class="word-match-subtitle" id="match-subtitle">灏嗚嫳鏂囦笌涓枃鎷夌嚎杩炲锛屽彧鏈?娆℃満浼?/p>
+        <div class="match-container">
+            <div class="match-column" id="match-left"></div>
+            <svg class="match-lines" id="match-lines" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="match-column" id="match-right"></div>
+        </div>
+        <div class="match-footer">
+            <div>宸茶繛绾? <span id="match-count">0</span>/<span id="match-total">0</span></div>
+            <button class="game-btn" id="btn-match-submit">鎻愪氦澶嶆椿</button>
+        </div>
+        <div id="match-result" class="match-result"></div>
+    </div>
+</div>
+
+<div id="profile-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content">
+        <div class="profile-header">
+            <h2 id="profile-username">鐜╁妗ｆ</h2>
+            <button class="game-btn game-btn-small" id="btn-profile-close">鍏抽棴</button>
+        </div>
+        <div class="profile-stats">
+            <div>娓告垙娆℃暟: <span id="profile-games">0</span></div>
+            <div>鏈€楂樼Н鍒? <span id="profile-highscore">0</span></div>
+            <div>宸插璇嶆暟: <span id="profile-words">0</span></div>
+            <div>娓哥帺鏃堕暱: <span id="profile-playtime">0 鍒嗛挓</span></div>
+            <!-- v1.6.4 鏂板锛氱瓟棰樼粺璁?-->
+            <div>馃摑 绛旈缁熻: <span id="profile-challenge-stats">-</span></div>
+        </div>
+        <!-- v1.6.4 鏂板锛氬崟璇嶆湰鎸夐挳 -->
+        <div style="text-align:center;margin:15px 0;">
+            <button id="btn-vocab-book" class="game-btn">馃摉 鎴戠殑鍗曡瘝鏈?/button>
+        </div>
+        <div class="profile-achievements">
+            <h3>鎴愬氨</h3>
+            <div id="achievements-container"></div>
+        </div>
+    </div>
+</div>
+
+<!-- v1.6.4 鏂板锛氬崟璇嶆湰妯℃€佹 -->
+<div id="vocab-book-modal" class="profile-modal" aria-hidden="true">
+    <div class="profile-modal-content vocab-book">
+        <div class="profile-header">
+            <h2>馃摉 鎴戠殑鍗曡瘝鏈?/h2>
+            <button class="game-btn game-btn-small" id="btn-close-vocab-book">鍏抽棴</button>
+        </div>
+        <div id="vocab-book-list" class="vocab-book-list"></div>
+    </div>
+</div>
+
+<script src="src/defaults.js"></script>
+<script src="src/storage.js"></script>
+<script src="words/vocabs/manifest.js"></script>
+<!-- main.js 妯″潡鍖栨媶鍒?(鍘?main.js 鎸夊姛鑳芥媶鍒嗕负浠ヤ笅妯″潡) -->
+<script src="src/modules/01-config.js"></script>
+<script src="src/modules/02-utils.js"></script>
+<script src="src/modules/03-audio.js"></script>
+<script src="src/modules/04-weapons.js"></script>
+<script src="src/modules/05-difficulty.js"></script>
+<script src="src/modules/06-biome.js"></script>
+<script src="src/modules/07-viewport.js"></script>
+<script src="src/modules/08-account.js"></script>
+<script src="src/modules/09-vocab.js"></script>
+<script src="src/modules/10-ui.js"></script>
+<script src="src/modules/11-game-init.js"></script>
+<script src="src/modules/12-challenges.js"></script>
+<script src="src/modules/13-game-loop.js"></script>
+<script src="src/modules/entity-names.js"></script>
+<script src="src/modules/14-renderer-main.js"></script>
+<script src="src/modules/14-renderer-entities.js"></script>
+<script src="src/modules/14-renderer-decorations.js"></script>
+<script src="src/modules/15-entities-base.js"></script>
+<script src="src/modules/15-entities-decorations.js"></script>
+<script src="src/modules/15-entities-particles.js"></script>
+<script src="src/modules/15-entities-combat.js"></script>
+<script src="src/modules/15-entities-boss.js"></script>
+<script src="src/modules/12-village-challenges.js"></script>
+<script src="src/modules/18-village.js"></script>
+<script src="src/modules/18-village-render.js"></script>
+<script src="src/modules/16-events.js"></script>
+<script src="src/modules/17-bootstrap.js"></script>
+</body>
+</html>
+
+

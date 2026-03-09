@@ -1,0 +1,4925 @@
+{
+  "scan_meta": {
+    "scan_date": "2026-03-04T20:23:07.116145",
+    "scan_mode": "extract",
+    "scan_scope": [
+      "src",
+      "config",
+      "docs"
+    ],
+    "scan_topic": "full-codebase-scan",
+    "extraction_method": "local_ast_regex",
+    "ai_tokens_used": 0
+  },
+  "modules": [
+    {
+      "name": "src",
+      "path": "src",
+      "responsibility": "包含 34 个文件，609 个函数",
+      "exported_symbols": [
+        "clone",
+        "exportSaveCode",
+        "importSaveCode",
+        "loadJsonWithFallback",
+        "loadJsonWithFallback",
+        "mergeDeep",
+        "clamp",
+        "parseKeyCodes",
+        "ensureAudioContext",
+        "ensureSpeechReady",
+        "ensureSpeechVoices",
+        "pickVoice",
+        "getNativeTts",
+        "speakNativeTts",
+        "normalizeSpeechText",
+        "buildOnlineTtsUrl",
+        "playOnlineTtsSequence",
+        "setupBgm",
+        "applyBgmSetting",
+        "unlockAudio"
+      ],
+      "dependencies": [],
+      "file_count": 34,
+      "loc": 21005
+    }
+  ],
+  "functions": [
+    {
+      "name": "clone",
+      "module_id": "mod:src",
+      "signature": "clone(value)",
+      "file_path": "src/storage.js",
+      "line_number": 45,
+      "is_public": true
+    },
+    {
+      "name": "exportSaveCode",
+      "module_id": "mod:src",
+      "signature": "exportSaveCode()",
+      "file_path": "src/storage.js",
+      "line_number": 149,
+      "is_public": true
+    },
+    {
+      "name": "importSaveCode",
+      "module_id": "mod:src",
+      "signature": "importSaveCode(code)",
+      "file_path": "src/storage.js",
+      "line_number": 163,
+      "is_public": true
+    },
+    {
+      "name": "loadJsonWithFallback",
+      "module_id": "mod:src",
+      "signature": "loadJsonWithFallback()",
+      "file_path": "src/config/loader.js",
+      "line_number": 1,
+      "is_public": true
+    },
+    {
+      "name": "loadJsonWithFallback",
+      "module_id": "mod:src",
+      "signature": "loadJsonWithFallback(path, fallback)",
+      "file_path": "src/modules/01-config.js",
+      "line_number": 14,
+      "is_public": true
+    },
+    {
+      "name": "mergeDeep",
+      "module_id": "mod:src",
+      "signature": "mergeDeep(target, source)",
+      "file_path": "src/modules/02-utils.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "clamp",
+      "module_id": "mod:src",
+      "signature": "clamp(value, min, max)",
+      "file_path": "src/modules/02-utils.js",
+      "line_number": 18,
+      "is_public": true
+    },
+    {
+      "name": "parseKeyCodes",
+      "module_id": "mod:src",
+      "signature": "parseKeyCodes(raw)",
+      "file_path": "src/modules/02-utils.js",
+      "line_number": 22,
+      "is_public": true
+    },
+    {
+      "name": "ensureAudioContext",
+      "module_id": "mod:src",
+      "signature": "ensureAudioContext()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "ensureSpeechReady",
+      "module_id": "mod:src",
+      "signature": "ensureSpeechReady()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 11,
+      "is_public": true
+    },
+    {
+      "name": "ensureSpeechVoices",
+      "module_id": "mod:src",
+      "signature": "ensureSpeechVoices()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 25,
+      "is_public": true
+    },
+    {
+      "name": "pickVoice",
+      "module_id": "mod:src",
+      "signature": "pickVoice(langPrefix)",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 51,
+      "is_public": true
+    },
+    {
+      "name": "getNativeTts",
+      "module_id": "mod:src",
+      "signature": "getNativeTts()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 59,
+      "is_public": true
+    },
+    {
+      "name": "speakNativeTts",
+      "module_id": "mod:src",
+      "signature": "speakNativeTts(tts, text, lang, rate)",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 81,
+      "is_public": true
+    },
+    {
+      "name": "normalizeSpeechText",
+      "module_id": "mod:src",
+      "signature": "normalizeSpeechText(primary, fallback)",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 100,
+      "is_public": true
+    },
+    {
+      "name": "buildOnlineTtsUrl",
+      "module_id": "mod:src",
+      "signature": "buildOnlineTtsUrl(text, lang)",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 109,
+      "is_public": true
+    },
+    {
+      "name": "playOnlineTtsSequence",
+      "module_id": "mod:src",
+      "signature": "playOnlineTtsSequence(sequence)",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 114,
+      "is_public": true
+    },
+    {
+      "name": "setupBgm",
+      "module_id": "mod:src",
+      "signature": "setupBgm()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 151,
+      "is_public": true
+    },
+    {
+      "name": "applyBgmSetting",
+      "module_id": "mod:src",
+      "signature": "applyBgmSetting()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 164,
+      "is_public": true
+    },
+    {
+      "name": "unlockAudio",
+      "module_id": "mod:src",
+      "signature": "unlockAudio()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 179,
+      "is_public": true
+    },
+    {
+      "name": "wireAudioUnlock",
+      "module_id": "mod:src",
+      "signature": "wireAudioUnlock()",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 199,
+      "is_public": true
+    },
+    {
+      "name": "playHitSfx",
+      "module_id": "mod:src",
+      "signature": "playHitSfx(intensity = 1)",
+      "file_path": "src/modules/03-audio.js",
+      "line_number": 207,
+      "is_public": true
+    },
+    {
+      "name": "getArrowCount",
+      "module_id": "mod:src",
+      "signature": "getArrowCount()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "showNoArrowToast",
+      "module_id": "mod:src",
+      "signature": "showNoArrowToast()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 9,
+      "is_public": true
+    },
+    {
+      "name": "unlockWeapon",
+      "module_id": "mod:src",
+      "signature": "unlockWeapon(id)",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 16,
+      "is_public": true
+    },
+    {
+      "name": "syncWeaponsFromInventory",
+      "module_id": "mod:src",
+      "signature": "syncWeaponsFromInventory()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 25,
+      "is_public": true
+    },
+    {
+      "name": "switchWeapon",
+      "module_id": "mod:src",
+      "signature": "switchWeapon()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 32,
+      "is_public": true
+    },
+    {
+      "name": "updateWeaponUI",
+      "module_id": "mod:src",
+      "signature": "updateWeaponUI()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 54,
+      "is_public": true
+    },
+    {
+      "name": "updateEquipStatus",
+      "module_id": "mod:src",
+      "signature": "updateEquipStatus()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 58,
+      "is_public": true
+    },
+    {
+      "name": "startBowCharge",
+      "module_id": "mod:src",
+      "signature": "startBowCharge()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 68,
+      "is_public": true
+    },
+    {
+      "name": "releaseBowShot",
+      "module_id": "mod:src",
+      "signature": "releaseBowShot(forceCharge = null)",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 79,
+      "is_public": true
+    },
+    {
+      "name": "emitDigParticles",
+      "module_id": "mod:src",
+      "signature": "emitDigParticles(x, y, type)",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 106,
+      "is_public": true
+    },
+    {
+      "name": "digGroundBlock",
+      "module_id": "mod:src",
+      "signature": "digGroundBlock()",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 133,
+      "is_public": true
+    },
+    {
+      "name": "performMeleeAttack",
+      "module_id": "mod:src",
+      "signature": "performMeleeAttack(weapon)",
+      "file_path": "src/modules/04-weapons.js",
+      "line_number": 293,
+      "is_public": true
+    },
+    {
+      "name": "getProgressScore",
+      "module_id": "mod:src",
+      "signature": "getProgressScore()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "getDifficultyConfig",
+      "module_id": "mod:src",
+      "signature": "getDifficultyConfig()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 7,
+      "is_public": true
+    },
+    {
+      "name": "getDifficultyTier",
+      "module_id": "mod:src",
+      "signature": "getDifficultyTier(scoreValue)",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 14,
+      "is_public": true
+    },
+    {
+      "name": "computeDifficultyState",
+      "module_id": "mod:src",
+      "signature": "computeDifficultyState()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 50,
+      "is_public": true
+    },
+    {
+      "name": "updateDifficultyState",
+      "module_id": "mod:src",
+      "signature": "updateDifficultyState(force = false)",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 134,
+      "is_public": true
+    },
+    {
+      "name": "getDifficultyState",
+      "module_id": "mod:src",
+      "signature": "getDifficultyState()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 145,
+      "is_public": true
+    },
+    {
+      "name": "getLootConfig",
+      "module_id": "mod:src",
+      "signature": "getLootConfig()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 150,
+      "is_public": true
+    },
+    {
+      "name": "resetInventory",
+      "module_id": "mod:src",
+      "signature": "resetInventory()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 160,
+      "is_public": true
+    },
+    {
+      "name": "resetProjectiles",
+      "module_id": "mod:src",
+      "signature": "resetProjectiles()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 167,
+      "is_public": true
+    },
+    {
+      "name": "getEnemyConfig",
+      "module_id": "mod:src",
+      "signature": "getEnemyConfig()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 174,
+      "is_public": true
+    },
+    {
+      "name": "getGolemConfig",
+      "module_id": "mod:src",
+      "signature": "getGolemConfig()",
+      "file_path": "src/modules/05-difficulty.js",
+      "line_number": 184,
+      "is_public": true
+    },
+    {
+      "name": "normalizeBiomeBundle",
+      "module_id": "mod:src",
+      "signature": "normalizeBiomeBundle(raw)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeById",
+      "module_id": "mod:src",
+      "signature": "getBiomeById(id)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 17,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeSwitchConfig",
+      "module_id": "mod:src",
+      "signature": "getBiomeSwitchConfig()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 21,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeIdForScore",
+      "module_id": "mod:src",
+      "signature": "getBiomeIdForScore(scoreValue)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 28,
+      "is_public": true
+    },
+    {
+      "name": "selectBiome",
+      "module_id": "mod:src",
+      "signature": "selectBiome(x, scoreValue)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 41,
+      "is_public": true
+    },
+    {
+      "name": "updateCurrentBiome",
+      "module_id": "mod:src",
+      "signature": "updateCurrentBiome()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 52,
+      "is_public": true
+    },
+    {
+      "name": "applyBiomeTransition",
+      "module_id": "mod:src",
+      "signature": "applyBiomeTransition(nextBiome, progressScore, hasFireResistance)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 68,
+      "is_public": true
+    },
+    {
+      "name": "updateWeatherForBiome",
+      "module_id": "mod:src",
+      "signature": "updateWeatherForBiome(biome)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 97,
+      "is_public": true
+    },
+    {
+      "name": "applyBiomeEffectsToPlayer",
+      "module_id": "mod:src",
+      "signature": "applyBiomeEffectsToPlayer()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 103,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeVisitRound",
+      "module_id": "mod:src",
+      "signature": "getBiomeVisitRound(biomeId)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 136,
+      "is_public": true
+    },
+    {
+      "name": "resetBiomeVisitCount",
+      "module_id": "mod:src",
+      "signature": "resetBiomeVisitCount()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 140,
+      "is_public": true
+    },
+    {
+      "name": "setBiomeVisitRound",
+      "module_id": "mod:src",
+      "signature": "setBiomeVisitRound(biomeId, roundValue)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 144,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeVisitCountSnapshot",
+      "module_id": "mod:src",
+      "signature": "getBiomeVisitCountSnapshot()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 150,
+      "is_public": true
+    },
+    {
+      "name": "resetBiomeGateState",
+      "module_id": "mod:src",
+      "signature": "resetBiomeGateState()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 169,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeGateConfig",
+      "module_id": "mod:src",
+      "signature": "getBiomeGateConfig()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 180,
+      "is_public": true
+    },
+    {
+      "name": "shouldTriggerBiomeGate",
+      "module_id": "mod:src",
+      "signature": "shouldTriggerBiomeGate(fromBiomeId, toBiomeId)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 198,
+      "is_public": true
+    },
+    {
+      "name": "startBiomeGate",
+      "module_id": "mod:src",
+      "signature": "startBiomeGate(fromBiomeId, toBiomeId)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 216,
+      "is_public": true
+    },
+    {
+      "name": "handleBiomeGateVictory",
+      "module_id": "mod:src",
+      "signature": "handleBiomeGateVictory(payload)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 234,
+      "is_public": true
+    },
+    {
+      "name": "refreshBiomeGateState",
+      "module_id": "mod:src",
+      "signature": "refreshBiomeGateState()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 254,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeGateStateSnapshot",
+      "module_id": "mod:src",
+      "signature": "getBiomeGateStateSnapshot()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 274,
+      "is_public": true
+    },
+    {
+      "name": "canLeaveBiome",
+      "module_id": "mod:src",
+      "signature": "canLeaveBiome(currentScore)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 287,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeStayDebugInfo",
+      "module_id": "mod:src",
+      "signature": "getBiomeStayDebugInfo(scoreValue = getProgressScore()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 298,
+      "is_public": true
+    },
+    {
+      "name": "recordBiomeStay",
+      "module_id": "mod:src",
+      "signature": "recordBiomeStay(biomeId, currentScore)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 318,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeStayStats",
+      "module_id": "mod:src",
+      "signature": "getBiomeStayStats()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 333,
+      "is_public": true
+    },
+    {
+      "name": "resetBiomeStayStats",
+      "module_id": "mod:src",
+      "signature": "resetBiomeStayStats()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 337,
+      "is_public": true
+    },
+    {
+      "name": "hasSunscreenBuff",
+      "module_id": "mod:src",
+      "signature": "hasSunscreenBuff()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 346,
+      "is_public": true
+    },
+    {
+      "name": "hasHeatProtection",
+      "module_id": "mod:src",
+      "signature": "hasHeatProtection()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 350,
+      "is_public": true
+    },
+    {
+      "name": "buildSkyWindZone",
+      "module_id": "mod:src",
+      "signature": "buildSkyWindZone(baseX, overrideType = null)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 369,
+      "is_public": true
+    },
+    {
+      "name": "clearSkyWindPlatforms",
+      "module_id": "mod:src",
+      "signature": "clearSkyWindPlatforms()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 384,
+      "is_public": true
+    },
+    {
+      "name": "resetSkyWindZones",
+      "module_id": "mod:src",
+      "signature": "resetSkyWindZones()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 388,
+      "is_public": true
+    },
+    {
+      "name": "spawnSkyWindRewardPlatform",
+      "module_id": "mod:src",
+      "signature": "spawnSkyWindRewardPlatform(zone)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 394,
+      "is_public": true
+    },
+    {
+      "name": "ensureSkyWindZones",
+      "module_id": "mod:src",
+      "signature": "ensureSkyWindZones()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 410,
+      "is_public": true
+    },
+    {
+      "name": "recycleSkyWindZones",
+      "module_id": "mod:src",
+      "signature": "recycleSkyWindZones()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 426,
+      "is_public": true
+    },
+    {
+      "name": "updateSkyWindZoneParticles",
+      "module_id": "mod:src",
+      "signature": "updateSkyWindZoneParticles(zone)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 448,
+      "is_public": true
+    },
+    {
+      "name": "applySkyWindForceToPlayer",
+      "module_id": "mod:src",
+      "signature": "applySkyWindForceToPlayer(zone)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 471,
+      "is_public": true
+    },
+    {
+      "name": "updateSkyWindSystem",
+      "module_id": "mod:src",
+      "signature": "updateSkyWindSystem()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 486,
+      "is_public": true
+    },
+    {
+      "name": "renderSkyWindZones",
+      "module_id": "mod:src",
+      "signature": "renderSkyWindZones(ctx, camX)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 508,
+      "is_public": true
+    },
+    {
+      "name": "acquireBiomeParticle",
+      "module_id": "mod:src",
+      "signature": "acquireBiomeParticle(type, x, y)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 540,
+      "is_public": true
+    },
+    {
+      "name": "emitBiomeParticle",
+      "module_id": "mod:src",
+      "signature": "emitBiomeParticle(type, x, y)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 584,
+      "is_public": true
+    },
+    {
+      "name": "applyEnvironmentalDamage",
+      "module_id": "mod:src",
+      "signature": "applyEnvironmentalDamage(hpLoss, msg, color)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 591,
+      "is_public": true
+    },
+    {
+      "name": "updateExtremeHeatEnvironment",
+      "module_id": "mod:src",
+      "signature": "updateExtremeHeatEnvironment()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 598,
+      "is_public": true
+    },
+    {
+      "name": "checkSoulSandEffect",
+      "module_id": "mod:src",
+      "signature": "checkSoulSandEffect()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 635,
+      "is_public": true
+    },
+    {
+      "name": "renderNetherHeatEffect",
+      "module_id": "mod:src",
+      "signature": "renderNetherHeatEffect(ctx)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 645,
+      "is_public": true
+    },
+    {
+      "name": "checkLavaCollision",
+      "module_id": "mod:src",
+      "signature": "checkLavaCollision()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 660,
+      "is_public": true
+    },
+    {
+      "name": "spawnNetherMushrooms",
+      "module_id": "mod:src",
+      "signature": "spawnNetherMushrooms()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 687,
+      "is_public": true
+    },
+    {
+      "name": "updateNetherMushrooms",
+      "module_id": "mod:src",
+      "signature": "updateNetherMushrooms()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 699,
+      "is_public": true
+    },
+    {
+      "name": "renderNetherMushrooms",
+      "module_id": "mod:src",
+      "signature": "renderNetherMushrooms(ctx, camX)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 713,
+      "is_public": true
+    },
+    {
+      "name": "tickWeather",
+      "module_id": "mod:src",
+      "signature": "tickWeather()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 727,
+      "is_public": true
+    },
+    {
+      "name": "spawnBiomeParticles",
+      "module_id": "mod:src",
+      "signature": "spawnBiomeParticles()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 734,
+      "is_public": true
+    },
+    {
+      "name": "renderOceanEnvironment",
+      "module_id": "mod:src",
+      "signature": "renderOceanEnvironment(ctx)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 766,
+      "is_public": true
+    },
+    {
+      "name": "renderSwimBubbles",
+      "module_id": "mod:src",
+      "signature": "renderSwimBubbles(ctx, camX)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 800,
+      "is_public": true
+    },
+    {
+      "name": "updateEndEnvironment",
+      "module_id": "mod:src",
+      "signature": "updateEndEnvironment()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 820,
+      "is_public": true
+    },
+    {
+      "name": "spawnEndEntities",
+      "module_id": "mod:src",
+      "signature": "spawnEndEntities()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 842,
+      "is_public": true
+    },
+    {
+      "name": "updateEndPortals",
+      "module_id": "mod:src",
+      "signature": "updateEndPortals()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 885,
+      "is_public": true
+    },
+    {
+      "name": "updateEndCrystals",
+      "module_id": "mod:src",
+      "signature": "updateEndCrystals()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 905,
+      "is_public": true
+    },
+    {
+      "name": "updateEndCreatures",
+      "module_id": "mod:src",
+      "signature": "updateEndCreatures()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 918,
+      "is_public": true
+    },
+    {
+      "name": "renderEndEnvironment",
+      "module_id": "mod:src",
+      "signature": "renderEndEnvironment(ctx)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 924,
+      "is_public": true
+    },
+    {
+      "name": "renderEndEntities",
+      "module_id": "mod:src",
+      "signature": "renderEndEntities(ctx, camX)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 943,
+      "is_public": true
+    },
+    {
+      "name": "renderEndSpeedBuff",
+      "module_id": "mod:src",
+      "signature": "renderEndSpeedBuff(ctx)",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 998,
+      "is_public": true
+    },
+    {
+      "name": "clearEndEntities",
+      "module_id": "mod:src",
+      "signature": "clearEndEntities()",
+      "file_path": "src/modules/06-biome.js",
+      "line_number": 1010,
+      "is_public": true
+    },
+    {
+      "name": "nowMs",
+      "module_id": "mod:src",
+      "signature": "nowMs()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "getViewportSize",
+      "module_id": "mod:src",
+      "signature": "getViewportSize()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 9,
+      "is_public": true
+    },
+    {
+      "name": "getSafeInsetsPx",
+      "module_id": "mod:src",
+      "signature": "getSafeInsetsPx()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 34,
+      "is_public": true
+    },
+    {
+      "name": "getGameAreaSize",
+      "module_id": "mod:src",
+      "signature": "getGameAreaSize()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 48,
+      "is_public": true
+    },
+    {
+      "name": "computeWorldScale",
+      "module_id": "mod:src",
+      "signature": "computeWorldScale(viewport)",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 57,
+      "is_public": true
+    },
+    {
+      "name": "scaleGameConfig",
+      "module_id": "mod:src",
+      "signature": "scaleGameConfig(viewport)",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 70,
+      "is_public": true
+    },
+    {
+      "name": "scaleEnemyStats",
+      "module_id": "mod:src",
+      "signature": "scaleEnemyStats()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 138,
+      "is_public": true
+    },
+    {
+      "name": "scaleWeapons",
+      "module_id": "mod:src",
+      "signature": "scaleWeapons()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 156,
+      "is_public": true
+    },
+    {
+      "name": "scaleBiomeConfigs",
+      "module_id": "mod:src",
+      "signature": "scaleBiomeConfigs()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 167,
+      "is_public": true
+    },
+    {
+      "name": "scaleCloudPlatformConfig",
+      "module_id": "mod:src",
+      "signature": "scaleCloudPlatformConfig()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 181,
+      "is_public": true
+    },
+    {
+      "name": "applyConfig",
+      "module_id": "mod:src",
+      "signature": "applyConfig(viewport = null)",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 196,
+      "is_public": true
+    },
+    {
+      "name": "remapWorldCoordinates",
+      "module_id": "mod:src",
+      "signature": "remapWorldCoordinates(oldScale, oldGroundY)",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 225,
+      "is_public": true
+    },
+    {
+      "name": "transformWorldEntityForViewport",
+      "module_id": "mod:src",
+      "signature": "transformWorldEntityForViewport(entity, scaleX, scaleY, scaleUnit)",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 307,
+      "is_public": true
+    },
+    {
+      "name": "realignWorldForViewport",
+      "module_id": "mod:src",
+      "signature": "realignWorldForViewport(previousLayout)",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 341,
+      "is_public": true
+    },
+    {
+      "name": "applySpeedSetting",
+      "module_id": "mod:src",
+      "signature": "applySpeedSetting()",
+      "file_path": "src/modules/07-viewport.js",
+      "line_number": 385,
+      "is_public": true
+    },
+    {
+      "name": "clearStartOverlayTimer",
+      "module_id": "mod:src",
+      "signature": "clearStartOverlayTimer()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "setStartOverlayPage",
+      "module_id": "mod:src",
+      "signature": "setStartOverlayPage(page)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 10,
+      "is_public": true
+    },
+    {
+      "name": "ensureStartOverlayContent",
+      "module_id": "mod:src",
+      "signature": "ensureStartOverlayContent()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 22,
+      "is_public": true
+    },
+    {
+      "name": "renderStartOverlayAccounts",
+      "module_id": "mod:src",
+      "signature": "renderStartOverlayAccounts()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 65,
+      "is_public": true
+    },
+    {
+      "name": "wireStartOverlayAccountActions",
+      "module_id": "mod:src",
+      "signature": "wireStartOverlayAccountActions()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 78,
+      "is_public": true
+    },
+    {
+      "name": "updateStartOverlayActionState",
+      "module_id": "mod:src",
+      "signature": "updateStartOverlayActionState()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 104,
+      "is_public": true
+    },
+    {
+      "name": "isStartOverlayVisible",
+      "module_id": "mod:src",
+      "signature": "isStartOverlayVisible()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 112,
+      "is_public": true
+    },
+    {
+      "name": "initLoginScreen",
+      "module_id": "mod:src",
+      "signature": "initLoginScreen()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 117,
+      "is_public": true
+    },
+    {
+      "name": "renderAccountList",
+      "module_id": "mod:src",
+      "signature": "renderAccountList(container, accounts, storedId)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 172,
+      "is_public": true
+    },
+    {
+      "name": "resetAccountRunState",
+      "module_id": "mod:src",
+      "signature": "resetAccountRunState(account)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 221,
+      "is_public": true
+    },
+    {
+      "name": "loginWithAccount",
+      "module_id": "mod:src",
+      "signature": "loginWithAccount(account, options)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 233,
+      "is_public": true
+    },
+    {
+      "name": "bootGameLoopIfNeeded",
+      "module_id": "mod:src",
+      "signature": "bootGameLoopIfNeeded()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 269,
+      "is_public": true
+    },
+    {
+      "name": "loadAccountData",
+      "module_id": "mod:src",
+      "signature": "loadAccountData(account)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 297,
+      "is_public": true
+    },
+    {
+      "name": "startAutoSave",
+      "module_id": "mod:src",
+      "signature": "startAutoSave()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 320,
+      "is_public": true
+    },
+    {
+      "name": "stopAutoSave",
+      "module_id": "mod:src",
+      "signature": "stopAutoSave()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 328,
+      "is_public": true
+    },
+    {
+      "name": "saveCurrentProgress",
+      "module_id": "mod:src",
+      "signature": "saveCurrentProgress()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 335,
+      "is_public": true
+    },
+    {
+      "name": "onWordCollected",
+      "module_id": "mod:src",
+      "signature": "onWordCollected(wordObj)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 355,
+      "is_public": true
+    },
+    {
+      "name": "onEnemyKilled",
+      "module_id": "mod:src",
+      "signature": "onEnemyKilled()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 370,
+      "is_public": true
+    },
+    {
+      "name": "onChestOpened",
+      "module_id": "mod:src",
+      "signature": "onChestOpened()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 378,
+      "is_public": true
+    },
+    {
+      "name": "onGameOver",
+      "module_id": "mod:src",
+      "signature": "onGameOver()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 386,
+      "is_public": true
+    },
+    {
+      "name": "checkAchievement",
+      "module_id": "mod:src",
+      "signature": "checkAchievement(type, value)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 401,
+      "is_public": true
+    },
+    {
+      "name": "unlockAchievement",
+      "module_id": "mod:src",
+      "signature": "unlockAchievement(id)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 414,
+      "is_public": true
+    },
+    {
+      "name": "showAchievementUnlock",
+      "module_id": "mod:src",
+      "signature": "showAchievementUnlock(achievement)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 427,
+      "is_public": true
+    },
+    {
+      "name": "showProfileModal",
+      "module_id": "mod:src",
+      "signature": "showProfileModal()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 446,
+      "is_public": true
+    },
+    {
+      "name": "hideProfileModal",
+      "module_id": "mod:src",
+      "signature": "hideProfileModal()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 471,
+      "is_public": true
+    },
+    {
+      "name": "renderAchievements",
+      "module_id": "mod:src",
+      "signature": "renderAchievements()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 479,
+      "is_public": true
+    },
+    {
+      "name": "formatPlayTime",
+      "module_id": "mod:src",
+      "signature": "formatPlayTime(seconds)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 503,
+      "is_public": true
+    },
+    {
+      "name": "wireProfileModal",
+      "module_id": "mod:src",
+      "signature": "wireProfileModal()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 513,
+      "is_public": true
+    },
+    {
+      "name": "showSaveProgressModal",
+      "module_id": "mod:src",
+      "signature": "showSaveProgressModal()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 537,
+      "is_public": true
+    },
+    {
+      "name": "hideSaveProgressModal",
+      "module_id": "mod:src",
+      "signature": "hideSaveProgressModal()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 568,
+      "is_public": true
+    },
+    {
+      "name": "confirmSaveProgress",
+      "module_id": "mod:src",
+      "signature": "confirmSaveProgress()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 577,
+      "is_public": true
+    },
+    {
+      "name": "hasSeenVocabPrompt",
+      "module_id": "mod:src",
+      "signature": "hasSeenVocabPrompt()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 597,
+      "is_public": true
+    },
+    {
+      "name": "markVocabPromptSeen",
+      "module_id": "mod:src",
+      "signature": "markVocabPromptSeen()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 602,
+      "is_public": true
+    },
+    {
+      "name": "handleExportSave",
+      "module_id": "mod:src",
+      "signature": "handleExportSave()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 607,
+      "is_public": true
+    },
+    {
+      "name": "handleImportSave",
+      "module_id": "mod:src",
+      "signature": "handleImportSave()",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 624,
+      "is_public": true
+    },
+    {
+      "name": "getWeakWords",
+      "module_id": "mod:src",
+      "signature": "getWeakWords(wordStats, limit = 5)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 640,
+      "is_public": true
+    },
+    {
+      "name": "renderLearningStats",
+      "module_id": "mod:src",
+      "signature": "renderLearningStats(account)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 654,
+      "is_public": true
+    },
+    {
+      "name": "getAchievementProgress",
+      "module_id": "mod:src",
+      "signature": "getAchievementProgress(id, accountStats)",
+      "file_path": "src/modules/08-account.js",
+      "line_number": 680,
+      "is_public": true
+    },
+    {
+      "name": "normalizeSettings",
+      "module_id": "mod:src",
+      "signature": "normalizeSettings(raw)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "saveSettings",
+      "module_id": "mod:src",
+      "signature": "saveSettings()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 60,
+      "is_public": true
+    },
+    {
+      "name": "saveProgress",
+      "module_id": "mod:src",
+      "signature": "saveProgress()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 64,
+      "is_public": true
+    },
+    {
+      "name": "saveVocabState",
+      "module_id": "mod:src",
+      "signature": "saveVocabState()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 68,
+      "is_public": true
+    },
+    {
+      "name": "toNonNegativeInt",
+      "module_id": "mod:src",
+      "signature": "toNonNegativeInt(value, fallback = 0)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 75,
+      "is_public": true
+    },
+    {
+      "name": "normalizeWordEntry",
+      "module_id": "mod:src",
+      "signature": "normalizeWordEntry(value)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 81,
+      "is_public": true
+    },
+    {
+      "name": "normalizePackProgressEntry",
+      "module_id": "mod:src",
+      "signature": "normalizePackProgressEntry(entry)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 111,
+      "is_public": true
+    },
+    {
+      "name": "replayPackQualityToWordPicker",
+      "module_id": "mod:src",
+      "signature": "replayPackQualityToWordPicker(packId)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 129,
+      "is_public": true
+    },
+    {
+      "name": "normalizeProgress",
+      "module_id": "mod:src",
+      "signature": "normalizeProgress(raw)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 143,
+      "is_public": true
+    },
+    {
+      "name": "placeholderImageDataUrl",
+      "module_id": "mod:src",
+      "signature": "placeholderImageDataUrl(text)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 155,
+      "is_public": true
+    },
+    {
+      "name": "updateWordImage",
+      "module_id": "mod:src",
+      "signature": "updateWordImage(wordObj)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 163,
+      "is_public": true
+    },
+    {
+      "name": "ensureVocabEngine",
+      "module_id": "mod:src",
+      "signature": "ensureVocabEngine()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 196,
+      "is_public": true
+    },
+    {
+      "name": "parseCustomVocab",
+      "module_id": "mod:src",
+      "signature": "parseCustomVocab(text)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 210,
+      "is_public": true
+    },
+    {
+      "name": "registerCustomVocab",
+      "module_id": "mod:src",
+      "signature": "registerCustomVocab(name, words)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 225,
+      "is_public": true
+    },
+    {
+      "name": "getVocabPackList",
+      "module_id": "mod:src",
+      "signature": "getVocabPackList()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 258,
+      "is_public": true
+    },
+    {
+      "name": "handleVocabFileImport",
+      "module_id": "mod:src",
+      "signature": "handleVocabFileImport(event)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 264,
+      "is_public": true
+    },
+    {
+      "name": "handleVocabTextImport",
+      "module_id": "mod:src",
+      "signature": "handleVocabTextImport()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 281,
+      "is_public": true
+    },
+    {
+      "name": "renderVocabSelect",
+      "module_id": "mod:src",
+      "signature": "renderVocabSelect()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 300,
+      "is_public": true
+    },
+    {
+      "name": "getActivePackTitle",
+      "module_id": "mod:src",
+      "signature": "getActivePackTitle()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 378,
+      "is_public": true
+    },
+    {
+      "name": "updateVocabPreview",
+      "module_id": "mod:src",
+      "signature": "updateVocabPreview(selection)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 384,
+      "is_public": true
+    },
+    {
+      "name": "showVocabSwitchEffect",
+      "module_id": "mod:src",
+      "signature": "showVocabSwitchEffect()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 408,
+      "is_public": true
+    },
+    {
+      "name": "getPackProgress",
+      "module_id": "mod:src",
+      "signature": "getPackProgress(packId)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 416,
+      "is_public": true
+    },
+    {
+      "name": "updateVocabProgressUI",
+      "module_id": "mod:src",
+      "signature": "updateVocabProgressUI()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 423,
+      "is_public": true
+    },
+    {
+      "name": "resetVocabRotationAndProgress",
+      "module_id": "mod:src",
+      "signature": "resetVocabRotationAndProgress()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 440,
+      "is_public": true
+    },
+    {
+      "name": "isPackCompleted",
+      "module_id": "mod:src",
+      "signature": "isPackCompleted(packId)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 448,
+      "is_public": true
+    },
+    {
+      "name": "pickPackAuto",
+      "module_id": "mod:src",
+      "signature": "pickPackAuto()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 453,
+      "is_public": true
+    },
+    {
+      "name": "loadVocabPackFile",
+      "module_id": "mod:src",
+      "signature": "loadVocabPackFile(file)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 480,
+      "is_public": true
+    },
+    {
+      "name": "loadVocabPackFiles",
+      "module_id": "mod:src",
+      "signature": "loadVocabPackFiles(files)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 494,
+      "is_public": true
+    },
+    {
+      "name": "normalizeRawWord",
+      "module_id": "mod:src",
+      "signature": "normalizeRawWord(raw)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 500,
+      "is_public": true
+    },
+    {
+      "name": "setActiveVocabPack",
+      "module_id": "mod:src",
+      "signature": "setActiveVocabPack(selection)",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 515,
+      "is_public": true
+    },
+    {
+      "name": "switchToNextPackInOrder",
+      "module_id": "mod:src",
+      "signature": "switchToNextPackInOrder()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 579,
+      "is_public": true
+    },
+    {
+      "name": "applySettingsToUI",
+      "module_id": "mod:src",
+      "signature": "applySettingsToUI()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 611,
+      "is_public": true
+    },
+    {
+      "name": "scheduleApplySettingsToUI",
+      "module_id": "mod:src",
+      "signature": "scheduleApplySettingsToUI()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 657,
+      "is_public": true
+    },
+    {
+      "name": "showVocabPromptModal",
+      "module_id": "mod:src",
+      "signature": "showVocabPromptModal()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 666,
+      "is_public": true
+    },
+    {
+      "name": "hideVocabPromptModal",
+      "module_id": "mod:src",
+      "signature": "hideVocabPromptModal()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 681,
+      "is_public": true
+    },
+    {
+      "name": "confirmVocabPrompt",
+      "module_id": "mod:src",
+      "signature": "confirmVocabPrompt()",
+      "file_path": "src/modules/09-vocab.js",
+      "line_number": 691,
+      "is_public": true
+    },
+    {
+      "name": "getSessionWordSummaryHtml",
+      "module_id": "mod:src",
+      "signature": "getSessionWordSummaryHtml(limit = 6)",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "updateStartOverlayButtons",
+      "module_id": "mod:src",
+      "signature": "updateStartOverlayButtons()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 24,
+      "is_public": true
+    },
+    {
+      "name": "setOverlay",
+      "module_id": "mod:src",
+      "signature": "setOverlay(visible, mode)",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 47,
+      "is_public": true
+    },
+    {
+      "name": "wireIntroConfirmButton",
+      "module_id": "mod:src",
+      "signature": "wireIntroConfirmButton()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 161,
+      "is_public": true
+    },
+    {
+      "name": "proceedToGameOver",
+      "module_id": "mod:src",
+      "signature": "proceedToGameOver()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 173,
+      "is_public": true
+    },
+    {
+      "name": "showGameReview",
+      "module_id": "mod:src",
+      "signature": "showGameReview(results)",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 176,
+      "is_public": true
+    },
+    {
+      "name": "triggerGameOver",
+      "module_id": "mod:src",
+      "signature": "triggerGameOver()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 221,
+      "is_public": true
+    },
+    {
+      "name": "maybeLaunchWordMatchRevive",
+      "module_id": "mod:src",
+      "signature": "maybeLaunchWordMatchRevive()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 231,
+      "is_public": true
+    },
+    {
+      "name": "resumeGameFromOverlay",
+      "module_id": "mod:src",
+      "signature": "resumeGameFromOverlay()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 431,
+      "is_public": true
+    },
+    {
+      "name": "skipStartOverlay",
+      "module_id": "mod:src",
+      "signature": "skipStartOverlay()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 489,
+      "is_public": true
+    },
+    {
+      "name": "getReviveConfig",
+      "module_id": "mod:src",
+      "signature": "getReviveConfig()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 510,
+      "is_public": true
+    },
+    {
+      "name": "reviveWithScore",
+      "module_id": "mod:src",
+      "signature": "reviveWithScore()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 520,
+      "is_public": true
+    },
+    {
+      "name": "keyLabel",
+      "module_id": "mod:src",
+      "signature": "keyLabel(code)",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 544,
+      "is_public": true
+    },
+    {
+      "name": "showLeaderboardModal",
+      "module_id": "mod:src",
+      "signature": "showLeaderboardModal()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 554,
+      "is_public": true
+    },
+    {
+      "name": "hideLeaderboardModal",
+      "module_id": "mod:src",
+      "signature": "hideLeaderboardModal()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 568,
+      "is_public": true
+    },
+    {
+      "name": "saveToLeaderboard",
+      "module_id": "mod:src",
+      "signature": "saveToLeaderboard()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 575,
+      "is_public": true
+    },
+    {
+      "name": "saveProfileScoreToLeaderboard",
+      "module_id": "mod:src",
+      "signature": "saveProfileScoreToLeaderboard()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 593,
+      "is_public": true
+    },
+    {
+      "name": "renderLeaderboard",
+      "module_id": "mod:src",
+      "signature": "renderLeaderboard()",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 602,
+      "is_public": true
+    },
+    {
+      "name": "escapeHtml",
+      "module_id": "mod:src",
+      "signature": "escapeHtml(text)",
+      "file_path": "src/modules/10-ui.js",
+      "line_number": 634,
+      "is_public": true
+    },
+    {
+      "name": "applyMotionToPlayer",
+      "module_id": "mod:src",
+      "signature": "applyMotionToPlayer(p)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "createPlayer",
+      "module_id": "mod:src",
+      "signature": "createPlayer()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 13,
+      "is_public": true
+    },
+    {
+      "name": "initGame",
+      "module_id": "mod:src",
+      "signature": "initGame()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 35,
+      "is_public": true
+    },
+    {
+      "name": "startLevel",
+      "module_id": "mod:src",
+      "signature": "startLevel(idx)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 97,
+      "is_public": true
+    },
+    {
+      "name": "shuffle",
+      "module_id": "mod:src",
+      "signature": "shuffle(arr)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 138,
+      "is_public": true
+    },
+    {
+      "name": "buildWordPicker",
+      "module_id": "mod:src",
+      "signature": "buildWordPicker()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 147,
+      "is_public": true
+    },
+    {
+      "name": "ensureStat",
+      "module_id": "mod:src",
+      "signature": "ensureStat(en)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 164,
+      "is_public": true
+    },
+    {
+      "name": "getRepeatBias",
+      "module_id": "mod:src",
+      "signature": "getRepeatBias()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 179,
+      "is_public": true
+    },
+    {
+      "name": "getRepeatWindow",
+      "module_id": "mod:src",
+      "signature": "getRepeatWindow()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 184,
+      "is_public": true
+    },
+    {
+      "name": "pushRecentWord",
+      "module_id": "mod:src",
+      "signature": "pushRecentWord(en)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 188,
+      "is_public": true
+    },
+    {
+      "name": "getCandidateScore",
+      "module_id": "mod:src",
+      "signature": "getCandidateScore(wordObj, nextDueTick, bias)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 195,
+      "is_public": true
+    },
+    {
+      "name": "pickBestDueWord",
+      "module_id": "mod:src",
+      "signature": "pickBestDueWord(excludes, windowSet, bias, allowRecentWords)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 203,
+      "is_public": true
+    },
+    {
+      "name": "ensureWordPicker",
+      "module_id": "mod:src",
+      "signature": "ensureWordPicker()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 289,
+      "is_public": true
+    },
+    {
+      "name": "normalizeWordKey",
+      "module_id": "mod:src",
+      "signature": "normalizeWordKey(value)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 293,
+      "is_public": true
+    },
+    {
+      "name": "ensureFollowUpMetrics",
+      "module_id": "mod:src",
+      "signature": "ensureFollowUpMetrics()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 297,
+      "is_public": true
+    },
+    {
+      "name": "ensurePlatformTestStats",
+      "module_id": "mod:src",
+      "signature": "ensurePlatformTestStats()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 310,
+      "is_public": true
+    },
+    {
+      "name": "resetFollowUpMetrics",
+      "module_id": "mod:src",
+      "signature": "resetFollowUpMetrics()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 330,
+      "is_public": true
+    },
+    {
+      "name": "createFollowUpPhraseItem",
+      "module_id": "mod:src",
+      "signature": "createFollowUpPhraseItem(wordObj, gapRemaining)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 339,
+      "is_public": true
+    },
+    {
+      "name": "getPhraseFollowMode",
+      "module_id": "mod:src",
+      "signature": "getPhraseFollowMode()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 356,
+      "is_public": true
+    },
+    {
+      "name": "isPhraseFollowAdaptiveEnabled",
+      "module_id": "mod:src",
+      "signature": "isPhraseFollowAdaptiveEnabled()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 360,
+      "is_public": true
+    },
+    {
+      "name": "pickPhraseGapCount",
+      "module_id": "mod:src",
+      "signature": "pickPhraseGapCount()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 365,
+      "is_public": true
+    },
+    {
+      "name": "maybeEnqueueFollowUpPhrase",
+      "module_id": "mod:src",
+      "signature": "maybeEnqueueFollowUpPhrase(wordObj)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 371,
+      "is_public": true
+    },
+    {
+      "name": "maybeTakeFollowUpPhrase",
+      "module_id": "mod:src",
+      "signature": "maybeTakeFollowUpPhrase(excludeSet)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 412,
+      "is_public": true
+    },
+    {
+      "name": "pickWordForSpawn",
+      "module_id": "mod:src",
+      "signature": "pickWordForSpawn()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 447,
+      "is_public": true
+    },
+    {
+      "name": "clearOldWordItems",
+      "module_id": "mod:src",
+      "signature": "clearOldWordItems()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 473,
+      "is_public": true
+    },
+    {
+      "name": "spawnWordItemNearPlayer",
+      "module_id": "mod:src",
+      "signature": "spawnWordItemNearPlayer()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 478,
+      "is_public": true
+    },
+    {
+      "name": "getSpawnRates",
+      "module_id": "mod:src",
+      "signature": "getSpawnRates()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 490,
+      "is_public": true
+    },
+    {
+      "name": "canSpawnWordItemAt",
+      "module_id": "mod:src",
+      "signature": "canSpawnWordItemAt(x)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 517,
+      "is_public": true
+    },
+    {
+      "name": "registerWordItemSpawn",
+      "module_id": "mod:src",
+      "signature": "registerWordItemSpawn(x)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 522,
+      "is_public": true
+    },
+    {
+      "name": "estimateMaxJumpHeightPx",
+      "module_id": "mod:src",
+      "signature": "estimateMaxJumpHeightPx()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 526,
+      "is_public": true
+    },
+    {
+      "name": "generatePlatform",
+      "module_id": "mod:src",
+      "signature": "generatePlatform(startX, length, groundYValue)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 539,
+      "is_public": true
+    },
+    {
+      "name": "spawnEnemyByDifficulty",
+      "module_id": "mod:src",
+      "signature": "spawnEnemyByDifficulty(x, y)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 805,
+      "is_public": true
+    },
+    {
+      "name": "weightedPick",
+      "module_id": "mod:src",
+      "signature": "weightedPick(table)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 891,
+      "is_public": true
+    },
+    {
+      "name": "pickWeightedLoot",
+      "module_id": "mod:src",
+      "signature": "pickWeightedLoot(table)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 903,
+      "is_public": true
+    },
+    {
+      "name": "pickChestRarity",
+      "module_id": "mod:src",
+      "signature": "pickChestRarity(rarities, rareBoost)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 914,
+      "is_public": true
+    },
+    {
+      "name": "spawnBiomeTree",
+      "module_id": "mod:src",
+      "signature": "spawnBiomeTree(x, yPos, biome, fallbackType)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 926,
+      "is_public": true
+    },
+    {
+      "name": "generateBiomeDecorations",
+      "module_id": "mod:src",
+      "signature": "generateBiomeDecorations(x, yPos, width, biome)",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 935,
+      "is_public": true
+    },
+    {
+      "name": "updateMapGeneration",
+      "module_id": "mod:src",
+      "signature": "updateMapGeneration()",
+      "file_path": "src/modules/11-game-init.js",
+      "line_number": 1070,
+      "is_public": true
+    },
+    {
+      "name": "recordWordResult",
+      "module_id": "mod:src",
+      "signature": "recordWordResult(wordObj, correct)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 7,
+      "is_public": true
+    },
+    {
+      "name": "dropItem",
+      "module_id": "mod:src",
+      "signature": "dropItem(type, x, y)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 17,
+      "is_public": true
+    },
+    {
+      "name": "bumpWordDisplay",
+      "module_id": "mod:src",
+      "signature": "bumpWordDisplay()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 25,
+      "is_public": true
+    },
+    {
+      "name": "showWordCard",
+      "module_id": "mod:src",
+      "signature": "showWordCard(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 32,
+      "is_public": true
+    },
+    {
+      "name": "recordWordProgress",
+      "module_id": "mod:src",
+      "signature": "recordWordProgress(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 61,
+      "is_public": true
+    },
+    {
+      "name": "registerCollectedWord",
+      "module_id": "mod:src",
+      "signature": "registerCollectedWord(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 93,
+      "is_public": true
+    },
+    {
+      "name": "getUniqueSessionWords",
+      "module_id": "mod:src",
+      "signature": "getUniqueSessionWords()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 98,
+      "is_public": true
+    },
+    {
+      "name": "escapeSessionWordText",
+      "module_id": "mod:src",
+      "signature": "escapeSessionWordText(value)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 108,
+      "is_public": true
+    },
+    {
+      "name": "escapeSessionWordAttr",
+      "module_id": "mod:src",
+      "signature": "escapeSessionWordAttr(value)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 115,
+      "is_public": true
+    },
+    {
+      "name": "speakSessionWordByText",
+      "module_id": "mod:src",
+      "signature": "speakSessionWordByText(encodedEn)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 119,
+      "is_public": true
+    },
+    {
+      "name": "buildSessionWordsSummary",
+      "module_id": "mod:src",
+      "signature": "buildSessionWordsSummary()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 140,
+      "is_public": true
+    },
+    {
+      "name": "normalizeChallengeTextSpacing",
+      "module_id": "mod:src",
+      "signature": "normalizeChallengeTextSpacing(text)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 164,
+      "is_public": true
+    },
+    {
+      "name": "getChallengeWordDisplayClass",
+      "module_id": "mod:src",
+      "signature": "getChallengeWordDisplayClass(text, forcePhrase = false)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 168,
+      "is_public": true
+    },
+    {
+      "name": "generatePhraseFillBlankChallenge",
+      "module_id": "mod:src",
+      "signature": "generatePhraseFillBlankChallenge(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 179,
+      "is_public": true
+    },
+    {
+      "name": "generateLetterOptions",
+      "module_id": "mod:src",
+      "signature": "generateLetterOptions(correctLetter, count = 4)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 233,
+      "is_public": true
+    },
+    {
+      "name": "generateFillBlankChallenge",
+      "module_id": "mod:src",
+      "signature": "generateFillBlankChallenge(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 268,
+      "is_public": true
+    },
+    {
+      "name": "generateMultiBlankChallenge",
+      "module_id": "mod:src",
+      "signature": "generateMultiBlankChallenge(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 295,
+      "is_public": true
+    },
+    {
+      "name": "generateScrambleDistractors",
+      "module_id": "mod:src",
+      "signature": "generateScrambleDistractors(en, count)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 371,
+      "is_public": true
+    },
+    {
+      "name": "generatePhraseUnscrambleDistractors",
+      "module_id": "mod:src",
+      "signature": "generatePhraseUnscrambleDistractors(correctPhrase, count)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 387,
+      "is_public": true
+    },
+    {
+      "name": "generateUnscrambleChallenge",
+      "module_id": "mod:src",
+      "signature": "generateUnscrambleChallenge(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 423,
+      "is_public": true
+    },
+    {
+      "name": "generateChallengeOptions",
+      "module_id": "mod:src",
+      "signature": "generateChallengeOptions(wordObj, key, count)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 509,
+      "is_public": true
+    },
+    {
+      "name": "pickDistinctWords",
+      "module_id": "mod:src",
+      "signature": "pickDistinctWords(wordObj, count)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 521,
+      "is_public": true
+    },
+    {
+      "name": "shouldTriggerLearningChallenge",
+      "module_id": "mod:src",
+      "signature": "shouldTriggerLearningChallenge(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 527,
+      "is_public": true
+    },
+    {
+      "name": "maybeTriggerLearningChallenge",
+      "module_id": "mod:src",
+      "signature": "maybeTriggerLearningChallenge(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 554,
+      "is_public": true
+    },
+    {
+      "name": "pickChallengeType",
+      "module_id": "mod:src",
+      "signature": "pickChallengeType(forced)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 561,
+      "is_public": true
+    },
+    {
+      "name": "startLearningChallenge",
+      "module_id": "mod:src",
+      "signature": "startLearningChallenge(wordObj, forcedType, origin)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 569,
+      "is_public": true
+    },
+    {
+      "name": "showLearningChallenge",
+      "module_id": "mod:src",
+      "signature": "showLearningChallenge(challenge)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 596,
+      "is_public": true
+    },
+    {
+      "name": "updateChallengeTimerDisplay",
+      "module_id": "mod:src",
+      "signature": "updateChallengeTimerDisplay()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 645,
+      "is_public": true
+    },
+    {
+      "name": "clearLearningChallengeTimer",
+      "module_id": "mod:src",
+      "signature": "clearLearningChallengeTimer()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 651,
+      "is_public": true
+    },
+    {
+      "name": "hideLearningChallenge",
+      "module_id": "mod:src",
+      "signature": "hideLearningChallenge()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 658,
+      "is_public": true
+    },
+    {
+      "name": "showChallengeCorrection",
+      "module_id": "mod:src",
+      "signature": "showChallengeCorrection(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 663,
+      "is_public": true
+    },
+    {
+      "name": "useLearningChallengeHint",
+      "module_id": "mod:src",
+      "signature": "useLearningChallengeHint()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 697,
+      "is_public": true
+    },
+    {
+      "name": "writeChallengeResultToProgress",
+      "module_id": "mod:src",
+      "signature": "writeChallengeResultToProgress(wordObj, quality)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 706,
+      "is_public": true
+    },
+    {
+      "name": "completeLearningChallenge",
+      "module_id": "mod:src",
+      "signature": "completeLearningChallenge(correct)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 729,
+      "is_public": true
+    },
+    {
+      "name": "getLearningStreaks",
+      "module_id": "mod:src",
+      "signature": "getLearningStreaks()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 790,
+      "is_public": true
+    },
+    {
+      "name": "resetLearningStreaks",
+      "module_id": "mod:src",
+      "signature": "resetLearningStreaks()",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 794,
+      "is_public": true
+    },
+    {
+      "name": "triggerWordGateChallenge",
+      "module_id": "mod:src",
+      "signature": "triggerWordGateChallenge(gate)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 799,
+      "is_public": true
+    },
+    {
+      "name": "updateWordUI",
+      "module_id": "mod:src",
+      "signature": "updateWordUI(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 806,
+      "is_public": true
+    },
+    {
+      "name": "speakWord",
+      "module_id": "mod:src",
+      "signature": "speakWord(wordObj)",
+      "file_path": "src/modules/12-challenges.js",
+      "line_number": 826,
+      "is_public": true
+    },
+    {
+      "name": "getVillageChallengeModal",
+      "module_id": "mod:src",
+      "signature": "getVillageChallengeModal()",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 6,
+      "is_public": true
+    },
+    {
+      "name": "showVillageChallengeModal",
+      "module_id": "mod:src",
+      "signature": "showVillageChallengeModal(innerHtml)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 24,
+      "is_public": true
+    },
+    {
+      "name": "hideVillageChallengeModal",
+      "module_id": "mod:src",
+      "signature": "hideVillageChallengeModal()",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 34,
+      "is_public": true
+    },
+    {
+      "name": "isVillageChallengeActive",
+      "module_id": "mod:src",
+      "signature": "isVillageChallengeActive(session)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 41,
+      "is_public": true
+    },
+    {
+      "name": "restorePauseStateFromSession",
+      "module_id": "mod:src",
+      "signature": "restorePauseStateFromSession(session)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 45,
+      "is_public": true
+    },
+    {
+      "name": "closeVillageChallengeSession",
+      "module_id": "mod:src",
+      "signature": "closeVillageChallengeSession(session, opts = {})",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 62,
+      "is_public": true
+    },
+    {
+      "name": "cancelVillageChallenge",
+      "module_id": "mod:src",
+      "signature": "cancelVillageChallenge(session, toastText)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 74,
+      "is_public": true
+    },
+    {
+      "name": "beginVillageChallengeSession",
+      "module_id": "mod:src",
+      "signature": "beginVillageChallengeSession(village, onComplete)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 80,
+      "is_public": true
+    },
+    {
+      "name": "resolveVillageChallengeWord",
+      "module_id": "mod:src",
+      "signature": "resolveVillageChallengeWord(rawWord)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 96,
+      "is_public": true
+    },
+    {
+      "name": "getVillageQuestionCount",
+      "module_id": "mod:src",
+      "signature": "getVillageQuestionCount()",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 129,
+      "is_public": true
+    },
+    {
+      "name": "getVillageRewardConfig",
+      "module_id": "mod:src",
+      "signature": "getVillageRewardConfig()",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 137,
+      "is_public": true
+    },
+    {
+      "name": "buildVillageChallengeWords",
+      "module_id": "mod:src",
+      "signature": "buildVillageChallengeWords(village, questionCount)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 144,
+      "is_public": true
+    },
+    {
+      "name": "buildVillageZhOptions",
+      "module_id": "mod:src",
+      "signature": "buildVillageZhOptions(correctWord, wordsPool)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 197,
+      "is_public": true
+    },
+    {
+      "name": "startVillageChallenge",
+      "module_id": "mod:src",
+      "signature": "startVillageChallenge(village, onComplete)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 212,
+      "is_public": true
+    },
+    {
+      "name": "handleAnswer",
+      "module_id": "mod:src",
+      "signature": "handleAnswer(isCorrect)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 249,
+      "is_public": true
+    },
+    {
+      "name": "showVillageChallengeIntro",
+      "module_id": "mod:src",
+      "signature": "showVillageChallengeIntro(session, biomeId, count, onStart)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 277,
+      "is_public": true
+    },
+    {
+      "name": "showVillageQuestion",
+      "module_id": "mod:src",
+      "signature": "showVillageQuestion(session, words, progress, onAnswer)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 304,
+      "is_public": true
+    },
+    {
+      "name": "finishVillageChallenge",
+      "module_id": "mod:src",
+      "signature": "finishVillageChallenge(session, village, correct, total, diamondsEarned)",
+      "file_path": "src/modules/12-village-challenges.js",
+      "line_number": 387,
+      "is_public": true
+    },
+    {
+      "name": "optimizedUpdate",
+      "module_id": "mod:src",
+      "signature": "optimizedUpdate(entity, updateFn)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "isEntityNearCamera",
+      "module_id": "mod:src",
+      "signature": "isEntityNearCamera(entity, margin = blockSize * 2)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 13,
+      "is_public": true
+    },
+    {
+      "name": "pushPause",
+      "module_id": "mod:src",
+      "signature": "pushPause()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 20,
+      "is_public": true
+    },
+    {
+      "name": "popPause",
+      "module_id": "mod:src",
+      "signature": "popPause()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 26,
+      "is_public": true
+    },
+    {
+      "name": "isModalPauseActive",
+      "module_id": "mod:src",
+      "signature": "isModalPauseActive()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 32,
+      "is_public": true
+    },
+    {
+      "name": "clearModalPauseStack",
+      "module_id": "mod:src",
+      "signature": "clearModalPauseStack(resumeGame = true)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 36,
+      "is_public": true
+    },
+    {
+      "name": "emitGameParticle",
+      "module_id": "mod:src",
+      "signature": "emitGameParticle(type, x, y)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 41,
+      "is_public": true
+    },
+    {
+      "name": "findSupportingPlatform",
+      "module_id": "mod:src",
+      "signature": "findSupportingPlatform(entityX, entityWidth, entityBottom)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 70,
+      "is_public": true
+    },
+    {
+      "name": "updateEntityGravity",
+      "module_id": "mod:src",
+      "signature": "updateEntityGravity(entity)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 86,
+      "is_public": true
+    },
+    {
+      "name": "triggerGravityCheck",
+      "module_id": "mod:src",
+      "signature": "triggerGravityCheck(digLeft, digRight, platformY)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 120,
+      "is_public": true
+    },
+    {
+      "name": "update",
+      "module_id": "mod:src",
+      "signature": "update()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 141,
+      "is_public": true
+    },
+    {
+      "name": "addScore",
+      "module_id": "mod:src",
+      "signature": "addScore(points)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 606,
+      "is_public": true
+    },
+    {
+      "name": "updateHpUI",
+      "module_id": "mod:src",
+      "signature": "updateHpUI()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 617,
+      "is_public": true
+    },
+    {
+      "name": "getDiamondCount",
+      "module_id": "mod:src",
+      "signature": "getDiamondCount()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 638,
+      "is_public": true
+    },
+    {
+      "name": "updateDiamondUI",
+      "module_id": "mod:src",
+      "signature": "updateDiamondUI()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 642,
+      "is_public": true
+    },
+    {
+      "name": "useDiamondForHp",
+      "module_id": "mod:src",
+      "signature": "useDiamondForHp()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 646,
+      "is_public": true
+    },
+    {
+      "name": "getLearnedWordCount",
+      "module_id": "mod:src",
+      "signature": "getLearnedWordCount()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 661,
+      "is_public": true
+    },
+    {
+      "name": "recordEnemyKill",
+      "module_id": "mod:src",
+      "signature": "recordEnemyKill(type)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 666,
+      "is_public": true
+    },
+    {
+      "name": "healPlayer",
+      "module_id": "mod:src",
+      "signature": "healPlayer(amount)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 672,
+      "is_public": true
+    },
+    {
+      "name": "scorePenaltyForDamage",
+      "module_id": "mod:src",
+      "signature": "scorePenaltyForDamage(amount)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 678,
+      "is_public": true
+    },
+    {
+      "name": "getArmorDurationMs",
+      "module_id": "mod:src",
+      "signature": "getArmorDurationMs(armorId)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 697,
+      "is_public": true
+    },
+    {
+      "name": "breakEquippedArmor",
+      "module_id": "mod:src",
+      "signature": "breakEquippedArmor(armorId)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 703,
+      "is_public": true
+    },
+    {
+      "name": "tickArmorDurabilityByTime",
+      "module_id": "mod:src",
+      "signature": "tickArmorDurabilityByTime()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 718,
+      "is_public": true
+    },
+    {
+      "name": "damagePlayer",
+      "module_id": "mod:src",
+      "signature": "damagePlayer(amount, sourceX, knockback = 90)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 753,
+      "is_public": true
+    },
+    {
+      "name": "nextLevel",
+      "module_id": "mod:src",
+      "signature": "nextLevel()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 834,
+      "is_public": true
+    },
+    {
+      "name": "showToast",
+      "module_id": "mod:src",
+      "signature": "showToast(msg)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 839,
+      "is_public": true
+    },
+    {
+      "name": "showFloatingText",
+      "module_id": "mod:src",
+      "signature": "showFloatingText(text, x, y, color)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 846,
+      "is_public": true
+    },
+    {
+      "name": "updateInventoryUI",
+      "module_id": "mod:src",
+      "signature": "updateInventoryUI()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 850,
+      "is_public": true
+    },
+    {
+      "name": "getInventoryEntries",
+      "module_id": "mod:src",
+      "signature": "getInventoryEntries(keys)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 874,
+      "is_public": true
+    },
+    {
+      "name": "renderInventoryModal",
+      "module_id": "mod:src",
+      "signature": "renderInventoryModal()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 885,
+      "is_public": true
+    },
+    {
+      "name": "setInventoryTab",
+      "module_id": "mod:src",
+      "signature": "setInventoryTab(tab)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 965,
+      "is_public": true
+    },
+    {
+      "name": "showInventoryModal",
+      "module_id": "mod:src",
+      "signature": "showInventoryModal()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 975,
+      "is_public": true
+    },
+    {
+      "name": "hideInventoryModal",
+      "module_id": "mod:src",
+      "signature": "hideInventoryModal()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 983,
+      "is_public": true
+    },
+    {
+      "name": "updateInventoryModal",
+      "module_id": "mod:src",
+      "signature": "updateInventoryModal()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 990,
+      "is_public": true
+    },
+    {
+      "name": "useInventoryItem",
+      "module_id": "mod:src",
+      "signature": "useInventoryItem(itemKey)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 997,
+      "is_public": true
+    },
+    {
+      "name": "addArmorToInventory",
+      "module_id": "mod:src",
+      "signature": "addArmorToInventory(armorId)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1304,
+      "is_public": true
+    },
+    {
+      "name": "equipArmor",
+      "module_id": "mod:src",
+      "signature": "equipArmor(armorId)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1313,
+      "is_public": true
+    },
+    {
+      "name": "unequipArmor",
+      "module_id": "mod:src",
+      "signature": "unequipArmor()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1339,
+      "is_public": true
+    },
+    {
+      "name": "getArmorDefense",
+      "module_id": "mod:src",
+      "signature": "getArmorDefense()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1354,
+      "is_public": true
+    },
+    {
+      "name": "updateArmorUI",
+      "module_id": "mod:src",
+      "signature": "updateArmorUI()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1360,
+      "is_public": true
+    },
+    {
+      "name": "showArmorSelectUI",
+      "module_id": "mod:src",
+      "signature": "showArmorSelectUI()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1364,
+      "is_public": true
+    },
+    {
+      "name": "hideArmorSelectUI",
+      "module_id": "mod:src",
+      "signature": "hideArmorSelectUI()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1417,
+      "is_public": true
+    },
+    {
+      "name": "tryCraft",
+      "module_id": "mod:src",
+      "signature": "tryCraft(recipeKey)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1431,
+      "is_public": true
+    },
+    {
+      "name": "spawnGolem",
+      "module_id": "mod:src",
+      "signature": "spawnGolem(type)",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1466,
+      "is_public": true
+    },
+    {
+      "name": "handleInteraction",
+      "module_id": "mod:src",
+      "signature": "handleInteraction(interactMode = \"tap\")",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1484,
+      "is_public": true
+    },
+    {
+      "name": "handleDecorationInteract",
+      "module_id": "mod:src",
+      "signature": "handleDecorationInteract()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1521,
+      "is_public": true
+    },
+    {
+      "name": "handleAttack",
+      "module_id": "mod:src",
+      "signature": "handleAttack(mode = \"press\")",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1532,
+      "is_public": true
+    },
+    {
+      "name": "handleAttackRelease",
+      "module_id": "mod:src",
+      "signature": "handleAttackRelease()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1557,
+      "is_public": true
+    },
+    {
+      "name": "triggerChestHint",
+      "module_id": "mod:src",
+      "signature": "triggerChestHint()",
+      "file_path": "src/modules/13-game-loop.js",
+      "line_number": 1564,
+      "is_public": true
+    },
+    {
+      "name": "drawDecoration",
+      "module_id": "mod:src",
+      "signature": "drawDecoration(decor)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "drawBush",
+      "module_id": "mod:src",
+      "signature": "drawBush(bush)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 92,
+      "is_public": true
+    },
+    {
+      "name": "drawFlower",
+      "module_id": "mod:src",
+      "signature": "drawFlower(flower)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 115,
+      "is_public": true
+    },
+    {
+      "name": "drawMushroom",
+      "module_id": "mod:src",
+      "signature": "drawMushroom(mushroom)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 154,
+      "is_public": true
+    },
+    {
+      "name": "drawVine",
+      "module_id": "mod:src",
+      "signature": "drawVine(vine)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 170,
+      "is_public": true
+    },
+    {
+      "name": "drawIceSpike",
+      "module_id": "mod:src",
+      "signature": "drawIceSpike(spike)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 193,
+      "is_public": true
+    },
+    {
+      "name": "drawSnowPile",
+      "module_id": "mod:src",
+      "signature": "drawSnowPile(pile)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 216,
+      "is_public": true
+    },
+    {
+      "name": "drawIceBlock",
+      "module_id": "mod:src",
+      "signature": "drawIceBlock(ice)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 231,
+      "is_public": true
+    },
+    {
+      "name": "drawDeadBush",
+      "module_id": "mod:src",
+      "signature": "drawDeadBush(bush)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 254,
+      "is_public": true
+    },
+    {
+      "name": "drawRock",
+      "module_id": "mod:src",
+      "signature": "drawRock(rock)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 276,
+      "is_public": true
+    },
+    {
+      "name": "drawBones",
+      "module_id": "mod:src",
+      "signature": "drawBones(bones)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 303,
+      "is_public": true
+    },
+    {
+      "name": "drawCactusDecor",
+      "module_id": "mod:src",
+      "signature": "drawCactusDecor(cactus)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 319,
+      "is_public": true
+    },
+    {
+      "name": "drawOre",
+      "module_id": "mod:src",
+      "signature": "drawOre(ore)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 337,
+      "is_public": true
+    },
+    {
+      "name": "drawStalactite",
+      "module_id": "mod:src",
+      "signature": "drawStalactite(stal)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 353,
+      "is_public": true
+    },
+    {
+      "name": "drawCrystal",
+      "module_id": "mod:src",
+      "signature": "drawCrystal(crystal)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 372,
+      "is_public": true
+    },
+    {
+      "name": "drawLavaPool",
+      "module_id": "mod:src",
+      "signature": "drawLavaPool(pool)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 386,
+      "is_public": true
+    },
+    {
+      "name": "drawShell",
+      "module_id": "mod:src",
+      "signature": "drawShell(shell)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 398,
+      "is_public": true
+    },
+    {
+      "name": "drawStarfish",
+      "module_id": "mod:src",
+      "signature": "drawStarfish(star)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 450,
+      "is_public": true
+    },
+    {
+      "name": "drawSeaweed",
+      "module_id": "mod:src",
+      "signature": "drawSeaweed(seaweed)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 477,
+      "is_public": true
+    },
+    {
+      "name": "drawLargeSeaweed",
+      "module_id": "mod:src",
+      "signature": "drawLargeSeaweed(seaweed)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 489,
+      "is_public": true
+    },
+    {
+      "name": "drawCoralDecor",
+      "module_id": "mod:src",
+      "signature": "drawCoralDecor(coral)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 510,
+      "is_public": true
+    },
+    {
+      "name": "drawBoatDecor",
+      "module_id": "mod:src",
+      "signature": "drawBoatDecor(boat)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 528,
+      "is_public": true
+    },
+    {
+      "name": "drawFireDecor",
+      "module_id": "mod:src",
+      "signature": "drawFireDecor(fire)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 537,
+      "is_public": true
+    },
+    {
+      "name": "drawLavaFall",
+      "module_id": "mod:src",
+      "signature": "drawLavaFall(fall)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 557,
+      "is_public": true
+    },
+    {
+      "name": "drawSoulSand",
+      "module_id": "mod:src",
+      "signature": "drawSoulSand(sand)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 568,
+      "is_public": true
+    },
+    {
+      "name": "drawNetherWart",
+      "module_id": "mod:src",
+      "signature": "drawNetherWart(wart)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 578,
+      "is_public": true
+    },
+    {
+      "name": "drawBasalt",
+      "module_id": "mod:src",
+      "signature": "drawBasalt(basalt)",
+      "file_path": "src/modules/14-renderer-decorations.js",
+      "line_number": 587,
+      "is_public": true
+    },
+    {
+      "name": "drawSteve",
+      "module_id": "mod:src",
+      "signature": "drawSteve(x, y, facingRight, attacking)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "drawMobRect",
+      "module_id": "mod:src",
+      "signature": "drawMobRect(x, y, s, px, py, pw, ph)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 57,
+      "is_public": true
+    },
+    {
+      "name": "drawCreeperMob",
+      "module_id": "mod:src",
+      "signature": "drawCreeperMob(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 61,
+      "is_public": true
+    },
+    {
+      "name": "drawEnemy",
+      "module_id": "mod:src",
+      "signature": "drawEnemy(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 93,
+      "is_public": true
+    },
+    {
+      "name": "drawSimpleBiomeEnemy",
+      "module_id": "mod:src",
+      "signature": "drawSimpleBiomeEnemy(enemy, bodyColor, detailColor, humanoid)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 152,
+      "is_public": true
+    },
+    {
+      "name": "drawWardenEnemy",
+      "module_id": "mod:src",
+      "signature": "drawWardenEnemy(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 169,
+      "is_public": true
+    },
+    {
+      "name": "drawZombie",
+      "module_id": "mod:src",
+      "signature": "drawZombie(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 187,
+      "is_public": true
+    },
+    {
+      "name": "drawSpider",
+      "module_id": "mod:src",
+      "signature": "drawSpider(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 221,
+      "is_public": true
+    },
+    {
+      "name": "drawSkeleton",
+      "module_id": "mod:src",
+      "signature": "drawSkeleton(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 258,
+      "is_public": true
+    },
+    {
+      "name": "drawEnderman",
+      "module_id": "mod:src",
+      "signature": "drawEnderman(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 292,
+      "is_public": true
+    },
+    {
+      "name": "drawGolem",
+      "module_id": "mod:src",
+      "signature": "drawGolem(golem)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 318,
+      "is_public": true
+    },
+    {
+      "name": "drawHealthBar",
+      "module_id": "mod:src",
+      "signature": "drawHealthBar(x, y, width, hp, maxHp)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 342,
+      "is_public": true
+    },
+    {
+      "name": "drawProjectile",
+      "module_id": "mod:src",
+      "signature": "drawProjectile(proj)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 352,
+      "is_public": true
+    },
+    {
+      "name": "renderBossSystem",
+      "module_id": "mod:src",
+      "signature": "renderBossSystem()",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 382,
+      "is_public": true
+    },
+    {
+      "name": "drawFoxEnemy",
+      "module_id": "mod:src",
+      "signature": "drawFoxEnemy(enemy)",
+      "file_path": "src/modules/14-renderer-entities.js",
+      "line_number": 388,
+      "is_public": true
+    },
+    {
+      "name": "scheduleNextFrame",
+      "module_id": "mod:src",
+      "signature": "scheduleNextFrame()",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "draw",
+      "module_id": "mod:src",
+      "signature": "draw()",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 29,
+      "is_public": true
+    },
+    {
+      "name": "drawBlock",
+      "module_id": "mod:src",
+      "signature": "drawBlock(x, y, w, h, type)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 178,
+      "is_public": true
+    },
+    {
+      "name": "drawFragilePlatformOverlay",
+      "module_id": "mod:src",
+      "signature": "drawFragilePlatformOverlay(p)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 255,
+      "is_public": true
+    },
+    {
+      "name": "drawPixelTree",
+      "module_id": "mod:src",
+      "signature": "drawPixelTree(ctx2d, x, y, type, hp)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 278,
+      "is_public": true
+    },
+    {
+      "name": "drawChest",
+      "module_id": "mod:src",
+      "signature": "drawChest(x, y, opened)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 374,
+      "is_public": true
+    },
+    {
+      "name": "drawItem",
+      "module_id": "mod:src",
+      "signature": "drawItem(x, y, text)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 418,
+      "is_public": true
+    },
+    {
+      "name": "drawWordGate",
+      "module_id": "mod:src",
+      "signature": "drawWordGate(gate)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 466,
+      "is_public": true
+    },
+    {
+      "name": "drawParticle",
+      "module_id": "mod:src",
+      "signature": "drawParticle(p)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 484,
+      "is_public": true
+    },
+    {
+      "name": "drawBackground",
+      "module_id": "mod:src",
+      "signature": "drawBackground(biome)",
+      "file_path": "src/modules/14-renderer-main.js",
+      "line_number": 524,
+      "is_public": true
+    },
+    {
+      "name": "colCheck",
+      "module_id": "mod:src",
+      "signature": "colCheck(shapeA, shapeB)",
+      "file_path": "src/modules/15-entities-base.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "colCheckRect",
+      "module_id": "mod:src",
+      "signature": "colCheckRect(x1, y1, w1, h1, x2, y2, w2, h2)",
+      "file_path": "src/modules/15-entities-base.js",
+      "line_number": 7,
+      "is_public": true
+    },
+    {
+      "name": "rectIntersect",
+      "module_id": "mod:src",
+      "signature": "rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2)",
+      "file_path": "src/modules/15-entities-base.js",
+      "line_number": 26,
+      "is_public": true
+    },
+    {
+      "name": "getPooledDecoration",
+      "module_id": "mod:src",
+      "signature": "getPooledDecoration(type, resetFn, createFn)",
+      "file_path": "src/modules/15-entities-base.js",
+      "line_number": 231,
+      "is_public": true
+    },
+    {
+      "name": "spawnDecoration",
+      "module_id": "mod:src",
+      "signature": "spawnDecoration(type, resetFn, createFn)",
+      "file_path": "src/modules/15-entities-base.js",
+      "line_number": 244,
+      "is_public": true
+    },
+    {
+      "name": "isPlayerProtectedFromWitherInVillage",
+      "module_id": "mod:src",
+      "signature": "isPlayerProtectedFromWitherInVillage()",
+      "file_path": "src/modules/15-entities-boss.js",
+      "line_number": 1,
+      "is_public": true
+    },
+    {
+      "name": "isBossWeaponLockActive",
+      "module_id": "mod:src",
+      "signature": "isBossWeaponLockActive()",
+      "file_path": "src/modules/15-entities-boss.js",
+      "line_number": 410,
+      "is_public": true
+    },
+    {
+      "name": "spawnOceanCreatures",
+      "module_id": "mod:src",
+      "signature": "spawnOceanCreatures()",
+      "file_path": "src/modules/15-entities-particles.js",
+      "line_number": 318,
+      "is_public": true
+    },
+    {
+      "name": "updateOceanCreatures",
+      "module_id": "mod:src",
+      "signature": "updateOceanCreatures()",
+      "file_path": "src/modules/15-entities-particles.js",
+      "line_number": 338,
+      "is_public": true
+    },
+    {
+      "name": "renderOceanCreatures",
+      "module_id": "mod:src",
+      "signature": "renderOceanCreatures(ctx, camX)",
+      "file_path": "src/modules/15-entities-particles.js",
+      "line_number": 350,
+      "is_public": true
+    },
+    {
+      "name": "renderInkEffect",
+      "module_id": "mod:src",
+      "signature": "renderInkEffect(ctx)",
+      "file_path": "src/modules/15-entities-particles.js",
+      "line_number": 355,
+      "is_public": true
+    },
+    {
+      "name": "setInputLocked",
+      "module_id": "mod:src",
+      "signature": "setInputLocked(locked)",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 5,
+      "is_public": true
+    },
+    {
+      "name": "wireSettingsModal",
+      "module_id": "mod:src",
+      "signature": "wireSettingsModal()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 9,
+      "is_public": true
+    },
+    {
+      "name": "readFollowUpMetrics",
+      "module_id": "mod:src",
+      "signature": "readFollowUpMetrics()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 63,
+      "is_public": true
+    },
+    {
+      "name": "renderFollowUpStats",
+      "module_id": "mod:src",
+      "signature": "renderFollowUpStats()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 74,
+      "is_public": true
+    },
+    {
+      "name": "fillAdvanced",
+      "module_id": "mod:src",
+      "signature": "fillAdvanced()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 80,
+      "is_public": true
+    },
+    {
+      "name": "openAdvanced",
+      "module_id": "mod:src",
+      "signature": "openAdvanced()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 98,
+      "is_public": true
+    },
+    {
+      "name": "closeAdvanced",
+      "module_id": "mod:src",
+      "signature": "closeAdvanced()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 106,
+      "is_public": true
+    },
+    {
+      "name": "saveAdvanced",
+      "module_id": "mod:src",
+      "signature": "saveAdvanced()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 113,
+      "is_public": true
+    },
+    {
+      "name": "fill",
+      "module_id": "mod:src",
+      "signature": "fill()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 130,
+      "is_public": true
+    },
+    {
+      "name": "open",
+      "module_id": "mod:src",
+      "signature": "open()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 171,
+      "is_public": true
+    },
+    {
+      "name": "close",
+      "module_id": "mod:src",
+      "signature": "close()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 180,
+      "is_public": true
+    },
+    {
+      "name": "resetProgress",
+      "module_id": "mod:src",
+      "signature": "resetProgress()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 189,
+      "is_public": true
+    },
+    {
+      "name": "save",
+      "module_id": "mod:src",
+      "signature": "save()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 193,
+      "is_public": true
+    },
+    {
+      "name": "wireHudButtons",
+      "module_id": "mod:src",
+      "signature": "wireHudButtons()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 283,
+      "is_public": true
+    },
+    {
+      "name": "wireArmorModal",
+      "module_id": "mod:src",
+      "signature": "wireArmorModal()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 323,
+      "is_public": true
+    },
+    {
+      "name": "wireInventoryModal",
+      "module_id": "mod:src",
+      "signature": "wireInventoryModal()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 334,
+      "is_public": true
+    },
+    {
+      "name": "wireTouchControls",
+      "module_id": "mod:src",
+      "signature": "wireTouchControls()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 354,
+      "is_public": true
+    },
+    {
+      "name": "bindHold",
+      "module_id": "mod:src",
+      "signature": "bindHold(action, onDown, onUp)",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 358,
+      "is_public": true
+    },
+    {
+      "name": "bindTap",
+      "module_id": "mod:src",
+      "signature": "bindTap(action, fn)",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 390,
+      "is_public": true
+    },
+    {
+      "name": "bindLongPress",
+      "module_id": "mod:src",
+      "signature": "bindLongPress(action, fn, holdMs = 420)",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 436,
+      "is_public": true
+    },
+    {
+      "name": "wireLearningModals",
+      "module_id": "mod:src",
+      "signature": "wireLearningModals()",
+      "file_path": "src/modules/16-events.js",
+      "line_number": 508,
+      "is_public": true
+    },
+    {
+      "name": "start",
+      "module_id": "mod:src",
+      "signature": "start()",
+      "file_path": "src/modules/17-bootstrap.js",
+      "line_number": 4,
+      "is_public": true
+    },
+    {
+      "name": "matchesBinding",
+      "module_id": "mod:src",
+      "signature": "matchesBinding(e, binding)",
+      "file_path": "src/modules/17-bootstrap.js",
+      "line_number": 162,
+      "is_public": true
+    },
+    {
+      "name": "installSafeAreaChangeWatcher",
+      "module_id": "mod:src",
+      "signature": "installSafeAreaChangeWatcher()",
+      "file_path": "src/modules/17-bootstrap.js",
+      "line_number": 269,
+      "is_public": true
+    },
+    {
+      "name": "registerTestApi",
+      "module_id": "mod:src",
+      "signature": "registerTestApi()",
+      "file_path": "src/modules/17-bootstrap.js",
+      "line_number": 308,
+      "is_public": true
+    },
+    {
+      "name": "canBuildForestShelter",
+      "module_id": "mod:src",
+      "signature": "canBuildForestShelter()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 105,
+      "is_public": true
+    },
+    {
+      "name": "buildForestShelter",
+      "module_id": "mod:src",
+      "signature": "buildForestShelter()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 110,
+      "is_public": true
+    },
+    {
+      "name": "updateForestShelter",
+      "module_id": "mod:src",
+      "signature": "updateForestShelter()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 127,
+      "is_public": true
+    },
+    {
+      "name": "getForestShelterEffect",
+      "module_id": "mod:src",
+      "signature": "getForestShelterEffect()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 140,
+      "is_public": true
+    },
+    {
+      "name": "spawnDesertOasis",
+      "module_id": "mod:src",
+      "signature": "spawnDesertOasis(x, y)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 165,
+      "is_public": true
+    },
+    {
+      "name": "spawnDesertCamel",
+      "module_id": "mod:src",
+      "signature": "spawnDesertCamel(x, y, nearOasis)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 176,
+      "is_public": true
+    },
+    {
+      "name": "updateDesertSystems",
+      "module_id": "mod:src",
+      "signature": "updateDesertSystems()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 187,
+      "is_public": true
+    },
+    {
+      "name": "getCamelRideEffect",
+      "module_id": "mod:src",
+      "signature": "getCamelRideEffect()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 254,
+      "is_public": true
+    },
+    {
+      "name": "spawnIceSculpture",
+      "module_id": "mod:src",
+      "signature": "spawnIceSculpture(x, y)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 272,
+      "is_public": true
+    },
+    {
+      "name": "hitIceSculpture",
+      "module_id": "mod:src",
+      "signature": "hitIceSculpture(sculpture)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 283,
+      "is_public": true
+    },
+    {
+      "name": "breakIceBlock",
+      "module_id": "mod:src",
+      "signature": "breakIceBlock(iceBlock)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 298,
+      "is_public": true
+    },
+    {
+      "name": "craftFrostArmor",
+      "module_id": "mod:src",
+      "signature": "craftFrostArmor()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 310,
+      "is_public": true
+    },
+    {
+      "name": "updateSnowIceSystem",
+      "module_id": "mod:src",
+      "signature": "updateSnowIceSystem()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 325,
+      "is_public": true
+    },
+    {
+      "name": "getFrostArmorEffect",
+      "module_id": "mod:src",
+      "signature": "getFrostArmorEffect()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 357,
+      "is_public": true
+    },
+    {
+      "name": "onMushroomBounce",
+      "module_id": "mod:src",
+      "signature": "onMushroomBounce(mushroomY)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 369,
+      "is_public": true
+    },
+    {
+      "name": "resetMushroomCombo",
+      "module_id": "mod:src",
+      "signature": "resetMushroomCombo(onGround = true)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 403,
+      "is_public": true
+    },
+    {
+      "name": "getMushroomBounceEffects",
+      "module_id": "mod:src",
+      "signature": "getMushroomBounceEffects()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 409,
+      "is_public": true
+    },
+    {
+      "name": "onFlowerCollected",
+      "module_id": "mod:src",
+      "signature": "onFlowerCollected()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 426,
+      "is_public": true
+    },
+    {
+      "name": "spawnCherryRabbit",
+      "module_id": "mod:src",
+      "signature": "spawnCherryRabbit(x, y)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 434,
+      "is_public": true
+    },
+    {
+      "name": "feedCherryRabbit",
+      "module_id": "mod:src",
+      "signature": "feedCherryRabbit(rabbit)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 444,
+      "is_public": true
+    },
+    {
+      "name": "updateCherryPetalSystem",
+      "module_id": "mod:src",
+      "signature": "updateCherryPetalSystem()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 462,
+      "is_public": true
+    },
+    {
+      "name": "getInvincibilityEffect",
+      "module_id": "mod:src",
+      "signature": "getInvincibilityEffect()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 485,
+      "is_public": true
+    },
+    {
+      "name": "renderInteractionChains",
+      "module_id": "mod:src",
+      "signature": "renderInteractionChains(ctx, camX)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 495,
+      "is_public": true
+    },
+    {
+      "name": "clearInteractionChains",
+      "module_id": "mod:src",
+      "signature": "clearInteractionChains()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 625,
+      "is_public": true
+    },
+    {
+      "name": "updateMushroomIslandPenalty",
+      "module_id": "mod:src",
+      "signature": "updateMushroomIslandPenalty()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 655,
+      "is_public": true
+    },
+    {
+      "name": "getMushroomIslandPenaltyMultiplier",
+      "module_id": "mod:src",
+      "signature": "getMushroomIslandPenaltyMultiplier()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 675,
+      "is_public": true
+    },
+    {
+      "name": "renderMushroomIslandPenaltyWarning",
+      "module_id": "mod:src",
+      "signature": "renderMushroomIslandPenaltyWarning(ctx)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 680,
+      "is_public": true
+    },
+    {
+      "name": "updateAllInteractionChains",
+      "module_id": "mod:src",
+      "signature": "updateAllInteractionChains()",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 704,
+      "is_public": true
+    },
+    {
+      "name": "incrementChainProgress",
+      "module_id": "mod:src",
+      "signature": "incrementChainProgress(biomeId, key)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 718,
+      "is_public": true
+    },
+    {
+      "name": "incrementMushroomBounce",
+      "module_id": "mod:src",
+      "signature": "incrementMushroomBounce(mushroomY)",
+      "file_path": "src/modules/18-interaction-chains.js",
+      "line_number": 723,
+      "is_public": true
+    },
+    {
+      "name": "getVillageColors",
+      "module_id": "mod:src",
+      "signature": "getVillageColors(biomeId)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 14,
+      "is_public": true
+    },
+    {
+      "name": "drawBlock_village",
+      "module_id": "mod:src",
+      "signature": "drawBlock_village(ctx, x, y, w, h, color, borderColor)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 20,
+      "is_public": true
+    },
+    {
+      "name": "drawBlockHouse",
+      "module_id": "mod:src",
+      "signature": "drawBlockHouse(ctx, bx, by, w, h, colors, type)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 29,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageBed",
+      "module_id": "mod:src",
+      "signature": "drawVillageBed(ctx, bx, by, colors)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 77,
+      "is_public": true
+    },
+    {
+      "name": "drawVillagePath",
+      "module_id": "mod:src",
+      "signature": "drawVillagePath(ctx, village)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 90,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageWell",
+      "module_id": "mod:src",
+      "signature": "drawVillageWell(ctx, x)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 107,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageLamp",
+      "module_id": "mod:src",
+      "signature": "drawVillageLamp(ctx, x, colors)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 129,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageFence",
+      "module_id": "mod:src",
+      "signature": "drawVillageFence(ctx, x, colors)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 147,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageSign",
+      "module_id": "mod:src",
+      "signature": "drawVillageSign(ctx, x, biomeName)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 160,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageNPC",
+      "module_id": "mod:src",
+      "signature": "drawVillageNPC(ctx, npc)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 181,
+      "is_public": true
+    },
+    {
+      "name": "drawVillages",
+      "module_id": "mod:src",
+      "signature": "drawVillages(ctx)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 232,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageInteractHint",
+      "module_id": "mod:src",
+      "signature": "drawVillageInteractHint(ctx, village)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 260,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageBackground",
+      "module_id": "mod:src",
+      "signature": "drawVillageBackground(ctx, village)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 301,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageDecorations",
+      "module_id": "mod:src",
+      "signature": "drawVillageDecorations(ctx, village)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 323,
+      "is_public": true
+    },
+    {
+      "name": "drawVillageBanner",
+      "module_id": "mod:src",
+      "signature": "drawVillageBanner(ctx, village)",
+      "file_path": "src/modules/18-village-render.js",
+      "line_number": 341,
+      "is_public": true
+    },
+    {
+      "name": "getVillageConfig",
+      "module_id": "mod:src",
+      "signature": "getVillageConfig()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 78,
+      "is_public": true
+    },
+    {
+      "name": "loadVillageConfig",
+      "module_id": "mod:src",
+      "signature": "loadVillageConfig()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 108,
+      "is_public": true
+    },
+    {
+      "name": "maybeSpawnVillage",
+      "module_id": "mod:src",
+      "signature": "maybeSpawnVillage(playerScore, playerX)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 135,
+      "is_public": true
+    },
+    {
+      "name": "createVillage",
+      "module_id": "mod:src",
+      "signature": "createVillage(startX, biomeId, index)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 197,
+      "is_public": true
+    },
+    {
+      "name": "spawnVillageItems",
+      "module_id": "mod:src",
+      "signature": "spawnVillageItems(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 238,
+      "is_public": true
+    },
+    {
+      "name": "cleanupVillages",
+      "module_id": "mod:src",
+      "signature": "cleanupVillages(playerX)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 261,
+      "is_public": true
+    },
+    {
+      "name": "createVillageNPC",
+      "module_id": "mod:src",
+      "signature": "createVillageNPC(baseX, role, villageX, villageWidth)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 293,
+      "is_public": true
+    },
+    {
+      "name": "updateVillageNPCs",
+      "module_id": "mod:src",
+      "signature": "updateVillageNPCs(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 314,
+      "is_public": true
+    },
+    {
+      "name": "updateVillages",
+      "module_id": "mod:src",
+      "signature": "updateVillages()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 359,
+      "is_public": true
+    },
+    {
+      "name": "isVillageInteriorActive",
+      "module_id": "mod:src",
+      "signature": "isVillageInteriorActive()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 426,
+      "is_public": true
+    },
+    {
+      "name": "syncVillageInteriorTouchUi",
+      "module_id": "mod:src",
+      "signature": "syncVillageInteriorTouchUi()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 430,
+      "is_public": true
+    },
+    {
+      "name": "getVillageInteriorVillage",
+      "module_id": "mod:src",
+      "signature": "getVillageInteriorVillage()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 438,
+      "is_public": true
+    },
+    {
+      "name": "getVillageInteriorBuilding",
+      "module_id": "mod:src",
+      "signature": "getVillageInteriorBuilding(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 443,
+      "is_public": true
+    },
+    {
+      "name": "getInteriorDoorX",
+      "module_id": "mod:src",
+      "signature": "getInteriorDoorX()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 448,
+      "is_public": true
+    },
+    {
+      "name": "getInteriorActionX",
+      "module_id": "mod:src",
+      "signature": "getInteriorActionX(type = villageInteriorState.buildingType)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 453,
+      "is_public": true
+    },
+    {
+      "name": "getInteriorMoveBounds",
+      "module_id": "mod:src",
+      "signature": "getInteriorMoveBounds()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 461,
+      "is_public": true
+    },
+    {
+      "name": "getPlayerCenterX",
+      "module_id": "mod:src",
+      "signature": "getPlayerCenterX()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 469,
+      "is_public": true
+    },
+    {
+      "name": "resetVillageInteriorState",
+      "module_id": "mod:src",
+      "signature": "resetVillageInteriorState({ silent = true } = {})",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 474,
+      "is_public": true
+    },
+    {
+      "name": "canEnterVillageInterior",
+      "module_id": "mod:src",
+      "signature": "canEnterVillageInterior(village, building)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 494,
+      "is_public": true
+    },
+    {
+      "name": "enterVillageInterior",
+      "module_id": "mod:src",
+      "signature": "enterVillageInterior(village, building)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 509,
+      "is_public": true
+    },
+    {
+      "name": "exitVillageInterior",
+      "module_id": "mod:src",
+      "signature": "exitVillageInterior(reason = \"\")",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 539,
+      "is_public": true
+    },
+    {
+      "name": "updateVillageInteriorMode",
+      "module_id": "mod:src",
+      "signature": "updateVillageInteriorMode()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 561,
+      "is_public": true
+    },
+    {
+      "name": "renderVillageInterior",
+      "module_id": "mod:src",
+      "signature": "renderVillageInterior(ctx)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 605,
+      "is_public": true
+    },
+    {
+      "name": "triggerVillageInteriorAutoDoor",
+      "module_id": "mod:src",
+      "signature": "triggerVillageInteriorAutoDoor(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 762,
+      "is_public": true
+    },
+    {
+      "name": "triggerVillageInteriorChestAction",
+      "module_id": "mod:src",
+      "signature": "triggerVillageInteriorChestAction(village, interactMode = \"tap\")",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 789,
+      "is_public": true
+    },
+    {
+      "name": "triggerVillageInteriorAutoAction",
+      "module_id": "mod:src",
+      "signature": "triggerVillageInteriorAutoAction(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 832,
+      "is_public": true
+    },
+    {
+      "name": "checkVillageRest",
+      "module_id": "mod:src",
+      "signature": "checkVillageRest(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 855,
+      "is_public": true
+    },
+    {
+      "name": "checkVillageBuildings",
+      "module_id": "mod:src",
+      "signature": "checkVillageBuildings(village, interactMode = \"tap\")",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 863,
+      "is_public": true
+    },
+    {
+      "name": "isInteriorBuildingType",
+      "module_id": "mod:src",
+      "signature": "isInteriorBuildingType(type)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 870,
+      "is_public": true
+    },
+    {
+      "name": "tryAutoEnterVillageInterior",
+      "module_id": "mod:src",
+      "signature": "tryAutoEnterVillageInterior(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 875,
+      "is_public": true
+    },
+    {
+      "name": "getNearbyBuilding",
+      "module_id": "mod:src",
+      "signature": "getNearbyBuilding(village, margin = 4)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 893,
+      "is_public": true
+    },
+    {
+      "name": "showRestPrompt",
+      "module_id": "mod:src",
+      "signature": "showRestPrompt(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 905,
+      "is_public": true
+    },
+    {
+      "name": "hideRestPrompt",
+      "module_id": "mod:src",
+      "signature": "hideRestPrompt()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 910,
+      "is_public": true
+    },
+    {
+      "name": "performRest",
+      "module_id": "mod:src",
+      "signature": "performRest(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 915,
+      "is_public": true
+    },
+    {
+      "name": "isInVillageArea",
+      "module_id": "mod:src",
+      "signature": "isInVillageArea(x)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 953,
+      "is_public": true
+    },
+    {
+      "name": "getVillageAt",
+      "module_id": "mod:src",
+      "signature": "getVillageAt(x)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 959,
+      "is_public": true
+    },
+    {
+      "name": "getBiomeName",
+      "module_id": "mod:src",
+      "signature": "getBiomeName(biomeId)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 966,
+      "is_public": true
+    },
+    {
+      "name": "getVillageWords",
+      "module_id": "mod:src",
+      "signature": "getVillageWords(biomeId)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 974,
+      "is_public": true
+    },
+    {
+      "name": "handleVillageInteraction",
+      "module_id": "mod:src",
+      "signature": "handleVillageInteraction(building, village, interactMode = \"tap\")",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 979,
+      "is_public": true
+    },
+    {
+      "name": "handleVillageInteriorInteraction",
+      "module_id": "mod:src",
+      "signature": "handleVillageInteriorInteraction(interactMode = \"tap\")",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1001,
+      "is_public": true
+    },
+    {
+      "name": "openVillageTrader",
+      "module_id": "mod:src",
+      "signature": "openVillageTrader(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1061,
+      "is_public": true
+    },
+    {
+      "name": "ensureVillageTraderModal",
+      "module_id": "mod:src",
+      "signature": "ensureVillageTraderModal()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1077,
+      "is_public": true
+    },
+    {
+      "name": "closeVillageTrader",
+      "module_id": "mod:src",
+      "signature": "closeVillageTrader()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1097,
+      "is_public": true
+    },
+    {
+      "name": "bindTraderTap",
+      "module_id": "mod:src",
+      "signature": "bindTraderTap(target, handler)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1108,
+      "is_public": true
+    },
+    {
+      "name": "renderVillageTraderMain",
+      "module_id": "mod:src",
+      "signature": "renderVillageTraderMain(modal, village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1126,
+      "is_public": true
+    },
+    {
+      "name": "renderTraderSellMaterials",
+      "module_id": "mod:src",
+      "signature": "renderTraderSellMaterials(modal, village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1146,
+      "is_public": true
+    },
+    {
+      "name": "renderTraderSellCount",
+      "module_id": "mod:src",
+      "signature": "renderTraderSellCount(modal, village, itemId, unitPrice, maxCount, label)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1183,
+      "is_public": true
+    },
+    {
+      "name": "sellMaterialByTrader",
+      "module_id": "mod:src",
+      "signature": "sellMaterialByTrader(itemId, unitPrice, requestedCount)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1212,
+      "is_public": true
+    },
+    {
+      "name": "renderTraderBuyArmor",
+      "module_id": "mod:src",
+      "signature": "renderTraderBuyArmor(modal, village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1240,
+      "is_public": true
+    },
+    {
+      "name": "handleTraderBuyArmor",
+      "module_id": "mod:src",
+      "signature": "handleTraderBuyArmor(armorId, cost)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1265,
+      "is_public": true
+    },
+    {
+      "name": "handleTraderBuySunscreen",
+      "module_id": "mod:src",
+      "signature": "handleTraderBuySunscreen()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1279,
+      "is_public": true
+    },
+    {
+      "name": "renderTraderBuyMaterials",
+      "module_id": "mod:src",
+      "signature": "renderTraderBuyMaterials(modal, village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1293,
+      "is_public": true
+    },
+    {
+      "name": "handleTraderBuyMaterialItem",
+      "module_id": "mod:src",
+      "signature": "handleTraderBuyMaterialItem(id, cost, type, amount = 1)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1319,
+      "is_public": true
+    },
+    {
+      "name": "saveVillageProgress",
+      "module_id": "mod:src",
+      "signature": "saveVillageProgress(village)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1339,
+      "is_public": true
+    },
+    {
+      "name": "getPlayerBuffStore",
+      "module_id": "mod:src",
+      "signature": "getPlayerBuffStore()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1377,
+      "is_public": true
+    },
+    {
+      "name": "setVillageBuff",
+      "module_id": "mod:src",
+      "signature": "setVillageBuff(buffId, durationMs, payload = {})",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1384,
+      "is_public": true
+    },
+    {
+      "name": "hasVillageBuff",
+      "module_id": "mod:src",
+      "signature": "hasVillageBuff(buffId)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1392,
+      "is_public": true
+    },
+    {
+      "name": "updateVillageBuffs",
+      "module_id": "mod:src",
+      "signature": "updateVillageBuffs()",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1398,
+      "is_public": true
+    },
+    {
+      "name": "addInventoryItem",
+      "module_id": "mod:src",
+      "signature": "addInventoryItem(itemId, count = 1)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1409,
+      "is_public": true
+    },
+    {
+      "name": "interactSpecialBuilding",
+      "module_id": "mod:src",
+      "signature": "interactSpecialBuilding(village, buildingType)",
+      "file_path": "src/modules/18-village.js",
+      "line_number": 1476,
+      "is_public": true
+    },
+    {
+      "name": "renderBiomeSky",
+      "module_id": "mod:src",
+      "signature": "renderBiomeSky(ctx, biomeId)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 227,
+      "is_public": true
+    },
+    {
+      "name": "initEndStars",
+      "module_id": "mod:src",
+      "signature": "initEndStars()",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 261,
+      "is_public": true
+    },
+    {
+      "name": "spawnSculkPulseWave",
+      "module_id": "mod:src",
+      "signature": "spawnSculkPulseWave(x, y)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 276,
+      "is_public": true
+    },
+    {
+      "name": "updateSculkPulseWaves",
+      "module_id": "mod:src",
+      "signature": "updateSculkPulseWaves()",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 286,
+      "is_public": true
+    },
+    {
+      "name": "renderSculkPulseWaves",
+      "module_id": "mod:src",
+      "signature": "renderSculkPulseWaves(ctx, camX)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 309,
+      "is_public": true
+    },
+    {
+      "name": "renderHeatWave",
+      "module_id": "mod:src",
+      "signature": "renderHeatWave(ctx)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 330,
+      "is_public": true
+    },
+    {
+      "name": "updateVolcanoVisualState",
+      "module_id": "mod:src",
+      "signature": "updateVolcanoVisualState()",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 352,
+      "is_public": true
+    },
+    {
+      "name": "renderVolcanoSilhouette",
+      "module_id": "mod:src",
+      "signature": "renderVolcanoSilhouette(ctx)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 413,
+      "is_public": true
+    },
+    {
+      "name": "renderLavaPools",
+      "module_id": "mod:src",
+      "signature": "renderLavaPools(ctx)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 466,
+      "is_public": true
+    },
+    {
+      "name": "renderVolcanoAsh",
+      "module_id": "mod:src",
+      "signature": "renderVolcanoAsh(ctx)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 494,
+      "is_public": true
+    },
+    {
+      "name": "updateOceanLightBeams",
+      "module_id": "mod:src",
+      "signature": "updateOceanLightBeams()",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 506,
+      "is_public": true
+    },
+    {
+      "name": "renderOceanLightBeams",
+      "module_id": "mod:src",
+      "signature": "renderOceanLightBeams(ctx)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 521,
+      "is_public": true
+    },
+    {
+      "name": "renderEndStars",
+      "module_id": "mod:src",
+      "signature": "renderEndStars(ctx)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 546,
+      "is_public": true
+    },
+    {
+      "name": "renderDeepDarkVisionMask",
+      "module_id": "mod:src",
+      "signature": "renderDeepDarkVisionMask(ctx, camX)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 562,
+      "is_public": true
+    },
+    {
+      "name": "spawnBiomeParticles",
+      "module_id": "mod:src",
+      "signature": "spawnBiomeParticles()",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 599,
+      "is_public": true
+    },
+    {
+      "name": "updateBiomeVisuals",
+      "module_id": "mod:src",
+      "signature": "updateBiomeVisuals()",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 614,
+      "is_public": true
+    },
+    {
+      "name": "renderBiomeVisuals",
+      "module_id": "mod:src",
+      "signature": "renderBiomeVisuals(ctx, camX)",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 624,
+      "is_public": true
+    },
+    {
+      "name": "clearBiomeVisuals",
+      "module_id": "mod:src",
+      "signature": "clearBiomeVisuals()",
+      "file_path": "src/modules/19-biome-visuals.js",
+      "line_number": 644,
+      "is_public": true
+    },
+    {
+      "name": "hasSilentBootsEquipped",
+      "module_id": "mod:src",
+      "signature": "hasSilentBootsEquipped()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 146,
+      "is_public": true
+    },
+    {
+      "name": "consumeSilentBootsDurability",
+      "module_id": "mod:src",
+      "signature": "consumeSilentBootsDurability(cost = 1)",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 150,
+      "is_public": true
+    },
+    {
+      "name": "adjustDeepDarkNoiseByEquipment",
+      "module_id": "mod:src",
+      "signature": "adjustDeepDarkNoiseByEquipment(amount, actionType = \"generic\")",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 161,
+      "is_public": true
+    },
+    {
+      "name": "addDeepDarkNoise",
+      "module_id": "mod:src",
+      "signature": "addDeepDarkNoise(amount, source = \"\", actionType = \"generic\")",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 173,
+      "is_public": true
+    },
+    {
+      "name": "getDeepDarkNoiseLevel",
+      "module_id": "mod:src",
+      "signature": "getDeepDarkNoiseLevel()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 184,
+      "is_public": true
+    },
+    {
+      "name": "spawnDeepDarkWarden",
+      "module_id": "mod:src",
+      "signature": "spawnDeepDarkWarden()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 188,
+      "is_public": true
+    },
+    {
+      "name": "updateDeepDarkNoiseSystem",
+      "module_id": "mod:src",
+      "signature": "updateDeepDarkNoiseSystem()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 202,
+      "is_public": true
+    },
+    {
+      "name": "renderDeepDarkEnemyEffects",
+      "module_id": "mod:src",
+      "signature": "renderDeepDarkEnemyEffects(ctx, camX)",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 225,
+      "is_public": true
+    },
+    {
+      "name": "renderDeepDarkNoiseHud",
+      "module_id": "mod:src",
+      "signature": "renderDeepDarkNoiseHud(ctx)",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 240,
+      "is_public": true
+    },
+    {
+      "name": "getCurrentBiomePoisonAllowed",
+      "module_id": "mod:src",
+      "signature": "getCurrentBiomePoisonAllowed()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 913,
+      "is_public": true
+    },
+    {
+      "name": "canApplyPoisonEffect",
+      "module_id": "mod:src",
+      "signature": "canApplyPoisonEffect()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 923,
+      "is_public": true
+    },
+    {
+      "name": "tryApplyPoisonEffect",
+      "module_id": "mod:src",
+      "signature": "tryApplyPoisonEffect(sourceX, sourceY)",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 928,
+      "is_public": true
+    },
+    {
+      "name": "updatePlayerPoisonStatus",
+      "module_id": "mod:src",
+      "signature": "updatePlayerPoisonStatus()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 938,
+      "is_public": true
+    },
+    {
+      "name": "resetPlayerPoisonStatus",
+      "module_id": "mod:src",
+      "signature": "resetPlayerPoisonStatus()",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 960,
+      "is_public": true
+    },
+    {
+      "name": "spawnBiomeEnemy",
+      "module_id": "mod:src",
+      "signature": "spawnBiomeEnemy(biomeId, x, y)",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 968,
+      "is_public": true
+    },
+    {
+      "name": "createBiomeEnemy",
+      "module_id": "mod:src",
+      "signature": "createBiomeEnemy(type, x, y)",
+      "file_path": "src/modules/20-enemies-new.js",
+      "line_number": 1018,
+      "is_public": true
+    },
+    {
+      "name": "ensurePlatformTestStats",
+      "module_id": "mod:src",
+      "signature": "ensurePlatformTestStats()",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 452,
+      "is_public": true
+    },
+    {
+      "name": "spawnBiomeDecoration",
+      "module_id": "mod:src",
+      "signature": "spawnBiomeDecoration(biomeId, x, y, groundY)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 474,
+      "is_public": true
+    },
+    {
+      "name": "spawnCherryGroveDecoration",
+      "module_id": "mod:src",
+      "signature": "spawnCherryGroveDecoration(x, y, groundY)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 497,
+      "is_public": true
+    },
+    {
+      "name": "spawnMushroomIslandDecoration",
+      "module_id": "mod:src",
+      "signature": "spawnMushroomIslandDecoration(x, y, groundY)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 523,
+      "is_public": true
+    },
+    {
+      "name": "spawnVolcanoDecoration",
+      "module_id": "mod:src",
+      "signature": "spawnVolcanoDecoration(x, y, groundY)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 544,
+      "is_public": true
+    },
+    {
+      "name": "spawnDeepDarkDecoration",
+      "module_id": "mod:src",
+      "signature": "spawnDeepDarkDecoration(x, y, groundY)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 569,
+      "is_public": true
+    },
+    {
+      "name": "spawnSkyDimensionDecoration",
+      "module_id": "mod:src",
+      "signature": "spawnSkyDimensionDecoration(x, y, groundY)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 595,
+      "is_public": true
+    },
+    {
+      "name": "updateAndRenderCherryPetals",
+      "module_id": "mod:src",
+      "signature": "updateAndRenderCherryPetals(ctx, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 617,
+      "is_public": true
+    },
+    {
+      "name": "updateAndRenderMushroomSpores",
+      "module_id": "mod:src",
+      "signature": "updateAndRenderMushroomSpores(ctx, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 638,
+      "is_public": true
+    },
+    {
+      "name": "renderNewBiomeDecorations",
+      "module_id": "mod:src",
+      "signature": "renderNewBiomeDecorations(ctx, camX, renderCamX = camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 660,
+      "is_public": true
+    },
+    {
+      "name": "renderCherryTree",
+      "module_id": "mod:src",
+      "signature": "renderCherryTree(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 719,
+      "is_public": true
+    },
+    {
+      "name": "renderFlowerCluster",
+      "module_id": "mod:src",
+      "signature": "renderFlowerCluster(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 800,
+      "is_public": true
+    },
+    {
+      "name": "renderButterfly",
+      "module_id": "mod:src",
+      "signature": "renderButterfly(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 818,
+      "is_public": true
+    },
+    {
+      "name": "renderSmallStream",
+      "module_id": "mod:src",
+      "signature": "renderSmallStream(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 833,
+      "is_public": true
+    },
+    {
+      "name": "renderGiantMushroom",
+      "module_id": "mod:src",
+      "signature": "renderGiantMushroom(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 843,
+      "is_public": true
+    },
+    {
+      "name": "renderGlowMushroom",
+      "module_id": "mod:src",
+      "signature": "renderGlowMushroom(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 885,
+      "is_public": true
+    },
+    {
+      "name": "renderMushroomCow",
+      "module_id": "mod:src",
+      "signature": "renderMushroomCow(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 900,
+      "is_public": true
+    },
+    {
+      "name": "renderMagmaCrack",
+      "module_id": "mod:src",
+      "signature": "renderMagmaCrack(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 916,
+      "is_public": true
+    },
+    {
+      "name": "renderHotSpring",
+      "module_id": "mod:src",
+      "signature": "renderHotSpring(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 928,
+      "is_public": true
+    },
+    {
+      "name": "renderObsidianPillar",
+      "module_id": "mod:src",
+      "signature": "renderObsidianPillar(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 945,
+      "is_public": true
+    },
+    {
+      "name": "renderSculkSensor",
+      "module_id": "mod:src",
+      "signature": "renderSculkSensor(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 966,
+      "is_public": true
+    },
+    {
+      "name": "renderSoulLantern",
+      "module_id": "mod:src",
+      "signature": "renderSoulLantern(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 981,
+      "is_public": true
+    },
+    {
+      "name": "renderAncientPillar",
+      "module_id": "mod:src",
+      "signature": "renderAncientPillar(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 995,
+      "is_public": true
+    },
+    {
+      "name": "renderSculkVeinPatch",
+      "module_id": "mod:src",
+      "signature": "renderSculkVeinPatch(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 1009,
+      "is_public": true
+    },
+    {
+      "name": "renderCloudPlatform",
+      "module_id": "mod:src",
+      "signature": "renderCloudPlatform(ctx, d, camX)",
+      "file_path": "src/modules/21-decorations-new.js",
+      "line_number": 1022,
+      "is_public": true
+    }
+  ],
+  "data_structures": [],
+  "data_flows": [],
+  "constraints": [],
+  "impact_items": [],
+  "reference_docs": []
+}

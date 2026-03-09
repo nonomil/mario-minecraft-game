@@ -1,0 +1,4679 @@
+{
+  "are": {
+    "phrase": "They are my classmates."
+  },
+  "article": {
+    "phrase": "I read an article about science."
+  },
+  "as": {
+    "phrase": "It's not as well made, but it's twice as expensive."
+  },
+  "at": {
+    "phrase": "We meet at the school gate."
+  },
+  "anymore": {
+    "phrase": "I don't watch TV much anymore."
+  },
+  "asleep": {
+    "phrase": "How could you miss that? Were you asleep?"
+  },
+  "another": {
+    "phrase": "His interests keep shifting from one thing to another."
+  },
+  "anxious": {
+    "phrase": "There was an anxious wait before the results were revealed."
+  },
+  "anyway": {
+    "phrase": "I don't think that's true. I haven't found any evidence, anyway."
+  },
+  "around": {
+    "phrase": "I planted a row of lilies around the statue."
+  },
+  "angry": {
+    "phrase": "The broken glass left two angry cuts across my arm."
+  },
+  "attendant": {
+    "phrase": "The movie was attendant."
+  },
+  "August": {
+    "phrase": "It is very hot in August."
+  },
+  "authority": {
+    "phrase": "We discussed authority during today's class."
+  },
+  "association": {
+    "phrase": "We discussed association during today's class."
+  },
+  "Australia": {
+    "phrase": "My fathers live in Australia."
+  },
+  "Australian": {
+    "phrase": "The movie was australian."
+  },
+  "autograph": {
+    "phrase": "Could you please autograph this book?"
+  },
+  "award": {
+    "phrase": "In addition, we will issue the 'employee of the month' award afterwards."
+  },
+  "american": {
+    "phrase": "Are you guys American?"
+  },
+  "autumn": {
+    "phrase": "The autumn moonlight is beautiful."
+  },
+  "awful": {
+    "phrase": "I have learnt an awful amount today."
+  },
+  "away": {
+    "phrase": "Two men away in the bottom of the ninth."
+  },
+  "balloon": {
+    "phrase": "I saw a balloon near the school."
+  },
+  "bad": {
+    "phrase": "Stop being bad, or you will get a spanking!"
+  },
+  "be": {
+    "phrase": "Please be quiet in class."
+  },
+  "banana": {
+    "phrase": "You are a banana."
+  },
+  "band": {
+    "phrase": "I saw a band near the school."
+  },
+  "bank": {
+    "phrase": "I'm going to bank the money."
+  },
+  "basketball": {
+    "phrase": "Why do you like playing basketball?"
+  },
+  "before": {
+    "phrase": "Wash your hands before dinner."
+  },
+  "baseball": {
+    "phrase": "We like playing baseball."
+  },
+  "bathroom": {
+    "phrase": "Ziri changed the bathroom towels."
+  },
+  "announce": {
+    "phrase": "Tom found a new way to announce his news."
+  },
+  "beard": {
+    "phrase": "I saw a beard near the school."
+  },
+  "available": {
+    "phrase": "Are any seats still available?"
+  },
+  "beat": {
+    "phrase": "The drummers beat to call soldiers to their quarters."
+  },
+  "beautiful": {
+    "phrase": "It's beautiful outside, let's go for a walk."
+  },
+  "begin": {
+    "phrase": "I usually begin with my classmates after school."
+  },
+  "below": {
+    "phrase": "The treasure is buried two meters below the surface."
+  },
+  "behind": {
+    "phrase": "I'm two weeks behind in my schedule."
+  },
+  "best": {
+    "phrase": "In my opinion, mushrooms are the best pizza toppings."
+  },
+  "between": {
+    "phrase": "I want to buy one that costs somewhere between forty and fifty dollars."
+  },
+  "better": {
+    "phrase": "He quickly found Ali his better in the ring."
+  },
+  "bicycle": {
+    "phrase": "The bicycle needs repair."
+  },
+  "bike": {
+    "phrase": "Put your bike away."
+  },
+  "bill": {
+    "phrase": "Please bring the bill."
+  },
+  "birth": {
+    "phrase": "He was of noble birth, but fortune had not favored him."
+  },
+  "birthday": {
+    "phrase": "Whose birthday is it?"
+  },
+  "biscuit": {
+    "phrase": "I saw a biscuit near the school."
+  },
+  "Asia": {
+    "phrase": "China is the biggest country in Asia."
+  },
+  "besides": {
+    "phrase": "Have you been anywhere besides Spain?"
+  },
+  "blank": {
+    "phrase": "There was a look of blank terror on his face."
+  },
+  "blackboard": {
+    "phrase": "What did she write on the blackboard?"
+  },
+  "blood": {
+    "phrase": "I saw a blood near the school."
+  },
+  "bored": {
+    "phrase": "The movie was bored."
+  },
+  "body": {
+    "phrase": "I saw a body near the school."
+  },
+  "Brazilian": {
+    "phrase": "Guilherme is from Brazil. He is Brazilian."
+  },
+  "bulb": {
+    "phrase": "I saw a bulb near the school."
+  },
+  "butter": {
+    "phrase": "I bought vegetables, beef and butter."
+  },
+  "burn": {
+    "phrase": "I usually burn with my classmates after school."
+  },
+  "by": {
+    "phrase": "The cat is by the table."
+  },
+  "calculator": {
+    "phrase": "I saw a calculator near the school."
+  },
+  "calm": {
+    "phrase": "The movie was calm."
+  },
+  "camera": {
+    "phrase": "I saw a camera near the school."
+  },
+  "camp": {
+    "phrase": "I usually camp with my classmates after school."
+  },
+  "bookcase": {
+    "phrase": "I saw a bookcase near the school."
+  },
+  "canada": {
+    "phrase": "I saw a canada near the school."
+  },
+  "Asian": {
+    "phrase": "The imports from Asian countries have expanded recently."
+  },
+  "cancer": {
+    "phrase": "I saw a cancer near the school."
+  },
+  "candle": {
+    "phrase": "I saw a candle near the school."
+  },
+  "casually": {
+    "phrase": "She answered casually in the interview."
+  },
+  "ceiling": {
+    "phrase": "I saw a ceiling near the school."
+  },
+  "careful": {
+    "phrase": "The movie was careful."
+  },
+  "celebrate": {
+    "phrase": "I usually celebrate with my classmates after school."
+  },
+  "center": {
+    "phrase": "I usually center with my classmates after school."
+  },
+  "chairman": {
+    "phrase": "I saw a chairman near the school."
+  },
+  "challenge": {
+    "phrase": "I usually challenge with my classmates after school."
+  },
+  "cheap": {
+    "phrase": "The movie was cheap."
+  },
+  "cheer": {
+    "phrase": "I usually cheer with my classmates after school."
+  },
+  "chemistry": {
+    "phrase": "I saw a chemistry near the school."
+  },
+  "centre": {
+    "phrase": "There are many hotels in the centre of town."
+  },
+  "ant": {
+    "phrase": "An ant is carrying a leaf."
+  },
+  "chess": {
+    "phrase": "I saw a chess near the school."
+  },
+  "child": {
+    "phrase": "I saw a child near the school."
+  },
+  "Chinese": {
+    "phrase": "Chinese appears in our geography textbook."
+  },
+  "chocolate": {
+    "phrase": "I saw a chocolate near the school."
+  },
+  "choice": {
+    "phrase": "I saw a choice near the school."
+  },
+  "chopsticks": {
+    "phrase": "I saw a chopsticks near the school."
+  },
+  "Christmas": {
+    "phrase": "Christmas appears in our geography textbook."
+  },
+  "cigarette": {
+    "phrase": "I saw a cigarette near the school."
+  },
+  "cinema": {
+    "phrase": "I saw a cinema near the school."
+  },
+  "circle": {
+    "phrase": "I saw a circle near the school."
+  },
+  "clap": {
+    "phrase": "I usually clap with my classmates after school."
+  },
+  "classmate": {
+    "phrase": "I saw a classmate near the school."
+  },
+  "charity": {
+    "phrase": "We discussed charity during today's class."
+  },
+  "clear": {
+    "phrase": "The movie was clear."
+  },
+  "artist": {
+    "phrase": "She is a young artist."
+  },
+  "clerk": {
+    "phrase": "I saw a clerk near the school."
+  },
+  "clever": {
+    "phrase": "The movie was clever."
+  },
+  "classroom": {
+    "phrase": "He is trapped in the classroom."
+  },
+  "climb": {
+    "phrase": "I usually climb with my classmates after school."
+  },
+  "cloudy": {
+    "phrase": "The movie was cloudy."
+  },
+  "color": {
+    "phrase": "I used the word color in a simple sentence."
+  },
+  "cola": {
+    "phrase": "I saw a cola near the school."
+  },
+  "comma": {
+    "phrase": "I saw a comma near the school."
+  },
+  "communicate": {
+    "phrase": "I usually communicate with my classmates after school."
+  },
+  "company": {
+    "phrase": "I saw a company near the school."
+  },
+  "communication": {
+    "phrase": "We discussed communication during today's class."
+  },
+  "complete": {
+    "phrase": "The movie was complete."
+  },
+  "computer": {
+    "phrase": "I saw a computer near the school."
+  },
+  "conference": {
+    "phrase": "We discussed conference during today's class."
+  },
+  "condition": {
+    "phrase": "We discussed condition during today's class."
+  },
+  "confident": {
+    "phrase": "The movie was confident."
+  },
+  "America": {
+    "phrase": "When women succeed, America succeeds."
+  },
+  "conjunction": {
+    "phrase": "We discussed conjunction during today's class."
+  },
+  "convenient": {
+    "phrase": "The movie was convenient."
+  },
+  "concentrate": {
+    "phrase": "I usually concentrate with my classmates after school."
+  },
+  "cooker": {
+    "phrase": "I saw a cooker near the school."
+  },
+  "cool": {
+    "phrase": "The movie was cool."
+  },
+  "cotton": {
+    "phrase": "I saw a cotton near the school."
+  },
+  "courage": {
+    "phrase": "We discussed courage during today's class."
+  },
+  "cousin": {
+    "phrase": "I saw a cousin near the school."
+  },
+  "country": {
+    "phrase": "I saw a country near the school."
+  },
+  "crazy": {
+    "phrase": "The movie was crazy."
+  },
+  "cross": {
+    "phrase": "I used the word cross in a simple sentence."
+  },
+  "creature": {
+    "phrase": "I saw a creature near the school."
+  },
+  "crowd": {
+    "phrase": "I usually crowd with my classmates after school."
+  },
+  "cruel": {
+    "phrase": "The movie was cruel."
+  },
+  "crayon": {
+    "phrase": "I saw a crayon near the school."
+  },
+  "assistant": {
+    "phrase": "The assistant helped the teacher prepare class."
+  },
+  "culture": {
+    "phrase": "I saw a culture near the school."
+  },
+  "cup": {
+    "phrase": "I saw a cup near the school."
+  },
+  "cupboard": {
+    "phrase": "I saw a cupboard near the school."
+  },
+  "cute": {
+    "phrase": "The movie was cute."
+  },
+  "dance": {
+    "phrase": "I used the word dance in a simple sentence."
+  },
+  "daily": {
+    "phrase": "The movie was daily."
+  },
+  "cry": {
+    "phrase": "Sami began to cry."
+  },
+  "danger": {
+    "phrase": "I saw a danger near the school."
+  },
+  "dangerous": {
+    "phrase": "The movie was dangerous."
+  },
+  "dare": {
+    "phrase": "I saw a dare near the school."
+  },
+  "date": {
+    "phrase": "I saw a date near the school."
+  },
+  "Dead": {
+    "phrase": "Dead is an important name in this lesson."
+  },
+  "deaf": {
+    "phrase": "The movie was deaf."
+  },
+  "day": {
+    "phrase": "I saw a day near the school."
+  },
+  "april": {
+    "phrase": "College starts in April."
+  },
+  "dear": {
+    "phrase": "The movie was dear."
+  },
+  "death": {
+    "phrase": "I saw a death near the school."
+  },
+  "december": {
+    "phrase": "I saw a december near the school."
+  },
+  "deep": {
+    "phrase": "I saw a deep near the school."
+  },
+  "decision": {
+    "phrase": "We discussed decision during today's class."
+  },
+  "decide": {
+    "phrase": "I usually decide with my classmates after school."
+  },
+  "deal": {
+    "phrase": "Deal us the cards."
+  },
+  "dentist": {
+    "phrase": "I saw a dentist near the school."
+  },
+  "delicious": {
+    "phrase": "The movie was delicious."
+  },
+  "department": {
+    "phrase": "We discussed department during today's class."
+  },
+  "depend": {
+    "phrase": "I usually depend with my classmates after school."
+  },
+  "desk": {
+    "phrase": "I saw a desk near the school."
+  },
+  "dessert": {
+    "phrase": "I saw a dessert near the school."
+  },
+  "destroy": {
+    "phrase": "I usually destroy with my classmates after school."
+  },
+  "dialogue": {
+    "phrase": "I saw a dialogue near the school."
+  },
+  "diary": {
+    "phrase": "I saw a diary near the school."
+  },
+  "aunt": {
+    "phrase": "Father named me after his aunt."
+  },
+  "Atlantic": {
+    "phrase": "Charles Lindbergh made the first solo flight across the Atlantic Ocean in 1927."
+  },
+  "die": {
+    "phrase": "I usually die with my classmates after school."
+  },
+  "diet": {
+    "phrase": "I usually diet with my classmates after school."
+  },
+  "different": {
+    "phrase": "The movie was different."
+  },
+  "difficult": {
+    "phrase": "The movie was difficult."
+  },
+  "dictionary": {
+    "phrase": "I need a dictionary."
+  },
+  "dinner": {
+    "phrase": "I saw a dinner near the school."
+  },
+  "disabled": {
+    "phrase": "The movie was disabled."
+  },
+  "direct": {
+    "phrase": "The movie was direct."
+  },
+  "disadvantage": {
+    "phrase": "We discussed disadvantage during today's class."
+  },
+  "disappointing": {
+    "phrase": "The movie was disappointing."
+  },
+  "dish": {
+    "phrase": "I saw a dish near the school."
+  },
+  "dismiss": {
+    "phrase": "I usually dismiss with my classmates after school."
+  },
+  "dislike": {
+    "phrase": "I usually dislike with my classmates after school."
+  },
+  "distance": {
+    "phrase": "We discussed distance during today's class."
+  },
+  "discovery": {
+    "phrase": "Automatic discovery of RSS feeds by a Web browser."
+  },
+  "discuss": {
+    "phrase": "I don't wish to discuss this further. Let's talk about something else."
+  },
+  "disturb": {
+    "phrase": "I usually disturb with my classmates after school."
+  },
+  "district": {
+    "phrase": "I saw a district near the school."
+  },
+  "doctor": {
+    "phrase": "If you still feel unwell tomorrow, see your doctor."
+  },
+  "divide": {
+    "phrase": "Stay on your side of the divide, please."
+  },
+  "documentary": {
+    "phrase": "The movie was documentary."
+  },
+  "doll": {
+    "phrase": "I saw a doll near the school."
+  },
+  "dollar": {
+    "phrase": "I saw a dollar near the school."
+  },
+  "down": {
+    "phrase": "There are three soldiers down and one walking wounded."
+  },
+  "donate": {
+    "phrase": "I usually donate with my classmates after school."
+  },
+  "dormitory": {
+    "phrase": "I saw a dormitory near the school."
+  },
+  "downstairs": {
+    "phrase": "The kids sleep in the downstairs bedroom, we sleep in the upstairs one."
+  },
+  "doubt": {
+    "phrase": "I saw a doubt near the school."
+  },
+  "dozen": {
+    "phrase": "Can I have a dozen eggs, please?"
+  },
+  "beach": {
+    "phrase": "He is exercising on the beach."
+  },
+  "draw": {
+    "phrase": "She had to draw upon her experience to solve the problem."
+  },
+  "dream": {
+    "phrase": "I wouldn't dream of snubbing you in public."
+  },
+  "dress": {
+    "phrase": "Does sir dress to the right or the left?"
+  },
+  "drink": {
+    "phrase": "My favourite drink is the White Russian."
+  },
+  "driver": {
+    "phrase": "I saw a driver near the school."
+  },
+  "drive": {
+    "phrase": "You drive nails into wood with a hammer."
+  },
+  "dog": {
+    "phrase": "It is very important to dog down these hatches..."
+  },
+  "drum": {
+    "phrase": "Replace the drum unit of your printer."
+  },
+  "drug": {
+    "phrase": "I saw a drug near the school."
+  },
+  "duck": {
+    "phrase": "Ay up duck, ow'a'tha?"
+  },
+  "dumpling": {
+    "phrase": "I saw a dumpling near the school."
+  },
+  "dull": {
+    "phrase": "He sat through the dull lecture and barely stayed awake."
+  },
+  "biology": {
+    "phrase": "I saw a biology near the school."
+  },
+  "dry": {
+    "phrase": "This is a dry well."
+  },
+  "during": {
+    "phrase": "I lived with my parents during the 1970s."
+  },
+  "drop": {
+    "phrase": "The moderator would drop hints whenever the students struggled."
+  },
+  "each": {
+    "phrase": "From each according to his ability, to each according to his needs."
+  },
+  "earth": {
+    "phrase": "I saw an earth near the school."
+  },
+  "early": {
+    "phrase": "The movie was early."
+  },
+  "easily": {
+    "phrase": "She answered easily in the interview."
+  },
+  "earthquake": {
+    "phrase": "I saw an earthquake near the school."
+  },
+  "eastern": {
+    "phrase": "The movie was eastern."
+  },
+  "edge": {
+    "phrase": "I saw an edge near the school."
+  },
+  "education": {
+    "phrase": "We discussed education during today's class."
+  },
+  "eat": {
+    "phrase": "I usually eat with my classmates after school."
+  },
+  "educate": {
+    "phrase": "I usually educate with my classmates after school."
+  },
+  "easy": {
+    "phrase": "The movie was easy."
+  },
+  "butterfly": {
+    "phrase": "I saw a butterfly near the school."
+  },
+  "effort": {
+    "phrase": "I saw an effort near the school."
+  },
+  "east": {
+    "phrase": "Tom lives three miles east of here."
+  },
+  "duty": {
+    "phrase": "We don't have a duty to keep you here."
+  },
+  "eighth": {
+    "phrase": "The movie was eighth."
+  },
+  "eight": {
+    "phrase": "I have eight notebooks in my bag."
+  },
+  "eighteenth": {
+    "phrase": "I have eighteenth notebooks in my bag."
+  },
+  "either": {
+    "phrase": "The movie was either."
+  },
+  "electric": {
+    "phrase": "The movie was electric."
+  },
+  "elementary": {
+    "phrase": "The movie was elementary."
+  },
+  "elevator": {
+    "phrase": "I saw an elevator near the school."
+  },
+  "eleven": {
+    "phrase": "I saw an eleven near the school."
+  },
+  "elephant": {
+    "phrase": "I saw an elephant near the school."
+  },
+  "eleventh": {
+    "phrase": "I have eleventh notebooks in my bag."
+  },
+  "else": {
+    "phrase": "She answered else in the interview."
+  },
+  "elbow": {
+    "phrase": "The elbow is the joint between the arm and forearm."
+  },
+  "chalk": {
+    "phrase": "I usually chalk with my classmates after school."
+  },
+  "embarrassed": {
+    "phrase": "The movie was embarrassed."
+  },
+  "encourage": {
+    "phrase": "We encourage the use of bicycles in the town centre."
+  },
+  "emotion": {
+    "phrase": "We discussed emotion during today's class."
+  },
+  "enemy": {
+    "phrase": "I saw an enemy near the school."
+  },
+  "energy": {
+    "phrase": "I saw an energy near the school."
+  },
+  "England": {
+    "phrase": "England appears in our geography textbook."
+  },
+  "enjoy": {
+    "phrase": "I plan to go travelling while I still enjoy good health."
+  },
+  "english": {
+    "phrase": "You can't hit it directly, but maybe if you give it some english."
+  },
+  "enter": {
+    "phrase": "Enter your user name and password."
+  },
+  "enough": {
+    "phrase": "She answered enough in the interview."
+  },
+  "entertainment": {
+    "phrase": "We discussed entertainment during today's class."
+  },
+  "environment": {
+    "phrase": "We discussed environment during today's class."
+  },
+  "eraser": {
+    "phrase": "I have worn out the eraser on this pencil."
+  },
+  "equipment": {
+    "phrase": "We discussed equipment during today's class."
+  },
+  "city": {
+    "phrase": "We discussed city during today's class."
+  },
+  "engineer": {
+    "phrase": "I am an engineer."
+  },
+  "escape": {
+    "phrase": "The prisoners made their escape by digging a tunnel."
+  },
+  "escalator": {
+    "phrase": "I saw an escalator near the school."
+  },
+  "essay": {
+    "phrase": "I saw an essay near the school."
+  },
+  "etiquette": {
+    "phrase": "I saw an etiquette near the school."
+  },
+  "establish": {
+    "phrase": "I usually establish with my classmates after school."
+  },
+  "Europe": {
+    "phrase": "Europe appears in our geography textbook."
+  },
+  "European": {
+    "phrase": "The movie was european."
+  },
+  "evening": {
+    "phrase": "I saw an evening near the school."
+  },
+  "even": {
+    "phrase": "The movie was even."
+  },
+  "ever": {
+    "phrase": "She answered ever in the interview."
+  },
+  "every": {
+    "phrase": "The movie was every."
+  },
+  "everyone": {
+    "phrase": "This gift is for everyone."
+  },
+  "everywhere": {
+    "phrase": "She answered everywhere in the interview."
+  },
+  "composition": {
+    "phrase": "We discussed composition during today's class."
+  },
+  "envelope": {
+    "phrase": "The letter is inside the envelope."
+  },
+  "examine": {
+    "phrase": "I usually examine with my classmates after school."
+  },
+  "exam": {
+    "phrase": "I saw an exam near the school."
+  },
+  "example": {
+    "phrase": "I saw an example near the school."
+  },
+  "exchange": {
+    "phrase": "I usually exchange with my classmates after school."
+  },
+  "except": {
+    "phrase": "I usually except with my classmates after school."
+  },
+  "excuse": {
+    "phrase": "I saw an excuse near the school."
+  },
+  "excite": {
+    "phrase": "I usually excite with my classmates after school."
+  },
+  "exercise": {
+    "phrase": "I saw an exercise near the school."
+  },
+  "exhibition": {
+    "phrase": "We discussed exhibition during today's class."
+  },
+  "expect": {
+    "phrase": "I usually expect with my classmates after school."
+  },
+  "everyday": {
+    "phrase": "TV plays an important part in everyday life."
+  },
+  "expensive": {
+    "phrase": "The movie was expensive."
+  },
+  "express": {
+    "phrase": "I usually express with my classmates after school."
+  },
+  "experiment": {
+    "phrase": "I usually experiment with my classmates after school."
+  },
+  "extra": {
+    "phrase": "She answered extra in the interview."
+  },
+  "creative": {
+    "phrase": "The movie was creative."
+  },
+  "face": {
+    "phrase": "I saw a face near the school."
+  },
+  "fact": {
+    "phrase": "I saw a fact near the school."
+  },
+  "factory": {
+    "phrase": "I saw a factory near the school."
+  },
+  "fall": {
+    "phrase": "I usually fall with my classmates after school."
+  },
+  "fair": {
+    "phrase": "The movie was fair."
+  },
+  "family": {
+    "phrase": "I saw a family near the school."
+  },
+  "fantastic": {
+    "phrase": "The movie was fantastic."
+  },
+  "explain": {
+    "phrase": "I usually explain with my classmates after school."
+  },
+  "farm": {
+    "phrase": "I usually farm with my classmates after school."
+  },
+  "farmer": {
+    "phrase": "I saw a farmer near the school."
+  },
+  "fashion": {
+    "phrase": "I saw a fashion near the school."
+  },
+  "fat": {
+    "phrase": "The movie was fat."
+  },
+  "father": {
+    "phrase": "I saw a father near the school."
+  },
+  "fax": {
+    "phrase": "I usually fax with my classmates after school."
+  },
+  "daughter": {
+    "phrase": "I saw a daughter near the school."
+  },
+  "favorite": {
+    "phrase": "The movie was favorite."
+  },
+  "famous": {
+    "phrase": "He is a famous painter."
+  },
+  "fear": {
+    "phrase": "I saw a fear near the school."
+  },
+  "February": {
+    "phrase": "February appears in our geography textbook."
+  },
+  "feed": {
+    "phrase": "I usually feed with my classmates after school."
+  },
+  "feel": {
+    "phrase": "I usually feel with my classmates after school."
+  },
+  "festival": {
+    "phrase": "I saw a festival near the school."
+  },
+  "feeling": {
+    "phrase": "I saw a feeling near the school."
+  },
+  "fetch": {
+    "phrase": "I usually fetch with my classmates after school."
+  },
+  "fever": {
+    "phrase": "I saw a fever near the school."
+  },
+  "few": {
+    "phrase": "The movie was few."
+  },
+  "fiction": {
+    "phrase": "We discussed fiction during today's class."
+  },
+  "fifteen": {
+    "phrase": "I saw a fifteen near the school."
+  },
+  "fifth": {
+    "phrase": "The toy department is on the fifth floor."
+  },
+  "fifty": {
+    "phrase": "I saw a fifty near the school."
+  },
+  "design": {
+    "phrase": "I usually design with my classmates after school."
+  },
+  "fast": {
+    "phrase": "The movie was fast."
+  },
+  "fill": {
+    "phrase": "The mixer returned to the plant for another fill."
+  },
+  "film": {
+    "phrase": "I saw a film near the school."
+  },
+  "find": {
+    "phrase": "I usually find with my classmates after school."
+  },
+  "fine": {
+    "phrase": "The movie was fine."
+  },
+  "finger": {
+    "phrase": "I saw a finger near the school."
+  },
+  "finish": {
+    "phrase": "I usually finish with my classmates after school."
+  },
+  "firm": {
+    "phrase": "He held her hand in a firm clasp."
+  },
+  "fifteenth": {
+    "phrase": "I have fifteenth notebooks in my bag."
+  },
+  "fisherman": {
+    "phrase": "I saw a fisherman near the school."
+  },
+  "fit": {
+    "phrase": "I usually fit with my classmates after school."
+  },
+  "five": {
+    "phrase": "He got five years."
+  },
+  "fix": {
+    "phrase": "I usually fix with my classmates after school."
+  },
+  "discover": {
+    "phrase": "I usually discover with my classmates after school."
+  },
+  "flat": {
+    "phrase": "He can run a mile in four minutes flat."
+  },
+  "flee": {
+    "phrase": "Ethereal products flee once freely exposed to air."
+  },
+  "flight": {
+    "phrase": "The migrating birds' flight took them to Africa."
+  },
+  "first": {
+    "phrase": "Who has first go?"
+  },
+  "floor": {
+    "phrase": "Many sunken ships rest on the ocean floor."
+  },
+  "fly": {
+    "phrase": "The bullet barely grazed the wild fowl's fly."
+  },
+  "fold": {
+    "phrase": "Fold the egg whites into the batter."
+  },
+  "follow": {
+    "phrase": "If you don't practise proper hygiene, illness is sure to follow."
+  },
+  "fool": {
+    "phrase": "The village fool threw his own shoes down the well."
+  },
+  "flag": {
+    "phrase": "Fred is planning to flag his patio this weekend."
+  },
+  "forbid": {
+    "phrase": "What part of \"no\" do you forbid to understand?"
+  },
+  "football": {
+    "phrase": "Each team scored three goals when they played football."
+  },
+  "force": {
+    "phrase": "The law will come into force in January."
+  },
+  "foreigner": {
+    "phrase": "I saw a foreigner near the school."
+  },
+  "forget": {
+    "phrase": "I usually forget with my classmates after school."
+  },
+  "forest": {
+    "phrase": "I usually forest with my classmates after school."
+  },
+  "food": {
+    "phrase": "Your food is here."
+  },
+  "drawer": {
+    "phrase": "I saw a drawer near the school."
+  },
+  "form": {
+    "phrase": "Please fill in this form first."
+  },
+  "forward": {
+    "phrase": "The movie was forward."
+  },
+  "forty": {
+    "phrase": "I saw a forty near the school."
+  },
+  "fourteen": {
+    "phrase": "Fourteen people live here."
+  },
+  "found": {
+    "phrase": "I usually found with my classmates after school."
+  },
+  "fourth": {
+    "phrase": "The movie was fourth."
+  },
+  "fourteenth": {
+    "phrase": "I have fourteenth notebooks in my bag."
+  },
+  "France": {
+    "phrase": "France appears in our geography textbook."
+  },
+  "French": {
+    "phrase": "French appears in our geography textbook."
+  },
+  "front": {
+    "phrase": "The front runner was thirty meters ahead of her nearest competitor."
+  },
+  "Friday": {
+    "phrase": "Friday appears in our geography textbook."
+  },
+  "ear": {
+    "phrase": "I saw an ear near the school."
+  },
+  "frog": {
+    "phrase": "I saw a frog near the school."
+  },
+  "frustrate": {
+    "phrase": "My clumsy fingers frustrate my typing efforts."
+  },
+  "foreign": {
+    "phrase": "Do you have foreign stamps?"
+  },
+  "friendship": {
+    "phrase": "We discussed friendship during today's class."
+  },
+  "fry": {
+    "phrase": "I usually fry with my classmates after school."
+  },
+  "full": {
+    "phrase": "The movie was full."
+  },
+  "fun": {
+    "phrase": "He is such a fun person to be with."
+  },
+  "funny": {
+    "phrase": "I've got a funny feeling that this isn't going to work."
+  },
+  "furry": {
+    "phrase": "The furry had designed an elaborate costume."
+  },
+  "furniture": {
+    "phrase": "A chair is furniture. Sofas are also furniture."
+  },
+  "fresh": {
+    "phrase": "The movie was fresh."
+  },
+  "gallery": {
+    "phrase": "I saw a gallery near the school."
+  },
+  "game": {
+    "phrase": "I saw a game near the school."
+  },
+  "garage": {
+    "phrase": "We discussed garage during today's class."
+  },
+  "general": {
+    "phrase": "The movie was general."
+  },
+  "gentle": {
+    "phrase": "The movie was gentle."
+  },
+  "gentleman": {
+    "phrase": "He is definitely not a gentleman."
+  },
+  "future": {
+    "phrase": "Be more careful in future."
+  },
+  "get": {
+    "phrase": "I usually get with my classmates after school."
+  },
+  "geography": {
+    "phrase": "I saw a geography near the school."
+  },
+  "eighteen": {
+    "phrase": "I saw an eighteen near the school."
+  },
+  "gift": {
+    "phrase": "I saw a gift near the school."
+  },
+  "girl": {
+    "phrase": "I saw a girl near the school."
+  },
+  "give": {
+    "phrase": "I usually give with my classmates after school."
+  },
+  "girlfriend": {
+    "phrase": "I saw a girlfriend near the school."
+  },
+  "garden": {
+    "phrase": "I saw a garden near the school."
+  },
+  "glove": {
+    "phrase": "I saw a glove near the school."
+  },
+  "goal": {
+    "phrase": "My lifelong goal is to get into a Hollywood movie."
+  },
+  "goat": {
+    "phrase": "I saw a goat near the school."
+  },
+  "god": {
+    "phrase": "The most frequently used name for the Islamic god is Allah."
+  },
+  "government": {
+    "phrase": "We discussed government during today's class."
+  },
+  "grade": {
+    "phrase": "The grade of this hill is more than 5 percent."
+  },
+  "grandchild": {
+    "phrase": "I saw a grandchild near the school."
+  },
+  "glad": {
+    "phrase": "Glad to see you again."
+  },
+  "grandparent": {
+    "phrase": "I saw a grandparent near the school."
+  },
+  "granddaughter": {
+    "phrase": "I saw a granddaughter near the school."
+  },
+  "eighty": {
+    "phrase": "I saw an eighty near the school."
+  },
+  "granny": {
+    "phrase": "I'm going to be a granny."
+  },
+  "grandson": {
+    "phrase": "I saw a grandson near the school."
+  },
+  "great": {
+    "phrase": "The movie was great."
+  },
+  "greeting": {
+    "phrase": "I saw a greeting near the school."
+  },
+  "ground": {
+    "phrase": "Look, I found a ten dollar bill on the ground!"
+  },
+  "guard": {
+    "phrase": "The motorcycle mechanic removed the damaged chain guard."
+  },
+  "grammar": {
+    "phrase": "I saw a grammar near the school."
+  },
+  "gun": {
+    "phrase": "I saw a gun near the school."
+  },
+  "guest": {
+    "phrase": "The guest for the broadcast was a leading footballer."
+  },
+  "gym": {
+    "phrase": "I saw a gym near the school."
+  },
+  "half": {
+    "phrase": "I saw a half near the school."
+  },
+  "guess": {
+    "phrase": "Guess what happened to me!"
+  },
+  "ham": {
+    "phrase": "I think you should eat a ham sandwich."
+  },
+  "hallway": {
+    "phrase": "I saw a hallway near the school."
+  },
+  "especially": {
+    "phrase": "She answered especially in the interview."
+  },
+  "hand": {
+    "phrase": "I saw a hand near the school."
+  },
+  "hamburger": {
+    "phrase": "I saw a hamburger near the school."
+  },
+  "handbag": {
+    "phrase": "I saw a handbag near the school."
+  },
+  "hang": {
+    "phrase": "I usually hang with my classmates after school."
+  },
+  "happen": {
+    "phrase": "I usually happen with my classmates after school."
+  },
+  "hard": {
+    "phrase": "The movie was hard."
+  },
+  "hat": {
+    "phrase": "I saw a hat near the school."
+  },
+  "hardly": {
+    "phrase": "She answered hardly in the interview."
+  },
+  "healthy": {
+    "phrase": "The movie was healthy."
+  },
+  "headache": {
+    "phrase": "I saw a headache near the school."
+  },
+  "hear": {
+    "phrase": "I usually hear with my classmates after school."
+  },
+  "her": {
+    "phrase": "Her English is very good."
+  },
+  "height": {
+    "phrase": "I saw a height near the school."
+  },
+  "hair": {
+    "phrase": "I saw a hair near the school."
+  },
+  "helicopter": {
+    "phrase": "I saw a helicopter near the school."
+  },
+  "excellent": {
+    "phrase": "The movie was excellent."
+  },
+  "his": {
+    "phrase": "His bike is new."
+  },
+  "helpful": {
+    "phrase": "The movie was helpful."
+  },
+  "here": {
+    "phrase": "She answered here in the interview."
+  },
+  "hero": {
+    "phrase": "Where is the hero?"
+  },
+  "high": {
+    "phrase": "The note was too high for her to sing."
+  },
+  "him": {
+    "phrase": "This gift is for him."
+  },
+  "hit": {
+    "phrase": "Where am I going to get my next hit?"
+  },
+  "have": {
+    "phrase": "I usually have with my classmates after school."
+  },
+  "heaven": {
+    "phrase": "I saw a heaven near the school."
+  },
+  "hobby": {
+    "phrase": "I like to collect stamps from different countries as a hobby."
+  },
+  "hole": {
+    "phrase": "Are you going out to get your hole tonight?"
+  },
+  "home": {
+    "phrase": "The missile was able to home in on the target."
+  },
+  "holiday": {
+    "phrase": "I want to take a French course this summer holiday."
+  },
+  "homeless": {
+    "phrase": "Whenever I pass the park, I see the homeless people sleeping on the benches."
+  },
+  "hometown": {
+    "phrase": "I saw a hometown near the school."
+  },
+  "honest": {
+    "phrase": "The movie was honest."
+  },
+  "how": {
+    "phrase": "How do you solve this question?"
+  },
+  "hospital": {
+    "phrase": "I saw a hospital near the school."
+  },
+  "fail": {
+    "phrase": "I usually fail with my classmates after school."
+  },
+  "hotel": {
+    "phrase": "I saw a hotel near the school."
+  },
+  "hot": {
+    "phrase": "The movie was hot."
+  },
+  "house": {
+    "phrase": "I saw a house near the school."
+  },
+  "housework": {
+    "phrase": "I saw a housework near the school."
+  },
+  "huge": {
+    "phrase": "The movie was huge."
+  },
+  "homeland": {
+    "phrase": "I suddenly feel nostalgic for my homeland."
+  },
+  "however": {
+    "phrase": "She answered however in the interview."
+  },
+  "hum": {
+    "phrase": "I usually hum with my classmates after school."
+  },
+  "hundred": {
+    "phrase": "I saw a hundred near the school."
+  },
+  "if": {
+    "phrase": "If it rains, we will stay home."
+  },
+  "humorous": {
+    "phrase": "The movie was humorous."
+  },
+  "hunger": {
+    "phrase": "I usually hunger with my classmates after school."
+  },
+  "hungry": {
+    "phrase": "The movie was hungry."
+  },
+  "husband": {
+    "phrase": "My husband is a professor."
+  },
+  "hurt": {
+    "phrase": "I usually hurt with my classmates after school."
+  },
+  "idea": {
+    "phrase": "I saw an idea near the school."
+  },
+  "feature": {
+    "phrase": "I saw a feature near the school."
+  },
+  "ill": {
+    "phrase": "The movie was ill."
+  },
+  "illness": {
+    "phrase": "We discussed illness during today's class."
+  },
+  "immediately": {
+    "phrase": "She answered immediately in the interview."
+  },
+  "in": {
+    "phrase": "The pen is in my bag."
+  },
+  "impolite": {
+    "phrase": "The movie was impolite."
+  },
+  "importance": {
+    "phrase": "We discussed importance during today's class."
+  },
+  "important": {
+    "phrase": "The movie was important."
+  },
+  "impress": {
+    "phrase": "I usually impress with my classmates after school."
+  },
+  "hurry": {
+    "phrase": "I saw a hurry near the school."
+  },
+  "improve": {
+    "phrase": "I usually improve with my classmates after school."
+  },
+  "include": {
+    "phrase": "I usually include with my classmates after school."
+  },
+  "inch": {
+    "phrase": "I saw an inch near the school."
+  },
+  "increase": {
+    "phrase": "I saw an increase near the school."
+  },
+  "Indian": {
+    "phrase": "Taiwanese food isn't as spicy as Indian food."
+  },
+  "impossible": {
+    "phrase": "The movie was impossible."
+  },
+  "indoors": {
+    "phrase": "She answered indoors in the interview."
+  },
+  "industry": {
+    "phrase": "I saw an industry near the school."
+  },
+  "final": {
+    "phrase": "The movie was final."
+  },
+  "infinitive": {
+    "phrase": "I saw an infinitive near the school."
+  },
+  "information": {
+    "phrase": "We discussed information during today's class."
+  },
+  "injure": {
+    "phrase": "I usually injure with my classmates after school."
+  },
+  "insect": {
+    "phrase": "The swamp is swarming with every sort of insect."
+  },
+  "inside": {
+    "phrase": "The inside surface of the cup is unpainted."
+  },
+  "instance": {
+    "phrase": "We discussed instance during today's class."
+  },
+  "India": {
+    "phrase": "India appears in our geography textbook."
+  },
+  "instead": {
+    "phrase": "She answered instead in the interview."
+  },
+  "insist": {
+    "phrase": "They insist that he should go."
+  },
+  "instruction": {
+    "phrase": "We discussed instruction during today's class."
+  },
+  "instrument": {
+    "phrase": "The violinist was a master of her instrument."
+  },
+  "intention": {
+    "phrase": "We discussed intention during today's class."
+  },
+  "interesting": {
+    "phrase": "The movie was interesting."
+  },
+  "internet": {
+    "phrase": "I have a slow Internet connection."
+  },
+  "flu": {
+    "phrase": "I saw a flu near the school."
+  },
+  "is": {
+    "phrase": "This is my notebook."
+  },
+  "international": {
+    "phrase": "I saw an international near the school."
+  },
+  "interview": {
+    "phrase": "The reporter gave the witness an interview."
+  },
+  "into": {
+    "phrase": "The eagle flew off into the wide blue sky."
+  },
+  "introduction": {
+    "phrase": "We discussed introduction during today's class."
+  },
+  "invent": {
+    "phrase": "I knew I had to invent an excuse, and quickly."
+  },
+  "invention": {
+    "phrase": "That judicial method which serveth best for the invention of truth."
+  },
+  "its": {
+    "phrase": "This gift is for its."
+  },
+  "island": {
+    "phrase": "I saw an island near the school."
+  },
+  "interest": {
+    "phrase": "He has a lot of interest in vintage cars."
+  },
+  "Japan": {
+    "phrase": "Japan appears in our geography textbook."
+  },
+  "Japanese": {
+    "phrase": "The movie was japanese."
+  },
+  "january": {
+    "phrase": "It always snows here in January."
+  },
+  "Jew": {
+    "phrase": "Jew appears in our geography textbook."
+  },
+  "july": {
+    "phrase": "I saw a july near the school."
+  },
+  "fork": {
+    "phrase": "Are you qualified to drive a fork?"
+  },
+  "joke": {
+    "phrase": "I saw a joke near the school."
+  },
+  "june": {
+    "phrase": "I saw a june near the school."
+  },
+  "junk": {
+    "phrase": "I usually junk with my classmates after school."
+  },
+  "just": {
+    "phrase": "She answered just in the interview."
+  },
+  "keep": {
+    "phrase": "I usually keep with my classmates after school."
+  },
+  "keyboard": {
+    "phrase": "I saw a keyboard near the school."
+  },
+  "key": {
+    "phrase": "I saw a key near the school."
+  },
+  "kick": {
+    "phrase": "I usually kick with my classmates after school."
+  },
+  "join": {
+    "phrase": "I usually join with my classmates after school."
+  },
+  "kangaroo": {
+    "phrase": "I saw a kangaroo near the school."
+  },
+  "kill": {
+    "phrase": "I usually kill with my classmates after school."
+  },
+  "kilo": {
+    "phrase": "I saw a kilo near the school."
+  },
+  "kind": {
+    "phrase": "I saw a kind near the school."
+  },
+  "kilometer": {
+    "phrase": "A thousand meters is one kilometer."
+  },
+  "fridge": {
+    "phrase": "I saw a fridge near the school."
+  },
+  "kiss": {
+    "phrase": "I usually kiss with my classmates after school."
+  },
+  "kitchen": {
+    "phrase": "I saw a kitchen near the school."
+  },
+  "kite": {
+    "phrase": "I saw a kite near the school."
+  },
+  "kid": {
+    "phrase": "I saw a kid near the school."
+  },
+  "knee": {
+    "phrase": "I saw a knee near the school."
+  },
+  "knock": {
+    "phrase": "I usually knock with my classmates after school."
+  },
+  "lab": {
+    "phrase": "I saw a lab near the school."
+  },
+  "king": {
+    "phrase": "I saw a king near the school."
+  },
+  "labor": {
+    "phrase": "He is reaping the fruits of his labor."
+  },
+  "lady": {
+    "phrase": "I saw a lady near the school."
+  },
+  "land": {
+    "phrase": "He got an awful land when the police arrived."
+  },
+  "language": {
+    "phrase": "The language he used to talk to me was obscene."
+  },
+  "lake": {
+    "phrase": "I saw a lake near the school."
+  },
+  "last": {
+    "phrase": "When we last met, he was based in Toronto."
+  },
+  "lamb": {
+    "phrase": "I saw a lamb near the school."
+  },
+  "lap": {
+    "phrase": "The boy was sitting on his mother's lap."
+  },
+  "later": {
+    "phrase": "I arrived later than my roommate."
+  },
+  "late": {
+    "phrase": "Late Latin is less fully inflected than classical Latin."
+  },
+  "giraffe": {
+    "phrase": "I saw a giraffe near the school."
+  },
+  "law": {
+    "phrase": "It was a territory without law, marked by violence."
+  },
+  "laboratory": {
+    "phrase": "A series of explosions turned the laboratory into ruins."
+  },
+  "lazy": {
+    "phrase": "I love staying inside and reading on a lazy Sunday."
+  },
+  "know": {
+    "phrase": "I usually know with my classmates after school."
+  },
+  "latest": {
+    "phrase": "Have you heard the latest?"
+  },
+  "laugh": {
+    "phrase": "Your new hat's an absolute laugh, dude."
+  },
+  "leaf": {
+    "phrase": "The train car has one single-leaf and two double-leaf doors per side."
+  },
+  "learn": {
+    "phrase": "Give him a clip round the ear. That'll learn him!"
+  },
+  "least": {
+    "phrase": "It was the least surprising thing."
+  },
+  "lay": {
+    "phrase": "I'll lay that he doesn't turn up on Monday."
+  },
+  "leave": {
+    "phrase": "I've been given three weeks' leave by my boss."
+  },
+  "leg": {
+    "phrase": "The left leg of these jeans has a tear."
+  },
+  "lemonade": {
+    "phrase": "I saw a lemonade near the school."
+  },
+  "leader": {
+    "phrase": "I saw a leader near the school."
+  },
+  "lend": {
+    "phrase": "Can you lend me some assistance?"
+  },
+  "let": {
+    "phrase": "Let P be the point where AB and OX intersect."
+  },
+  "left": {
+    "phrase": "The movie was left."
+  },
+  "grape": {
+    "phrase": "I saw a grape near the school."
+  },
+  "less": {
+    "phrase": "Listen a lot and speak less."
+  },
+  "level": {
+    "phrase": "Take the elevator and get off at the promenade level."
+  },
+  "license": {
+    "phrase": "It was decided to license Wikipedia under the GFDL."
+  },
+  "letter": {
+    "phrase": "I wrote a letter to my sister about my life."
+  },
+  "lie": {
+    "phrase": "The paper does not lie smooth on the wall."
+  },
+  "lesson": {
+    "phrase": "I hope this accident taught you a lesson!"
+  },
+  "lifestyle": {
+    "phrase": "I saw a lifestyle near the school."
+  },
+  "life": {
+    "phrase": "His life of the founder is finished, except for the title."
+  },
+  "like": {
+    "phrase": "We could go to the museum if you like."
+  },
+  "lighting": {
+    "phrase": "I saw a lighting near the school."
+  },
+  "listen": {
+    "phrase": "Give the motor a listen and tell me if it sounds off."
+  },
+  "litter": {
+    "phrase": "I saw a litter near the school."
+  },
+  "little": {
+    "phrase": "Can I try a little of that sauce?"
+  },
+  "live": {
+    "phrase": "The movie was live."
+  },
+  "lively": {
+    "phrase": "The movie was lively."
+  },
+  "handsome": {
+    "phrase": "The movie was handsome."
+  },
+  "lock": {
+    "phrase": "I usually lock with my classmates after school."
+  },
+  "list": {
+    "phrase": "I usually list with my classmates after school."
+  },
+  "look": {
+    "phrase": "I usually look with my classmates after school."
+  },
+  "lose": {
+    "phrase": "I usually lose with my classmates after school."
+  },
+  "lot": {
+    "phrase": "I saw a lot near the school."
+  },
+  "loud": {
+    "phrase": "The movie was loud."
+  },
+  "line": {
+    "phrase": "Remember, your answers must match the party line."
+  },
+  "love": {
+    "phrase": "I saw a love near the school."
+  },
+  "loving": {
+    "phrase": "The movie was loving."
+  },
+  "hen": {
+    "phrase": "I saw a hen near the school."
+  },
+  "lovely": {
+    "phrase": "The movie was lovely."
+  },
+  "lost": {
+    "phrase": "The movie was lost."
+  },
+  "lunch": {
+    "phrase": "I saw a lunch near the school."
+  },
+  "mad": {
+    "phrase": "The movie was mad."
+  },
+  "machine": {
+    "phrase": "I saw a machine near the school."
+  },
+  "luck": {
+    "phrase": "I saw a luck near the school."
+  },
+  "lonely": {
+    "phrase": "The movie was lonely."
+  },
+  "magic": {
+    "phrase": "I saw a magic near the school."
+  },
+  "major": {
+    "phrase": "The movie was major."
+  },
+  "main": {
+    "phrase": "The main question is how does Tom feel."
+  },
+  "magazine": {
+    "phrase": "I saw a magazine near the school."
+  },
+  "mail": {
+    "phrase": "I saw a mail near the school."
+  },
+  "hour": {
+    "phrase": "The hour grows late and I must go home."
+  },
+  "man": {
+    "phrase": "I saw a man near the school."
+  },
+  "marathon": {
+    "phrase": "I saw a marathon near the school."
+  },
+  "manage": {
+    "phrase": "I usually manage with my classmates after school."
+  },
+  "march": {
+    "phrase": "I saw a march near the school."
+  },
+  "market": {
+    "phrase": "I saw a market near the school."
+  },
+  "marriage": {
+    "phrase": "We discussed marriage during today's class."
+  },
+  "mark": {
+    "phrase": "Mark performed in front of people."
+  },
+  "Mars": {
+    "phrase": "Mars appears in our geography textbook."
+  },
+  "long": {
+    "phrase": "I saw a long near the school."
+  },
+  "marry": {
+    "phrase": "I usually marry with my classmates after school."
+  },
+  "many": {
+    "phrase": "This gift is for many."
+  },
+  "imagine": {
+    "phrase": "I usually imagine with my classmates after school."
+  },
+  "match": {
+    "phrase": "I usually match with my classmates after school."
+  },
+  "material": {
+    "phrase": "The movie was material."
+  },
+  "math": {
+    "phrase": "I saw a math near the school."
+  },
+  "maybe": {
+    "phrase": "She answered maybe in the interview."
+  },
+  "me": {
+    "phrase": "This gift is for me."
+  },
+  "meaning": {
+    "phrase": "What are you meaning?"
+  },
+  "meat": {
+    "phrase": "I saw a meat near the school."
+  },
+  "medal": {
+    "phrase": "I saw a medal near the school."
+  },
+  "medium": {
+    "phrase": "The movie was medium."
+  },
+  "memory": {
+    "phrase": "I saw a memory near the school."
+  },
+  "matter": {
+    "phrase": "I usually matter with my classmates after school."
+  },
+  "mend": {
+    "phrase": "I usually mend with my classmates after school."
+  },
+  "mention": {
+    "phrase": "I usually mention with my classmates after school."
+  },
+  "menu": {
+    "phrase": "Do you have a menu in English?"
+  },
+  "meeting": {
+    "phrase": "The meeting has ended."
+  },
+  "message": {
+    "phrase": "We discussed message during today's class."
+  },
+  "meter": {
+    "phrase": "I saw a meter near the school."
+  },
+  "influence": {
+    "phrase": "We discussed influence during today's class."
+  },
+  "mind": {
+    "phrase": "Mind your table manners."
+  },
+  "minute": {
+    "phrase": "I saw a minute near the school."
+  },
+  "misleading": {
+    "phrase": "The movie was misleading."
+  },
+  "mirror": {
+    "phrase": "I saw a mirror near the school."
+  },
+  "million": {
+    "phrase": "I have million notebooks in my bag."
+  },
+  "mix": {
+    "phrase": "I usually mix with my classmates after school."
+  },
+  "modest": {
+    "phrase": "The movie was modest."
+  },
+  "modern": {
+    "phrase": "The movie was modern."
+  },
+  "miss": {
+    "phrase": "I saw a miss near the school."
+  },
+  "mistake": {
+    "phrase": "I saw a mistake near the school."
+  },
+  "mine": {
+    "phrase": "I saw a mine near the school."
+  },
+  "introduce": {
+    "phrase": "Let me introduce you to my friends."
+  },
+  "mom": {
+    "phrase": "I saw a mom near the school."
+  },
+  "model": {
+    "phrase": "I saw a model near the school."
+  },
+  "Monday": {
+    "phrase": "Monday appears in our geography textbook."
+  },
+  "monkey": {
+    "phrase": "I saw a monkey near the school."
+  },
+  "moon": {
+    "phrase": "I was over the moon!"
+  },
+  "month": {
+    "phrase": "I saw a month near the school."
+  },
+  "morning": {
+    "phrase": "I saw a morning near the school."
+  },
+  "money": {
+    "phrase": "I saw a money near the school."
+  },
+  "most": {
+    "phrase": "She answered most in the interview."
+  },
+  "motorcycle": {
+    "phrase": "I saw a motorcycle near the school."
+  },
+  "mother": {
+    "phrase": "I saw a mother near the school."
+  },
+  "more": {
+    "phrase": "She answered more in the interview."
+  },
+  "monitor": {
+    "phrase": "I saw a monitor near the school."
+  },
+  "mouse": {
+    "phrase": "I saw a mouse near the school."
+  },
+  "keen": {
+    "phrase": "The movie was keen."
+  },
+  "must": {
+    "phrase": "We must wear uniforms at school."
+  },
+  "my": {
+    "phrase": "My school bag is blue."
+  },
+  "mouth": {
+    "phrase": "\"Open your mouth and say 'aah',\" directed the doctor."
+  },
+  "mountain": {
+    "phrase": "I saw a mountain near the school."
+  },
+  "much": {
+    "phrase": "He is much fatter than I remember him."
+  },
+  "murder": {
+    "phrase": "I usually murder with my classmates after school."
+  },
+  "museum": {
+    "phrase": "I saw a museum near the school."
+  },
+  "mysterious": {
+    "phrase": "Why he left without saying goodbye is quite mysterious."
+  },
+  "native": {
+    "phrase": "The native peoples of Australia are called aborigines."
+  },
+  "national": {
+    "phrase": "Import tariffs were raised for the national interest."
+  },
+  "mystery": {
+    "phrase": "The truth behind the events remains a mystery."
+  },
+  "natural": {
+    "phrase": "Natural food is healthier than processed food."
+  },
+  "movie": {
+    "phrase": "I saw a movie near the school."
+  },
+  "musician": {
+    "phrase": "He is something of a musician."
+  },
+  "nature": {
+    "phrase": "Nature never lies (i.e. tells untruths)."
+  },
+  "near": {
+    "phrase": "I can't see near objects very clearly without my glasses."
+  },
+  "knife": {
+    "phrase": "I saw a knife near the school."
+  },
+  "necessary": {
+    "phrase": "The movie was necessary."
+  },
+  "need": {
+    "phrase": "You need not go if you don't want to."
+  },
+  "never": {
+    "phrase": "I never eat breakfast too late."
+  },
+  "negative": {
+    "phrase": "The nitro group is negative."
+  },
+  "neighbor": {
+    "phrase": "I saw a neighbor near the school."
+  },
+  "nervous": {
+    "phrase": "I felt incredibly nervous."
+  },
+  "net": {
+    "phrase": "The movie was net."
+  },
+  "newspaper": {
+    "phrase": "I saw a newspaper near the school."
+  },
+  "news": {
+    "phrase": "I saw a news near the school."
+  },
+  "nearly": {
+    "phrase": "Tom nearly died tonight."
+  },
+  "neither": {
+    "phrase": "I stayed home because it was raining."
+  },
+  "neck": {
+    "phrase": "I saw a neck near the school."
+  },
+  "next": {
+    "phrase": "She answered next in the interview."
+  },
+  "no": {
+    "phrase": "No, I don't think so."
+  },
+  "new": {
+    "phrase": "The movie was new."
+  },
+  "legend": {
+    "phrase": "\"Anyone can be a legend.\"."
+  },
+  "nice": {
+    "phrase": "The movie was nice."
+  },
+  "ninety": {
+    "phrase": "I'm certain that he will live to be ninety."
+  },
+  "ninth": {
+    "phrase": "I have ninth notebooks in my bag."
+  },
+  "nobody": {
+    "phrase": "This gift is for nobody."
+  },
+  "nod": {
+    "phrase": "I saw a nod near the school."
+  },
+  "noodle": {
+    "phrase": "She slurped a long noodle up out of her soup."
+  },
+  "nineteenth": {
+    "phrase": "I have nineteenth notebooks in my bag."
+  },
+  "noise": {
+    "phrase": "I saw a noise near the school."
+  },
+  "nor": {
+    "phrase": "Nor did I stop to think, but ran."
+  },
+  "not": {
+    "phrase": "I am not busy this evening."
+  },
+  "none": {
+    "phrase": "This gift is for none."
+  },
+  "normal": {
+    "phrase": "Organize the data into third normal form."
+  },
+  "north": {
+    "phrase": "Minnesota is in the north of the USA."
+  },
+  "noon": {
+    "phrase": "I saw a noon near the school."
+  },
+  "nineteen": {
+    "phrase": "I am nineteen years old."
+  },
+  "northern": {
+    "phrase": "Les Dawson was a famous northern comedian."
+  },
+  "library": {
+    "phrase": "I saw a library near the school."
+  },
+  "nothing": {
+    "phrase": "You're nothing to me now!"
+  },
+  "nose": {
+    "phrase": "It is essential that a winetaster develops a good nose."
+  },
+  "notice": {
+    "phrase": "I can't work here any longer. I'm giving notice."
+  },
+  "notebook": {
+    "phrase": "I saw a notebook near the school."
+  },
+  "often": {
+    "phrase": "We often play football after class."
+  },
+  "now": {
+    "phrase": "He now asked her whether she had made pudding."
+  },
+  "number": {
+    "phrase": "The number 8 is usually made with a single stroke."
+  },
+  "object": {
+    "phrase": "Mary Jane had been the object of Peter's affection for years."
+  },
+  "obey": {
+    "phrase": "I usually obey with my classmates after school."
+  },
+  "october": {
+    "phrase": "I saw an october near the school."
+  },
+  "oil": {
+    "phrase": "I saw an oil near the school."
+  },
+  "once": {
+    "phrase": "She answered once in the interview."
+  },
+  "one": {
+    "phrase": "This gift is for one."
+  },
+  "officer": {
+    "phrase": "He became a police officer."
+  },
+  "onion": {
+    "phrase": "Eh, it's an onion-flavoured bagel!"
+  },
+  "online": {
+    "phrase": "The movie was online."
+  },
+  "or": {
+    "phrase": "Do you want rice or noodles?"
+  },
+  "only": {
+    "phrase": "She answered only in the interview."
+  },
+  "offer": {
+    "phrase": "I usually offer with my classmates after school."
+  },
+  "London": {
+    "phrase": "London appears in our geography textbook."
+  },
+  "open": {
+    "phrase": "The movie was open."
+  },
+  "opera": {
+    "phrase": "I saw an opera near the school."
+  },
+  "operate": {
+    "phrase": "I usually operate with my classmates after school."
+  },
+  "order": {
+    "phrase": "I saw an order near the school."
+  },
+  "other": {
+    "phrase": "The movie was other."
+  },
+  "ours": {
+    "phrase": "This gift is for ours."
+  },
+  "out": {
+    "phrase": "She answered out in the interview."
+  },
+  "opposite": {
+    "phrase": "The movie was opposite."
+  },
+  "organize": {
+    "phrase": "I usually organize with my classmates after school."
+  },
+  "outstanding": {
+    "phrase": "The movie was outstanding."
+  },
+  "outside": {
+    "phrase": "It was snowing outside."
+  },
+  "outdoor": {
+    "phrase": "Children like outdoor activities."
+  },
+  "overcoat": {
+    "phrase": "I saw an overcoat near the school."
+  },
+  "outgoing": {
+    "phrase": "The movie was outgoing."
+  },
+  "lucky": {
+    "phrase": "The movie was lucky."
+  },
+  "own": {
+    "phrase": "I will own my enemies."
+  },
+  "pacific": {
+    "phrase": "The movie was pacific."
+  },
+  "owner": {
+    "phrase": "The police recovered the stolen car and returned it to its owner."
+  },
+  "pack": {
+    "phrase": "The ship had to sail round the pack of ice."
+  },
+  "page": {
+    "phrase": "An SUV parked me in. Could you please page its owner?"
+  },
+  "overseas": {
+    "phrase": "She answered overseas in the interview."
+  },
+  "pardon": {
+    "phrase": "I saw a pardon near the school."
+  },
+  "paint": {
+    "phrase": "I am running low on paint for my marker."
+  },
+  "palace": {
+    "phrase": "I saw a palace near the school."
+  },
+  "pain": {
+    "phrase": "In the final analysis, pain is a fact of life."
+  },
+  "package": {
+    "phrase": "The package arrived sooner than I expected."
+  },
+  "parent": {
+    "phrase": "I saw a parent near the school."
+  },
+  "Paris": {
+    "phrase": "Paris appears in our geography textbook."
+  },
+  "manager": {
+    "phrase": "The website manager is very busy."
+  },
+  "party": {
+    "phrase": "The green party took 12% of the vote."
+  },
+  "partner": {
+    "phrase": "I usually partner with my classmates after school."
+  },
+  "part": {
+    "phrase": "The part of his hair was slightly to the left."
+  },
+  "passenger": {
+    "phrase": "I saw a passenger near the school."
+  },
+  "past": {
+    "phrase": "I'm past caring what he thinks of me."
+  },
+  "particular": {
+    "phrase": "I don't appreciate your particular brand of cynicism."
+  },
+  "peel": {
+    "phrase": "I had been out in the sun too long, and my nose was starting to peel."
+  },
+  "pay": {
+    "phrase": "It didn't pay him to keep the store open any more."
+  },
+  "pear": {
+    "phrase": "I saw a pear near the school."
+  },
+  "pen": {
+    "phrase": "There are two steers in the third pen."
+  },
+  "patient": {
+    "phrase": "The subject of a passive verb is usually a patient."
+  },
+  "passport": {
+    "phrase": "This is my passport."
+  },
+  "maths": {
+    "phrase": "I saw a maths near the school."
+  },
+  "penny": {
+    "phrase": "I saw a penny near the school."
+  },
+  "people": {
+    "phrase": "There were so many people at the restaurant last night."
+  },
+  "pencil": {
+    "phrase": "I saw a pencil near the school."
+  },
+  "perform": {
+    "phrase": "I usually perform with my classmates after school."
+  },
+  "perhaps": {
+    "phrase": "She answered perhaps in the interview."
+  },
+  "period": {
+    "phrase": "I saw a period near the school."
+  },
+  "person": {
+    "phrase": "Each person is unique, both mentally and physically."
+  },
+  "percent": {
+    "phrase": "He asks for ten percent."
+  },
+  "pet": {
+    "phrase": "The professor seemed offended by the criticism of her pet theory."
+  },
+  "permission": {
+    "phrase": "Sire, do I have your permission to execute this traitor?"
+  },
+  "phone": {
+    "phrase": "I usually phone with my classmates after school."
+  },
+  "photograph": {
+    "phrase": "I usually photograph with my classmates after school."
+  },
+  "personal": {
+    "phrase": "The movie was personal."
+  },
+  "phrase": {
+    "phrase": "I usually phrase with my classmates after school."
+  },
+  "microwave": {
+    "phrase": "I saw a microwave near the school."
+  },
+  "piano": {
+    "phrase": "He can play \"Happy Birthday\" on the piano."
+  },
+  "pick": {
+    "phrase": "I usually pick with my classmates after school."
+  },
+  "picnic": {
+    "phrase": "We went out for a picnic in the forest."
+  },
+  "piece": {
+    "phrase": "I saw a piece near the school."
+  },
+  "physics": {
+    "phrase": "The physics of car crashes would not let Tom Cruise walk away like that."
+  },
+  "pierce": {
+    "phrase": "I usually pierce with my classmates after school."
+  },
+  "pioneer": {
+    "phrase": "I saw a pioneer near the school."
+  },
+  "picture": {
+    "phrase": "I get the picture."
+  },
+  "place": {
+    "phrase": "Come to my place."
+  },
+  "plain": {
+    "phrase": "The movie was plain."
+  },
+  "plan": {
+    "phrase": "I saw a plan near the school."
+  },
+  "plane": {
+    "phrase": "I saw a plane near the school."
+  },
+  "pilot": {
+    "phrase": "I saw a pilot near the school."
+  },
+  "pity": {
+    "phrase": "It's a pity you're feeling unwell because there's a party on tonight."
+  },
+  "moment": {
+    "phrase": "We discussed moment during today's class."
+  },
+  "plastic": {
+    "phrase": "The movie was plastic."
+  },
+  "planet": {
+    "phrase": "I saw a planet near the school."
+  },
+  "please": {
+    "phrase": "I usually please with my classmates after school."
+  },
+  "pleasure": {
+    "phrase": "He remembered with pleasure his home and family."
+  },
+  "plenty": {
+    "phrase": "I think six eggs should be plenty for this recipe."
+  },
+  "playground": {
+    "phrase": "I saw a playground near the school."
+  },
+  "pocket": {
+    "phrase": "I paid for it out of my own pocket."
+  },
+  "point": {
+    "phrase": "It's rude to point at other people."
+  },
+  "poem": {
+    "phrase": "I saw a poem near the school."
+  },
+  "police": {
+    "phrase": "Extra security was hired to police the crowd at the big game."
+  },
+  "play": {
+    "phrase": "I usually play with my classmates after school."
+  },
+  "polite": {
+    "phrase": "It's not polite to use a mobile phone in a restaurant."
+  },
+  "pond": {
+    "phrase": "I haven't been back home across the pond in twenty years."
+  },
+  "pool": {
+    "phrase": "He put $10,000 into the pool."
+  },
+  "poor": {
+    "phrase": "We were so poor that we couldn't afford shoes."
+  },
+  "move": {
+    "phrase": "The move into my fiancé's house took two long days."
+  },
+  "policy": {
+    "phrase": "The Communist Party has a policy of returning power to the workers."
+  },
+  "pop": {
+    "phrase": "Listen to the pop of a champagne cork."
+  },
+  "popcorn": {
+    "phrase": "I saw a popcorn near the school."
+  },
+  "pollution": {
+    "phrase": "We discussed pollution during today's class."
+  },
+  "population": {
+    "phrase": "The population of New Jersey will not stand for this!"
+  },
+  "pork": {
+    "phrase": "The cafeteria serves pork on Tuesdays."
+  },
+  "porridge": {
+    "phrase": "Just do your porridge and keep your head down."
+  },
+  "position": {
+    "phrase": "Stand in this position, with your arms at your side."
+  },
+  "popularity": {
+    "phrase": "We discussed popularity during today's class."
+  },
+  "possibly": {
+    "phrase": "I couldn't possibly be there on time."
+  },
+  "positive": {
+    "phrase": "The results of our experiment are positive."
+  },
+  "postcard": {
+    "phrase": "I usually postcard with my classmates after school."
+  },
+  "nearby": {
+    "phrase": "He stopped at a nearby store for some groceries."
+  },
+  "post": {
+    "phrase": "Post a sentinel in front of the door."
+  },
+  "postman": {
+    "phrase": "I saw a postman near the school."
+  },
+  "possible": {
+    "phrase": "Jones is a possible for the new opening in sales."
+  },
+  "pound": {
+    "phrase": "I saw a pound near the school."
+  },
+  "practice": {
+    "phrase": "This firm of solicitors is involved in family law practice."
+  },
+  "poster": {
+    "phrase": "I saw a poster for the film on the side of a bus."
+  },
+  "prediction": {
+    "phrase": "We discussed prediction during today's class."
+  },
+  "praise": {
+    "phrase": "Be sure to praise Bobby for his excellent work at school this week."
+  },
+  "prefer": {
+    "phrase": "I prefer tea to coffee."
+  },
+  "present": {
+    "phrase": "The theater is proud to present the Fearless Fliers."
+  },
+  "president": {
+    "phrase": "I saw a president near the school."
+  },
+  "press": {
+    "phrase": "He can even the match with a press."
+  },
+  "predict": {
+    "phrase": "I usually predict with my classmates after school."
+  },
+  "pretty": {
+    "phrase": "The movie was pretty."
+  },
+  "pretend": {
+    "phrase": "Let's pretend we're aliens."
+  },
+  "prepare": {
+    "phrase": "I usually prepare with my classmates after school."
+  },
+  "prevent": {
+    "phrase": "I usually prevent with my classmates after school."
+  },
+  "nine": {
+    "phrase": "I saw a nine near the school."
+  },
+  "primary": {
+    "phrase": "The movie was primary."
+  },
+  "prisoner": {
+    "phrase": "I saw a prisoner near the school."
+  },
+  "prison": {
+    "phrase": "I saw a prison near the school."
+  },
+  "private": {
+    "phrase": "The movie was private."
+  },
+  "price": {
+    "phrase": "I saw a price near the school."
+  },
+  "print": {
+    "phrase": "I saw a print near the school."
+  },
+  "probably": {
+    "phrase": "She answered probably in the interview."
+  },
+  "produce": {
+    "phrase": "I usually produce with my classmates after school."
+  },
+  "prize": {
+    "phrase": "I saw a prize near the school."
+  },
+  "professional": {
+    "phrase": "The movie was professional."
+  },
+  "pronoun": {
+    "phrase": "I saw a pronoun near the school."
+  },
+  "pronounce": {
+    "phrase": "I usually pronounce with my classmates after school."
+  },
+  "pronunciation": {
+    "phrase": "We discussed pronunciation during today's class."
+  },
+  "proper": {
+    "phrase": "The movie was proper."
+  },
+  "november": {
+    "phrase": "I saw a november near the school."
+  },
+  "promise": {
+    "phrase": "Tom broke his promise."
+  },
+  "protect": {
+    "phrase": "I usually protect with my classmates after school."
+  },
+  "proud": {
+    "phrase": "She must be proud of you."
+  },
+  "pupil": {
+    "phrase": "I saw a pupil near the school."
+  },
+  "purse": {
+    "phrase": "I saw a purse near the school."
+  },
+  "push": {
+    "phrase": "I usually push with my classmates after school."
+  },
+  "put": {
+    "phrase": "I usually put with my classmates after school."
+  },
+  "quality": {
+    "phrase": "This product has good quality."
+  },
+  "queen": {
+    "phrase": "I saw a queen near the school."
+  },
+  "quick": {
+    "phrase": "My father is old but he still has a quick wit."
+  },
+  "province": {
+    "phrase": "I saw a province near the school."
+  },
+  "quiet": {
+    "phrase": "Can you quiet your child? He's making lots of noise."
+  },
+  "race": {
+    "phrase": "The race around the park was won by Johnny, who ran faster than the others."
+  },
+  "queue": {
+    "phrase": "Please stand in a queue."
+  },
+  "provide": {
+    "phrase": "Bees provide us with honey."
+  },
+  "rainy": {
+    "phrase": "Due to the rainy weather, we decided not to play in the park."
+  },
+  "quite": {
+    "phrase": "The test was quite easy."
+  },
+  "operation": {
+    "phrase": "We discussed operation during today's class."
+  },
+  "rather": {
+    "phrase": "I'd like this one rather than the other one."
+  },
+  "rank": {
+    "phrase": "I am a rank amateur as a wordsmith."
+  },
+  "railway": {
+    "phrase": "The railway station is near my home."
+  },
+  "raincoat": {
+    "phrase": "Take a raincoat on rainy days."
+  },
+  "rapid": {
+    "phrase": "The movie was rapid."
+  },
+  "reach": {
+    "phrase": "What will it take for me to reach him?"
+  },
+  "real": {
+    "phrase": "The movie was real."
+  },
+  "read": {
+    "phrase": "What's your read of the current political situation?"
+  },
+  "realistic": {
+    "phrase": "A realistic novel about the Victorian poor."
+  },
+  "realize": {
+    "phrase": "I realize that I messed up."
+  },
+  "really": {
+    "phrase": "But ma, I really, really want to go to the show!"
+  },
+  "recent": {
+    "phrase": "The movie was recent."
+  },
+  "recite": {
+    "phrase": "I usually recite with my classmates after school."
+  },
+  "refuse": {
+    "phrase": "I saw a refuse near the school."
+  },
+  "reason": {
+    "phrase": "I usually reason with my classmates after school."
+  },
+  "over": {
+    "phrase": "She answered over in the interview."
+  },
+  "recycle": {
+    "phrase": "I usually recycle with my classmates after school."
+  },
+  "recorder": {
+    "phrase": "I saw a recorder near the school."
+  },
+  "regular": {
+    "phrase": "The movie was regular."
+  },
+  "relation": {
+    "phrase": "We discussed relation during today's class."
+  },
+  "relax": {
+    "phrase": "I usually relax with my classmates after school."
+  },
+  "remain": {
+    "phrase": "I usually remain with my classmates after school."
+  },
+  "rent": {
+    "phrase": "I usually rent with my classmates after school."
+  },
+  "repair": {
+    "phrase": "I usually repair with my classmates after school."
+  },
+  "refrigerator": {
+    "phrase": "I saw a refrigerator near the school."
+  },
+  "report": {
+    "phrase": "I saw a report near the school."
+  },
+  "represent": {
+    "phrase": "The red lines on the map represent a railway."
+  },
+  "require": {
+    "phrase": "I usually require with my classmates after school."
+  },
+  "relative": {
+    "phrase": "The movie was relative."
+  },
+  "pancake": {
+    "phrase": "I saw a pancake near the school."
+  },
+  "research": {
+    "phrase": "I saw a research near the school."
+  },
+  "resolution": {
+    "phrase": "We discussed resolution during today's class."
+  },
+  "rest": {
+    "phrase": "I usually rest with my classmates after school."
+  },
+  "result": {
+    "phrase": "I saw a result near the school."
+  },
+  "retire": {
+    "phrase": "I usually retire with my classmates after school."
+  },
+  "return": {
+    "phrase": "I usually return with my classmates after school."
+  },
+  "reveal": {
+    "phrase": "I usually reveal with my classmates after school."
+  },
+  "review": {
+    "phrase": "I saw a review near the school."
+  },
+  "restroom": {
+    "phrase": "I saw a restroom near the school."
+  },
+  "reply": {
+    "phrase": "Her reply was effortless."
+  },
+  "retell": {
+    "phrase": "I usually retell with my classmates after school."
+  },
+  "rice": {
+    "phrase": "Do you want rice?"
+  },
+  "rich": {
+    "phrase": "The movie was rich."
+  },
+  "perfect": {
+    "phrase": "The movie was perfect."
+  },
+  "ride": {
+    "phrase": "I usually ride with my classmates after school."
+  },
+  "right": {
+    "phrase": "The movie was right."
+  },
+  "rise": {
+    "phrase": "I usually rise with my classmates after school."
+  },
+  "risk": {
+    "phrase": "I saw a risk near the school."
+  },
+  "river": {
+    "phrase": "I saw a river near the school."
+  },
+  "road": {
+    "phrase": "I saw a road near the school."
+  },
+  "robot": {
+    "phrase": "I saw a robot near the school."
+  },
+  "ring": {
+    "phrase": "I saw a ring near the school."
+  },
+  "root": {
+    "phrase": "I usually root with my classmates after school."
+  },
+  "role": {
+    "phrase": "Must the woman always play the secondary role?"
+  },
+  "rope": {
+    "phrase": "Grab a hold of the rope."
+  },
+  "route": {
+    "phrase": "I saw a route near the school."
+  },
+  "room": {
+    "phrase": "I saw a room near the school."
+  },
+  "row": {
+    "phrase": "I saw a row near the school."
+  },
+  "rubber": {
+    "phrase": "Jones toes the rubber and then fires to the plate."
+  },
+  "photo": {
+    "phrase": "I saw a photo near the school."
+  },
+  "rubbish": {
+    "phrase": "Much of what they sell is rubbish."
+  },
+  "round": {
+    "phrase": "I saw a round near the school."
+  },
+  "rule": {
+    "phrase": "I saw a rule near the school."
+  },
+  "run": {
+    "phrase": "I need to make a run to the store."
+  },
+  "rural": {
+    "phrase": "The movie was rural."
+  },
+  "rude": {
+    "phrase": "Karen broke up with Fred because he was often rude to her."
+  },
+  "Russia": {
+    "phrase": "Russia appears in our geography textbook."
+  },
+  "sad": {
+    "phrase": "The movie was sad."
+  },
+  "safe": {
+    "phrase": "The pitcher attempted to pick off the runner at first, but he was safe."
+  },
+  "rush": {
+    "phrase": "Many errors were made in the rush to finish."
+  },
+  "sail": {
+    "phrase": "Let's go for a sail."
+  },
+  "sale": {
+    "phrase": "He celebrated after the sale of company."
+  },
+  "Russian": {
+    "phrase": "I can speak Russian."
+  },
+  "salt": {
+    "phrase": "There is no salt."
+  },
+  "pleasant": {
+    "phrase": "The movie was pleasant."
+  },
+  "safety": {
+    "phrase": "Be sure that the safety is set before proceeding."
+  },
+  "salad": {
+    "phrase": "I saw a salad near the school."
+  },
+  "satisfy": {
+    "phrase": "I usually satisfy with my classmates after school."
+  },
+  "sauce": {
+    "phrase": "I saw a sauce near the school."
+  },
+  "sausage": {
+    "phrase": "We discussed sausage during today's class."
+  },
+  "save": {
+    "phrase": "I usually save with my classmates after school."
+  },
+  "sandwich": {
+    "phrase": "I usually sandwich with my classmates after school."
+  },
+  "saying": {
+    "phrase": "I saw a saying near the school."
+  },
+  "Saturday": {
+    "phrase": "Saturday appears in our geography textbook."
+  },
+  "scared": {
+    "phrase": "The movie was scared."
+  },
+  "say": {
+    "phrase": "I usually say with my classmates after school."
+  },
+  "scary": {
+    "phrase": "The movie was scary."
+  },
+  "school": {
+    "phrase": "I saw a school near the school."
+  },
+  "popular": {
+    "phrase": "The movie was popular."
+  },
+  "schoolbag": {
+    "phrase": "I saw a schoolbag near the school."
+  },
+  "schoolwork": {
+    "phrase": "I saw a schoolwork near the school."
+  },
+  "science": {
+    "phrase": "We discussed science during today's class."
+  },
+  "scientist": {
+    "phrase": "I saw a scientist near the school."
+  },
+  "scientific": {
+    "phrase": "There is no scientific basis for these claims."
+  },
+  "screen": {
+    "phrase": "I saw a screen near the school."
+  },
+  "scarf": {
+    "phrase": "I saw a scarf near the school."
+  },
+  "search": {
+    "phrase": "I usually search with my classmates after school."
+  },
+  "season": {
+    "phrase": "The third season of Friends aired from 1996 to 1997."
+  },
+  "score": {
+    "phrase": "I saw a score near the school."
+  },
+  "seal": {
+    "phrase": "I usually seal with my classmates after school."
+  },
+  "second": {
+    "phrase": "Saturn is the second largest planet."
+  },
+  "seat": {
+    "phrase": "Be sure to seat the gasket properly before attaching the cover."
+  },
+  "pour": {
+    "phrase": "I usually pour with my classmates after school."
+  },
+  "secret": {
+    "phrase": "The work was done in secret, so that nobody could object."
+  },
+  "see": {
+    "phrase": "I'll see your twenty dollars and raise you ten."
+  },
+  "sell": {
+    "phrase": "I'll sell you all three for a hundred dollars."
+  },
+  "send": {
+    "phrase": "I usually send with my classmates after school."
+  },
+  "seek": {
+    "phrase": "I usually seek with my classmates after school."
+  },
+  "sense": {
+    "phrase": "It's common sense not to put metal objects in a microwave oven."
+  },
+  "semester": {
+    "phrase": "I saw a semester near the school."
+  },
+  "seldom": {
+    "phrase": "He seldom eats fast food."
+  },
+  "september": {
+    "phrase": "I saw a september near the school."
+  },
+  "separate": {
+    "phrase": "They went their separate ways."
+  },
+  "servant": {
+    "phrase": "I saw a servant near the school."
+  },
+  "service": {
+    "phrase": "This machine provides the name service for the LAN."
+  },
+  "pride": {
+    "phrase": "Humility often achieves more than pride."
+  },
+  "set": {
+    "phrase": "I have set my heart on running the marathon."
+  },
+  "serious": {
+    "phrase": "After all these years, we're finally getting serious attention."
+  },
+  "sentence": {
+    "phrase": "The court returned a sentence of guilt in the first charge, but innocence in the second."
+  },
+  "serve": {
+    "phrase": "Whose serve is it?"
+  },
+  "seven": {
+    "phrase": "I have seven notebooks in my bag."
+  },
+  "seventh": {
+    "phrase": "I saw a seventh near the school."
+  },
+  "seventy": {
+    "phrase": "I saw a seventy near the school."
+  },
+  "several": {
+    "phrase": "The movie was several."
+  },
+  "she": {
+    "phrase": "She is reading an English story."
+  },
+  "shame": {
+    "phrase": "Shame, you poor thing, you must be cold!"
+  },
+  "seventeenth": {
+    "phrase": "I have seventeenth notebooks in my bag."
+  },
+  "shape": {
+    "phrase": "I saw a shape near the school."
+  },
+  "share": {
+    "phrase": "Upload media from the browser or directly to the file share."
+  },
+  "shake": {
+    "phrase": "He refused to shake my hand."
+  },
+  "program": {
+    "phrase": "I saw a program near the school."
+  },
+  "shelf": {
+    "phrase": "I saw a shelf near the school."
+  },
+  "shine": {
+    "phrase": "I usually shine with my classmates after school."
+  },
+  "shiny": {
+    "phrase": "The movie was shiny."
+  },
+  "shampoo": {
+    "phrase": "I don't shampoo my hair in the morning."
+  },
+  "shark": {
+    "phrase": "I saw a shark near the school."
+  },
+  "shirt": {
+    "phrase": "I saw a shirt near the school."
+  },
+  "shoe": {
+    "phrase": "I saw a shoe near the school."
+  },
+  "shop": {
+    "phrase": "I saw a shop near the school."
+  },
+  "short": {
+    "phrase": "I like short hairstyles."
+  },
+  "shoulder": {
+    "phrase": "I saw a shoulder near the school."
+  },
+  "shock": {
+    "phrase": "I saw a shock near the school."
+  },
+  "show": {
+    "phrase": "I usually show with my classmates after school."
+  },
+  "shout": {
+    "phrase": "I usually shout with my classmates after school."
+  },
+  "shoot": {
+    "phrase": "I usually shoot with my classmates after school."
+  },
+  "shorts": {
+    "phrase": "I saw a shorts near the school."
+  },
+  "shut": {
+    "phrase": "I usually shut with my classmates after school."
+  },
+  "radio": {
+    "phrase": "I listen to the radio every morning."
+  },
+  "sick": {
+    "phrase": "The movie was sick."
+  },
+  "sight": {
+    "phrase": "I saw a sight near the school."
+  },
+  "silent": {
+    "phrase": "The movie was silent."
+  },
+  "shy": {
+    "phrase": "The movie was shy."
+  },
+  "silk": {
+    "phrase": "I saw a silk near the school."
+  },
+  "sing": {
+    "phrase": "The sauce really makes this lamb sing."
+  },
+  "since": {
+    "phrase": "I have loved you since I first met you."
+  },
+  "side": {
+    "phrase": "I saw a side near the school."
+  },
+  "simple": {
+    "phrase": "The movie was simple."
+  },
+  "singular": {
+    "phrase": "The movie was singular."
+  },
+  "similar": {
+    "phrase": "The movie was similar."
+  },
+  "singer": {
+    "phrase": "I saw a singer near the school."
+  },
+  "sir": {
+    "phrase": "Excuse me, sir, do you know the way to the art museum?"
+  },
+  "situation": {
+    "phrase": "The United States is in an awkward situation with debt default looming."
+  },
+  "sister": {
+    "phrase": "My sister is always driving me crazy."
+  },
+  "silly": {
+    "phrase": "I need to ask you a silly question."
+  },
+  "sit": {
+    "phrase": "How will this new contract sit with the workers?"
+  },
+  "receive": {
+    "phrase": "I usually receive with my classmates after school."
+  },
+  "size": {
+    "phrase": "I don't think we have the red one in your size."
+  },
+  "six": {
+    "phrase": "She returned at six."
+  },
+  "sixteenth": {
+    "phrase": "A sixteenth of 320 is 20."
+  },
+  "sixty": {
+    "phrase": "I have sixty notebooks in my bag."
+  },
+  "sixth": {
+    "phrase": "I saw a sixth near the school."
+  },
+  "sleepy": {
+    "phrase": "The movie was sleepy."
+  },
+  "sleep": {
+    "phrase": "I usually sleep with my classmates after school."
+  },
+  "skin": {
+    "phrase": "He is so disgusting he makes my skin crawl."
+  },
+  "skirt": {
+    "phrase": "I saw a skirt near the school."
+  },
+  "skill": {
+    "phrase": "I saw a skill near the school."
+  },
+  "slipper": {
+    "phrase": "The movie was slipper."
+  },
+  "small": {
+    "phrase": "Remember when the children were small?"
+  },
+  "soap": {
+    "phrase": "Be sure to soap yourself well before rinsing."
+  },
+  "smile": {
+    "phrase": "He always puts a smile on my face."
+  },
+  "smoke": {
+    "phrase": "You'll need to smoke the meat for several hours."
+  },
+  "soccer": {
+    "phrase": "I saw a soccer near the school."
+  },
+  "restaurant": {
+    "phrase": "I saw a restaurant near the school."
+  },
+  "slide": {
+    "phrase": "The long, red slide was great fun for the kids."
+  },
+  "socks": {
+    "phrase": "I saw a socks near the school."
+  },
+  "sock": {
+    "phrase": "I usually sock with my classmates after school."
+  },
+  "sofa": {
+    "phrase": "I saw a sofa near the school."
+  },
+  "solid": {
+    "phrase": "He wore a solid shirt with floral pants."
+  },
+  "sometimes": {
+    "phrase": "Sometimes I read in the library."
+  },
+  "solution": {
+    "phrase": "We hope a solution is found."
+  },
+  "solve": {
+    "phrase": "I usually solve with my classmates after school."
+  },
+  "some": {
+    "phrase": "The movie was some."
+  },
+  "somebody": {
+    "phrase": "Somebody entered the room."
+  },
+  "soldier": {
+    "phrase": "I saw a soldier near the school."
+  },
+  "snowy": {
+    "phrase": "The movie was snowy."
+  },
+  "something": {
+    "phrase": "This gift is for something."
+  },
+  "somewhere": {
+    "phrase": "I left my keys somewhere in the room."
+  },
+  "riddle": {
+    "phrase": "I usually riddle with my classmates after school."
+  },
+  "sorry": {
+    "phrase": "The movie was sorry."
+  },
+  "sort": {
+    "phrase": "I saw a sort near the school."
+  },
+  "song": {
+    "phrase": "This song is nice."
+  },
+  "south": {
+    "phrase": "I saw a south near the school."
+  },
+  "southeast": {
+    "phrase": "Our school is in the southeast of the city."
+  },
+  "soon": {
+    "phrase": "We will start the meeting soon."
+  },
+  "southern": {
+    "phrase": "The movie was southern."
+  },
+  "space": {
+    "phrase": "I saw a space near the school."
+  },
+  "speak": {
+    "phrase": "I usually speak with my classmates after school."
+  },
+  "speaker": {
+    "phrase": "I saw a speaker near the school."
+  },
+  "special": {
+    "phrase": "I saw a special near the school."
+  },
+  "specially": {
+    "phrase": "She answered specially in the interview."
+  },
+  "sound": {
+    "phrase": "I usually sound with my classmates after school."
+  },
+  "specific": {
+    "phrase": "The movie was specific."
+  },
+  "spare": {
+    "phrase": "The movie was spare."
+  },
+  "ruler": {
+    "phrase": "I saw a ruler near the school."
+  },
+  "specifically": {
+    "phrase": "She answered specifically in the interview."
+  },
+  "spell": {
+    "phrase": "I saw a spell near the school."
+  },
+  "spot": {
+    "phrase": "I saw a spot near the school."
+  },
+  "spotlight": {
+    "phrase": "I usually spotlight with my classmates after school."
+  },
+  "stage": {
+    "phrase": "We discussed stage during today's class."
+  },
+  "square": {
+    "phrase": "The movie was square."
+  },
+  "spend": {
+    "phrase": "I usually spend with my classmates after school."
+  },
+  "stair": {
+    "phrase": "I saw a stair near the school."
+  },
+  "start": {
+    "phrase": "I usually start with my classmates after school."
+  },
+  "station": {
+    "phrase": "We discussed station during today's class."
+  },
+  "statement": {
+    "phrase": "We discussed statement during today's class."
+  },
+  "same": {
+    "phrase": "We like the same things."
+  },
+  "spoken": {
+    "phrase": "The movie was spoken."
+  },
+  "standard": {
+    "phrase": "I saw a standard near the school."
+  },
+  "stay": {
+    "phrase": "I usually stay with my classmates after school."
+  },
+  "steal": {
+    "phrase": "I usually steal with my classmates after school."
+  },
+  "stone": {
+    "phrase": "I saw a stone near the school."
+  },
+  "steam": {
+    "phrase": "Water turns into steam when it is boiled."
+  },
+  "stop": {
+    "phrase": "I usually stop with my classmates after school."
+  },
+  "story": {
+    "phrase": "I saw a story near the school."
+  },
+  "straight": {
+    "phrase": "The movie was straight."
+  },
+  "strange": {
+    "phrase": "The movie was strange."
+  },
+  "store": {
+    "phrase": "I went to the store."
+  },
+  "stranger": {
+    "phrase": "I saw a stranger near the school."
+  },
+  "storm": {
+    "phrase": "I saw a storm near the school."
+  },
+  "strategy": {
+    "phrase": "I saw a strategy near the school."
+  },
+  "scene": {
+    "phrase": "I saw a scene near the school."
+  },
+  "stomach": {
+    "phrase": "I saw a stomach near the school."
+  },
+  "strawberry": {
+    "phrase": "I saw a strawberry near the school."
+  },
+  "stress": {
+    "phrase": "I usually stress with my classmates after school."
+  },
+  "strong": {
+    "phrase": "Hercules has strong muscles."
+  },
+  "student": {
+    "phrase": "I saw a student near the school."
+  },
+  "study": {
+    "phrase": "I saw a study near the school."
+  },
+  "stupid": {
+    "phrase": "The movie was stupid."
+  },
+  "street": {
+    "phrase": "A street map, please."
+  },
+  "subject": {
+    "phrase": "I saw a subject near the school."
+  },
+  "style": {
+    "phrase": "Do you sell this style of wallet?"
+  },
+  "subway": {
+    "phrase": "I saw a subway near the school."
+  },
+  "success": {
+    "phrase": "I saw a success near the school."
+  },
+  "strict": {
+    "phrase": "The movie was strict."
+  },
+  "successful": {
+    "phrase": "The movie was successful."
+  },
+  "seem": {
+    "phrase": "I usually seem with my classmates after school."
+  },
+  "such": {
+    "phrase": "The movie was such."
+  },
+  "suggest": {
+    "phrase": "I usually suggest with my classmates after school."
+  },
+  "succeed": {
+    "phrase": "I usually succeed with my classmates after school."
+  },
+  "suit": {
+    "phrase": "Would six suit you?"
+  },
+  "suitable": {
+    "phrase": "Fill in the blanks with suitable words."
+  },
+  "sun": {
+    "phrase": "I saw a sun near the school."
+  },
+  "super": {
+    "phrase": "The movie was super."
+  },
+  "supermarket": {
+    "phrase": "I saw a supermarket near the school."
+  },
+  "sunny": {
+    "phrase": "The movie was sunny."
+  },
+  "suitcase": {
+    "phrase": "She helped me pack my suitcase."
+  },
+  "suggestion": {
+    "phrase": "We discussed suggestion during today's class."
+  },
+  "supper": {
+    "phrase": "I saw a supper near the school."
+  },
+  "summer": {
+    "phrase": "I saw a summer near the school."
+  },
+  "seventeen": {
+    "phrase": "I saw a seventeen near the school."
+  },
+  "Sunday": {
+    "phrase": "Sunday appears in our geography textbook."
+  },
+  "supply": {
+    "phrase": "I saw a supply near the school."
+  },
+  "support": {
+    "phrase": "I usually support with my classmates after school."
+  },
+  "surface": {
+    "phrase": "A light breeze stirred the surface of the lake."
+  },
+  "surprise": {
+    "phrase": "I saw a surprise near the school."
+  },
+  "sweater": {
+    "phrase": "I saw a sweater near the school."
+  },
+  "survey": {
+    "phrase": "I usually survey with my classmates after school."
+  },
+  "swim": {
+    "phrase": "I usually swim with my classmates after school."
+  },
+  "sweep": {
+    "phrase": "I usually sweep with my classmates after school."
+  },
+  "surf": {
+    "phrase": "I usually surf with my classmates after school."
+  },
+  "swimming": {
+    "phrase": "My head was swimming after drinking two bottles of cheap wine."
+  },
+  "suppose": {
+    "phrase": "I usually suppose with my classmates after school."
+  },
+  "swing": {
+    "phrase": "The lathe can swing a pulley of 12 inches diameter."
+  },
+  "ship": {
+    "phrase": "I usually ship with my classmates after school."
+  },
+  "symbol": {
+    "phrase": "I saw a symbol near the school."
+  },
+  "tail": {
+    "phrase": "Most primates have a tail and fangs."
+  },
+  "symphony": {
+    "phrase": "Do you know the concert schedule of London Symphony Orchestra?"
+  },
+  "talented": {
+    "phrase": "The movie was talented."
+  },
+  "talent": {
+    "phrase": "Not much talent in this bar tonight—let's hit the clubs."
+  },
+  "task": {
+    "phrase": "I usually task with my classmates after school."
+  },
+  "talk": {
+    "phrase": "We need to have a talk about your homework."
+  },
+  "take": {
+    "phrase": "He had to take it apart to fix it."
+  },
+  "tea": {
+    "phrase": "Australia were 490 for 7 at tea on the second day."
+  },
+  "taxi": {
+    "phrase": "I usually taxi with my classmates after school."
+  },
+  "tasty": {
+    "phrase": "These items will make an attractive and tasty display."
+  },
+  "tape": {
+    "phrase": "After the party there was tape all over the place."
+  },
+  "teach": {
+    "phrase": "I'll teach you to make fun of me!"
+  },
+  "taste": {
+    "phrase": "He had a strange taste in his mouth."
+  },
+  "silence": {
+    "phrase": "Eloquence is silver, silence is golden."
+  },
+  "technology": {
+    "phrase": "I saw a technology near the school."
+  },
+  "telephone": {
+    "phrase": "I saw a telephone near the school."
+  },
+  "television": {
+    "phrase": "I have an old television in the study."
+  },
+  "tell": {
+    "phrase": "I saw you steal those sweets! I'm going to tell!"
+  },
+  "temperature": {
+    "phrase": "I saw a temperature near the school."
+  },
+  "ten": {
+    "phrase": "I have ten notebooks in my bag."
+  },
+  "teenager": {
+    "phrase": "I feel like I'm a teenager again."
+  },
+  "tense": {
+    "phrase": "Dyirbal verbs are not inflected for tense."
+  },
+  "tennis": {
+    "phrase": "I saw a tennis near the school."
+  },
+  "tenth": {
+    "phrase": "She will return home next Sunday, that is, the tenth."
+  },
+  "tent": {
+    "phrase": "We were camping in a three-man tent."
+  },
+  "teen": {
+    "phrase": "The movie was teen."
+  },
+  "sixteen": {
+    "phrase": "The movie was sixteen."
+  },
+  "their": {
+    "phrase": "Their classroom is on the third floor."
+  },
+  "terrible": {
+    "phrase": "The movie was terrible."
+  },
+  "than": {
+    "phrase": "I stayed home because it was raining."
+  },
+  "terrorist": {
+    "phrase": "I saw a terrorist near the school."
+  },
+  "thank": {
+    "phrase": "I usually thank with my classmates after school."
+  },
+  "theater": {
+    "phrase": "I worked in theater for twenty-five years."
+  },
+  "these": {
+    "phrase": "These books belong to me."
+  },
+  "them": {
+    "phrase": "This gift is for them."
+  },
+  "theatre": {
+    "phrase": "I saw a theatre near the school."
+  },
+  "therefore": {
+    "phrase": "She answered therefore in the interview."
+  },
+  "there": {
+    "phrase": "She answered there in the interview."
+  },
+  "thin": {
+    "phrase": "The movie was thin."
+  },
+  "think": {
+    "phrase": "I tend to think of her as rather ugly."
+  },
+  "test": {
+    "phrase": "I saw a test near the school."
+  },
+  "third": {
+    "phrase": "The third tree from the left is my favorite."
+  },
+  "those": {
+    "phrase": "Those students are from Class 2."
+  },
+  "thirsty": {
+    "phrase": "After all that work I am really thirsty."
+  },
+  "theme": {
+    "phrase": "What is the theme of his latest novel?"
+  },
+  "then": {
+    "phrase": "She answered then in the interview."
+  },
+  "thief": {
+    "phrase": "He is a thief."
+  },
+  "society": {
+    "phrase": "Our global society develops in fits and starts."
+  },
+  "though": {
+    "phrase": "She answered though in the interview."
+  },
+  "thirtieth": {
+    "phrase": "Monday is Tom's thirtieth birthday."
+  },
+  "thought": {
+    "phrase": "Idly, the detective thought what his next move should be."
+  },
+  "thread": {
+    "phrase": "All of these essays have a common thread."
+  },
+  "throat": {
+    "phrase": "As I swallowed I felt something strange in my throat."
+  },
+  "thirteenth": {
+    "phrase": "I have thirteenth notebooks in my bag."
+  },
+  "thousand": {
+    "phrase": "I saw a thousand near the school."
+  },
+  "to": {
+    "phrase": "I go to school by bike."
+  },
+  "through": {
+    "phrase": "Interstate highways form a nationwide system of through roads."
+  },
+  "thrill": {
+    "phrase": "I saw a thrill near the school."
+  },
+  "tidy": {
+    "phrase": "The scheme made a tidy profit."
+  },
+  "throw": {
+    "phrase": "Football tickets are expensive at fifty bucks a throw."
+  },
+  "tiger": {
+    "phrase": "This is not a tiger."
+  },
+  "toast": {
+    "phrase": "I ate a piece of toast for breakfast."
+  },
+  "today": {
+    "phrase": "Today is the day we'll fix this once and for all."
+  },
+  "tiny": {
+    "phrase": "The movie was tiny."
+  },
+  "Thursday": {
+    "phrase": "Thursday appears in our geography textbook."
+  },
+  "together": {
+    "phrase": "She answered together in the interview."
+  },
+  "toilet": {
+    "phrase": "I saw a toilet near the school."
+  },
+  "sour": {
+    "phrase": "The movie was sour."
+  },
+  "tomorrow": {
+    "phrase": "I saw a tomorrow near the school."
+  },
+  "ton": {
+    "phrase": "I saw a ton near the school."
+  },
+  "tongue": {
+    "phrase": "I saw a tongue near the school."
+  },
+  "tomato": {
+    "phrase": "I saw a tomato near the school."
+  },
+  "tooth": {
+    "phrase": "If your tooth hurts, you should see a dentist."
+  },
+  "toothache": {
+    "phrase": "I saw a toothache near the school."
+  },
+  "tool": {
+    "phrase": "I saw a tool near the school."
+  },
+  "toothbrush": {
+    "phrase": "I saw a toothbrush near the school."
+  },
+  "toothpaste": {
+    "phrase": "You can't put toothpaste back in the tube."
+  },
+  "too": {
+    "phrase": "She answered too in the interview."
+  },
+  "topic": {
+    "phrase": "I saw a topic near the school."
+  },
+  "total": {
+    "phrase": "The movie was total."
+  },
+  "tour": {
+    "phrase": "I usually tour with my classmates after school."
+  },
+  "speech": {
+    "phrase": "I saw a speech near the school."
+  },
+  "top": {
+    "phrase": "I saw a top near the school."
+  },
+  "touch": {
+    "phrase": "I usually touch with my classmates after school."
+  },
+  "towel": {
+    "phrase": "I saw a towel near the school."
+  },
+  "toy": {
+    "phrase": "His toy is blue."
+  },
+  "tourist": {
+    "phrase": "I saw a tourist near the school."
+  },
+  "traffic": {
+    "phrase": "I saw a traffic near the school."
+  },
+  "trade": {
+    "phrase": "I saw a trade near the school."
+  },
+  "tragedy": {
+    "phrase": "I saw a tragedy near the school."
+  },
+  "town": {
+    "phrase": "I saw a town near the school."
+  },
+  "train": {
+    "phrase": "I saw a train near the school."
+  },
+  "training": {
+    "phrase": "I saw a training near the school."
+  },
+  "translate": {
+    "phrase": "I usually translate with my classmates after school."
+  },
+  "traditional": {
+    "phrase": "The movie was traditional."
+  },
+  "treat": {
+    "phrase": "Please treat me kindly."
+  },
+  "state": {
+    "phrase": "I saw a state near the school."
+  },
+  "travel": {
+    "phrase": "I usually travel with my classmates after school."
+  },
+  "trash": {
+    "phrase": "I saw a trash near the school."
+  },
+  "tree": {
+    "phrase": "I saw a tree near the school."
+  },
+  "trip": {
+    "phrase": "I usually trip with my classmates after school."
+  },
+  "treasure": {
+    "phrase": "I saw a treasure near the school."
+  },
+  "truck": {
+    "phrase": "I saw a truck near the school."
+  },
+  "trouble": {
+    "phrase": "I will not trouble you to deliver the letter."
+  },
+  "truth": {
+    "phrase": "Alcoholism and redemption led me finally to truth."
+  },
+  "treatment": {
+    "phrase": "You must complete the treatment until the end."
+  },
+  "trousers": {
+    "phrase": "The trousers need to be shortened."
+  },
+  "trust": {
+    "phrase": "I put the house into my sister's trust."
+  },
+  "Tuesday": {
+    "phrase": "Tuesday appears in our geography textbook."
+  },
+  "turkey": {
+    "phrase": "That film was a turkey."
+  },
+  "try": {
+    "phrase": "I usually try with my classmates after school."
+  },
+  "stream": {
+    "phrase": "I saw a stream near the school."
+  },
+  "tutor": {
+    "phrase": "I usually tutor with my classmates after school."
+  },
+  "twenty": {
+    "phrase": "It has twenty children."
+  },
+  "twice": {
+    "phrase": "She answered twice in the interview."
+  },
+  "twin": {
+    "phrase": "The movie was twin."
+  },
+  "turn": {
+    "phrase": "I usually turn with my classmates after school."
+  },
+  "twelve": {
+    "phrase": "There are twelve months in a year."
+  },
+  "twentieth": {
+    "phrase": "The next meeting will be on the twentieth of October."
+  },
+  "two": {
+    "phrase": "I saw a two near the school."
+  },
+  "ugly": {
+    "phrase": "He played an ugly trick on us."
+  },
+  "sudden": {
+    "phrase": "The movie was sudden."
+  },
+  "unable": {
+    "phrase": "Are you unable to mind your own business or something?"
+  },
+  "true": {
+    "phrase": "The movie was true."
+  },
+  "type": {
+    "phrase": "He was exactly her type."
+  },
+  "under": {
+    "phrase": "It took the hypnotist several minutes to make his subject go under."
+  },
+  "umbrella": {
+    "phrase": "Quick, grab that umbrella before you get rained on!"
+  },
+  "underground": {
+    "phrase": "She answered underground in the interview."
+  },
+  "understand": {
+    "phrase": "I understand that you have a package for me?"
+  },
+  "unfamiliar": {
+    "phrase": "The movie was unfamiliar."
+  },
+  "unfriendly": {
+    "phrase": "The movie was unfriendly."
+  },
+  "unhealthy": {
+    "phrase": "He had an unhealthy interest in fire."
+  },
+  "uniform": {
+    "phrase": "The movie was uniform."
+  },
+  "underwater": {
+    "phrase": "We've been underwater on our mortgage ever since the housing crash."
+  },
+  "unimportant": {
+    "phrase": "The movie was unimportant."
+  },
+  "sure": {
+    "phrase": "The movie was sure."
+  },
+  "unhappy": {
+    "phrase": "An unhappy customer is unlikely to return to your shop."
+  },
+  "uncle": {
+    "phrase": "I saw an uncle near the school."
+  },
+  "unit": {
+    "phrase": "He was a member of a special police unit."
+  },
+  "unusual": {
+    "phrase": "The movie was unusual."
+  },
+  "university": {
+    "phrase": "The only reason why I haven't gone to university is because I can't afford it."
+  },
+  "use": {
+    "phrase": "I saw an use near the school."
+  },
+  "upstairs": {
+    "phrase": "She answered upstairs in the interview."
+  },
+  "used": {
+    "phrase": "The movie was used."
+  },
+  "tale": {
+    "phrase": "I felt like I was living in a fairy tale."
+  },
+  "useful": {
+    "phrase": "It could prove useful."
+  },
+  "vacation": {
+    "phrase": "We discussed vacation during today's class."
+  },
+  "vegetable": {
+    "phrase": "I saw a vegetable near the school."
+  },
+  "usual": {
+    "phrase": "The movie was usual."
+  },
+  "upset": {
+    "phrase": "The movie was upset."
+  },
+  "up": {
+    "phrase": "She answered up in the interview."
+  },
+  "value": {
+    "phrase": "I saw a value near the school."
+  },
+  "verb": {
+    "phrase": "I saw a verb near the school."
+  },
+  "vehicle": {
+    "phrase": "I saw a vehicle near the school."
+  },
+  "view": {
+    "phrase": "I usually view with my classmates after school."
+  },
+  "violin": {
+    "phrase": "I saw a violin near the school."
+  },
+  "village": {
+    "phrase": "Our school is in that village."
+  },
+  "video": {
+    "phrase": "I saw a video near the school."
+  },
+  "visit": {
+    "phrase": "I saw a visit near the school."
+  },
+  "visitor": {
+    "phrase": "She showed the visitor her baby."
+  },
+  "voice": {
+    "phrase": "I saw a voice near the school."
+  },
+  "teacher": {
+    "phrase": "I saw a teacher near the school."
+  },
+  "volunteer": {
+    "phrase": "I usually volunteer with my classmates after school."
+  },
+  "waiter": {
+    "phrase": "I saw a waiter near the school."
+  },
+  "vocabulary": {
+    "phrase": "I saw a vocabulary near the school."
+  },
+  "wake": {
+    "phrase": "I usually wake with my classmates after school."
+  },
+  "wallet": {
+    "phrase": "I saw a wallet near the school."
+  },
+  "war": {
+    "phrase": "I saw a war near the school."
+  },
+  "warn": {
+    "phrase": "We should warn Tom."
+  },
+  "volleyball": {
+    "phrase": "I saw a volleyball near the school."
+  },
+  "waste": {
+    "phrase": "I saw a waste near the school."
+  },
+  "we": {
+    "phrase": "We have a science class today."
+  },
+  "walk": {
+    "phrase": "I saw a walk near the school."
+  },
+  "term": {
+    "phrase": "He was sentenced to a term of six years in prison."
+  },
+  "warm": {
+    "phrase": "The air was warm."
+  },
+  "wash": {
+    "phrase": "I saw a wash near the school."
+  },
+  "wave": {
+    "phrase": "I usually wave with my classmates after school."
+  },
+  "watermelon": {
+    "phrase": "I saw a watermelon near the school."
+  },
+  "way": {
+    "phrase": "I saw a way near the school."
+  },
+  "wear": {
+    "phrase": "I usually wear with my classmates after school."
+  },
+  "weather": {
+    "phrase": "I saw a weather near the school."
+  },
+  "weekday": {
+    "phrase": "I saw a weekday near the school."
+  },
+  "weak": {
+    "phrase": "The movie was weak."
+  },
+  "what": {
+    "phrase": "What are you doing now?"
+  },
+  "well": {
+    "phrase": "She answered well in the interview."
+  },
+  "website": {
+    "phrase": "I saw a website near the school."
+  },
+  "western": {
+    "phrase": "The movie was western."
+  },
+  "weight": {
+    "phrase": "Recently I lost weight."
+  },
+  "why": {
+    "phrase": "Why are you late today?"
+  },
+  "thirty": {
+    "phrase": "I saw a thirty near the school."
+  },
+  "whatever": {
+    "phrase": "Take whatever you like."
+  },
+  "whale": {
+    "phrase": "I usually whale with my classmates after school."
+  },
+  "Wednesday": {
+    "phrase": "Wednesday appears in our geography textbook."
+  },
+  "west": {
+    "phrase": "I saw a west near the school."
+  },
+  "wife": {
+    "phrase": "I saw a wife near the school."
+  },
+  "which": {
+    "phrase": "This gift is for which."
+  },
+  "whenever": {
+    "phrase": "I stayed home because it was raining."
+  },
+  "window": {
+    "phrase": "I saw a window near the school."
+  },
+  "wine": {
+    "phrase": "I saw a wine near the school."
+  },
+  "wing": {
+    "phrase": "I saw a wing near the school."
+  },
+  "win": {
+    "phrase": "I usually win with my classmates after school."
+  },
+  "wild": {
+    "phrase": "Wild animals live in the forest."
+  },
+  "tonight": {
+    "phrase": "She answered tonight in the interview."
+  },
+  "windy": {
+    "phrase": "The movie was windy."
+  },
+  "winter": {
+    "phrase": "I saw a winter near the school."
+  },
+  "wind": {
+    "phrase": "I saw a wind near the school."
+  },
+  "wish": {
+    "phrase": "My dearest wish is to see them happily married."
+  },
+  "woman": {
+    "phrase": "I saw a woman near the school."
+  },
+  "work": {
+    "phrase": "He used pliers to work the wire into shape."
+  },
+  "worker": {
+    "phrase": "This FTP client spawns a separate worker for each file to be uploaded."
+  },
+  "worry": {
+    "phrase": "My main worry is that I'll miss the train."
+  },
+  "would": {
+    "phrase": "I would like a cup of tea."
+  },
+  "worldwide": {
+    "phrase": "She answered worldwide in the interview."
+  },
+  "wise": {
+    "phrase": "The movie was wise."
+  },
+  "worse": {
+    "phrase": "Do not think the worse of him for his enterprise."
+  },
+  "worst": {
+    "phrase": "My sore leg hurts worst when it's cold and rainy."
+  },
+  "wonderful": {
+    "phrase": "They served a wonderful six-course meal."
+  },
+  "worth": {
+    "phrase": "The movie was worth."
+  },
+  "wound": {
+    "phrase": "It took a long time to get over the wound of that insult."
+  },
+  "tower": {
+    "phrase": "Have you visited the Tower of London?"
+  },
+  "writer": {
+    "phrase": "I saw a writer near the school."
+  },
+  "yes": {
+    "phrase": "Yes, I can help you."
+  },
+  "wrong": {
+    "phrase": "I spelled several names wrong in my address book."
+  },
+  "write": {
+    "phrase": "I write for a living."
+  },
+  "yard": {
+    "phrase": "I need to hedge a yard of yen."
+  },
+  "yeah": {
+    "phrase": "Yeah! We did it!"
+  },
+  "yesterday": {
+    "phrase": "Today is the child of yesterday and the parent of tomorrow."
+  },
+  "you": {
+    "phrase": "You can ask me any question."
+  },
+  "yet": {
+    "phrase": "Are you there yet?"
+  },
+  "world": {
+    "phrase": "I saw a world near the school."
+  },
+  "x-ray": {
+    "phrase": "The book is x-ray."
+  },
+  "young": {
+    "phrase": "The lion caught a gnu to feed its young."
+  },
+  "year": {
+    "phrase": "Mars goes around the sun once in a Martian year, or 1.88 Earth years."
+  },
+  "yogurt": {
+    "phrase": "I saw a yogurt near the school."
+  },
+  "zero": {
+    "phrase": "They rudely treated him like a zero."
+  },
+  "Yin": {
+    "phrase": "Yin appears in our geography textbook."
+  },
+  "yours": {
+    "phrase": "Yours sincerely, Yours faithfully, Yours, Sincerely yours,."
+  },
+  "zebra": {
+    "phrase": "I saw a zebra near the school."
+  },
+  "yoghurt": {
+    "phrase": "I saw a yoghurt near the school."
+  },
+  "zoo": {
+    "phrase": "The shopping center was a zoo the week before Christmas."
+  },
+  "transportation": {
+    "phrase": "We discussed transportation during today's class."
+  },
+  "zigzag": {
+    "phrase": "The movie was zigzag."
+  },
+  "accessory": {
+    "phrase": "I saw an accessory near the school."
+  },
+  "across": {
+    "phrase": "Could you slide that across the table to me, please?"
+  },
+  "act": {
+    "phrase": "He was caught in the act of stealing."
+  },
+  "after": {
+    "phrase": "Let's clean the classroom after school."
+  },
+  "add": {
+    "phrase": "I usually add with my classmates after school."
+  },
+  "again": {
+    "phrase": "Please say that sentence again."
+  },
+  "afford": {
+    "phrase": "I usually afford with my classmates after school."
+  },
+  "ache": {
+    "phrase": "I usually ache with my classmates after school."
+  },
+  "afraid": {
+    "phrase": "I am afraid I cannot help you in this matter."
+  },
+  "Africa": {
+    "phrase": "Africa appears in our geography textbook."
+  },
+  "adult": {
+    "phrase": "This program contains adult content. Parental discretion is advised."
+  },
+  "against": {
+    "phrase": "It is hard work to swim against the current."
+  },
+  "advantage": {
+    "phrase": "Having the faster car is of little advantage."
+  },
+  "aggressive": {
+    "phrase": "The movie was aggressive."
+  },
+  "age": {
+    "phrase": "What is the present age of a man, or of the earth?"
+  },
+  "twelfth": {
+    "phrase": "The movie was twelfth."
+  },
+  "afternoon": {
+    "phrase": "Any plan for tomorrow afternoon?"
+  },
+  "agent": {
+    "phrase": "I saw an agent near the school."
+  },
+  "ago": {
+    "phrase": "The movie was ago."
+  },
+  "aim": {
+    "phrase": "I usually aim with my classmates after school."
+  },
+  "almost": {
+    "phrase": "I am almost ready for the exam."
+  },
+  "airline": {
+    "phrase": "I saw an airline near the school."
+  },
+  "album": {
+    "phrase": "I saw an album near the school."
+  },
+  "agreement": {
+    "phrase": "We discussed agreement during today's class."
+  },
+  "already": {
+    "phrase": "I have already finished my homework."
+  },
+  "alien": {
+    "phrase": "The movie was alien."
+  },
+  "always": {
+    "phrase": "She always arrives at school early."
+  },
+  "am": {
+    "phrase": "I am in Grade 8."
+  },
+  "alone": {
+    "phrase": "I can't ask for help because I am alone."
+  },
+  "airport": {
+    "phrase": "I saw an airport near the school."
+  },
+  "uncomfortable": {
+    "phrase": "The movie was uncomfortable."
+  },
+  "airplane": {
+    "phrase": "He has a private airplane."
+  },
+  "aloud": {
+    "phrase": "Try speaking aloud rather than whispering."
+  },
+  "along": {
+    "phrase": "John played the piano and everyone sang along."
+  },
+  "amazing": {
+    "phrase": "The movie was amazing."
+  },
+  "alright": {
+    "phrase": "She answered alright in the interview."
+  },
+  "unpleasant": {
+    "phrase": "The movie was unpleasant."
+  },
+  "useless": {
+    "phrase": "The movie was useless."
+  },
+  "victory": {
+    "phrase": "Relying on strength alone cannot guarantee victory."
+  },
+  "want": {
+    "phrase": "I usually want with my classmates after school."
+  },
+  "Wheel": {
+    "phrase": "Wheel appears in our geography textbook."
+  },
+  "winner": {
+    "phrase": "It is good to be a winner."
+  },
+  "Yang": {
+    "phrase": "Yang appears in our geography textbook."
+  },
+  "accident": {
+    "phrase": "My insurance went up after the second accident in three months."
+  },
+  "agree": {
+    "phrase": "I usually agree with my classmates after school."
+  },
+  "alive": {
+    "phrase": "As long as the plant is alive, he will continue to water it."
+  },
+  "an": {
+    "phrase": "She has an apple."
+  },
+  "and": {
+    "phrase": "I like tea and milk."
+  },
+  "anybody": {
+    "phrase": "Everybody who wants to be anybody will come to Jake's party."
+  },
+  "ancient": {
+    "phrase": "We visited an ancient temple."
+  },
+  "anyone": {
+    "phrase": "Almost anyone can change a light bulb."
+  },
+  "anything": {
+    "phrase": "She's not anything like as strong as me."
+  },
+  "ball": {
+    "phrase": "I had a ball at that concert."
+  },
+  "among": {
+    "phrase": "He is among the few who completely understand the subject."
+  },
+  "bell": {
+    "phrase": "Who will bell the cat?"
+  },
+  "bee": {
+    "phrase": "Cride out, Now now Sir knight, shew what ye bee,."
+  },
+  "beside": {
+    "phrase": "A small table beside the bed."
+  },
+  "border": {
+    "phrase": "There's a nice frilly border around the picture frame."
+  },
+  "brain": {
+    "phrase": "I have too much on my brain today."
+  },
+  "cap": {
+    "phrase": "I used the word cap in a simple sentence."
+  },
+  "cd": {
+    "phrase": "I used the word cd in a simple sentence."
+  },
+  "cut": {
+    "phrase": "I used the word cut in a simple sentence."
+  },
+  "bamboo": {
+    "phrase": "The bamboo bent but did not break."
+  },
+  "experience": {
+    "phrase": "I used the word experience in a simple sentence."
+  },
+  "fan": {
+    "phrase": "I used the word fan in a simple sentence."
+  },
+  "fence": {
+    "phrase": "I used the word fence in a simple sentence."
+  },
+  "field": {
+    "phrase": "I used the word field in a simple sentence."
+  },
+  "for": {
+    "phrase": "This gift is for you."
+  },
+  "flower": {
+    "phrase": "She was in the flower of her life."
+  },
+  "from": {
+    "phrase": "I am from Shanghai."
+  },
+  "golden": {
+    "phrase": "It's not long until our golden wedding."
+  },
+  "health": {
+    "phrase": "Drink to my health!"
+  },
+  "heavy": {
+    "phrase": "Wooden furniture is heavy."
+  },
+  "heart": {
+    "phrase": "I used the word heart in a simple sentence."
+  },
+  "hello": {
+    "phrase": "I used the word hello in a simple sentence."
+  },
+  "hey": {
+    "phrase": "Hey! This is new!"
+  },
+  "honey": {
+    "phrase": "I used the word honey in a simple sentence."
+  },
+  "jump": {
+    "phrase": "I used the word jump in a simple sentence."
+  },
+  "master": {
+    "phrase": "They are loyal to their master."
+  },
+  "fox": {
+    "phrase": "This guy looks like a fox."
+  },
+  "music": {
+    "phrase": "I used the word music in a simple sentence."
+  },
+  "night": {
+    "phrase": "I used the word night in a simple sentence."
+  },
+  "of": {
+    "phrase": "A cup of water is on the table."
+  },
+  "on": {
+    "phrase": "The cat is on the chair."
+  },
+  "off": {
+    "phrase": "I used the word off in a simple sentence."
+  },
+  "panda": {
+    "phrase": "I used the word panda in a simple sentence."
+  },
+  "pig": {
+    "phrase": "Some religions prohibit their adherents from eating pig."
+  },
+  "plant": {
+    "phrase": "I used the word plant in a simple sentence."
+  },
+  "player": {
+    "phrase": "I used the word player in a simple sentence."
+  },
+  "rock": {
+    "phrase": "A rock fell from above."
+  },
+  "shall": {
+    "phrase": "I shall come back."
+  },
+  "slow": {
+    "phrase": "I'm just sitting here with a desk of cards, enjoying a slow afternoon."
+  },
+  "slice": {
+    "phrase": "Give me a slice of cake too!"
+  },
+  "speed": {
+    "phrase": "I used the word speed in a simple sentence."
+  },
+  "step": {
+    "phrase": "I used the word step in a simple sentence."
+  },
+  "sweet": {
+    "phrase": "It was sweet of him to help out."
+  },
+  "the": {
+    "phrase": "The book is on the desk."
+  },
+  "tall": {
+    "phrase": "Being tall is an advantage in basketball."
+  },
+  "thing": {
+    "phrase": "Oh yeah, I'm supposed to promote that vision thing."
+  },
+  "towards": {
+    "phrase": "The cat is towards the table."
+  },
+  "toward": {
+    "phrase": "The cat is toward the table."
+  },
+  "record": {
+    "phrase": "I used the word record in a simple sentence."
+  },
+  "turtle": {
+    "phrase": "I used the word turtle in a simple sentence."
+  },
+  "until": {
+    "phrase": "I stayed home because it was raining."
+  },
+  "very": {
+    "phrase": "The math problem is very difficult."
+  },
+  "unless": {
+    "phrase": "I stayed home because it was raining."
+  },
+  "wall": {
+    "phrase": "I used the word wall in a simple sentence."
+  },
+  "with": {
+    "phrase": "I play basketball with my friends."
+  },
+  "word": {
+    "phrase": "I miswrote a word."
+  },
+  "active": {
+    "phrase": "I used the word active in a simple sentence."
+  },
+  "silver": {
+    "phrase": "I used the word silver in a simple sentence."
+  },
+  "allow": {
+    "phrase": "To allow a sum for leakage."
+  },
+  "upon": {
+    "phrase": "He was set upon by the agitated dogs."
+  },
+  "bag": {
+    "phrase": "He headed back to the bag."
+  },
+  "amount": {
+    "phrase": "Pour a small amount of water into the dish."
+  },
+  "catch": {
+    "phrase": "I usually catch with my classmates after school."
+  },
+  "century": {
+    "phrase": "I saw a century near the school."
+  },
+  "awake": {
+    "phrase": "I am already awake."
+  },
+  "coke": {
+    "phrase": "I saw a coke near the school."
+  },
+  "clothing": {
+    "phrase": "I saw a clothing near the school."
+  },
+  "comfortable": {
+    "phrase": "The movie was comfortable."
+  },
+  "common": {
+    "phrase": "The movie was common."
+  },
+  "competition": {
+    "phrase": "We discussed competition during today's class."
+  },
+  "appointment": {
+    "phrase": "We discussed appointment during today's class."
+  },
+  "complain": {
+    "phrase": "I usually complain with my classmates after school."
+  },
+  "conversation": {
+    "phrase": "We discussed conversation during today's class."
+  },
+  "advertisement": {
+    "phrase": "We discussed advertisement during today's class."
+  },
+  "criticize": {
+    "phrase": "I usually criticize with my classmates after school."
+  },
+  "development": {
+    "phrase": "We discussed development during today's class."
+  },
+  "discussion": {
+    "phrase": "We discussed discussion during today's class."
+  },
+  "battery": {
+    "phrase": "I saw a battery near the school."
+  },
+  "host": {
+    "phrase": "Our company is host of the annual conference this year."
+  },
+  "countryside": {
+    "phrase": "I saw a countryside near the school."
+  },
+  "jeans": {
+    "phrase": "I saw a jeans near the school."
+  },
+  "four": {
+    "phrase": "I have four notebooks in my bag."
+  },
+  "offend": {
+    "phrase": "I usually offend with my classmates after school."
+  },
+  "opportunity": {
+    "phrase": "We discussed opportunity during today's class."
+  },
+  "pass": {
+    "phrase": "Smith was given a pass after Jones' double."
+  },
+  "project": {
+    "phrase": "I usually project with my classmates after school."
+  },
+  "so": {
+    "phrase": "I was tired, so I went to bed early."
+  },
+  "this": {
+    "phrase": "This is my first lesson today."
+  },
+  "about": {
+    "phrase": "We are talking about our weekend plan."
+  },
+  "Apple": {
+    "phrase": "I eat an apple every morning."
+  },
+  "arm": {
+    "phrase": "Shelburne Bay is an arm of Lake Champlain."
+  },
+  "consider": {
+    "phrase": "I usually consider with my classmates after school."
+  },
+  "do": {
+    "phrase": "What does Bob do? — He's a plumber."
+  },
+  "friend": {
+    "phrase": "I saw a friend near the school."
+  },
+  "history": {
+    "phrase": "He has had a lot of history with the police."
+  },
+  "able": {
+    "phrase": "The movie was able."
+  }
+}

@@ -1,0 +1,576 @@
+{
+    "switch": {
+        "stepScore": 300,
+        "order": [
+            "forest",
+            "cherry_grove",
+            "snow",
+            "desert",
+            "mushroom_island",
+            "mountain",
+            "ocean",
+            "volcano",
+            "nether",
+            "deep_dark",
+            "end",
+            "sky_dimension"
+        ],
+        "unlockScore": {
+            "forest": 0,
+            "cherry_grove": 100,
+            "snow": 250,
+            "desert": 400,
+            "mushroom_island": 550,
+            "mountain": 800,
+            "ocean": 1100,
+            "volcano": 1500,
+            "nether": 2100,
+            "deep_dark": 2800,
+            "end": 3800,
+            "sky_dimension": 5000
+        },
+        "minStay": {
+            "forest": { "score": 100, "timeSec": 20 },
+            "cherry_grove": { "score": 60, "timeSec": 10 },
+            "snow": { "score": 150, "timeSec": 30 },
+            "desert": { "score": 150, "timeSec": 30 },
+            "mushroom_island": { "score": 200, "timeSec": 40 },
+            "mountain": { "score": 200, "timeSec": 35 },
+            "ocean": { "score": 140, "timeSec": 25 },
+            "volcano": { "score": 320, "timeSec": 70 },
+            "nether": { "score": 380, "timeSec": 80 },
+            "deep_dark": { "score": 320, "timeSec": 60 },
+            "end": { "score": 300, "timeSec": 50 },
+            "sky_dimension": { "score": 300, "timeSec": 50 }
+        },
+        "gateBoss": {
+            "enabled": true,
+            "defaultType": "wither",
+            "perBiomeOnce": true,
+            "gateExempt": ["forest"]
+        }
+    },
+    "biomes": {
+        "forest": {
+            "id": "forest",
+            "name": "Forest",
+            "color": "#4CAF50",
+            "groundType": "grass",
+            "decorations": {
+                "tree": 0.3,
+                "bush": 0.2,
+                "flower": 0.25,
+                "mushroom": 0.1,
+                "vine": 0.15,
+                "cave_entrance": 0.04,
+                "vine_ladder": 0.02
+            },
+            "treeTypes": {
+                "oak": 0.5,
+                "birch": 0.3,
+                "dark_oak": 0.2
+            },
+            "effects": {
+                "particles": "leaves",
+                "ambient": "#88CC88",
+                "weather": [
+                    "clear",
+                    "rain",
+                    "fog"
+                ]
+            },
+            "spawnWeight": {
+                "min": 0,
+                "max": 1000
+            },
+            "platform": {
+                "floatingChanceMult": 1.1,
+                "floatingGroundTypes": [
+                    "grass"
+                ],
+                "floatingMinOffset": 80,
+                "floatingMaxExtra": 50,
+                "microPlatformChance": 0.22,
+                "microPlatformPeriod": 2,
+                "microPattern": "stair",
+                "microPlatformType": "grass",
+                "microPlatformMaxCount": 3,
+                "microMaxRiseBlocks": 3,
+                "microItemChance": 0.12
+            }
+        },
+        "snow": {
+            "id": "snow",
+            "name": "Snow",
+            "color": "#FFFFFF",
+            "groundType": "snow",
+            "decorations": {
+                "spruce": 0.25,
+                "ice_spike": 0.1,
+                "snow_pile": 0.3,
+                "ice_block": 0.15
+            },
+            "treeTypes": {
+                "spruce": 0.7,
+                "pine": 0.3
+            },
+            "effects": {
+                "particles": "snowflakes",
+                "ambient": "#CCE6FF",
+                "speedMultiplier": 1.2,
+                "weather": [
+                    "snow"
+                ]
+            },
+            "spawnWeight": {
+                "min": 500,
+                "max": 1500
+            },
+            "platform": {
+                "floatingChanceMult": 1.0,
+                "floatingGroundTypes": [
+                    "snow",
+                    "grass"
+                ]
+            }
+        },
+        "desert": {
+            "id": "desert",
+            "name": "Desert",
+            "color": "#FDD835",
+            "groundType": "sand",
+            "decorations": {
+                "cactus": 0.2,
+                "dead_bush": 0.15,
+                "rock": 0.1,
+                "bones": 0.05
+            },
+            "treeTypes": {
+                "cactus": 1.0
+            },
+            "effects": {
+                "particles": "dust",
+                "ambient": "#FFEECC",
+                "speedMultiplier": 0.85,
+                "heatWave": true,
+                "weather": [
+                    "clear",
+                    "sandstorm"
+                ]
+            },
+            "spawnWeight": {
+                "min": 1000,
+                "max": 2000
+            },
+            "platform": {
+                "floatingChanceMult": 0.9,
+                "floatingGroundTypes": [
+                    "sand",
+                    "stone"
+                ]
+            }
+        },
+        "mountain": {
+            "id": "mountain",
+            "name": "Mountain",
+            "color": "#757575",
+            "groundType": "stone",
+            "decorations": {
+                "ore_coal": 0.15,
+                "ore_iron": 0.1,
+                "ore_gold": 0.05,
+                "ore_diamond": 0.02,
+                "stalactite": 0.12,
+                "crystal": 0.08,
+                "lava_pool": 0.05,
+                "cave_entrance": 0.03
+            },
+            "effects": {
+                "particles": "sparkle",
+                "ambient": "#666688",
+                "darkness": 0.3,
+                "weather": [
+                    "fog"
+                ]
+            },
+            "spawnWeight": {
+                "min": 1500,
+                "max": 3000
+            },
+            "platform": {
+                "floatingChanceMult": 1.1,
+                "floatingGroundTypes": [
+                    "stone",
+                    "grass"
+                ]
+            }
+        },
+        "cave": {
+            "id": "cave",
+            "name": "Cave",
+            "color": "#3B3B4F",
+            "groundType": "stone",
+            "decorations": {
+                "ore_coal": 0.25,
+                "ore_iron": 0.18,
+                "ore_gold": 0.08,
+                "ore_diamond": 0.05,
+                "stalactite": 0.2,
+                "crystal": 0.1,
+                "lava_pool": 0.08,
+                "cave_exit": 0.08
+            },
+            "effects": {
+                "particles": "sparkle",
+                "ambient": "#3B3B4F",
+                "darkness": 0.45,
+                "weather": [
+                    "fog"
+                ]
+            },
+            "spawnWeight": {
+                "min": 0,
+                "max": 99999
+            },
+            "platform": {
+                "floatingChanceMult": 0.6,
+                "floatingGroundTypes": [
+                    "stone"
+                ],
+                "microPlatformChance": 0.25,
+                "microPlatformPeriod": 2,
+                "microPattern": "stair",
+                "microPlatformType": "stone",
+                "microPlatformMaxCount": 3,
+                "microMaxRiseBlocks": 3,
+                "microItemChance": 0.15,
+                "fragileChance": 0.2,
+                "fragileBreakDelay": 100
+            }
+        },
+        "ocean": {
+            "id": "ocean",
+            "name": "Ocean",
+            "color": "#2196F3",
+            "groundType": "sand",
+            "decorations": {
+                "shell": 0.28,
+                "starfish": 0.22,
+                "seaweed": 0.25,
+                "large_seaweed": 0.2,
+                "coral": 0.2,
+                "boat": 0.05
+            },
+            "treeTypes": {},
+            "effects": {
+                "particles": "bubbles",
+                "ambient": "#AAD4F5",
+                "waterLevel": 150
+            },
+            "spawnWeight": {
+                "min": 2000,
+                "max": 4000
+            },
+            "platform": {
+                "floatingChanceMult": 0.8,
+                "floatingGroundTypes": [
+                    "sand",
+                    "grass"
+                ]
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["drowned"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["drowned", "pufferfish"], "spawnRate": 0.8, "poison": true, "eliteChance": 0.1 },
+                { "round": 3, "types": ["drowned", "pufferfish", "guardian"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.2 }
+            ]
+        },
+        "nether": {
+            "id": "nether",
+            "name": "Nether",
+            "gateBossType": "ghast",
+            "color": "#8B0000",
+            "groundType": "netherrack",
+            "decorations": {
+                "lava_pool": 0.15,
+                "fire": 0.2,
+                "soul_sand": 0.1,
+                "nether_wart": 0.12,
+                "basalt": 0.18,
+                "lava_fall": 0.08
+            },
+            "effects": {
+                "particles": "flames",
+                "ambient": "#CC3333",
+                "damage": 1,
+                "speedMultiplier": 0.7,
+                "onEnterOnly": true
+            },
+            "spawnWeight": {
+                "min": 3500,
+                "max": 5000
+            },
+            "platform": {
+                "floatingChanceMult": 1.0,
+                "floatingGroundTypes": [
+                    "netherrack",
+                    "stone"
+                ]
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["zombie_pigman"], "spawnRate": 0.6, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["zombie_pigman", "blaze"], "spawnRate": 0.8, "poison": false, "eliteChance": 0.15 },
+                { "round": 3, "types": ["zombie_pigman", "blaze", "ghast"], "spawnRate": 1.0, "poison": false, "eliteChance": 0.25 }
+            ]
+        },
+        "sky": {
+            "id": "sky",
+            "name": "Sky",
+            "color": "#87CEEB",
+            "groundType": "cloud",
+            "decorations": {},
+            "effects": {
+                "particles": "sparkle",
+                "ambient": "#9BD4FF",
+                "weather": [
+                    "clear",
+                    "fog"
+                ]
+            },
+            "spawnWeight": {
+                "min": 0,
+                "max": 99999
+            }
+        },
+        "cherry_grove": {
+            "id": "cherry_grove",
+            "name": "Cherry Grove",
+            "color": "#FFB7C5",
+            "groundType": "grass",
+            "decorations": {
+                "cherry_tree": 0.35,
+                "flower_cluster": 0.15,
+                "butterfly": 0.15,
+                "small_stream": 0.08
+            },
+            "treeTypes": {
+                "cherry": 1.0
+            },
+            "effects": {
+                "particles": "petals",
+                "ambient": "#FFE4E1",
+                "skyColors": ["#FFE4E1", "#FFC0CB"],
+                "weather": [
+                    "clear",
+                    "fog"
+                ]
+            },
+            "spawnWeight": {
+                "min": 100,
+                "max": 500
+            },
+            "platform": {
+                "floatingChanceMult": 1.05,
+                "floatingGroundTypes": [
+                    "grass"
+                ],
+                "floatingMinOffset": 80,
+                "floatingMaxExtra": 45,
+                "microPlatformChance": 0.20,
+                "microPlatformPeriod": 2,
+                "microPattern": "stair",
+                "microPlatformType": "grass",
+                "microPlatformMaxCount": 3,
+                "microMaxRiseBlocks": 3,
+                "microItemChance": 0.12
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["bee"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["bee", "spore_bug"], "spawnRate": 0.8, "poison": true, "eliteChance": 0.1 },
+                { "round": 3, "types": ["bee", "spore_bug", "fox"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.2 }
+            ]
+        },
+        "mushroom_island": {
+            "id": "mushroom_island",
+            "name": "Mushroom Island",
+            "color": "#BA55D3",
+            "groundType": "mycelium",
+            "decorations": {
+                "giant_mushroom": 0.5,
+                "glow_mushroom": 0.2,
+                "mushroom_cow": 0.08
+            },
+            "treeTypes": {
+                "brown_mushroom": 0.5,
+                "red_mushroom": 0.5
+            },
+            "effects": {
+                "particles": "spores",
+                "ambient": "#DDA0DD",
+                "skyColors": ["#DDA0DD", "#BA55D3"],
+                "bounceMultiplier": 1.5,
+                "noEnemySpawn": false,
+                "weather": [
+                    "clear",
+                    "fog"
+                ]
+            },
+            "spawnWeight": {
+                "min": 550,
+                "max": 1200
+            },
+            "platform": {
+                "floatingChanceMult": 1.0,
+                "floatingGroundTypes": [
+                    "mycelium"
+                ]
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["mooshroom"], "spawnRate": 0.4, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["mooshroom", "spore_bug"], "spawnRate": 0.7, "poison": true, "eliteChance": 0.1 },
+                { "round": 3, "types": ["mooshroom", "spore_bug", "witch"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.2 }
+            ]
+        },
+        "volcano": {
+            "id": "volcano",
+            "name": "Volcano",
+            "color": "#FF4500",
+            "groundType": "basalt",
+            "decorations": {
+                "magma_crack": 0.25,
+                "hot_spring": 0.08,
+                "obsidian_pillar": 0.15
+            },
+            "treeTypes": {},
+            "effects": {
+                "particles": "embers",
+                "ambient": "#FF4500",
+                "skyColors": ["#FF4500", "#8B0000", "#2F1F1F"],
+                "damage": 2,
+                "heatWave": true,
+                "weather": [
+                    "clear",
+                    "ashstorm"
+                ]
+            },
+            "spawnWeight": {
+                "min": 1500,
+                "max": 2500
+            },
+            "platform": {
+                "floatingChanceMult": 0.9,
+                "floatingGroundTypes": [
+                    "basalt",
+                    "stone"
+                ]
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["magma_cube"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["magma_cube", "blaze"], "spawnRate": 0.8, "poison": false, "eliteChance": 0.1 },
+                { "round": 3, "types": ["magma_cube", "blaze", "wither_skeleton"], "spawnRate": 1.0, "poison": false, "eliteChance": 0.25 }
+            ]
+        },
+        "deep_dark": {
+            "id": "deep_dark",
+            "name": "Deep Dark",
+            "gateBossType": "wither_skeleton",
+            "color": "#008080",
+            "groundType": "sculk",
+            "decorations": {
+                "sculk_sensor": 0.15,
+                "soul_lantern": 0.1
+            },
+            "treeTypes": {},
+            "effects": {
+                "particles": "sculk_pulse",
+                "ambient": "#0A0A1A",
+                "skyColors": ["#0A0A1A", "#0D1B2A", "#1B3A4B"],
+                "darkness": 0.6,
+                "noiseCancellation": true,
+                "weather": [
+                    "fog"
+                ]
+            },
+            "spawnWeight": {
+                "min": 2800,
+                "max": 4000
+            },
+            "platform": {
+                "floatingChanceMult": 0.85,
+                "floatingGroundTypes": [
+                    "sculk"
+                ]
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["warden_scout"], "spawnRate": 0.4, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["warden_scout", "sculk_crawler"], "spawnRate": 0.7, "poison": true, "eliteChance": 0.15 },
+                { "round": 3, "types": ["warden_scout", "sculk_crawler", "warden"], "spawnRate": 1.0, "poison": true, "eliteChance": 0.3 }
+            ]
+        },
+        "end": {
+            "id": "end",
+            "name": "End",
+            "color": "#9C27B0",
+            "groundType": "end_stone",
+            "decorations": {
+                "end_crystal": 0.15,
+                "chorus_plant": 0.2
+            },
+            "treeTypes": {},
+            "effects": {
+                "particles": "end_particles",
+                "ambient": "#1A0A2E",
+                "skyColors": ["#0D0015", "#1A0A2E", "#2D1B4E"],
+                "gravityMultiplier": 0.65,
+                "jumpMultiplier": 1.5,
+                "weather": [
+                    "clear"
+                ]
+            },
+            "spawnWeight": {
+                "min": 3800,
+                "max": 5500
+            },
+            "platform": {
+                "floatingChanceMult": 1.3,
+                "floatingGroundTypes": [
+                    "end_stone"
+                ]
+            },
+            "enemyTiers": [
+                { "round": 1, "types": ["endermite"], "spawnRate": 0.5, "poison": false, "eliteChance": 0 },
+                { "round": 2, "types": ["endermite", "shulker"], "spawnRate": 0.8, "poison": false, "eliteChance": 0.2 },
+                { "round": 3, "types": ["endermite", "shulker", "enderman"], "spawnRate": 1.0, "poison": false, "eliteChance": 0.3 }
+            ]
+        },
+        "sky_dimension": {
+            "id": "sky_dimension",
+            "name": "Sky Dimension",
+            "color": "#FFD700",
+            "groundType": "cloud",
+            "decorations": {
+                "cloud_platform": 0.3
+            },
+            "treeTypes": {},
+            "effects": {
+                "particles": "golden_sparkle",
+                "ambient": "#87CEEB",
+                "skyColors": ["#87CEEB", "#FFD700", "#FF6347"],
+                "gravityMultiplier": 0.8,
+                "jumpMultiplier": 1.3,
+                "weather": [
+                    "clear"
+                ]
+            },
+            "spawnWeight": {
+                "min": 5000,
+                "max": 99999
+            },
+            "platform": {
+                "floatingChanceMult": 1.2,
+                "floatingGroundTypes": [
+                    "cloud"
+                ]
+            }
+        }
+    }
+}

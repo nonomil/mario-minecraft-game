@@ -1,0 +1,1091 @@
+/**
+ * 11-game-init.js - 游戏初始化、关卡生成
+ * 从 main.js 拆分 (原始行 2837-3400)
+ */
+function applyMotionToPlayer(p) {
+    if (!p) return;
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+    const scale = clamp(Number(settings.motionScale) || 1.0, 0.6, 2.0);
+    p.baseSpeed = (Number(gameConfig.physics.movementSpeed) || 2.0) * scale;
+    p.baseJumpStrength = (Number(gameConfig.physics.jumpStrength) || -7.0) * scale;
+    p.speed = p.baseSpeed;
+    p.jumpStrength = p.baseJumpStrength;
+}
+
+function createPlayer() {
+    const p = {
+        x: 100,
+        y: 300,
+        width: gameConfig.player.width,
+        height: gameConfig.player.height,
+        velX: 0,
+        velY: 0,
+        speed: gameConfig.physics.movementSpeed,
+        jumpStrength: gameConfig.physics.jumpStrength,
+        grounded: false,
+        facingRight: true,
+        jumpCount: 0,
+        maxJumps: gameConfig.player.maxJumps,
+        isAttacking: false,
+        attackTimer: 0,
+        lastFragilePlatform: null
+    };
+    applyMotionToPlayer(p);
+    return p;
+}
+
+function initGame() {
+    score = 0;
+    levelScore = 0;
+    runBestScore = 0;
+    lastWordItemX = -Infinity;
+    currentLevelIdx = 0;
+    playerMaxHp = Number(gameConfig?.player?.maxHp) || 3;
+    playerHp = playerMaxHp;
+    lastDamageFrame = 0;
+    difficultyState = null;
+    sessionCollectedWords = [];
+    if (typeof resetLearningStreaks === "function") resetLearningStreaks();
+    followUpQueue = [];
+    resetFollowUpMetrics();
+    if (typeof resetBiomeGateState === "function") resetBiomeGateState();
+    wordGates = [];
+    currentLearningChallenge = null;
+    clearLearningChallengeTimer();
+    hideLearningChallenge();
+    wordMatchActive = false;
+    if (wordMatchTimer) {
+        clearInterval(wordMatchTimer);
+        wordMatchTimer = null;
+    }
+    activeWordMatch = null;
+    resetInventory();
+    updateInventoryUI();
+    player = createPlayer();
+    // Reset BOSS arena state
+    if (typeof bossArena !== 'undefined' && bossArena) {
+        bossArena.active = false;
+        bossArena.boss = null;
+        bossArena.currentEncounter = null;
+        bossArena.victoryTimer = 0;
+        bossArena.viewportLocked = false;
+        bossArena.phaseFlashTimer = 0;
+        bossArena.phaseBannerText = '';
+        bossArena.lockedCamX = 0;
+        bossArena.leftWall = 0;
+        bossArena.rightWall = 0;
+        bossArena.lastEnvironmentPulseSerial = 0;
+        bossArena.comboCooldowns = { volcanic: 0, shadow: 0, arcane: 0 };
+        if (bossArena.spawned) {
+            for (const k in bossArena.spawned) delete bossArena.spawned[k];
+        }
+        bossArena.environmentController = (typeof bossEnvironmentController !== 'undefined') ? bossEnvironmentController : null;
+    }
+    if (typeof bossEnvironmentController !== 'undefined' && bossEnvironmentController && typeof bossEnvironmentController.reset === 'function') {
+        bossEnvironmentController.reset();
+    }
+    // Reset village state
+    if (typeof activeVillages !== 'undefined') activeVillages = [];
+    if (typeof villageSpawnedForScore !== 'undefined') {
+        for (const k in villageSpawnedForScore) delete villageSpawnedForScore[k];
+    }
+    if (typeof villageSpawnState !== 'undefined' && villageSpawnState) {
+        villageSpawnState.lastSpawnScore = -Infinity;
+        villageSpawnState.lastSpawnX = -Infinity;
+        villageSpawnState.lastSpawnBiome = null;
+        villageSpawnState.lastSpawnTransitionTick = 0;
+    }
+    if (typeof playerInVillage !== 'undefined') playerInVillage = false;
+    if (typeof currentVillage !== 'undefined') currentVillage = null;
+    if (typeof resetVillageInteriorState === "function") resetVillageInteriorState();
+    startLevel(0);
+    updateDifficultyState(true);
+}
+
+function startLevel(idx) {
+    currentLevelIdx = idx;
+    const level = levels[currentLevelIdx];
+    canvas.style.backgroundColor = level.bg;
+    const initBiome = getBiomeById(getBiomeIdForScore(getProgressScore()));
+    currentBiome = initBiome.id;
+    const info = document.getElementById("level-info");
+    if (info) info.innerText = `生态: ${initBiome.name}`;
+    platforms = [];
+    trees = [];
+    chests = [];
+    items = [];
+    decorations = [];
+    particles = [];
+    enemies = [];
+    golems = [];
+    treasureBlocks = [];
+    if (typeof resetPlayerPoisonStatus === "function") resetPlayerPoisonStatus();
+    digHits.clear();
+    resetProjectiles();
+    playerPositionHistory = [];
+    lastGenX = 0;
+    cameraX = 0;
+    wordGates = [];
+    sessionCollectedWords = [];
+    followUpQueue = [];
+    resetFollowUpMetrics();
+    if (typeof resetBiomeGateState === "function") resetBiomeGateState();
+    if (typeof resetVillageInteriorState === "function") resetVillageInteriorState();
+    updateHpUI();
+    player.x = 100;
+    player.y = Math.min(300, groundY - player.height - 10);
+    player.velX = 0;
+    player.velY = 0;
+    generatePlatform(0, 12, groundY);
+    // Safety: ensure ground platform exists and is within canvas
+    if (!platforms.length || groundY <= 0 || groundY >= canvas.height) {
+        console.warn('startLevel: groundY invalid or no platforms', { groundY, canvasHeight: canvas.height, platforms: platforms.length });
+    }
+}
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function buildWordPicker() {
+    const base = Array.isArray(wordDatabase) ? wordDatabase.filter(w => w && w.en) : [];
+    let bag = shuffle(base);
+    let cursor = 0;
+    const INTERVALS = {
+        correct_fast: [0, 5, 15, 40, 120, 300],
+        correct_slow: [0, 3, 10, 28, 80, 220],
+        wrong: [0, 1, 3, 8, 20, 60]
+    };
+    const stats = Object.create(null);
+    const due = Object.create(null);
+    const recentWords = [];
+    const unseen = shuffle(base.map(w => w.en));
+    let tick = 0;
+    const byEn = Object.create(null);
+    base.forEach(w => { byEn[w.en] = w; });
+    function ensureStat(en) {
+        if (!en) return null;
+        if (!stats[en]) {
+            stats[en] = {
+                count: 0,
+                quality: "correct_slow",
+                mastery: 0,
+                streak: 0,
+                wrong: 0,
+                seen: 0,
+                lastTick: 0
+            };
+        }
+        return stats[en];
+    }
+
+    function getRepeatBias() {
+        const bias = String(settings?.wordRepeatBias || "reinforce_wrong");
+        return bias === "balanced" ? "balanced" : "reinforce_wrong";
+    }
+
+    function getRepeatWindow() {
+        return Math.max(1, Number(settings?.wordRepeatWindow) || 6);
+    }
+
+    function pushRecentWord(en) {
+        if (!en) return;
+        recentWords.push(en);
+        const windowSize = getRepeatWindow();
+        while (recentWords.length > windowSize) recentWords.shift();
+    }
+
+    function getCandidateScore(wordObj, nextDueTick, bias) {
+        const st = ensureStat(wordObj.en);
+        const dueReady = Math.max(0, tick - nextDueTick);
+        const weakBoost = Math.max(0, 2 - Number(st.mastery || 0));
+        const wrongBoost = bias === "reinforce_wrong" ? Math.min(4, Number(st.wrong || 0)) : 0;
+        return dueReady * 0.2 + weakBoost * 1.3 + wrongBoost * 0.9 - Number(st.count || 0) * 0.55;
+    }
+
+    function pickBestDueWord(excludes, windowSet, bias, allowRecentWords) {
+        let best = null;
+        let bestScore = -Infinity;
+        for (let i = 0; i < base.length; i++) {
+            const w = bag[cursor++ % bag.length];
+            if (!w || excludes.has(w.en)) continue;
+            const nextDue = typeof due[w.en] === "number" ? due[w.en] : 0;
+            if (nextDue > tick) continue;
+            if (!allowRecentWords && windowSet.has(w.en)) continue;
+            const score = getCandidateScore(w, nextDue, bias);
+            if (score > bestScore) {
+                best = w;
+                bestScore = score;
+            } else if (Math.abs(score - bestScore) < 0.0001 && Math.random() < 0.25) {
+                best = w;
+            }
+        }
+        return best;
+    }
+
+    return {
+        next(excludeSet) {
+            if (!base.length) return { en: "word", zh: "单词" };
+            const excludes = excludeSet || new Set();
+            tick++;
+
+            for (let tries = 0; tries < unseen.length; tries++) {
+                const en = unseen[0];
+                if (!en) break;
+                if (!excludes.has(en) && !stats[en]) {
+                    unseen.shift();
+                    const st = ensureStat(en);
+                    st.count = 1;
+                    st.seen = (st.seen || 0) + 1;
+                    st.lastTick = tick;
+                    const ivl = INTERVALS.correct_slow;
+                    due[en] = tick + ivl[Math.min(st.count, ivl.length - 1)];
+                    pushRecentWord(en);
+                    return byEn[en] || base[0];
+                }
+                unseen.shift();
+                unseen.push(en);
+            }
+
+            const bias = getRepeatBias();
+            const windowSet = new Set(recentWords);
+            let best = pickBestDueWord(excludes, windowSet, bias, false);
+            if (!best) best = pickBestDueWord(excludes, windowSet, bias, true);
+            const chosen = best || base[Math.floor(Math.random() * base.length)];
+            const st = ensureStat(chosen.en);
+            st.count++;
+            st.seen = (st.seen || 0) + 1;
+            st.lastTick = tick;
+            const q = st.quality || "correct_slow";
+            const ivl = INTERVALS[q] || INTERVALS.correct_slow;
+            due[chosen.en] = tick + ivl[Math.min(st.count, ivl.length - 1)];
+            pushRecentWord(chosen.en);
+            return chosen;
+        },
+        updateWordQuality(en, quality) {
+            if (!en) return;
+            const st = ensureStat(en);
+            st.quality = quality || "correct_slow";
+            if (quality === "wrong") {
+                st.mastery = Math.max(-3, Number(st.mastery || 0) - 2);
+                st.wrong = (Number(st.wrong) || 0) + 1;
+                st.streak = Math.min(0, Number(st.streak || 0) - 1);
+            } else if (quality === "correct_fast") {
+                st.mastery = Math.min(5, Number(st.mastery || 0) + 2);
+                st.streak = Math.max(0, Number(st.streak || 0)) + 1;
+            } else {
+                st.mastery = Math.min(5, Number(st.mastery || 0) + 1);
+                st.streak = Math.max(0, Number(st.streak || 0)) + 1;
+            }
+            if (quality === "wrong") {
+                due[en] = tick;
+            }
+        },
+        getWordStats(en) {
+            const key = String(en || "").trim();
+            const st = key ? stats[key] : null;
+            return st ? { ...st } : null;
+        }
+    };
+}
+
+function ensureWordPicker() {
+    if (!wordPicker) wordPicker = buildWordPicker();
+}
+
+function normalizeWordKey(value) {
+    return String(value || "").trim().toLowerCase();
+}
+
+function ensureFollowUpMetrics() {
+    if (!globalThis.__MMWG_FOLLOWUP_METRICS) {
+        globalThis.__MMWG_FOLLOWUP_METRICS = {
+            pickCalls: 0,
+            followServed: 0,
+            followQueued: 0,
+            followDeferredByExclude: 0,
+            followDroppedByQueueLimit: 0
+        };
+    }
+    return globalThis.__MMWG_FOLLOWUP_METRICS;
+}
+
+function ensurePlatformTestStats() {
+    if (typeof globalThis === "undefined") return null;
+    if (!globalThis.__MMWG_TEST_HOOKS__) {
+        globalThis.__MMWG_TEST_HOOKS__ = {};
+    }
+    if (!globalThis.__MMWG_TEST_HOOKS__.platformStats) {
+        globalThis.__MMWG_TEST_HOOKS__.platformStats = {
+            maxFloatingHeightRatio: 0,
+            maxMicroStackHeight: 0,
+            maxCloudStackHeight: 0
+        };
+    }
+    if (typeof globalThis.__MMWG_TEST_HOOKS__.getPlatformStats !== "function") {
+        globalThis.__MMWG_TEST_HOOKS__.getPlatformStats = () => ({
+            ...globalThis.__MMWG_TEST_HOOKS__.platformStats
+        });
+    }
+    return globalThis.__MMWG_TEST_HOOKS__.platformStats;
+}
+
+function resetFollowUpMetrics() {
+    const m = ensureFollowUpMetrics();
+    m.pickCalls = 0;
+    m.followServed = 0;
+    m.followQueued = 0;
+    m.followDeferredByExclude = 0;
+    m.followDroppedByQueueLimit = 0;
+}
+
+function createFollowUpPhraseItem(wordObj, gapRemaining) {
+    if (!wordObj || !wordObj.phrase) return null;
+    const phraseText = String(wordObj.phrase || "").trim();
+    if (!phraseText) return null;
+    const phraseZh = String(wordObj.phraseZh || wordObj.phraseTranslation || wordObj.zh || "").trim();
+    return {
+        en: phraseText,
+        zh: phraseZh || wordObj.zh || "",
+        phrase: "",
+        phraseZh: "",
+        phraseTranslation: "",
+        __followUpPhrase: true,
+        __sourceWordEn: String(wordObj.en || "").trim(),
+        __gapRemaining: Math.max(0, Number(gapRemaining) || 0)
+    };
+}
+
+function getPhraseFollowMode() {
+    return String(settings?.phraseFollowMode || "hybrid");
+}
+
+function isPhraseFollowAdaptiveEnabled() {
+    if (typeof settings?.phraseFollowAdaptive === "boolean") return settings.phraseFollowAdaptive;
+    return true;
+}
+
+function pickPhraseGapCount() {
+    const explicit = Number(settings?.phraseFollowGapCount);
+    if (Number.isFinite(explicit)) return Math.max(0, explicit);
+    return 2;
+}
+
+function maybeEnqueueFollowUpPhrase(wordObj) {
+    if (!wordObj || wordObj.__followUpPhrase) return;
+    const phraseText = String(wordObj.phrase || "").trim();
+    if (!phraseText) return;
+    const mode = getPhraseFollowMode();
+    if (mode === "off") return;
+
+    let gapRemaining = 0;
+    if (mode === "gap2") {
+        gapRemaining = pickPhraseGapCount();
+    } else if (mode === "hybrid") {
+        let directRatio = Math.max(0, Math.min(1, Number(settings?.phraseFollowDirectRatio) || 0.7));
+        if (isPhraseFollowAdaptiveEnabled() && wordPicker && typeof wordPicker.getWordStats === "function") {
+            const st = wordPicker.getWordStats(wordObj.en);
+            const mastery = Number(st?.mastery || 0);
+            if (mastery <= -1) directRatio = Math.max(directRatio, 0.9);
+            else if (mastery >= 3) directRatio = Math.min(directRatio, 0.25);
+        }
+        gapRemaining = Math.random() < directRatio ? 0 : pickPhraseGapCount();
+    }
+
+    const phraseItem = createFollowUpPhraseItem(wordObj, gapRemaining);
+    if (!phraseItem) return;
+    const phraseKey = normalizeWordKey(phraseItem.en);
+    const sourceKey = normalizeWordKey(phraseItem.__sourceWordEn);
+    const duplicate = followUpQueue.some(q =>
+        q &&
+        normalizeWordKey(q.en) === phraseKey &&
+        normalizeWordKey(q.__sourceWordEn) === sourceKey
+    );
+    if (duplicate) return;
+    const metrics = ensureFollowUpMetrics();
+    const maxQueueSize = 24;
+    if (followUpQueue.length >= maxQueueSize) {
+        followUpQueue.shift();
+        metrics.followDroppedByQueueLimit++;
+    }
+    followUpQueue.push(phraseItem);
+    metrics.followQueued++;
+}
+
+function maybeTakeFollowUpPhrase(excludeSet) {
+    if (!Array.isArray(followUpQueue) || !followUpQueue.length) return null;
+    const metrics = ensureFollowUpMetrics();
+    const total = followUpQueue.length;
+    const excludeKeys = new Set();
+    if (excludeSet && typeof excludeSet.forEach === "function") {
+        excludeSet.forEach(v => excludeKeys.add(normalizeWordKey(v)));
+    }
+    let selected = null;
+    for (let i = 0; i < total; i++) {
+        const item = followUpQueue.shift();
+        if (!item) {
+            continue;
+        }
+        const gapRemaining = Math.max(0, Number(item.__gapRemaining) || 0);
+        if (gapRemaining > 0) {
+            item.__gapRemaining = gapRemaining - 1;
+            followUpQueue.push(item);
+            continue;
+        }
+        const itemKey = normalizeWordKey(item.en);
+        if (excludeKeys.has(itemKey)) {
+            metrics.followDeferredByExclude++;
+            followUpQueue.push(item);
+            continue;
+        }
+        if (!selected) {
+            selected = item;
+        } else {
+            followUpQueue.push(item);
+        }
+    }
+    return selected;
+}
+
+function pickWordForSpawn() {
+    ensureWordPicker();
+    const metrics = ensureFollowUpMetrics();
+    metrics.pickCalls++;
+    const exclude = new Set();
+    if (settings.avoidWordRepeats) {
+        items.forEach(i => { if (i && i.wordObj && i.wordObj.en) exclude.add(i.wordObj.en); });
+        if (lastWord && lastWord.en) exclude.add(lastWord.en);
+    }
+    const followWord = maybeTakeFollowUpPhrase(exclude);
+    if (followWord) {
+        metrics.followServed++;
+        return followWord;
+    }
+
+    const picked = wordPicker.next(exclude);
+    maybeEnqueueFollowUpPhrase(picked);
+    if (metrics.pickCalls % 60 === 0) {
+        const hitRate = metrics.pickCalls > 0
+            ? (metrics.followServed / metrics.pickCalls).toFixed(2)
+            : "0.00";
+        console.log(`[WordFollow] calls=${metrics.pickCalls}, served=${metrics.followServed}, queued=${metrics.followQueued}, hitRate=${hitRate}, deferred=${metrics.followDeferredByExclude}, dropped=${metrics.followDroppedByQueueLimit}, queue=${followUpQueue.length}`);
+    }
+    return picked;
+}
+
+function clearOldWordItems() {
+    items = items.filter(item => !(item && item.wordObj));
+    lastWordItemX = cameraX - 100;
+}
+
+function spawnWordItemNearPlayer() {
+    if (!player) return;
+    const word = pickWordForSpawn();
+    if (!word) return;
+    const spawnX = player.x + 200;
+    if (!canSpawnWordItemAt(spawnX)) return;
+    const spawnY = player.y - 50;
+    const item = new Item(spawnX, spawnY, word);
+    items.push(item);
+    registerWordItemSpawn(spawnX);
+}
+
+function getSpawnRates() {
+    const s = gameConfig.spawn || {};
+    let treeChance = s.treeChance ?? 0.2;
+    let chestChance = s.chestChance ?? 0.35;
+    let itemChance = s.itemChance ?? 0.55;
+    let enemyChance = s.enemyChance ?? 0.7;
+
+    if (settings.learningMode) {
+        // Learning mode should reduce enemies, but not to the point that they vanish.
+        enemyChance *= 0.6;
+        treeChance *= 0.6;
+        chestChance *= 0.8;
+        itemChance = Math.min(0.85, itemChance * 1.2);
+    }
+
+    const diff = getDifficultyState();
+    enemyChance *= diff.enemySpawnMult;
+    chestChance *= diff.chestSpawnMult;
+
+    const clamp01 = v => Math.max(0, Math.min(1, v));
+    treeChance = clamp01(treeChance);
+    chestChance = clamp01(Math.max(chestChance, treeChance));
+    itemChance = clamp01(Math.max(itemChance, chestChance));
+    enemyChance = clamp01(Math.max(enemyChance, itemChance));
+    return { treeChance, chestChance, itemChance, enemyChance };
+}
+
+function canSpawnWordItemAt(x) {
+    const minGap = Number(gameConfig?.spawn?.wordItemMinGap ?? 150) || 150;
+    return Math.abs(x - lastWordItemX) >= minGap;
+}
+
+function registerWordItemSpawn(x) {
+    lastWordItemX = x;
+}
+
+function estimateMaxJumpHeightPx() {
+    const g = Math.max(0.05, Number(gameConfig?.physics?.gravity) || 0.2);
+    const v1 = Math.abs(Number(player?.jumpStrength ?? gameConfig?.physics?.jumpStrength ?? -7));
+    let h = (v1 * v1) / (2 * g);
+    const maxJumps = Number(player?.maxJumps ?? gameConfig?.player?.maxJumps ?? 1);
+    if (maxJumps >= 2) {
+        const v2 = v1 * 0.8;
+        h += (v2 * v2) / (2 * g);
+    }
+    if (!isFinite(h) || h <= 0) return 120;
+    return h;
+}
+
+function generatePlatform(startX, length, groundYValue) {
+    console.log('generatePlatform called:', { startX, length, groundYValue, blockSize });
+    const level = levels[currentLevelIdx];
+    const biome = getBiomeById(getBiomeIdForScore(getProgressScore()));
+    const platformCfg = biome.platform || {};
+    const groundType = biome.groundType || level.ground;
+    const newWidth = length * blockSize;
+    const halfScreenHeight = canvas && canvas.height ? canvas.height * 0.5 : null;
+    const minHeightClamp = halfScreenHeight ? (groundYValue - halfScreenHeight) : null;
+    console.log('Platform config:', { groundType, newWidth, biomeId: biome.id });
+    let merged = false;
+    for (let i = platforms.length - 1; i >= 0; i--) {
+        const p = platforms[i];
+        if (p.y === groundYValue && p.type === groundType) {
+            if (Math.abs((p.x + p.width) - startX) < 1.5) {
+                p.width += newWidth;
+                merged = true;
+            }
+            break;
+        }
+    }
+
+    if (!merged) {
+        platforms.push(new Platform(startX, groundYValue, newWidth, blockSize, groundType));
+        console.log('Platform created! Total platforms:', platforms.length);
+    }
+
+    generateBiomeDecorations(startX, groundYValue, newWidth, biome);
+
+    // 藏宝方块：5%概率在地面生成一个金色斑点方块，挖开出宝箱
+    if (startX > 500 && length >= 4 && Math.random() < 0.05) {
+        const tbOffset = 1 + Math.floor(Math.random() * (length - 2));
+        const tbX = startX + tbOffset * blockSize;
+        treasureBlocks.push({ x: tbX, y: groundYValue, groundType: groundType });
+    }
+
+    const floatChance = (gameConfig.spawn.floatingPlatformChance || 0) * (platformCfg.floatingChanceMult || 1);
+    const floatItemChance = (gameConfig.spawn.floatingItemChance || 0) * (platformCfg.floatingItemChanceMult || 1);
+    // 可能生成1-2个悬浮平台，间距和高度各不相同
+    const maxFloats = length >= 12 ? 2 : 1;
+    let floatUsedRanges = []; // 记录已用的X范围，避免重叠
+    for (let fi = 0; fi < maxFloats; fi++) {
+        if (Math.random() >= floatChance) continue;
+        if (length <= 5) continue;
+        // 加权随机：短平台多，长平台少
+        const floatRoll = Math.random();
+        let floatLen;
+        if (floatRoll < 0.35) {
+            floatLen = 2 + Math.floor(Math.random() * 2); // 2-3格 (35%)
+        } else if (floatRoll < 0.70) {
+            floatLen = 4 + Math.floor(Math.random() * 2); // 4-5格 (35%)
+        } else {
+            floatLen = 6 + Math.floor(Math.random() * 3); // 6-8格 (30%)
+        }
+        floatLen = Math.min(floatLen, length - 1);
+        const treeH = blockSize * 2.8; // 树高度，与 Tree class 一致
+        const maxJump = estimateMaxJumpHeightPx();
+        const rawMinOffset = Math.max(blockSize * 2, Number(platformCfg.floatingMinOffset) || 100);
+        const maxOffset = Math.min(rawMinOffset + 150, maxJump * 0.95);
+        // 每个平台独立随机高度（宽范围：低到高）
+        const heightRange = Math.max(30, maxOffset - rawMinOffset);
+        let thisOffset = rawMinOffset + Math.random() * heightRange;
+        let floatY = Math.round((groundYValue - thisOffset) / (blockSize / 2)) * (blockSize / 2);
+        // 计算X位置，确保与已有悬浮平台保持间距
+        const floatWidthPx = floatLen * blockSize;
+        const minSpacing = blockSize * 3;
+        let floatX = startX + blockSize + Math.floor(Math.random() * Math.max(1, (length - floatLen) * blockSize));
+        // 检查与已有平台的间距
+        let tooClose = false;
+        for (const range of floatUsedRanges) {
+            if (floatX + floatWidthPx + minSpacing > range[0] && floatX < range[1] + minSpacing) {
+                tooClose = true;
+                break;
+            }
+        }
+        if (tooClose) continue;
+        // 检查是否与树干涉，如果干涉则移到树顶上方（检查所有树）
+        const floatRight = floatX + floatWidthPx;
+        let treeAdjusted = true;
+        while (treeAdjusted) {
+            treeAdjusted = false;
+            for (const t of trees) {
+                if (t.remove) continue;
+                if (t.x + t.width <= floatX || t.x >= floatRight) continue;
+                const floatBottom = floatY + blockSize;
+                if (floatY < t.y + t.height && floatBottom > t.y) {
+                    floatY = t.y - blockSize;
+                    treeAdjusted = true;
+                }
+            }
+        }
+        // 确保不超出跳跃范围
+        const minReachableY = groundYValue - maxJump * 0.95;
+        let minClampY = minReachableY;
+        if (minHeightClamp != null) {
+            minClampY = Math.max(minClampY, minHeightClamp);
+        }
+        if (floatY < minClampY) {
+            floatY = Math.round(minClampY / (blockSize / 2)) * (blockSize / 2);
+        }
+        const platformStats = ensurePlatformTestStats();
+        if (platformStats && canvas && canvas.height) {
+            const heightRatio = (groundYValue - floatY) / canvas.height;
+            if (Number.isFinite(heightRatio)) {
+                platformStats.maxFloatingHeightRatio = Math.max(platformStats.maxFloatingHeightRatio || 0, heightRatio);
+            }
+        }
+        floatUsedRanges.push([floatX, floatX + floatWidthPx]);
+        const floatTypes = Array.isArray(platformCfg.floatingGroundTypes) && platformCfg.floatingGroundTypes.length ? platformCfg.floatingGroundTypes : [groundType];
+        const floatType = floatTypes[Math.floor(Math.random() * floatTypes.length)] || groundType;
+        const floatPlatform = new Platform(floatX, floatY, floatWidthPx, blockSize, floatType);
+        if (biome.id === "nether" && Math.random() < 0.45 && typeof floatPlatform.makeFragile === "function") {
+            floatPlatform.makeFragile(3);
+        }
+        platforms.push(floatPlatform);
+        const floatItemX = floatX + blockSize / 2;
+        if (Math.random() < floatItemChance && canSpawnWordItemAt(floatItemX)) {
+            const word = pickWordForSpawn();
+            items.push(new Item(floatItemX, floatY - 50, word));
+            registerWordItemSpawn(floatItemX);
+        }
+        // 悬浮平台上生成宝箱（4格以上，25%概率）
+        if (floatLen >= 4 && Math.random() < 0.25) {
+            let chestOffsetBlocks;
+            if (floatLen >= 6) {
+                const center = Math.floor(floatLen / 2);
+                chestOffsetBlocks = center - 1 + Math.floor(Math.random() * 2);
+            } else {
+                chestOffsetBlocks = 1 + Math.floor(Math.random() * (floatLen - 2));
+            }
+            const chestX = floatX + chestOffsetBlocks * blockSize + blockSize * 0.1;
+            chests.push(new Chest(chestX, floatY));
+            // 口袋宝箱：6+格平台，宝箱两侧加墙壁方块形成"口袋"
+            if (floatLen >= 6 && chestOffsetBlocks >= 1 && chestOffsetBlocks < floatLen - 1) {
+                const wallY = floatY - blockSize;
+                const leftWallX = floatX + (chestOffsetBlocks - 1) * blockSize;
+                const rightWallX = floatX + (chestOffsetBlocks + 1) * blockSize;
+                platforms.push(new Platform(leftWallX, wallY, blockSize, blockSize, floatType));
+                platforms.push(new Platform(rightWallX, wallY, blockSize, blockSize, floatType));
+            }
+        }
+    }
+
+    const microChance = Number(platformCfg.microPlatformChance) || 0;
+    const microPeriod = Math.max(1, Number(platformCfg.microPlatformPeriod) || 1);
+    const microSegment = Math.floor(startX / (blockSize * 6));
+    const allowMicro = microSegment % microPeriod === 0;
+    if (microChance > 0 && allowMicro && Math.random() < microChance && newWidth >= blockSize * 4) {
+        const maxCount = Math.max(1, Number(platformCfg.microPlatformMaxCount) || 2);
+        const count = 1 + Math.floor(Math.random() * maxCount);
+        const microType = platformCfg.microPlatformType || "grass";
+        const pattern = String(platformCfg.microPattern || "stair").toLowerCase();
+        const maxJumpBlocks = Math.max(1, Math.floor((estimateMaxJumpHeightPx() * 0.85) / blockSize));
+        const configuredMaxRise = Math.max(1, Math.min(maxJumpBlocks, Number(platformCfg.microMaxRiseBlocks) || 2));
+        const maxRiseBlocks = Math.min(2, configuredMaxRise);
+
+        if (pattern === "stair") {
+            const steps = Math.max(1, Math.min(count, maxRiseBlocks));
+            const minX = startX + blockSize;
+            const maxX = startX + newWidth - blockSize * (steps + 1);
+            if (maxX > minX) {
+                let stairX0 = minX + Math.random() * (maxX - minX);
+                stairX0 = Math.floor(stairX0 / blockSize) * blockSize;
+                for (let i = 0; i < steps; i++) {
+                    const mx = stairX0 + i * blockSize;
+                    const my = groundYValue - (i + 1) * blockSize;
+                    const microPlatform = new Platform(mx, my, blockSize, blockSize, microType);
+                    if (biome.id === "nether" && Math.random() < 0.5 && typeof microPlatform.makeFragile === "function") {
+                        microPlatform.makeFragile(3);
+                    }
+                    platforms.push(microPlatform);
+                }
+                const platformStats = ensurePlatformTestStats();
+                if (platformStats) {
+                    platformStats.maxMicroStackHeight = Math.max(platformStats.maxMicroStackHeight || 0, steps);
+                }
+                const topX = stairX0 + (steps - 1) * blockSize + blockSize / 2;
+                if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(topX)) {
+                    const word = pickWordForSpawn();
+                    const topY = groundYValue - steps * blockSize - 50;
+                    items.push(new Item(topX, topY, word));
+                    registerWordItemSpawn(topX);
+                }
+            }
+        } else {
+            // fallback: random but clamped to be reachable
+            const maxJump = estimateMaxJumpHeightPx() * 0.85;
+            const minOffset = Math.max(50, Number(platformCfg.microPlatformMinOffset) || 80);
+            const maxExtra = Math.max(0, Number(platformCfg.microPlatformMaxExtra) || 60);
+            const maxOffset = Math.max(60, Math.min(minOffset + maxExtra, maxJump - 12));
+            const baseOffset = Math.min(minOffset, maxOffset);
+            const extra = Math.max(0, maxOffset - baseOffset);
+            for (let i = 0; i < count; i++) {
+                let mx = startX + blockSize + Math.random() * (newWidth - blockSize * 2);
+                mx = Math.floor(mx / blockSize) * blockSize;
+                let my = Math.round((groundYValue - baseOffset - Math.random() * extra) / (blockSize / 2)) * (blockSize / 2);
+                if (minHeightClamp != null && my < minHeightClamp) {
+                    my = Math.round(minHeightClamp / (blockSize / 2)) * (blockSize / 2);
+                }
+                const microPlatform = new Platform(mx, my, blockSize, blockSize, microType);
+                if (biome.id === "nether" && Math.random() < 0.5 && typeof microPlatform.makeFragile === "function") {
+                    microPlatform.makeFragile(3);
+                }
+                platforms.push(microPlatform);
+                const platformStats = ensurePlatformTestStats();
+                if (platformStats) {
+                    platformStats.maxMicroStackHeight = Math.max(platformStats.maxMicroStackHeight || 0, 1);
+                }
+                const spawnX = mx + blockSize / 2;
+                if (Math.random() < (platformCfg.microItemChance || 0) && canSpawnWordItemAt(spawnX)) {
+                    const word = pickWordForSpawn();
+                    items.push(new Item(spawnX, my - 50, word));
+                    registerWordItemSpawn(spawnX);
+                }
+            }
+        }
+    }
+
+    if (startX > 400) {
+        const objectX = startX + 100 + Math.random() * (length * blockSize - 150);
+        const rand = Math.random();
+        const rates = getSpawnRates();
+        const enemyConfig = getEnemyConfig();
+        let enemyChance = rates.enemyChance;
+        if (enemyConfig.spawnChance != null) {
+            let extra = enemyConfig.spawnChance;
+            if (settings.learningMode) extra *= 0.6;
+            enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance + extra));
+        }
+        enemyChance = Math.min(1, Math.max(enemyChance, rates.itemChance));
+        if (rand < rates.treeChance) {
+            spawnBiomeTree(objectX, groundYValue, biome, level.treeType);
+        } else if (rand < rates.chestChance) {
+            chests.push(new Chest(objectX, groundYValue));
+        } else if (rand < rates.itemChance && canSpawnWordItemAt(objectX)) {
+            const word = pickWordForSpawn();
+            items.push(new Item(objectX, groundYValue - 60, word));
+            registerWordItemSpawn(objectX);
+        } else if (settings.wordGateEnabled && Math.random() < LEARNING_CONFIG.wordGate.spawnChance && getProgressScore() >= (LEARNING_CONFIG.wordGate.minScore || 0)) {
+            const gateWord = pickWordForSpawn();
+            if (gateWord) wordGates.push(new WordGate(objectX, groundYValue - 20, gateWord));
+        } else if (rand < enemyChance) {
+            spawnEnemyByDifficulty(objectX, groundYValue - 32);
+        }
+    }
+
+    // 宝藏柱：地面上垂直方块柱，顶部有宝箱或单词（10%概率）
+    if (startX > 600 && length >= 6 && Math.random() < 0.10) {
+        const pillarX = startX + blockSize * 2 + Math.floor(Math.random() * Math.max(1, (length - 4) * blockSize));
+        const pillarHeight = 2 + Math.floor(Math.random() * 2); // 2-3格高
+        for (let ph = 1; ph <= pillarHeight; ph++) {
+            platforms.push(new Platform(pillarX, groundYValue - ph * blockSize, blockSize, blockSize, groundType));
+        }
+        const topY = groundYValue - pillarHeight * blockSize;
+        if (Math.random() < 0.7) {
+            chests.push(new Chest(pillarX + blockSize * 0.1, topY));
+        } else if (canSpawnWordItemAt(pillarX)) {
+            const word = pickWordForSpawn();
+            items.push(new Item(pillarX + blockSize * 0.2, topY - 40, word));
+            registerWordItemSpawn(pillarX);
+        }
+    }
+
+    lastGenX = startX + length * blockSize;
+}
+
+function spawnEnemyByDifficulty(x, y) {
+    // 村庄安全区不刷怪 (v1.8.0)
+    if (typeof isInVillageArea === 'function' && isInVillageArea(x)) return;
+    const enemyConfig = getEnemyConfig();
+    const step = Number(getBiomeSwitchConfig().stepScore) || 200;
+    const tier = Math.max(0, Math.floor((Number(getProgressScore()) || 0) / Math.max(1, step)));
+    const biomePools = {
+        forest: ["zombie", "creeper", "spider", "skeleton", "enderman"],
+        cherry_grove: ["bee", "bee", "fox", "witch"],
+        snow: ["zombie", "skeleton", "creeper", "spider", "enderman"],
+        desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
+        mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
+        ocean: ["drowned", "pufferfish"],
+        nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"],
+        mushroom_island: ["spore_bug", "bee", "fox"]
+    };
+    const basePool = biomePools[currentBiome] || ["zombie", "creeper", "spider", "skeleton", "enderman"];
+
+    // P1-1: 群系敌人分层 - 根据轮次覆盖敌人池
+    const biomeCfg = biomeConfigs[currentBiome];
+    const tiers = biomeCfg && biomeCfg.enemyTiers;
+    let pool;
+    let tierSpawnRate = 1.0;
+    if (tiers && tiers.length > 0 && typeof getBiomeVisitRound === 'function') {
+        const round = getBiomeVisitRound(currentBiome);
+        const tierIdx = Math.max(0, Math.min(Number(round) || 0, tiers.length) - 1);
+        const tierData = tiers[tierIdx] || {};
+        const tierTypes = (Array.isArray(tierData.types) ? tierData.types : []).filter(t => ENEMY_STATS[t]);
+        const fallbackTake = Math.max(2, Math.min(basePool.length, 2 + tierIdx));
+        pool = tierTypes.length > 0
+            ? tierTypes
+            : basePool.slice(0, fallbackTake).filter(t => ENEMY_STATS[t]);
+        tierSpawnRate = Number(tierData.spawnRate) || 1.0;
+        if (Math.random() > tierSpawnRate) return; // 按 spawnRate 概率跳过生成
+    } else {
+        const take = Math.max(2, Math.min(basePool.length, 2 + tier));
+        pool = basePool.slice(0, take).filter(t => ENEMY_STATS[t]);
+    }
+    if (getProgressScore() < 3000) {
+        pool = pool.filter(t => t !== "enderman");
+    }
+    // P1-3: 海洋群系排除 creeper
+    if (currentBiome === 'ocean') {
+        pool = pool.filter(t => t !== "creeper");
+    }
+
+    const aliveEnemies = enemies.filter(e => !e.remove && e.y < 900).length;
+    const penaltyMult = typeof getMushroomIslandPenaltyMultiplier === 'function'
+        ? Math.max(1, Number(getMushroomIslandPenaltyMultiplier()) || 1)
+        : 1;
+    const maxOnScreen = Math.round((enemyConfig.maxOnScreen || 8) * penaltyMult);
+    if (aliveEnemies >= maxOnScreen) return;
+
+    if (currentBiome === "nether") {
+        const weightedPool = [
+            { type: "zombie", weight: 0.2 },
+            { type: "piglin", weight: 0.3 },
+            { type: "skeleton", weight: 0.2 },
+            { type: "creeper", weight: 0.15 },
+            { type: "enderman", weight: 0.15 }
+        ];
+        let randomValue = Math.random();
+        let selectedType = "piglin";
+        for (const entry of weightedPool) {
+            randomValue -= entry.weight;
+            if (randomValue <= 0) {
+                selectedType = entry.type;
+                break;
+            }
+        }
+        enemies.push(new Enemy(x, y, selectedType));
+        return;
+    }
+
+    if (typeof spawnBiomeEnemy === "function") {
+        const biomeEnemy = spawnBiomeEnemy(currentBiome, x, y);
+        if (biomeEnemy) {
+            enemies.push(biomeEnemy);
+            return;
+        }
+    }
+
+    const type = pool.length ? pool[Math.floor(Math.random() * pool.length)] : "zombie";
+    enemies.push(new Enemy(x, y, type));
+}
+
+function weightedPick(table) {
+    const entries = Object.entries(table || {});
+    if (!entries.length) return null;
+    const total = entries.reduce((sum, [, w]) => sum + w, 0);
+    let r = Math.random() * (total || 1);
+    for (const [key, w] of entries) {
+        r -= w;
+        if (r <= 0) return key;
+    }
+    return entries[entries.length - 1][0];
+}
+
+function pickWeightedLoot(table) {
+    if (!table || !table.length) return null;
+    const total = table.reduce((sum, entry) => sum + (entry.weight || 0), 0);
+    let r = Math.random() * (total || 1);
+    for (const entry of table) {
+        r -= (entry.weight || 0);
+        if (r <= 0) return entry;
+    }
+    return table[table.length - 1];
+}
+
+function pickChestRarity(rarities, rareBoost) {
+    if (!rarities || !rarities.length) return "common";
+    const boost = Number(rareBoost) || 0;
+    const adjusted = rarities.map((r, idx) => {
+        const base = Number(r.weight) || 1;
+        const mult = 1 + boost * idx;
+        return { ...r, weight: Math.max(1, base * mult) };
+    });
+    const picked = pickWeightedLoot(adjusted);
+    return picked?.id || "common";
+}
+
+function spawnBiomeTree(x, yPos, biome, fallbackType) {
+    if (biome && biome.id === "ocean") {
+        spawnDecoration("seaweed", obj => obj.reset(x, yPos - 30), () => new Seaweed(x, yPos - 30));
+        return;
+    }
+    const type = weightedPick(biome.treeTypes) || fallbackType || "oak";
+    trees.push(new Tree(x, yPos, type));
+}
+
+function generateBiomeDecorations(x, yPos, width, biome) {
+    const decorConfig = biome.decorations || {};
+    Object.entries(decorConfig).forEach(([decorType, probability]) => {
+        if (Math.random() >= probability) return;
+        const decorX = x + Math.random() * width;
+        switch (decorType) {
+            case "tree":
+                spawnBiomeTree(decorX, yPos, biome);
+                break;
+            case "spruce":
+            case "pine":
+            case "palm_tree":
+                spawnBiomeTree(decorX, yPos, biome);
+                break;
+            case "bush":
+                spawnDecoration("bush", obj => obj.reset(decorX, yPos - 20), () => new Bush(decorX, yPos - 20));
+                break;
+            case "flower":
+                spawnDecoration("flower", obj => obj.reset(decorX, yPos - 18), () => new Flower(decorX, yPos - 18));
+                break;
+            case "mushroom":
+                spawnDecoration("mushroom", obj => obj.reset(decorX, yPos - 36), () => new Mushroom(decorX, yPos - 36));
+                break;
+            case "vine":
+                spawnDecoration("vine", obj => obj.reset(decorX, yPos - 80, 40 + Math.random() * 30), () => new Vine(decorX, yPos - 80, 40 + Math.random() * 30));
+                break;
+            case "ice_spike":
+                spawnDecoration("ice_spike", obj => obj.reset(decorX, yPos - 80), () => new IceSpike(decorX, yPos - 80));
+                break;
+            case "snow_pile": {
+                const size = ["small", "medium", "large"][Math.floor(Math.random() * 3)];
+                spawnDecoration("snow_pile", obj => obj.reset(decorX, yPos - 25, size), () => new SnowPile(decorX, yPos - 25, size));
+                break;
+            }
+            case "ice_block": {
+                const blockWidth = 60 + Math.random() * 80;
+                spawnDecoration("ice_block", obj => obj.reset(decorX, yPos - 50, blockWidth), () => new IceBlock(decorX, yPos - 50, blockWidth));
+                break;
+            }
+            case "cactus":
+                spawnDecoration("cactus", obj => obj.reset(decorX, yPos - 100), () => new CactusDecor(decorX, yPos - 100));
+                break;
+            case "dead_bush":
+                spawnDecoration("dead_bush", obj => obj.reset(decorX, yPos - 30), () => new DeadBush(decorX, yPos - 30));
+                break;
+            case "rock": {
+                const size = ["small", "medium", "large"][Math.floor(Math.random() * 3)];
+                spawnDecoration("rock", obj => obj.reset(decorX, yPos - 30, size), () => new Rock(decorX, yPos - 30, size));
+                break;
+            }
+            case "bones":
+                spawnDecoration("bones", obj => obj.reset(decorX, yPos - 12), () => new BoneDecor(decorX, yPos - 12));
+                break;
+            case "ore_coal":
+            case "ore_iron":
+            case "ore_gold":
+            case "ore_diamond": {
+                const oreType = decorType.replace("ore_", "");
+                spawnDecoration(decorType, obj => obj.reset(decorX, yPos - 30, oreType), () => new Ore(decorX, yPos - 30, oreType));
+                break;
+            }
+            case "stalactite": {
+                const direction = Math.random() > 0.5 ? "down" : "up";
+                spawnDecoration("stalactite", obj => obj.reset(decorX, direction === "down" ? yPos - 100 : yPos - 20, direction), () => new Stalactite(decorX, direction === "down" ? yPos - 100 : yPos - 20, direction));
+                break;
+            }
+            case "crystal":
+                spawnDecoration("crystal", obj => obj.reset(decorX, yPos - 28), () => new Crystal(decorX, yPos - 28));
+                break;
+            case "lava_pool": {
+                const poolWidth = 60 + Math.random() * 80;
+                spawnDecoration("lava_pool", obj => obj.reset(decorX, yPos - 16, poolWidth, biome.id), () => new LavaPool(decorX, yPos - 16, poolWidth, biome.id));
+                break;
+            }
+            case "palm_tree":
+                spawnBiomeTree(decorX, yPos, biome);
+                break;
+            case "shell":
+                spawnDecoration("shell", obj => obj.reset(decorX, yPos - 18), () => new Shell(decorX, yPos - 18));
+                break;
+            case "starfish":
+                spawnDecoration("starfish", obj => obj.reset(decorX, yPos - 30), () => new Starfish(decorX, yPos - 30));
+                break;
+            case "seaweed":
+                spawnDecoration("seaweed", obj => obj.reset(decorX, yPos - 60), () => new Seaweed(decorX, yPos - 60));
+                break;
+            case "large_seaweed":
+                spawnDecoration("large_seaweed", obj => obj.reset(decorX, yPos - 110), () => new LargeSeaweed(decorX, yPos - 110));
+                break;
+            case "coral":
+                spawnDecoration("coral", obj => obj.reset(decorX, yPos - 35), () => new CoralDecor(decorX, yPos - 35));
+                break;
+            case "boat":
+                spawnDecoration("boat", obj => obj.reset(decorX, yPos - 18), () => new BoatDecor(decorX, yPos - 18));
+                break;
+            case "fire":
+                spawnDecoration("fire", obj => obj.reset(decorX, yPos - 24), () => new FireDecor(decorX, yPos - 24));
+                break;
+            case "lava_fall":
+                spawnDecoration("lava_fall", obj => obj.reset(decorX, yPos - 120), () => new LavaFall(decorX, yPos - 120));
+                break;
+            case "soul_sand": {
+                const sandWidth = 40 + Math.random() * 60;
+                spawnDecoration("soul_sand", obj => obj.reset(decorX, yPos - 10, sandWidth), () => new SoulSand(decorX, yPos - 10, sandWidth));
+                break;
+            }
+            case "nether_wart":
+                spawnDecoration("nether_wart", obj => obj.reset(decorX, yPos - 10), () => new NetherWart(decorX, yPos - 10));
+                break;
+            case "basalt":
+                spawnDecoration("basalt", obj => obj.reset(decorX, yPos - 40), () => new Basalt(decorX, yPos - 40));
+                break;
+            case "cherry_tree":
+            case "flower_cluster":
+            case "butterfly":
+            case "small_stream":
+            case "giant_mushroom":
+            case "glow_mushroom":
+            case "mushroom_cow":
+            case "magma_crack":
+            case "hot_spring":
+            case "obsidian_pillar":
+            case "sculk_sensor":
+            case "soul_lantern":
+            case "cloud_platform":
+                if (typeof spawnBiomeDecoration === "function") {
+                    spawnBiomeDecoration(biome?.id || currentBiome, decorX, yPos, yPos);
+                }
+                break;
+            default:
+                break;
+        }
+    });
+}
+
+function updateMapGeneration() {
+    if (player.x + mapBuffer > lastGenX) {
+        if (Math.random() < 0.05) {
+            lastGenX += 80 + Math.random() * 40;
+        }
+        const length = Math.floor(4 + Math.random() * 7);
+        generatePlatform(lastGenX, length, groundY);
+    }
+    platforms = platforms.filter(p => !p.remove && p.x + p.width > cameraX - removeThreshold);
+    trees = trees.filter(t => t.x + t.width > cameraX - removeThreshold && !t.remove);
+    chests = chests.filter(c => c.x + 40 > cameraX - removeThreshold);
+    items = items.filter(i => i.x + 30 > cameraX - removeThreshold && !i.collected);
+    enemies = enemies.filter(e => e.x + e.width > cameraX - removeThreshold && !e.remove && e.y < 1000);
+}

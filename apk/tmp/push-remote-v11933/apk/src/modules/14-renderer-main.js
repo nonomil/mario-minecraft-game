@@ -1,0 +1,673 @@
+/**
+ * 14-renderer-main.js - 主渲染函数
+ * 从 14-renderer.js 拆分
+ */
+function scheduleNextFrame() {
+    requestAnimationFrame(() => {
+        try {
+            // Performance monitoring: frame start
+            if (typeof startMeasure === 'function') {
+                startMeasure('frame_total');
+                startMeasure('update');
+            }
+
+            // Backup state periodically
+            if (typeof errorHandler !== 'undefined' && typeof backupGameState === 'function') {
+                errorHandler.framesSinceBackup++;
+                if (errorHandler.framesSinceBackup >= errorHandler.stateBackupInterval) {
+                    backupGameState();
+                }
+            }
+
+            update();
+
+            if (typeof endMeasure === 'function') {
+                endMeasure('update');
+                startMeasure('render');
+            }
+
+            draw();
+
+            if (typeof endMeasure === 'function') {
+                endMeasure('render');
+                endMeasure('frame_total');
+            }
+
+            // Record frame count
+            if (typeof recordFrame === 'function') {
+                recordFrame();
+            }
+
+            // Reset error count on successful frame
+            if (typeof resetErrorCount === 'function') {
+                resetErrorCount();
+            }
+        } catch (e) {
+            // Enhanced error handling
+            let shouldContinue = true;
+
+            if (typeof handleGameLoopError === 'function') {
+                shouldContinue = handleGameLoopError(e, 'gameLoop');
+            } else {
+                // Fallback error handling
+                try { console.error('[gameLoop] fatal:', e); } catch {}
+                try {
+                    if (typeof window !== "undefined") {
+                        window.__MMWG_LAST_ERROR = (e && e.stack) ? String(e.stack) : String(e && e.message ? e.message : e);
+                    }
+                } catch {}
+            }
+
+            if (!shouldContinue) {
+                // Pause game
+                if (typeof isModalPauseActive === "function" && isModalPauseActive()) {
+                    paused = true;
+                } else if (typeof pushPause === "function") {
+                    pushPause();
+                } else {
+                    paused = true;
+                }
+                try { setOverlay(true, "error"); } catch {}
+            }
+        }
+    });
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
+        if (typeof renderVillageInterior === "function") {
+            renderVillageInterior(ctx);
+        }
+        scheduleNextFrame();
+        return;
+    }
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active) {
+        if (typeof endDragonArena.renderBackground === 'function') endDragonArena.renderBackground(ctx);
+        if (typeof renderBossSystem === 'function') renderBossSystem();
+        drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
+        if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
+        if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
+        if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
+        if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
+        if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
+        if (typeof endDragonArena.renderHud === 'function') endDragonArena.renderHud(ctx);
+        scheduleNextFrame();
+        return;
+    }
+    const biome = getBiomeById(currentBiome);
+    drawBackground(biome);
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active && typeof endDragonArena.renderBackground === 'function') endDragonArena.renderBackground(ctx);
+    if (typeof renderBiomeVisuals === 'function') renderBiomeVisuals(ctx, cameraX);
+    if (typeof renderOceanEnvironment === 'function') renderOceanEnvironment(ctx);
+    if (typeof renderEndEnvironment === 'function') renderEndEnvironment(ctx);
+    if (typeof renderSkyWindZones === 'function') renderSkyWindZones(ctx, cameraX);
+    ctx.save();
+    ctx.translate(-cameraX, 0);
+
+    platforms.forEach(p => {
+        if (!p || p.remove) return;
+        // 悬浮平台阴影
+        if (p.y < groundY) {
+            ctx.fillStyle = "rgba(0,0,0,0.12)";
+            ctx.fillRect(p.x + 4, p.y + p.height + 3, p.width, 6);
+        }
+        drawBlock(p.x, p.y, p.width, p.height, p.type);
+        if (p.fragile) drawFragilePlatformOverlay(p);
+    });
+
+    // 藏宝方块：金色斑点覆盖层
+    if (typeof treasureBlocks !== 'undefined') {
+        treasureBlocks.forEach(tb => {
+            const shimmer = 0.4 + Math.sin(gameFrame * 0.08 + tb.x) * 0.15;
+            ctx.fillStyle = `rgba(255, 215, 0, ${shimmer})`;
+            ctx.fillRect(tb.x + 8, tb.y + 6, 12, 10);
+            ctx.fillRect(tb.x + 28, tb.y + 16, 10, 8);
+            ctx.fillRect(tb.x + 14, tb.y + 28, 8, 10);
+            ctx.fillStyle = `rgba(255, 255, 200, ${shimmer * 0.7})`;
+            ctx.fillRect(tb.x + 20, tb.y + 4, 6, 6);
+            ctx.fillRect(tb.x + 36, tb.y + 26, 6, 6);
+        });
+    }
+
+    if (biome.effects?.waterLevel) {
+        ctx.fillStyle = "rgba(33, 150, 243, 0.25)";
+        ctx.fillRect(cameraX - 50, biome.effects.waterLevel, canvas.width + 100, canvas.height - biome.effects.waterLevel);
+    }
+
+    trees.forEach(t => {
+        if (t.shake > 0) t.shake--;
+        const shakeX = (Math.random() - 0.5) * t.shake * 2;
+        drawPixelTree(ctx, t.x + shakeX, t.y, t.type, t.hp);
+    });
+
+    decorations.forEach(d => drawDecoration(d));
+    if (typeof renderNewBiomeDecorations === "function") renderNewBiomeDecorations(ctx, cameraX, 0);
+    if (typeof renderInteractionChains === 'function') renderInteractionChains(ctx, cameraX);
+
+    chests.forEach(c => drawChest(c.x, c.y, c.opened));
+
+    items.forEach(i => {
+        if (!i.collected) drawItem(i.x, i.y + i.floatY, getWorldWordDisplayText(i.wordObj));
+    });
+
+    wordGates.forEach(gate => drawWordGate(gate));
+
+    // 村庄系统渲染 (v1.8.0)
+    if (typeof drawVillages === 'function') drawVillages(ctx);
+
+    if (particles.length) {
+        particles.forEach(p => drawParticle(p));
+    }
+    if (typeof renderSwimBubbles === 'function') renderSwimBubbles(ctx, cameraX);
+
+    enemies.forEach(e => drawEnemy(e));
+    if (typeof renderDeepDarkEnemyEffects === "function") renderDeepDarkEnemyEffects(ctx, cameraX);
+
+    // 海洋生物渲染
+    if (typeof renderOceanCreatures === 'function') renderOceanCreatures(ctx, cameraX);
+
+    golems.forEach(g => drawGolem(g));
+
+    if (typeof dragonList !== 'undefined' && Array.isArray(dragonList)) {
+        dragonList.forEach(dragon => {
+            if (!dragon.remove) drawEnderDragon(dragon);
+        });
+    }
+
+    if (projectiles.length) {
+        projectiles.forEach(p => drawProjectile(p));
+    }
+
+    // 新BOSS系统渲染
+    if (typeof renderBossSystem === 'function') renderBossSystem();
+
+    // 地狱蘑菇渲染
+    if (typeof renderNetherMushrooms === 'function') renderNetherMushrooms(ctx, cameraX);
+
+    // 末地实体渲染
+    if (typeof renderEndEntities === 'function') renderEndEntities(ctx, cameraX);
+
+    // 技能物品实体渲染
+    if (typeof bombs !== 'undefined') bombs.forEach(b => b.render(ctx, cameraX));
+    if (typeof webTraps !== 'undefined') webTraps.forEach(w => w.render(ctx, cameraX));
+    if (typeof fleshBaits !== 'undefined') fleshBaits.forEach(f => f.render(ctx, cameraX));
+    if (typeof torches !== 'undefined') torches.forEach(t => t.render(ctx, cameraX));
+
+    drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
+
+    ctx.fillStyle = "#FFF";
+    ctx.font = "bold 20px Verdana";
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 3;
+    floatingTexts.forEach(t => {
+        ctx.fillStyle = t.color || '#FFF';
+        ctx.strokeText(t.text, t.x + 10, t.y);
+        ctx.fillText(t.text, t.x + 10, t.y);
+    });
+
+    chests.forEach(c => {
+        if (!c.opened && Math.abs(player.x - c.x) < 60 && !chestHintSeen) {
+            triggerChestHint();
+            chestHintPos = { x: c.x, y: c.y };
+        }
+    });
+
+    if (chestHintFramesLeft > 0 && chestHintPos) {
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 4;
+        ctx.fillStyle = "white";
+        const hint = "按(📦)打开";
+        ctx.strokeText(hint, chestHintPos.x - 10, chestHintPos.y - 15);
+        ctx.fillText(hint, chestHintPos.x - 10, chestHintPos.y - 15);
+        chestHintFramesLeft--;
+    }
+
+    ctx.restore();
+
+    // 墨汁效果（全屏遮罩）
+    if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
+    // 地狱热浪效果
+    if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
+    // 末地速度buff
+    if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
+    if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
+    if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
+    if (typeof bossArena !== 'undefined' && bossArena && typeof bossArena.renderEnvironmentOverlay === 'function') {
+        bossArena.renderEnvironmentOverlay(ctx);
+    }
+
+    // BOSS血条
+    if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
+        bossArena.renderBossHpBar(ctx);
+    }
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active && typeof endDragonArena.renderHud === 'function') endDragonArena.renderHud(ctx);
+
+    scheduleNextFrame();
+}
+
+function drawBlock(x, y, w, h, type) {
+    if (w <= 0) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, canvasHeight - y);
+    ctx.clip();
+    const cols = Math.ceil(w / blockSize);
+    for (let i = 0; i < cols; i++) {
+        const cx = x + i * blockSize;
+        if (type === "grass") {
+            ctx.fillStyle = "#5d4037";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#4CAF50";
+            ctx.fillRect(cx, y, blockSize, h / 3);
+        } else if (type === "snow") {
+            ctx.fillStyle = "#1e3f66";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(cx, y, blockSize, h / 3);
+        } else if (type === "stone") {
+            ctx.fillStyle = "#757575";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#424242";
+            ctx.fillRect(cx + 5, y + 5, 10, 10);
+        } else if (type === "sand") {
+            ctx.fillStyle = "#FDD835";
+            ctx.fillRect(cx, y, blockSize, h);
+        } else if (type === "netherrack") {
+            ctx.fillStyle = "#5E1B1B";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#8B0000";
+            ctx.fillRect(cx + 4, y + 6, 12, 8);
+            ctx.fillRect(cx + 20, y + 16, 10, 8);
+        } else if (type === "cloud") {
+            ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+            ctx.beginPath();
+            ctx.ellipse(cx + blockSize / 2, y + h / 2, blockSize / 2, h / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "rgba(200, 230, 255, 0.4)";
+            ctx.beginPath();
+            ctx.ellipse(cx + blockSize / 2 - 4, y + h / 2 - 3, blockSize / 3, h / 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (type === "end_stone") {
+            ctx.fillStyle = "#D4C99E";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#BDB76B";
+            ctx.fillRect(cx + 6, y + 4, 8, 8);
+            ctx.fillRect(cx + 18, y + 14, 6, 6);
+        } else {
+            ctx.fillStyle = "#5d4037";
+            ctx.fillRect(cx, y, blockSize, h);
+            ctx.fillStyle = "#4CAF50";
+            ctx.fillRect(cx, y, blockSize, h / 3);
+        }
+
+        ctx.strokeStyle = "rgba(0,0,0,0.1)";
+        ctx.strokeRect(cx, y, blockSize, h);
+
+        if (y >= groundY) {
+            const fillHeight = canvasHeight - (y + h);
+            if (fillHeight > 0) {
+                if (type === "grass") ctx.fillStyle = "#5d4037";
+                else if (type === "snow") ctx.fillStyle = "#1e3f66";
+                else if (type === "stone") ctx.fillStyle = "#757575";
+                else if (type === "sand") ctx.fillStyle = "#FDD835";
+                else if (type === "netherrack") ctx.fillStyle = "#3E1010";
+                else if (type === "end_stone") ctx.fillStyle = "#B8AD82";
+                else ctx.fillStyle = "#5d4037";
+                ctx.fillRect(cx, y + h, blockSize, fillHeight);
+                ctx.fillStyle = "rgba(0,0,0,0.05)";
+                ctx.fillRect(cx + 10, y + h + 10, 20, 20);
+            }
+        }
+    }
+    ctx.restore();
+}
+
+function drawFragilePlatformOverlay(p) {
+    const ratio = Math.max(0, Math.min(1, (p.stepCount || 0) / Math.max(1, p.maxSteps || 3)));
+    const alpha = p.breaking ? (0.45 + Math.sin(gameFrame * 0.7) * 0.2) : (0.2 + ratio * 0.35);
+    const crackColor = p.breaking ? `rgba(255,80,80,${Math.max(0.2, alpha)})` : `rgba(255,170,90,${alpha})`;
+    ctx.strokeStyle = crackColor;
+    ctx.lineWidth = 2;
+
+    const cx = p.x + p.width * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - p.width * 0.25, p.y + 2);
+    ctx.lineTo(cx - p.width * 0.1, p.y + p.height * 0.45);
+    ctx.lineTo(cx - p.width * 0.2, p.y + p.height - 2);
+    ctx.moveTo(cx + p.width * 0.2, p.y + 3);
+    ctx.lineTo(cx + p.width * 0.05, p.y + p.height * 0.5);
+    ctx.lineTo(cx + p.width * 0.15, p.y + p.height - 2);
+    ctx.stroke();
+
+    if (p.breaking) {
+        ctx.fillStyle = "rgba(255,110,110,0.25)";
+        ctx.fillRect(p.x, p.y, p.width, p.height);
+    }
+}
+
+function drawPixelTree(ctx2d, x, y, type, hp) {
+    // Scale all dimensions relative to blockSize (base blockSize=50)
+    const s = blockSize / 50;
+    const treeW = 80 * s;
+    const trunkW = 20 * s;
+    const trunkH = 100 * s;
+    const totalH = 140 * s;
+    const trunkX = x + (treeW - trunkW) / 2;
+    const trunkY = y + totalH - trunkH;
+    if (type === "cactus") {
+        ctx2d.fillStyle = "#2E7D32";
+        ctx2d.fillRect(trunkX, trunkY, trunkW, trunkH);
+        ctx2d.fillRect(trunkX - 15 * s, trunkY + 10 * s, 15 * s, 10 * s);
+        ctx2d.fillRect(trunkX - 15 * s, trunkY - 10 * s, 10 * s, 20 * s);
+        ctx2d.fillRect(trunkX + trunkW, trunkY + 20 * s, 15 * s, 10 * s);
+        ctx2d.fillRect(trunkX + trunkW + 5 * s, trunkY + 5 * s, 10 * s, 15 * s);
+        return;
+    }
+
+    if (type === "palm") {
+        ctx2d.fillStyle = "#8D6E63";
+        ctx2d.fillRect(trunkX + 6 * s, trunkY - 20 * s, 8 * s, trunkH + 20 * s);
+        ctx2d.fillStyle = "#2E7D32";
+        ctx2d.beginPath();
+        ctx2d.moveTo(trunkX + 10 * s, trunkY - 30 * s);
+        ctx2d.lineTo(trunkX - 10 * s, trunkY - 10 * s);
+        ctx2d.lineTo(trunkX + 30 * s, trunkY - 10 * s);
+        ctx2d.closePath();
+        ctx2d.fill();
+        return;
+    }
+
+    if (type === "spruce" || type === "pine") {
+        ctx2d.fillStyle = "#5D4037";
+        ctx2d.fillRect(trunkX + 4 * s, trunkY, trunkW - 8 * s, trunkH);
+        ctx2d.fillStyle = type === "spruce" ? "#1B5E20" : "#2E7D32";
+        ctx2d.beginPath();
+        ctx2d.moveTo(x + 40 * s, y + 10 * s);
+        ctx2d.lineTo(x + 10 * s, y + 70 * s);
+        ctx2d.lineTo(x + 70 * s, y + 70 * s);
+        ctx2d.closePath();
+        ctx2d.fill();
+        ctx2d.fillStyle = "rgba(255,255,255,0.5)";
+        ctx2d.fillRect(x + 20 * s, y + 40 * s, 40 * s, 6 * s);
+        return;
+    }
+
+    if (type === "brown_mushroom" || type === "red_mushroom") {
+        const capColor = type === "red_mushroom" ? "#D32F2F" : "#8D6E63";
+        ctx2d.fillStyle = "#E8D8B0";
+        ctx2d.fillRect(trunkX + 3 * s, trunkY + 20 * s, trunkW - 6 * s, trunkH - 20 * s);
+        ctx2d.fillStyle = capColor;
+        ctx2d.fillRect(x + 6 * s, y + 30 * s, treeW - 12 * s, 34 * s);
+        ctx2d.fillRect(x + 14 * s, y + 12 * s, treeW - 28 * s, 22 * s);
+        if (type === "red_mushroom") {
+            ctx2d.fillStyle = "#FFFFFF";
+            ctx2d.fillRect(x + 20 * s, y + 22 * s, 7 * s, 7 * s);
+            ctx2d.fillRect(x + 44 * s, y + 26 * s, 6 * s, 6 * s);
+            ctx2d.fillRect(x + 56 * s, y + 20 * s, 5 * s, 5 * s);
+        }
+        return;
+    }
+
+    let leafColor = "#2E7D32";
+    if (type === "birch") leafColor = "#7CB342";
+    if (type === "dark_oak") leafColor = "#1B5E20";
+    if (type === "mushroom") leafColor = "#D32F2F";
+    if (type === "cherry") leafColor = "#FFB7C5";
+
+    if (type === "birch") {
+        ctx2d.fillStyle = "#F5F5F5";
+    } else if (type === "dark_oak") {
+        ctx2d.fillStyle = "#4E342E";
+    } else {
+        ctx2d.fillStyle = "#5D4037";
+    }
+    ctx2d.fillRect(trunkX, trunkY, trunkW, trunkH);
+
+    ctx2d.fillStyle = leafColor;
+    ctx2d.fillRect(x, y + 40 * s, treeW, 40 * s);
+    ctx2d.fillRect(x + 10 * s, y + 20 * s, 60 * s, 20 * s);
+    ctx2d.fillRect(x + 20 * s, y, 40 * s, 20 * s);
+
+    if (type === "birch") {
+        ctx2d.fillStyle = "#424242";
+        ctx2d.fillRect(trunkX + 4 * s, trunkY + 10 * s, 4 * s, 6 * s);
+        ctx2d.fillRect(trunkX + 12 * s, trunkY + 28 * s, 4 * s, 6 * s);
+    }
+
+    if (hp < 5) {
+        ctx2d.fillStyle = "rgba(0,0,0,0.3)";
+        const crackH = (5 - hp) * 10 * s;
+        ctx2d.fillRect(trunkX + 5 * s, trunkY + trunkH - crackH, 10 * s, crackH);
+    }
+}
+
+function drawChest(x, y, opened) {
+    const s = blockSize * 0.8;
+    if (opened) {
+        // 打开的宝箱 - 箱体
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.4, s, s * 0.6);
+        ctx.fillStyle = "#6D4E2F";
+        ctx.fillRect(x + 1, y + s * 0.42, s - 2, 2); // 箱体顶部线
+        // 打开的盖子 - 向后翻
+        ctx.fillStyle = "#A0804A";
+        ctx.fillRect(x - 2, y, s + 4, s * 0.35);
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.28, s, 3);
+        // 金属扣 - 盖子上
+        ctx.fillStyle = "#FFC107";
+        ctx.fillRect(x + s * 0.35, y + s * 0.2, s * 0.3, s * 0.1);
+        // 箱内金光
+        ctx.fillStyle = "rgba(255, 215, 0, 0.5)";
+        ctx.fillRect(x + 3, y + s * 0.45, s - 6, s * 0.25);
+        // 箱内物品闪光
+        ctx.fillStyle = "#FFD700";
+        ctx.fillRect(x + s * 0.2, y + s * 0.5, s * 0.15, s * 0.12);
+        ctx.fillRect(x + s * 0.55, y + s * 0.48, s * 0.2, s * 0.14);
+    } else {
+        // 关闭的宝箱 - 箱体
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.35, s, s * 0.65);
+        // 盖子
+        ctx.fillStyle = "#A0804A";
+        ctx.fillRect(x - 1, y, s + 2, s * 0.4);
+        ctx.fillStyle = "#8D6E3F";
+        ctx.fillRect(x, y + s * 0.33, s, 3);
+        // 金属锁扣
+        ctx.fillStyle = "#FFC107";
+        ctx.fillRect(x + s * 0.38, y + s * 0.28, s * 0.24, s * 0.18);
+        ctx.fillStyle = "#E5A800";
+        ctx.fillRect(x + s * 0.42, y + s * 0.34, s * 0.16, s * 0.08);
+        // 边框暗线
+        ctx.strokeStyle = "#5D3E1F";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, s, s);
+    }
+}
+
+function drawItem(x, y, text) {
+    const size = blockSize * 0.6;
+    const cx = x + size / 2;
+    const cy = y + size / 2;
+    const r = size / 2;
+    const grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.2, cx, cy, r);
+    grad.addColorStop(0, "#FFF7B0");
+    grad.addColorStop(0.55, "#FFD54F");
+    grad.addColorStop(1, "#F9A825");
+
+    ctx.save();
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#C99700";
+    ctx.lineWidth = Math.max(2, size * 0.08);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(255,255,255,0.6)";
+    ctx.lineWidth = Math.max(1, size * 0.05);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.72, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    ctx.beginPath();
+    ctx.arc(cx - r * 0.25, cy - r * 0.28, r * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    const rawText = String(text || "").trim();
+    const isPhrase = /\s/.test(rawText);
+    const maxChars = isPhrase ? 24 : 14;
+    const displayText = rawText.length > maxChars ? `${rawText.slice(0, maxChars - 1)}…` : rawText;
+    let fontSize = Math.max(10, Math.round(size * 0.55));
+    if (displayText.length > 12) fontSize = Math.max(9, Math.round(size * 0.46));
+    if (displayText.length > 18) fontSize = Math.max(8, Math.round(size * 0.40));
+
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = Math.max(2, size * 0.12);
+    ctx.font = `bold ${fontSize}px Arial`;
+    ctx.textAlign = "center";
+    ctx.strokeText(displayText, cx, y - size * 0.2);
+    ctx.fillText(displayText, cx, y - size * 0.2);
+}
+
+function getWorldWordDisplayText(wordObj) {
+    const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
+    const primaryText = String(displayContent?.primaryText || "").trim();
+    if (primaryText) return primaryText;
+    const fallbackChinese = String(wordObj?.zh || wordObj?.chinese || "").trim();
+    const fallbackEnglish = String(wordObj?.en || wordObj?.word || "").trim();
+    return fallbackChinese || fallbackEnglish;
+}
+
+function drawWordGate(gate) {
+    if (!gate || gate.remove) return;
+    if (settings?.wordGateEnabled === false) return;
+    ctx.save();
+    ctx.translate(0, 0);
+    ctx.fillStyle = gate.locked ? "#FFA726" : "#4CAF50";
+    ctx.strokeStyle = "rgba(255,255,255,0.6)";
+    ctx.lineWidth = 3;
+    ctx.fillRect(gate.x, gate.y, gate.width, gate.height);
+    ctx.strokeRect(gate.x, gate.y, gate.width, gate.height);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 16px Verdana";
+    ctx.textAlign = "center";
+    ctx.fillText(getWorldWordDisplayText(gate.wordObj) || "词语", gate.x + gate.width / 2, gate.y + 28);
+    ctx.font = "14px Verdana";
+    ctx.fillText(gate.locked ? "词语闸门" : "已解锁", gate.x + gate.width / 2, gate.y + gate.height - 12);
+    ctx.restore();
+}
+
+function drawParticle(p) {
+    if (p.type === "snowflake") {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "leaf") {
+        ctx.fillStyle = p.color || "#7CB342";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "dust") {
+        ctx.fillStyle = "rgba(210, 180, 120, 0.5)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "ember") {
+        ctx.fillStyle = "rgba(255, 140, 0, 0.8)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "bubble") {
+        ctx.strokeStyle = "rgba(173, 216, 230, 0.8)";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.stroke();
+    } else if (p.type === "sparkle") {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    } else if (p.type === "rain") {
+        ctx.strokeStyle = "rgba(120, 170, 255, 0.8)";
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + p.velX, p.y + p.size);
+        ctx.stroke();
+    } else if (p.type === "end_particle") {
+        ctx.globalAlpha = Math.min(1, p.life / 60);
+        ctx.fillStyle = p.color || "#CE93D8";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.globalAlpha = 1;
+    } else if (p.type === "dig_debris") {
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color || "#5d4037";
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.globalAlpha = 1;
+    }
+}
+
+function drawBackground(biome) {
+    const ambient = biome.effects?.ambient || "#87CEEB";
+    ctx.fillStyle = ambient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (currentBiome !== "volcano") {
+        const parallaxX = cameraX * 0.2;
+        ctx.fillStyle = "rgba(0,0,0,0.15)";
+        for (let i = 0; i < 3; i++) {
+            const mx = -parallaxX + i * 400;
+            ctx.beginPath();
+            ctx.moveTo(mx, canvas.height - 200);
+            ctx.lineTo(mx + 200, canvas.height - 320);
+            ctx.lineTo(mx + 400, canvas.height - 200);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+
+    if (currentBiome !== "volcano") {
+        ctx.fillStyle = "rgba(255,255,255,0.6)";
+        for (let i = 0; i < 4; i++) {
+            const cx = (i * 220 + (cameraX * 0.4) % 220) - 100;
+            ctx.beginPath();
+            ctx.arc(cx, 80, 30, 0, Math.PI * 2);
+            ctx.arc(cx + 40, 90, 20, 0, Math.PI * 2);
+            ctx.arc(cx + 70, 80, 26, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
+        ctx.beginPath();
+        ctx.arc(canvas.width - 80, 60, 24, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    if (biome.effects?.darkness) {
+        ctx.fillStyle = `rgba(0,0,0,${biome.effects.darkness})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (weatherState.type === "fog") {
+        ctx.fillStyle = "rgba(200,200,200,0.25)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "sandstorm") {
+        ctx.fillStyle = "rgba(210,180,140,0.35)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "rain") {
+        ctx.fillStyle = "rgba(0,0,50,0.15)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "snow") {
+        ctx.fillStyle = "rgba(255,255,255,0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (biome.effects?.heatWave && currentBiome !== "volcano") {
+        ctx.strokeStyle = "rgba(255, 200, 120, 0.25)";
+        for (let y = 120; y < canvas.height; y += 40) {
+            ctx.beginPath();
+            for (let x = 0; x <= canvas.width; x += 40) {
+                const offset = Math.sin((x + gameFrame) * 0.02 + y * 0.05) * 6;
+                ctx.lineTo(x, y + offset);
+            }
+            ctx.stroke();
+        }
+    }
+}

@@ -1,0 +1,7 @@
+[
+    { "name": "草原", "bg": "#87CEEB", "ground": "grass", "treeType": "oak" },
+    { "name": "雪地", "bg": "#E0F7FA", "ground": "snow", "treeType": "spruce" },
+    { "name": "矿洞", "bg": "#2F2F2F", "ground": "stone", "treeType": "mushroom" },
+    { "name": "森林", "bg": "#228B22", "ground": "forest", "treeType": "big_oak" },
+    { "name": "沙漠", "bg": "#FFECB3", "ground": "sand", "treeType": "cactus" }
+]

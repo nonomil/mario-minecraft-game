@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Game Debug</title>
+  <style>
+    :root { --bg:#0b1220; --panel:#121b2f; --line:#2a3653; --text:#dbe7ff; --muted:#92a4c8; --accent:#56b2ff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Consolas, "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); }
+    .debug-panel { padding: 10px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg,#16213a,#11192d); }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+    label { font-size: 12px; color: var(--muted); }
+    select, input, button { height: 30px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); padding: 0 8px; }
+    button { background: #1c2a47; cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    .status { font-size: 12px; color: #a9bee6; white-space: pre-wrap; }
+    .game-wrap { height: calc(100vh - 190px); }
+    iframe { width: 100%; height: 100%; border: 0; background: #000; }
+  </style>
+</head>
+<body>
+  <div class="debug-panel">
+    <div class="row">
+      <label>群系</label>
+      <select id="biome">
+        <option>forest</option><option>cherry_grove</option><option>snow</option><option>desert</option>
+        <option>mushroom_island</option><option>mountain</option><option>ocean</option><option>volcano</option>
+        <option>nether</option><option>deep_dark</option><option>end</option><option>sky_dimension</option>
+      </select>
+      <button id="btnBiome">切换群系</button>
+      <label>轮次</label>
+      <input id="biomeRound" type="number" value="1" min="1" step="1">
+      <button id="btnBiomeRound">设置轮次</button>
+      <label>分数</label>
+      <input id="score" type="number" value="0" min="0" step="100">
+      <button id="btnScore">设置分数</button>
+      <label>BOSS</label>
+      <select id="boss"><option value="wither">&#x51CB;&#x7075;</option><option value="ghast">&#x6076;&#x9B42;</option><option value="blaze">&#x70C8;&#x7130;&#x4EBA;</option><option value="wither_skeleton">&#x51CB;&#x7075;&#x9AB7;&#x9AC5;</option><option value="warden">&#x575A;&#x5B88;&#x8005;</option><option value="evoker">&#x5524;&#x9B54;&#x8005;</option><option value="ender_dragon">&#x672B;&#x5F71;&#x9F99;</option></select>
+      <button id="btnBoss">触发BOSS（正常关卡）</button>
+      <button id="btnBossGate">触发BOSS（门禁模式）</button>
+      <label>阶段</label>
+      <select id="bossPhase">
+        <option value="1">P1</option>
+        <option value="2">P2</option>
+        <option value="3" selected>P3</option>
+      </select>
+      <button id="btnBossPhase">设置BOSS阶段</button>
+      <button id="btnEnderDragon">末影龙竞技场</button>
+      <button id="btnVillage">生成村庄</button>
+      <button id="btnGod">无敌: OFF</button>
+    </div>
+    <div class="row">
+      <label>敌人</label>
+      <select id="enemy">
+        <option>zombie</option><option>skeleton</option><option>creeper</option><option>spider</option><option>enderman</option>
+        <option>drowned</option><option>guardian</option><option>pufferfish</option>
+        <option>piglin</option><option>bee</option><option>fox</option><option>spore_bug</option>
+        <option>magma_cube</option><option>fire_spirit</option><option>sculk_worm</option><option>shadow_stalker</option>
+      </select>
+      <button id="btnEnemy">生成敌人</button>
+      <label>挑战</label>
+      <select id="challengeMode">
+        <option value="long_word">长词</option>
+        <option value="phrase">短语</option>
+        <option value="multi_blank">双空补全</option>
+      </select>
+      <button id="btnChallenge">触发挑战</button>
+      <label>物品</label>
+      <select id="item"><option value="diamond">&#x94BB;&#x77F3;</option><option value="gunpowder">&#x70B8;&#x836F;</option><option value="ender_pearl">&#x672B;&#x5F71;&#x73CD;&#x73E0;</option><option value="dragon_egg">&#x9F99;&#x86CB;</option><option value="string">&#x8718;&#x86DB;&#x4E1D;</option><option value="bow">&#x5F13;</option><option value="arrow">&#x7BAD;</option><option value="totem">&#x56FE;&#x817E;</option><option value="echo_shard">&#x56DE;&#x54CD;&#x788E;&#x7247;</option><option value="sculk_vein">&#x5E7D;&#x533F;&#x83CC;&#x8109;</option><option value="emerald">&#x7EFF;&#x5B9D;&#x77F3;</option><option value="potion">&#x836F;&#x6C34;</option></select>
+      <label>数量</label>
+      <input id="count" type="number" value="1" min="1">
+      <button id="btnItem">给予物品</button>
+      <button id="btnDragonEquip">龙蛋并装备（长按攻击召唤）</button>
+    </div>
+    <div id="status" class="status">status: game iframe loading...</div>
+  </div>
+  <div class="game-wrap">
+    <iframe id="game" src="../../Game.html"></iframe>
+  </div>
+
+  <script>
+    const gameFrame = document.getElementById("game");
+    const statusEl = document.getElementById("status");
+    let debugGodMode = false;
+    let iframeLoaded = false;
+    let iframeAccessError = "";
+
+    async function resetDebugCaches() {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(registrations.map((registration) => registration.unregister()));
+      }
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.filter((key) => key.startsWith('mmwg-')).map((key) => caches.delete(key)));
+      }
+    }
+
+    async function loadFreshGameFrame() {
+      statusEl.innerText = 'status: clearing service worker cache...';
+      try {
+        await resetDebugCaches();
+      } catch (err) {
+        console.warn('resetDebugCaches failed:', err);
+      }
+      gameFrame.src = `../../Game.html?debug_frame_ts=${Date.now()}`;
+    }
+
+    function gw() {
+      const w = gameFrame && gameFrame.contentWindow ? gameFrame.contentWindow : null;
+      if (!w) return null;
+      try {
+        void w.document;
+      } catch (e) {
+        iframeAccessError = String(e && e.message ? e.message : e);
+        return null;
+      }
+      iframeAccessError = "";
+      return w;
+    }
+
+    function readGameExpr(w, expr, fallback = null) {
+      if (!w || typeof w.eval !== "function") return fallback;
+      try {
+        const value = w.eval(expr);
+        return value == null ? fallback : value;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function runGameExpr(w, expr) {
+      if (!w || typeof w.eval !== "function") return undefined;
+      return w.eval(expr);
+    }
+
+    function renderStatus(w) {
+      if (!w) {
+        if (!iframeLoaded) {
+          statusEl.innerText = "status: game iframe loading...";
+          return;
+        }
+        if (iframeAccessError) {
+          statusEl.innerText =
+            "status: iframe loaded but inaccessible (cross-origin/preview sandbox).\n" +
+            "请用本地 HTTP 打开: http://localhost:4173/tests/debug-pages/GameDebug.html";
+          return;
+        }
+        statusEl.innerText =
+          "status: iframe loaded, waiting game globals...\n" +
+          "如果长时间不变，请用本地 HTTP 打开（不要用 IDE 预览/file://）。";
+        return;
+      }
+      const biomeId = readGameExpr(w, 'typeof currentBiome !== "undefined" ? currentBiome : null', w.currentBiome || "n/a") || "n/a";
+      const scoreValue = Number(readGameExpr(w, 'typeof score !== "undefined" ? score : 0', w.score || 0)) || 0;
+      const runBestScoreValue = Number(readGameExpr(w, 'typeof runBestScore !== "undefined" ? runBestScore : 0', w.runBestScore || 0)) || 0;
+      const enemyCount = Number(readGameExpr(w, 'Array.isArray(enemies) ? enemies.length : 0', Array.isArray(w.enemies) ? w.enemies.length : 0)) || 0;
+      const dragonCount = Number(readGameExpr(w, 'Array.isArray(dragonList) ? dragonList.length : 0', Array.isArray(w.dragonList) ? w.dragonList.length : 0)) || 0;
+      const ridingDragon = Boolean(readGameExpr(w, '!!ridingDragon', Boolean(w.ridingDragon)));
+      const equippedConsumableKey = readGameExpr(w, 'equippedConsumable && equippedConsumable.itemKey ? equippedConsumable.itemKey : null', w.equippedConsumable && w.equippedConsumable.itemKey ? w.equippedConsumable.itemKey : null) || '-';
+      const equippedConsumableCount = Number(readGameExpr(w, 'equippedConsumable && equippedConsumable.count ? equippedConsumable.count : 0', w.equippedConsumable && w.equippedConsumable.count ? w.equippedConsumable.count : 0)) || 0;
+      const stay = typeof w.getBiomeStayDebugInfo === "function"
+        ? w.getBiomeStayDebugInfo(scoreValue)
+        : null;
+      const rounds = typeof w.getBiomeVisitCountSnapshot === "function"
+        ? w.getBiomeVisitCountSnapshot()
+        : null;
+      const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+      const bossName = boss && boss.name ? boss.name : "-";
+      const bossPhase = boss && boss.phase ? boss.phase : "-";
+      const bossEnvironment = w.bossArena && w.bossArena.environmentController && typeof w.bossArena.environmentController.getSnapshot === "function"
+        ? w.bossArena.environmentController.getSnapshot()
+        : null;
+      const bossEnvironmentLabel = bossEnvironment ? (bossEnvironment.label || bossEnvironment.environmentId || "-") : "-";
+      const bossEnvironmentTheme = bossEnvironment ? (bossEnvironment.theme || "neutral") : "neutral";
+      const bossEnvironmentIntensity = bossEnvironment ? (Number(bossEnvironment.intensity) || 0) : 0;
+      const bossEnvironmentHazardCount = bossEnvironment ? (Number(bossEnvironment.hazardCount) || 0) : 0;
+      const bossEnvironmentStrength = bossEnvironment ? (Number(bossEnvironment.visualStrength) || 0) : 0;
+
+      statusEl.innerText =
+        "biome=" + biomeId +
+        "  score=" + scoreValue +
+        "  runBestScore=" + runBestScoreValue +
+        "  enemies=" + enemyCount +
+        "  dragons=" + dragonCount +
+        "  ridingDragon=" + ridingDragon + "\n" +
+        "consumable: equipped=" + equippedConsumableKey +
+        "  count=" + equippedConsumableCount + "\n" +
+        "stay: scoreInBiome=" + (stay ? Math.floor(stay.scoreInBiome) : "n/a") +
+        "  timeInBiomeSec=" + (stay ? Math.floor(stay.timeInBiomeSec) : "n/a") +
+        "  minScore=" + (stay ? stay.minScore : "n/a") +
+        "  minTimeSec=" + (stay ? stay.minTimeSec : "n/a") +
+        "  canLeave=" + (stay ? stay.canLeave : "n/a") + "\n" +
+        "boss: active=" + Boolean(w.bossArena && w.bossArena.active) +
+        "  locked=" + Boolean(w.bossArena && w.bossArena.viewportLocked) +
+        "  name=" + bossName +
+        "  phase=" + bossPhase + "\n" +
+        "env: active=" + Boolean(bossEnvironment && bossEnvironment.active) +
+        "  label=" + bossEnvironmentLabel +
+        "  theme=" + bossEnvironmentTheme +
+        "  intensity=" + bossEnvironmentIntensity +
+        "  hazards=" + bossEnvironmentHazardCount +
+        "  strength=" + bossEnvironmentStrength.toFixed(2) + "\n" +
+        "biomeVisitCount=" + (rounds ? JSON.stringify(rounds) : "n/a");
+    }
+
+    loadFreshGameFrame();
+
+    function withGame(fn) {
+      const w = gw();
+      if (!w) {
+        renderStatus(null);
+        return;
+      }
+      try { fn(w); } catch (e) { console.error(e); }
+      renderStatus(w);
+    }
+
+    function ensureRunning() {
+      withGame(w => {
+        try {
+          if (typeof w.bootGameLoopIfNeeded === "function") w.bootGameLoopIfNeeded();
+          if (typeof w.resumeGameFromOverlay === "function") w.resumeGameFromOverlay();
+          if (typeof w.setOverlay === "function") w.setOverlay(false);
+          if (typeof w.paused !== "undefined") w.paused = false;
+          if (typeof w.pauseStack === "number") w.pauseStack = 0;
+        } catch (e) {
+          console.warn("ensureRunning failed:", e);
+        }
+      });
+    }
+
+    function patchGodMode(w) {
+      if (!w || typeof w.damagePlayer !== "function") return;
+      const currentDamagePlayer = w.damagePlayer;
+      if (currentDamagePlayer && currentDamagePlayer.__mmdbgGodPatched) return;
+      const raw = currentDamagePlayer;
+      function debugDamagePlayerPatched() {
+        if (debugGodMode) return;
+        return raw.apply(this, arguments);
+      }
+      debugDamagePlayerPatched.__mmdbgGodPatched = true;
+      debugDamagePlayerPatched.__mmdbgRaw = raw;
+      w.damagePlayer = debugDamagePlayerPatched;
+    }
+
+    function setBiome() {
+      const biomeId = document.getElementById("biome").value;
+      withGame(w => {
+        patchGodMode(w);
+        runGameExpr(w, `(() => {
+          const biomeId = ${JSON.stringify(biomeId)};
+          const unlockScore = Number(typeof getBiomeSwitchConfig === "function"
+            ? (getBiomeSwitchConfig().unlockScore?.[biomeId] ?? 0)
+            : 0);
+          score = Math.max(Number(score) || 0, unlockScore);
+          runBestScore = Math.max(Number(runBestScore) || 0, unlockScore);
+          const nextBiome = typeof getBiomeById === "function" ? getBiomeById(biomeId) : null;
+          const progressScore = Math.max(
+            typeof getProgressScore === "function" ? (Number(getProgressScore()) || 0) : (Number(score) || 0),
+            unlockScore
+          );
+          if (nextBiome && typeof applyBiomeTransition === "function") {
+            applyBiomeTransition(nextBiome, progressScore, typeof hasHeatProtection === "function" ? hasHeatProtection() : false);
+          } else {
+            currentBiome = biomeId;
+            if (nextBiome && typeof updateWeatherForBiome === "function") {
+              updateWeatherForBiome(nextBiome);
+            }
+          }
+          const info = document.getElementById("level-info");
+          if (info && nextBiome && nextBiome.name) info.innerText = '生态: ' + nextBiome.name;
+          return currentBiome;
+        })()`);
+      });
+    }
+
+    function setBiomeRound() {
+      const biomeId = document.getElementById("biome").value;
+      const roundValue = Math.max(1, Number(document.getElementById("biomeRound").value) || 1);
+      withGame(w => {
+        if (typeof w.setBiomeVisitRound === "function") {
+          w.setBiomeVisitRound(biomeId, roundValue);
+        } else if (typeof w.getBiomeVisitCountSnapshot === "function") {
+          // fallback: 尝试通过切换多次群系累积轮次
+          const rounds = w.getBiomeVisitCountSnapshot();
+          if (!rounds[biomeId]) rounds[biomeId] = 1;
+        }
+      });
+    }
+
+    function setScore() {
+      const s = Math.max(0, Number(document.getElementById("score").value) || 0);
+      withGame(w => {
+        patchGodMode(w);
+        runGameExpr(w, `(() => {
+          score = ${s};
+          runBestScore = Math.max(Number(runBestScore) || 0, ${s});
+          const el = document.getElementById("score");
+          if (el) el.innerText = String(score);
+          if (typeof updateCurrentBiome === "function") updateCurrentBiome();
+          return score;
+        })()`);
+      });
+    }
+
+    function getSelectedBiomeId() {
+      const el = document.getElementById("biome");
+      return el && el.value ? String(el.value) : "forest";
+    }
+
+    function getOrderedBiomeIds() {
+      return Array.from(document.querySelectorAll("#biome option")).map(option => String(option.value || option.textContent || "").trim()).filter(Boolean);
+    }
+
+    function getNextBiomeId(fromBiomeId) {
+      const biomeIds = getOrderedBiomeIds();
+      const index = biomeIds.indexOf(String(fromBiomeId || ""));
+      if (index === -1) return fromBiomeId || "forest";
+      return biomeIds[(index + 1) % biomeIds.length] || fromBiomeId || "forest";
+    }
+
+    function syncSelectedBiomeIntoGame() {
+      setBiome();
+      return getSelectedBiomeId();
+    }
+
+    function enterDragonArenaDebug() {
+      ensureRunning();
+      const biomeEl = document.getElementById("biome");
+      if (biomeEl) biomeEl.value = "end";
+      withGame(w => {
+        patchGodMode(w);
+        if (w.bossArena && w.bossArena.active && typeof w.bossArena.exit === "function") {
+          w.bossArena.exit();
+        }
+        if (w.endDragonArena && typeof w.endDragonArena.enter === "function") {
+          w.endDragonArena.enter();
+        }
+      });
+    }
+
+    function spawnBoss() {
+      ensureRunning();
+      const boss = document.getElementById("boss").value;
+      if (boss === "ender_dragon") {
+        enterDragonArenaDebug();
+        return;
+      }
+      syncSelectedBiomeIntoGame();
+      withGame(w => {
+        patchGodMode(w);
+        if (w.endDragonArena && w.endDragonArena.active && typeof w.endDragonArena.exit === "function") {
+          w.endDragonArena.exit();
+        }
+        if (w.bossArena && typeof w.bossArena.enter === "function") w.bossArena.enter(boss, { source: "manual", markSpawned: false });
+      });
+    }
+
+    function spawnBossGate() {
+      ensureRunning();
+      const boss = document.getElementById("boss").value;
+      const fromBiome = syncSelectedBiomeIntoGame();
+      const toBiome = getNextBiomeId(fromBiome);
+      if (boss === "ender_dragon") {
+        enterDragonArenaDebug();
+        return;
+      }
+      withGame(w => {
+        patchGodMode(w);
+        if (w.endDragonArena && w.endDragonArena.active && typeof w.endDragonArena.exit === "function") {
+          w.endDragonArena.exit();
+        }
+        if (w.bossArena && typeof w.bossArena.enter === "function") {
+          if (w.bossArena.active && typeof w.bossArena.exit === "function") {
+            w.bossArena.exit();
+          }
+          w.bossArena.enter(boss, {
+            source: "biome_gate",
+            fromBiome,
+            toBiome,
+            markSpawned: false
+          });
+        }
+      });
+    }
+
+    function spawnVillage() {
+      withGame(w => {
+        patchGodMode(w);
+        if (w.settings) w.settings.villageEnabled = true;
+        const interval = Number(w.villageConfig?.spawnScoreInterval) || 500;
+        const targetScore = Math.max(Number(w.getProgressScore?.() || 0), interval);
+        if (typeof w.maybeSpawnVillage === "function") w.maybeSpawnVillage(targetScore, Number(w.player?.x) || 0);
+      });
+    }
+
+    function spawnEnemy() {
+      const enemyType = document.getElementById("enemy").value;
+      withGame(w => {
+        patchGodMode(w);
+        runGameExpr(w, `(() => {
+          const enemyType = ${JSON.stringify(enemyType)};
+          const x = (Number(player?.x) || 0) + 140;
+          const y = (Number(groundY) || 530) - 32;
+          let e = null;
+          if (typeof createBiomeEnemy === "function") e = createBiomeEnemy(enemyType, x, y);
+          if (!e && typeof Enemy === "function") e = new Enemy(x, y, enemyType);
+          if (e && Array.isArray(enemies)) enemies.push(e);
+          return e ? (e.type || enemyType) : null;
+        })()`);
+      });
+    }
+
+    function triggerChallenge() {
+      const mode = document.getElementById("challengeMode").value;
+      withGame(w => {
+        patchGodMode(w);
+        if (typeof w.startLearningChallenge !== "function") return;
+
+        const db = Array.isArray(w.wordDatabase) ? w.wordDatabase : [];
+        const fallback = { en: "adventure", zh: "冒险" };
+        let wordObj = fallback;
+        let forcedType = "fill_blank";
+
+        if (mode === "long_word") {
+          wordObj = db.find(item => item && item.en && item.en.length >= 12) || { en: "environment", zh: "环境" };
+          forcedType = "fill_blank";
+        } else if (mode === "phrase") {
+          wordObj = db.find(item => item && item.phrase && item.phraseZh) || { en: "keep going", zh: "继续前进", phrase: "keep going", phraseZh: "继续前进" };
+          forcedType = "listen";
+        } else if (mode === "multi_blank") {
+          wordObj = db.find(item => item && item.en && item.en.length >= 6) || { en: "minecraft", zh: "我的世界" };
+          forcedType = "multi_blank";
+        }
+
+        if (!w.settings) w.settings = {};
+        w.settings.learningMode = true;
+        w.settings.challengeEnabled = true;
+        w.startLearningChallenge(wordObj, forcedType, null);
+      });
+    }
+
+    function giveItem() {
+      const item = (document.getElementById("item").value || "").trim();
+      const count = Math.max(1, Number(document.getElementById("count").value) || 1);
+      if (!item) return;
+      withGame(w => {
+        patchGodMode(w);
+        runGameExpr(w, `(() => {
+          const item = ${JSON.stringify(item)};
+          const count = ${count};
+          if (typeof inventory === "undefined" || !inventory) return 0;
+          inventory[item] = (Number(inventory[item]) || 0) + count;
+          return inventory[item];
+        })()`);
+        if (typeof w.updateInventoryUI === "function") w.updateInventoryUI();
+      });
+    }
+
+    function setBossPhaseFromInput() {
+      const phaseValue = document.getElementById("bossPhase").value;
+      withGame((w) => {
+        const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+        if (!boss) return;
+        const targetPhase = Math.max(1, Math.min(3, Number(phaseValue) || 1));
+        if (targetPhase < boss.phase) boss.phase = 1;
+        while (boss.phase < targetPhase) {
+          boss.phase += 1;
+          if (typeof boss.onPhaseChange === "function") boss.onPhaseChange(boss.phase);
+        }
+      });
+    }
+
+    function prepareDragonLongPressSummon() {
+      ensureRunning();
+      withGame(w => {
+        patchGodMode(w);
+        runGameExpr(w, `(() => {
+          inventory.dragon_egg = (Number(inventory.dragon_egg) || 0) + 1;
+          if (typeof equipConsumable === "function") equipConsumable("dragon_egg");
+          if (typeof updateInventoryUI === "function") updateInventoryUI();
+          if (typeof updateConsumableUI === "function") updateConsumableUI();
+          if (typeof showToast === "function") {
+            showToast("🐉 已装备龙蛋，请长按攻击按钮召唤");
+          }
+          return {
+            dragonEgg: Number(inventory.dragon_egg) || 0,
+            equipped: equippedConsumable && equippedConsumable.itemKey ? equippedConsumable.itemKey : null,
+            equippedCount: equippedConsumable && equippedConsumable.count ? equippedConsumable.count : 0
+          };
+        })()`);
+      });
+    }
+
+    document.getElementById("btnBiome").addEventListener("click", setBiome);
+    document.getElementById("btnBiomeRound").addEventListener("click", setBiomeRound);
+    document.getElementById("btnScore").addEventListener("click", setScore);
+    document.getElementById("btnBoss").addEventListener("click", spawnBoss);
+    document.getElementById("btnBossGate").addEventListener("click", spawnBossGate);
+    document.getElementById("btnBossPhase").addEventListener("click", setBossPhaseFromInput);
+    document.getElementById("btnEnderDragon").addEventListener("click", function() {
+      enterDragonArenaDebug();
+    });
+    document.getElementById("btnVillage").addEventListener("click", spawnVillage);
+    document.getElementById("btnEnemy").addEventListener("click", spawnEnemy);
+    document.getElementById("btnChallenge").addEventListener("click", triggerChallenge);
+    document.getElementById("btnItem").addEventListener("click", giveItem);
+    document.getElementById("btnDragonEquip").addEventListener("click", prepareDragonLongPressSummon);
+    document.getElementById("btnGod").addEventListener("click", function () {
+      debugGodMode = !debugGodMode;
+      this.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
+    });
+
+    gameFrame.addEventListener("load", () => {
+      iframeLoaded = true;
+      const w = gw();
+      if (w) patchGodMode(w);
+      renderStatus(w);
+    });
+
+    // Playwright-friendly debug API
+    window.MMDBG = {
+      ready() {
+        const w = gw();
+        return Boolean(w && w.bossArena);
+      },
+      ensureRunning,
+      setBiome(id) {
+        const el = document.getElementById("biome");
+        if (el && id) el.value = String(id);
+        setBiome();
+      },
+      setBiomeRound(roundValue) {
+        const el = document.getElementById("biomeRound");
+        if (el) el.value = String(Math.max(1, Number(roundValue) || 1));
+        setBiomeRound();
+      },
+      setScore(scoreValue) {
+        const el = document.getElementById("score");
+        if (el) el.value = String(Math.max(0, Number(scoreValue) || 0));
+        setScore();
+      },
+      spawnBoss(type) {
+        const el = document.getElementById("boss");
+        if (el && type) el.value = String(type);
+        spawnBoss();
+        setBossPhaseFromInput();
+      },
+      spawnBossGate(type) {
+        const el = document.getElementById("boss");
+        if (el && type) el.value = String(type);
+        spawnBossGate();
+        setBossPhaseFromInput();
+      },
+      setBossPhase(phaseValue) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          const targetPhase = Math.max(1, Math.min(3, Number(phaseValue) || 1));
+          if (targetPhase < boss.phase) boss.phase = 1;
+          while (boss.phase < targetPhase) {
+            boss.phase += 1;
+            if (typeof boss.onPhaseChange === "function") boss.onPhaseChange(boss.phase);
+          }
+        });
+      },
+
+      setBossHpRatio(ratioValue) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          const ratio = Math.max(0.05, Math.min(1, Number(ratioValue) || 1));
+          boss.hp = Math.max(1, Math.round(boss.maxHp * ratio));
+        });
+      },
+      setBossState(nextState) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          boss.state = String(nextState || "idle");
+        });
+      },
+      tick(frameCount) {
+        withGame((w) => {
+          const steps = Math.max(1, Math.min(600, Number(frameCount) || 1));
+          for (let index = 0; index < steps; index++) {
+            if (w.bossArena && w.bossArena.active && typeof w.bossArena.update === "function") {
+              w.bossArena.update();
+            } else if (w.bossArena && w.bossArena.active && w.bossArena.boss) {
+              w.bossArena.boss.update(w.player);
+            }
+            if (w.endDragonArena && w.endDragonArena.active && typeof w.endDragonArena.update === "function") w.endDragonArena.update(w.player);
+          }
+        });
+      },
+      setGodMode(on) {
+        debugGodMode = Boolean(on);
+        const btn = document.getElementById("btnGod");
+        if (btn) btn.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
+      },
+      prepareDragonLongPressSummon() {
+        prepareDragonLongPressSummon();
+      },
+      enterDragonArena() {
+        enterDragonArenaDebug();
+      },
+      setDragonArenaPhase(phaseValue) {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.setPhase === "function") {
+            w.endDragonArena.setPhase(phaseValue);
+          }
+        });
+      },
+      damageDragonBoss(amount) {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.damageDragon === "function") {
+            w.endDragonArena.damageDragon(amount);
+          }
+        });
+      },
+      destroyDragonCrystal(index) {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.destroyCrystal === "function") {
+            w.endDragonArena.destroyCrystal(index);
+          }
+        });
+      },
+      forceDragonVictory() {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.forceVictory === "function") {
+            w.endDragonArena.forceVictory();
+          }
+        });
+      },
+      exitDragonArena() {
+        withGame((w) => {
+          if (w.endDragonArena && typeof w.endDragonArena.exit === "function") {
+            w.endDragonArena.exit();
+          }
+        });
+      },
+      getDragonArenaState() {
+        return this.getState();
+      },
+      getState() {
+        const w = gw();
+        if (!w) return { ready: false };
+        const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+        const bossEnvironment = w.bossArena && w.bossArena.environmentController && typeof w.bossArena.environmentController.getSnapshot === "function"
+          ? w.bossArena.environmentController.getSnapshot()
+          : (w.bossEnvironmentController && typeof w.bossEnvironmentController.getSnapshot === "function" ? w.bossEnvironmentController.getSnapshot() : null);
+        const dragonArena = w.endDragonArena || null;
+        const dragonBoss = dragonArena && dragonArena.dragon ? dragonArena.dragon : null;
+        const stay = typeof w.getBiomeStayDebugInfo === "function" ? w.getBiomeStayDebugInfo(Number(w.score) || 0) : null;
+        return {
+          ready: true,
+          score: Number(w.score) || 0,
+          runBestScore: Number(w.runBestScore) || 0,
+          playerX: readGameExpr(w, 'typeof player !== "undefined" && player ? Number(player.x) || 0 : 0', 0),
+          playerY: readGameExpr(w, 'typeof player !== "undefined" && player ? Number(player.y) || 0 : 0', 0),
+          playerVelX: readGameExpr(w, 'typeof player !== "undefined" && player ? Number(player.velX) || 0 : 0', 0),
+          biome: readGameExpr(w, 'typeof currentBiome !== "undefined" ? currentBiome : null', w.currentBiome || null),
+          availableBosses: w.bossArena && typeof w.bossArena.getBossTypes === "function" ? w.bossArena.getBossTypes() : (w.bossArena && Array.isArray(w.bossArena.bossTypes) ? w.bossArena.bossTypes.slice() : []),
+          bossActive: Boolean(w.bossArena && w.bossArena.active),
+          bossLocked: Boolean(w.bossArena && w.bossArena.viewportLocked),
+          bossType: boss && boss.constructor ? boss.constructor.name : null,
+          bossId: boss && boss.type ? boss.type : null,
+          bossName: boss && boss.name ? boss.name : null,
+          bossVisualKey: boss && boss.visualKey ? boss.visualKey : null,
+          bossPhase: boss && boss.phase ? boss.phase : null,
+          bossState: boss && boss.state ? boss.state : null,
+          bossIntentKey: boss && boss.intentKey ? boss.intentKey : '',
+          bossRewardKey: boss && boss.rewardKey ? boss.rewardKey : '',
+          bossVictoryReady: Boolean(boss && boss.alive === false),
+          bossProjectileCount: boss && Array.isArray(boss.bossProjectiles) ? boss.bossProjectiles.length : 0,
+          bossProjectileTypes: boss && typeof boss.getProjectileTypeSnapshot === "function" ? boss.getProjectileTypeSnapshot() : (boss && Array.isArray(boss.bossProjectiles) ? Array.from(new Set(boss.bossProjectiles.map((entry) => entry && entry.type ? entry.type : 'default'))) : []),
+          bossMinionCount: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).length : 0,
+          bossMinionTypes: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).map((entry) => entry.type || "skeleton_minion") : [],
+          bossEnvironmentActive: Boolean(bossEnvironment && bossEnvironment.active),
+          bossEnvironmentId: bossEnvironment ? (bossEnvironment.environmentId || null) : null,
+          bossEnvironmentLabel: bossEnvironment ? (bossEnvironment.label || "") : "",
+          bossEnvironmentTheme: bossEnvironment ? (bossEnvironment.theme || "neutral") : "neutral",
+          bossEnvironmentState: bossEnvironment ? (bossEnvironment.state || "idle") : "idle",
+          bossEnvironmentHazardCount: bossEnvironment ? Math.max(0, Number(bossEnvironment.hazardCount) || 0) : 0,
+          bossEnvironmentIntensity: bossEnvironment ? Math.max(0, Number(bossEnvironment.intensity) || 0) : 0,
+          bossEnvironmentLastHazard: bossEnvironment ? (bossEnvironment.lastHazardKind || "") : "",
+          bossEnvironmentWindForce: bossEnvironment ? (Number(bossEnvironment.windForce) || 0) : 0,
+          bossEnvironmentPulseFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.pulseFrames) || 0) : 0,
+          bossEnvironmentSafeZoneInset: bossEnvironment ? Math.max(0, Number(bossEnvironment.safeZoneInset) || 0) : 0,
+          bossEnvironmentVisionRadius: bossEnvironment ? Math.max(0, Number(bossEnvironment.visionRadius) || 0) : 0,
+          bossEnvironmentDriftForce: bossEnvironment ? (Number(bossEnvironment.driftForce) || 0) : 0,
+          bossEnvironmentSealFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.sealFrames) || 0) : 0,
+          bossEnvironmentComboKey: bossEnvironment ? (bossEnvironment.comboKey || "") : "",
+          bossEnvironmentComboFrames: bossEnvironment ? Math.max(0, Number(bossEnvironment.comboFrames) || 0) : 0,
+          bossEnvironmentVisualStrength: bossEnvironment ? Number(bossEnvironment.visualStrength || 0) : 0,
+          dragonCount: Array.isArray(w.dragonList) ? w.dragonList.length : 0,
+          dragonArenaActive: Boolean(dragonArena && dragonArena.active),
+          dragonArenaState: dragonArena && dragonArena.active && dragonArena.state ? dragonArena.state : null,
+          dragonArenaPhase: dragonArena && dragonArena.active && dragonArena.phase ? dragonArena.phase : null,
+          dragonBossName: dragonArena && dragonArena.active && dragonBoss && dragonBoss.name ? dragonBoss.name : null,
+          dragonBossHp: dragonArena && dragonArena.active && dragonBoss ? Number(dragonBoss.hp) || 0 : 0,
+          dragonBossMaxHp: dragonArena && dragonArena.active && dragonBoss ? Number(dragonBoss.maxHp) || 0 : 0,
+          dragonBossIntentKey: dragonArena && dragonArena.active && dragonBoss && dragonBoss.intentKey ? dragonBoss.intentKey : '',
+          dragonCrystalCount: dragonArena && dragonArena.active && Array.isArray(dragonArena.crystals) ? dragonArena.crystals.length : 0,
+          dragonAliveCrystalCount: dragonArena && dragonArena.active && Array.isArray(dragonArena.crystals) ? dragonArena.crystals.filter((entry) => entry && entry.alive).length : 0,
+          dragonHazardCount: dragonArena && dragonArena.active && Array.isArray(dragonArena.hazards) ? dragonArena.hazards.length : 0,
+          dragonVictoryReady: Boolean(dragonArena && dragonArena.active && dragonArena.victoryReady),
+          dragonExitPortalReady: Boolean(dragonArena && dragonArena.active && dragonArena.exitPortalReady),
+          dragonHudTitle: dragonArena && dragonArena.active && dragonArena.hudTitle ? dragonArena.hudTitle : '',
+          dragonPhaseLabel: dragonArena && dragonArena.active && dragonArena.phaseLabel ? dragonArena.phaseLabel : '',
+          dragonCrystalLabel: dragonArena && dragonArena.active && dragonArena.crystalLabel ? dragonArena.crystalLabel : '',
+          dragonObjectiveLabel: dragonArena && dragonArena.active && dragonArena.objectiveLabel ? dragonArena.objectiveLabel : '',
+          dragonStatusLabel: dragonArena && dragonArena.active && dragonArena.statusLabel ? dragonArena.statusLabel : '',
+          dragonBannerText: dragonArena && dragonArena.active && dragonArena.bannerText ? dragonArena.bannerText : '',
+          dragonPhasePulse: dragonArena && dragonArena.active ? Number(dragonArena.phasePulse) || 0 : 0,
+          dragonDamageFlash: dragonArena && dragonArena.active ? Number(dragonArena.damageFlash) || 0 : 0,
+          dragonPortalPulse: dragonArena && dragonArena.active ? Number(dragonArena.portalPulse) || 0 : 0,
+          ridingDragon: Boolean(w.ridingDragon),
+          equippedConsumable: w.equippedConsumable && w.equippedConsumable.itemKey ? w.equippedConsumable.itemKey : null,
+          stay
+        };
+      }
+    };
+
+    setInterval(() => {
+      const w = gw();
+      if (w) patchGodMode(w);
+      renderStatus(w);
+    }, 500);
+  </script>
+</body>
+</html>

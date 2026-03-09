@@ -1,0 +1,1678 @@
+/**
+ * 18-village.js - 村庄系统核心逻辑
+ * v1.8.0 实现村庄基础框架
+ */
+
+// ========== 村庄风格定义 ==========
+const VILLAGE_STYLES = {
+  forest: {
+    buildingColors: { wall: '#8B6914', roof: '#2E7D32', door: '#5D4037' },
+    groundColor: '#6D4C41',
+    decorations: ['well', 'farm', 'fence', 'flower_pot'],
+    specialBuilding: 'library'
+  },
+  snow: {
+    buildingColors: { wall: '#ECEFF1', roof: '#1565C0', door: '#37474F' },
+    groundColor: '#B0BEC5',
+    decorations: ['snowman', 'ice_lamp', 'pine_fence'],
+    specialBuilding: 'hot_spring'
+  },
+  desert: {
+    buildingColors: { wall: '#D7CCC8', roof: '#FF8F00', door: '#4E342E' },
+    groundColor: '#BCAAA4',
+    decorations: ['cactus_pot', 'sand_lamp', 'oasis'],
+    specialBuilding: 'water_station'
+  },
+  mountain: {
+    buildingColors: { wall: '#78909C', roof: '#455A64', door: '#37474F' },
+    groundColor: '#607D8B',
+    decorations: ['anvil', 'stone_lamp', 'mine_cart'],
+    specialBuilding: 'blacksmith'
+  },
+  ocean: {
+    buildingColors: { wall: '#4FC3F7', roof: '#0277BD', door: '#01579B' },
+    groundColor: '#4DB6AC',
+    decorations: ['anchor', 'barrel', 'fishing_rod'],
+    specialBuilding: 'lighthouse'
+  },
+  nether: {
+    buildingColors: { wall: '#4A148C', roof: '#880E4F', door: '#311B92' },
+    groundColor: '#6A1B9A',
+    decorations: ['soul_lantern', 'nether_wart_pot', 'chain'],
+    specialBuilding: 'brewing_stand'
+  }
+};
+
+const DEFAULT_VILLAGE_CONFIG = {
+  enabled: true,
+  spawnScoreInterval: 500,
+  villageWidth: 800,
+  safeZone: true,
+  restHealFull: true,
+  challengeQuestionCount: 10,
+  minSpawnScoreGap: 900,
+  minSpawnDistancePx: 2600,
+  minBiomeTransitionsBetweenVillages: 2,
+  minBiomeStayScoreForVillage: 120,
+  challengeReward: {
+    perfect: { score: 100, diamonds: 0 },
+    partial: { score: 50, diamonds: 0 }
+  },
+  npcSpeed: 0.3,
+  npcGreetDistance: 80,
+  maxActiveVillages: 3,
+  buildings: {
+    bed_house: { w: 80, h: 60, offset: 100 },
+    word_house: { w: 100, h: 80, offset: 300 },
+    trader_house: { w: 72, h: 62, offset: 550 },
+    special: { w: 80, h: 60, offset: 700 }
+  },
+  biomeWords: {
+    forest: ["tree", "leaf", "bird", "flower", "grass", "wood", "deer", "owl"],
+    snow: ["snow", "ice", "cold", "coat", "hat", "scarf", "ski", "sled"],
+    desert: ["sand", "sun", "hot", "water", "cactus", "camel", "oasis", "dry"],
+    mountain: ["rock", "iron", "gold", "pick", "cave", "stone", "gem", "ore"],
+    ocean: ["fish", "wave", "boat", "shell", "whale", "coral", "swim", "sea"],
+    nether: ["fire", "red", "lava", "dark", "flame", "ash", "smoke", "glow"]
+  }
+};
+
+function getVillageConfig() {
+  const cfg = (villageConfig && typeof villageConfig === "object") ? villageConfig : {};
+  return {
+    ...DEFAULT_VILLAGE_CONFIG,
+    ...cfg,
+    challengeReward: {
+      ...DEFAULT_VILLAGE_CONFIG.challengeReward,
+      ...(cfg.challengeReward || {}),
+      perfect: {
+        ...DEFAULT_VILLAGE_CONFIG.challengeReward.perfect,
+        ...(cfg.challengeReward?.perfect || {})
+      },
+      partial: {
+        ...DEFAULT_VILLAGE_CONFIG.challengeReward.partial,
+        ...(cfg.challengeReward?.partial || {})
+      }
+    },
+    buildings: {
+      ...DEFAULT_VILLAGE_CONFIG.buildings,
+      ...(cfg.buildings || {})
+    },
+    biomeWords: {
+      ...DEFAULT_VILLAGE_CONFIG.biomeWords,
+      ...(cfg.biomeWords || {})
+    }
+  };
+}
+
+// ========== 加载配置 ==========
+function loadVillageConfig() {
+  // 从 config/village.json 加载，失败时使用默认值
+  // 在 17-bootstrap.js 的 loadAllConfigs() 中调用
+  fetch('config/village.json')
+    .then(r => r.json())
+    .then(data => {
+      villageConfig = {
+        ...DEFAULT_VILLAGE_CONFIG,
+        ...(data || {}),
+        buildings: {
+          ...DEFAULT_VILLAGE_CONFIG.buildings,
+          ...(data?.buildings || {})
+        },
+        biomeWords: {
+          ...DEFAULT_VILLAGE_CONFIG.biomeWords,
+          ...(data?.biomeWords || {})
+        }
+      };
+      console.log('[Village] 配置加载成功');
+    })
+    .catch(() => {
+      villageConfig = { ...DEFAULT_VILLAGE_CONFIG };
+      console.warn('[Village] 使用默认配置');
+    });
+}
+
+// ========== 村庄生成 ==========
+function maybeSpawnVillage(playerScore, playerX) {
+  if (!settings || !settings.villageEnabled) return;
+  const cfg = getVillageConfig();
+  if (!cfg.enabled) return;
+  const interval = cfg.spawnScoreInterval || 500;
+  const minScoreGap = Math.max(0, Number(cfg.minSpawnScoreGap ?? 900));
+  const minDistancePx = Math.max(0, Number(cfg.minSpawnDistancePx ?? 2600));
+  const minBiomeTransitionsBetweenVillages = Math.max(0, Math.floor(Number(cfg.minBiomeTransitionsBetweenVillages ?? 2)));
+  const minBiomeStayScoreForVillage = Math.max(0, Number(cfg.minBiomeStayScoreForVillage ?? 120));
+
+  const transitionTick = (() => {
+    if (typeof getBiomeVisitCountSnapshot !== "function") return 0;
+    const snap = getBiomeVisitCountSnapshot() || {};
+    let total = 0;
+    for (const v of Object.values(snap)) total += Number(v) || 0;
+    return total;
+  })();
+
+  const stayScore = (() => {
+    if (typeof getBiomeStayDebugInfo !== "function") return Infinity;
+    const info = getBiomeStayDebugInfo(playerScore) || {};
+    return Number(info.scoreInBiome) || 0;
+  })();
+
+  const hasSpawnHistory = (() => {
+    const hasScoreMark = villageSpawnedForScore && typeof villageSpawnedForScore === "object"
+      ? Object.keys(villageSpawnedForScore).length > 0
+      : false;
+    const lastScore = Number(villageSpawnState?.lastSpawnScore);
+    const lastX = Number(villageSpawnState?.lastSpawnX);
+    return hasScoreMark
+      || (Number.isFinite(lastScore) && lastScore > 0)
+      || (Number.isFinite(lastX) && lastX > 0);
+  })();
+
+  if (typeof villageSpawnState !== "undefined" && villageSpawnState && hasSpawnHistory) {
+    if ((playerScore - (Number(villageSpawnState.lastSpawnScore) || -Infinity)) < minScoreGap) return;
+    if ((playerX - (Number(villageSpawnState.lastSpawnX) || -Infinity)) < minDistancePx) return;
+    if ((transitionTick - (Number(villageSpawnState.lastSpawnTransitionTick) || 0)) < minBiomeTransitionsBetweenVillages) return;
+    if (stayScore < minBiomeStayScoreForVillage) return;
+  }
+
+  // 计算当前分数应当生成的村庄编号
+  const villageIndex = Math.floor(playerScore / interval);
+  if (villageIndex < 1) return; // 0分不生成
+  if (villageSpawnedForScore[villageIndex]) return; // 已生成
+
+  const biomeId = currentBiome || 'forest';
+  const village = createVillage(playerX + 600, biomeId, villageIndex);
+  activeVillages.push(village);
+  villageSpawnedForScore[villageIndex] = true;
+  if (typeof villageSpawnState !== "undefined" && villageSpawnState) {
+    villageSpawnState.lastSpawnScore = Number(playerScore) || 0;
+    villageSpawnState.lastSpawnX = Number(village.x) || Number(playerX) || 0;
+    villageSpawnState.lastSpawnBiome = biomeId;
+    villageSpawnState.lastSpawnTransitionTick = transitionTick;
+  }
+
+  // 回收远处的村庄
+  cleanupVillages(playerX);
+  console.log(`[Village] 生成村庄 #${villageIndex} at x=${village.x}, biome=${biomeId}`);
+}
+
+function createVillage(startX, biomeId, index) {
+  const config = getVillageConfig();
+  const style = VILLAGE_STYLES[biomeId] || VILLAGE_STYLES.forest;
+  const cfg = config.buildings || {};
+  const village = {
+    id: index,
+    x: startX,
+    width: config.villageWidth || 800,
+    biomeId: biomeId,
+    style: style,
+    buildings: [
+      { type: 'bed_house',  x: startX + (cfg.bed_house?.offset || 100),  w: cfg.bed_house?.w || 80,  h: cfg.bed_house?.h || 60 },
+      { type: 'word_house', x: startX + (cfg.word_house?.offset || 300), w: cfg.word_house?.w || 100, h: cfg.word_house?.h || 80 },
+      { type: 'trader_house', x: startX + (cfg.trader_house?.offset || cfg.save_stone?.offset || 550), w: cfg.trader_house?.w || 72,  h: cfg.trader_house?.h || 62 },
+      { type: style.specialBuilding, x: startX + (cfg.special?.offset || 700), w: cfg.special?.w || 80, h: cfg.special?.h || 60 }
+    ],
+    npcs: [],
+    decorations: style.decorations.map((d, i) => ({
+      type: d, x: startX + 50 + i * 150
+    })),
+    visited: false,
+    restUsed: false,
+    questCompleted: false,
+    saved: false
+  };
+
+  // v1.8.1 添加 NPC
+  if (typeof createVillageNPC === 'function') {
+    const roles = ['greeter', 'teacher', 'trader'];
+    const baseX = startX + 200;
+    village.npcs = roles.map((role, i) =>
+      createVillageNPC(baseX + i * 200, role, village.x, village.width)
+    );
+  }
+
+  // Spawn word items and chests inside village
+  spawnVillageItems(village);
+
+  return village;
+}
+
+function spawnVillageItems(village) {
+  if (typeof pickWordForSpawn !== 'function') return;
+  if (typeof Item === 'undefined') return;
+  const vx = village.x;
+  const w = village.width || 800;
+  const wordCount = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < wordCount; i++) {
+    const ix = vx + 80 + (i * (w - 160) / wordCount) + Math.random() * 40;
+    const word = pickWordForSpawn();
+    if (word) {
+      items.push(new Item(ix, groundY - 60, word));
+      if (typeof registerWordItemSpawn === 'function') registerWordItemSpawn(ix);
+    }
+  }
+  if (typeof Chest !== 'undefined') {
+    const chestCount = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < chestCount; i++) {
+      const cx = vx + 200 + i * 300 + Math.random() * 80;
+      chests.push(new Chest(cx, groundY));
+    }
+  }
+}
+
+function cleanupVillages(playerX) {
+  const max = getVillageConfig().maxActiveVillages || 3;
+  // 移除玩家身后超过 2000px 的村庄
+  activeVillages = activeVillages.filter(v => {
+    return (v.x + v.width) > playerX - 2000;
+  });
+  // 如果仍超过上限，移除最远的
+  while (activeVillages.length > max) {
+    activeVillages.shift();
+  }
+}
+
+// ========== NPC 村民系统 (v1.8.1) ==========
+
+const NPC_ROLES = {
+  greeter: {
+    greeting: 'Welcome! 欢迎!',
+    speed: 0.3,
+    patrolRange: 120
+  },
+  teacher: {
+    greeting: 'Come learn! 来学习!',
+    speed: 0.2,
+    patrolRange: 80
+  },
+  trader: {
+    greeting: 'Trade? 交易吗?',
+    speed: 0.15,
+    patrolRange: 60
+  }
+};
+
+function createVillageNPC(baseX, role, villageX, villageWidth) {
+  const cfg = NPC_ROLES[role] || NPC_ROLES.greeter;
+  const minX = Math.max(villageX + 20, baseX - cfg.patrolRange);
+  const maxX = Math.min(villageX + villageWidth - 20, baseX + cfg.patrolRange);
+  return {
+    x: baseX,
+    y: 0,
+    role: role,
+    direction: 1,
+    speed: cfg.speed,
+    minX: minX,
+    maxX: maxX,
+    showBubble: false,
+    bubbleText: cfg.greeting,
+    bubbleTimer: 0,
+    facingRight: true,
+    animFrame: 0,
+    animTimer: 0
+  };
+}
+
+function updateVillageNPCs(village) {
+  for (const npc of village.npcs) {
+    // 来回走动
+    npc.x += npc.direction * npc.speed;
+    if (npc.x <= npc.minX) {
+      npc.x = npc.minX;
+      npc.direction = 1;
+      npc.facingRight = true;
+    } else if (npc.x >= npc.maxX) {
+      npc.x = npc.maxX;
+      npc.direction = -1;
+      npc.facingRight = false;
+    }
+
+    // 走路动画帧
+    npc.animTimer++;
+    if (npc.animTimer >= 15) {
+      npc.animTimer = 0;
+      npc.animFrame = (npc.animFrame + 1) % 2;
+    }
+
+    // 玩家靠近时显示气泡
+    const dist = Math.abs(player.x - npc.x);
+    const greetDist = getVillageConfig().npcGreetDistance || 80;
+    if (dist < greetDist) {
+      npc.showBubble = true;
+      // 面向玩家
+      npc.facingRight = player.x > npc.x;
+      npc.direction = 0; // 停下来
+      npc.bubbleTimer = 120; // 气泡持续 2 秒
+    } else if (npc.bubbleTimer > 0) {
+      npc.bubbleTimer--;
+      if (npc.bubbleTimer <= 0) {
+        npc.showBubble = false;
+        // 恢复巡逻
+        npc.direction = npc.facingRight ? 1 : -1;
+      }
+    } else {
+      npc.showBubble = false;
+    }
+  }
+}
+
+// ========== 村庄状态更新 ==========
+function updateVillages() {
+  if (!settings || !settings.villageEnabled) return;
+  if (!player) return;
+  if (typeof updateVillageBuffs === 'function') updateVillageBuffs();
+  // 检查是否需要生成新村庄
+  maybeSpawnVillage(score, player.x);
+  // 检测玩家是否在村庄内
+  const wasInVillage = playerInVillage;
+  playerInVillage = false;
+  currentVillage = null;
+  for (const v of activeVillages) {
+    if (player.x >= v.x && player.x <= v.x + v.width) {
+      playerInVillage = true;
+      currentVillage = v;
+      if (!v.visited) {
+        v.visited = true;
+        const biomeName = getBiomeName(v.biomeId);
+        showToast(BIOME_MESSAGES.enterVillage(biomeName));
+        // Remove enemies inside village area
+        if (typeof enemies !== 'undefined' && Array.isArray(enemies)) {
+          for (let i = enemies.length - 1; i >= 0; i--) {
+            if (enemies[i].x >= v.x && enemies[i].x <= v.x + v.width) {
+              enemies.splice(i, 1);
+            }
+          }
+        }
+      }
+      // v1.8.1 更新村民
+      updateVillageNPCs(v);
+      if (typeof tryAutoEnterVillageInterior === "function") {
+        tryAutoEnterVillageInterior(v);
+      }
+
+      break;
+    }
+  }
+  if (wasInVillage && !playerInVillage) {
+    showToast(BIOME_MESSAGES.leaveVillage);
+    // v1.8.2 清除休息提示
+    hideRestPrompt();
+  }
+}
+
+// ========== 休息系统 (v1.8.2) ==========
+let restPromptVisible = false;
+let restPromptVillage = null;
+const INTERIOR_BUILDING_TYPES = new Set(["bed_house", "word_house", "trader_house"]);
+const INTERIOR_MOVE_SPEED_FACTOR = 0.5;
+const INTERIOR_HALF_RANGE = 72;
+const INTERIOR_DOOR_RANGE = 20;
+const INTERIOR_ACTION_RANGES = {
+  bed_house: 30,
+  word_house: 34,
+  trader_house: 42
+};
+const villageInteriorState = {
+  active: false,
+  villageId: null,
+  buildingType: null,
+  entryBuildingX: 0,
+  returnPlayerX: 0,
+  returnPlayerY: 0,
+  enteredAt: 0,
+  exitConfirmUntil: 0,
+  challengeStarted: false,
+  autoEnterBlockUntil: 0,
+  autoTriggerCooldownUntil: 0,
+  actionTriggerCooldownUntil: 0,
+  autoTriggerZone: "",
+  autoActionZone: ""
+};
+
+function isVillageInteriorActive() {
+  return !!villageInteriorState.active;
+}
+
+function syncVillageInteriorTouchUi() {
+  if (typeof document === "undefined") return;
+  const root = document.getElementById("touch-controls");
+  if (!root) return;
+  if (isVillageInteriorActive()) root.classList.add("interior-active");
+  else root.classList.remove("interior-active");
+}
+
+function getVillageInteriorVillage() {
+  if (!villageInteriorState.villageId) return null;
+  return activeVillages.find(v => v && v.id === villageInteriorState.villageId) || null;
+}
+
+function getVillageInteriorBuilding(village) {
+  if (!village || !villageInteriorState.buildingType) return null;
+  return village.buildings?.find(b => b?.type === villageInteriorState.buildingType) || null;
+}
+
+function getInteriorDoorX() {
+  const center = Number(villageInteriorState.entryBuildingX) || 0;
+  return center + Math.round(INTERIOR_HALF_RANGE * 0.7);
+}
+
+function getInteriorActionX(type = villageInteriorState.buildingType) {
+  const center = Number(villageInteriorState.entryBuildingX) || 0;
+  if (type === "bed_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.7);
+  if (type === "word_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.7);
+  if (type === "trader_house") return center - Math.round(INTERIOR_HALF_RANGE * 0.4);
+  return center;
+}
+
+function getInteriorActionRange(type = villageInteriorState.buildingType) {
+  return Number(INTERIOR_ACTION_RANGES[type]) || 22;
+}
+
+function drawVillageInteriorHintCard(ctx, x, y, width, height, title, lines, accent = "#FFD54F") {
+  if (!ctx) return;
+  ctx.save();
+  ctx.fillStyle = "rgba(34, 34, 34, 0.88)";
+  ctx.fillRect(x, y, width, height);
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 3;
+  ctx.strokeRect(x, y, width, height);
+  ctx.fillStyle = accent;
+  ctx.fillRect(x, y, width, 8);
+  ctx.fillStyle = "#FFF8E1";
+  ctx.textAlign = "left";
+  ctx.font = "bold 18px sans-serif";
+  ctx.fillText(title, x + 14, y + 30);
+  ctx.font = "15px sans-serif";
+  lines.forEach((line, index) => {
+    ctx.fillText(line, x + 14, y + 56 + (index * 22));
+  });
+  ctx.restore();
+}
+
+function drawInteriorLabelGroup(ctx, centerX, topY, lines, color = "rgba(255,255,255,0.96)") {
+  if (!ctx || !Array.isArray(lines) || !lines.length) return;
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.font = "bold 18px sans-serif";
+  const lineGap = 26;
+  lines.forEach((line, index) => {
+    const y = topY + index * lineGap;
+    ctx.fillStyle = "rgba(0,0,0,0.28)";
+    ctx.fillText(line, centerX + 1, y + 1);
+    ctx.fillStyle = color;
+    ctx.fillText(line, centerX, y);
+  });
+  ctx.restore();
+}
+
+function getInteriorPromptLines(buildingType) {
+  if (buildingType === "bed_house") return ["← 走到床边", "🧰 按宝箱键休息"];
+  if (buildingType === "word_house") return ["← 走到书前", "🧰 按宝箱键开始"];
+  if (buildingType === "trader_house") return ["← 走到商人旁", "🧰 按宝箱键交易"];
+  return ["← 靠近目标", "🧰 按宝箱键互动"];
+}
+
+function drawBedHouseDecor(ctx, panelX, panelY, panelW, floorY, colors) {
+  const chestX = panelX + panelW - 208;
+  const chestY = floorY - 44;
+  ctx.fillStyle = "#6D4C41";
+  ctx.fillRect(chestX, chestY, 36, 24);
+  ctx.fillStyle = "#8D6E63";
+  ctx.fillRect(chestX + 2, chestY + 2, 32, 8);
+  ctx.fillStyle = "#FBC02D";
+  ctx.fillRect(chestX + 16, chestY + 10, 4, 6);
+
+  const tableX = panelX + 84;
+  const tableY = floorY - 34;
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(tableX, tableY, 26, 10);
+  ctx.fillRect(tableX + 3, tableY + 10, 4, 18);
+  ctx.fillRect(tableX + 19, tableY + 10, 4, 18);
+  ctx.fillStyle = "#FFEE58";
+  ctx.fillRect(tableX + 9, tableY - 14, 8, 14);
+  ctx.fillStyle = "rgba(255,238,88,0.28)";
+  ctx.beginPath();
+  ctx.arc(tableX + 13, tableY - 8, 16, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(panelX + panelW - 154, panelY + 92, 54, 8);
+  ctx.fillStyle = "#8BC34A";
+  ctx.fillRect(panelX + panelW - 146, panelY + 76, 16, 16);
+  ctx.fillStyle = "#8D6E63";
+  ctx.fillRect(panelX + panelW - 121, panelY + 74, 12, 18);
+}
+
+function drawWordHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors) {
+  const shelfX = actionPx - 120;
+  const shelfY = floorY - 170;
+  const shelfW = 240;
+  const shelfH = 160;
+
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(shelfX, shelfY, shelfW, shelfH);
+  ctx.fillStyle = colors.plank || "#B8945A";
+  ctx.fillRect(shelfX + 8, shelfY + 8, shelfW - 16, shelfH - 16);
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(shelfX, shelfY + 52, shelfW, 6);
+  ctx.fillRect(shelfX, shelfY + 104, shelfW, 6);
+
+  const bookColors = ["#1E88E5", "#D32F2F", "#388E3C", "#F57C00", "#7B1FA2"];
+  for (let i = 0; i < 4; i++) {
+    ctx.fillStyle = bookColors[i];
+    ctx.fillRect(shelfX + 18 + i * 52, shelfY + 16, 32, 34);
+  }
+  for (let i = 0; i < 4; i++) {
+    ctx.fillStyle = bookColors[(i + 2) % 5];
+    ctx.fillRect(shelfX + 18 + i * 52, shelfY + 70, 32, 40);
+  }
+
+  const noteX = panelX + panelW - 184;
+  const noteY = panelY + 110;
+  ctx.fillStyle = "#FFF8E1";
+  ctx.fillRect(noteX, noteY, 54, 40);
+  ctx.strokeStyle = "#BCAAA4";
+  ctx.strokeRect(noteX, noteY, 54, 40);
+  ctx.fillStyle = "#90CAF9";
+  ctx.fillRect(noteX + 6, noteY + 8, 42, 4);
+  ctx.fillRect(noteX + 6, noteY + 18, 30, 4);
+  ctx.fillRect(noteX + 6, noteY + 28, 36, 4);
+
+  const bookX = actionPx - 44;
+  const bookY = floorY - 70;
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(bookX + 4, bookY + 4, 88, 52);
+  ctx.fillStyle = "#1565C0";
+  ctx.fillRect(bookX, bookY, 88, 52);
+  ctx.fillStyle = "#FAFAFA";
+  ctx.fillRect(bookX + 10, bookY + 8, 32, 34);
+  ctx.fillRect(bookX + 46, bookY + 8, 32, 34);
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.fillRect(bookX + 42, bookY + 4, 4, 42);
+  ctx.fillStyle = "#FFD54F";
+  ctx.font = "bold 14px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("ABC", bookX + 44, bookY + 30);
+  ctx.textAlign = "left";
+}
+
+function drawTraderInteriorNpc(ctx, x, floorY) {
+  const robeW = 24;
+  const robeH = 44;
+  const headW = 18;
+  const headH = 18;
+  const robeX = x - robeW * 0.5;
+  const robeY = floorY - robeH;
+  const headX = x - headW * 0.5;
+  const headY = robeY - headH + 6;
+
+  ctx.fillStyle = "#1565C0";
+  ctx.fillRect(robeX, robeY, robeW, robeH);
+  ctx.fillStyle = "#1E88E5";
+  ctx.fillRect(robeX + 3, robeY + 4, robeW - 6, 12);
+  ctx.fillStyle = "#90CAF9";
+  ctx.fillRect(robeX + 7, robeY + 18, robeW - 14, 18);
+  ctx.fillStyle = "#0D47A1";
+  ctx.fillRect(robeX + 4, robeY + robeH, 6, 10);
+  ctx.fillRect(robeX + robeW - 10, robeY + robeH, 6, 10);
+
+  ctx.fillStyle = "#E9C8A7";
+  ctx.fillRect(headX, headY, headW, headH);
+  ctx.fillStyle = "#8D6E63";
+  ctx.fillRect(headX + 2, headY - 4, headW - 4, 7);
+  ctx.fillStyle = "#5D4037";
+  ctx.fillRect(headX + 8, headY + 8, 6, 8);
+  ctx.fillStyle = "#3E2723";
+  ctx.fillRect(headX + 4, headY + 7, 2, 2);
+  ctx.fillRect(headX + 12, headY + 7, 2, 2);
+}
+
+function drawTraderHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors) {
+  const rackX = panelX + 78;
+  const rackW = 144;
+  const rackH = 96;
+  const rackY = floorY - rackH;
+
+  ctx.fillStyle = colors.log || "#5D4037";
+  ctx.fillRect(rackX, rackY, rackW, 8);
+  ctx.fillRect(rackX, rackY + 38, rackW, 7);
+  ctx.fillRect(rackX, rackY + 76, rackW, 7);
+  ctx.fillRect(rackX + 6, rackY, 8, rackH);
+  ctx.fillRect(rackX + rackW - 14, rackY, 8, rackH);
+
+  const itemColors = ["#8BC34A", "#FFB74D", "#90CAF9", "#A1887F", "#CE93D8"];
+  for (let i = 0; i < 5; i++) {
+    ctx.fillStyle = itemColors[i];
+    ctx.fillRect(rackX + 16 + i * 24, rackY + 10, 18, 20);
+    ctx.fillRect(rackX + 16 + i * 24, rackY + 48, 18, 18);
+  }
+  ctx.fillStyle = "#6D4C41";
+  ctx.fillRect(rackX + 22, rackY + 80, 26, 20);
+  ctx.fillRect(rackX + 62, rackY + 82, 34, 18);
+  ctx.fillRect(rackX + 108, rackY + 78, 22, 22);
+
+  ctx.fillStyle = "#BCAAA4";
+  ctx.fillRect(panelX + panelW - 192, floorY - 54, 30, 24);
+  ctx.fillRect(panelX + panelW - 154, floorY - 50, 24, 20);
+}
+
+function getInteriorMoveBounds() {
+  const centerX = Number(villageInteriorState.entryBuildingX) || 0;
+  return {
+    minX: centerX - INTERIOR_HALF_RANGE,
+    maxX: centerX + INTERIOR_HALF_RANGE
+  };
+}
+
+function getPlayerCenterX() {
+  if (!player) return 0;
+  return (Number(player.x) || 0) + ((Number(player.width) || 0) * 0.5);
+}
+
+function resetVillageInteriorState({ silent = true } = {}) {
+  const wasActive = villageInteriorState.active;
+  villageInteriorState.active = false;
+  villageInteriorState.villageId = null;
+  villageInteriorState.buildingType = null;
+  villageInteriorState.entryBuildingX = 0;
+  villageInteriorState.returnPlayerX = 0;
+  villageInteriorState.returnPlayerY = 0;
+  villageInteriorState.enteredAt = 0;
+  villageInteriorState.exitConfirmUntil = 0;
+  villageInteriorState.challengeStarted = false;
+  villageInteriorState.autoEnterBlockUntil = 0;
+  villageInteriorState.autoTriggerCooldownUntil = 0;
+  villageInteriorState.actionTriggerCooldownUntil = 0;
+  villageInteriorState.autoTriggerZone = "";
+  villageInteriorState.autoActionZone = "";
+  syncVillageInteriorTouchUi();
+  if (!silent && wasActive) showToast("🏠 已离开房屋");
+}
+
+function canEnterVillageInterior(village, building) {
+  if (!village || !building) return false;
+  if (!INTERIOR_BUILDING_TYPES.has(building.type)) return false;
+  if (isVillageInteriorActive()) return false;
+  if (typeof bossArena !== "undefined" && bossArena?.active) {
+    showToast("⚔️ BOSS战中，暂时不能进屋");
+    return false;
+  }
+  if (typeof biomeGateState !== "undefined" && biomeGateState?.gateActive) {
+    showToast("🚫 门禁战进行中，暂时不能进屋");
+    return false;
+  }
+  return true;
+}
+
+function enterVillageInterior(village, building) {
+  if (!canEnterVillageInterior(village, building)) return false;
+  villageInteriorState.active = true;
+  villageInteriorState.villageId = village.id;
+  villageInteriorState.buildingType = building.type;
+  villageInteriorState.entryBuildingX = Number(building.x) || 0;
+  villageInteriorState.returnPlayerX = Number(player?.x) || 0;
+  villageInteriorState.returnPlayerY = Number(player?.y) || 0;
+  villageInteriorState.enteredAt = Date.now();
+  villageInteriorState.exitConfirmUntil = 0;
+  villageInteriorState.challengeStarted = false;
+  villageInteriorState.autoTriggerCooldownUntil = Date.now() + 600;
+  villageInteriorState.actionTriggerCooldownUntil = 0;
+  villageInteriorState.autoTriggerZone = "";
+  villageInteriorState.autoActionZone = "";
+  syncVillageInteriorTouchUi();
+  if (player) {
+    const centerX = Number(villageInteriorState.entryBuildingX) || 0;
+    const bounds = getInteriorMoveBounds();
+    player.x = Math.max(bounds.minX, Math.min(bounds.maxX, centerX - (player.width * 0.5)));
+    player.y = groundY - player.height;
+    player.velX = 0;
+    player.velY = 0;
+    player.grounded = true;
+  }
+  const label = building.type === "bed_house" ? "床屋" : (building.type === "word_house" ? "词屋" : "商人屋");
+  showToast(`🏠 进入${label}（Esc 退出）`);
+  return true;
+}
+
+function exitVillageInterior(reason = "") {
+  if (!isVillageInteriorActive()) return false;
+  const village = getVillageInteriorVillage();
+  const building = getVillageInteriorBuilding(village);
+  if (player) {
+    const fallbackX = villageInteriorState.returnPlayerX || player.x;
+    const exitX = building ? (building.x + building.w * 0.5 - player.width * 0.5) : fallbackX;
+    player.x = Math.max(0, exitX);
+    player.y = Math.min(groundY - player.height, villageInteriorState.returnPlayerY || player.y);
+    player.velX = 0;
+    player.velY = 0;
+    player.grounded = false;
+    player.jumpCount = 0;
+    player.lastFragilePlatform = null;
+  }
+  const text = reason || "🏠 离开房屋";
+  resetVillageInteriorState();
+  villageInteriorState.autoEnterBlockUntil = Date.now() + 1400;
+  showToast(text);
+  return true;
+}
+
+function updateVillageInteriorMode() {
+  if (!isVillageInteriorActive()) return;
+  syncVillageInteriorTouchUi();
+  const village = getVillageInteriorVillage();
+  if (!village) {
+    resetVillageInteriorState();
+    return;
+  }
+  if (!player) return;
+  if (
+    villageInteriorState.buildingType === "word_house" &&
+    villageInteriorState.challengeStarted &&
+    !village._challengeRunning &&
+    !(typeof isModalPauseActive === "function" && isModalPauseActive())
+  ) {
+    exitVillageInterior("🏠 挑战结束，已离开词屋");
+    return;
+  }
+  const bounds = getInteriorMoveBounds();
+  const interiorMoveSpeed = Math.max(
+    0.8,
+    (Number(player.baseSpeed) || Number(player.speed) || 4) * INTERIOR_MOVE_SPEED_FACTOR
+  );
+  let moveX = 0;
+  if (keys.left) {
+    moveX -= interiorMoveSpeed;
+    player.facingRight = false;
+  }
+  if (keys.right) {
+    moveX += interiorMoveSpeed;
+    player.facingRight = true;
+  }
+  player.x = Math.max(bounds.minX, Math.min(bounds.maxX, (Number(player.x) || 0) + moveX));
+  player.y = groundY - player.height;
+  player.velX = 0;
+  player.velY = 0;
+  player.grounded = true;
+  player.jumpCount = 0;
+  triggerVillageInteriorAutoDoor(village);
+  triggerVillageInteriorAutoAction(village);
+  const targetCam = Math.max(0, player.x - cameraOffsetX);
+  if (targetCam > cameraX) cameraX = targetCam;
+}
+
+function renderVillageInterior(ctx) {
+  if (!isVillageInteriorActive()) return false;
+  if (!ctx || !canvas) return false;
+  const village = getVillageInteriorVillage();
+  const buildingType = villageInteriorState.buildingType || "bed_house";
+  const colors = typeof getVillageColors === "function"
+    ? getVillageColors(village?.biomeId || "forest")
+    : { plank: "#B8945A", log: "#5D4037", glass: "#A8D8EA" };
+
+  ctx.fillStyle = "rgba(0,0,0,0.72)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const panelW = Math.min(canvas.width * 0.9, 720);
+  const panelH = Math.min(canvas.height * 0.8, 460);
+  const panelX = (canvas.width - panelW) * 0.5;
+  const panelY = (canvas.height - panelH) * 0.5;
+  ctx.fillStyle = colors.plank || "#B8945A";
+  ctx.fillRect(panelX, panelY, panelW, panelH);
+  ctx.strokeStyle = colors.log || "#5D4037";
+  ctx.lineWidth = 6;
+  ctx.strokeRect(panelX, panelY, panelW, panelH);
+
+  ctx.fillStyle = "rgba(0,0,0,0.16)";
+  ctx.fillRect(panelX + 24, panelY + panelH - 92, panelW - 48, 56);
+  ctx.fillStyle = colors.glass || "#A8D8EA";
+  ctx.fillRect(panelX + panelW - 110, panelY + 36, 70, 46);
+  ctx.strokeStyle = "rgba(0,0,0,0.2)";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(panelX + panelW - 110, panelY + 36, 70, 46);
+
+  const bounds = getInteriorMoveBounds();
+  const floorY = panelY + panelH - 84;
+  const usableLeft = panelX + 56;
+  const usableRight = panelX + panelW - 56;
+  const toPanelX = (worldX) => {
+    const ratio = (worldX - bounds.minX) / Math.max(1, (bounds.maxX - bounds.minX));
+    return usableLeft + Math.max(0, Math.min(1, ratio)) * (usableRight - usableLeft);
+  };
+  const doorPx = toPanelX(getInteriorDoorX());
+  const actionPx = toPanelX(getInteriorActionX(buildingType));
+  const playerPx = toPanelX(getPlayerCenterX());
+  const entryPromptPx = toPanelX(Number(villageInteriorState.entryBuildingX) || 0);
+
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.fillRect(doorPx - 10, floorY, 20, 8);
+  ctx.fillRect(actionPx - 10, floorY, 20, 8);
+  const actionHeader = buildingType === "bed_house"
+    ? "\ud83d\udecf\ufe0f \u5e8a\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
+    : (buildingType === "word_house"
+      ? "\ud83d\udcd8 \u5355\u8bcd\u4e66\uff08\u6309\u5b9d\u7bb1\u952e\uff09"
+      : "\ud83e\uddd1\u200d\ud83c\udf3e \u5546\u4eba\uff08\u77ed\u6309\u5b9d\u7bb1\u952e\uff09");
+
+  const title = buildingType === "bed_house"
+    ? "\ud83c\udfe0 \u5e8a\u5c4b\u5ba4\u5185"
+    : (buildingType === "word_house" ? "\ud83d\udcd8 \u8bcd\u5c4b\u5ba4\u5185" : "\ud83e\uddd1\u200d\ud83c\udf3e \u5546\u4eba\u5c4b\u5ba4\u5185");
+  ctx.fillStyle = "#1E1E1E";
+  ctx.font = "bold 28px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(title, panelX + 28, panelY + 48);
+
+  const hintPanelX = panelX + 28;
+  const hintPanelY = panelY + 76;
+  const hintPanelW = Math.min(240, panelW - 120);
+  const hintPanelH = 96;
+  const hintTitle = buildingType === "bed_house"
+    ? "🛏️ 休息点"
+    : (buildingType === "word_house" ? "📘 单词关卡" : "🧑‍🌾 商人交易");
+  const hintLines = buildingType === "bed_house"
+    ? ["短按 🧰 宝箱键即可休息", "恢复满血 ❤️"]
+    : (buildingType === "word_house"
+      ? ["短按 🧰 宝箱键开始测验", "必须完成本关才能继续前进"]
+      : ["较大范围内短按 🧰 宝箱键", "打开交易，卖材料换钻石"]);
+  const hintAccent = buildingType === "trader_house" ? "#81D4FA" : (buildingType === "word_house" ? "#64B5F6" : "#AED581");
+  drawVillageInteriorHintCard(ctx, hintPanelX, hintPanelY, hintPanelW, hintPanelH, hintTitle, hintLines, hintAccent);
+
+  ctx.fillStyle = "#222";
+  ctx.font = "18px sans-serif";
+  let bedBaseX = actionPx - 96;
+  let bedBaseY = floorY - 74;
+  if (buildingType === "bed_house") {
+    bedBaseX = actionPx - 96;
+    bedBaseY = floorY - 74;
+    drawBedHouseDecor(ctx, panelX, panelY, panelW, floorY, colors);
+    drawVillageBed(ctx, bedBaseX, bedBaseY, colors);
+  }
+  // Requirement update: keep door as auto-exit, bed/word use chest-key trigger.
+  ctx.fillStyle = colors.plank || "#B8945A";
+  ctx.fillRect(panelX + 24, panelY + 72, panelW - 48, 86);
+
+  const doorW = 56;
+  const doorH = 96;
+  const doorShapeX = doorPx - doorW * 0.5;
+  const doorShapeY = floorY - doorH;
+  ctx.fillStyle = "#6D4C41";
+  ctx.fillRect(doorShapeX, doorShapeY, doorW, doorH);
+  ctx.strokeStyle = "#3E2723";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(doorShapeX, doorShapeY, doorW, doorH);
+  ctx.fillStyle = "#FBC02D";
+  ctx.beginPath();
+  ctx.arc(doorShapeX + doorW - 6, doorShapeY + doorH * 0.55, 2.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (buildingType === "word_house") {
+    drawWordHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors);
+  }
+  if (buildingType === "trader_house") {
+    drawTraderHouseDecor(ctx, actionPx, floorY, panelX, panelY, panelW, colors);
+    drawTraderInteriorNpc(ctx, actionPx + 2, floorY + 8);
+  }
+
+  drawInteriorLabelGroup(ctx, entryPromptPx, floorY - 154, getInteriorPromptLines(buildingType));
+
+  const steveX = playerPx - (Number(player?.width) || 26) * 0.5;
+  const steveY = floorY - (Number(player?.height) || 52);
+  if (typeof drawSteve === "function") {
+    drawSteve(steveX, steveY, !!player?.facingRight, false);
+  } else {
+    ctx.fillStyle = "#FFEE58";
+    ctx.fillRect(playerPx - 9, floorY - 26, 18, 24);
+    ctx.fillStyle = "#5D4037";
+    ctx.fillRect(playerPx - 9, floorY - 2, 18, 2);
+  }
+
+  ctx.textAlign = "left";
+  return true;
+}
+
+function triggerVillageInteriorAutoDoor(village) {
+  if (!isVillageInteriorActive() || !village || !player) return false;
+  if (paused || (typeof isModalPauseActive === "function" && isModalPauseActive())) return false;
+  const now = Date.now();
+  if (now < Number(villageInteriorState.autoTriggerCooldownUntil || 0)) return false;
+
+  const centerX = getPlayerCenterX();
+  const nearDoor = Math.abs(centerX - getInteriorDoorX()) <= INTERIOR_DOOR_RANGE;
+  const zone = nearDoor ? "door" : "";
+
+  if (!zone) {
+    if (villageInteriorState.autoTriggerZone === "door") villageInteriorState.autoTriggerZone = "";
+    return false;
+  }
+  if (zone === villageInteriorState.autoTriggerZone) return false;
+
+  villageInteriorState.autoTriggerZone = zone;
+  villageInteriorState.autoTriggerCooldownUntil = now + 900;
+
+  if (zone === "door") {
+    exitVillageInterior("🏠 离开房屋");
+    return true;
+  }
+
+  return false;
+}
+
+function triggerVillageInteriorChestAction(village, interactMode = "tap") {
+  if (!isVillageInteriorActive() || !village || !player) return false;
+  const now = Date.now();
+  if (now < Number(villageInteriorState.actionTriggerCooldownUntil || 0)) return false;
+  const type = villageInteriorState.buildingType;
+  const centerX = getPlayerCenterX();
+  const nearAction = Math.abs(centerX - getInteriorActionX(type)) <= getInteriorActionRange(type);
+  if (!nearAction) {
+    const nearHint = type === "bed_house"
+      ? "\u9760\u8fd1\u5e8a\u540e\u6309\u5b9d\u7bb1\u952e"
+      : (type === "word_house"
+        ? "\u9760\u8fd1\u5355\u8bcd\u4e66\u540e\u6309\u5b9d\u7bb1\u952e"
+        : "\u9760\u8fd1\u5546\u4eba\u540e\u6309\u5b9d\u7bb1\u952e");
+    showToast(nearHint);
+    villageInteriorState.actionTriggerCooldownUntil = now + 180;
+    return true;
+  }
+  villageInteriorState.autoTriggerZone = "";
+  villageInteriorState.autoActionZone = "";
+  villageInteriorState.actionTriggerCooldownUntil = now + 650;
+  if (type === "bed_house") {
+    performRest(village);
+    return true;
+  }
+  if (type === "word_house") {
+    if (village.questCompleted) {
+      showToast(UI_TEXTS.questDone);
+      return true;
+    }
+    if (typeof startVillageChallenge === "function") {
+      villageInteriorState.challengeStarted = true;
+      startVillageChallenge(village, () => {
+        village.questCompleted = true;
+      }, { forced: true, skipIntro: true });
+      return true;
+    }
+  }
+  if (type === "trader_house") {
+    return !!openVillageTrader(village);
+  }
+  return false;
+}
+
+function triggerVillageInteriorAutoAction(village) {
+  // Word-house quiz now requires explicit long-press trigger.
+  return false;
+  if (!isVillageInteriorActive() || !village || !player) return false;
+  if (paused || (typeof isModalPauseActive === "function" && isModalPauseActive())) return false;
+  if (villageInteriorState.buildingType !== "word_house") return false;
+  if (village.questCompleted || village._challengeRunning || villageInteriorState.challengeStarted) return false;
+  const now = Date.now();
+  if (now < Number(villageInteriorState.actionTriggerCooldownUntil || 0)) return false;
+
+  const centerX = getPlayerCenterX();
+  const nearAction = Math.abs(centerX - getInteriorActionX("word_house")) <= INTERIOR_ACTION_RANGE;
+  const zone = nearAction ? "word_action" : "";
+  if (!zone) {
+    if (villageInteriorState.autoActionZone === "word_action") villageInteriorState.autoActionZone = "";
+    return false;
+  }
+  if (zone === villageInteriorState.autoActionZone) return false;
+  villageInteriorState.autoActionZone = zone;
+  villageInteriorState.actionTriggerCooldownUntil = now + 650;
+  return !!triggerVillageInteriorChestAction(village);
+}
+
+function checkVillageRest(village) {
+  if (!village) return;
+  if (village.restUsed) return; // 已使用过
+  const nearby = getNearbyBuilding(village);
+  if (nearby && nearby.type === 'bed_house') showRestPrompt(village);
+  else hideRestPrompt();
+}
+
+function checkVillageBuildings(village, interactMode = "tap") {
+  if (!village) return false;
+  const nearby = getNearbyBuilding(village);
+  if (!nearby) return false;
+  return !!handleVillageInteraction(nearby, village, interactMode);
+}
+
+
+function isInteriorBuildingType(type) {
+  return type === "bed_house" || type === "word_house" || type === "trader_house";
+}
+
+function tryAutoEnterVillageInterior(village) {
+  if (!village || !player) return false;
+  if (isVillageInteriorActive()) return false;
+  if (paused || (typeof isModalPauseActive === "function" && isModalPauseActive())) return false;
+  const now = Date.now();
+  if (now < Number(villageInteriorState.autoEnterBlockUntil || 0)) return false;
+  const nearby = getNearbyBuilding(village, 2);
+  if (!nearby) return false;
+  const centerX = getPlayerCenterX();
+  const doorCenter = nearby.x + nearby.w * 0.5;
+  const autoRange = nearby.type === "trader_house" ? (INTERIOR_DOOR_RANGE + 12) : INTERIOR_DOOR_RANGE;
+  if (Math.abs(centerX - doorCenter) > autoRange) return false;
+  if (village._lastAutoEnterAt && now - village._lastAutoEnterAt < 1000) return false;
+  village._lastAutoEnterAt = now;
+  if (!isInteriorBuildingType(nearby.type)) return false;
+  return enterVillageInterior(village, nearby);
+}
+function getNearbyBuilding(village, margin = 4) {
+  if (!village || !Array.isArray(village.buildings) || !player) return null;
+  const centerX = player.x + player.width / 2;
+  for (const building of village.buildings) {
+    const extraMargin = building.type === "trader_house" ? 14 : 0;
+    const hitMargin = margin + extraMargin;
+    const left = building.x - hitMargin;
+    const right = building.x + building.w + hitMargin;
+    if (centerX >= left && centerX <= right) return building;
+  }
+  return null;
+}
+
+function showRestPrompt(village) {
+  restPromptVisible = true;
+  restPromptVillage = village;
+}
+
+function hideRestPrompt() {
+  restPromptVisible = false;
+  restPromptVillage = null;
+}
+
+function performRest(village) {
+  if (!village) return;
+  if (village.restUsed) {
+    showToast(UI_TEXTS.restAlready);
+    return;
+  }
+
+  // 检查满血条件
+  const isFullHp = playerHp >= playerMaxHp;
+  const cfg = getVillageConfig();
+  if (isFullHp && cfg.restHealFull) {
+    showToast(UI_TEXTS.restFullHp);
+    return;
+  }
+
+  // 执行休息回血
+  if (cfg.restHealFull) {
+    playerHp = playerMaxHp;
+  } else {
+    playerHp = Math.min(playerMaxHp, playerHp + 5);
+  }
+
+  updateHpUI();
+  village.restUsed = true;
+  hideRestPrompt();
+
+  const healAmount = cfg.restHealFull ? '全满' : '+5';
+  showToast(UI_TEXTS.restSuccess(healAmount));
+  showFloatingText(UI_TEXTS.restHeal, player.x, player.y - 60);
+
+  // 保存进度
+  if (typeof saveCurrentProgress === 'function') {
+    saveCurrentProgress();
+  }
+}
+
+// ========== 杈呭姪鍑芥暟 ==========
+function isInVillageArea(x) {
+  for (const v of activeVillages) {
+    if (x >= v.x && x <= v.x + v.width) return true;
+  }
+  return false;
+}
+
+function getVillageAt(x) {
+  for (const v of activeVillages) {
+    if (x >= v.x && x <= v.x + v.width) return v;
+  }
+  return null;
+}
+
+function getBiomeName(biomeId) {
+  if (typeof biomeConfigs === 'undefined' || !biomeConfigs) return biomeId || 'forest';
+  const biome = biomeConfigs[biomeId];
+  return biome ? biome.name : biomeId;
+}
+
+// ========== v1.8.3 村庄单词系统 ==========
+function getVillageWords(biomeId) {
+  const cfg = getVillageConfig();
+  if (!cfg.biomeWords) return [];
+  return cfg.biomeWords[biomeId] || cfg.biomeWords.forest || [];
+}
+
+function handleVillageInteraction(building, village, interactMode = "tap") {
+  if (!building || !village) return false;
+  const now = Date.now();
+  if (village._lastInteractAt && now - village._lastInteractAt < 250) return false;
+  village._lastInteractAt = now;
+
+  switch (building.type) {
+    case 'bed_house':
+      return enterVillageInterior(village, building);
+    case 'word_house':
+      return enterVillageInterior(village, building);
+    case 'trader_house':
+      return enterVillageInterior(village, building);
+    default:
+      if (SPECIAL_BUILDING_EFFECTS[building.type]) {
+        interactSpecialBuilding(village, building.type);
+        return true;
+      }
+      return false;
+  }
+}
+
+function handleVillageInteriorInteraction(interactMode = "tap") {
+  const village = getVillageInteriorVillage();
+  if (!village) return false;
+  return !!triggerVillageInteriorChestAction(village, interactMode);
+}
+
+const TRADER_MATERIAL_PRICES = {
+  // 常见材料
+  iron: 2,
+  gold: 3,
+  coal: 1,
+  stick: 1,
+  arrow: 1,       // 5个才值1钻，在卖出逻辑里按5个一组处理
+  // 食物
+  beef: 2,
+  mutton: 2,
+  chicken: 1,
+  fish: 1,
+  mushroom: 1,
+  mushroom_stew: 3,
+  flower: 1,
+  bone: 1,
+  feather: 1,
+  // 战斗消耗品
+  gunpowder: 2,
+  rotten_flesh: 1,
+  string: 1,
+  shell: 2,
+  snow_block: 1,
+  // 稀有材料
+  ender_pearl: 5,
+  sculk_vein: 4,
+  echo_shard: 6,
+  starfish: 4,
+  pumpkin: 1,
+  // 传说级（高价收购）
+  dragon_egg: 30,
+  totem: 20,
+  nether_star: 25
+};
+
+const TRADER_ARMOR_PRICES = {
+  leather: 10,
+  iron: 20,
+  gold: 30,
+  diamond: 40
+};
+
+const TRADER_BUY_ITEMS = [
+  { id: "sunscreen", label: "\u9632\u6652\u971c \ud83e\uddf4", cost: 5, type: "buff" },
+  { id: "arrow", label: "\u7bad \u00d710 \ud83c\udff9", cost: 3, type: "item", amount: 10 },
+  { id: "stone_sword", label: "\u77f3\u5251 \u2694\ufe0f", cost: 8, type: "item", amount: 1 },
+  { id: "iron_sword", label: "\u94c1\u5251 \ud83d\udde1\ufe0f", cost: 15, type: "item", amount: 1 },
+  { id: "bow", label: "\u5f13 \ud83c\udff9", cost: 12, type: "item", amount: 1 },
+  { id: "gunpowder", label: "\u706b\u836f \u00d75 \ud83d\udca5", cost: 4, type: "item", amount: 5 },
+  { id: "ender_pearl", label: "\u672b\u5f71\u73cd\u73e0 \u00d73 \ud83d\udfe3", cost: 10, type: "item", amount: 3 },
+  { id: "dragon_egg", label: "龙蛋 🥚", cost: 100, type: "item", amount: 1 }
+];
+
+let traderPrevPaused = false;
+
+function openVillageTrader(village) {
+  if (typeof document === "undefined") {
+    showToast("🧑‍🌾 商人暂不可用");
+    return false;
+  }
+  if (typeof isModalPauseActive === "function" && isModalPauseActive()) return false;
+  traderPrevPaused = !!paused;
+  if (typeof pushPause === "function") pushPause();
+  else paused = true;
+  const modal = ensureVillageTraderModal();
+  renderVillageTraderMain(modal, village);
+  modal.style.display = "flex";
+  modal.setAttribute("aria-hidden", "false");
+  return true;
+}
+
+function ensureVillageTraderModal() {
+  let modal = document.getElementById("village-trader-modal");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "village-trader-modal";
+  modal.className = "learning-modal";
+  modal.style.display = "none";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = `
+    <div class="learning-modal-content" style="max-width: 760px;width:min(92vw,760px);max-height:72vh;overflow:hidden;padding:20px 22px;">
+      <div id="village-trader-body"></div>
+    </div>
+  `;
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeVillageTrader();
+  });
+  document.getElementById("game-container")?.appendChild(modal);
+  return modal;
+}
+
+function getTraderSectionGridStyle() {
+  return "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:stretch;";
+}
+
+function getTraderListGridStyle(minWidth = 180) {
+  return `display:grid;grid-template-columns:repeat(auto-fit,minmax(${minWidth}px,1fr));gap:12px;max-height:440px;overflow-y:auto;padding:8px;align-items:stretch;`;
+}
+
+function getTraderCardButtonStyle(accent = "#81C784") {
+  return `min-height:96px;padding:16px 14px;display:grid;place-items:center;text-align:center;gap:6px;transition:transform 0.2s;width:100%;border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(0,0,0,0.12));border-top:3px solid ${accent};`;
+}
+
+function closeVillageTrader() {
+  const modal = document.getElementById("village-trader-modal");
+  if (modal) {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+  }
+  if (typeof popPause === "function") popPause();
+  else paused = false;
+  if (traderPrevPaused) paused = true;
+}
+
+function bindTraderTap(target, handler) {
+  if (!target || typeof handler !== "function") return;
+  let lastTapAt = 0;
+  const invoke = (e) => {
+    if (e) e.preventDefault();
+    const now = Date.now();
+    if (now - lastTapAt < 180) return;
+    lastTapAt = now;
+    handler();
+  };
+  if ((typeof window !== "undefined") && ("PointerEvent" in window)) {
+    target.addEventListener("pointerup", invoke, { passive: false });
+  } else {
+    target.addEventListener("touchend", invoke, { passive: false });
+    target.addEventListener("mouseup", invoke, { passive: false });
+  }
+}
+
+function renderVillageTraderMain(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const diamondCount = Number(inventory?.diamond) || 0;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">🧑‍🌾 商人交易</h3>
+    <p style="margin:0 0 12px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
+    <div style="${getTraderSectionGridStyle()}">
+      <button id="trader-btn-sell" class="game-btn" style="${getTraderCardButtonStyle("#4FC3F7")}"><div style="font-weight:bold;font-size:16px;">卖材料换钻石 💎</div><div style="font-size:13px;opacity:0.9;">把背包材料变成钻石</div></button>
+      <button id="trader-btn-armor" class="game-btn" style="${getTraderCardButtonStyle("#90CAF9")}"><div style="font-weight:bold;font-size:16px;">用钻石买盔甲 🛡️</div><div style="font-size:13px;opacity:0.9;">快速补充护甲装备</div></button>
+      <button id="trader-btn-materials" class="game-btn" style="${getTraderCardButtonStyle("#FFCC80")}"><div style="font-weight:bold;font-size:16px;">用钻石买材料和武器 ⚔️</div><div style="font-size:13px;opacity:0.9;">材料、武器和龙蛋</div></button>
+      <button id="trader-btn-close" class="game-btn" style="${getTraderCardButtonStyle("#B0BEC5")}"><div style="font-weight:bold;font-size:16px;">关闭</div><div style="font-size:13px;opacity:0.9;">离开当前交易页面</div></button>
+    </div>
+  `;
+  bindTraderTap(body.querySelector("#trader-btn-sell"), () => renderTraderSellMaterials(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-armor"), () => renderTraderBuyArmor(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-materials"), () => renderTraderBuyMaterials(modal, village));
+  bindTraderTap(body.querySelector("#trader-btn-close"), closeVillageTrader);
+}
+
+function renderTraderSellMaterials(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const sellable = Object.entries(TRADER_MATERIAL_PRICES)
+    .filter(([itemId]) => Number(inventory?.[itemId]) > 0)
+    .map(([itemId, price]) => {
+      const count = Number(inventory[itemId]) || 0;
+      const label = ITEM_LABELS[itemId] || itemId;
+      return { itemId, price, count, label };
+    });
+  if (!sellable.length) {
+    showToast("🧺 没有可出售材料");
+    renderVillageTraderMain(modal, village);
+    return;
+  }
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">出售材料</h3>
+    <div id="trader-sell-list" style="${getTraderListGridStyle(200)}"></div>
+    <div style="margin-top:12px;">
+      <button id="trader-btn-back-main" class="game-btn">返回</button>
+    </div>
+  `;
+  const list = body.querySelector("#trader-sell-list");
+  sellable.forEach(({ itemId, price, count, label }) => {
+    const btn = document.createElement("button");
+    btn.className = "game-btn";
+    btn.style.cssText = "min-height:92px;padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;line-height:1.55;white-space:normal;border-top:3px solid #4FC3F7;";
+    const icon = (typeof ITEM_ICONS !== 'undefined' && ITEM_ICONS[itemId]) || '';
+    const priceText = itemId === 'arrow'
+      ? `5个=1💎`
+      : `单价${price}💎`;
+    btn.innerHTML = `<span style="font-weight:800;">${icon} ${label}</span><span style="font-size:13px;opacity:0.92;">库存 ${count} · ${priceText}</span>`;
+    bindTraderTap(btn, () => renderTraderSellCount(modal, village, itemId, price, count, label));
+    list?.appendChild(btn);
+  });
+  bindTraderTap(body.querySelector("#trader-btn-back-main"), () => renderVillageTraderMain(modal, village));
+}
+
+function renderTraderSellCount(modal, village, itemId, unitPrice, maxCount, label) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const btnAllText = `全部（${maxCount}）`;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">出售 ${label}</h3>
+    <p style="margin:0 0 12px;color:#E0E0E0;">单价：${unitPrice}💎 / 件，库存：${maxCount}</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button id="trader-sell-1" class="game-btn">卖出 x1</button>
+      <button id="trader-sell-5" class="game-btn">卖出 x5</button>
+      <button id="trader-sell-all" class="game-btn">${btnAllText}</button>
+      <button id="trader-sell-back" class="game-btn">返回材料列表</button>
+    </div>
+  `;
+  bindTraderTap(body.querySelector("#trader-sell-1"), () => {
+    sellMaterialByTrader(itemId, unitPrice, 1);
+    renderTraderSellMaterials(modal, village);
+  });
+  bindTraderTap(body.querySelector("#trader-sell-5"), () => {
+    sellMaterialByTrader(itemId, unitPrice, 5);
+    renderTraderSellMaterials(modal, village);
+  });
+  bindTraderTap(body.querySelector("#trader-sell-all"), () => {
+    sellMaterialByTrader(itemId, unitPrice, maxCount);
+    renderTraderSellMaterials(modal, village);
+  });
+  bindTraderTap(body.querySelector("#trader-sell-back"), () => renderTraderSellMaterials(modal, village));
+}
+
+function sellMaterialByTrader(itemId, unitPrice, requestedCount) {
+  const maxCount = Number(inventory?.[itemId]) || 0;
+  // arrow 按5个一组出售
+  if (itemId === 'arrow') {
+    const groups = Math.floor(Math.min(maxCount, requestedCount) / 5);
+    if (groups <= 0) {
+      showToast("🛒 箭矢不足5个");
+      return false;
+    }
+    const sellCount = groups * 5;
+    inventory.arrow -= sellCount;
+    inventory.diamond = (Number(inventory.diamond) || 0) + groups;
+    if (typeof updateInventoryUI === "function") updateInventoryUI();
+    showToast(`💎 售出箭矢 x${sellCount}，获得${groups}钻石`);
+    return true;
+  }
+  const sellCount = Math.max(0, Math.min(maxCount, Number(requestedCount) || 0));
+  if (sellCount <= 0) {
+    showToast("🛒 没有可出售数量");
+    return false;
+  }
+  inventory[itemId] -= sellCount;
+  inventory.diamond = (Number(inventory.diamond) || 0) + (sellCount * unitPrice);
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
+  showToast(`💎 售出${ITEM_LABELS[itemId] || itemId} x${sellCount}，获得${sellCount * unitPrice}钻石`);
+  return true;
+}
+
+function renderTraderBuyArmor(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const diamondCount = Number(inventory?.diamond) || 0;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">购买盔甲</h3>
+    <p style="margin:0 0 8px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
+    <div id="trader-armor-list" style="${getTraderListGridStyle(180)}"></div>
+    <div style="margin-top:12px;">
+      <button id="trader-btn-back-main" class="game-btn">返回</button>
+    </div>
+  `;
+  const list = body.querySelector("#trader-armor-list");
+  Object.entries(TRADER_ARMOR_PRICES).forEach(([armorId, cost]) => {
+    const armorName = ARMOR_TYPES?.[armorId]?.name || armorId;
+    const btn = document.createElement("button");
+    btn.className = "game-btn";
+    btn.innerHTML = `<div style="font-weight:bold;margin-bottom:4px;">${armorName}</div><div style="font-size:14px;opacity:0.9;">${cost}💎</div>`;
+    btn.style.cssText = getTraderCardButtonStyle("#90CAF9");
+    bindTraderTap(btn, () => {
+      handleTraderBuyArmor(armorId, cost);
+      renderTraderBuyArmor(modal, village);
+    });
+    list?.appendChild(btn);
+  });
+  bindTraderTap(body.querySelector("#trader-btn-back-main"), () => renderVillageTraderMain(modal, village));
+}
+
+function handleTraderBuyArmor(armorId, cost) {
+  if (!armorId || !Number.isFinite(Number(cost))) return false;
+  if ((Number(inventory.diamond) || 0) < Number(cost)) {
+    showToast("💎 钻石不足");
+    return false;
+  }
+  inventory.diamond -= Number(cost);
+  if (typeof addArmorToInventory === "function") addArmorToInventory(armorId);
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
+  const armorName = ARMOR_TYPES?.[armorId]?.name || armorId;
+  showToast(`🛡️ 购买成功：${armorName}`);
+  return true;
+}
+
+function handleTraderBuySunscreen() {
+  const cost = 5;
+  if ((Number(inventory.diamond) || 0) < cost) {
+    showToast("💎 钻石不足");
+    return false;
+  }
+  inventory.diamond -= cost;
+  setVillageBuff("sunscreen", 420000);
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
+  showToast("🧴 防晒霜已生效（7分钟）");
+  showFloatingText("🧴 防晒中", player.x, player.y - 36, "#FFD54F");
+  return true;
+}
+
+function renderTraderBuyMaterials(modal, village) {
+  const body = modal.querySelector("#village-trader-body");
+  if (!body) return;
+  const diamondCount = Number(inventory?.diamond) || 0;
+  body.innerHTML = `
+    <h3 style="margin:0 0 12px;color:#FFD54F;">用钻石买材料和武器 ⚔️</h3>
+    <p style="margin:0 0 8px;color:#E0E0E0;">当前钻石：<b>${diamondCount}</b> 💎</p>
+    <div id="trader-buy-list" style="${getTraderListGridStyle(180)}"></div>
+    <div style="margin-top:12px;">
+      <button id="trader-btn-back-main" class="game-btn">返回</button>
+    </div>
+  `;
+  const list = body.querySelector("#trader-buy-list");
+  TRADER_BUY_ITEMS.forEach(({ id, label, cost, type, amount }) => {
+    const btn = document.createElement("button");
+    btn.className = "game-btn";
+    btn.innerHTML = `<div style="font-weight:bold;margin-bottom:4px;">${label}</div><div style="font-size:14px;opacity:0.9;">${cost}💎</div>`;
+    btn.style.cssText = getTraderCardButtonStyle("#FFCC80");
+    bindTraderTap(btn, () => {
+      handleTraderBuyMaterialItem(id, cost, type, amount);
+      renderTraderBuyMaterials(modal, village);
+    });
+    list?.appendChild(btn);
+  });
+  bindTraderTap(body.querySelector("#trader-btn-back-main"), () => renderVillageTraderMain(modal, village));
+}
+
+function handleTraderBuyMaterialItem(id, cost, type, amount = 1) {
+  const diamonds = Number(inventory?.diamond) || 0;
+  if (diamonds < cost) {
+    showToast("💎 钻石不足");
+    return false;
+  }
+  inventory.diamond -= cost;
+  if (type === "buff" && id === "sunscreen") {
+    setVillageBuff("sunscreen", 420000);
+    showToast("🧴 防晒霜已生效（7分钟）");
+    showFloatingText("🧴 防晒中", player.x, player.y - 36, "#FFD54F");
+  } else {
+    inventory[id] = (Number(inventory[id]) || 0) + amount;
+    const label = ITEM_LABELS?.[id] || id;
+    showToast(`✅ 购买成功：${label} ×${amount}`);
+  }
+  if (typeof updateInventoryUI === "function") updateInventoryUI();
+  return true;
+}
+
+function saveVillageProgress(village) {
+  if (!village) return false;
+  if (village.saved) {
+    showToast(UI_TEXTS.villageAlreadySaved);
+    return false;
+  }
+
+  village.saved = true;
+  village.saveTimestamp = Date.now();
+
+  const checkpoint = {
+    version: 1,
+    timestamp: village.saveTimestamp,
+    villageId: village.id,
+    villageX: village.x,
+    biomeId: village.biomeId,
+    score: Number(score) || 0,
+    playerHp: Number(playerHp) || 0,
+    playerMaxHp: Number(playerMaxHp) || 0,
+    playerX: Number(player?.x) || 0,
+    diamonds: Number(inventory?.diamond) || 0,
+    inventory: { ...(inventory || {}) },
+    equipment: { ...(playerEquipment || {}) },
+    armorInventory: Array.isArray(armorInventory) ? [...armorInventory] : []
+  };
+
+  try {
+    localStorage.setItem('mmwg:villageCheckpoint', JSON.stringify(checkpoint));
+  } catch (_) {}
+
+  if (typeof saveCurrentProgress === 'function') {
+    saveCurrentProgress();
+  }
+  showToast(UI_TEXTS.villageSaved);
+  showFloatingText('💾 已保存', player.x, player.y - 40, '#66BB6A');
+  return true;
+}
+
+function getPlayerBuffStore() {
+  if (!window.playerBuffs || typeof window.playerBuffs !== 'object') {
+    window.playerBuffs = {};
+  }
+  return window.playerBuffs;
+}
+
+function setVillageBuff(buffId, durationMs, payload = {}) {
+  const buffs = getPlayerBuffStore();
+  buffs[buffId] = {
+    ...payload,
+    expiresAt: Date.now() + Math.max(1000, Number(durationMs) || 1000)
+  };
+}
+
+function hasVillageBuff(buffId) {
+  const buffs = getPlayerBuffStore();
+  const buff = buffs[buffId];
+  return !!(buff && Number(buff.expiresAt) > Date.now());
+}
+
+function updateVillageBuffs() {
+  const buffs = getPlayerBuffStore();
+  const now = Date.now();
+  for (const [buffId, buff] of Object.entries(buffs)) {
+    if (!buff || Number(buff.expiresAt) <= now) {
+      delete buffs[buffId];
+      showToast(`🔔 ${buffId} 效果结束`);
+    }
+  }
+}
+
+function addInventoryItem(itemId, count = 1) {
+  if (!itemId) return;
+  if (!inventory[itemId] && inventory[itemId] !== 0) inventory[itemId] = 0;
+  inventory[itemId] += Math.max(1, Number(count) || 1);
+  if (typeof updateInventoryUI === 'function') updateInventoryUI();
+}
+
+const SPECIAL_BUILDING_EFFECTS = {
+  library: {
+    execute(village) {
+      const words = (typeof getVillageWords === 'function' ? getVillageWords(village.biomeId) : []) || [];
+      const picked = [...words].sort(() => Math.random() - 0.5).slice(0, 2);
+      if (picked.length) {
+        const hints = picked.map(w => `${w.en || w}/${w.zh || ''}`.trim()).join(' / ');
+        showToast(`📚 学习: ${hints}`);
+        if (typeof speakWord === 'function') {
+          picked.forEach((w, i) => setTimeout(() => speakWord({ en: w.en || w, zh: w.zh || '' }), i * 700));
+        }
+      }
+      if (typeof addScore === 'function') addScore(30);
+      else score += 30;
+      showFloatingText('+30 分', player.x, player.y - 30, '#FFD54F');
+    }
+  },
+  hot_spring: {
+    execute() {
+      setVillageBuff('antiFreeze', 30000);
+      playerHp = Math.min((Number(playerMaxHp) || 3), (Number(playerHp) || 0) + 2);
+      if (typeof updateHpUI === 'function') updateHpUI();
+      showToast('❤️ 抗冰冻30秒，恢复2点生命');
+      showFloatingText('+2 HP', player.x, player.y - 30, '#80CBC4');
+    }
+  },
+  water_station: {
+    execute() {
+      setVillageBuff('waterProtection', 30000);
+      addInventoryItem('shell', 1);
+      showToast('🛡️ 沙漠保护30秒，获得贝壳x1');
+      showFloatingText('+1 shell', player.x, player.y - 30, '#4FC3F7');
+    }
+  },
+  blacksmith: {
+    execute() {
+      addInventoryItem('iron', 3);
+      if (typeof addScore === 'function') addScore(50);
+      else score += 50;
+      showToast('⚒️ 获得铁块x3，分数+50');
+      showFloatingText('+3 iron +50', player.x, player.y - 30, '#B0BEC5');
+    }
+  },
+  lighthouse: {
+    execute() {
+      setVillageBuff('lighthouse', 45000, { radius: 500 });
+      showToast('🗼 视野增强45秒');
+      showFloatingText('Light+', player.x, player.y - 30, '#FFF176');
+    }
+  },
+  brewing_stand: {
+    execute() {
+      setVillageBuff('fireResistance', 30000);
+      addInventoryItem('mushroom_stew', 1);
+      showToast('🧪 抗火30秒，获得蘑菇煲x1');
+      showFloatingText('FireRes+', player.x, player.y - 30, '#FF8A65');
+    }
+  }
+};
+
+function interactSpecialBuilding(village, buildingType) {
+  if (!village || !buildingType) return false;
+  if (village.specialUsed) {
+    showToast(UI_TEXTS.specialUsed);
+    return false;
+  }
+
+  const effect = SPECIAL_BUILDING_EFFECTS[buildingType];
+  if (!effect) {
+    showToast(UI_TEXTS.specialNoFunc);
+    return false;
+  }
+
+  village.specialUsed = true;
+  effect.execute(village);
+  return true;
+}

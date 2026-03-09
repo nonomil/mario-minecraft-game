@@ -1,0 +1,16 @@
+需要修复的文本：
+
+1. Line 535: '?? BOSS DEFEATED!' → '🎉 击败BOSS!'
+2. Line 537: '?? ${rewardDrops.join...' → '🎁 ${rewardDrops.join...'
+3. Line 765: name: '凋零 Wither' (正确)
+4. Line 1035: name: '恶魂 Ghast' (正确)
+5. Line 1261: name: '烈焰人 Blaze' (正确)
+6. Line 1338: '?? ??!' (Blaze火焰环) → '🔥 火焰环!'
+7. Line 1562: name: '凋零骷髅 Wither Skeleton' (正确)
+8. Line 1660: '?? ??!' (Wither Skeleton骨墙) → '💀 骨墙!'
+9. Line 1977: name: '??? Warden' → '监守者 Warden'
+10. Line 2053: '?' (Warden蓄力) → '⚡'
+11. Line 2083: '??' (Warden震地) → '💥 震地!'
+12. Line 2091: ')))' (Warden音波) (正确)
+13. Line 2127: '??' (Warden暗脉冲) → '🌀 暗脉冲!'
+14. Line 2237: name: '??? Evoker' → '唤魔者 Evoker'

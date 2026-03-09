@@ -1,0 +1,1283 @@
+{
+  "is": {
+    "phrase": "This is my English book."
+  },
+  "for": {
+    "phrase": "This gift is for you."
+  },
+  "look": {
+    "phrase": "Look at the blackboard."
+  },
+  "big": {
+    "phrase": "I see a big dog."
+  },
+  "find": {
+    "phrase": "Can you find your book?"
+  },
+  "little": {
+    "phrase": "I have a little toy."
+  },
+  "it": {
+    "phrase": "It is a sunny day."
+  },
+  "jump": {
+    "phrase": "The rabbit can jump."
+  },
+  "help": {
+    "phrase": "I help my mother."
+  },
+  "and": {
+    "phrase": "I like apples and bananas."
+  },
+  "down": {
+    "phrase": "Please sit down."
+  },
+  "funny": {
+    "phrase": "This story is funny."
+  },
+  "away": {
+    "phrase": "The bird flies away."
+  },
+  "make": {
+    "phrase": "I make a paper boat."
+  },
+  "Blue": {
+    "phrase": "The sky is blue."
+  },
+  "in": {
+    "phrase": "The book is in my bag."
+  },
+  "here": {
+    "phrase": "Come here, please."
+  },
+  "can": {
+    "phrase": "I can swim."
+  },
+  "come": {
+    "phrase": "Come here, please."
+  },
+  "my": {
+    "phrase": "My name is Lily."
+  },
+  "one": {
+    "phrase": "I have one apple."
+  },
+  "Red": {
+    "phrase": "The apple is red."
+  },
+  "play": {
+    "phrase": "We play games after class."
+  },
+  "run": {
+    "phrase": "I run in the park."
+  },
+  "see": {
+    "phrase": "I can see a bird."
+  },
+  "to": {
+    "phrase": "I go to school every day."
+  },
+  "the": {
+    "phrase": "The cat is on the chair."
+  },
+  "three": {
+    "phrase": "I have three pencils."
+  },
+  "Yellow": {
+    "phrase": "The banana is yellow."
+  },
+  "about": {
+    "phrase": "Tell me about your school."
+  },
+  "you": {
+    "phrase": "You are my best friend."
+  },
+  "two": {
+    "phrase": "I have two books."
+  },
+  "we": {
+    "phrase": "We read together every morning."
+  },
+  "up": {
+    "phrase": "Stand up, please."
+  },
+  "where": {
+    "phrase": "Where is your school?"
+  },
+  "afraid": {
+    "phrase": "I am afraid I cannot help you in this matter."
+  },
+  "after": {
+    "phrase": "We play after class."
+  },
+  "afternoon": {
+    "phrase": "Any plan for tomorrow afternoon?"
+  },
+  "again": {
+    "phrase": "Please say it again."
+  },
+  "not": {
+    "phrase": "I am not late today."
+  },
+  "all": {
+    "phrase": "All the children are here."
+  },
+  "also": {
+    "phrase": "She also likes reading."
+  },
+  "always": {
+    "phrase": "I always wash my hands."
+  },
+  "animal": {
+    "phrase": "He's a political animal."
+  },
+  "angry": {
+    "phrase": "An angry mob started looting the warehouse."
+  },
+  "as": {
+    "phrase": "It's not as well made, but it's twice as expensive."
+  },
+  "ask": {
+    "phrase": "I know this is a big ask, but …."
+  },
+  "art": {
+    "phrase": "Sotheby's regularly auctions art for millions."
+  },
+  "are": {
+    "phrase": "They are in the classroom."
+  },
+  "arm": {
+    "phrase": "Shelburne Bay is an arm of Lake Champlain."
+  },
+  "at": {
+    "phrase": "We meet at the school gate."
+  },
+  "aunt": {
+    "phrase": "This is an aunt."
+  },
+  "baby": {
+    "phrase": "Stand up for yourself – don't be such a baby!"
+  },
+  "back": {
+    "phrase": "He sat in the back of the room."
+  },
+  "autumn": {
+    "phrase": "The autumn moonlight is beautiful."
+  },
+  "bad": {
+    "phrase": "They were caught trying to pass bad coinage."
+  },
+  "bag": {
+    "phrase": "He headed back to the bag."
+  },
+  "ball": {
+    "phrase": "I had a ball at that concert."
+  },
+  "be": {
+    "phrase": "Be kind to your classmates."
+  },
+  "banana": {
+    "phrase": "This is a banana."
+  },
+  "basketball": {
+    "phrase": "Why do you like playing basketball?"
+  },
+  "Bear": {
+    "phrase": "That window can be a bear to open."
+  },
+  "me": {
+    "phrase": "Please help me with this question."
+  },
+  "Bed": {
+    "phrase": "The meats and cheeses lay on a bed of lettuce."
+  },
+  "beautiful": {
+    "phrase": "It's beautiful outside, let's go for a walk."
+  },
+  "before": {
+    "phrase": "Brush your teeth before bed."
+  },
+  "beside": {
+    "phrase": "A small table beside the bed."
+  },
+  "behind": {
+    "phrase": "The cat is behind the box."
+  },
+  "between": {
+    "phrase": "The ball is between two chairs."
+  },
+  "am": {
+    "phrase": "I am happy today."
+  },
+  "bike": {
+    "phrase": "Put your bike away."
+  },
+  "Apple": {
+    "phrase": "We learn the word apple today."
+  },
+  "an": {
+    "phrase": "She has an apple."
+  },
+  "blackboard": {
+    "phrase": "What did she write on the blackboard?"
+  },
+  "answer": {
+    "phrase": "He has a lot to answer for."
+  },
+  "Black": {
+    "phrase": "At this point black makes a disastrous move."
+  },
+  "birthday": {
+    "phrase": "This is a birthday."
+  },
+  "bird": {
+    "phrase": "Mike went out with his bird last night."
+  },
+  "any": {
+    "phrase": "Do you have any questions?"
+  },
+  "Book": {
+    "phrase": "We learn the word book today."
+  },
+  "body": {
+    "phrase": "My whole body was sore."
+  },
+  "Boat": {
+    "phrase": "This is my boat."
+  },
+  "Box": {
+    "phrase": "We learn the word box today."
+  },
+  "boy": {
+    "phrase": "This is a boy."
+  },
+  "Bread": {
+    "phrase": "We learn the word bread today."
+  },
+  "breakfast": {
+    "phrase": "This is a breakfast."
+  },
+  "bus": {
+    "phrase": "This is a bus."
+  },
+  "bicycle": {
+    "phrase": "The bicycle needs repair."
+  },
+  "Brown": {
+    "phrase": "We learn the word brown today."
+  },
+  "bring": {
+    "phrase": "I bring every day."
+  },
+  "but": {
+    "phrase": "I am tired, but I keep going."
+  },
+  "begin": {
+    "phrase": "I begin every day."
+  },
+  "buy": {
+    "phrase": "I buy every day."
+  },
+  "brother": {
+    "phrase": "This is a brother."
+  },
+  "busy": {
+    "phrase": "The book is busy."
+  },
+  "Cake": {
+    "phrase": "We learn the word cake today."
+  },
+  "by": {
+    "phrase": "I go to school by bus."
+  },
+  "bye": {
+    "phrase": "This is a bye."
+  },
+  "candy": {
+    "phrase": "I candy every day."
+  },
+  "car": {
+    "phrase": "This is a car."
+  },
+  "cap": {
+    "phrase": "We learn the word cap today."
+  },
+  "card": {
+    "phrase": "Do you accept credit card?"
+  },
+  "chair": {
+    "phrase": "This is a chair."
+  },
+  "Chicken": {
+    "phrase": "We learn the word chicken today."
+  },
+  "Cat": {
+    "phrase": "We learn the word cat today."
+  },
+  "China": {
+    "phrase": "This is a china."
+  },
+  "Chinese": {
+    "phrase": "This is a chinese."
+  },
+  "cinema": {
+    "phrase": "This is a cinema."
+  },
+  "city": {
+    "phrase": "This is a city."
+  },
+  "clever": {
+    "phrase": "The book is clever."
+  },
+  "child": {
+    "phrase": "This is a child."
+  },
+  "class": {
+    "phrase": "This is a class."
+  },
+  "close": {
+    "phrase": "The book is close."
+  },
+  "Clock": {
+    "phrase": "We learn the word clock today."
+  },
+  "cloudy": {
+    "phrase": "The book is cloudy."
+  },
+  "clean": {
+    "phrase": "The book is clean."
+  },
+  "clothes": {
+    "phrase": "This is a clothes."
+  },
+  "computer": {
+    "phrase": "This is a computer."
+  },
+  "coat": {
+    "phrase": "This is a coat."
+  },
+  "cold": {
+    "phrase": "The book is cold."
+  },
+  "cook": {
+    "phrase": "I cook every day."
+  },
+  "cool": {
+    "phrase": "The book is cool."
+  },
+  "could": {
+    "phrase": "I could go now."
+  },
+  "cousin": {
+    "phrase": "This is a cousin."
+  },
+  "cry": {
+    "phrase": "I cry every day."
+  },
+  "dance": {
+    "phrase": "We learn the word dance today."
+  },
+  "Cow": {
+    "phrase": "We learn the word cow today."
+  },
+  "crayon": {
+    "phrase": "This is a crayon."
+  },
+  "day": {
+    "phrase": "This is a day."
+  },
+  "dear": {
+    "phrase": "The book is dear."
+  },
+  "desk": {
+    "phrase": "This is a desk."
+  },
+  "difficult": {
+    "phrase": "The book is difficult."
+  },
+  "do": {
+    "phrase": "Do your homework on time."
+  },
+  "dinner": {
+    "phrase": "This is a dinner."
+  },
+  "call": {
+    "phrase": "I call every day."
+  },
+  "dirty": {
+    "phrase": "The book is dirty."
+  },
+  "draw": {
+    "phrase": "We learn the word draw today."
+  },
+  "Door": {
+    "phrase": "We learn the word door today."
+  },
+  "dog": {
+    "phrase": "This is a dog."
+  },
+  "doctor": {
+    "phrase": "I doctor every day."
+  },
+  "dress": {
+    "phrase": "I dress every day."
+  },
+  "drink": {
+    "phrase": "I drink every day."
+  },
+  "driver": {
+    "phrase": "Tom is an awful driver."
+  },
+  "duck": {
+    "phrase": "This is a duck."
+  },
+  "easy": {
+    "phrase": "The book is easy."
+  },
+  "early": {
+    "phrase": "The book is early."
+  },
+  "Egg": {
+    "phrase": "We learn the word egg today."
+  },
+  "english": {
+    "phrase": "The book is english."
+  },
+  "ear": {
+    "phrase": "This is an ear."
+  },
+  "eat": {
+    "phrase": "I eat every day."
+  },
+  "evening": {
+    "phrase": "This is an evening."
+  },
+  "elephant": {
+    "phrase": "This is an elephant."
+  },
+  "every": {
+    "phrase": "The book is every."
+  },
+  "exercise": {
+    "phrase": "This is an exercise."
+  },
+  "Eye": {
+    "phrase": "We learn the word eye today."
+  },
+  "face": {
+    "phrase": "This is a face."
+  },
+  "family": {
+    "phrase": "This is a family."
+  },
+  "fan": {
+    "phrase": "We learn the word fan today."
+  },
+  "Far": {
+    "phrase": "This is far better."
+  },
+  "fast": {
+    "phrase": "The book is fast."
+  },
+  "farmer": {
+    "phrase": "This is a farmer."
+  },
+  "farm": {
+    "phrase": "I farm every day."
+  },
+  "feel": {
+    "phrase": "I feel every day."
+  },
+  "favorite": {
+    "phrase": "The book is favorite."
+  },
+  "film": {
+    "phrase": "This is a film."
+  },
+  "fine": {
+    "phrase": "The book is fine."
+  },
+  "food": {
+    "phrase": "This is a food."
+  },
+  "Fish": {
+    "phrase": "We learn the word fish today."
+  },
+  "father": {
+    "phrase": "This is a father."
+  },
+  "floor": {
+    "phrase": "This is a floor."
+  },
+  "fly": {
+    "phrase": "I fly every day."
+  },
+  "Foot": {
+    "phrase": "We learn the word foot today."
+  },
+  "football": {
+    "phrase": "This is a football."
+  },
+  "flower": {
+    "phrase": "We learn the word flower today."
+  },
+  "friend": {
+    "phrase": "This is a friend."
+  },
+  "dad": {
+    "phrase": "This is a dad."
+  },
+  "game": {
+    "phrase": "This is a game."
+  },
+  "from": {
+    "phrase": "I am from China."
+  },
+  "get": {
+    "phrase": "I get every day."
+  },
+  "give": {
+    "phrase": "I give every day."
+  },
+  "girl": {
+    "phrase": "This is a girl."
+  },
+  "Green": {
+    "phrase": "We learn the word green today."
+  },
+  "hair": {
+    "phrase": "This is a hair."
+  },
+  "happy": {
+    "phrase": "The book is happy."
+  },
+  "half": {
+    "phrase": "This is a half."
+  },
+  "hand": {
+    "phrase": "This is a hand."
+  },
+  "have": {
+    "phrase": "I have a new pencil."
+  },
+  "great": {
+    "phrase": "The book is great."
+  },
+  "Head": {
+    "phrase": "We learn the word head today."
+  },
+  "healthy": {
+    "phrase": "The book is healthy."
+  },
+  "hear": {
+    "phrase": "I hear every day."
+  },
+  "he": {
+    "phrase": "He likes science."
+  },
+  "heavy": {
+    "phrase": "We learn the word heavy today."
+  },
+  "hello": {
+    "phrase": "We learn the word hello today."
+  },
+  "her": {
+    "phrase": "Her book is on the desk."
+  },
+  "high": {
+    "phrase": "The book is high."
+  },
+  "Fruit": {
+    "phrase": "We learn the word fruit today."
+  },
+  "his": {
+    "phrase": "His bike is red."
+  },
+  "him": {
+    "phrase": "I help him after school."
+  },
+  "house": {
+    "phrase": "This is a house."
+  },
+  "hospital": {
+    "phrase": "This is a hospital."
+  },
+  "holiday": {
+    "phrase": "This is a holiday."
+  },
+  "hot": {
+    "phrase": "The book is hot."
+  },
+  "Horse": {
+    "phrase": "We learn the word horse today."
+  },
+  "hour": {
+    "phrase": "This is a hour."
+  },
+  "home": {
+    "phrase": "This is a home."
+  },
+  "idea": {
+    "phrase": "This is an idea."
+  },
+  "hungry": {
+    "phrase": "The book is hungry."
+  },
+  "how": {
+    "phrase": "Please do it how."
+  },
+  "interesting": {
+    "phrase": "The book is interesting."
+  },
+  "Grass": {
+    "phrase": "We learn the word grass today."
+  },
+  "ill": {
+    "phrase": "The book is ill."
+  },
+  "juice": {
+    "phrase": "This is a juice."
+  },
+  "its": {
+    "phrase": "The dog is wagging its tail."
+  },
+  "just": {
+    "phrase": "Please do it just."
+  },
+  "kid": {
+    "phrase": "This is a kid."
+  },
+  "kitchen": {
+    "phrase": "This is a kitchen."
+  },
+  "lesson": {
+    "phrase": "This is a lesson."
+  },
+  "kite": {
+    "phrase": "This is a kite."
+  },
+  "kind": {
+    "phrase": "This is a kind."
+  },
+  "lake": {
+    "phrase": "This is a lake."
+  },
+  "late": {
+    "phrase": "The book is late."
+  },
+  "let": {
+    "phrase": "I let every day."
+  },
+  "leg": {
+    "phrase": "This is a leg."
+  },
+  "know": {
+    "phrase": "I know every day."
+  },
+  "Light": {
+    "phrase": "We learn the word light today."
+  },
+  "like": {
+    "phrase": "I like every day."
+  },
+  "left": {
+    "phrase": "The book is left."
+  },
+  "library": {
+    "phrase": "This is a library."
+  },
+  "live": {
+    "phrase": "The book is live."
+  },
+  "listen": {
+    "phrase": "I listen every day."
+  },
+  "long": {
+    "phrase": "This is a long."
+  },
+  "love": {
+    "phrase": "This is a love."
+  },
+  "man": {
+    "phrase": "This is a man."
+  },
+  "lunch": {
+    "phrase": "This is a lunch."
+  },
+  "many": {
+    "phrase": "This is for many."
+  },
+  "math": {
+    "phrase": "This is a math."
+  },
+  "miss": {
+    "phrase": "This is a miss."
+  },
+  "maths": {
+    "phrase": "This is a maths."
+  },
+  "Map": {
+    "phrase": "We learn the word map today."
+  },
+  "minute": {
+    "phrase": "This is a minute."
+  },
+  "may": {
+    "phrase": "I may go now."
+  },
+  "mom": {
+    "phrase": "This is a mom."
+  },
+  "Milk": {
+    "phrase": "We learn the word milk today."
+  },
+  "monkey": {
+    "phrase": "This is a monkey."
+  },
+  "moon": {
+    "phrase": "This is a moon."
+  },
+  "month": {
+    "phrase": "This is a month."
+  },
+  "meet": {
+    "phrase": "I meet every day."
+  },
+  "mother": {
+    "phrase": "This is a mother."
+  },
+  "morning": {
+    "phrase": "This is a morning."
+  },
+  "mouth": {
+    "phrase": "This is a mouth."
+  },
+  "much": {
+    "phrase": "Please do it much."
+  },
+  "music": {
+    "phrase": "We learn the word music today."
+  },
+  "Name": {
+    "phrase": "We learn the word name today."
+  },
+  "near": {
+    "phrase": "The book is near."
+  },
+  "new": {
+    "phrase": "The book is new."
+  },
+  "next": {
+    "phrase": "Please do it next."
+  },
+  "night": {
+    "phrase": "We learn the word night today."
+  },
+  "no": {
+    "phrase": "No, thank you."
+  },
+  "nurse": {
+    "phrase": "I nurse every day."
+  },
+  "nose": {
+    "phrase": "This is a nose."
+  },
+  "now": {
+    "phrase": "Please do it now."
+  },
+  "nice": {
+    "phrase": "The book is nice."
+  },
+  "of": {
+    "phrase": "A cup of milk is on the table."
+  },
+  "noodle": {
+    "phrase": "This is a noodle."
+  },
+  "often": {
+    "phrase": "Please do it often."
+  },
+  "on": {
+    "phrase": "The pencil is on the desk."
+  },
+  "old": {
+    "phrase": "The book is old."
+  },
+  "once": {
+    "phrase": "Please do it once."
+  },
+  "open": {
+    "phrase": "The book is open."
+  },
+  "or": {
+    "phrase": "Do you want tea or milk?"
+  },
+  "Orange": {
+    "phrase": "Does she like orange?"
+  },
+  "over": {
+    "phrase": "Please do it over."
+  },
+  "our": {
+    "phrase": "Our class starts at eight."
+  },
+  "panda": {
+    "phrase": "We learn the word panda today."
+  },
+  "party": {
+    "phrase": "This is a party."
+  },
+  "park": {
+    "phrase": "You may park here."
+  },
+  "pen": {
+    "phrase": "This is a pen."
+  },
+  "photo": {
+    "phrase": "This is a photo."
+  },
+  "pencil": {
+    "phrase": "This is a pencil."
+  },
+  "people": {
+    "phrase": "This is a people."
+  },
+  "parent": {
+    "phrase": "This is a parent."
+  },
+  "place": {
+    "phrase": "This is a place."
+  },
+  "picture": {
+    "phrase": "This is a picture."
+  },
+  "pig": {
+    "phrase": "Some religions prohibit their adherents from eating pig."
+  },
+  "plant": {
+    "phrase": "We learn the word plant today."
+  },
+  "please": {
+    "phrase": "I please every day."
+  },
+  "plane": {
+    "phrase": "This is a plane."
+  },
+  "police": {
+    "phrase": "This is a police."
+  },
+  "Potato": {
+    "phrase": "We learn the word potato today."
+  },
+  "rain": {
+    "phrase": "A rain of mortar fire fell on our trenches."
+  },
+  "put": {
+    "phrase": "She put her books on the table."
+  },
+  "pupil": {
+    "phrase": "This is a pupil."
+  },
+  "river": {
+    "phrase": "This is a river."
+  },
+  "rice": {
+    "phrase": "This is a rice."
+  },
+  "right": {
+    "phrase": "Is this the right software for my computer?"
+  },
+  "say": {
+    "phrase": "Say, what did you think about the movie?"
+  },
+  "room": {
+    "phrase": "The room was on its feet."
+  },
+  "round": {
+    "phrase": "The baker sold us a round dozen."
+  },
+  "ruler": {
+    "phrase": "This is a ruler."
+  },
+  "sad": {
+    "phrase": "The book is sad."
+  },
+  "school": {
+    "phrase": "He was a gentleman of the old school."
+  },
+  "science": {
+    "phrase": "My favorite subjects at school are science, mathematics, and history."
+  },
+  "season": {
+    "phrase": "The third season of Friends aired from 1996 to 1997."
+  },
+  "schoolbag": {
+    "phrase": "This is a schoolbag."
+  },
+  "she": {
+    "phrase": "She sings very well."
+  },
+  "Sheep": {
+    "phrase": "We learn the word sheep today."
+  },
+  "ship": {
+    "phrase": "I ship Kirk and Spock in “Star Trek”."
+  },
+  "playground": {
+    "phrase": "This is a playground."
+  },
+  "shop": {
+    "phrase": "This is where I do my weekly shop."
+  },
+  "shoe": {
+    "phrase": "This is a shoe."
+  },
+  "sister": {
+    "phrase": "My sister is always driving me crazy."
+  },
+  "sit": {
+    "phrase": "I currently sit on a standards committee."
+  },
+  "shirt": {
+    "phrase": "It can take a while to learn how to iron a shirt properly."
+  },
+  "sing": {
+    "phrase": "The sauce really makes this lamb sing."
+  },
+  "shorts": {
+    "phrase": "Jessica hated covering her legs, so she usually wore shorts."
+  },
+  "small": {
+    "phrase": "The book is small."
+  },
+  "short": {
+    "phrase": "Jones smashes a grounder between third and short."
+  },
+  "skirt": {
+    "phrase": "This is a skirt."
+  },
+  "sleep": {
+    "phrase": "I sleep every day."
+  },
+  "slow": {
+    "phrase": "We learn the word slow today."
+  },
+  "Snow": {
+    "phrase": "We learn the word snow today."
+  },
+  "sock": {
+    "phrase": "I sock every day."
+  },
+  "some": {
+    "phrase": "The book is some."
+  },
+  "read": {
+    "phrase": "What's your read of the current political situation?"
+  },
+  "song": {
+    "phrase": "This is a song."
+  },
+  "sometimes": {
+    "phrase": "Please do it sometimes."
+  },
+  "sorry": {
+    "phrase": "The book is sorry."
+  },
+  "Soup": {
+    "phrase": "We learn the word soup today."
+  },
+  "sport": {
+    "phrase": "I sport every day."
+  },
+  "spring": {
+    "phrase": "This is a spring."
+  },
+  "Star": {
+    "phrase": "We learn the word star today."
+  },
+  "speak": {
+    "phrase": "I speak every day."
+  },
+  "Stand": {
+    "phrase": "We learn the word stand today."
+  },
+  "street": {
+    "phrase": "This is a street."
+  },
+  "stop": {
+    "phrase": "I stop every day."
+  },
+  "strong": {
+    "phrase": "The book is strong."
+  },
+  "summer": {
+    "phrase": "This is a summer."
+  },
+  "study": {
+    "phrase": "This is a study."
+  },
+  "sun": {
+    "phrase": "This is a sun."
+  },
+  "story": {
+    "phrase": "This is a story."
+  },
+  "subject": {
+    "phrase": "This is a subject."
+  },
+  "sunny": {
+    "phrase": "The book is sunny."
+  },
+  "sweater": {
+    "phrase": "This is a sweater."
+  },
+  "supermarket": {
+    "phrase": "This is a supermarket."
+  },
+  "Table": {
+    "phrase": "We learn the word table today."
+  },
+  "swim": {
+    "phrase": "I swim every day."
+  },
+  "take": {
+    "phrase": "I take every day."
+  },
+  "taxi": {
+    "phrase": "Not a single taxi stopped."
+  },
+  "tall": {
+    "phrase": "We learn the word tall today."
+  },
+  "talk": {
+    "phrase": "I talk every day."
+  },
+  "teacher": {
+    "phrase": "This is a teacher."
+  },
+  "tea": {
+    "phrase": "This is a tea."
+  },
+  "their": {
+    "phrase": "Their teacher is very kind."
+  },
+  "tell": {
+    "phrase": "I tell every day."
+  },
+  "them": {
+    "phrase": "We help them clean the room."
+  },
+  "that": {
+    "phrase": "That is my classroom."
+  },
+  "they": {
+    "phrase": "They play football after school."
+  },
+  "there": {
+    "phrase": "There is a tree near our school."
+  },
+  "thin": {
+    "phrase": "The book is thin."
+  },
+  "this": {
+    "phrase": "This is my ruler."
+  },
+  "think": {
+    "phrase": "I think every day."
+  },
+  "tiger": {
+    "phrase": "This is a tiger."
+  },
+  "time": {
+    "phrase": "This is a time."
+  },
+  "then": {
+    "phrase": "Please do it then."
+  },
+  "those": {
+    "phrase": "Those are tall trees."
+  },
+  "today": {
+    "phrase": "Please do it today."
+  },
+  "toilet": {
+    "phrase": "This is a toilet."
+  },
+  "tomato": {
+    "phrase": "This is a tomato."
+  },
+  "tired": {
+    "phrase": "The book is tired."
+  },
+  "too": {
+    "phrase": "Please do it too."
+  },
+  "toy": {
+    "phrase": "This is a toy."
+  },
+  "train": {
+    "phrase": "This is a train."
+  },
+  "tomorrow": {
+    "phrase": "This is a tomorrow."
+  },
+  "travel": {
+    "phrase": "I travel every day."
+  },
+  "thank": {
+    "phrase": "I thank every day."
+  },
+  "trousers": {
+    "phrase": "This is a trousers."
+  },
+  "these": {
+    "phrase": "These are my books."
+  },
+  "turn": {
+    "phrase": "I turn every day."
+  },
+  "tree": {
+    "phrase": "This is a tree."
+  },
+  "try": {
+    "phrase": "I try every day."
+  },
+  "umbrella": {
+    "phrase": "This is an umbrella."
+  },
+  "uncle": {
+    "phrase": "This is an uncle."
+  },
+  "us": {
+    "phrase": "Our teacher helps us."
+  },
+  "use": {
+    "phrase": "This is an use."
+  },
+  "under": {
+    "phrase": "The cat is under the table."
+  },
+  "very": {
+    "phrase": "It is very cold today."
+  },
+  "Wait": {
+    "phrase": "We learn the word wait today."
+  },
+  "walk": {
+    "phrase": "This is a walk."
+  },
+  "vegetable": {
+    "phrase": "This is a vegetable."
+  },
+  "want": {
+    "phrase": "I want every day."
+  },
+  "wash": {
+    "phrase": "This is a wash."
+  },
+  "warm": {
+    "phrase": "The book is warm."
+  },
+  "Water": {
+    "phrase": "We learn the word water today."
+  },
+  "welcome": {
+    "phrase": "The book is welcome."
+  },
+  "way": {
+    "phrase": "This is a way."
+  },
+  "wear": {
+    "phrase": "I wear every day."
+  },
+  "watch": {
+    "phrase": "I watch every day."
+  },
+  "week": {
+    "phrase": "This is a week."
+  },
+  "visit": {
+    "phrase": "This is a visit."
+  },
+  "weather": {
+    "phrase": "This is a weather."
+  },
+  "what": {
+    "phrase": "What is your name?"
+  },
+  "when": {
+    "phrase": "When do you get up?"
+  },
+  "well": {
+    "phrase": "Please do it well."
+  },
+  "White": {
+    "phrase": "Is your dog white?"
+  },
+  "who": {
+    "phrase": "Who is your English teacher?"
+  },
+  "why": {
+    "phrase": "Why are you late?"
+  },
+  "windy": {
+    "phrase": "The book is windy."
+  },
+  "window": {
+    "phrase": "This is a window."
+  },
+  "whose": {
+    "phrase": "Whose pencil is this?"
+  },
+  "with": {
+    "phrase": "I play with my friends."
+  },
+  "woman": {
+    "phrase": "This is a woman."
+  },
+  "winter": {
+    "phrase": "This is a winter."
+  },
+  "word": {
+    "phrase": "We learn the word word today."
+  },
+  "wrong": {
+    "phrase": "Please do it wrong."
+  },
+  "write": {
+    "phrase": "We learn the word write today."
+  },
+  "work": {
+    "phrase": "This is a work."
+  },
+  "worker": {
+    "phrase": "This is a worker."
+  },
+  "wonderful": {
+    "phrase": "The book is wonderful."
+  },
+  "worry": {
+    "phrase": "This is a worry."
+  },
+  "year": {
+    "phrase": "This is a year."
+  },
+  "young": {
+    "phrase": "Is the teacher young?"
+  },
+  "your": {
+    "phrase": "Your bag is very nice."
+  },
+  "yes": {
+    "phrase": "Yes, I understand."
+  },
+  "zoo": {
+    "phrase": "This is a zoo."
+  },
+  "yesterday": {
+    "phrase": "This is a yesterday."
+  },
+  "color": {
+    "phrase": "We learn the word color today."
+  }
+}

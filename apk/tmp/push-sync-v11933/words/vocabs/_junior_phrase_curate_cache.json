@@ -1,0 +1,2802 @@
+{
+  "able": {
+    "phrase": "I’ll see you as soon as I’m able.",
+    "phraseZh": "例句：I’ll see you as soon as I’m able."
+  },
+  "about": {
+    "phrase": "This idea has been about for a while but has only recently become fashionable.",
+    "phraseZh": "例句：This idea has been about for a while but has only recently become fashionable."
+  },
+  "accept": {
+    "phrase": "The Boy Scouts were going to accept him as a member.",
+    "phraseZh": "例句：The Boy Scouts were going to accept him as a member."
+  },
+  "absent": {
+    "phrase": "The part was rudimental or absent.",
+    "phraseZh": "例句：The part was rudimental or absent."
+  },
+  "accent": {
+    "phrase": "At this hotel, the accent is on luxury.",
+    "phraseZh": "例句：At this hotel, the accent is on luxury."
+  },
+  "abroad": {
+    "phrase": "A tree spreads its branches abroad.",
+    "phraseZh": "例句：A tree spreads its branches abroad."
+  },
+  "above": {
+    "phrase": "He's in a better place now, floating free as the clouds above.",
+    "phraseZh": "例句：He's in a better place now, floating free as the clouds above."
+  },
+  "ability": {
+    "phrase": "This phone has the ability to have its software upgraded wirelessly.",
+    "phraseZh": "例句：This phone has the ability to have its software upgraded wirelessly."
+  },
+  "ache": {
+    "phrase": "I use ache in daily life.",
+    "phraseZh": "例句：I use ache in daily life."
+  },
+  "accessory": {
+    "phrase": "She was accessory to the riot.",
+    "phraseZh": "例句：She was accessory to the riot."
+  },
+  "action": {
+    "phrase": "Knead bread with a rocking action.",
+    "phraseZh": "例句：Knead bread with a rocking action."
+  },
+  "act": {
+    "phrase": "an act of goodwill.",
+    "phraseZh": "例句：an act of goodwill."
+  },
+  "across": {
+    "phrase": "she helped the blind man across; the river is half a mile across.",
+    "phraseZh": "例句：she helped the blind man across; the river is half a mile across."
+  },
+  "active": {
+    "phrase": "certain active principles.",
+    "phraseZh": "例句：certain active principles."
+  },
+  "accident": {
+    "phrase": "to die by an accident.",
+    "phraseZh": "例句：to die by an accident."
+  },
+  "achieve": {
+    "phrase": "Show all the spoils by valiant kings achieved.",
+    "phraseZh": "例句：Show all the spoils by valiant kings achieved."
+  },
+  "add": {
+    "phrase": "to add numbers.",
+    "phraseZh": "例句：to add numbers."
+  },
+  "adult": {
+    "phrase": "an adult human, animal, or plant.",
+    "phraseZh": "例句：an adult human, animal, or plant."
+  },
+  "adverb": {
+    "phrase": "I often went outside hiking during my stay in Japan.",
+    "phraseZh": "例句：I often went outside hiking during my stay in Japan."
+  },
+  "advantage": {
+    "phrase": "The enemy had the advantage of a more elevated position.",
+    "phraseZh": "例句：The enemy had the advantage of a more elevated position."
+  },
+  "activity": {
+    "phrase": "Pit row was abuzz with activity.",
+    "phraseZh": "例句：Pit row was abuzz with activity."
+  },
+  "advertisement": {
+    "phrase": "The good manners and intelligence of the students are an advertisement for the school.",
+    "phraseZh": "例句：The good manners and intelligence of the students are an advertisement for the school."
+  },
+  "address": {
+    "phrase": "He addressed a letter.",
+    "phraseZh": "例句：He addressed a letter."
+  },
+  "advice": {
+    "phrase": "She was offered various piece of advice on what to do with her new-found wealth.",
+    "phraseZh": "例句：She was offered various piece of advice on what to do with her new-found wealth."
+  },
+  "after": {
+    "phrase": "The after gun is abaft the forward gun.",
+    "phraseZh": "例句：The after gun is abaft the forward gun."
+  },
+  "afford": {
+    "phrase": "I think we can afford the extra hour it will take. We can only afford to buy a small car at the moment.",
+    "phraseZh": "例句：I think we can afford the extra hour it will take. We can only afford to buy a small car at the moment."
+  },
+  "Africa": {
+    "phrase": "I use Africa in daily life.",
+    "phraseZh": "例句：I use Africa in daily life."
+  },
+  "advise": {
+    "phrase": "The dentist advised me to brush three times a day.",
+    "phraseZh": "例句：The dentist advised me to brush three times a day."
+  },
+  "again": {
+    "phrase": "Great, thanks again!",
+    "phraseZh": "例句：Great, thanks again!"
+  },
+  "afraid": {
+    "phrase": "He is afraid of death.",
+    "phraseZh": "例句：He is afraid of death."
+  },
+  "afternoon": {
+    "phrase": "I use afternoon in daily life.",
+    "phraseZh": "例句：I use afternoon in daily life."
+  },
+  "against": {
+    "phrase": "It is hard work to swim against the current.",
+    "phraseZh": "例句：It is hard work to swim against the current."
+  },
+  "agent": {
+    "phrase": "I use agent in daily life.",
+    "phraseZh": "例句：I use agent in daily life."
+  },
+  "ago": {
+    "phrase": "in days ago/in days agone.",
+    "phraseZh": "例句：in days ago/in days agone."
+  },
+  "agree": {
+    "phrase": "all parties agree in the expediency of the law.",
+    "phraseZh": "例句：all parties agree in the expediency of the law."
+  },
+  "aid": {
+    "phrase": "He came to my aid when I was foundering.",
+    "phraseZh": "例句：He came to my aid when I was foundering."
+  },
+  "age": {
+    "phrase": "the age of infancy.",
+    "phraseZh": "例句：the age of infancy."
+  },
+  "agreement": {
+    "phrase": "to enter an agreement; the UK and US negotiators nearing agreement; he nodded his agreement.",
+    "phraseZh": "例句：to enter an agreement; the UK and US negotiators nearing agreement; he nodded his agreement."
+  },
+  "aggressive": {
+    "phrase": "an aggressive policy, war, person, nation.",
+    "phraseZh": "例句：an aggressive policy, war, person, nation."
+  },
+  "aim": {
+    "phrase": "Take time with the aim of your gun.",
+    "phraseZh": "例句：Take time with the aim of your gun."
+  },
+  "air": {
+    "phrase": "I'm going outside to get some air.",
+    "phraseZh": "例句：I'm going outside to get some air."
+  },
+  "airplane": {
+    "phrase": "I use airplane in daily life.",
+    "phraseZh": "例句：I use airplane in daily life."
+  },
+  "airline": {
+    "phrase": "I use airline in daily life.",
+    "phraseZh": "例句：I use airline in daily life."
+  },
+  "alien": {
+    "phrase": "alien subjects, enemies, property, or shores.",
+    "phraseZh": "例句：alien subjects, enemies, property, or shores."
+  },
+  "album": {
+    "phrase": "I use album in daily life.",
+    "phraseZh": "例句：I use album in daily life."
+  },
+  "alive": {
+    "phrase": "As long as the plant is alive, he will continue to water it.",
+    "phraseZh": "例句：As long as the plant is alive, he will continue to water it."
+  },
+  "airport": {
+    "phrase": "Because of this, and contrary to popular belief, British airports primarily act as giant wealth extractors, transporting.",
+    "phraseZh": "例句：Because of this, and contrary to popular belief, British airports primarily act as giant wealth extractors, transporting."
+  },
+  "all": {
+    "phrase": "She gave her all, and collapsed at the finish line.",
+    "phraseZh": "例句：She gave her all, and collapsed at the finish line."
+  },
+  "allow": {
+    "phrase": "to allow a right; to allow a claim; to allow the truth of a proposition.",
+    "phraseZh": "例句：to allow a right; to allow a claim; to allow the truth of a proposition."
+  },
+  "alone": {
+    "phrase": "I can't ask for help because I am alone.",
+    "phraseZh": "例句：I can't ask for help because I am alone."
+  },
+  "along": {
+    "phrase": "John played the piano and everyone sang along.",
+    "phraseZh": "例句：John played the piano and everyone sang along."
+  },
+  "alright": {
+    "phrase": "The car is all right. It gets me there, anyway.",
+    "phraseZh": "例句：The car is all right. It gets me there, anyway."
+  },
+  "almost": {
+    "phrase": "Almost all people went there. - Not all but very close to it.",
+    "phraseZh": "例句：Almost all people went there. - Not all but very close to it."
+  },
+  "already": {
+    "phrase": "Are you quitting already?",
+    "phraseZh": "例句：Are you quitting already?"
+  },
+  "also": {
+    "phrase": "They had porridge for breakfast, and also toast.",
+    "phraseZh": "例句：They had porridge for breakfast, and also toast."
+  },
+  "aloud": {
+    "phrase": "Try speaking aloud rather than whispering.",
+    "phraseZh": "例句：Try speaking aloud rather than whispering."
+  },
+  "always": {
+    "phrase": "Airplanes did not always exist as a form of transportation.",
+    "phraseZh": "例句：Airplanes did not always exist as a form of transportation."
+  },
+  "amazing": {
+    "phrase": "2015, June 10, Lindsey Bever, \"Morning Mix: Another reason seeing-eye dogs are amazing\"http//www.washingtonpost.com/news.",
+    "phraseZh": "例句：2015, June 10, Lindsey Bever, \"Morning Mix: Another reason seeing-eye dogs are amazing\"http//www.washingtonpost.com/news."
+  },
+  "am": {
+    "phrase": "I use am in daily life.",
+    "phraseZh": "例句：I use am in daily life."
+  },
+  "american": {
+    "phrase": "I use american in daily life.",
+    "phraseZh": "例句：I use american in daily life."
+  },
+  "America": {
+    "phrase": "I use America in daily life.",
+    "phraseZh": "例句：I use America in daily life."
+  },
+  "although": {
+    "phrase": "Although it was very muddy, the football game went on.",
+    "phraseZh": "例句：Although it was very muddy, the football game went on."
+  },
+  "among": {
+    "phrase": "He is among the few who completely understand the subject.",
+    "phraseZh": "例句：He is among the few who completely understand the subject."
+  },
+  "amount": {
+    "phrase": "The amount of atmospheric pollution threatens a health crisis.",
+    "phraseZh": "例句：The amount of atmospheric pollution threatens a health crisis."
+  },
+  "an": {
+    "phrase": "An it harm none, do what ye will.",
+    "phraseZh": "例句：An it harm none, do what ye will."
+  },
+  "ancient": {
+    "phrase": "an ancient city an ancient forest.",
+    "phraseZh": "例句：an ancient city an ancient forest."
+  },
+  "angry": {
+    "phrase": "An angry mob started looting the warehouse.",
+    "phraseZh": "例句：An angry mob started looting the warehouse."
+  },
+  "and": {
+    "phrase": "I use and in daily life.",
+    "phraseZh": "例句：I use and in daily life."
+  },
+  "animal": {
+    "phrase": "He's a political animal.",
+    "phraseZh": "例句：He's a political animal."
+  },
+  "announce": {
+    "phrase": "I use announce in daily life.",
+    "phraseZh": "例句：I use announce in daily life."
+  },
+  "another": {
+    "phrase": "There is one sterling and here is another.",
+    "phraseZh": "例句：There is one sterling and here is another."
+  },
+  "answer": {
+    "phrase": "Her answer to his proposal was a slap in the face.",
+    "phraseZh": "例句：Her answer to his proposal was a slap in the face."
+  },
+  "anybody": {
+    "phrase": "Anybody will do.",
+    "phraseZh": "例句：Anybody will do."
+  },
+  "any": {
+    "phrase": "I will not remain here any longer.",
+    "phraseZh": "例句：I will not remain here any longer."
+  },
+  "anxious": {
+    "phrase": "I could tell she was anxious as she was biting her nails.",
+    "phraseZh": "例句：I could tell she was anxious as she was biting her nails."
+  },
+  "anyone": {
+    "phrase": "Almost anyone can change a light bulb.",
+    "phraseZh": "例句：Almost anyone can change a light bulb."
+  },
+  "anything": {
+    "phrase": "I would not do it for anything.",
+    "phraseZh": "例句：I would not do it for anything."
+  },
+  "anymore": {
+    "phrase": "I eat fish anymore.",
+    "phraseZh": "例句：I eat fish anymore."
+  },
+  "ant": {
+    "phrase": "I use ant in daily life.",
+    "phraseZh": "例句：I use ant in daily life."
+  },
+  "anyway": {
+    "phrase": "He didn't enjoy washing his car, but it was so dirty that he did it anyway.",
+    "phraseZh": "例句：He didn't enjoy washing his car, but it was so dirty that he did it anyway."
+  },
+  "anywhere": {
+    "phrase": "I don't know where I left my keys. They could be anywhere.",
+    "phraseZh": "例句：I don't know where I left my keys. They could be anywhere."
+  },
+  "appear": {
+    "phrase": "A great writer appeared at that time.",
+    "phraseZh": "例句：A great writer appeared at that time."
+  },
+  "april": {
+    "phrase": "I use april in daily life.",
+    "phraseZh": "例句：I use april in daily life."
+  },
+  "Apple": {
+    "phrase": "I use Apple in daily life.",
+    "phraseZh": "例句：I use Apple in daily life."
+  },
+  "are": {
+    "phrase": "I use are in daily life.",
+    "phraseZh": "例句：I use are in daily life."
+  },
+  "appointment": {
+    "phrase": "His appointment was deemed suitable.",
+    "phraseZh": "例句：His appointment was deemed suitable."
+  },
+  "argue": {
+    "phrase": "He also argued for stronger methods to be used against China.",
+    "phraseZh": "例句：He also argued for stronger methods to be used against China."
+  },
+  "area": {
+    "phrase": "The photo is a little dark in that area.",
+    "phraseZh": "例句：The photo is a little dark in that area."
+  },
+  "around": {
+    "phrase": "Is Clare around today?",
+    "phraseZh": "例句：Is Clare around today?"
+  },
+  "army": {
+    "phrase": "The army was sent in to quell the uprising.",
+    "phraseZh": "例句：The army was sent in to quell the uprising."
+  },
+  "arrive": {
+    "phrase": "He arrived home for two days.",
+    "phraseZh": "例句：He arrived home for two days."
+  },
+  "article": {
+    "phrase": "a sales article.",
+    "phraseZh": "例句：a sales article."
+  },
+  "artist": {
+    "phrase": "I use artist in daily life.",
+    "phraseZh": "例句：I use artist in daily life."
+  },
+  "arm": {
+    "phrase": "She stood with her right arm extended and her palm forward to indicate “Stop!”.",
+    "phraseZh": "例句：She stood with her right arm extended and her palm forward to indicate “Stop!”."
+  },
+  "art": {
+    "phrase": "There is a debate as to whether graffiti is art or vandalism.",
+    "phraseZh": "例句：There is a debate as to whether graffiti is art or vandalism."
+  },
+  "as": {
+    "phrase": "It's not as well made, but it's twice as expensive.",
+    "phraseZh": "例句：It's not as well made, but it's twice as expensive."
+  },
+  "Asia": {
+    "phrase": "I use Asia in daily life.",
+    "phraseZh": "例句：I use Asia in daily life."
+  },
+  "Asian": {
+    "phrase": "I use Asian in daily life.",
+    "phraseZh": "例句：I use Asian in daily life."
+  },
+  "ask": {
+    "phrase": "I know this is a big ask, but ….",
+    "phraseZh": "例句：I know this is a big ask, but …."
+  },
+  "asleep": {
+    "phrase": "I was asleep when you called.",
+    "phraseZh": "例句：I was asleep when you called."
+  },
+  "assistant": {
+    "phrase": "an assistant surgeon.",
+    "phraseZh": "例句：an assistant surgeon."
+  },
+  "at": {
+    "phrase": "Caesar was at Rome; at the corner of Fourth Street and Vine; at Jim’s house.",
+    "phraseZh": "例句：Caesar was at Rome; at the corner of Fourth Street and Vine; at Jim’s house."
+  },
+  "association": {
+    "phrase": "I use association in daily life.",
+    "phraseZh": "例句：I use association in daily life."
+  },
+  "Atlantic": {
+    "phrase": "I use Atlantic in daily life.",
+    "phraseZh": "例句：I use Atlantic in daily life."
+  },
+  "aunt": {
+    "phrase": "I use aunt in daily life.",
+    "phraseZh": "例句：I use aunt in daily life."
+  },
+  "attention": {
+    "phrase": "Please direct your attention to the following words.",
+    "phraseZh": "例句：Please direct your attention to the following words."
+  },
+  "attempt": {
+    "phrase": "It was worth the attempt.",
+    "phraseZh": "例句：It was worth the attempt."
+  },
+  "attendant": {
+    "phrase": "the widow attendant to the heir.",
+    "phraseZh": "例句：the widow attendant to the heir."
+  },
+  "August": {
+    "phrase": "an august patron of the arts.",
+    "phraseZh": "例句：an august patron of the arts."
+  },
+  "Australia": {
+    "phrase": "I use Australia in daily life.",
+    "phraseZh": "例句：I use Australia in daily life."
+  },
+  "attitude": {
+    "phrase": "The ballet dancer walked with a graceful attitude.",
+    "phraseZh": "例句：The ballet dancer walked with a graceful attitude."
+  },
+  "Australian": {
+    "phrase": "I use Australian in daily life.",
+    "phraseZh": "例句：I use Australian in daily life."
+  },
+  "author": {
+    "phrase": "Have you read any Corinthian authors?",
+    "phraseZh": "例句：Have you read any Corinthian authors?"
+  },
+  "avenue": {
+    "phrase": "There are several avenues by which we can approach this problem.",
+    "phraseZh": "例句：There are several avenues by which we can approach this problem."
+  },
+  "autograph": {
+    "phrase": "I use autograph in daily life.",
+    "phraseZh": "例句：I use autograph in daily life."
+  },
+  "autumn": {
+    "phrase": "autumn leaves.",
+    "phraseZh": "例句：autumn leaves."
+  },
+  "avoid": {
+    "phrase": "I try to avoid the company of gamblers.",
+    "phraseZh": "例句：I try to avoid the company of gamblers."
+  },
+  "available": {
+    "phrase": "We have an available candidate.",
+    "phraseZh": "例句：We have an available candidate."
+  },
+  "awake": {
+    "phrase": "They were awake to the possibility of a decline in sales.",
+    "phraseZh": "例句：They were awake to the possibility of a decline in sales."
+  },
+  "authority": {
+    "phrase": "the world's foremost authority on orangutans.",
+    "phraseZh": "例句：the world's foremost authority on orangutans."
+  },
+  "away": {
+    "phrase": "The master is away from home.",
+    "phraseZh": "例句：The master is away from home."
+  },
+  "award": {
+    "phrase": "the arbitrators awarded damages to the complainant.",
+    "phraseZh": "例句：the arbitrators awarded damages to the complainant."
+  },
+  "back": {
+    "phrase": "Could you please scratch my back?",
+    "phraseZh": "例句：Could you please scratch my back?"
+  },
+  "background": {
+    "phrase": "The lawyer had a background in computer science.",
+    "phraseZh": "例句：The lawyer had a background in computer science."
+  },
+  "awful": {
+    "phrase": "My socks smell awful.",
+    "phraseZh": "例句：My socks smell awful."
+  },
+  "baby": {
+    "phrase": "When is your baby due?",
+    "phraseZh": "例句：When is your baby due?"
+  },
+  "bad": {
+    "phrase": "Abducting children is bad for mothers.",
+    "phraseZh": "例句：Abducting children is bad for mothers."
+  },
+  "bag": {
+    "phrase": "Acid House is not my bag: I prefer the more traditional styles of music.",
+    "phraseZh": "例句：Acid House is not my bag: I prefer the more traditional styles of music."
+  },
+  "ball": {
+    "phrase": "a ball of spittle; a fecal ball.",
+    "phraseZh": "例句：a ball of spittle; a fecal ball."
+  },
+  "balloon": {
+    "phrase": "the balloon of St. Paul's Cathedral in London.",
+    "phraseZh": "例句：the balloon of St. Paul's Cathedral in London."
+  },
+  "banana": {
+    "phrase": "I use banana in daily life.",
+    "phraseZh": "例句：I use banana in daily life."
+  },
+  "balance": {
+    "phrase": "Blair thought he could provide a useful balance to Bush's policies.",
+    "phraseZh": "例句：Blair thought he could provide a useful balance to Bush's policies."
+  },
+  "bank": {
+    "phrase": "blood bank; sperm bank; data bank.",
+    "phraseZh": "例句：blood bank; sperm bank; data bank."
+  },
+  "barbecue": {
+    "phrase": "We cooked our food on the barbecue.",
+    "phraseZh": "例句：We cooked our food on the barbecue."
+  },
+  "band": {
+    "phrase": "valence band; conduction band.",
+    "phraseZh": "例句：valence band; conduction band."
+  },
+  "bamboo": {
+    "phrase": "I use bamboo in daily life.",
+    "phraseZh": "例句：I use bamboo in daily life."
+  },
+  "basket": {
+    "phrase": "A basket of fake fruit adorned the table.",
+    "phraseZh": "例句：A basket of fake fruit adorned the table."
+  },
+  "battery": {
+    "phrase": "Schoolchildren take a battery of standard tests to measure their progress.",
+    "phraseZh": "例句：Schoolchildren take a battery of standard tests to measure their progress."
+  },
+  "be": {
+    "phrase": "I use be in daily life.",
+    "phraseZh": "例句：I use be in daily life."
+  },
+  "basic": {
+    "phrase": "Rice is a basic for many Asian villagers.",
+    "phraseZh": "例句：Rice is a basic for many Asian villagers."
+  },
+  "beach": {
+    "phrase": "I use beach in daily life.",
+    "phraseZh": "例句：I use beach in daily life."
+  },
+  "baseball": {
+    "phrase": "I use baseball in daily life.",
+    "phraseZh": "例句：I use baseball in daily life."
+  },
+  "bathroom": {
+    "phrase": "Most Americans don't know 'WC' and many Brits mock 'bathroom' but almost everyone understands 'toilet' or 'lavatory'.",
+    "phraseZh": "例句：Most Americans don't know 'WC' and many Brits mock 'bathroom' but almost everyone understands 'toilet' or 'lavatory'."
+  },
+  "basketball": {
+    "phrase": "I use basketball in daily life.",
+    "phraseZh": "例句：I use basketball in daily life."
+  },
+  "beat": {
+    "phrase": "a beat of the heart; the beat of the pulse.",
+    "phraseZh": "例句：a beat of the heart; the beat of the pulse."
+  },
+  "beard": {
+    "phrase": "the beard of grain.",
+    "phraseZh": "例句：the beard of grain."
+  },
+  "because": {
+    "phrase": "My life is ruined because of you!",
+    "phraseZh": "例句：My life is ruined because of you!"
+  },
+  "beauty": {
+    "phrase": "Brigitte Bardot was a renowned beauty.",
+    "phraseZh": "例句：Brigitte Bardot was a renowned beauty."
+  },
+  "beautiful": {
+    "phrase": "Hey, beautiful!",
+    "phraseZh": "例句：Hey, beautiful!"
+  },
+  "Bear": {
+    "phrase": "That window can be a bear to open.",
+    "phraseZh": "例句：That window can be a bear to open."
+  },
+  "become": {
+    "phrase": "It hath becomen so that many a man had to sterve.",
+    "phraseZh": "例句：It hath becomen so that many a man had to sterve."
+  },
+  "Bed": {
+    "phrase": "The meats and cheeses lay on a bed of lettuce.",
+    "phraseZh": "例句：The meats and cheeses lay on a bed of lettuce."
+  },
+  "bedroom": {
+    "phrase": "Please don't enter my bedroom without knocking.",
+    "phraseZh": "例句：Please don't enter my bedroom without knocking."
+  },
+  "behave": {
+    "phrase": "You need to behave yourself, young lady.",
+    "phraseZh": "例句：You need to behave yourself, young lady."
+  },
+  "before": {
+    "phrase": "I've never done this before.",
+    "phraseZh": "例句：I've never done this before."
+  },
+  "bee": {
+    "phrase": "geography bee.",
+    "phraseZh": "例句：geography bee."
+  },
+  "behaviour": {
+    "phrase": "She can't stop the strange behaviour because she has OCD (obsessive-compulsive disorder).",
+    "phraseZh": "例句：She can't stop the strange behaviour because she has OCD (obsessive-compulsive disorder)."
+  },
+  "begin": {
+    "phrase": "I began playing the piano at the age of five. Now that everyone is here, we should begin the presentation.",
+    "phraseZh": "例句：I began playing the piano at the age of five. Now that everyone is here, we should begin the presentation."
+  },
+  "Beef": {
+    "phrase": "I love eating beef.",
+    "phraseZh": "例句：I love eating beef."
+  },
+  "behind": {
+    "phrase": "to look behind.",
+    "phraseZh": "例句：to look behind."
+  },
+  "belong": {
+    "phrase": "Where does this document belong?",
+    "phraseZh": "例句：Where does this document belong?"
+  },
+  "believe": {
+    "phrase": "I believe there are faeries.",
+    "phraseZh": "例句：I believe there are faeries."
+  },
+  "belt": {
+    "phrase": "As part of the act, the fat clown's belt broke, causing his pants to fall down.",
+    "phraseZh": "例句：As part of the act, the fat clown's belt broke, causing his pants to fall down."
+  },
+  "beside": {
+    "phrase": "A small table beside the bed.",
+    "phraseZh": "例句：A small table beside the bed."
+  },
+  "best": {
+    "phrase": "I did my best.",
+    "phraseZh": "例句：I did my best."
+  },
+  "besides": {
+    "phrase": "I have been to Spain but nowhere besides.",
+    "phraseZh": "例句：I have been to Spain but nowhere besides."
+  },
+  "bell": {
+    "phrase": "I’ll give you a bell later.",
+    "phraseZh": "例句：I’ll give you a bell later."
+  },
+  "below": {
+    "phrase": "the landlubbers lying down below.",
+    "phraseZh": "例句：the landlubbers lying down below."
+  },
+  "better": {
+    "phrase": "He quickly found Ali his better in the ring.",
+    "phraseZh": "例句：He quickly found Ali his better in the ring."
+  },
+  "between": {
+    "phrase": "I want to buy one that costs somewhere between forty and fifty dollars.",
+    "phraseZh": "例句：I want to buy one that costs somewhere between forty and fifty dollars."
+  },
+  "big": {
+    "phrase": "Elephants are big animals, and they eat a lot.",
+    "phraseZh": "例句：Elephants are big animals, and they eat a lot."
+  },
+  "bike": {
+    "phrase": "It was such a nice day I decided to bike to the store, though it's far enough I usually take my car.",
+    "phraseZh": "例句：It was such a nice day I decided to bike to the store, though it's far enough I usually take my car."
+  },
+  "bill": {
+    "phrase": "I use bill in daily life.",
+    "phraseZh": "例句：I use bill in daily life."
+  },
+  "beyond": {
+    "phrase": "No swimming beyond this point.",
+    "phraseZh": "例句：No swimming beyond this point."
+  },
+  "bicycle": {
+    "phrase": "I use bicycle in daily life.",
+    "phraseZh": "例句：I use bicycle in daily life."
+  },
+  "biology": {
+    "phrase": "the biology of the whale.",
+    "phraseZh": "例句：the biology of the whale."
+  },
+  "bird": {
+    "phrase": "Mike went out with his bird last night.",
+    "phraseZh": "例句：Mike went out with his bird last night."
+  },
+  "biscuit": {
+    "phrase": "cheese and biscuits.",
+    "phraseZh": "例句：cheese and biscuits."
+  },
+  "birth": {
+    "phrase": "the birth of an empire.",
+    "phraseZh": "例句：the birth of an empire."
+  },
+  "birthday": {
+    "phrase": "I use birthday in daily life.",
+    "phraseZh": "例句：I use birthday in daily life."
+  },
+  "bit": {
+    "phrase": "A horse hates having a bit put in its mouth.",
+    "phraseZh": "例句：A horse hates having a bit put in its mouth."
+  },
+  "Black": {
+    "phrase": "At this point black makes a disastrous move.",
+    "phraseZh": "例句：At this point black makes a disastrous move."
+  },
+  "bitter": {
+    "phrase": "The coffee tasted bitter.",
+    "phraseZh": "例句：The coffee tasted bitter."
+  },
+  "blackboard": {
+    "phrase": "I use blackboard in daily life.",
+    "phraseZh": "例句：I use blackboard in daily life."
+  },
+  "blank": {
+    "phrase": "the double blank.",
+    "phraseZh": "例句：the double blank."
+  },
+  "blind": {
+    "phrase": "Don't wave that pencil in my face - do you want to blind me?",
+    "phraseZh": "例句：Don't wave that pencil in my face - do you want to blind me?"
+  },
+  "blood": {
+    "phrase": "The cultists gathered around a chalice of blood.",
+    "phraseZh": "例句：The cultists gathered around a chalice of blood."
+  },
+  "Blue": {
+    "phrase": "The boys in blue marched to the pipers.",
+    "phraseZh": "例句：The boys in blue marched to the pipers."
+  },
+  "Block": {
+    "phrase": "a block of ice.",
+    "phraseZh": "例句：a block of ice."
+  },
+  "board": {
+    "phrase": "Each player starts the game with four counters on the board.",
+    "phraseZh": "例句：Each player starts the game with four counters on the board."
+  },
+  "Boat": {
+    "phrase": "a stone boat; a gravy boat.",
+    "phraseZh": "例句：a stone boat; a gravy boat."
+  },
+  "blow": {
+    "phrase": "We're having a bit of a blow this afternoon.",
+    "phraseZh": "例句：We're having a bit of a blow this afternoon."
+  },
+  "body": {
+    "phrase": "a nonpareil face on an agate body.",
+    "phraseZh": "例句：a nonpareil face on an agate body."
+  },
+  "bookcase": {
+    "phrase": "I use bookcase in daily life.",
+    "phraseZh": "例句：I use bookcase in daily life."
+  },
+  "boil": {
+    "phrase": "Add the noodles when the water comes to the boil.",
+    "phraseZh": "例句：Add the noodles when the water comes to the boil."
+  },
+  "border": {
+    "phrase": "There's a nice frilly border around the picture frame.",
+    "phraseZh": "例句：There's a nice frilly border around the picture frame."
+  },
+  "bored": {
+    "phrase": "The piano teacher's bored look indicated he wasn't paying much attention to his pupil's lackluster rendition of Mozart's.",
+    "phraseZh": "例句：The piano teacher's bored look indicated he wasn't paying much attention to his pupil's lackluster rendition of Mozart's."
+  },
+  "boring": {
+    "phrase": "What a boring film that was! I almost fell asleep.",
+    "phraseZh": "例句：What a boring film that was! I almost fell asleep."
+  },
+  "Book": {
+    "phrase": "He was frustrated because he couldn't find anything about dinosaurs in the book.",
+    "phraseZh": "例句：He was frustrated because he couldn't find anything about dinosaurs in the book."
+  },
+  "born": {
+    "phrase": "Judging from the look on his face, he wasn't bearing good news.",
+    "phraseZh": "例句：Judging from the look on his face, he wasn't bearing good news."
+  },
+  "both": {
+    "phrase": "Both you and I are students.",
+    "phraseZh": "例句：Both you and I are students."
+  },
+  "bottom": {
+    "phrase": "Where shall we go for a walk? How about Ashcombe Bottom?",
+    "phraseZh": "例句：Where shall we go for a walk? How about Ashcombe Bottom?"
+  },
+  "boss": {
+    "phrase": "Chat turned to whisper when the boss entered the conference room.",
+    "phraseZh": "例句：Chat turned to whisper when the boss entered the conference room."
+  },
+  "borrow": {
+    "phrase": "This putt has a big left-to right borrow on it.",
+    "phraseZh": "例句：This putt has a big left-to right borrow on it."
+  },
+  "Bow": {
+    "phrase": "He made a polite bow as he entered the room.",
+    "phraseZh": "例句：He made a polite bow as he entered the room."
+  },
+  "Bottle": {
+    "phrase": "I only drank a bottle of beer.",
+    "phraseZh": "例句：I only drank a bottle of beer."
+  },
+  "bother": {
+    "phrase": "Yes, I can do that for you - it's no bother.",
+    "phraseZh": "例句：Yes, I can do that for you - it's no bother."
+  },
+  "Bowl": {
+    "phrase": "Direct the cleaning fluid around the toilet bowl and under the rim.",
+    "phraseZh": "例句：Direct the cleaning fluid around the toilet bowl and under the rim."
+  },
+  "brave": {
+    "phrase": "After braving tricks on the high-dive, he braved a jump off the first diving platform.",
+    "phraseZh": "例句：After braving tricks on the high-dive, he braved a jump off the first diving platform."
+  },
+  "boy": {
+    "phrase": "Kate is dating a boy named Jim.",
+    "phraseZh": "例句：Kate is dating a boy named Jim."
+  },
+  "break": {
+    "phrase": "The femur has a clean break and so should heal easily.",
+    "phraseZh": "例句：The femur has a clean break and so should heal easily."
+  },
+  "breakfast": {
+    "phrase": "You should put more protein in her breakfast so she will grow.",
+    "phraseZh": "例句：You should put more protein in her breakfast so she will grow."
+  },
+  "Brazilian": {
+    "phrase": "I use Brazilian in daily life.",
+    "phraseZh": "例句：I use Brazilian in daily life."
+  },
+  "brain": {
+    "phrase": "She was a total brain.",
+    "phraseZh": "例句：She was a total brain."
+  },
+  "Bread": {
+    "phrase": "I use Bread in daily life.",
+    "phraseZh": "例句：I use Bread in daily life."
+  },
+  "Box": {
+    "phrase": "Leave this place before I box you!",
+    "phraseZh": "例句：Leave this place before I box you!"
+  },
+  "breathe": {
+    "phrase": "Fish have gills so they can breathe underwater.",
+    "phraseZh": "例句：Fish have gills so they can breathe underwater."
+  },
+  "brother": {
+    "phrase": "I would like to thank the brother who just spoke.",
+    "phraseZh": "例句：I would like to thank the brother who just spoke."
+  },
+  "bridge": {
+    "phrase": "With enough cable, we can bridge this gorge.",
+    "phraseZh": "例句：With enough cable, we can bridge this gorge."
+  },
+  "bright": {
+    "phrase": "Could you please dim the light? It's far too bright.",
+    "phraseZh": "例句：Could you please dim the light? It's far too bright."
+  },
+  "bring": {
+    "phrase": "Waiter, please bring me a single malt whiskey.",
+    "phraseZh": "例句：Waiter, please bring me a single malt whiskey."
+  },
+  "Breath": {
+    "phrase": "I could hear the breath of the runner behind me.",
+    "phraseZh": "例句：I could hear the breath of the runner behind me."
+  },
+  "Brown": {
+    "phrase": "Fry the onions until they brown.",
+    "phraseZh": "例句：Fry the onions until they brown."
+  },
+  "brush": {
+    "phrase": "She gave her hair a quick brush.",
+    "phraseZh": "例句：She gave her hair a quick brush."
+  },
+  "build": {
+    "phrase": "Rugby players are of sturdy build.",
+    "phraseZh": "例句：Rugby players are of sturdy build."
+  },
+  "building": {
+    "phrase": "The building of the bridge will be completed in a couple of weeks.",
+    "phraseZh": "例句：The building of the bridge will be completed in a couple of weeks."
+  },
+  "burn": {
+    "phrase": "chili burn from eating hot peppers.",
+    "phraseZh": "例句：chili burn from eating hot peppers."
+  },
+  "bus": {
+    "phrase": "He bussed tables as the restaurant emptied out.",
+    "phraseZh": "例句：He bussed tables as the restaurant emptied out."
+  },
+  "bulb": {
+    "phrase": "the bulb of the aorta.",
+    "phraseZh": "例句：the bulb of the aorta."
+  },
+  "business": {
+    "phrase": "I was left my father's business.",
+    "phraseZh": "例句：I was left my father's business."
+  },
+  "Bush": {
+    "phrase": "to bush a piece of land; to bush seeds into the ground.",
+    "phraseZh": "例句：to bush a piece of land; to bush seeds into the ground."
+  },
+  "busy": {
+    "phrase": "On my vacation I'll busy myself with gardening.",
+    "phraseZh": "例句：On my vacation I'll busy myself with gardening."
+  },
+  "but": {
+    "phrase": "But me no buts.",
+    "phraseZh": "例句：But me no buts."
+  },
+  "bye": {
+    "phrase": "Craig's Crew plays the bye next week.",
+    "phraseZh": "例句：Craig's Crew plays the bye next week."
+  },
+  "by": {
+    "phrase": "I watched as it passed by.",
+    "phraseZh": "例句：I watched as it passed by."
+  },
+  "butterfly": {
+    "phrase": "butterfly tape.",
+    "phraseZh": "例句：butterfly tape."
+  },
+  "cabbage": {
+    "phrase": "Cabbage is good for you.",
+    "phraseZh": "例句：Cabbage is good for you."
+  },
+  "buy": {
+    "phrase": "At only $30, the second-hand kitchen table was a great buy.",
+    "phraseZh": "例句：At only $30, the second-hand kitchen table was a great buy."
+  },
+  "butter": {
+    "phrase": "peanut butter.",
+    "phraseZh": "例句：peanut butter."
+  },
+  "cage": {
+    "phrase": "The most dangerous prisoners are locked away in a cage.",
+    "phraseZh": "例句：The most dangerous prisoners are locked away in a cage."
+  },
+  "call": {
+    "phrase": "I paid a call to a dear friend of mine.",
+    "phraseZh": "例句：I paid a call to a dear friend of mine."
+  },
+  "camera": {
+    "phrase": "I use camera in daily life.",
+    "phraseZh": "例句：I use camera in daily life."
+  },
+  "calendar": {
+    "phrase": "Write his birthday on the calendar hanging on the wall.",
+    "phraseZh": "例句：Write his birthday on the calendar hanging on the wall."
+  },
+  "calm": {
+    "phrase": "to calm a crying baby.",
+    "phraseZh": "例句：to calm a crying baby."
+  },
+  "camp": {
+    "phrase": "a hunter's camp.",
+    "phraseZh": "例句：a hunter's camp."
+  },
+  "calculator": {
+    "phrase": "I use calculator in daily life.",
+    "phraseZh": "例句：I use calculator in daily life."
+  },
+  "Cake": {
+    "phrase": "a cake of sand.",
+    "phraseZh": "例句：a cake of sand."
+  },
+  "camel": {
+    "phrase": "Are you having a giraffe?!",
+    "phraseZh": "例句：Are you having a giraffe?!"
+  },
+  "cancer": {
+    "phrase": "I use cancer in daily life.",
+    "phraseZh": "例句：I use cancer in daily life."
+  },
+  "cancel": {
+    "phrase": "He cancelled his order on their website.",
+    "phraseZh": "例句：He cancelled his order on their website."
+  },
+  "cap": {
+    "phrase": "He took the cap off the bottle and splashed himself with some cologne.",
+    "phraseZh": "例句：He took the cap off the bottle and splashed himself with some cologne."
+  },
+  "canada": {
+    "phrase": "I use canada in daily life.",
+    "phraseZh": "例句：I use canada in daily life."
+  },
+  "candy": {
+    "phrase": "Fruits preserved in sugar candy after a time.",
+    "phraseZh": "例句：Fruits preserved in sugar candy after a time."
+  },
+  "capital": {
+    "phrase": "He does not have enough capital to start a business.",
+    "phraseZh": "例句：He does not have enough capital to start a business."
+  },
+  "candle": {
+    "phrase": "I use candle in daily life.",
+    "phraseZh": "例句：I use candle in daily life."
+  },
+  "can": {
+    "phrase": "Animals can experience emotions.",
+    "phraseZh": "例句：Animals can experience emotions."
+  },
+  "car": {
+    "phrase": "She drove her car to the mall.",
+    "phraseZh": "例句：She drove her car to the mall."
+  },
+  "careful": {
+    "phrase": "He was a slow and careful driver.",
+    "phraseZh": "例句：He was a slow and careful driver."
+  },
+  "care": {
+    "phrase": "Care should be taken when holding babies.",
+    "phraseZh": "例句：Care should be taken when holding babies."
+  },
+  "card": {
+    "phrase": "He accused them of playing the race card.",
+    "phraseZh": "例句：He accused them of playing the race card."
+  },
+  "Carrot": {
+    "phrase": "I use Carrot in daily life.",
+    "phraseZh": "例句：I use Carrot in daily life."
+  },
+  "carry": {
+    "phrase": "Adjust your carry from time to time so that you don't tire too quickly.",
+    "phraseZh": "例句：Adjust your carry from time to time so that you don't tire too quickly."
+  },
+  "captain": {
+    "phrase": "The captain is the last man to leave a sinking ship.",
+    "phraseZh": "例句：The captain is the last man to leave a sinking ship."
+  },
+  "careless": {
+    "phrase": "Jessica was so careless that she put her shorts on backwards.",
+    "phraseZh": "例句：Jessica was so careless that she put her shorts on backwards."
+  },
+  "cd": {
+    "phrase": "I use cd in daily life.",
+    "phraseZh": "例句：I use cd in daily life."
+  },
+  "case": {
+    "phrase": "For a change, in this case, he was telling the truth.",
+    "phraseZh": "例句：For a change, in this case, he was telling the truth."
+  },
+  "cause": {
+    "phrase": "They identified a burst pipe as the cause of the flooding.",
+    "phraseZh": "例句：They identified a burst pipe as the cause of the flooding."
+  },
+  "catch": {
+    "phrase": "The catch of the perpetrator was the product of a year of police work.",
+    "phraseZh": "例句：The catch of the perpetrator was the product of a year of police work."
+  },
+  "Cat": {
+    "phrase": "The weather was cat, so they returned home early.",
+    "phraseZh": "例句：The weather was cat, so they returned home early."
+  },
+  "ceiling": {
+    "phrase": "the dining room had an ornate ceiling.",
+    "phraseZh": "例句：the dining room had an ornate ceiling."
+  },
+  "celebrate": {
+    "phrase": "to celebrate the name of the Most High.",
+    "phraseZh": "例句：to celebrate the name of the Most High."
+  },
+  "casually": {
+    "phrase": "I use casually in daily life.",
+    "phraseZh": "例句：I use casually in daily life."
+  },
+  "cent": {
+    "phrase": "He blew every last cent.",
+    "phraseZh": "例句：He blew every last cent."
+  },
+  "chair": {
+    "phrase": "My violin teacher used to play first chair with the Boston Pops.",
+    "phraseZh": "例句：My violin teacher used to play first chair with the Boston Pops."
+  },
+  "century": {
+    "phrase": "That was his tenth professional century.",
+    "phraseZh": "例句：That was his tenth professional century."
+  },
+  "centre": {
+    "phrase": "the center of attention.",
+    "phraseZh": "例句：the center of attention."
+  },
+  "chairman": {
+    "phrase": "I use chairman in daily life.",
+    "phraseZh": "例句：I use chairman in daily life."
+  },
+  "center": {
+    "phrase": "the center of attention.",
+    "phraseZh": "例句：the center of attention."
+  },
+  "certain": {
+    "phrase": "I was certain of my decision.",
+    "phraseZh": "例句：I was certain of my decision."
+  },
+  "chalk": {
+    "phrase": "I use chalk in daily life.",
+    "phraseZh": "例句：I use chalk in daily life."
+  },
+  "challenge": {
+    "phrase": "to challenge the accuracy of a statement or of a quotation.",
+    "phraseZh": "例句：to challenge the accuracy of a statement or of a quotation."
+  },
+  "champion": {
+    "phrase": "The defending champion is expected to defeat his challenger.",
+    "phraseZh": "例句：The defending champion is expected to defeat his challenger."
+  },
+  "charity": {
+    "phrase": "I use charity in daily life.",
+    "phraseZh": "例句：I use charity in daily life."
+  },
+  "character": {
+    "phrase": "A study of the suspect's character and his cast iron alibi ruled him out.",
+    "phraseZh": "例句：A study of the suspect's character and his cast iron alibi ruled him out."
+  },
+  "change": {
+    "phrase": "The product is undergoing a change in order to improve it.",
+    "phraseZh": "例句：The product is undergoing a change in order to improve it."
+  },
+  "chance": {
+    "phrase": "We had the chance to meet the president last week.",
+    "phraseZh": "例句：We had the chance to meet the president last week."
+  },
+  "chant": {
+    "phrase": "The football fans chanted insults at the referee.",
+    "phraseZh": "例句：The football fans chanted insults at the referee."
+  },
+  "chase": {
+    "phrase": "I need something to chase this shot with.",
+    "phraseZh": "例句：I need something to chase this shot with."
+  },
+  "chat": {
+    "phrase": "The Chat just made a joke about my skills.",
+    "phraseZh": "例句：The Chat just made a joke about my skills."
+  },
+  "cheat": {
+    "phrase": "My brother flunked biology because he cheated on his mid-term.",
+    "phraseZh": "例句：My brother flunked biology because he cheated on his mid-term."
+  },
+  "cheer": {
+    "phrase": "a table loaded with good cheer.",
+    "phraseZh": "例句：a table loaded with good cheer."
+  },
+  "cheap": {
+    "phrase": "the cheap trick of hiding deadly lava under pushable blocks.",
+    "phraseZh": "例句：the cheap trick of hiding deadly lava under pushable blocks."
+  },
+  "chemistry": {
+    "phrase": "I use chemistry in daily life.",
+    "phraseZh": "例句：I use chemistry in daily life."
+  },
+  "check": {
+    "phrase": "I don't know if she will be there, but it's worth a check.",
+    "phraseZh": "例句：I don't know if she will be there, but it's worth a check."
+  },
+  "chess": {
+    "phrase": "I use chess in daily life.",
+    "phraseZh": "例句：I use chess in daily life."
+  },
+  "cheese": {
+    "phrase": "Cheese it, the cops!",
+    "phraseZh": "例句：Cheese it, the cops!"
+  },
+  "Chest": {
+    "phrase": "The clothes are kept in a chest.",
+    "phraseZh": "例句：The clothes are kept in a chest."
+  },
+  "China": {
+    "phrase": "He set the table with china, cloth napkins, and crystal stemware.",
+    "phraseZh": "例句：He set the table with china, cloth napkins, and crystal stemware."
+  },
+  "chew": {
+    "phrase": "I popped the gum into my mouth and gave it a chew.",
+    "phraseZh": "例句：I popped the gum into my mouth and gave it a chew."
+  },
+  "Chinese": {
+    "phrase": "I use Chinese in daily life.",
+    "phraseZh": "例句：I use Chinese in daily life."
+  },
+  "chopsticks": {
+    "phrase": "I use chopsticks in daily life.",
+    "phraseZh": "例句：I use chopsticks in daily life."
+  },
+  "chop": {
+    "phrase": "It should take just one good chop to fell the sapling.",
+    "phraseZh": "例句：It should take just one good chop to fell the sapling."
+  },
+  "choice": {
+    "phrase": "I use choice in daily life.",
+    "phraseZh": "例句：I use choice in daily life."
+  },
+  "Chicken": {
+    "phrase": "Why do you refuse to fight? Huh, I guess you're just too chicken.",
+    "phraseZh": "例句：Why do you refuse to fight? Huh, I guess you're just too chicken."
+  },
+  "chocolate": {
+    "phrase": "I use chocolate in daily life.",
+    "phraseZh": "例句：I use chocolate in daily life."
+  },
+  "child": {
+    "phrase": "I use child in daily life.",
+    "phraseZh": "例句：I use child in daily life."
+  },
+  "choose": {
+    "phrase": "I chose a nice ripe apple from the fruit bowl.",
+    "phraseZh": "例句：I chose a nice ripe apple from the fruit bowl."
+  },
+  "chip": {
+    "phrase": "This cup has a chip in it.",
+    "phraseZh": "例句：This cup has a chip in it."
+  },
+  "circle": {
+    "phrase": "I use circle in daily life.",
+    "phraseZh": "例句：I use circle in daily life."
+  },
+  "cinema": {
+    "phrase": "I use cinema in daily life.",
+    "phraseZh": "例句：I use cinema in daily life."
+  },
+  "chore": {
+    "phrase": "Washing dishes is a chore, but we cannot just stop eating.",
+    "phraseZh": "例句：Washing dishes is a chore, but we cannot just stop eating."
+  },
+  "Christmas": {
+    "phrase": "I use Christmas in daily life.",
+    "phraseZh": "例句：I use Christmas in daily life."
+  },
+  "clap": {
+    "phrase": "I use clap in daily life.",
+    "phraseZh": "例句：I use clap in daily life."
+  },
+  "city": {
+    "phrase": "I use city in daily life.",
+    "phraseZh": "例句：I use city in daily life."
+  },
+  "cigarette": {
+    "phrase": "I use cigarette in daily life.",
+    "phraseZh": "例句：I use cigarette in daily life."
+  },
+  "church": {
+    "phrase": "There is a lovely little church in the valley.",
+    "phraseZh": "例句：There is a lovely little church in the valley."
+  },
+  "classmate": {
+    "phrase": "Danny and I have been classmates for five years, but I've never spoken to him outside of lessons.",
+    "phraseZh": "例句：Danny and I have been classmates for five years, but I've never spoken to him outside of lessons."
+  },
+  "classroom": {
+    "phrase": "I use classroom in daily life.",
+    "phraseZh": "例句：I use classroom in daily life."
+  },
+  "class": {
+    "phrase": "Often used to imply membership of a large class.",
+    "phraseZh": "例句：Often used to imply membership of a large class."
+  },
+  "clever": {
+    "phrase": "I use clever in daily life.",
+    "phraseZh": "例句：I use clever in daily life."
+  },
+  "clear": {
+    "phrase": "a room ten feet square in the clear.",
+    "phraseZh": "例句：a room ten feet square in the clear."
+  },
+  "climb": {
+    "phrase": "I use climb in daily life.",
+    "phraseZh": "例句：I use climb in daily life."
+  },
+  "clerk": {
+    "phrase": "I use clerk in daily life.",
+    "phraseZh": "例句：I use clerk in daily life."
+  },
+  "clean": {
+    "phrase": "This place needs a clean.",
+    "phraseZh": "例句：This place needs a clean."
+  },
+  "close": {
+    "phrase": "We owe them our thanks for bringing the project to a successful close.",
+    "phraseZh": "例句：We owe them our thanks for bringing the project to a successful close."
+  },
+  "club": {
+    "phrase": "Michael stood you up? Welcome to the club.",
+    "phraseZh": "例句：Michael stood you up? Welcome to the club."
+  },
+  "cloudy": {
+    "phrase": "a cloudy infrastructure.",
+    "phraseZh": "例句：a cloudy infrastructure."
+  },
+  "clone": {
+    "phrase": "The scientists were able to clone a sheep.",
+    "phraseZh": "例句：The scientists were able to clone a sheep."
+  },
+  "cloud": {
+    "phrase": "He opened the door and was greeted by a cloud of bats.",
+    "phraseZh": "例句：He opened the door and was greeted by a cloud of bats."
+  },
+  "Clock": {
+    "phrase": "This car has over 300,000 miles on the clock.",
+    "phraseZh": "例句：This car has over 300,000 miles on the clock."
+  },
+  "clothing": {
+    "phrase": "The clothing and unclothing of the idols was of special significance.",
+    "phraseZh": "例句：The clothing and unclothing of the idols was of special significance."
+  },
+  "clothes": {
+    "phrase": "He is a respected man of the cloth.",
+    "phraseZh": "例句：He is a respected man of the cloth."
+  },
+  "coach": {
+    "phrase": "John flew coach to Vienna, but first-class back home.",
+    "phraseZh": "例句：John flew coach to Vienna, but first-class back home."
+  },
+  "coast": {
+    "phrase": "The rocky coast of Maine has few beaches.",
+    "phraseZh": "例句：The rocky coast of Maine has few beaches."
+  },
+  "coffee": {
+    "phrase": "He did not stay for coffee.",
+    "phraseZh": "例句：He did not stay for coffee."
+  },
+  "Coal": {
+    "phrase": "Put some coal on the fire.",
+    "phraseZh": "例句：Put some coal on the fire."
+  },
+  "coat": {
+    "phrase": "When the dog shed its coat, it left hair all over the furniture and the carpet.",
+    "phraseZh": "例句：When the dog shed its coat, it left hair all over the furniture and the carpet."
+  },
+  "coke": {
+    "phrase": "The plant should produce approximately 550,000 tons of screened blast furnace coke per year.",
+    "phraseZh": "例句：The plant should produce approximately 550,000 tons of screened blast furnace coke per year."
+  },
+  "coin": {
+    "phrase": "She spent some serious coin on that car!",
+    "phraseZh": "例句：She spent some serious coin on that car!"
+  },
+  "cola": {
+    "phrase": "I use cola in daily life.",
+    "phraseZh": "例句：I use cola in daily life."
+  },
+  "cold": {
+    "phrase": "A cold wind whistled through the trees.",
+    "phraseZh": "例句：A cold wind whistled through the trees."
+  },
+  "collect": {
+    "phrase": "It was to be a collect delivery, but no-one was available to pay.",
+    "phraseZh": "例句：It was to be a collect delivery, but no-one was available to pay."
+  },
+  "color": {
+    "phrase": "Humans and birds can perceive color.",
+    "phraseZh": "例句：Humans and birds can perceive color."
+  },
+  "combine": {
+    "phrase": "We can't finish harvesting because our combine is stuck in the mud.",
+    "phraseZh": "例句：We can't finish harvesting because our combine is stuck in the mud."
+  },
+  "come": {
+    "phrase": "He was a dream come true.",
+    "phraseZh": "例句：He was a dream come true."
+  },
+  "college": {
+    "phrase": "College of Cardinals, College of Surgeons.",
+    "phraseZh": "例句：College of Cardinals, College of Surgeons."
+  },
+  "comfortable": {
+    "phrase": "This is the most comfortable bed I've ever slept in.",
+    "phraseZh": "例句：This is the most comfortable bed I've ever slept in."
+  },
+  "comedy": {
+    "phrase": "Why would you be watching comedy when there are kids starving right now?",
+    "phraseZh": "例句：Why would you be watching comedy when there are kids starving right now?"
+  },
+  "comma": {
+    "phrase": "I use comma in daily life.",
+    "phraseZh": "例句：I use comma in daily life."
+  },
+  "common": {
+    "phrase": "The two competitors have the common aim of winning the championship.",
+    "phraseZh": "例句：The two competitors have the common aim of winning the championship."
+  },
+  "communicate": {
+    "phrase": "I use communicate in daily life.",
+    "phraseZh": "例句：I use communicate in daily life."
+  },
+  "company": {
+    "phrase": "Keep the house clean; I have company coming.",
+    "phraseZh": "例句：Keep the house clean; I have company coming."
+  },
+  "comment": {
+    "phrase": "I have no comment on that.",
+    "phraseZh": "例句：I have no comment on that."
+  },
+  "compare": {
+    "phrase": "Compare the tiger's coloration with that of the zebra.",
+    "phraseZh": "例句：Compare the tiger's coloration with that of the zebra."
+  },
+  "competition": {
+    "phrase": "The competition for this job is strong.",
+    "phraseZh": "例句：The competition for this job is strong."
+  },
+  "communication": {
+    "phrase": "communication of a secret.",
+    "phraseZh": "例句：communication of a secret."
+  },
+  "complain": {
+    "phrase": "Joe was always complaining about the noise made by his neighbours.",
+    "phraseZh": "例句：Joe was always complaining about the noise made by his neighbours."
+  },
+  "computer": {
+    "phrase": "I use computer in daily life.",
+    "phraseZh": "例句：I use computer in daily life."
+  },
+  "concentrate": {
+    "phrase": "to concentrate rays of light into a focus.",
+    "phraseZh": "例句：to concentrate rays of light into a focus."
+  },
+  "con": {
+    "phrase": "We're getting a loft con done next year.",
+    "phraseZh": "例句：We're getting a loft con done next year."
+  },
+  "complete": {
+    "phrase": "I use complete in daily life.",
+    "phraseZh": "例句：I use complete in daily life."
+  },
+  "composition": {
+    "phrase": "I use composition in daily life.",
+    "phraseZh": "例句：I use composition in daily life."
+  },
+  "concert": {
+    "phrase": "I'm going to the rock concert on Friday.",
+    "phraseZh": "例句：I'm going to the rock concert on Friday."
+  },
+  "condition": {
+    "phrase": "I use condition in daily life.",
+    "phraseZh": "例句：I use condition in daily life."
+  },
+  "conference": {
+    "phrase": "I use conference in daily life.",
+    "phraseZh": "例句：I use conference in daily life."
+  },
+  "connect": {
+    "phrase": "I'm flying to London where I connect with a flight heading to Hungary.",
+    "phraseZh": "例句：I'm flying to London where I connect with a flight heading to Hungary."
+  },
+  "control": {
+    "phrase": "The government has complete control over the situation.",
+    "phraseZh": "例句：The government has complete control over the situation."
+  },
+  "confident": {
+    "phrase": "I'm pretty confident that she's not lying, she's acting normally.",
+    "phraseZh": "例句：I'm pretty confident that she's not lying, she's acting normally."
+  },
+  "conjunction": {
+    "phrase": "I use conjunction in daily life.",
+    "phraseZh": "例句：I use conjunction in daily life."
+  },
+  "consider": {
+    "phrase": "Consider that we’ve had three major events and the year has hardly begun.",
+    "phraseZh": "例句：Consider that we’ve had three major events and the year has hardly begun."
+  },
+  "continue": {
+    "phrase": "Do you want me to continue to unload these?",
+    "phraseZh": "例句：Do you want me to continue to unload these?"
+  },
+  "convenient": {
+    "phrase": "Fast food might be convenient, but it's also very unhealthy.",
+    "phraseZh": "例句：Fast food might be convenient, but it's also very unhealthy."
+  },
+  "conversation": {
+    "phrase": "I had an interesting conversation with Nicolas yesterday about how much he's getting paid.",
+    "phraseZh": "例句：I had an interesting conversation with Nicolas yesterday about how much he's getting paid."
+  },
+  "corner": {
+    "phrase": "On weekends, Emily liked to find a quiet corner and curl up with a good book.",
+    "phraseZh": "例句：On weekends, Emily liked to find a quiet corner and curl up with a good book."
+  },
+  "Cookie": {
+    "phrase": "I use Cookie in daily life.",
+    "phraseZh": "例句：I use Cookie in daily life."
+  },
+  "correct": {
+    "phrase": "It's rude to correct your parents.",
+    "phraseZh": "例句：It's rude to correct your parents."
+  },
+  "copy": {
+    "phrase": "That handbag is a copy. You can tell because the buckle is different.",
+    "phraseZh": "例句：That handbag is a copy. You can tell because the buckle is different."
+  },
+  "cooker": {
+    "phrase": "I use cooker in daily life.",
+    "phraseZh": "例句：I use cooker in daily life."
+  },
+  "cook": {
+    "phrase": "I'm a terrible cook, so I eat a lot of frozen dinners.",
+    "phraseZh": "例句：I'm a terrible cook, so I eat a lot of frozen dinners."
+  },
+  "cool": {
+    "phrase": "in the cool of the morning.",
+    "phraseZh": "例句：in the cool of the morning."
+  },
+  "costume": {
+    "phrase": "The dancer was wearing Highland costume.",
+    "phraseZh": "例句：The dancer was wearing Highland costume."
+  },
+  "count": {
+    "phrase": "Give the chairs a quick count to check if we have enough.",
+    "phraseZh": "例句：Give the chairs a quick count to check if we have enough."
+  },
+  "countryside": {
+    "phrase": "We live in the Swedish countryside.",
+    "phraseZh": "例句：We live in the Swedish countryside."
+  },
+  "cost": {
+    "phrase": "It will cost you a lot of money to take a trip around the world.",
+    "phraseZh": "例句：It will cost you a lot of money to take a trip around the world."
+  },
+  "country": {
+    "phrase": "I use country in daily life.",
+    "phraseZh": "例句：I use country in daily life."
+  },
+  "cotton": {
+    "phrase": "I use cotton in daily life.",
+    "phraseZh": "例句：I use cotton in daily life."
+  },
+  "could": {
+    "phrase": "Animals can experience emotions.",
+    "phraseZh": "例句：Animals can experience emotions."
+  },
+  "cough": {
+    "phrase": "Behind me, I heard a distinct, dry cough.",
+    "phraseZh": "例句：Behind me, I heard a distinct, dry cough."
+  },
+  "courage": {
+    "phrase": "I use courage in daily life.",
+    "phraseZh": "例句：I use courage in daily life."
+  },
+  "cousin": {
+    "phrase": "I use cousin in daily life.",
+    "phraseZh": "例句：I use cousin in daily life."
+  },
+  "course": {
+    "phrase": "The normal course of events seems to be just one damned thing after another.",
+    "phraseZh": "例句：The normal course of events seems to be just one damned thing after another."
+  },
+  "cover": {
+    "phrase": "The soldiers took cover behind a ruined building.",
+    "phraseZh": "例句：The soldiers took cover behind a ruined building."
+  },
+  "couple": {
+    "phrase": "I've coupled our system to theirs.",
+    "phraseZh": "例句：I've coupled our system to theirs."
+  },
+  "crayon": {
+    "phrase": "I use crayon in daily life.",
+    "phraseZh": "例句：I use crayon in daily life."
+  },
+  "court": {
+    "phrase": "The girls were playing in the court.",
+    "phraseZh": "例句：The girls were playing in the court."
+  },
+  "Cow": {
+    "phrase": "Con artists are not cowed by the law.",
+    "phraseZh": "例句：Con artists are not cowed by the law."
+  },
+  "Cream": {
+    "phrase": "Take 100 ml of cream and 50 grams of sugar….",
+    "phraseZh": "例句：Take 100 ml of cream and 50 grams of sugar…."
+  },
+  "crazy": {
+    "phrase": "His ideas were both frightening and crazy.",
+    "phraseZh": "例句：His ideas were both frightening and crazy."
+  },
+  "criticize": {
+    "phrase": "They criticized him for endangering people's lives.",
+    "phraseZh": "例句：They criticized him for endangering people's lives."
+  },
+  "cross": {
+    "phrase": "Put a cross for a wrong answer and a tick for a right one.",
+    "phraseZh": "例句：Put a cross for a wrong answer and a tick for a right one."
+  },
+  "creative": {
+    "phrase": "He is a visionary creative.",
+    "phraseZh": "例句：He is a visionary creative."
+  },
+  "create": {
+    "phrase": "You can create the color orange by mixing yellow and red.",
+    "phraseZh": "例句：You can create the color orange by mixing yellow and red."
+  },
+  "crowd": {
+    "phrase": "After the movie let out, a crowd of people pushed through the exit doors.",
+    "phraseZh": "例句：After the movie let out, a crowd of people pushed through the exit doors."
+  },
+  "creature": {
+    "phrase": "He's a creature of habit. insects and other creatures.",
+    "phraseZh": "例句：He's a creature of habit. insects and other creatures."
+  },
+  "cruel": {
+    "phrase": "The supervisor was very cruel to Josh, as he would always give Josh the hardest, most degrading work he could find.",
+    "phraseZh": "例句：The supervisor was very cruel to Josh, as he would always give Josh the hardest, most degrading work he could find."
+  },
+  "cry": {
+    "phrase": "After we broke up, I retreated to my room for a good cry.",
+    "phraseZh": "例句：After we broke up, I retreated to my room for a good cry."
+  },
+  "cut": {
+    "phrase": "He made a fine cut with his sword.",
+    "phraseZh": "例句：He made a fine cut with his sword."
+  },
+  "custom": {
+    "phrase": "My feet are very large, so I need custom shoes.",
+    "phraseZh": "例句：My feet are very large, so I need custom shoes."
+  },
+  "cute": {
+    "phrase": "Let's go to the mall and look for cute girls.",
+    "phraseZh": "例句：Let's go to the mall and look for cute girls."
+  },
+  "culture": {
+    "phrase": "I'm headed to the lab to make sure my cell culture hasn't died.",
+    "phraseZh": "例句：I'm headed to the lab to make sure my cell culture hasn't died."
+  },
+  "cup": {
+    "phrase": "Pour the tea into the cup.",
+    "phraseZh": "例句：Pour the tea into the cup."
+  },
+  "cupboard": {
+    "phrase": "Put the cups back into the cupboard.",
+    "phraseZh": "例句：Put the cups back into the cupboard."
+  },
+  "dad": {
+    "phrase": "His dad was always there for him.",
+    "phraseZh": "例句：His dad was always there for him."
+  },
+  "daily": {
+    "phrase": "I use daily in daily life.",
+    "phraseZh": "例句：I use daily in daily life."
+  },
+  "dangerous": {
+    "phrase": "Railway crossings without gates are highly dangerous.",
+    "phraseZh": "例句：Railway crossings without gates are highly dangerous."
+  },
+  "dance": {
+    "phrase": "So how much longer are we gonna do this dance?",
+    "phraseZh": "例句：So how much longer are we gonna do this dance?"
+  },
+  "dare": {
+    "phrase": "I use dare in daily life.",
+    "phraseZh": "例句：I use dare in daily life."
+  },
+  "danger": {
+    "phrase": "There's plenty of danger in the desert.",
+    "phraseZh": "例句：There's plenty of danger in the desert."
+  },
+  "Dark": {
+    "phrase": "The room was too dark for reading.",
+    "phraseZh": "例句：The room was too dark for reading."
+  },
+  "date": {
+    "phrase": "I use date in daily life.",
+    "phraseZh": "例句：I use date in daily life."
+  },
+  "day": {
+    "phrase": "The day begins at midnight.",
+    "phraseZh": "例句：The day begins at midnight."
+  },
+  "deal": {
+    "phrase": "I believe it's your deal.",
+    "phraseZh": "例句：I believe it's your deal."
+  },
+  "deaf": {
+    "phrase": "Those people are deaf to reason.",
+    "phraseZh": "例句：Those people are deaf to reason."
+  },
+  "dear": {
+    "phrase": "My cousin is such a dear, always drawing me pictures.",
+    "phraseZh": "例句：My cousin is such a dear, always drawing me pictures."
+  },
+  "death": {
+    "phrase": "The death of my grandmother saddened the whole family.",
+    "phraseZh": "例句：The death of my grandmother saddened the whole family."
+  },
+  "daughter": {
+    "phrase": "I already have a son, so I would like to have a daughter.",
+    "phraseZh": "例句：I already have a son, so I would like to have a daughter."
+  },
+  "Dead": {
+    "phrase": "Have respect for the dead.",
+    "phraseZh": "例句：Have respect for the dead."
+  },
+  "december": {
+    "phrase": "I use december in daily life.",
+    "phraseZh": "例句：I use december in daily life."
+  },
+  "decide": {
+    "phrase": "Her last-minute goal decided the game.",
+    "phraseZh": "例句：Her last-minute goal decided the game."
+  },
+  "deep": {
+    "phrase": "creatures of the deep.",
+    "phraseZh": "例句：creatures of the deep."
+  },
+  "decision": {
+    "phrase": "It is the decision of the court that movies are protected as free speech.",
+    "phraseZh": "例句：It is the decision of the court that movies are protected as free speech."
+  },
+  "degree": {
+    "phrase": "She has two bachelor's degrees and is studying towards a master's degree.",
+    "phraseZh": "例句：She has two bachelor's degrees and is studying towards a master's degree."
+  },
+  "dentist": {
+    "phrase": "I use dentist in daily life.",
+    "phraseZh": "例句：I use dentist in daily life."
+  },
+  "delicious": {
+    "phrase": "The irony is delicious!",
+    "phraseZh": "例句：The irony is delicious!"
+  },
+  "depend": {
+    "phrase": "I use depend in daily life.",
+    "phraseZh": "例句：I use depend in daily life."
+  },
+  "department": {
+    "phrase": "I use department in daily life.",
+    "phraseZh": "例句：I use department in daily life."
+  },
+  "destroy": {
+    "phrase": "Hooligans destroy unprovoked.",
+    "phraseZh": "例句：Hooligans destroy unprovoked."
+  },
+  "describe": {
+    "phrase": "The feeling is difficult to describe, but not unpleasant.",
+    "phraseZh": "例句：The feeling is difficult to describe, but not unpleasant."
+  },
+  "dialogue": {
+    "phrase": "The movie had great special effects, but the dialogue was lackluster.",
+    "phraseZh": "例句：The movie had great special effects, but the dialogue was lackluster."
+  },
+  "dessert": {
+    "phrase": "I use dessert in daily life.",
+    "phraseZh": "例句：I use dessert in daily life."
+  },
+  "design": {
+    "phrase": "To be hateful of the truth by design.",
+    "phraseZh": "例句：To be hateful of the truth by design."
+  },
+  "desk": {
+    "phrase": "city desk.",
+    "phraseZh": "例句：city desk."
+  },
+  "development": {
+    "phrase": "The development of this story has been slow.",
+    "phraseZh": "例句：The development of this story has been slow."
+  },
+  "develop": {
+    "phrase": "Let's see how things develop and then make our decision.",
+    "phraseZh": "例句：Let's see how things develop and then make our decision."
+  },
+  "different": {
+    "phrase": "Several different scientists all reached this conclusion at about the same time.",
+    "phraseZh": "例句：Several different scientists all reached this conclusion at about the same time."
+  },
+  "dictionary": {
+    "phrase": "I use dictionary in daily life.",
+    "phraseZh": "例句：I use dictionary in daily life."
+  },
+  "die": {
+    "phrase": "If anyone sees me wearing this ridiculous outfit, I'll die.",
+    "phraseZh": "例句：If anyone sees me wearing this ridiculous outfit, I'll die."
+  },
+  "diary": {
+    "phrase": "They kept separate diaries. His was on paper and her diary was on her computer's hard drive.",
+    "phraseZh": "例句：They kept separate diaries. His was on paper and her diary was on her computer's hard drive."
+  },
+  "difference": {
+    "phrase": "You need to learn to be more tolerant of difference.",
+    "phraseZh": "例句：You need to learn to be more tolerant of difference."
+  },
+  "diet": {
+    "phrase": "The diet of the Giant Panda consists mainly of bamboo.",
+    "phraseZh": "例句：The diet of the Giant Panda consists mainly of bamboo."
+  },
+  "difficult": {
+    "phrase": "Stop being difficult and eat your broccoli—you know it's good for you.",
+    "phraseZh": "例句：Stop being difficult and eat your broccoli—you know it's good for you."
+  },
+  "difficulty": {
+    "phrase": "I use difficulty in daily life.",
+    "phraseZh": "例句：I use difficulty in daily life."
+  },
+  "dinner": {
+    "phrase": "Give the dog its dinner.",
+    "phraseZh": "例句：Give the dog its dinner."
+  },
+  "disabled": {
+    "phrase": "Falling off the horse disabled him.",
+    "phraseZh": "例句：Falling off the horse disabled him."
+  },
+  "dig": {
+    "phrase": "He guffawed and gave me a dig in the ribs after telling his latest joke.",
+    "phraseZh": "例句：He guffawed and gave me a dig in the ribs after telling his latest joke."
+  },
+  "direct": {
+    "phrase": "to direct the affairs of a nation or the movements of an army.",
+    "phraseZh": "例句：to direct the affairs of a nation or the movements of an army."
+  },
+  "disappointing": {
+    "phrase": "I use disappointing in daily life.",
+    "phraseZh": "例句：I use disappointing in daily life."
+  },
+  "disadvantage": {
+    "phrase": "My height is a disadvantage for reaching high shelves.",
+    "phraseZh": "例句：My height is a disadvantage for reaching high shelves."
+  },
+  "dirty": {
+    "phrase": "I use dirty in daily life.",
+    "phraseZh": "例句：I use dirty in daily life."
+  },
+  "discover": {
+    "phrase": "I use discover in daily life.",
+    "phraseZh": "例句：I use discover in daily life."
+  },
+  "discuss": {
+    "phrase": "I don't wish to discuss this further. Let's talk about something else.",
+    "phraseZh": "例句：I don't wish to discuss this further. Let's talk about something else."
+  },
+  "discussion": {
+    "phrase": "My discussion with the professor was very enlightening.",
+    "phraseZh": "例句：My discussion with the professor was very enlightening."
+  },
+  "disease": {
+    "phrase": "The tomato plants had some kind of disease that left their leaves splotchy and fruit withered.",
+    "phraseZh": "例句：The tomato plants had some kind of disease that left their leaves splotchy and fruit withered."
+  },
+  "dismiss": {
+    "phrase": "The company dismissed me after less than a year.",
+    "phraseZh": "例句：The company dismissed me after less than a year."
+  },
+  "dish": {
+    "phrase": "a dish of stew.",
+    "phraseZh": "例句：a dish of stew."
+  },
+  "display": {
+    "phrase": "The trapeze artist put on an amazing acrobatic display.",
+    "phraseZh": "例句：The trapeze artist put on an amazing acrobatic display."
+  },
+  "discovery": {
+    "phrase": "I use discovery in daily life.",
+    "phraseZh": "例句：I use discovery in daily life."
+  },
+  "dislike": {
+    "phrase": "Tell me your likes and dislikes.",
+    "phraseZh": "例句：Tell me your likes and dislikes."
+  },
+  "district": {
+    "phrase": "the Soho district of London.",
+    "phraseZh": "例句：the Soho district of London."
+  },
+  "disturb": {
+    "phrase": "A school of fish disturbed the water.",
+    "phraseZh": "例句：A school of fish disturbed the water."
+  },
+  "distance": {
+    "phrase": "the distance between a descendant and his ancestor.",
+    "phraseZh": "例句：the distance between a descendant and his ancestor."
+  },
+  "divide": {
+    "phrase": "I use divide in daily life.",
+    "phraseZh": "例句：I use divide in daily life."
+  },
+  "documentary": {
+    "phrase": "I use documentary in daily life.",
+    "phraseZh": "例句：I use documentary in daily life."
+  },
+  "doctor": {
+    "phrase": "If you still feel unwell tomorrow, see your doctor.",
+    "phraseZh": "例句：If you still feel unwell tomorrow, see your doctor."
+  },
+  "do": {
+    "phrase": "We’re having a bit of a do on Saturday to celebrate my birthday.",
+    "phraseZh": "例句：We’re having a bit of a do on Saturday to celebrate my birthday."
+  },
+  "dog": {
+    "phrase": "I use dog in daily life.",
+    "phraseZh": "例句：I use dog in daily life."
+  },
+  "doll": {
+    "phrase": "I use doll in daily life.",
+    "phraseZh": "例句：I use doll in daily life."
+  },
+  "dollar": {
+    "phrase": "I use dollar in daily life.",
+    "phraseZh": "例句：I use dollar in daily life."
+  },
+  "donate": {
+    "phrase": "I use donate in daily life.",
+    "phraseZh": "例句：I use donate in daily life."
+  },
+  "dormitory": {
+    "phrase": "I use dormitory in daily life.",
+    "phraseZh": "例句：I use dormitory in daily life."
+  },
+  "Door": {
+    "phrase": "I use Door in daily life.",
+    "phraseZh": "例句：I use Door in daily life."
+  },
+  "doubt": {
+    "phrase": "I use doubt in daily life.",
+    "phraseZh": "例句：I use doubt in daily life."
+  },
+  "Double": {
+    "phrase": "I use Double in daily life.",
+    "phraseZh": "例句：I use Double in daily life."
+  },
+  "down": {
+    "phrase": "I use down in daily life.",
+    "phraseZh": "例句：I use down in daily life."
+  },
+  "downstairs": {
+    "phrase": "I use downstairs in daily life.",
+    "phraseZh": "例句：I use downstairs in daily life."
+  },
+  "dream": {
+    "phrase": "I use dream in daily life.",
+    "phraseZh": "例句：I use dream in daily life."
+  },
+  "dozen": {
+    "phrase": "Can I have a dozen eggs, please?",
+    "phraseZh": "例句：Can I have a dozen eggs, please?"
+  },
+  "draw": {
+    "phrase": "The game ended in a draw.",
+    "phraseZh": "例句：The game ended in a draw."
+  },
+  "drink": {
+    "phrase": "I use drink in daily life.",
+    "phraseZh": "例句：I use drink in daily life."
+  },
+  "dress": {
+    "phrase": "I use dress in daily life.",
+    "phraseZh": "例句：I use dress in daily life."
+  },
+  "drawer": {
+    "phrase": "I use drawer in daily life.",
+    "phraseZh": "例句：I use drawer in daily life."
+  },
+  "drive": {
+    "phrase": "I use drive in daily life.",
+    "phraseZh": "例句：I use drive in daily life."
+  },
+  "driver": {
+    "phrase": "I use driver in daily life.",
+    "phraseZh": "例句：I use driver in daily life."
+  },
+  "drop": {
+    "phrase": "I use drop in daily life.",
+    "phraseZh": "例句：I use drop in daily life."
+  },
+  "drum": {
+    "phrase": "I use drum in daily life.",
+    "phraseZh": "例句：I use drum in daily life."
+  },
+  "drug": {
+    "phrase": "I use drug in daily life.",
+    "phraseZh": "例句：I use drug in daily life."
+  },
+  "dry": {
+    "phrase": "I use dry in daily life.",
+    "phraseZh": "例句：I use dry in daily life."
+  },
+  "duck": {
+    "phrase": "I use duck in daily life.",
+    "phraseZh": "例句：I use duck in daily life."
+  },
+  "dull": {
+    "phrase": "I use dull in daily life.",
+    "phraseZh": "例句：I use dull in daily life."
+  },
+  "dumpling": {
+    "phrase": "I use dumpling in daily life.",
+    "phraseZh": "例句：I use dumpling in daily life."
+  },
+  "during": {
+    "phrase": "I use during in daily life.",
+    "phraseZh": "例句：I use during in daily life."
+  },
+  "duty": {
+    "phrase": "We don't have a duty to keep you here.",
+    "phraseZh": "例句：We don't have a duty to keep you here."
+  },
+  "ear": {
+    "phrase": "I use ear in daily life.",
+    "phraseZh": "例句：I use ear in daily life."
+  },
+  "each": {
+    "phrase": "I use each in daily life.",
+    "phraseZh": "例句：I use each in daily life."
+  },
+  "early": {
+    "phrase": "I use early in daily life.",
+    "phraseZh": "例句：I use early in daily life."
+  },
+  "earthquake": {
+    "phrase": "I use earthquake in daily life.",
+    "phraseZh": "例句：I use earthquake in daily life."
+  },
+  "earth": {
+    "phrase": "I use earth in daily life.",
+    "phraseZh": "例句：I use earth in daily life."
+  },
+  "easily": {
+    "phrase": "Individuals without a family network are easily controlled.",
+    "phraseZh": "例句：Individuals without a family network are easily controlled."
+  },
+  "east": {
+    "phrase": "the east front of a cathedral.",
+    "phraseZh": "例句：the east front of a cathedral."
+  },
+  "eastern": {
+    "phrase": "I use eastern in daily life.",
+    "phraseZh": "例句：I use eastern in daily life."
+  },
+  "eat": {
+    "phrase": "I use eat in daily life.",
+    "phraseZh": "例句：I use eat in daily life."
+  },
+  "easy": {
+    "phrase": "I use easy in daily life.",
+    "phraseZh": "例句：I use easy in daily life."
+  },
+  "educate": {
+    "phrase": "I use educate in daily life.",
+    "phraseZh": "例句：I use educate in daily life."
+  },
+  "edge": {
+    "phrase": "I use edge in daily life.",
+    "phraseZh": "例句：I use edge in daily life."
+  },
+  "education": {
+    "phrase": "I use education in daily life.",
+    "phraseZh": "例句：I use education in daily life."
+  },
+  "effort": {
+    "phrase": "I use effort in daily life.",
+    "phraseZh": "例句：I use effort in daily life."
+  },
+  "Egg": {
+    "phrase": "I use Egg in daily life.",
+    "phraseZh": "例句：I use Egg in daily life."
+  },
+  "eight": {
+    "phrase": "I use eight in daily life.",
+    "phraseZh": "例句：I use eight in daily life."
+  },
+  "eighteen": {
+    "phrase": "I use eighteen in daily life.",
+    "phraseZh": "例句：I use eighteen in daily life."
+  },
+  "eighth": {
+    "phrase": "I use eighth in daily life.",
+    "phraseZh": "例句：I use eighth in daily life."
+  },
+  "eighteenth": {
+    "phrase": "I use eighteenth in daily life.",
+    "phraseZh": "例句：I use eighteenth in daily life."
+  },
+  "eighty": {
+    "phrase": "I use eighty in daily life.",
+    "phraseZh": "例句：I use eighty in daily life."
+  },
+  "either": {
+    "phrase": "I use either in daily life.",
+    "phraseZh": "例句：I use either in daily life."
+  },
+  "Elder": {
+    "phrase": "I use Elder in daily life.",
+    "phraseZh": "例句：I use Elder in daily life."
+  },
+  "elbow": {
+    "phrase": "I use elbow in daily life.",
+    "phraseZh": "例句：I use elbow in daily life."
+  },
+  "electric": {
+    "phrase": "We had to sit in the dark because the electric was cut off.",
+    "phraseZh": "例句：We had to sit in the dark because the electric was cut off."
+  },
+  "elementary": {
+    "phrase": "I use elementary in daily life.",
+    "phraseZh": "例句：I use elementary in daily life."
+  },
+  "eleven": {
+    "phrase": "A: SUM1 Hl3p ME im alwyz L0ziN!!?!",
+    "phraseZh": "例句：A: SUM1 Hl3p ME im alwyz L0ziN!!?!"
+  },
+  "elevator": {
+    "phrase": "I use elevator in daily life.",
+    "phraseZh": "例句：I use elevator in daily life."
+  },
+  "elephant": {
+    "phrase": "Let's play hide and seek. I'll count. One elephant, two elephant, three elephant...",
+    "phraseZh": "例句：Let's play hide and seek. I'll count. One elephant, two elephant, three elephant..."
+  },
+  "eleventh": {
+    "phrase": "I use eleventh in daily life.",
+    "phraseZh": "例句：I use eleventh in daily life."
+  },
+  "embarrassed": {
+    "phrase": "The crowd's laughter and jeers embarrassed him.",
+    "phraseZh": "例句：The crowd's laughter and jeers embarrassed him."
+  },
+  "else": {
+    "phrase": "The instructor is busy. Can anyone else help me?",
+    "phraseZh": "例句：The instructor is busy. Can anyone else help me?"
+  },
+  "Empty": {
+    "phrase": "an empty purse; an empty jug; an empty stomach.",
+    "phraseZh": "例句：an empty purse; an empty jug; an empty stomach."
+  },
+  "encourage": {
+    "phrase": "We encourage the use of bicycles in the town centre.",
+    "phraseZh": "例句：We encourage the use of bicycles in the town centre."
+  },
+  "End": {
+    "phrase": "At the end of the road, turn left.",
+    "phraseZh": "例句：At the end of the road, turn left."
+  },
+  "emotion": {
+    "phrase": "I use emotion in daily life.",
+    "phraseZh": "例句：I use emotion in daily life."
+  },
+  "enemy": {
+    "phrase": "Crush the enemy!",
+    "phraseZh": "例句：Crush the enemy!"
+  },
+  "energy": {
+    "phrase": "I use energy in daily life.",
+    "phraseZh": "例句：I use energy in daily life."
+  },
+  "engineer": {
+    "phrase": "I use engineer in daily life.",
+    "phraseZh": "例句：I use engineer in daily life."
+  },
+  "envelope": {
+    "phrase": "I use envelope in daily life.",
+    "phraseZh": "例句：I use envelope in daily life."
+  },
+  "enjoy": {
+    "phrase": "Enjoy your holidays! I enjoy dancing.",
+    "phraseZh": "例句：Enjoy your holidays! I enjoy dancing."
+  },
+  "enter": {
+    "phrase": "You should knock before you enter, unless you want to see me naked.",
+    "phraseZh": "例句：You should knock before you enter, unless you want to see me naked."
+  },
+  "english": {
+    "phrase": "You can't hit it directly, but maybe if you give it some english.",
+    "phraseZh": "例句：You can't hit it directly, but maybe if you give it some english."
+  },
+  "enough": {
+    "phrase": "Are you man enough to fight me?",
+    "phraseZh": "例句：Are you man enough to fight me?"
+  },
+  "entertainment": {
+    "phrase": "I use entertainment in daily life.",
+    "phraseZh": "例句：I use entertainment in daily life."
+  },
+  "England": {
+    "phrase": "I use England in daily life.",
+    "phraseZh": "例句：I use England in daily life."
+  },
+  "environment": {
+    "phrase": "That program uses the Microsoft Windows environment.",
+    "phraseZh": "例句：That program uses the Microsoft Windows environment."
+  },
+  "equipment": {
+    "phrase": "I use equipment in daily life.",
+    "phraseZh": "例句：I use equipment in daily life."
+  },
+  "eraser": {
+    "phrase": "I have worn out the eraser on this pencil.",
+    "phraseZh": "例句：I have worn out the eraser on this pencil."
+  },
+  "escape": {
+    "phrase": "The prisoners made their escape by digging a tunnel.",
+    "phraseZh": "例句：The prisoners made their escape by digging a tunnel."
+  },
+  "escalator": {
+    "phrase": "They agreed to a cost-of-living escalator.",
+    "phraseZh": "例句：They agreed to a cost-of-living escalator."
+  },
+  "especially": {
+    "phrase": "Invite them all, especially Molly.",
+    "phraseZh": "例句：Invite them all, especially Molly."
+  },
+  "essay": {
+    "phrase": "I use essay in daily life.",
+    "phraseZh": "例句：I use essay in daily life."
+  },
+  "establish": {
+    "phrase": "I use establish in daily life.",
+    "phraseZh": "例句：I use establish in daily life."
+  },
+  "etiquette": {
+    "phrase": "I use etiquette in daily life.",
+    "phraseZh": "例句：I use etiquette in daily life."
+  },
+  "evening": {
+    "phrase": "It was the evening of the Roman Empire.",
+    "phraseZh": "例句：It was the evening of the Roman Empire."
+  },
+  "even": {
+    "phrase": "We need to even this playing field; the west goal is too low.",
+    "phraseZh": "例句：We need to even this playing field; the west goal is too low."
+  },
+  "European": {
+    "phrase": "I use European in daily life.",
+    "phraseZh": "例句：I use European in daily life."
+  },
+  "Europe": {
+    "phrase": "I use Europe in daily life.",
+    "phraseZh": "例句：I use Europe in daily life."
+  },
+  "every": {
+    "phrase": "I use every in daily life.",
+    "phraseZh": "例句：I use every in daily life."
+  },
+  "ever": {
+    "phrase": "It was ever thus.",
+    "phraseZh": "例句：It was ever thus."
+  },
+  "everybody": {
+    "phrase": "I use everybody in daily life.",
+    "phraseZh": "例句：I use everybody in daily life."
+  },
+  "everyday": {
+    "phrase": "I use everyday in daily life.",
+    "phraseZh": "例句：I use everyday in daily life."
+  },
+  "everyone": {
+    "phrase": "I use everyone in daily life.",
+    "phraseZh": "例句：I use everyone in daily life."
+  },
+  "examine": {
+    "phrase": "He examined the crime scene for clues.",
+    "phraseZh": "例句：He examined the crime scene for clues."
+  },
+  "exam": {
+    "phrase": "He examined the crime scene for clues.",
+    "phraseZh": "例句：He examined the crime scene for clues."
+  },
+  "everything": {
+    "phrase": "I checked the list again and everything is done.",
+    "phraseZh": "例句：I checked the list again and everything is done."
+  },
+  "example": {
+    "phrase": "I use example in daily life.",
+    "phraseZh": "例句：I use example in daily life."
+  },
+  "everywhere": {
+    "phrase": "He delivers the mail everywhere on this street.",
+    "phraseZh": "例句：He delivers the mail everywhere on this street."
+  },
+  "excellent": {
+    "phrase": "I use excellent in daily life.",
+    "phraseZh": "例句：I use excellent in daily life."
+  },
+  "except": {
+    "phrase": "I use except in daily life.",
+    "phraseZh": "例句：I use except in daily life."
+  },
+  "excite": {
+    "phrase": "I use excite in daily life.",
+    "phraseZh": "例句：I use excite in daily life."
+  },
+  "exchange": {
+    "phrase": "I use exchange in daily life.",
+    "phraseZh": "例句：I use exchange in daily life."
+  },
+  "exercise": {
+    "phrase": "I use exercise in daily life.",
+    "phraseZh": "例句：I use exercise in daily life."
+  },
+  "exhibition": {
+    "phrase": "I use exhibition in daily life.",
+    "phraseZh": "例句：I use exhibition in daily life."
+  },
+  "excuse": {
+    "phrase": "I use excuse in daily life.",
+    "phraseZh": "例句：I use excuse in daily life."
+  },
+  "expect": {
+    "phrase": "I use expect in daily life.",
+    "phraseZh": "例句：I use expect in daily life."
+  },
+  "expensive": {
+    "phrase": "an unnecessarily expensive choice of algorithm.",
+    "phraseZh": "例句：an unnecessarily expensive choice of algorithm."
+  },
+  "experiment": {
+    "phrase": "I use experiment in daily life.",
+    "phraseZh": "例句：I use experiment in daily life."
+  },
+  "experience": {
+    "phrase": "It was an experience he would not soon forget.",
+    "phraseZh": "例句：It was an experience he would not soon forget."
+  },
+  "Eye": {
+    "phrase": "The car was quite pleasing to the eye, but impractical.",
+    "phraseZh": "例句：The car was quite pleasing to the eye, but impractical."
+  },
+  "extra": {
+    "phrase": "Extra, extra! Read all about it!",
+    "phraseZh": "例句：Extra, extra! Read all about it!"
+  },
+  "explain": {
+    "phrase": "To explain a chapter of the Bible.",
+    "phraseZh": "例句：To explain a chapter of the Bible."
+  },
+  "express": {
+    "phrase": "I took the express into town.",
+    "phraseZh": "例句：I took the express into town."
+  },
+  "face": {
+    "phrase": "That girl has a pretty face.",
+    "phraseZh": "例句：That girl has a pretty face."
+  },
+  "fact": {
+    "phrase": "In this story, the Gettysburg Address is a fact, but the rest is fiction.",
+    "phraseZh": "例句：In this story, the Gettysburg Address is a fact, but the rest is fiction."
+  },
+  "factory": {
+    "phrase": "chicken factory; pig factory.",
+    "phraseZh": "例句：chicken factory; pig factory."
+  },
+  "family": {
+    "phrase": "Our family lives in town.",
+    "phraseZh": "例句：Our family lives in town."
+  },
+  "famous": {
+    "phrase": "Some people are only famous within their city.",
+    "phraseZh": "例句：Some people are only famous within their city."
+  },
+  "fall": {
+    "phrase": "the fall of Rome.",
+    "phraseZh": "例句：the fall of Rome."
+  },
+  "fail": {
+    "phrase": "The project was full of fail.",
+    "phraseZh": "例句：The project was full of fail."
+  },
+  "fan": {
+    "phrase": "I attempted to fan the disagreeable odour out of the room.",
+    "phraseZh": "例句：I attempted to fan the disagreeable odour out of the room."
+  },
+  "fair": {
+    "phrase": "When will we learn to distinguish between the fair and the foul?",
+    "phraseZh": "例句：When will we learn to distinguish between the fair and the foul?"
+  },
+  "fantastic": {
+    "phrase": "He told fantastic stories of dragons and goblins.",
+    "phraseZh": "例句：He told fantastic stories of dragons and goblins."
+  },
+  "Far": {
+    "phrase": "He went to a far land.",
+    "phraseZh": "例句：He went to a far land."
+  },
+  "farm": {
+    "phrase": "a render farm.",
+    "phraseZh": "例句：a render farm."
+  },
+  "farmer": {
+    "phrase": "a farmer of the revenues.",
+    "phraseZh": "例句：a farmer of the revenues."
+  },
+  "fashion": {
+    "phrase": "Check out the latest in fashion.",
+    "phraseZh": "例句：Check out the latest in fashion."
+  },
+  "fat": {
+    "phrase": "We need to trim the fat in this company.",
+    "phraseZh": "例句：We need to trim the fat in this company."
+  },
+  "fast": {
+    "phrase": "That rope is dangerously loose. Make it fast!",
+    "phraseZh": "例句：That rope is dangerously loose. Make it fast!"
+  },
+  "father": {
+    "phrase": "My father was a strong influence on me.",
+    "phraseZh": "例句：My father was a strong influence on me."
+  },
+  "favorite": {
+    "phrase": "The teacher's favourite always went first.",
+    "phraseZh": "例句：The teacher's favourite always went first."
+  },
+  "feature": {
+    "phrase": "one of the features of the landscape.",
+    "phraseZh": "例句：one of the features of the landscape."
+  },
+  "fax": {
+    "phrase": "I use fax in daily life.",
+    "phraseZh": "例句：I use fax in daily life."
+  },
+  "fear": {
+    "phrase": "He was struck by fear on seeing the snake.",
+    "phraseZh": "例句：He was struck by fear on seeing the snake."
+  },
+  "February": {
+    "phrase": "I use February in daily life.",
+    "phraseZh": "例句：I use February in daily life."
+  },
+  "feed": {
+    "phrase": "They sell feed, riding helmets, and everything else for horses.",
+    "phraseZh": "例句：They sell feed, riding helmets, and everything else for horses."
+  },
+  "feel": {
+    "phrase": "Bark has a rough feel.",
+    "phraseZh": "例句：Bark has a rough feel."
+  },
+  "feeling": {
+    "phrase": "The wool on my arm produced a strange feeling.",
+    "phraseZh": "例句：The wool on my arm produced a strange feeling."
+  },
+  "fence": {
+    "phrase": "I use fence in daily life.",
+    "phraseZh": "例句：I use fence in daily life."
+  },
+  "fiction": {
+    "phrase": "I am a great reader of fiction.",
+    "phraseZh": "例句：I am a great reader of fiction."
+  },
+  "field": {
+    "phrase": "There are several species of wild flowers growing in this field.",
+    "phraseZh": "例句：There are several species of wild flowers growing in this field."
+  },
+  "festival": {
+    "phrase": "I use festival in daily life.",
+    "phraseZh": "例句：I use festival in daily life."
+  },
+  "fetch": {
+    "phrase": "to fetch headway or sternway.",
+    "phraseZh": "例句：to fetch headway or sternway."
+  },
+  "few": {
+    "phrase": "Many are called, but few are chosen.",
+    "phraseZh": "例句：Many are called, but few are chosen."
+  },
+  "fever": {
+    "phrase": "\"I have a fever. I think I've the flu.\".",
+    "phraseZh": "例句：\"I have a fever. I think I've the flu.\"."
+  },
+  "fifteen": {
+    "phrase": "I use fifteen in daily life.",
+    "phraseZh": "例句：I use fifteen in daily life."
+  },
+  "fill": {
+    "phrase": "I use fill in daily life.",
+    "phraseZh": "例句：I use fill in daily life."
+  },
+  "fight": {
+    "phrase": "I use fight in daily life.",
+    "phraseZh": "例句：I use fight in daily life."
+  },
+  "fifth": {
+    "phrase": "I use fifth in daily life.",
+    "phraseZh": "例句：I use fifth in daily life."
+  },
+  "fifty": {
+    "phrase": "I use fifty in daily life.",
+    "phraseZh": "例句：I use fifty in daily life."
+  },
+  "final": {
+    "phrase": "final solution; the final day of a school term.",
+    "phraseZh": "例句：final solution; the final day of a school term."
+  },
+  "find": {
+    "phrase": "I use find in daily life.",
+    "phraseZh": "例句：I use find in daily life."
+  },
+  "film": {
+    "phrase": "a clear plastic film for wrapping food.",
+    "phraseZh": "例句：a clear plastic film for wrapping food."
+  },
+  "fifteenth": {
+    "phrase": "I use fifteenth in daily life.",
+    "phraseZh": "例句：I use fifteenth in daily life."
+  },
+  "Fire": {
+    "phrase": "We sat about the fire singing songs and telling tales.",
+    "phraseZh": "例句：We sat about the fire singing songs and telling tales."
+  },
+  "finish": {
+    "phrase": "The car's finish was so shiny and new.",
+    "phraseZh": "例句：The car's finish was so shiny and new."
+  },
+  "finger": {
+    "phrase": "a finger of land; a finger of smoke.",
+    "phraseZh": "例句：a finger of land; a finger of smoke."
+  },
+  "Fish": {
+    "phrase": "Salmon is a fish.",
+    "phraseZh": "例句：Salmon is a fish."
+  },
+  "firm": {
+    "phrase": "It's good to have a firm grip when shaking hands.",
+    "phraseZh": "例句：It's good to have a firm grip when shaking hands."
+  },
+  "fine": {
+    "phrase": "to fine the soil.",
+    "phraseZh": "例句：to fine the soil."
+  },
+  "fisherman": {
+    "phrase": "I use fisherman in daily life.",
+    "phraseZh": "例句：I use fisherman in daily life."
+  },
+  "first": {
+    "phrase": "He was the first to complete the course.",
+    "phraseZh": "例句：He was the first to complete the course."
+  },
+  "fix": {
+    "phrase": "That plumber's fix is much better than the first one's.",
+    "phraseZh": "例句：That plumber's fix is much better than the first one's."
+  },
+  "fit": {
+    "phrase": "Since he put on weight, his jeans have been a tight fit.",
+    "phraseZh": "例句：Since he put on weight, his jeans have been a tight fit."
+  },
+  "five": {
+    "phrase": "He wrote a five followed by four zeroes.",
+    "phraseZh": "例句：He wrote a five followed by four zeroes."
+  },
+  "flight": {
+    "phrase": "Most birds are capable of flight.",
+    "phraseZh": "例句：Most birds are capable of flight."
+  },
+  "flag": {
+    "phrase": "Please flag down a taxi for me.",
+    "phraseZh": "例句：Please flag down a taxi for me."
+  },
+  "floor": {
+    "phrase": "The room has a wooden floor.",
+    "phraseZh": "例句：The room has a wooden floor."
+  },
+  "flee": {
+    "phrase": "The prisoner tried to flee, but was caught by the guards.",
+    "phraseZh": "例句：The prisoner tried to flee, but was caught by the guards."
+  },
+  "flat": {
+    "phrase": "a flat of strawberries.",
+    "phraseZh": "例句：a flat of strawberries."
+  },
+  "flower": {
+    "phrase": "The dogwoods are in flower this week.",
+    "phraseZh": "例句：The dogwoods are in flower this week."
+  },
+  "flu": {
+    "phrase": "I use flu in daily life.",
+    "phraseZh": "例句：I use flu in daily life."
+  },
+  "fly": {
+    "phrase": "There was a good wind, so I decided to give the kite a fly.",
+    "phraseZh": "例句：There was a good wind, so I decided to give the kite a fly."
+  },
+  "food": {
+    "phrase": "The innkeeper brought them food and drink.",
+    "phraseZh": "例句：The innkeeper brought them food and drink."
+  },
+  "follow": {
+    "phrase": "a follow shot.",
+    "phraseZh": "例句：a follow shot."
+  },
+  "Foot": {
+    "phrase": "Southern Italy is shaped like a foot.",
+    "phraseZh": "例句：Southern Italy is shaped like a foot."
+  },
+  "fold": {
+    "phrase": "If you fold the sheets, they'll fit more easily in the drawer.",
+    "phraseZh": "例句：If you fold the sheets, they'll fit more easily in the drawer."
+  },
+  "fool": {
+    "phrase": "The village fool threw his own shoes down the well.",
+    "phraseZh": "例句：The village fool threw his own shoes down the well."
+  },
+  "forbid": {
+    "phrase": "What part of \"no\" do you forbid to understand?",
+    "phraseZh": "例句：What part of \"no\" do you forbid to understand?"
+  },
+  "foreign": {
+    "phrase": "He liked visiting foreign cities.",
+    "phraseZh": "例句：He liked visiting foreign cities."
+  },
+  "football": {
+    "phrase": "Each team scored three goals when they played football.",
+    "phraseZh": "例句：Each team scored three goals when they played football."
+  },
+  "foreigner": {
+    "phrase": "I use foreigner in daily life.",
+    "phraseZh": "例句：I use foreigner in daily life."
+  },
+  "forest": {
+    "phrase": "a forest of criticism.",
+    "phraseZh": "例句：a forest of criticism."
+  },
+  "for": {
+    "phrase": "I use for in daily life.",
+    "phraseZh": "例句：I use for in daily life."
+  },
+  "force": {
+    "phrase": "the force of an appeal, an argument, or a contract.",
+    "phraseZh": "例句：the force of an appeal, an argument, or a contract."
+  },
+  "forget": {
+    "phrase": "Let's just forget about it.",
+    "phraseZh": "例句：Let's just forget about it."
+  },
+  "forty": {
+    "phrase": "I use forty in daily life.",
+    "phraseZh": "例句：I use forty in daily life."
+  },
+  "fork": {
+    "phrase": "LibreOffice is a fork of OpenOffice.",
+    "phraseZh": "例句：LibreOffice is a fork of OpenOffice."
+  },
+  "found": {
+    "phrase": "I found my car keys. They were under the couch.",
+    "phraseZh": "例句：I found my car keys. They were under the couch."
+  },
+  "forward": {
+    "phrase": "I'll be glad to forward your mail to you while you're gone.",
+    "phraseZh": "例句：I'll be glad to forward your mail to you while you're gone."
+  },
+  "four": {
+    "phrase": "There are four seasons: winter, spring, summer and autumn.",
+    "phraseZh": "例句：There are four seasons: winter, spring, summer and autumn."
+  },
+  "fourteen": {
+    "phrase": "I use fourteen in daily life.",
+    "phraseZh": "例句：I use fourteen in daily life."
+  },
+  "form": {
+    "phrase": "To apply for the position, complete the application form.",
+    "phraseZh": "例句：To apply for the position, complete the application form."
+  },
+  "fourteenth": {
+    "phrase": "I use fourteenth in daily life.",
+    "phraseZh": "例句：I use fourteenth in daily life."
+  },
+  "fourth": {
+    "phrase": "I use fourth in daily life.",
+    "phraseZh": "例句：I use fourth in daily life."
+  },
+  "fox": {
+    "phrase": "The quick brown fox jumps over the lazy dog.",
+    "phraseZh": "例句：The quick brown fox jumps over the lazy dog."
+  },
+  "freeze": {
+    "phrase": "Don't freeze meat twice.",
+    "phraseZh": "例句：Don't freeze meat twice."
+  },
+  "free": {
+    "phrase": "He was given free rein to do whatever he wanted.",
+    "phraseZh": "例句：He was given free rein to do whatever he wanted."
+  },
+  "France": {
+    "phrase": "I use France in daily life.",
+    "phraseZh": "例句：I use France in daily life."
+  },
+  "fresh": {
+    "phrase": "He followed the fresh hoofprints to find the deer.",
+    "phraseZh": "例句：He followed the fresh hoofprints to find the deer."
+  },
+  "French": {
+    "phrase": "I use French in daily life.",
+    "phraseZh": "例句：I use French in daily life."
+  },
+  "Friday": {
+    "phrase": "I use Friday in daily life.",
+    "phraseZh": "例句：I use Friday in daily life."
+  },
+  "fridge": {
+    "phrase": "I use fridge in daily life.",
+    "phraseZh": "例句：I use fridge in daily life."
+  },
+  "friendship": {
+    "phrase": "I use friendship in daily life.",
+    "phraseZh": "例句：I use friendship in daily life."
+  },
+  "frog": {
+    "phrase": "I use frog in daily life.",
+    "phraseZh": "例句：I use frog in daily life."
+  },
+  "from": {
+    "phrase": "I use from in daily life.",
+    "phraseZh": "例句：I use from in daily life."
+  },
+  "friend": {
+    "phrase": "I use friend in daily life.",
+    "phraseZh": "例句：I use friend in daily life."
+  },
+  "Fruit": {
+    "phrase": "I use Fruit in daily life.",
+    "phraseZh": "例句：I use Fruit in daily life."
+  },
+  "front": {
+    "phrase": "I use front in daily life.",
+    "phraseZh": "例句：I use front in daily life."
+  },
+  "friendly": {
+    "phrase": "I use friendly in daily life.",
+    "phraseZh": "例句：I use friendly in daily life."
+  },
+  "frustrate": {
+    "phrase": "My clumsy fingers frustrate my typing efforts.",
+    "phraseZh": "例句：My clumsy fingers frustrate my typing efforts."
+  },
+  "fry": {
+    "phrase": "to be in a fry.",
+    "phraseZh": "例句：to be in a fry."
+  },
+  "full": {
+    "phrase": "The jugs were full to the point of overflowing.",
+    "phraseZh": "例句：The jugs were full to the point of overflowing."
+  },
+  "fun": {
+    "phrase": "He is such a fun person to be with.",
+    "phraseZh": "例句：He is such a fun person to be with."
+  },
+  "funny": {
+    "phrase": "When I went to the circus, I only found the clowns funny.",
+    "phraseZh": "例句：When I went to the circus, I only found the clowns funny."
+  },
+  "furniture": {
+    "phrase": "A chair is furniture. Sofas are also furniture.",
+    "phraseZh": "例句：A chair is furniture. Sofas are also furniture."
+  },
+  "furry": {
+    "phrase": "The furry had designed an elaborate costume.",
+    "phraseZh": "例句：The furry had designed an elaborate costume."
+  },
+  "future": {
+    "phrase": "There is no future in dwelling on the past.",
+    "phraseZh": "例句：There is no future in dwelling on the past."
+  },
+  "gallery": {
+    "phrase": "I use gallery in daily life.",
+    "phraseZh": "例句：I use gallery in daily life."
+  },
+  "game": {
+    "phrase": "I use game in daily life.",
+    "phraseZh": "例句：I use game in daily life."
+  },
+  "garage": {
+    "phrase": "I use garage in daily life.",
+    "phraseZh": "例句：I use garage in daily life."
+  },
+  "gentle": {
+    "phrase": "I use gentle in daily life.",
+    "phraseZh": "例句：I use gentle in daily life."
+  },
+  "garden": {
+    "phrase": "I use garden in daily life.",
+    "phraseZh": "例句：I use garden in daily life."
+  },
+  "Gate": {
+    "phrase": "I use Gate in daily life.",
+    "phraseZh": "例句：I use Gate in daily life."
+  },
+  "gentleman": {
+    "phrase": "I use gentleman in daily life.",
+    "phraseZh": "例句：I use gentleman in daily life."
+  },
+  "general": {
+    "phrase": "I use general in daily life.",
+    "phraseZh": "例句：I use general in daily life."
+  },
+  "geography": {
+    "phrase": "I use geography in daily life.",
+    "phraseZh": "例句：I use geography in daily life."
+  },
+  "gift": {
+    "phrase": "She had a gift for playing the flute.",
+    "phraseZh": "例句：She had a gift for playing the flute."
+  }
+}
