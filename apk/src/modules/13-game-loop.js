@@ -743,6 +743,35 @@ function useDragonEgg() {
     return true;
 }
 
+function useWardenEgg() {
+    const existingWarden = enemies.some(enemy => enemy && !enemy.remove && enemy.type === "warden");
+    if (existingWarden) {
+        showToast("⚠️ 已有坚守者存在");
+        return false;
+    }
+    if ((inventory.warden_egg || 0) <= 0) {
+        showToast("❌ 没有坚守者的蛋");
+        return false;
+    }
+    if (typeof WardenEnemy !== "function") {
+        showToast("⚠️ 坚守者暂不可召唤");
+        return false;
+    }
+
+    inventory.warden_egg--;
+    if (typeof updateInventoryUI === "function") {
+        updateInventoryUI();
+    }
+
+    const spawnOffset = player.facingRight ? 220 : -220;
+    const spawnX = player.x + spawnOffset;
+    const spawnY = Math.max(40, groundY - 60);
+    enemies.push(new WardenEnemy(spawnX, spawnY));
+    showToast("🧿 坚守者已苏醒！");
+    showFloatingText("🧿 Warden!", player.x, player.y - 54, "#66E0E0");
+    return true;
+}
+
 function dismountRider(rider) {
     if (!ridingDragon || !rider) return;
 
@@ -1338,6 +1367,11 @@ function useInventoryItem(itemKey) {
         used = useDragonEgg();
         if (used) {
             itemCooldownTimers.dragon_egg = ITEM_COOLDOWNS.dragon_egg;
+        }
+    } else if (itemKey === "warden_egg") {
+        used = useWardenEgg();
+        if (used) {
+            itemCooldownTimers.warden_egg = ITEM_COOLDOWNS.warden_egg;
         }
     } else if (itemKey === "starfish") {
         // 海星幸运星

@@ -137,6 +137,7 @@
                 { "item": "max_hp", "weight": 8, "min": 1, "max": 2 },
                 { "item": "diamond", "weight": 8, "min": 2, "max": 3 },
                 { "item": "dragon_egg", "weight": 4, "min": 1, "max": 1 },
+                { "item": "warden_egg", "weight": 3, "min": 1, "max": 1 },
                 { "item": "ender_pearl", "weight": 6, "min": 2, "max": 3 },
                 { "item": "score", "weight": 10, "min": 80, "max": 150 }
             ]

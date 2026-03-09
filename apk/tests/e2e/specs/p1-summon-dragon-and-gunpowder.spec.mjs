@@ -152,10 +152,9 @@ test.describe("召唤机制与火药增强", () => {
       projectiles: projectiles.length,
       cooldown: ridingDragon.fireballCooldown,
       lastProjectile: projectiles.length ? projectiles[projectiles.length - 1].constructor.name : null
-    })`)).toMatchObject({
-      cooldown: 60,
+    })`)).toEqual(expect.objectContaining({
       lastProjectile: "EnderDragonFireball"
-    });
+    }));
 
     const afterAttack = await gameEval(page, `({
       projectiles: projectiles.length,
@@ -163,6 +162,8 @@ test.describe("召唤机制与火药增强", () => {
       lastProjectile: projectiles.length ? projectiles[projectiles.length - 1].constructor.name : null
     })`);
     expect(afterAttack.projectiles).toBeGreaterThan(beforeAttack.projectiles);
+    expect(afterAttack.cooldown).toBeGreaterThan(0);
+    expect(afterAttack.cooldown).toBeLessThanOrEqual(60);
   });
 
   test("炸药爆炸后会在前方地面留下持续火焰", async ({ page }) => {

@@ -191,6 +191,7 @@ const ITEM_COOLDOWNS = {
     coal: 180,           // 3秒 (煤矿火把)
     flower: 600,         // 10秒 (花朵治愈)
     dragon_egg: 720,     // 12秒 (龙蛋龙息)
+    warden_egg: 900,     // 15秒 (坚守者召唤)
     starfish: 5400,      // 90秒 (海星幸运)
     gold: 0              // 无冷却 (黄金交易)
 };
@@ -202,6 +203,7 @@ const ITEM_DESCRIPTIONS = {
     ender_pearl:  { desc: "向前方传送200px，穿越障碍物+60秒隐身", cost: "消耗: 1个", cd: "冷却: 8秒" },
     string:       { desc: "放置蛛网陷阱，减速敌人80%持续5秒", cost: "消耗: 2个", cd: "冷却: 6秒" },
     dragon_egg:   { desc: "释放全屏龙息，对所有敌人造成50伤害", cost: "消耗: 1个", cd: "冷却: 12秒" },
+    warden_egg:   { desc: "在前方召唤一只坚守者，适合主动挑战强敌", cost: "消耗: 1个", cd: "冷却: 15秒" },
     totem:        { desc: "被动：HP归零时自动触发，回复3❤️并获得3秒无敌", cost: "自动消耗: 1个", cd: "被动触发" },
     flower:       { desc: "花香护体30秒，敌人攻击频率降低30%", cost: "消耗: 1个", cd: "冷却: 10秒" },
     mushroom:     { desc: "2个蘑菇合成1个蘑菇煲（回复2❤️）", cost: "消耗: 2个", cd: "无冷却" },
@@ -763,6 +765,7 @@ const DEFAULT_CHEST_TABLES = {
     legendary: [
         { item: "max_hp",       weight: 10, min: 1, max: 2 },
         { item: "dragon_egg",   weight: 6,  min: 1, max: 1 },
+        { item: "warden_egg",   weight: 4,  min: 1, max: 1 },
         { item: "totem",        weight: 6,  min: 1, max: 1 },
         { item: "ender_pearl",  weight: 6,  min: 2, max: 3 },
         { item: "echo_shard",   weight: 5,  min: 3, max: 3 },
