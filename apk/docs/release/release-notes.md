@@ -1,5 +1,24 @@
 # Release Notes
 
+## v1.19.32 (2026-03-09)
+
+### 📚 Vocabulary Packs
+- **Legacy 词库 ID 自动迁移**:
+  - 修复旧设置/旧账号中的 `vocab.kindergarten`、`vocab.junior_high`、`vocab.minecraft` 等旧 ID 在当前 manifest 下无法匹配的问题
+  - 启动、账号恢复、设置保存统一走 canonical pack id 解析链路
+  - 避免 `activeVocabPackId` 为空和“词库数据未就绪”假象
+
+### 🧪 Verification
+- `node tests/unit/vocab-pack-switch-regression.test.mjs`
+- `npx playwright test -c tests/e2e/playwright.config.mjs tests/e2e/specs/p0-vocab-pack-switch.spec.mjs`（使用临时端口 4181）
+
+### 📦 Technical Changes
+- 默认词库改为 `vocab.kindergarten.full`
+- 同步版本元数据到 `version.json`、`package.json`、`android-app/package.json`、`android-app/web/build-info.json`
+- 更新 `service-worker.js` 缓存版本与 `Game.html` 资源缓存戳到 `v1.19.32`
+
+---
+
 ## v1.19.31 (2026-03-09)
 
 ### 🎮 Gameplay

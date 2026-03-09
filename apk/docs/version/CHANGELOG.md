@@ -1,3 +1,31 @@
+## v1.19.32 (2026-03-09)
+
+### Fixed
+- **Vocabulary Pack Switching**: 修复 legacy 词库 ID 与当前 manifest 脱节导致的切换不生效问题。
+  - 默认词库改为有效 canonical ID `vocab.kindergarten.full`
+  - 对旧设置/旧账号中的 `vocab.kindergarten`、`vocab.junior_high`、`vocab.minecraft` 等旧 ID 做归一化映射
+  - 启动、账号恢复、设置保存共用同一套词库解析逻辑，避免 `activeVocabPackId` 为空
+
+### Improved
+- **Regression Coverage**: 词库切换回归覆盖升级。
+  - 单元测试新增默认词库与 manifest 对齐校验
+  - E2E 新增旧 ID 自动迁移验证，并检查切换到 `vocab.junior_high.basic` 与 `vocab.minecraft.full` 后实际生效
+
+### Verification
+- `node tests/unit/vocab-pack-switch-regression.test.mjs`
+- `npx playwright test -c tests/e2e/playwright.config.mjs tests/e2e/specs/p0-vocab-pack-switch.spec.mjs`（临时端口 `4181`）
+
+### Version Metadata
+- `version.json` -> `versionCode/buildNumber 85`, `versionName 1.19.32`
+- `package.json` -> `1.19.32`
+- `android-app/package.json` -> `1.19.32`
+- `android-app/android/app/build.gradle` -> `versionCode 85`, `versionName 1.19.32`
+- `android-app/web/build-info.json` -> `version 1.19.32`, `buildNumber 85`
+- `service-worker.js` -> cache `v1.19.32`
+- `Game.html` -> cache-busting `v1.19.32`
+
+---
+
 ## v1.19.31 (2026-03-09)
 
 ### Fixed

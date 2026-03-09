@@ -1,3 +1,15 @@
+## v1.19.32（发布日期：2026-03-09）
+- 类型：PATCH（词库切换兼容修复 + 发布同步）
+- APK 版本：versionName = 1.19.32，versionCode = 85（buildNumber = 85）
+- 主要完成项：
+  - 修复 legacy 词库 ID 与当前 manifest 不一致导致的切换不生效问题。
+  - 默认词库改为 `vocab.kindergarten.full`，避免首启出现“词库数据未就绪”。
+  - 启动、账号恢复、设置保存统一做词库 ID 归一化，兼容旧存档中的 `vocab.kindergarten`、`vocab.junior_high`、`vocab.minecraft` 等旧值。
+  - 词库切换回归测试升级，覆盖旧 ID 自动迁移和实际切换生效。
+- 验证结果：
+  - `node tests/unit/vocab-pack-switch-regression.test.mjs`
+  - `npx playwright test -c tests/e2e/playwright.config.mjs tests/e2e/specs/p0-vocab-pack-switch.spec.mjs`（临时端口 4181）
+
 ## v1.19.11（发布日期：2026-03-06）
 - 类型：PATCH（UI 优化 + 测验机制调整）
 - APK 版本：versionName = 1.19.11，versionCode = 66（buildNumber = 66）
