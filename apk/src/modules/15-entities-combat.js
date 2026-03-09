@@ -121,7 +121,7 @@ class DragonFireball extends Projectile {
 
 // ============ EnderDragonFireball 类 ============
 class EnderDragonFireball extends Projectile {
-    constructor(x, y, targetX, targetY) {
+    constructor(x, y, targetX, targetY, options = {}) {
         super(x, y, targetX, targetY, 3, "player");
         this.damage = 25;
         this.aoeRadius = 30;
@@ -132,12 +132,13 @@ class EnderDragonFireball extends Projectile {
         const dy = targetY - y;
         const dirX = dx === 0 ? 1 : Math.sign(dx);
         const horizontalSpeed = 4.2 * unit;
+        const straight = !!options?.straight;
         const verticalBias = Math.max(-0.35 * unit, Math.min(0.18 * unit, (dy / Math.max(Math.abs(dx), 1)) * horizontalSpeed * 0.28));
         this.velX = dirX * horizontalSpeed;
-        this.velY = verticalBias;
-        this.dropDelayFrames = 9;
-        this.gravity = 0.32 * unit;
-        this.maxFallSpeed = 6.5 * unit;
+        this.velY = straight ? 0 : verticalBias;
+        this.dropDelayFrames = straight ? 0 : 9;
+        this.gravity = straight ? 0 : (0.32 * unit);
+        this.maxFallSpeed = straight ? 0 : (6.5 * unit);
     }
 
     update(playerRef, golemList, enemyList) {
@@ -824,14 +825,15 @@ class EnderDragon extends Entity {
         }
     }
 
-    shootFireball(targetX, targetY) {
+    shootFireball(targetX, targetY, options = {}) {
         if (this.fireballCooldown > 0) return false;
 
         const fireball = new EnderDragonFireball(
             this.x + this.width / 2,
             this.y + this.height / 2,
             targetX,
-            targetY
+            targetY,
+            options
         );
 
         if (typeof projectiles !== 'undefined') {

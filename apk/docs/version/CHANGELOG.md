@@ -1,3 +1,42 @@
+﻿## v1.19.35 (2026-03-10)
+
+### 0309 多线玩法集成
+- 商人短按进入恢复稳定，卖材料第一页与下一页动作都改为双列布局。
+- 地面左右方向键恢复旧版底部横排双键；骑龙时自动切换四键飞行布局。
+- 跳跃下龙后主角会被安全移出龙体碰撞盒，地面移动立即恢复；末影龙回归锚点按下龙后位置重算。
+- 合成系统正式接入：新增合成按钮、材料多选、盾牌减伤耐久与火炬照明。
+- 地下矿洞新增独立视觉层、暗区遮罩、火炬光圈与洞穴后处理效果，并补入正式群系配置 / 调试切换链路。
+- 坚守者蛋接入传奇宝箱、商人售卖（400 钻石）与召唤链路，骑龙状态仍可使用。
+- 多类敌人从占位方块升级为专用像素轮廓，覆盖 `drowned` 到 `shadow_stalker` 等群系敌人。
+
+### Release Workflow
+- 新增 `docs/release/WORKFLOW.md`，补齐发版流程说明。
+- 按 `release-and-push` 流程回填本次 Git 记录，并同步 release 文档。
+
+### Validation
+- `node tests/unit/village-ui-regression.test.mjs`
+- `node tests/unit/dragon-summon-regression.test.mjs`
+- `node tests/unit/crafting-foundation-regression.test.mjs`
+- `node tests/unit/cave-biome-lighting-regression.test.mjs`
+- `node tests/unit/warden-egg-regression.test.mjs`
+- `node tests/unit/enemy-renderer-regression.test.mjs`
+- `node tests/unit/dev-cache-busting-regression.test.mjs`
+- `MMWG_E2E_PORT=4200 npx playwright test tests/e2e/specs/p0-village-trader-sell-grid.spec.mjs tests/e2e/specs/p0-village-wordhouse-trigger.spec.mjs --config=tests/e2e/playwright.config.mjs`
+- `MMWG_E2E_PORT=4201 npx playwright test tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs tests/e2e/specs/p1-crafting-foundation.spec.mjs --config=tests/e2e/playwright.config.mjs`
+- `MMWG_E2E_PORT=4202 npx playwright test tests/e2e/specs/p1-cave-lighting.spec.mjs tests/e2e/specs/p1-warden-egg-integration.spec.mjs --config=tests/e2e/playwright.config.mjs`
+- `MMWG_E2E_PORT=4205 npx playwright test tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs tests/e2e/specs/p1-cave-lighting.spec.mjs --config=tests/e2e/playwright.config.mjs`
+
+### Version Metadata
+- `version.json` -> `versionCode/buildNumber 87`, `versionName 1.19.35`
+- `package.json` -> `1.19.35`
+- `android-app/package.json` -> `1.19.35`
+- `android-app/android/app/build.gradle` -> `versionCode 87`, `versionName 1.19.35`
+- `android-app/web/build-info.json` -> `version 1.19.35`, `buildNumber 87`, `gitCommit d308f87`
+- `service-worker.js` -> cache `v1.19.35`
+- `Game.html` -> cache-busting `v1.19.35`
+
+---
+
 ## v1.19.33 (2026-03-09)
 
 ### Fixed

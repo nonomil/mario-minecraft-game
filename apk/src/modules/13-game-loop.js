@@ -20,6 +20,27 @@ function isEntityNearCamera(entity, margin = blockSize * 2) {
 let pauseStack = 0;
 let inventoryPauseHeld = false;
 let armorPauseHeld = false;
+let craftingPauseHeld = false;
+
+const SHIELD_DAMAGE_REDUCTION = 0.45;
+const SHIELD_DURABILITY_COST = 18;
+const SHIELD_MAX_DURABILITY = 100;
+const CRAFTING_MODAL_SELECTABLE_ITEMS = ["stick", "iron", "gunpowder"];
+const CRAFTING_RECIPE_DEFINITIONS = {
+    shield: {
+        label: "盾牌",
+        icon: "🛡️",
+        ingredients: { stick: 2, iron: 1 },
+        description: "减免部分伤害，并拥有独立耐久"
+    },
+    torch: {
+        label: "火炬",
+        icon: "🔥",
+        ingredients: { stick: 1, gunpowder: 1 },
+        description: "可在黑暗区域扩大照明范围"
+    }
+};
+let craftingSelection = {};
 
 // 末影龙系统
 let dragonList = [];
@@ -558,7 +579,10 @@ function update() {
                 player.facingRight = true;
                 ridingDragon.facingRight = true;
             }
-            if (keys.up || keys.jump) {
+            if (keys.jump) {
+                dismountRider(player);
+                keys.jump = false;
+            } else if (keys.up) {
                 ridingDragon.y -= moveSpeed;
             }
             if (keys.down) {
@@ -779,8 +803,28 @@ function dismountRider(rider) {
     dragon.rider = null;
     ridingDragon = null;
     skipPlayerGravity = false;
+
+    const riderWidth = Number(rider.width) || Number(player?.width) || 26;
+    const riderHeight = Number(rider.height) || Number(player?.height) || 52;
+    const dismountPadding = Math.max(12, Math.round((Number(dragon.width) || 96) * 0.14));
+    const preferLeftSide = dragon.facingRight !== false;
+    const leftX = dragon.x - riderWidth - dismountPadding;
+    const rightX = dragon.x + dragon.width + dismountPadding;
+    const minX = typeof cameraX === "number" ? cameraX - 24 : Math.min(leftX, rightX);
+    const maxX = typeof cameraX === "number" && typeof canvas !== "undefined" && canvas
+        ? cameraX + canvas.width - riderWidth + 24
+        : Math.max(leftX, rightX);
+    const targetX = preferLeftSide ? leftX : rightX;
+    rider.x = Math.max(minX, Math.min(targetX, maxX));
+    rider.y = Math.min(
+        Math.max(40, dragon.y + Math.max(4, dragon.height - riderHeight)),
+        groundY - riderHeight
+    );
+    rider.velX = preferLeftSide ? -Math.max(1.5, dragon.speed * 0.65) : Math.max(1.5, dragon.speed * 0.65);
+    rider.grounded = false;
+
     if (!dragon.remove && typeof dragon.setReturningState === "function") {
-        dragon.setReturningState(player);
+        dragon.setReturningState(rider);
     }
 
     // 给予缓降效果
@@ -806,7 +850,7 @@ function dragonShootFireball() {
     const targetX = ridingDragon.x + dir * 300;
     const targetY = ridingDragon.y;
 
-    return ridingDragon.shootFireball(targetX, targetY);
+    return ridingDragon.shootFireball(targetX, targetY, { straight: true });
 }
 
 function addScore(points) {
@@ -1000,8 +1044,20 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const baseReduction = Math.min(0.6, defense * 0.12);
     const armorReduction = reductionByArmor[armorId];
     const reduction = hasArmor ? (Number.isFinite(armorReduction) ? armorReduction : baseReduction) : baseReduction;
+    const shieldEquipped = !!(shieldState?.equipped && Number(inventory.shield) > 0 && Number(shieldState?.durability) > 0);
+    const combinedReduction = shieldEquipped
+        ? (1 - ((1 - reduction) * (1 - SHIELD_DAMAGE_REDUCTION)))
+        : reduction;
     const minDamage = 1;  // 有无护甲都至少受 1 点伤害，钻石/下界合金不再无敌
-    const actualDamage = Math.max(minDamage, Math.round(scaledDamage * (1 - reduction)));
+    const actualDamage = Math.max(minDamage, Math.round(scaledDamage * (1 - combinedReduction)));
+    if (shieldEquipped) {
+        shieldState.durability = Math.max(0, Number(shieldState.durability) - SHIELD_DURABILITY_COST);
+        if (shieldState.durability <= 0) {
+            shieldState.equipped = false;
+            inventory.shield = Math.max(0, (Number(inventory.shield) || 0) - 1);
+            showToast("🛡️ 盾牌已损坏");
+        }
+    }
     if (hasArmor) {
         // Hit-based durability loss per armor type
         const hitDurabilityCost = {
@@ -1017,6 +1073,7 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     playerHp = Math.max(0, playerHp - actualDamage);
     if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(8, "", "hurt");
     updateHpUI();
+    updateInventoryUI();
     showFloatingText(`-${penalty}分`, player.x, player.y);
     if (playerHp <= 0 || score <= 0) {
         // 检查图腾复活
@@ -1075,6 +1132,7 @@ function updateInventoryUI() {
     syncWeaponsFromInventory();
     updateWeaponUI();
     updateInventoryModal();
+    updateCraftingModal();
 }
 
 function getInventoryEntries(keys) {
@@ -1149,7 +1207,13 @@ function renderInventoryModal() {
                 <div>🧴 防晒霜 剩余 ${mins}:${String(secs).padStart(2, "0")}</div>
             </div>`;
         }
-        inventoryContentEl.innerHTML = `${currentArmorHtml}${sunscreenHtml}${armorSectionHtml}${weaponHtml}`;
+        const shieldHtml = `
+            <div class="inventory-equipment inventory-item-wide" style="margin-top:6px;">
+                <div>🛡️ 盾牌：${shieldState?.equipped && Number(shieldState?.durability) > 0 ? "已装备" : "未装备"}</div>
+                <div>库存：${Number(inventory.shield) || 0} · 耐久：${Number(shieldState?.durability) || 0}/${Number(shieldState?.maxDurability) || SHIELD_MAX_DURABILITY}</div>
+            </div>
+        `;
+        inventoryContentEl.innerHTML = `${currentArmorHtml}${shieldHtml}${sunscreenHtml}${armorSectionHtml}${weaponHtml}`;
         return;
     }
 
@@ -1170,6 +1234,8 @@ function renderInventoryModal() {
         if (entry.key === "pumpkin") hint = ' (→⛄)';
         else if (entry.key === "iron" && entry.count >= 3) hint = ' (×3→🤖)';
         else if (entry.key === "iron") hint = ` (${entry.count}/3→🤖)`;
+        else if (entry.key === "shield") hint = shieldState?.equipped ? ' (已装备)' : ' (点击装备)';
+        else if (entry.key === "torch") hint = ' (点击放置)';
         return `<div class="inventory-item" data-item="${entry.key}" style="${style}" onclick="window.useInventoryItem && window.useInventoryItem('${entry.key}')">
             <div class="inventory-item-left">
                 <div class="inventory-item-icon">${entry.icon}</div>
@@ -1214,6 +1280,175 @@ function hideInventoryModal() {
 function updateInventoryModal() {
     if (!inventoryModalEl || !inventoryModalEl.classList.contains("visible")) return;
     renderInventoryModal();
+}
+
+function getCraftingSelectableEntries() {
+    return CRAFTING_MODAL_SELECTABLE_ITEMS
+        .map(key => ({
+            key,
+            count: Number(inventory[key]) || 0,
+            label: ITEM_LABELS[key] || key,
+            icon: ITEM_ICONS[key] || "📦"
+        }))
+        .filter(entry => entry.count > 0);
+}
+
+function getCraftSelectionEntries() {
+    return Object.entries(craftingSelection)
+        .filter(([, count]) => Number(count) > 0)
+        .map(([key, count]) => ({
+            key,
+            count: Number(count) || 0,
+            label: ITEM_LABELS[key] || key
+        }));
+}
+
+function getSelectedRecipeKey() {
+    const normalizedSelection = {};
+    for (const [key, count] of Object.entries(craftingSelection)) {
+        const safeCount = Number(count) || 0;
+        if (safeCount > 0) normalizedSelection[key] = safeCount;
+    }
+
+    for (const [recipeKey, recipeDef] of Object.entries(CRAFTING_RECIPE_DEFINITIONS)) {
+        const ingredients = recipeDef.ingredients || {};
+        const ingredientKeys = Object.keys(ingredients);
+        if (ingredientKeys.length !== Object.keys(normalizedSelection).length) continue;
+        const matches = ingredientKeys.every((itemKey) => Number(normalizedSelection[itemKey]) === Number(ingredients[itemKey]));
+        if (matches) return recipeKey;
+    }
+
+    return "";
+}
+
+function clearCraftSelection() {
+    craftingSelection = {};
+    updateCraftingModal();
+}
+
+function toggleCraftMaterialSelection(itemKey) {
+    const maxCount = Number(inventory[itemKey]) || 0;
+    if (maxCount <= 0) return;
+
+    const currentCount = Number(craftingSelection[itemKey]) || 0;
+    const nextCount = currentCount >= maxCount ? 0 : currentCount + 1;
+    if (nextCount <= 0) delete craftingSelection[itemKey];
+    else craftingSelection[itemKey] = nextCount;
+    updateCraftingModal();
+}
+
+function getPlayerTorchLightRadius() {
+    if (!Array.isArray(torches) || !player) return 0;
+    const px = Number(player.x) + Number(player.width || 0) * 0.5;
+    const py = Number(player.y) + Number(player.height || 0) * 0.5;
+    let bestRadius = 0;
+    torches.forEach((torch) => {
+        if (!torch || torch.remove) return;
+        const radius = Number(torch.lightRadius) || 0;
+        const dx = (Number(torch.x) || 0) - px;
+        const dy = (Number(torch.y) || 0) - py;
+        if ((dx * dx) + (dy * dy) <= radius * radius) {
+            bestRadius = Math.max(bestRadius, radius);
+        }
+    });
+    return bestRadius;
+}
+
+function renderCraftingModal() {
+    if (!craftingMaterialListEl || !craftingRecipeListEl || !craftingSelectionSummaryEl || !craftingPreviewEl) return;
+
+    craftingRecipeListEl.innerHTML = Object.values(CRAFTING_RECIPE_DEFINITIONS).map((recipe) => {
+        const ingredients = Object.entries(recipe.ingredients || {})
+            .map(([itemKey, count]) => `${ITEM_LABELS[itemKey] || itemKey} x${count}`)
+            .join(" + ");
+        return `<div class="crafting-recipe-card">
+            <div class="crafting-recipe-name">${recipe.icon} ${recipe.label}</div>
+            <div>${ingredients}</div>
+            <div class="crafting-recipe-desc">${recipe.description}</div>
+        </div>`;
+    }).join("");
+
+    const selectedEntries = getCraftSelectionEntries();
+    if (!selectedEntries.length) {
+        craftingSelectionSummaryEl.innerHTML = "当前未选择材料。点击下方材料卡片可累计选择数量。";
+    } else {
+        craftingSelectionSummaryEl.innerHTML = selectedEntries
+            .map((entry) => `${entry.label} x${entry.count}`)
+            .join(" · ");
+    }
+
+    const selectedRecipeKey = getSelectedRecipeKey();
+    if (selectedRecipeKey) {
+        const recipe = CRAFTING_RECIPE_DEFINITIONS[selectedRecipeKey];
+        craftingPreviewEl.innerHTML = `已匹配配方：<b>${recipe.icon} ${recipe.label}</b>，点击“开始合成”即可制作。`;
+    } else {
+        craftingPreviewEl.innerHTML = "尚未匹配到有效配方。当前只支持盾牌和火炬的手动合成。";
+    }
+
+    const entries = getCraftingSelectableEntries();
+    if (!entries.length) {
+        craftingMaterialListEl.innerHTML = `<div class="inventory-empty">暂无可用于合成的材料</div>`;
+    } else {
+        craftingMaterialListEl.innerHTML = entries.map((entry) => {
+            const selectedCount = Number(craftingSelection[entry.key]) || 0;
+            const className = selectedCount > 0 ? "inventory-item craft-selected" : "inventory-item";
+            const countText = selectedCount > 0
+                ? `已选 ${selectedCount}/${entry.count}`
+                : `库存 ${entry.count}`;
+            return `<div class="${className}" data-item="${entry.key}" onclick="window.toggleCraftMaterialSelection && window.toggleCraftMaterialSelection('${entry.key}')">
+                <div class="inventory-item-left">
+                    <div class="inventory-item-icon">${entry.icon}</div>
+                    <div class="inventory-item-name">${entry.label}</div>
+                </div>
+                <div class="inventory-item-count">${countText}</div>
+            </div>`;
+        }).join("");
+    }
+
+    if (craftingConfirmBtnEl) {
+        craftingConfirmBtnEl.disabled = !selectedRecipeKey;
+    }
+}
+
+function showCraftingModal() {
+    if (!craftingModalEl) return;
+    if (craftingModalEl.classList.contains("visible")) return;
+    pushPause();
+    craftingPauseHeld = true;
+    craftingModalEl.classList.add("visible");
+    craftingModalEl.setAttribute("aria-hidden", "false");
+    renderCraftingModal();
+}
+
+function hideCraftingModal() {
+    if (!craftingModalEl) return;
+    if (!craftingModalEl.classList.contains("visible") && !craftingPauseHeld) return;
+    craftingModalEl.classList.remove("visible");
+    craftingModalEl.setAttribute("aria-hidden", "true");
+    if (craftingPauseHeld) {
+        popPause();
+        craftingPauseHeld = false;
+    }
+}
+
+function updateCraftingModal() {
+    if (!craftingModalEl || !craftingModalEl.classList.contains("visible")) return;
+    renderCraftingModal();
+}
+
+function craftSelectedMaterials() {
+    const recipeKey = getSelectedRecipeKey();
+    if (!recipeKey) {
+        showToast("⚒️ 当前材料组合还不能合成");
+        return false;
+    }
+    const crafted = tryCraft(recipeKey);
+    if (crafted) {
+        clearCraftSelection();
+    } else {
+        updateCraftingModal();
+    }
+    return crafted;
 }
 
 // 背包物品使用函数
@@ -1362,6 +1597,27 @@ function useInventoryItem(itemKey) {
         }
         itemCooldownTimers.coal = ITEM_COOLDOWNS.coal;
         showToast("🕯️ 放置火把");
+        used = true;
+    } else if (itemKey === "torch") {
+        inventory.torch -= 1;
+        if (typeof torches !== "undefined") {
+            torches.push(new Torch(player.x, groundY - 30));
+        }
+        showFloatingText("🔥 火炬照明", player.x, player.y - 30, "#FFD54F");
+        showToast("🔥 放置火炬");
+        used = true;
+    } else if (itemKey === "shield") {
+        if (shieldState?.equipped && Number(shieldState?.durability) > 0) {
+            shieldState.equipped = false;
+            showToast("🛡️ 收起盾牌");
+        } else {
+            shieldState.equipped = true;
+            shieldState.maxDurability = SHIELD_MAX_DURABILITY;
+            if (Number(shieldState.durability) <= 0) {
+                shieldState.durability = SHIELD_MAX_DURABILITY;
+            }
+            showToast(`🛡️ 装备盾牌（耐久 ${shieldState.durability}/${shieldState.maxDurability}）`);
+        }
         used = true;
     } else if (itemKey === "dragon_egg") {
         used = useDragonEgg();
@@ -1587,6 +1843,12 @@ function useInventoryItem(itemKey) {
 // 导出到全局，供 HTML onclick 使用
 if (typeof window !== "undefined") {
     window.useInventoryItem = useInventoryItem;
+    window.showCraftingModal = showCraftingModal;
+    window.hideCraftingModal = hideCraftingModal;
+    window.toggleCraftMaterialSelection = toggleCraftMaterialSelection;
+    window.clearCraftSelection = clearCraftSelection;
+    window.craftSelectedMaterials = craftSelectedMaterials;
+    window.getPlayerTorchLightRadius = getPlayerTorchLightRadius;
     window.equipArmorFromBackpack = function(armorId) {
         if (equipArmor(armorId)) {
             updateInventoryModal();
@@ -1728,7 +1990,9 @@ function hideArmorSelectUI() {
 const RECIPES = {
     iron_golem: { iron: 3 },
     snow_golem: { pumpkin: 1, snow_block: 2 },
-    silent_boots: { sculk_vein: 5 }
+    silent_boots: { sculk_vein: 5 },
+    shield: { stick: 2, iron: 1 },
+    torch: { stick: 1, gunpowder: 1 }
 };
 
 function tryCraft(recipeKey) {
@@ -1758,6 +2022,23 @@ function tryCraft(recipeKey) {
         silentBootsState.durability = 30;
         showToast("🥾 静音靴已装备（耐久30）");
         showFloatingText("🥾 静音靴", player.x, player.y - 40, "#7FDBFF");
+        updateInventoryUI();
+        return true;
+    }
+    if (recipeKey === "shield") {
+        inventory.shield = (Number(inventory.shield) || 0) + 1;
+        shieldState.equipped = true;
+        shieldState.maxDurability = SHIELD_MAX_DURABILITY;
+        shieldState.durability = SHIELD_MAX_DURABILITY;
+        showToast("🛡️ 合成盾牌并自动装备");
+        showFloatingText("🛡️ 盾牌", player.x, player.y - 40, "#90CAF9");
+        updateInventoryUI();
+        return true;
+    }
+    if (recipeKey === "torch") {
+        inventory.torch = (Number(inventory.torch) || 0) + 1;
+        showToast("🔥 合成火炬");
+        showFloatingText("🔥 火炬", player.x, player.y - 40, "#FFD54F");
         updateInventoryUI();
         return true;
     }

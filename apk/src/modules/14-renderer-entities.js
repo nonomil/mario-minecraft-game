@@ -94,6 +94,7 @@ function drawCreeperMob(enemy) {
 
 function drawEnemy(enemy) {
     if (enemy.remove || enemy.y > 900) return;
+    if (enemy.type === "sculk_worm" && enemy.underground) return;
     switch (enemy.type) {
         case "zombie":
             drawZombie(enemy);
@@ -114,35 +115,47 @@ function drawEnemy(enemy) {
         case "skeleton":
             drawSkeleton(enemy);
             break;
+        case "drowned":
+            drawDrownedEnemy(enemy);
+            break;
+        case "guardian":
+            drawGuardianEnemy(enemy);
+            break;
+        case "pufferfish":
+            drawPufferfishEnemy(enemy);
+            break;
         case "enderman":
             drawEnderman(enemy);
             break;
         case "piglin":
-            drawSimpleBiomeEnemy(enemy, "#C68642", "#8B4513", true);
+            drawPiglinEnemy(enemy);
             break;
         case "bee":
-            drawSimpleBiomeEnemy(enemy, "#FFD54F", "#212121", false);
+            drawBeeEnemy(enemy);
             break;
         case "fox":
             drawFoxEnemy(enemy);
             break;
         case "spore_bug":
-            drawSimpleBiomeEnemy(enemy, "#8E24AA", "#4A148C", false);
+            drawSporeBugEnemy(enemy);
             break;
         case "magma_cube":
-            drawSimpleBiomeEnemy(enemy, "#FF5722", "#BF360C", false);
+            drawMagmaCubeEnemy(enemy);
             break;
         case "fire_spirit":
-            drawSimpleBiomeEnemy(enemy, "#FFB300", "#F57C00", false);
+            drawFireSpiritEnemy(enemy);
             break;
         case "sculk_worm":
-            drawSimpleBiomeEnemy(enemy, "#00838F", "#80DEEA", false);
+            drawSculkWormEnemy(enemy);
             break;
         case "shadow_stalker":
-            drawSimpleBiomeEnemy(enemy, "#1B1B2F", "#E53935", true);
+            drawShadowStalkerEnemy(enemy);
             break;
         case "warden":
             drawWardenEnemy(enemy);
+            break;
+        default:
+            drawSimpleBiomeEnemy(enemy, enemy.color || "#78909C", "#263238", enemy.height >= enemy.width);
             break;
     }
 
@@ -166,6 +179,361 @@ function drawSimpleBiomeEnemy(enemy, bodyColor, detailColor, humanoid) {
     } else {
         ctx.fillRect(x + w * 0.2, y + h * 0.4, w * 0.6, h * 0.18);
     }
+}
+
+function drawDrownedEnemy(enemy) {
+    const x = enemy.x;
+    const s = enemy.width / 16;
+    const y = enemy.y + enemy.height - 24 * s;
+
+    ctx.fillStyle = "#4D8B7E";
+    drawMobRect(x, y, s, 0, 0, 16, 8);
+    ctx.fillStyle = "#29584A";
+    drawMobRect(x, y, s, 1, 0, 14, 2);
+    drawMobRect(x, y, s, 2, 2, 2, 2);
+    drawMobRect(x, y, s, 12, 3, 2, 2);
+
+    ctx.fillStyle = "#E1F5FE";
+    drawMobRect(x, y, s, 4, 3, 2, 2);
+    drawMobRect(x, y, s, 10, 3, 2, 2);
+    ctx.fillStyle = "#19363B";
+    drawMobRect(x, y, s, 7, 5, 2, 1);
+
+    ctx.fillStyle = "#266D8F";
+    drawMobRect(x, y, s, 3, 8, 10, 8);
+    drawMobRect(x, y, s, 0, 8, 3, 12);
+    drawMobRect(x, y, s, 13, 8, 3, 12);
+    ctx.fillStyle = "#52A6AE";
+    drawMobRect(x, y, s, 4, 9, 8, 2);
+    drawMobRect(x, y, s, 2, 12, 2, 5);
+    drawMobRect(x, y, s, 12, 13, 2, 5);
+    ctx.fillStyle = "#A7C6A5";
+    drawMobRect(x, y, s, 5, 11, 1, 4);
+    drawMobRect(x, y, s, 10, 12, 1, 5);
+
+    ctx.fillStyle = "#355C5C";
+    drawMobRect(x, y, s, 3, 16, 5, 8);
+    drawMobRect(x, y, s, 8, 16, 5, 8);
+    ctx.fillStyle = "#82B7B5";
+    drawMobRect(x, y, s, 4, 18, 3, 1);
+    drawMobRect(x, y, s, 9, 19, 3, 1);
+}
+
+function drawGuardianEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const shellX = x + w * 0.12;
+    const shellY = y + h * 0.18;
+    const shellW = w * 0.7;
+    const shellH = h * 0.56;
+    const tailX = x + w * 0.72;
+    const tailY = y + h * 0.32;
+    const spikes = [
+        [0.26, 0.02, 0.1, 0.18],
+        [0.54, 0.01, 0.1, 0.2],
+        [0.18, 0.2, 0.09, 0.18],
+        [0.63, 0.18, 0.09, 0.18],
+        [0.27, 0.62, 0.1, 0.18],
+        [0.54, 0.61, 0.1, 0.18],
+        [0.04, 0.36, 0.15, 0.08],
+        [0.72, 0.38, 0.16, 0.08]
+    ];
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillRect(x + w * 0.12, y + h * 0.78, w * 0.7, h * 0.08);
+
+    ctx.fillStyle = "#A3B5A4";
+    spikes.forEach(([px, py, pw, ph]) => {
+        ctx.fillRect(x + w * px, y + h * py, w * pw, h * ph);
+    });
+
+    ctx.fillStyle = "#6F8376";
+    ctx.fillRect(shellX, shellY, shellW, shellH);
+    ctx.fillStyle = "#8CA18C";
+    ctx.fillRect(x + w * 0.2, y + h * 0.26, w * 0.5, h * 0.16);
+    ctx.fillRect(x + w * 0.18, y + h * 0.44, w * 0.46, h * 0.18);
+
+    ctx.fillStyle = "#4E6762";
+    ctx.fillRect(tailX, tailY, w * 0.12, h * 0.16);
+    ctx.fillRect(tailX + w * 0.1, tailY - h * 0.08, w * 0.1, h * 0.34);
+    ctx.fillStyle = "#2BC8B7";
+    ctx.fillRect(tailX + w * 0.04, tailY + h * 0.02, w * 0.16, h * 0.04);
+    ctx.fillRect(x + w * 0.32, y + h * 0.22, w * 0.05, h * 0.08);
+    ctx.fillRect(x + w * 0.58, y + h * 0.22, w * 0.05, h * 0.08);
+
+    ctx.fillStyle = "#E3B868";
+    ctx.fillRect(x + w * 0.26, y + h * 0.34, w * 0.26, h * 0.16);
+    ctx.fillStyle = "#FFF3C4";
+    ctx.fillRect(x + w * 0.3, y + h * 0.37, w * 0.16, h * 0.1);
+    ctx.fillStyle = "#161616";
+    ctx.fillRect(x + w * 0.37, y + h * 0.39, w * 0.06, h * 0.06);
+}
+
+function drawPufferfishEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const spikes = [
+        [0.14, 0.04, 0.08, 0.12],
+        [0.38, 0.0, 0.08, 0.14],
+        [0.62, 0.04, 0.08, 0.12],
+        [0.82, 0.18, 0.1, 0.1],
+        [0.84, 0.46, 0.1, 0.1],
+        [0.78, 0.72, 0.12, 0.1],
+        [0.58, 0.84, 0.1, 0.1],
+        [0.34, 0.86, 0.1, 0.1],
+        [0.1, 0.74, 0.12, 0.1],
+        [0.04, 0.48, 0.1, 0.1],
+        [0.08, 0.22, 0.1, 0.1]
+    ];
+
+    ctx.fillStyle = "#F5C84B";
+    ctx.fillRect(x + w * 0.16, y + h * 0.12, w * 0.68, h * 0.72);
+    ctx.fillStyle = "#F9E07B";
+    ctx.fillRect(x + w * 0.26, y + h * 0.2, w * 0.5, h * 0.56);
+    ctx.fillStyle = "#D69A1C";
+    spikes.forEach(([px, py, pw, ph]) => {
+        ctx.fillRect(x + w * px, y + h * py, w * pw, h * ph);
+    });
+    ctx.fillRect(x + w * 0.1, y + h * 0.4, w * 0.08, h * 0.12);
+    ctx.fillRect(x + w * 0.82, y + h * 0.4, w * 0.08, h * 0.12);
+
+    ctx.fillStyle = "#212121";
+    ctx.fillRect(x + w * 0.28, y + h * 0.34, w * 0.1, h * 0.1);
+    ctx.fillRect(x + w * 0.62, y + h * 0.34, w * 0.1, h * 0.1);
+    ctx.fillStyle = "#FDF5D0";
+    ctx.fillRect(x + w * 0.32, y + h * 0.37, w * 0.03, h * 0.03);
+    ctx.fillRect(x + w * 0.66, y + h * 0.37, w * 0.03, h * 0.03);
+    ctx.fillStyle = "#8D6E63";
+    ctx.fillRect(x + w * 0.42, y + h * 0.54, w * 0.16, h * 0.05);
+    ctx.fillRect(x + w * 0.46, y + h * 0.62, w * 0.08, h * 0.04);
+}
+
+function drawPiglinEnemy(enemy) {
+    const x = enemy.x;
+    const s = enemy.width / 16;
+    const y = enemy.y + enemy.height - 26 * s;
+
+    ctx.fillStyle = "#D89A8A";
+    drawMobRect(x, y, s, 0, 0, 16, 8);
+    ctx.fillStyle = "#F0B3A5";
+    drawMobRect(x, y, s, 4, 2, 8, 4);
+    ctx.fillStyle = "#C97F74";
+    drawMobRect(x, y, s, -2, 1, 3, 4);
+    drawMobRect(x, y, s, 15, 1, 3, 4);
+    drawMobRect(x, y, s, 6, 4, 4, 2);
+    ctx.fillStyle = "#FFF5F3";
+    drawMobRect(x, y, s, 4, 6, 2, 2);
+    drawMobRect(x, y, s, 10, 6, 2, 2);
+    ctx.fillStyle = "#2E1B17";
+    drawMobRect(x, y, s, 5, 2, 2, 2);
+    drawMobRect(x, y, s, 9, 2, 2, 2);
+
+    ctx.fillStyle = "#7A3F2C";
+    drawMobRect(x, y, s, 3, 8, 10, 9);
+    drawMobRect(x, y, s, 0, 8, 3, 12);
+    drawMobRect(x, y, s, 13, 8, 3, 12);
+    ctx.fillStyle = "#9C5D3E";
+    drawMobRect(x, y, s, 4, 9, 8, 3);
+    ctx.fillStyle = "#E8C16B";
+    drawMobRect(x, y, s, 0, 11, 2, 5);
+    drawMobRect(x, y, s, 13, 12, 2, 5);
+
+    ctx.fillStyle = "#4E342E";
+    drawMobRect(x, y, s, 3, 17, 5, 9);
+    drawMobRect(x, y, s, 8, 17, 5, 9);
+    ctx.fillStyle = "#2F1D18";
+    drawMobRect(x, y, s, 3, 24, 5, 2);
+    drawMobRect(x, y, s, 8, 24, 5, 2);
+}
+
+function drawBeeEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const faceRight = enemy.dir >= 0;
+    const bodyX = faceRight ? x + w * 0.08 : x + w * 0.16;
+    const wingPulse = Math.sin((typeof gameFrame === "number" ? gameFrame : 0) * 0.18 + enemy.x * 0.02) * h * 0.08;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(210, 240, 255, 0.72)";
+    ctx.fillRect(x + w * 0.16, y + h * 0.08 + wingPulse, w * 0.26, h * 0.24);
+    ctx.fillRect(x + w * 0.44, y + h * 0.02 - wingPulse, w * 0.26, h * 0.24);
+    ctx.restore();
+
+    ctx.fillStyle = "#3B2C1A";
+    ctx.fillRect(bodyX, y + h * 0.3, w * 0.68, h * 0.42);
+    ctx.fillStyle = "#FFD54F";
+    ctx.fillRect(bodyX + w * 0.04, y + h * 0.24, w * 0.6, h * 0.42);
+    ctx.fillStyle = "#2B2B2B";
+    ctx.fillRect(bodyX + w * 0.12, y + h * 0.26, w * 0.08, h * 0.4);
+    ctx.fillRect(bodyX + w * 0.32, y + h * 0.24, w * 0.08, h * 0.42);
+    ctx.fillRect(bodyX + w * 0.52, y + h * 0.26, w * 0.08, h * 0.4);
+    ctx.fillStyle = "#FFF6CF";
+    ctx.fillRect(faceRight ? bodyX + w * 0.5 : bodyX + w * 0.06, y + h * 0.36, w * 0.12, h * 0.12);
+    ctx.fillStyle = "#121212";
+    ctx.fillRect(faceRight ? bodyX + w * 0.56 : bodyX + w * 0.12, y + h * 0.4, w * 0.04, h * 0.04);
+    ctx.fillStyle = "#D4A000";
+    ctx.fillRect(faceRight ? x + w * 0.02 : x + w * 0.82, y + h * 0.42, w * 0.08, h * 0.08);
+    ctx.fillStyle = "#1E1E1E";
+    ctx.fillRect(faceRight ? x + w * 0.88 : x + w * 0.04, y + h * 0.42, w * 0.06, h * 0.05);
+}
+
+function drawSporeBugEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const pulse = (Math.sin((typeof gameFrame === "number" ? gameFrame : 0) * 0.14 + enemy.x * 0.12) + 1) * 0.5;
+
+    ctx.fillStyle = "#5D2B7E";
+    ctx.fillRect(x + w * 0.08, y + h * 0.08, w * 0.84, h * 0.38);
+    ctx.fillStyle = "#9B62D4";
+    ctx.fillRect(x + w * 0.18, y + h * 0.12, w * 0.64, h * 0.22);
+    ctx.fillStyle = "#D8C2FF";
+    ctx.fillRect(x + w * 0.24, y + h * 0.16, w * 0.08, h * 0.08);
+    ctx.fillRect(x + w * 0.56, y + h * 0.16, w * 0.1, h * 0.1);
+
+    ctx.fillStyle = "#3F2747";
+    ctx.fillRect(x + w * 0.2, y + h * 0.42, w * 0.48, h * 0.28);
+    ctx.fillStyle = "#B8FFCC";
+    ctx.fillRect(x + w * 0.28, y + h * 0.48, w * 0.08, h * 0.08);
+    ctx.fillRect(x + w * 0.5, y + h * 0.48, w * 0.08, h * 0.08);
+    ctx.fillStyle = `rgba(184, 255, 204, ${0.22 + pulse * 0.28})`;
+    ctx.fillRect(x + w * 0.24, y + h * 0.44, w * 0.4, h * 0.22);
+    ctx.fillStyle = "#2D1B34";
+    ctx.fillRect(x + w * 0.16, y + h * 0.72, w * 0.08, h * 0.14);
+    ctx.fillRect(x + w * 0.34, y + h * 0.72, w * 0.08, h * 0.14);
+    ctx.fillRect(x + w * 0.52, y + h * 0.72, w * 0.08, h * 0.14);
+    ctx.fillRect(x + w * 0.7, y + h * 0.72, w * 0.08, h * 0.14);
+}
+
+function drawMagmaCubeEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const squash = enemy.isJumping ? 0.82 : 0.96 + Math.sin((enemy.jumpCooldown || 0) * 0.08) * 0.04;
+    const topY = y + h * (1 - squash);
+    const bodyH = h * squash;
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
+    ctx.fillRect(x + w * 0.08, y + h * 0.88, w * 0.84, h * 0.08);
+    ctx.fillStyle = "#4A0F07";
+    ctx.fillRect(x, topY, w, bodyH);
+    ctx.fillStyle = "#8D1B09";
+    ctx.fillRect(x + w * 0.08, topY + bodyH * 0.08, w * 0.84, bodyH * 0.22);
+    ctx.fillRect(x + w * 0.1, topY + bodyH * 0.42, w * 0.8, bodyH * 0.22);
+    ctx.fillRect(x + w * 0.14, topY + bodyH * 0.72, w * 0.72, bodyH * 0.12);
+    ctx.fillStyle = "#FF6F1C";
+    ctx.fillRect(x + w * 0.22, topY + bodyH * 0.18, w * 0.56, bodyH * 0.46);
+    ctx.fillStyle = "#FFD54F";
+    ctx.fillRect(x + w * 0.32, topY + bodyH * 0.28, w * 0.36, bodyH * 0.18);
+    ctx.fillStyle = "#220B05";
+    ctx.fillRect(x + w * 0.26, topY + bodyH * 0.38, w * 0.12, bodyH * 0.08);
+    ctx.fillRect(x + w * 0.62, topY + bodyH * 0.38, w * 0.12, bodyH * 0.08);
+    ctx.fillRect(x + w * 0.38, topY + bodyH * 0.56, w * 0.24, bodyH * 0.06);
+}
+
+function drawFireSpiritEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const sway = Math.sin((typeof gameFrame === "number" ? gameFrame : 0) * 0.12 + enemy.x * 0.08) * w * 0.06;
+
+    ctx.save();
+    ctx.globalAlpha = enemy.isDashing ? 0.78 : 0.62;
+    ctx.fillStyle = "#FF6F00";
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.5, y + h * 0.04);
+    ctx.lineTo(x + w * 0.82 + sway, y + h * 0.32);
+    ctx.lineTo(x + w * 0.72, y + h * 0.7);
+    ctx.lineTo(x + w * 0.5, y + h * 0.96);
+    ctx.lineTo(x + w * 0.28, y + h * 0.72);
+    ctx.lineTo(x + w * 0.16 - sway, y + h * 0.32);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    ctx.fillStyle = "#FFB74D";
+    ctx.fillRect(x + w * 0.28, y + h * 0.24, w * 0.44, h * 0.44);
+    ctx.fillStyle = "#FFF3C4";
+    ctx.fillRect(x + w * 0.38, y + h * 0.34, w * 0.24, h * 0.2);
+    ctx.fillStyle = "#2B1100";
+    ctx.fillRect(x + w * 0.35, y + h * 0.42, w * 0.08, h * 0.06);
+    ctx.fillRect(x + w * 0.57, y + h * 0.42, w * 0.08, h * 0.06);
+    ctx.fillStyle = "#FF7043";
+    ctx.fillRect(x + w * 0.1, y + h * 0.58, w * 0.12, h * 0.08);
+    ctx.fillRect(x + w * 0.78, y + h * 0.5, w * 0.12, h * 0.08);
+}
+
+function drawSculkWormEnemy(enemy) {
+    if (enemy.underground) return;
+
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const segments = 5;
+    const frame = typeof gameFrame === "number" ? gameFrame : 0;
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillRect(x + w * 0.06, y + h * 0.76, w * 0.88, h * 0.1);
+
+    for (let index = 0; index < segments; index += 1) {
+        const segX = x + (w / segments) * index;
+        const wave = Math.sin(frame * 0.16 + index * 0.8) * h * 0.08;
+        const segY = y + h * 0.24 + wave;
+        const segW = w / segments + (index === segments - 1 ? 0 : 1);
+        const segH = h * (index === 0 ? 0.46 : 0.4);
+        ctx.fillStyle = index === 0 ? "#0E3236" : "#12474C";
+        ctx.fillRect(segX, segY, segW, segH);
+        ctx.fillStyle = "#77F7F0";
+        ctx.fillRect(segX + segW * 0.3, segY + segH * 0.24, segW * 0.22, segH * 0.2);
+    }
+
+    ctx.fillStyle = "#B5FFFB";
+    ctx.fillRect(x + w * 0.04, y + h * 0.32, w * 0.08, h * 0.06);
+    ctx.fillRect(x + w * 0.04, y + h * 0.58, w * 0.08, h * 0.06);
+    ctx.fillStyle = "#042328";
+    ctx.fillRect(x + w * 0.1, y + h * 0.42, w * 0.1, h * 0.06);
+}
+
+function drawShadowStalkerEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    const alpha = enemy.stealthed ? 0.5 : 0.95;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#0E1020";
+    ctx.fillRect(x + w * 0.24, y + h * 0.08, w * 0.32, h * 0.22);
+    ctx.fillRect(x + w * 0.12, y + h * 0.26, w * 0.56, h * 0.46);
+    ctx.fillRect(x + w * 0.04, y + h * 0.46, w * 0.18, h * 0.18);
+    ctx.fillRect(x + w * 0.64, y + h * 0.44, w * 0.18, h * 0.18);
+    ctx.fillRect(x + w * 0.2, y + h * 0.68, w * 0.14, h * 0.26);
+    ctx.fillRect(x + w * 0.48, y + h * 0.68, w * 0.14, h * 0.26);
+    ctx.fillStyle = "#232846";
+    ctx.fillRect(x + w * 0.18, y + h * 0.3, w * 0.44, h * 0.16);
+    ctx.fillRect(x + w * 0.3, y + h * 0.18, w * 0.2, h * 0.08);
+    ctx.fillStyle = "#E53935";
+    ctx.fillRect(x + w * 0.31, y + h * 0.16, w * 0.08, h * 0.05);
+    ctx.fillRect(x + w * 0.47, y + h * 0.16, w * 0.08, h * 0.05);
+    ctx.fillStyle = "#9A2424";
+    ctx.fillRect(x + w * 0.02, y + h * 0.58, w * 0.08, h * 0.04);
+    ctx.fillRect(x + w * 0.82, y + h * 0.56, w * 0.08, h * 0.04);
+    if (enemy.stealthed) {
+        ctx.fillStyle = "rgba(229, 57, 53, 0.14)";
+        ctx.fillRect(x + w * 0.08, y + h * 0.08, w * 0.72, h * 0.78);
+    }
+    ctx.restore();
 }
 
 function drawWardenEnemy(enemy) {

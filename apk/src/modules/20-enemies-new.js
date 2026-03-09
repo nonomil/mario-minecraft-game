@@ -979,6 +979,10 @@ function spawnBiomeEnemy(biomeId, x, y) {
             enemyTypes.push("bee", "bee", "fox");
             if (score > 300) enemyTypes.push("witch");
             break;
+        case "cave":
+            enemyTypes.push("spore_bug");
+            if (score > 700) enemyTypes.push("spore_bug");
+            break;
         case "mushroom_island":
             enemyTypes.push("spore_bug", "spore_bug");
             if (score > 400) enemyTypes.push("spore_bug");

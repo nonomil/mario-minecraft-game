@@ -242,6 +242,16 @@ function testGameLoopSetsReturningStateOnDismount() {
   );
   assert.match(
     source,
+    /const\s+leftX\s*=\s*dragon\.x[\s\S]*const\s+rightX\s*=\s*dragon\.x\s*\+\s*dragon\.width[\s\S]*rider\.x\s*=\s*Math\.max\(/,
+    "下龙时应把主角从龙体上安全移开，不能只清 riding 状态而仍留在龙碰撞盒里"
+  );
+  assert.match(
+    source,
+    /setReturningState\s*\(\s*rider\s*\)|setReturningState\s*\(\s*player\s*\)/,
+    "下龙后末影龙回归锚点应基于下龙后的主角位置重新计算"
+  );
+  assert.match(
+    source,
     /ridingDragon\.y\s*=\s*Math\.max\(50,\s*Math\.min\(ridingDragon\.y,\s*groundY\s*-\s*ridingDragon\.height\)\)/,
     "骑乘末影龙时最低高度应允许降到与地面平齐"
   );
@@ -270,10 +280,42 @@ function testMobileHoldAttackUsesDragonFireInsteadOfConsumableWhileMounted() {
   );
 }
 
-function testDragonFireballStartsFlatThenDrops() {
+function testMountedJumpUsesDismountInsteadOfClimb() {
+  const source = readModuleCode("src/modules/13-game-loop.js");
+  assert.match(
+    source,
+    /if\s*\(\s*keys\.jump\s*\)\s*\{\s*dismountRider\(player\);[\s\S]*?keys\.jump\s*=\s*false;?\s*\}/,
+    "骑龙时点击跳跃键应立即下龙，并消费这次 jump 输入"
+  );
+  assert.match(
+    source,
+    /if\s*\(\s*keys\.up\s*\)\s*\{\s*ridingDragon\.y\s*-\=\s*moveSpeed;/,
+    "骑龙时向上飞行应只保留给 up 输入，不能再混用 jump"
+  );
+}
+
+function testDismountKeepsGroundMovementAvailable() {
+  const source = readModuleCode("tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs");
+  assert.match(
+    source,
+    /playerAfterDismountX[\s\S]*playerAfterMoveX[\s\S]*toBeGreaterThan/,
+    "下龙 E2E 应验证主角恢复地面移动，而不是只检查 riding=false"
+  );
+}
+
+function testDragonShootFireballRequestsStraightFlightWhileMounted() {
+  const source = readModuleCode("src/modules/13-game-loop.js");
+  assert.match(
+    source,
+    /ridingDragon\.shootFireball\(targetX,\s*targetY,\s*\{\s*straight:\s*true\s*\}\)/,
+    "骑龙喷火应明确请求水平直喷火球配置"
+  );
+}
+
+function testStraightDragonFireballStaysHorizontal() {
   const context = createCombatContext();
   const EnderDragonFireball = vm.runInContext("EnderDragonFireball", context);
-  const fireball = new EnderDragonFireball(20, 40, 220, 40);
+  const fireball = new EnderDragonFireball(20, 40, 220, 40, { straight: true });
   const samples = [];
 
   for (let i = 0; i < 18; i += 1) {
@@ -281,13 +323,10 @@ function testDragonFireballStartsFlatThenDrops() {
     samples.push(fireball.y);
   }
 
-  const earlySegment = samples.slice(0, 6);
-  const lateSegment = samples.slice(12);
-  const earlyVariance = Math.max(...earlySegment) - Math.min(...earlySegment);
-  const lateDrop = lateSegment[lateSegment.length - 1] - earlySegment[earlySegment.length - 1];
+  const totalDrift = Math.max(...samples) - Math.min(...samples);
 
-  assert.ok(earlyVariance <= 2, "末影龙火球起飞后前几帧应基本平飞，不能立刻大幅下坠");
-  assert.ok(lateDrop >= 6, "末影龙火球在平飞一段后应明显下落，形成抛物线");
+  assert.ok(totalDrift <= 3, "骑龙长按攻击的火球应保持近似水平直线，不应再明显下坠");
+  assert.equal(fireball.gravity, 0, "水平直喷火球不应继续叠加重力");
 }
 
 function testMobileDragonFlightButtonsExistAndAreBound() {
@@ -374,7 +413,10 @@ function run() {
   testGameLoopSetsReturningStateOnDismount();
   testMountAndDismountHintsExplainDragonControls();
   testMobileHoldAttackUsesDragonFireInsteadOfConsumableWhileMounted();
-  testDragonFireballStartsFlatThenDrops();
+  testMountedJumpUsesDismountInsteadOfClimb();
+  testDismountKeepsGroundMovementAvailable();
+  testDragonShootFireballRequestsStraightFlightWhileMounted();
+  testStraightDragonFireballStaysHorizontal();
   testMobileDragonFlightButtonsExistAndAreBound();
   testTraderSellsDragonEggForOneHundredDiamonds();
   testBossHpDoublesWhenSummonedDragonExists();

@@ -171,6 +171,7 @@ async function start() {
     wireHudButtons();
     wireArmorModal();
     wireInventoryModal();
+    wireCraftingModal();
     wireProfileModal();
     wireSettingsModal();
     wireLearningModals();
@@ -299,15 +300,16 @@ async function start() {
         const isPause = e.code === "Escape";
         const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
         const inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+        const ridingNow = typeof ridingDragon !== "undefined" && !!ridingDragon;
         if (isJump) {
             keys.jump = true;
-            if (!e.repeat) {
+            if (!ridingNow && !e.repeat) {
                 jumpBuffer = gameConfig.jump.bufferFrames;
             }
         }
         if (isRight) keys.right = true;
         if (isLeft) keys.left = true;
-        if (e.code === "ArrowUp" || e.code === "KeyW") keys.up = true;
+        if (e.code === "KeyW" || (e.code === "ArrowUp" && !ridingNow)) keys.up = true;
         if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
         if (isAttack) handleAttack("press");
         if (isWeaponSwitch && !e.repeat) switchWeapon();

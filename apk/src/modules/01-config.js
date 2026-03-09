@@ -114,6 +114,12 @@ let inventoryContentEl = null;
 let inventoryTabButtons = null;
 let inventoryTab = "items";
 let inventoryDropMode = false;
+let craftingModalEl = null;
+let craftingMaterialListEl = null;
+let craftingRecipeListEl = null;
+let craftingSelectionSummaryEl = null;
+let craftingPreviewEl = null;
+let craftingConfirmBtnEl = null;
 let profileModalEl = null;
 let profileUsernameEl = null;
 let profilePlaytimeEl = null;
@@ -160,10 +166,13 @@ const INVENTORY_TEMPLATE = {
     bow: 1,
     arrow: 5,
     gunpowder: 0,
+    torch: 0,
+    shield: 0,
     rotten_flesh: 0,
     string: 0,
     ender_pearl: 0,
     dragon_egg: 0,
+    warden_egg: 0,
     flower: 0,
     mushroom: 0,
     coal: 0,
@@ -200,6 +209,8 @@ let itemCooldownTimers = {}; // { itemKey: remainingFrames }
 // 物品描述（用于Tooltip）
 const ITEM_DESCRIPTIONS = {
     gunpowder:    { desc: "投掷炸弹，爆炸范围120px，造成30伤害", cost: "消耗: 1个", cd: "冷却: 5秒" },
+    torch:        { desc: "放置可携带火炬，增强黑暗区域视野", cost: "消耗: 1个", cd: "无冷却" },
+    shield:       { desc: "装备后减免部分伤害，并随受击损耗耐久", cost: "装备型道具", cd: "无冷却" },
     ender_pearl:  { desc: "向前方传送200px，穿越障碍物+60秒隐身", cost: "消耗: 1个", cd: "冷却: 8秒" },
     string:       { desc: "放置蛛网陷阱，减速敌人80%持续5秒", cost: "消耗: 2个", cd: "冷却: 6秒" },
     dragon_egg:   { desc: "释放全屏龙息，对所有敌人造成50伤害", cost: "消耗: 1个", cd: "冷却: 12秒" },
@@ -236,10 +247,13 @@ const ITEM_LABELS = {
     bow: "弓",
     arrow: "箭矢",
     gunpowder: "火药",
+    torch: "火炬",
+    shield: "盾牌",
     rotten_flesh: "腐肉",
     string: "蜘蛛丝",
     ender_pearl: "末影珍珠",
     dragon_egg: "龙蛋",
+    warden_egg: "坚守者的蛋",
     flower: "花朵",
     mushroom: "蘑菇",
     coal: "煤矿",
@@ -264,10 +278,13 @@ const ITEM_ICONS = {
     bow: "🏹",
     arrow: "🏹",
     gunpowder: "💥",
+    torch: "🔥",
+    shield: "🛡️",
     rotten_flesh: "🥩",
     string: "🕸️",
     ender_pearl: "🟣",
     dragon_egg: "🐉",
+    warden_egg: "🧿",
     flower: "🌸",
     mushroom: "🍄",
     coal: "🪨",
@@ -293,7 +310,7 @@ const ITEM_ICONS = {
     armor_netherite: "⬛"
 };
 const INVENTORY_CATEGORIES = {
-    items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow"],
+    items: ["diamond", "pumpkin", "stone_sword", "iron_pickaxe", "bow", "arrow", "torch", "shield", "warden_egg"],
     materials: ["iron", "stick", "coal", "gold", "shell", "starfish", "gunpowder", "rotten_flesh", "string", "ender_pearl", "dragon_egg", "totem", "flower", "mushroom", "sculk_vein", "echo_shard", "beef", "mutton", "mushroom_stew"],
     equipment: []
 };
@@ -482,6 +499,7 @@ const FOOD_TYPES = {
     raw_fish: { heal: 1, icon: "🐟", name: "生鱼", color: "#87CEEB" }
 };
 let playerEquipment = { armor: null, armorDurability: 0, armorEquippedAt: 0, armorLastDurabilityTick: 0 };
+let shieldState = { equipped: false, durability: 0, maxDurability: 100 };
 let silentBootsState = { equipped: false, durability: 0, maxDurability: 30 };
 let armorInventory = [];
 
@@ -628,6 +646,15 @@ const DEFAULT_BIOME_CONFIGS = {
         effects: { particles: "sparkle", ambient: "#666688", darkness: 0.3, weather: ["fog"] },
         spawnWeight: { min: 1500, max: 3000 }
     },
+    cave: {
+        id: "cave",
+        name: "矿洞",
+        color: "#3B3B4F",
+        groundType: "stone",
+        decorations: { ore_coal: 0.25, ore_iron: 0.18, ore_gold: 0.08, ore_diamond: 0.05, stalactite: 0.2, crystal: 0.1, lava_pool: 0.08, cave_exit: 0.08 },
+        effects: { particles: "sparkle", ambient: "#3B3B4F", darkness: 0.45, weather: ["fog"] },
+        spawnWeight: { min: 900, max: 1800 }
+    },
     ocean: {
         id: "ocean",
         name: "海滨",
@@ -669,12 +696,13 @@ let netherEntryPenaltyArmed = true;
 const MAX_DECORATIONS_ONSCREEN = 60;
 const DEFAULT_BIOME_SWITCH = {
     stepScore: 200,
-    order: ["forest", "snow", "desert", "mountain", "ocean", "nether", "end"],
+    order: ["forest", "snow", "desert", "mountain", "cave", "ocean", "nether", "end"],
     unlockScore: {
         forest: 0,
         snow: 200,
         desert: 400,
         mountain: 600,
+        cave: 900,
         ocean: 800,
         nether: 2000,
         end: 4000

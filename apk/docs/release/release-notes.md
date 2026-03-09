@@ -1,4 +1,37 @@
-# Release Notes
+﻿# Release Notes
+
+## v1.19.35 (2026-03-10)
+
+### 🎮 Gameplay Integration
+- **0309 多线玩法集成完成**:
+  - 商人屋短按进入恢复稳定，卖材料第一页和下一页均为双列动作布局
+  - 地面左右方向键恢复旧版底部横排双键，骑龙时自动切换四键飞行布局
+  - 跳跃下龙后主角会安全脱离龙体，方向输入立即恢复；末影龙按新的主角位置回归待命
+  - 合成台正式接入，支持盾牌 / 火炬配方、多选材料与 HUD/触控入口
+  - 地下矿洞新增暗区遮罩、火炬照明扩圈与洞穴背景效果，并正式注册到群系配置 / 调试切换链路
+  - 坚守者蛋接入传奇宝箱、商人售卖与召唤流程
+  - 补齐 `drowned / guardian / pufferfish / piglin / bee / spore_bug / magma_cube / fire_spirit / sculk_worm / shadow_stalker` 的专用敌人剪影
+
+### 🧪 Verification
+- `node tests/unit/village-ui-regression.test.mjs`
+- `node tests/unit/dragon-summon-regression.test.mjs`
+- `node tests/unit/crafting-foundation-regression.test.mjs`
+- `node tests/unit/cave-biome-lighting-regression.test.mjs`
+- `node tests/unit/warden-egg-regression.test.mjs`
+- `node tests/unit/enemy-renderer-regression.test.mjs`
+- `node tests/unit/dev-cache-busting-regression.test.mjs`
+- `MMWG_E2E_PORT=4200 npx playwright test tests/e2e/specs/p0-village-trader-sell-grid.spec.mjs tests/e2e/specs/p0-village-wordhouse-trigger.spec.mjs --config=tests/e2e/playwright.config.mjs`
+- `MMWG_E2E_PORT=4201 npx playwright test tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs tests/e2e/specs/p1-crafting-foundation.spec.mjs --config=tests/e2e/playwright.config.mjs`
+- `MMWG_E2E_PORT=4202 npx playwright test tests/e2e/specs/p1-cave-lighting.spec.mjs tests/e2e/specs/p1-warden-egg-integration.spec.mjs --config=tests/e2e/playwright.config.mjs`
+- `MMWG_E2E_PORT=4205 npx playwright test tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs tests/e2e/specs/p1-cave-lighting.spec.mjs --config=tests/e2e/playwright.config.mjs`
+
+### 📦 Technical Changes
+- 统一版本元数据到 `v1.19.35 / build 87`
+- 更新 `service-worker.js` 缓存版本与 `Game.html` 资源缓存戳到 `v1.19.35`
+- 新增发布流程文档 `docs/release/WORKFLOW.md`
+- 提取本次相关 Git 记录：`d308f87`、`88f8b20`、`fb28129`、`8fd8de0`、`874800d`、`142d733`、`176bb90`
+
+---
 
 ## v1.19.33 (2026-03-09)
 

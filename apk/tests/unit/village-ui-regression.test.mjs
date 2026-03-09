@@ -64,7 +64,30 @@ function testTraderSellsDragonEgg() {
   const items = vm.runInContext("TRADER_BUY_ITEMS", context);
   const dragonEgg = items.find((item) => item && item.id === "dragon_egg");
   assert.ok(dragonEgg, "商人购买列表应包含龙蛋");
-  assert.equal(dragonEgg.cost, 5000, "龙蛋售价应为 5000 钻石");
+  assert.equal(dragonEgg.cost, 100, "龙蛋售价应为 100 钻石");
+}
+
+function testTraderSellsWardenEggAtFourHundredDiamonds() {
+  const context = { console, Math, Date };
+  vm.createContext(context);
+  runScriptInContext(context, "src/modules/18-village.js");
+
+  const items = vm.runInContext("TRADER_BUY_ITEMS", context);
+  const wardenEgg = items.find((item) => item && item.id === "warden_egg");
+  assert.ok(wardenEgg, "商人购买列表应包含坚守者的蛋");
+  assert.equal(wardenEgg.cost, 400, "坚守者的蛋售价应为 400 钻石");
+}
+
+function testVillageOutdoorSceneDoesNotDrawStandaloneBedBesideBedHouse() {
+  const context = { console, Math, Date };
+  vm.createContext(context);
+  runScriptInContext(context, "src/modules/18-village-render.js");
+
+  const renderSource = String(context.drawVillages);
+  assert.ok(
+    !/if \(building\.type === 'bed_house'\) \{[\s\S]*?drawVillageBed\(/.test(renderSource),
+    "室外村庄背景不应再在床屋旁额外绘制床"
+  );
 }
 
 function testWordHouseUsesBookshelfAndLargerBook() {
@@ -161,12 +184,14 @@ function run() {
   testBedHouseInteriorUsesLargerDoor();
   testTraderDialogUsesMultiColumnGrid();
   testTraderSellsDragonEgg();
+  testTraderSellsWardenEggAtFourHundredDiamonds();
   testWordHouseUsesBookshelfAndLargerBook();
   testTraderUsesUnifiedTallTwoColumnLayout();
   testInteriorUsesRaisedSpacedLabelsAndDecorHelpers();
   testInteriorLabelsUseCenteredEntryPrompts();
   testTraderNpcUsesTallerOfficialInspiredShape();
   testInteriorDrawsPlayerAfterFurnitureAndTraderRackSitsOnFloor();
+  testVillageOutdoorSceneDoesNotDrawStandaloneBedBesideBedHouse();
   console.log("village UI regression checks passed");
 }
 

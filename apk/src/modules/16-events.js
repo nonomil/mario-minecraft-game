@@ -372,6 +372,12 @@ function wireHudButtons() {
             showInventoryModal();
         });
     }
+    const btnCrafting = document.getElementById("btn-crafting");
+    if (btnCrafting) {
+        btnCrafting.addEventListener("click", () => {
+            showCraftingModal();
+        });
+    }
 }
 
 function wireArmorModal() {
@@ -401,6 +407,26 @@ function wireInventoryModal() {
     if (inventoryModalEl) {
         inventoryModalEl.addEventListener("click", e => {
             if (e.target === inventoryModalEl) hideInventoryModal();
+        });
+    }
+}
+
+function wireCraftingModal() {
+    craftingModalEl = document.getElementById("crafting-modal");
+    craftingMaterialListEl = document.getElementById("crafting-material-list");
+    craftingRecipeListEl = document.getElementById("crafting-recipe-list");
+    craftingSelectionSummaryEl = document.getElementById("crafting-selection-summary");
+    craftingPreviewEl = document.getElementById("crafting-preview");
+    craftingConfirmBtnEl = document.getElementById("btn-crafting-confirm");
+
+    const btnClose = document.getElementById("btn-crafting-close");
+    const btnClear = document.getElementById("btn-crafting-clear");
+    if (btnClose) btnClose.addEventListener("click", hideCraftingModal);
+    if (btnClear) btnClear.addEventListener("click", clearCraftSelection);
+    if (craftingConfirmBtnEl) craftingConfirmBtnEl.addEventListener("click", craftSelectedMaterials);
+    if (craftingModalEl) {
+        craftingModalEl.addEventListener("click", e => {
+            if (e.target === craftingModalEl) hideCraftingModal();
         });
     }
 }
@@ -670,6 +696,10 @@ function wireTouchControls() {
     }, () => { keys.down = false; });
     bindTap("jump", () => {
         if (window._inputLocked) return;
+        if (typeof ridingDragon !== "undefined" && ridingDragon && typeof dismountRider === "function") {
+            dismountRider(player);
+            return;
+        }
         jumpBuffer = gameConfig.jump.bufferFrames;
     });
     // 使用 bindTapOrHold 替代 bindTap，支持长按使用消耗品
@@ -694,6 +724,7 @@ function wireTouchControls() {
             if (typeof exitVillageInterior === "function") exitVillageInterior("🏠 离开房屋");
         }
     });
+    bindTap("craft", () => { showCraftingModal(); });
     bindTap("switch", () => { switchWeapon(); });
     bindTap("use-diamond", () => { useDiamondForHp(); });
 }

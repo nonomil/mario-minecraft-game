@@ -166,6 +166,67 @@ test.describe("召唤机制与火药增强", () => {
     expect(afterAttack.cooldown).toBeLessThanOrEqual(60);
   });
 
+  test("骑龙时点击跳跃按钮会立即下龙", async ({ page }) => {
+    await openGameDebug(page);
+
+    await gameEval(page, `
+      enemies.length = 0;
+      projectiles.length = 0;
+      inventory.dragon_egg = 1;
+      if (typeof updateInventoryUI === "function") updateInventoryUI();
+      useInventoryItem("dragon_egg");
+      true;
+    `);
+
+    await gameEval(page, `
+      if (dragonList[0]) {
+        player.x = dragonList[0].x + 8;
+        player.y = dragonList[0].y + 8;
+      }
+      true;
+    `);
+
+    await page.waitForFunction(() => {
+      const frame = document.getElementById("game");
+      const w = frame && frame.contentWindow ? frame.contentWindow : null;
+      return Boolean(w && w.eval("!!ridingDragon && dragonList[0] && dragonList[0].rider === player"));
+    });
+
+    await dispatchTouchAction(page, "jump", 120);
+
+    await expect.poll(async () => gameEval(page, `({
+      riding: !!ridingDragon,
+      invincibleFrames: dismountInvincibleFrames
+    })`)).toMatchObject({
+      riding: false
+    });
+
+    const state = await gameEval(page, `({
+      riding: !!ridingDragon,
+      invincibleFrames: dismountInvincibleFrames
+    })`);
+    expect(state.riding).toBe(false);
+    expect(state.invincibleFrames).toBeGreaterThan(0);
+
+    const playerAfterDismountX = await gameEval(page, `player.x`);
+    const separation = await gameEval(page, `(() => {
+      const dragon = dragonList[0];
+      if (!dragon) return 0;
+      const playerRight = player.x + player.width;
+      const dragonRight = dragon.x + dragon.width;
+      if (playerRight < dragon.x) return dragon.x - playerRight;
+      if (dragonRight < player.x) return player.x - dragonRight;
+      return 0;
+    })()`);
+    expect(separation).toBeGreaterThan(8);
+
+    await gameEval(page, `keys.right = true; true;`);
+    await expect.poll(async () => gameEval(page, `player.x`)).toBeGreaterThan(playerAfterDismountX);
+    const playerAfterMoveX = await gameEval(page, `player.x`);
+    expect(playerAfterMoveX).toBeGreaterThan(playerAfterDismountX);
+    await gameEval(page, `keys.right = false; true;`);
+  });
+
   test("炸药爆炸后会在前方地面留下持续火焰", async ({ page }) => {
     await openGameDebug(page);
 

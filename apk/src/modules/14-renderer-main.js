@@ -237,6 +237,47 @@ function draw() {
         bossArena.renderEnvironmentOverlay(ctx);
     }
 
+    const darknessAlpha = typeof getBiomeDarknessOverlayAlpha === "function"
+        ? getBiomeDarknessOverlayAlpha(biome)
+        : (Number(biome.effects?.darkness) || 0);
+    if (darknessAlpha > 0) {
+        ctx.fillStyle = `rgba(0,0,0,${darknessAlpha})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (weatherState.type === "fog") {
+        ctx.fillStyle = "rgba(200,200,200,0.25)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "sandstorm") {
+        ctx.fillStyle = "rgba(210,180,140,0.35)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "rain") {
+        ctx.fillStyle = "rgba(0,0,50,0.15)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    if (weatherState.type === "snow") {
+        ctx.fillStyle = "rgba(255,255,255,0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    if (biome.effects?.heatWave && currentBiome !== "volcano") {
+        ctx.strokeStyle = "rgba(255, 200, 120, 0.25)";
+        for (let y = 120; y < canvas.height; y += 40) {
+            ctx.beginPath();
+            for (let x = 0; x <= canvas.width; x += 40) {
+                const offset = Math.sin((x + gameFrame) * 0.02 + y * 0.05) * 6;
+                ctx.lineTo(x, y + offset);
+            }
+            ctx.stroke();
+        }
+    }
+
+    if (typeof renderBiomePostEffects === "function") {
+        renderBiomePostEffects(ctx, cameraX);
+    }
+
     // BOSS血条
     if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
         bossArena.renderBossHpBar(ctx);
@@ -637,37 +678,4 @@ function drawBackground(biome) {
         ctx.fill();
     }
 
-    if (biome.effects?.darkness) {
-        ctx.fillStyle = `rgba(0,0,0,${biome.effects.darkness})`;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    if (weatherState.type === "fog") {
-        ctx.fillStyle = "rgba(200,200,200,0.25)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    if (weatherState.type === "sandstorm") {
-        ctx.fillStyle = "rgba(210,180,140,0.35)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    if (weatherState.type === "rain") {
-        ctx.fillStyle = "rgba(0,0,50,0.15)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    if (weatherState.type === "snow") {
-        ctx.fillStyle = "rgba(255,255,255,0.1)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    if (biome.effects?.heatWave && currentBiome !== "volcano") {
-        ctx.strokeStyle = "rgba(255, 200, 120, 0.25)";
-        for (let y = 120; y < canvas.height; y += 40) {
-            ctx.beginPath();
-            for (let x = 0; x <= canvas.width; x += 40) {
-                const offset = Math.sin((x + gameFrame) * 0.02 + y * 0.05) * 6;
-                ctx.lineTo(x, y + offset);
-            }
-            ctx.stroke();
-        }
-    }
 }

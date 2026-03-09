@@ -42,6 +42,15 @@ const BIOME_PARTICLE_CONFIG = {
         alpha: { min: 0.3, max: 0.6 },
         lifespan: 120
     },
+    cave: {
+        type: 'dust',
+        spawnRate: 8,
+        velocity: { x: () => (Math.random() - 0.5) * 0.18, y: () => -0.08 - Math.random() * 0.08 },
+        size: { min: 2, max: 5 },
+        color: '#B8C0CC',
+        alpha: { min: 0.15, max: 0.38 },
+        lifespan: 220
+    },
     mushroom_island: {
         type: 'spore',
         spawnRate: 6,
@@ -104,6 +113,7 @@ const BIOME_SKY_CONFIG = {
     cherry_grove: ['#FFE4E1', '#FFC0CB'],
     snow: ['#CCE6FF'],
     desert: ['#FFEECC'],
+    cave: ['#141821', '#232838', '#3B3B4F'],
     mushroom_island: ['#DDA0DD', '#BA55D3'],
     mountain: ['#666688'],
     ocean: ['#AAD4F5', '#4682B4', '#191970'],
@@ -503,6 +513,59 @@ function renderVolcanoAsh(ctx) {
     ctx.restore();
 }
 
+function renderCaveBackdrop(ctx, camX) {
+    if (currentBiome !== "cave") return;
+    const floorY = canvas.height - 126;
+    ctx.save();
+
+    const caveGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    caveGradient.addColorStop(0, "rgba(8, 12, 18, 0.88)");
+    caveGradient.addColorStop(0.45, "rgba(18, 22, 34, 0.72)");
+    caveGradient.addColorStop(1, "rgba(30, 28, 38, 0.38)");
+    ctx.fillStyle = caveGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const step = 148;
+    const startX = Math.floor(camX / step) * step - step;
+    for (let worldX = startX; worldX < camX + canvas.width + step * 2; worldX += step) {
+        const dx = worldX - camX;
+
+        ctx.fillStyle = "rgba(26, 20, 18, 0.78)";
+        ctx.fillRect(dx + 18, floorY - 112, 12, 120);
+        ctx.fillRect(dx + 102, floorY - 112, 12, 120);
+        ctx.fillRect(dx + 12, floorY - 118, 108, 14);
+
+        ctx.strokeStyle = "rgba(108, 92, 78, 0.45)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(dx - 8, floorY - 18);
+        ctx.lineTo(dx + 132, floorY - 18);
+        ctx.moveTo(dx - 8, floorY - 8);
+        ctx.lineTo(dx + 132, floorY - 8);
+        for (let tie = 0; tie < 6; tie++) {
+            const tieX = dx + tie * 24;
+            ctx.moveTo(tieX, floorY - 22);
+            ctx.lineTo(tieX + 10, floorY - 4);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(104, 124, 180, 0.18)";
+        ctx.beginPath();
+        ctx.moveTo(dx + 42, floorY - 118);
+        ctx.lineTo(dx + 58, floorY - 144);
+        ctx.lineTo(dx + 76, floorY - 112);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(92, 220, 255, 0.1)";
+        ctx.beginPath();
+        ctx.arc(dx + 59, floorY - 128, 14, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.restore();
+}
+
 // 海洋光束效果
 function updateOceanLightBeams() {
     if (currentBiome !== 'ocean') {
@@ -561,39 +624,106 @@ function renderEndStars(ctx) {
     ctx.globalAlpha = 1;
 }
 
-function renderDeepDarkVisionMask(ctx, camX) {
-    if (currentBiome !== "deep_dark") return;
-    const noise = typeof getDeepDarkNoiseLevel === "function" ? getDeepDarkNoiseLevel() : 0;
-    const playerRadius = Math.max(95, 140 - noise * 0.4);
+function getBiomeVisionMaskConfig(biomeId = currentBiome) {
+    if (biomeId === "cave") {
+        return {
+            overlayAlpha: 0.68,
+            baseRadius: 150,
+            torchBoost: 0.7,
+            torchGlowBoost: 1.18,
+            decorationTypes: [],
+            decorationRadius: 0
+        };
+    }
+    if (biomeId === "deep_dark") {
+        const noise = typeof getDeepDarkNoiseLevel === "function" ? getDeepDarkNoiseLevel() : 0;
+        return {
+            overlayAlpha: 0.8,
+            baseRadius: Math.max(95, 140 - noise * 0.4),
+            torchBoost: 0.48,
+            torchGlowBoost: 1.05,
+            decorationTypes: ["soul_lantern"],
+            decorationRadius: 118
+        };
+    }
+    return null;
+}
+
+function hasBiomeVisionMask(biomeId = currentBiome) {
+    return !!getBiomeVisionMaskConfig(biomeId);
+}
+
+function getBiomeDarknessOverlayAlpha(biome) {
+    const biomeId = biome?.id || currentBiome;
+    const rawAlpha = Math.max(0, Number(biome?.effects?.darkness) || 0);
+    if (!rawAlpha) return 0;
+    if (!hasBiomeVisionMask(biomeId)) return rawAlpha;
+    const retained = biomeId === "cave" ? 0.45 : 0.55;
+    return Math.max(0.18, Math.min(rawAlpha, rawAlpha * retained));
+}
+
+function getPlayerVisionRadiusForBiome(biomeId = currentBiome) {
+    const config = getBiomeVisionMaskConfig(biomeId);
+    if (!config) return 0;
+    const torchRadius = typeof getPlayerTorchLightRadius === "function"
+        ? Math.max(0, Number(getPlayerTorchLightRadius()) || 0)
+        : 0;
+    return Math.max(config.baseRadius, config.baseRadius + torchRadius * config.torchBoost);
+}
+
+function cutVisionHole(ctx, x, y, innerRadius, outerRadius) {
+    if (!Number.isFinite(x) || !Number.isFinite(y) || outerRadius <= 0) return;
+    const light = ctx.createRadialGradient(x, y, innerRadius, x, y, outerRadius);
+    light.addColorStop(0, "rgba(0,0,0,0.96)");
+    light.addColorStop(0.7, "rgba(0,0,0,0.45)");
+    light.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = light;
+    ctx.beginPath();
+    ctx.arc(x, y, outerRadius, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function renderBiomeVisionMask(ctx, camX) {
+    const config = getBiomeVisionMaskConfig(currentBiome);
+    if (!config) return;
     ctx.save();
-    ctx.fillStyle = "rgba(0, 0, 0, 0.78)";
+    ctx.fillStyle = `rgba(0, 0, 0, ${config.overlayAlpha})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = "destination-out";
 
     const px = (player?.x || cameraX) - camX + (player?.width || 32) * 0.5;
     const py = (player?.y || (canvas.height * 0.6)) + (player?.height || 40) * 0.45;
-    const core = ctx.createRadialGradient(px, py, 14, px, py, playerRadius);
-    core.addColorStop(0, "rgba(0,0,0,0.95)");
-    core.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = core;
-    ctx.beginPath();
-    ctx.arc(px, py, playerRadius, 0, Math.PI * 2);
-    ctx.fill();
+    cutVisionHole(ctx, px, py, 16, getPlayerVisionRadiusForBiome(currentBiome));
 
-    for (const d of decorations) {
-        if (!d || d.remove || d.type !== "soul_lantern") continue;
-        const lx = d.x - camX + d.width * 0.5;
-        const ly = d.y + d.height * 0.45;
-        const glow = ctx.createRadialGradient(lx, ly, 10, lx, ly, 80);
-        glow.addColorStop(0, "rgba(0,0,0,0.85)");
-        glow.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(lx, ly, 80, 0, Math.PI * 2);
-        ctx.fill();
+    if (typeof torches !== "undefined" && Array.isArray(torches)) {
+        for (const torch of torches) {
+            if (!torch || torch.remove) continue;
+            const tx = torch.x - camX;
+            const ty = torch.y;
+            const radius = Math.max(90, (Number(torch.lightRadius) || 140) * config.torchGlowBoost);
+            cutVisionHole(ctx, tx, ty, 12, radius);
+        }
+    }
+
+    if (typeof decorations !== "undefined" && Array.isArray(decorations)) {
+        for (const d of decorations) {
+            if (!d || d.remove || !config.decorationTypes.includes(d.type)) continue;
+            const lx = d.x - camX + (d.width || 0) * 0.5;
+            const ly = d.y + (d.height || 0) * 0.45;
+            cutVisionHole(ctx, lx, ly, 10, config.decorationRadius);
+        }
     }
 
     ctx.restore();
+}
+
+function renderDeepDarkVisionMask(ctx, camX) {
+    if (currentBiome !== "deep_dark") return;
+    renderBiomeVisionMask(ctx, camX);
+}
+
+function renderBiomePostEffects(ctx, camX) {
+    renderBiomeVisionMask(ctx, camX);
 }
 
 // ============ 生成群系粒子 ============
@@ -626,6 +756,7 @@ function updateBiomeVisuals() {
 function renderBiomeVisuals(ctx, camX) {
     // 天空渲染
     renderBiomeSky(ctx, currentBiome);
+    renderCaveBackdrop(ctx, camX);
     if (currentBiome === "volcano") renderVolcanoSilhouette(ctx);
 
     // 粒子效果
@@ -638,7 +769,6 @@ function renderBiomeVisuals(ctx, camX) {
     renderLavaPools(ctx);
     renderOceanLightBeams(ctx);
     renderEndStars(ctx);
-    renderDeepDarkVisionMask(ctx, camX);
 }
 
 // ============ 清理函数 ============

@@ -1222,7 +1222,8 @@ const TRADER_BUY_ITEMS = [
   { id: "bow", label: "\u5f13 \ud83c\udff9", cost: 12, type: "item", amount: 1 },
   { id: "gunpowder", label: "\u706b\u836f \u00d75 \ud83d\udca5", cost: 4, type: "item", amount: 5 },
   { id: "ender_pearl", label: "\u672b\u5f71\u73cd\u73e0 \u00d73 \ud83d\udfe3", cost: 10, type: "item", amount: 3 },
-  { id: "dragon_egg", label: "龙蛋 🥚", cost: 100, type: "item", amount: 1 }
+  { id: "dragon_egg", label: "龙蛋 🥚", cost: 100, type: "item", amount: 1 },
+  { id: "warden_egg", label: "坚守者的蛋 🥚", cost: 400, type: "item", amount: 1 }
 ];
 
 let traderPrevPaused = false;
@@ -1269,6 +1270,10 @@ function getTraderSectionGridStyle() {
 
 function getTraderListGridStyle(minWidth = 180) {
   return `display:grid;grid-template-columns:repeat(auto-fit,minmax(${minWidth}px,1fr));gap:12px;max-height:440px;overflow-y:auto;padding:8px;align-items:stretch;`;
+}
+
+function getTraderActionGridStyle() {
+  return "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:stretch;";
 }
 
 function getTraderCardButtonStyle(accent = "#81C784") {
@@ -1369,11 +1374,11 @@ function renderTraderSellCount(modal, village, itemId, unitPrice, maxCount, labe
   body.innerHTML = `
     <h3 style="margin:0 0 12px;color:#FFD54F;">出售 ${label}</h3>
     <p style="margin:0 0 12px;color:#E0E0E0;">单价：${unitPrice}💎 / 件，库存：${maxCount}</p>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <button id="trader-sell-1" class="game-btn">卖出 x1</button>
-      <button id="trader-sell-5" class="game-btn">卖出 x5</button>
-      <button id="trader-sell-all" class="game-btn">${btnAllText}</button>
-      <button id="trader-sell-back" class="game-btn">返回材料列表</button>
+    <div id="trader-sell-count-grid" style="${getTraderActionGridStyle()}">
+      <button id="trader-sell-1" class="game-btn" style="${getTraderCardButtonStyle("#4FC3F7")}">卖出 x1</button>
+      <button id="trader-sell-5" class="game-btn" style="${getTraderCardButtonStyle("#4FC3F7")}">卖出 x5</button>
+      <button id="trader-sell-all" class="game-btn" style="${getTraderCardButtonStyle("#29B6F6")}">${btnAllText}</button>
+      <button id="trader-sell-back" class="game-btn" style="${getTraderCardButtonStyle("#B0BEC5")}">返回材料列表</button>
     </div>
   `;
   bindTraderTap(body.querySelector("#trader-sell-1"), () => {

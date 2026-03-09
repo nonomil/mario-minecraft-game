@@ -258,10 +258,6 @@ function drawVillages(ctx) {
       for (const building of village.buildings) {
         const colors = getVillageColors(village.biomeId);
         drawBlockHouse(ctx, building.x, groundY - building.h, building.w, building.h, colors, building.type);
-        // Draw bed next to bed_house
-        if (building.type === 'bed_house') {
-          drawVillageBed(ctx, building.x + building.w + 8, groundY - 10, colors);
-        }
       }
     }
     if (Array.isArray(village.npcs)) {

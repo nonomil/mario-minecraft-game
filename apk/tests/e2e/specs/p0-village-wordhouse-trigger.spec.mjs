@@ -68,3 +68,43 @@ test("P0 word house starts forced quiz by single interaction near action point",
 
   await expect(page.locator(".village-question-progress")).toHaveText(/第 1 \/ \d+ 题/);
 });
+
+test("P0 trader house opens trader modal by single interaction near action point", async ({ page }) => {
+  await openGameAndBoot(page);
+
+  const setup = await page.evaluate(() => {
+    if (typeof settings !== "undefined" && settings) settings.villageEnabled = true;
+    if (!player) return { ok: false, reason: "player missing" };
+
+    const targetScore = Math.max(500, Number(villageConfig?.spawnScoreInterval) || 500);
+    player.x = 4300;
+    score = targetScore;
+    runBestScore = Math.max(Number(runBestScore) || 0, targetScore);
+    currentBiome = "forest";
+
+    if (Array.isArray(activeVillages)) activeVillages.length = 0;
+    if (villageSpawnedForScore && typeof villageSpawnedForScore === "object") {
+      for (const k in villageSpawnedForScore) delete villageSpawnedForScore[k];
+    }
+
+    maybeSpawnVillage(targetScore, player.x);
+    const village = Array.isArray(activeVillages) ? activeVillages[0] : null;
+    const traderHouse = village?.buildings?.find((b) => b?.type === "trader_house");
+    if (!village || !traderHouse) return { ok: false, reason: "trader house missing" };
+
+    const entered = enterVillageInterior(village, traderHouse);
+    if (!entered) return { ok: false, reason: "enter interior failed" };
+
+    const actionX = (typeof getInteriorActionX === "function") ? getInteriorActionX("trader_house") : (traderHouse.x + traderHouse.w * 0.3);
+    player.x = actionX - ((Number(player.width) || 32) * 0.5);
+    if (typeof handleVillageInteriorInteraction === "function") handleVillageInteriorInteraction("tap");
+
+    return { ok: true };
+  });
+
+  expect(setup.ok, setup.reason || "setup failed").toBeTruthy();
+
+  const modal = page.locator("#village-trader-modal");
+  await expect(modal).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator("#trader-btn-sell")).toBeVisible();
+});

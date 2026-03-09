@@ -822,6 +822,7 @@ function spawnEnemyByDifficulty(x, y) {
         snow: ["zombie", "skeleton", "creeper", "spider", "enderman"],
         desert: ["zombie", "creeper", "skeleton", "spider", "enderman"],
         mountain: ["zombie", "skeleton", "enderman", "creeper", "spider"],
+        cave: ["spider", "skeleton", "spore_bug", "zombie"],
         ocean: ["drowned", "pufferfish"],
         nether: ["zombie", "piglin", "skeleton", "creeper", "enderman"],
         mushroom_island: ["spore_bug", "bee", "fox"]

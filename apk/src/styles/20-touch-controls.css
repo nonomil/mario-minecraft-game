@@ -539,6 +539,89 @@
     padding: 16px 0;
 }
 
+.crafting-panel {
+    width: min(640px, 94vw);
+}
+
+.crafting-intro {
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.crafting-recipes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.crafting-recipe-card {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
+    display: grid;
+    gap: 4px;
+}
+
+.crafting-recipe-name {
+    font-weight: 800;
+    color: #ffd54f;
+}
+
+.crafting-recipe-desc {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.74);
+}
+
+.crafting-summary,
+.crafting-preview {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    line-height: 1.5;
+}
+
+.crafting-preview {
+    border-color: rgba(255, 213, 79, 0.32);
+    color: #fff8dc;
+}
+
+.crafting-material-list {
+    max-height: min(42vh, 320px);
+}
+
+.crafting-material-list .inventory-item {
+    cursor: pointer;
+}
+
+.crafting-material-list .inventory-item.craft-selected {
+    border-color: rgba(255, 213, 79, 0.9);
+    background: rgba(255, 213, 79, 0.14);
+    box-shadow: 0 0 0 1px rgba(255, 213, 79, 0.25);
+}
+
+.crafting-material-list .inventory-item.craft-selected .inventory-item-count {
+    background: rgba(255, 213, 79, 0.2);
+    color: #fff5c1;
+}
+
+.crafting-actions {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.crafting-actions .game-btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 
 /* 默认隐藏上下飞行按键，只在骑龙时显示 */
 .touch-btn-up,

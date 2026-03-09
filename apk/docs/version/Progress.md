@@ -1,3 +1,25 @@
+﻿## v1.19.35（发布日期：2026-03-10）
+- 类型：PATCH（0309 多线玩法集成 + 发版链路同步）
+- APK 版本：versionName = 1.19.35，versionCode = 87（buildNumber = 87）
+- 主要完成项：
+  - 商人短按进入与卖材料双列页面在主线完成集成并复核通过。
+  - 骑龙触控、地面横排双键、跳跃下龙、火球发射链路全部回归通过；下龙后主角不会再卡在龙体里。
+  - 合成台、盾牌、火炬、地下矿洞视觉层、坚守者蛋掉落/售卖/召唤全部并入主线；矿洞正式注册到群系配置与调试切换。
+  - 多类群系敌人从纯色方块占位图升级为专用像素轮廓，便于调试和正式游玩辨识。
+  - 补齐 release workflow 文档，统一版本元数据、缓存戳与 release 说明文件。
+- 验证结果：
+  - `node tests/unit/village-ui-regression.test.mjs`
+  - `node tests/unit/dragon-summon-regression.test.mjs`
+  - `node tests/unit/crafting-foundation-regression.test.mjs`
+  - `node tests/unit/cave-biome-lighting-regression.test.mjs`
+  - `node tests/unit/warden-egg-regression.test.mjs`
+  - `node tests/unit/enemy-renderer-regression.test.mjs`
+  - `node tests/unit/dev-cache-busting-regression.test.mjs`
+  - `MMWG_E2E_PORT=4200 npx playwright test tests/e2e/specs/p0-village-trader-sell-grid.spec.mjs tests/e2e/specs/p0-village-wordhouse-trigger.spec.mjs --config=tests/e2e/playwright.config.mjs`
+  - `MMWG_E2E_PORT=4201 npx playwright test tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs tests/e2e/specs/p1-crafting-foundation.spec.mjs --config=tests/e2e/playwright.config.mjs`
+  - `MMWG_E2E_PORT=4202 npx playwright test tests/e2e/specs/p1-cave-lighting.spec.mjs tests/e2e/specs/p1-warden-egg-integration.spec.mjs --config=tests/e2e/playwright.config.mjs`
+  - `MMWG_E2E_PORT=4205 npx playwright test tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs tests/e2e/specs/p1-cave-lighting.spec.mjs --config=tests/e2e/playwright.config.mjs`
+
 ## v1.19.33（发布日期：2026-03-09）
 - 类型：PATCH（启动器/离线/APK 词库切换链路修复 + 发布同步）
 - APK 版本：versionName = 1.19.33，versionCode = 86（buildNumber = 86）
@@ -167,6 +189,6 @@
 
 ---
 ## 历史记录说明
-- 以前版本记录曾在 Windows 终端编码链路中发生了不可逆的字符替换（例如：`?` / 乱码占位符 / 乱码片段）。
+- 以前版本记录曾在 Windows 终端编码链路中发生了不可逆的字符替换（例如：问号占位、乱码占位符或异常字符片段）。
 - 为避免误导与继续污染，已暂时移除该段文本；后续可从旧仓库或备份 commit 恢复。
 
