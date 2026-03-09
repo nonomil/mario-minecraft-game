@@ -301,13 +301,32 @@ function testMobileDragonFlightButtonsExistAndAreBound() {
   const css = readModuleCode("src/styles/20-touch-controls.css");
   assert.match(
     css,
-    /\.touch-left[\s\S]*grid-template-columns:\s*repeat\(3,\s*var\(--touch-btn-size\)\)/,
-    "左侧飞行键应改为 3 列十字布局，而不是四键并排"
+    /#touch-controls\.layout-phone\s*\{[\s\S]*--touch-left-bottom:\s*20px\s*;/,
+    "手机端地面方向键应回到旧版底部位置，不能再整体抬高"
   );
   assert.match(
     css,
-    /grid-template-areas:\s*["']?\.\s+up\s+\.[\s\S]*["']?left\s+\.\s+right[\s\S]*["']?\.\s+down\s+\./,
-    "左侧飞行键应使用十字区域布局，上下位于左右中间"
+    /#touch-left-zone\.touch-left\s*\{[\s\S]*display:\s*flex[\s\S]*flex-direction:\s*row[\s\S]*gap:\s*15px\s*;/,
+    "地面状态下左侧方向键应恢复成旧版底部横排双键布局"
+  );
+  assert.ok(
+    !/#touch-left-zone\.touch-left\s*\{[\s\S]*grid-template-columns:\s*repeat\(3,\s*var\(--touch-btn-size\)\)/.test(css),
+    "地面状态下左侧方向键不应继续使用 3 列十字网格"
+  );
+  assert.match(
+    css,
+    /#touch-controls\.riding-dragon\s+#touch-left-zone\.touch-left\s*\{[\s\S]*display:\s*grid[\s\S]*grid-template-columns:\s*repeat\(2,\s*var\(--touch-btn-size\)\)[\s\S]*grid-template-areas:\s*["']up down["'][\s\S]*["']left right["']/,
+    "骑龙状态下左侧控制区应切换成紧凑 2x2 四键布局"
+  );
+  assert.match(
+    css,
+    /\.touch-btn-up,\s*[\r\n\s]*\.touch-btn-down\s*\{[\s\S]*display:\s*none\s*;/,
+    "地面状态下上下飞行键应默认隐藏"
+  );
+  assert.match(
+    css,
+    /#touch-controls\.riding-dragon\s+\.touch-btn-up,\s*[\r\n\s]*#touch-controls\.riding-dragon\s+\.touch-btn-down\s*\{[\s\S]*display:\s*flex\s*;/,
+    "骑龙状态下上下飞行键应恢复显示"
   );
 
   const eventsSource = readModuleCode("src/modules/16-events.js");

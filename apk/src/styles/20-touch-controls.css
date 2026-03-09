@@ -16,24 +16,34 @@
     display: block;
 }
 
-/* 左侧控制区域 - 屏幕左侧中间 */
+/* 左侧控制区域 - 地面时恢复旧版底部横排，骑龙时切四键布局 */
 #touch-left-zone.touch-left {
     position: absolute;
     left: 20px;
     bottom: calc(var(--safe-bottom) + var(--touch-left-bottom));
-    display: grid !important;
-    width: calc(var(--touch-btn-size) * 3 + 24px);
-    height: calc(var(--touch-btn-size) * 3 + 24px);
-    grid-template-columns: repeat(3, var(--touch-btn-size));
-    grid-template-rows: repeat(3, var(--touch-btn-size));
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: flex-end;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    pointer-events: auto;
+}
+
+#touch-controls.riding-dragon #touch-left-zone.touch-left {
+    display: grid;
+    width: calc(var(--touch-btn-size) * 2 + 12px);
+    height: calc(var(--touch-btn-size) * 2 + 12px);
+    grid-template-columns: repeat(2, var(--touch-btn-size));
+    grid-template-rows: repeat(2, var(--touch-btn-size));
     grid-template-areas:
-        ". up ."
-        "left . right"
-        ". down .";
-    gap: 12px !important;
+        "up down"
+        "left right";
+    gap: 12px;
     align-items: center;
     justify-items: center;
-    pointer-events: auto;
 }
 
 /* 右侧控制区域 - 屏幕右侧中间 */
@@ -50,7 +60,7 @@
 }
 
 #touch-controls.layout-phone {
-    --touch-left-bottom: clamp(96px, 22vh, 220px);
+    --touch-left-bottom: 20px;
     --touch-right-bottom: clamp(96px, 20vh, 200px);
 }
 

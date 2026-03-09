@@ -50,3 +50,5 @@ tests/e2e/playwright-report/
 
 # Worktrees
 .worktrees/
+/.worktrees/
+/.worktrees/**

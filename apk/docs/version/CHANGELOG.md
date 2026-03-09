@@ -1,3 +1,31 @@
+## v1.19.31 (2026-03-09)
+
+### Fixed
+- **Mobile Touch Direction Buttons**: 恢复移动端地面状态的旧版左下角横排双键布局。
+  - 手机端左右按键回到底部，不再整体抬高
+  - 左右键间距恢复为更紧凑的旧版手感
+
+### Improved
+- **Dragon Riding Touch Compatibility**: 保持龙蛋召唤与骑龙触控兼容。
+  - 地面状态：继续默认隐藏上下飞行键
+  - 骑龙状态：左侧控制区切换为紧凑 2x2 四键布局
+  - 复用现有 `riding-dragon` class，不改动事件绑定逻辑
+
+### Verification
+- `tests/unit/dragon-summon-regression.test.mjs` 已更新为地面横排 + 骑龙四键布局断言
+- `tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs` 已重新通过
+
+### Version Metadata
+- `version.json` -> `versionCode/buildNumber 84`, `versionName 1.19.31`
+- `package.json` -> `1.19.31`
+- `android-app/package.json` -> `1.19.31`
+- `android-app/android/app/build.gradle` -> `versionCode 84`, `versionName 1.19.31`
+- `android-app/web/build-info.json` -> `version 1.19.31`, `buildNumber 84`
+- `service-worker.js` -> cache `v1.19.31`
+- `Game.html` -> cache-busting `v1.19.31`
+
+---
+
 ## v1.19.30 (2026-03-09)
 
 ### Added

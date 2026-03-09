@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.31] - 2026-03-09
+### Fixed
+- **Mobile Direction Buttons**: Restored the old bottom-left horizontal left/right touch layout on phones so the movement buttons are no longer too high or too far apart.
+
+### Changed
+- **Dragon Riding Touch Layout**: Kept the same left control zone but switch it into a compact 2x2 riding layout so up/down flight remains available after summoning and mounting the dragon.
+- **Regression Coverage**: Updated the dragon summon touch regression and re-ran the targeted summon/riding touch E2E flow before release.
+
 ## [1.19.30] - 2026-03-09
 ### Added
 - **Ender Dragon Pursuit Arena**: Upgraded the dedicated Ender Dragon arena with a three-phase pursuit model that tracks player movement.

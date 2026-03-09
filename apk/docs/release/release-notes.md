@@ -1,5 +1,28 @@
 # Release Notes
 
+## v1.19.31 (2026-03-09)
+
+### 🎮 Gameplay
+- **移动端左右方向键回退到旧版底部布局**:
+  - 手机端地面状态恢复为左下角横排双键
+  - 左右键间距缩回旧版，不再被十字网格拉开
+
+### 🐉 Dragon Riding
+- **龙蛋召唤 / 骑龙兼容保持可用**:
+  - 地面时继续默认隐藏上下飞行键
+  - 骑上末影龙后左侧控制区切换为紧凑 2x2 四键布局
+  - 骑龙触屏移动与喷火流程已重新验证
+
+### 🧪 Verification
+- `node tests/unit/dragon-summon-regression.test.mjs`
+- `npx playwright test -c tests/e2e/playwright.config.mjs tests/e2e/specs/p1-summon-dragon-and-gunpowder.spec.mjs`（使用临时端口 4175）
+
+### 📦 Technical Changes
+- 同步版本元数据到 `version.json`、`package.json`、`android-app/package.json`、`android-app/web/build-info.json`
+- 更新 `service-worker.js` 缓存版本与 `Game.html` 资源缓存戳到 `v1.19.31`
+
+---
+
 ## v1.19.30 (2026-03-09)
 
 ### 🎮 Gameplay
