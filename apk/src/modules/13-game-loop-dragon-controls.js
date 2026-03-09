@@ -9,22 +9,19 @@
  * 骑龙状态：显示上下左右四个按键
  */
 function updateDragonTouchControls() {
-    const btnUp = document.querySelector('.touch-btn-up');
-    const btnDown = document.querySelector('.touch-btn-down');
-
-    if (!btnUp || !btnDown) return;
+    const touchControls = document.getElementById('touch-controls');
+    
+    if (!touchControls) return;
 
     // 检查是否正在骑龙
     const isRiding = typeof ridingDragon !== 'undefined' && ridingDragon !== null;
 
     if (isRiding) {
-        // 骑龙时显示上下按键
-        btnUp.style.display = 'flex';
-        btnDown.style.display = 'flex';
+        // 骑龙时添加 class，CSS 会显示上下按键
+        touchControls.classList.add('riding-dragon');
     } else {
-        // 地面时隐藏上下按键
-        btnUp.style.display = 'none';
-        btnDown.style.display = 'none';
+        // 地面时移除 class，CSS 会隐藏上下按键
+        touchControls.classList.remove('riding-dragon');
     }
 }
 

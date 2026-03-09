@@ -529,3 +529,15 @@
     padding: 16px 0;
 }
 
+
+/* 默认隐藏上下飞行按键，只在骑龙时显示 */
+.touch-btn-up,
+.touch-btn-down {
+    display: none;
+}
+
+/* 骑龙状态下显示上下按键（由 JS 动态添加 class） */
+#touch-controls.riding-dragon .touch-btn-up,
+#touch-controls.riding-dragon .touch-btn-down {
+    display: flex;
+}
