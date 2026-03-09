@@ -82,6 +82,19 @@ function draw() {
         scheduleNextFrame();
         return;
     }
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active) {
+        if (typeof endDragonArena.renderBackground === 'function') endDragonArena.renderBackground(ctx);
+        if (typeof renderBossSystem === 'function') renderBossSystem();
+        drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
+        if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
+        if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
+        if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
+        if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
+        if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
+        if (typeof endDragonArena.renderHud === 'function') endDragonArena.renderHud(ctx);
+        scheduleNextFrame();
+        return;
+    }
     const biome = getBiomeById(currentBiome);
     drawBackground(biome);
     if (typeof endDragonArena !== 'undefined' && endDragonArena.active && typeof endDragonArena.renderBackground === 'function') endDragonArena.renderBackground(ctx);

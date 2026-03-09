@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.30] - 2026-03-09
+### Added
+- **Ender Dragon Pursuit Arena**: Upgraded the dedicated Ender Dragon arena with a three-phase pursuit model that tracks player movement.
+
+### Changed
+- **Dragon Combat Pressure**: Added phase-specific dive, fireball, breath, and low-sweep pressure behaviors to make the encounter actively chase the player.
+- **Regression Coverage**: Expanded Ender Dragon arena verification for pursuit, hazards, crystal interactions, healing beam targeting, and victory portal flows.
+
 ## [1.19.28] - 2026-03-09
 ### Fixed
 - **BOSS Environment System**: Fixed issues in BOSS exclusive environment controller.

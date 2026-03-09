@@ -1,3 +1,27 @@
+## v1.19.30 (2026-03-09)
+
+### Added
+- **Ender Dragon Phase Pursuit**: 末影龙专属竞技场升级为三阶段追击战。
+  - Phase 1 会根据玩家位置进行高空压制式跟随
+  - Phase 2 会主动缩短水平距离，并朝玩家路径释放火球与吐息危险区
+  - Phase 3 会以更低高度进行贴身压迫与低空横扫
+
+### Improved
+- **Dragon Arena Debug & QA**: 扩展末影龙竞技场调试与回归验证覆盖。
+  - 新增/完善追踪、缩距、碰撞伤害、火球、晶体销毁、治疗束切换与胜利传送门等场景验证
+  - 在最新 `main` 上完成 Playwright 自动化与调试页压力验证
+
+### Version Metadata
+- `version.json` -> `versionCode/buildNumber 83`, `versionName 1.19.30`
+- `package.json` -> `1.19.30`
+- `android-app/package.json` -> `1.19.30`
+- `android-app/android/app/build.gradle` -> `versionCode 83`, `versionName 1.19.30`
+- `android-app/web/build-info.json` -> `version 1.19.30`, `buildNumber 83`
+- `service-worker.js` -> cache `v1.19.30`
+- `Game.html` -> cache-busting `v1.19.30`
+
+---
+
 ## v1.19.29 (2026-03-09)
 
 ### Fixed
@@ -483,6 +507,6 @@
 
 ---
 ## 历史记录说明
-- 以前版本记录曾在 Windows 终端编码链路中发生了不可逆的字符替换（例如：`?` / 乱码占位符 / 乱码片段）。
+- 以前版本记录曾在 Windows 终端编码链路中发生了不可逆的字符替换（例如：字面问号 / 乱码占位符 / 乱码片段）。
 - 为避免误导与继续污染，已暂时移除该段文本；后续可从旧仓库或备份 commit 恢复。
 

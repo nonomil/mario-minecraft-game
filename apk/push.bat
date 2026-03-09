@@ -211,12 +211,12 @@ echo [信息] %REMOTE%: %ORIGIN_URL%
 echo.
 
 REM -----------------------------
-REM 模式选择 + 自动检测 127.0.0.1:1080
+REM 模式选择 + 自动检测 127.0.0.1:10808
 REM -----------------------------
 if not defined MODE (
     echo [选择] 请选择推送模式：
-    echo   1. 自动检测 推荐: 检测 127.0.0.1:1080，有代理则走代理，否则直连
-    echo   2. 强制代理: 使用 127.0.0.1:1080
+    echo   1. 自动检测 推荐: 检测 127.0.0.1:10808，有代理则走代理，否则直连
+    echo   2. 强制代理: 使用 127.0.0.1:10808
     echo   3. 强制直连: 不使用代理
     echo.
     choice /c 123 /n /t 5 /d 1 /m "请输入 1/2/3（5 秒后默认 1）: "
@@ -227,21 +227,21 @@ if not defined MODE (
 )
 
 set "PROXY_OK=0"
-for /f "delims=" %%P in ('powershell -NoProfile -Command "$ok=0; try { $c=New-Object System.Net.Sockets.TcpClient; $iar=$c.BeginConnect('127.0.0.1',1080,$null,$null); if ($iar.AsyncWaitHandle.WaitOne(200,$false) -and $c.Connected) { $ok=1 }; $c.Close() } catch {}; Write-Output $ok" 2^>nul') do set "PROXY_OK=%%P"
+for /f "delims=" %%P in ('powershell -NoProfile -Command "$ok=0; try { $c=New-Object System.Net.Sockets.TcpClient; $iar=$c.BeginConnect('127.0.0.1',10808,$null,$null); if ($iar.AsyncWaitHandle.WaitOne(200,$false) -and $c.Connected) { $ok=1 }; $c.Close() } catch {}; Write-Output $ok" 2^>nul') do set "PROXY_OK=%%P"
 if not "%PROXY_OK%"=="1" set "PROXY_OK=0"
 
 set "MODE=%MODE: =%"
 if /i "%MODE%"=="auto" (
-    echo [模式] 自动检测: 检测本地代理 127.0.0.1:1080...
+    echo [模式] 自动检测: 检测本地代理 127.0.0.1:10808...
     if "%PROXY_OK%"=="1" (
-        echo [模式] 已检测到代理端口 1080 正在监听，将使用代理推送。
+        echo [模式] 已检测到代理端口 10808 正在监听，将使用代理推送。
         set "PRIMARY=proxy"
     ) else (
-        echo [模式] 未检测到代理端口 1080，将使用直连推送。
+        echo [模式] 未检测到代理端口 10808，将使用直连推送。
         set "PRIMARY=direct"
     )
 ) else if /i "%MODE%"=="proxy" (
-    echo [模式] 强制代理: 127.0.0.1:1080
+    echo [模式] 强制代理: 127.0.0.1:10808
     set "PRIMARY=proxy"
 ) else if /i "%MODE%"=="direct" (
     echo [模式] 强制直连
@@ -264,7 +264,7 @@ if "%DRY_RUN%"=="1" (
     echo   git rev-list --left-right --count %REMOTE%/%BRANCH%...HEAD
     echo   git --no-pager log %REMOTE%/%BRANCH%..HEAD --oneline
     if /i "%PRIMARY%"=="proxy" (
-        echo   git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+        echo   git -c http.proxy=http://127.0.0.1:10808 -c https.proxy=http://127.0.0.1:10808 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
     ) else (
         echo   git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
     )
@@ -364,13 +364,13 @@ goto :push_failed
 
 :push_with_proxy
 echo.
-echo [代理] 使用代理 (http://127.0.0.1:1080) + openssl 推送...
-git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+echo [代理] 使用代理 (http://127.0.0.1:10808) + openssl 推送...
+git -c http.proxy=http://127.0.0.1:10808 -c https.proxy=http://127.0.0.1:10808 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :push_success
 
 echo.
 echo [重试] 代理推送失败，尝试 socks5 代理...
-git -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 push %REMOTE% HEAD:%BRANCH%
+git -c http.proxy=socks5://127.0.0.1:10808 -c https.proxy=socks5://127.0.0.1:10808 push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :push_success
 
 :push_failed
@@ -383,17 +383,17 @@ echo 所有尝试都失败了。
 echo.
 echo Possible causes:
 echo 1. Network cannot reach github.com:443
-echo 2. Proxy/VPN not running (127.0.0.1:1080)
+echo 2. Proxy/VPN not running (127.0.0.1:10808)
 echo 3. Auth issue (credentials/token)
 echo.
 echo Quick checks:
-echo - Ensure proxy is running and listening on port 1080
-echo - Test: curl -x http://127.0.0.1:1080 https://github.com
+echo - Ensure proxy is running and listening on port 10808
+echo - Test: curl -x http://127.0.0.1:10808 https://github.com
 echo - Remote: git remote -v
 echo.
 echo Git proxy config examples:
-echo   git config http.proxy http://127.0.0.1:1080
-echo   git config https.proxy http://127.0.0.1:1080
+echo   git config http.proxy http://127.0.0.1:10808
+echo   git config https.proxy http://127.0.0.1:10808
 echo   git config http.sslBackend openssl
 echo.
 call :exit_with_pause 1
@@ -496,7 +496,7 @@ if "%MAIN_APK_DIRTY%"=="1" if not "%FORCE%"=="1" (
 if not defined MODE set "MODE=auto"
 
 set "PROXY_OK=0"
-for /f "delims=" %%P in ('powershell -NoProfile -Command "$ok=0; try { $c=New-Object System.Net.Sockets.TcpClient; $iar=$c.BeginConnect('127.0.0.1',1080,$null,$null); if ($iar.AsyncWaitHandle.WaitOne(200,$false) -and $c.Connected) { $ok=1 }; $c.Close() } catch {}; Write-Output $ok" 2^>nul') do set "PROXY_OK=%%P"
+for /f "delims=" %%P in ('powershell -NoProfile -Command "$ok=0; try { $c=New-Object System.Net.Sockets.TcpClient; $iar=$c.BeginConnect('127.0.0.1',10808,$null,$null); if ($iar.AsyncWaitHandle.WaitOne(200,$false) -and $c.Connected) { $ok=1 }; $c.Close() } catch {}; Write-Output $ok" 2^>nul') do set "PROXY_OK=%%P"
 if not "%PROXY_OK%"=="1" set "PROXY_OK=0"
 
 set "MODE=%MODE: =%"
@@ -530,7 +530,7 @@ if "%DRY_RUN%"=="1" (
         echo   ^(sync-only: 跳过 push^)
     ) else (
         if /i "%PRIMARY%"=="proxy" (
-            echo   git -C "%MAIN_REPO%" -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+            echo   git -C "%MAIN_REPO%" -c http.proxy=http://127.0.0.1:10808 -c https.proxy=http://127.0.0.1:10808 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
         ) else (
             echo   git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
         )
@@ -574,10 +574,10 @@ set "MAIN_PULL_TRIES=0"
 :main_repo_pull_retry
 set /a MAIN_PULL_TRIES+=1
 if /i "%PRIMARY%"=="proxy" (
-    git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
+    git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=http://127.0.0.1:10808 -c https.proxy=http://127.0.0.1:10808 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
     if errorlevel 1 (
         echo [重试] 主仓库代理 pull 失败，尝试 socks5 代理...
-        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 pull --ff-only %REMOTE% %BRANCH%
+        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=socks5://127.0.0.1:10808 -c https.proxy=socks5://127.0.0.1:10808 pull --ff-only %REMOTE% %BRANCH%
     )
 ) else (
     git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
@@ -680,13 +680,13 @@ goto :publish_push_failed
 
 :publish_push_with_proxy
 echo.
-echo [代理] 使用代理 (http://127.0.0.1:1080) + openssl 推送...
-git -c http.proxy=http://127.0.0.1:1080 -c https.proxy=http://127.0.0.1:1080 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+echo [代理] 使用代理 (http://127.0.0.1:10808) + openssl 推送...
+git -c http.proxy=http://127.0.0.1:10808 -c https.proxy=http://127.0.0.1:10808 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :publish_push_success
 
 echo.
 echo [重试] 代理推送失败，尝试 socks5 代理...
-git -c http.proxy=socks5://127.0.0.1:1080 -c https.proxy=socks5://127.0.0.1:1080 push %REMOTE% HEAD:%BRANCH%
+git -c http.proxy=socks5://127.0.0.1:10808 -c https.proxy=socks5://127.0.0.1:10808 push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :publish_push_success
 
 :publish_push_failed

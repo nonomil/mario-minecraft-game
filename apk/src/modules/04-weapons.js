@@ -364,6 +364,10 @@ function performMeleeAttack(weapon) {
         }
     }
 
+    if (typeof endDragonArena !== 'undefined' && endDragonArena.active && typeof endDragonArena.damageCrystalAtRect === 'function') {
+        endDragonArena.damageCrystalAtRect(ax, ay, range, player.height);
+    }
+
     playerWeapons.attackCooldown = weapon.cooldown;
 }
 

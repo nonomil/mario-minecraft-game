@@ -1,5 +1,24 @@
 # Release Notes
 
+## v1.19.30 (2026-03-09)
+
+### 🎮 Gameplay
+- **末影龙三阶段追击战**:
+  - P1 会跟随玩家位置进行高空压制，不再只是固定悬停
+  - P2 会主动俯冲缩距，并朝玩家路线发射火球与吐息危险区
+  - P3 会以更低高度进行贴身压迫和低空横扫
+
+### 🧪 Verification
+- **龙竞技场回归覆盖扩大**:
+  - Playwright 已覆盖追踪、缩距、碰撞伤害、火球、晶体销毁、治疗束切换与胜利传送门流程
+  - 额外完成调试页 enter/exit、阶段切换、胜利重开等压力验证
+
+### 📦 Technical Changes
+- 同步版本元数据到 `version.json`、`package.json`、`android-app/package.json`、`android-app/web/build-info.json`
+- 更新 `service-worker.js` 缓存版本与 `Game.html` 资源缓存戳到 `v1.19.30`
+
+---
+
 ## v1.19.29 (2026-03-09)
 
 ### 🐛 Bug Fixes

@@ -442,6 +442,9 @@ function update() {
         bossArena.checkSpawn();
         bossArena.update();
     }
+    if (typeof endDragonArena !== 'undefined' && endDragonArena && typeof endDragonArena.update === 'function') {
+        endDragonArena.update();
+    }
 
     // 海洋生物更新
     if (typeof updateOceanCreatures === 'function') updateOceanCreatures();

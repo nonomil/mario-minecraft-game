@@ -72,6 +72,13 @@ class Projectile extends Entity {
                     return;
                 }
             }
+            if (typeof endDragonArena !== "undefined" && endDragonArena.active && typeof endDragonArena.damageCrystalAtRect === "function") {
+                const hitCrystalIndex = endDragonArena.damageCrystalAtRect(this.x, this.y, this.width, this.height);
+                if (hitCrystalIndex >= 0) {
+                    this.remove = true;
+                    return;
+                }
+            }
             // BOSS碰撞
             if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
                 const b = bossArena.boss;
