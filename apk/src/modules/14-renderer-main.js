@@ -86,10 +86,6 @@ function draw() {
         if (typeof endDragonArena.renderBackground === 'function') endDragonArena.renderBackground(ctx);
         if (typeof renderBossSystem === 'function') renderBossSystem();
         drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
-        if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
-        if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
-        if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
-        if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
         if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
         if (typeof endDragonArena.renderHud === 'function') endDragonArena.renderHud(ctx);
         scheduleNextFrame();
@@ -225,58 +221,7 @@ function draw() {
 
     ctx.restore();
 
-    // 墨汁效果（全屏遮罩）
-    if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
-    // 地狱热浪效果
-    if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
-    // 末地速度buff
-    if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
-    if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
     if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
-    if (typeof bossArena !== 'undefined' && bossArena && typeof bossArena.renderEnvironmentOverlay === 'function') {
-        bossArena.renderEnvironmentOverlay(ctx);
-    }
-
-    const darknessAlpha = typeof getBiomeDarknessOverlayAlpha === "function"
-        ? getBiomeDarknessOverlayAlpha(biome)
-        : (Number(biome.effects?.darkness) || 0);
-    if (darknessAlpha > 0) {
-        ctx.fillStyle = `rgba(0,0,0,${darknessAlpha})`;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    if (weatherState.type === "fog") {
-        ctx.fillStyle = "rgba(200,200,200,0.25)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    if (weatherState.type === "sandstorm") {
-        ctx.fillStyle = "rgba(210,180,140,0.35)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    if (weatherState.type === "rain") {
-        ctx.fillStyle = "rgba(0,0,50,0.15)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    if (weatherState.type === "snow") {
-        ctx.fillStyle = "rgba(255,255,255,0.1)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
-
-    if (biome.effects?.heatWave && currentBiome !== "volcano") {
-        ctx.strokeStyle = "rgba(255, 200, 120, 0.25)";
-        for (let y = 120; y < canvas.height; y += 40) {
-            ctx.beginPath();
-            for (let x = 0; x <= canvas.width; x += 40) {
-                const offset = Math.sin((x + gameFrame) * 0.02 + y * 0.05) * 6;
-                ctx.lineTo(x, y + offset);
-            }
-            ctx.stroke();
-        }
-    }
-
-    if (typeof renderBiomePostEffects === "function") {
-        renderBiomePostEffects(ctx, cameraX);
-    }
 
     // BOSS血条
     if (typeof bossArena !== 'undefined' && bossArena.active && bossArena.boss && bossArena.boss.alive) {
@@ -676,6 +621,46 @@ function drawBackground(biome) {
         ctx.beginPath();
         ctx.arc(canvas.width - 80, 60, 24, 0, Math.PI * 2);
         ctx.fill();
+    }
+
+    const weatherType = typeof weatherState !== "undefined" && weatherState && typeof weatherState.type === "string"
+        ? weatherState.type
+        : "clear";
+
+    if (weatherType !== "clear") {
+        const skyLimit = typeof groundY === "number" ? Math.max(0, Math.min(canvas.height, groundY)) : canvas.height;
+        if (weatherType === "fog") {
+            const fogGradient = ctx.createLinearGradient(0, 0, 0, skyLimit);
+            fogGradient.addColorStop(0, "rgba(235,235,235,0.08)");
+            fogGradient.addColorStop(1, "rgba(210,210,210,0.28)");
+            ctx.fillStyle = fogGradient;
+            ctx.fillRect(0, 0, canvas.width, skyLimit);
+            ctx.fillStyle = "rgba(245,245,245,0.22)";
+            for (let i = 0; i < 5; i++) {
+                const baseX = (i * 260 + (cameraX * 0.18) % 260) - 120;
+                const baseY = Math.max(40, skyLimit - 130 + Math.sin((cameraX + i * 120) / 220) * 12);
+                ctx.beginPath();
+                ctx.arc(baseX, baseY, 44, 0, Math.PI * 2);
+                ctx.arc(baseX + 48, baseY + 8, 36, 0, Math.PI * 2);
+                ctx.arc(baseX + 92, baseY, 40, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        } else if (weatherType === "sandstorm") {
+            const stormGradient = ctx.createLinearGradient(0, 0, 0, skyLimit);
+            stormGradient.addColorStop(0, "rgba(235, 210, 160, 0.10)");
+            stormGradient.addColorStop(1, "rgba(210, 180, 140, 0.22)");
+            ctx.fillStyle = stormGradient;
+            ctx.fillRect(0, 0, canvas.width, skyLimit);
+        } else if (weatherType === "rain") {
+            const rainGradient = ctx.createLinearGradient(0, 0, 0, skyLimit);
+            rainGradient.addColorStop(0, "rgba(20, 40, 70, 0.10)");
+            rainGradient.addColorStop(1, "rgba(0, 0, 50, 0.16)");
+            ctx.fillStyle = rainGradient;
+            ctx.fillRect(0, 0, canvas.width, skyLimit);
+        } else if (weatherType === "snow") {
+            ctx.fillStyle = "rgba(255,255,255,0.08)";
+            ctx.fillRect(0, 0, canvas.width, skyLimit);
+        }
     }
 
 }

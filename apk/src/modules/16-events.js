@@ -416,13 +416,16 @@ function wireCraftingModal() {
     craftingMaterialListEl = document.getElementById("crafting-material-list");
     craftingRecipeListEl = document.getElementById("crafting-recipe-list");
     craftingSelectionSummaryEl = document.getElementById("crafting-selection-summary");
+    craftingSelectionChipsEl = document.getElementById("crafting-selection-chips");
     craftingPreviewEl = document.getElementById("crafting-preview");
     craftingConfirmBtnEl = document.getElementById("btn-crafting-confirm");
+    craftingAutoFillBtnEl = document.getElementById("btn-crafting-autofill");
 
     const btnClose = document.getElementById("btn-crafting-close");
     const btnClear = document.getElementById("btn-crafting-clear");
     if (btnClose) btnClose.addEventListener("click", hideCraftingModal);
     if (btnClear) btnClear.addEventListener("click", clearCraftSelection);
+    if (craftingAutoFillBtnEl) craftingAutoFillBtnEl.addEventListener("click", autoFillCraftingSelection);
     if (craftingConfirmBtnEl) craftingConfirmBtnEl.addEventListener("click", craftSelectedMaterials);
     if (craftingModalEl) {
         craftingModalEl.addEventListener("click", e => {
@@ -725,7 +728,14 @@ function wireTouchControls() {
         }
     });
     bindTap("craft", () => { showCraftingModal(); });
-    bindTap("switch", () => { switchWeapon(); });
+    bindTap("switch", () => {
+        if (window._inputLocked) return;
+        if (typeof ridingDragon !== "undefined" && ridingDragon && typeof dismountRider === "function") {
+            dismountRider(player);
+            return;
+        }
+        switchWeapon();
+    });
     bindTap("use-diamond", () => { useDiamondForHp(); });
 }
 

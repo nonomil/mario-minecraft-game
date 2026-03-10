@@ -21,8 +21,8 @@ android {
         applicationId "com.nonomil.mariominecraftgame"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 88
-        versionName "1.19.36"
+        versionCode 89
+        versionName "1.19.37"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

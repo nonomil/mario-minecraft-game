@@ -312,7 +312,13 @@ async function start() {
         if (e.code === "KeyW" || (e.code === "ArrowUp" && !ridingNow)) keys.up = true;
         if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
         if (isAttack) handleAttack("press");
-        if (isWeaponSwitch && !e.repeat) switchWeapon();
+        if (isWeaponSwitch && !e.repeat) {
+            if (ridingNow && typeof dismountRider === "function") {
+                dismountRider(player);
+            } else {
+                switchWeapon();
+            }
+        }
         if (isUseDiamond) useDiamondForHp();
         if (isInteract && !e.repeat && !paused && !modalPauseActive()) handleInteraction();
         if (isDecorInteract && !e.repeat && !paused && !modalPauseActive()) handleDecorationInteract();

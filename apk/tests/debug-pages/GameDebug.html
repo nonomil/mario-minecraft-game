@@ -73,6 +73,27 @@
       <button id="btnItem">给予物品</button>
       <button id="btnDragonEquip">龙蛋并装备（长按攻击召唤）</button>
     </div>
+    <div class="row">
+      <label>合成测试</label>
+      <label>倍率</label>
+      <input id="craftMultiplier" type="number" value="1" min="1" step="1">
+      <button id="btnCraftInjectShield">注入盾牌材料</button>
+      <button id="btnCraftInjectTorch">注入火炬材料</button>
+      <button id="btnCraftClear">清空合成材料</button>
+      <button id="btnCraftOpen">打开合成台</button>
+      <button id="btnCraftAutoShield">自动填充盾牌</button>
+      <button id="btnCraftAutoTorch">自动填充火炬</button>
+    </div>
+    <div class="row">
+      <label>合成库存</label>
+      <label>木棍</label>
+      <input id="craftStick" type="number" value="0" min="0" step="1">
+      <label>铁块</label>
+      <input id="craftIron" type="number" value="0" min="0" step="1">
+      <label>火药</label>
+      <input id="craftGunpowder" type="number" value="0" min="0" step="1">
+      <button id="btnCraftSet">设置库存</button>
+    </div>
     <div id="status" class="status">status: game iframe loading...</div>
   </div>
   <div class="game-wrap">
@@ -85,6 +106,18 @@
     let debugGodMode = false;
     let iframeLoaded = false;
     let iframeAccessError = "";
+    const CRAFTING_MIN_COUNT = 0;
+    const CRAFTING_MIN_MULTIPLIER = 1;
+    const CRAFTING_DEFAULT_MULTIPLIER = 1;
+    const CRAFTING_KEYS = {
+      stick: "stick",
+      iron: "iron",
+      gunpowder: "gunpowder"
+    };
+    const CRAFTING_PRESETS = {
+      shield: { stick: 2, iron: 1 },
+      torch: { stick: 1, gunpowder: 1 }
+    };
 
     async function resetDebugCaches() {
       if ('serviceWorker' in navigator) {
@@ -133,6 +166,133 @@
     function runGameExpr(w, expr) {
       if (!w || typeof w.eval !== "function") return undefined;
       return w.eval(expr);
+    }
+
+    function readNumberInput(id, fallbackValue) {
+      const el = document.getElementById(id);
+      if (!el) return fallbackValue;
+      const value = Number(el.value);
+      return Number.isFinite(value) ? value : fallbackValue;
+    }
+
+    function readCraftMultiplier() {
+      const value = Math.floor(readNumberInput("craftMultiplier", CRAFTING_DEFAULT_MULTIPLIER));
+      return Math.max(CRAFTING_MIN_MULTIPLIER, value || CRAFTING_DEFAULT_MULTIPLIER);
+    }
+
+    function normalizeCraftCount(value) {
+      const num = Math.floor(Number(value) || 0);
+      return Math.max(CRAFTING_MIN_COUNT, num);
+    }
+
+    function getCraftInventoryInputs() {
+      return {
+        [CRAFTING_KEYS.stick]: normalizeCraftCount(readNumberInput("craftStick", 0)),
+        [CRAFTING_KEYS.iron]: normalizeCraftCount(readNumberInput("craftIron", 0)),
+        [CRAFTING_KEYS.gunpowder]: normalizeCraftCount(readNumberInput("craftGunpowder", 0))
+      };
+    }
+
+    function setCraftInventoryInputs(values) {
+      const stickEl = document.getElementById("craftStick");
+      const ironEl = document.getElementById("craftIron");
+      const gunpowderEl = document.getElementById("craftGunpowder");
+      if (stickEl && values && values[CRAFTING_KEYS.stick] != null) {
+        stickEl.value = String(values[CRAFTING_KEYS.stick]);
+      }
+      if (ironEl && values && values[CRAFTING_KEYS.iron] != null) {
+        ironEl.value = String(values[CRAFTING_KEYS.iron]);
+      }
+      if (gunpowderEl && values && values[CRAFTING_KEYS.gunpowder] != null) {
+        gunpowderEl.value = String(values[CRAFTING_KEYS.gunpowder]);
+      }
+    }
+
+    function applyInventoryDelta(values) {
+      withGame(w => {
+        runGameExpr(w, `(() => {
+          const values = ${JSON.stringify(values)};
+          if (typeof inventory === "undefined" || !inventory) return values;
+          Object.keys(values).forEach((key) => {
+            const delta = Number(values[key]) || 0;
+            inventory[key] = (Number(inventory[key]) || 0) + delta;
+          });
+          return values;
+        })()`);
+        if (typeof w.updateInventoryUI === "function") w.updateInventoryUI();
+      });
+    }
+
+    function applyInventorySet(values) {
+      withGame(w => {
+        runGameExpr(w, `(() => {
+          const values = ${JSON.stringify(values)};
+          if (typeof inventory === "undefined" || !inventory) return values;
+          Object.keys(values).forEach((key) => {
+            const nextValue = Math.max(${CRAFTING_MIN_COUNT}, Number(values[key]) || 0);
+            inventory[key] = nextValue;
+          });
+          return values;
+        })()`);
+        if (typeof w.updateInventoryUI === "function") w.updateInventoryUI();
+      });
+    }
+
+    function injectCraftPreset(presetKey) {
+      const preset = CRAFTING_PRESETS[presetKey];
+      if (!preset) return;
+      const multiplier = readCraftMultiplier();
+      const values = {};
+      Object.keys(preset).forEach((key) => {
+        values[key] = preset[key] * multiplier;
+      });
+      applyInventoryDelta(values);
+    }
+
+    function clearCraftInventory() {
+      const values = {
+        [CRAFTING_KEYS.stick]: 0,
+        [CRAFTING_KEYS.iron]: 0,
+        [CRAFTING_KEYS.gunpowder]: 0
+      };
+      setCraftInventoryInputs(values);
+      applyInventorySet(values);
+    }
+
+    function setCraftInventoryFromInputs() {
+      const values = getCraftInventoryInputs();
+      applyInventorySet(values);
+    }
+
+    function openCraftingModal() {
+      ensureRunning();
+      withGame(w => {
+        runGameExpr(w, `(() => {
+          if (typeof showCraftingModal === "function") {
+            showCraftingModal();
+            return true;
+          }
+          return false;
+        })()`);
+      });
+    }
+
+    function autoFillCrafting(recipeKey) {
+      const key = recipeKey ? String(recipeKey) : "";
+      openCraftingModal();
+      withGame(w => {
+        runGameExpr(w, `(() => {
+          const recipeKey = ${JSON.stringify(key)};
+          if (recipeKey && typeof selectCraftRecipe === "function") {
+            selectCraftRecipe(recipeKey);
+          }
+          if (typeof autoFillCraftingSelection === "function") {
+            autoFillCraftingSelection();
+            return true;
+          }
+          return false;
+        })()`);
+      });
     }
 
     function renderStatus(w) {
@@ -508,6 +668,21 @@
     document.getElementById("btnChallenge").addEventListener("click", triggerChallenge);
     document.getElementById("btnItem").addEventListener("click", giveItem);
     document.getElementById("btnDragonEquip").addEventListener("click", prepareDragonLongPressSummon);
+    document.getElementById("btnCraftInjectShield").addEventListener("click", function () {
+      injectCraftPreset("shield");
+    });
+    document.getElementById("btnCraftInjectTorch").addEventListener("click", function () {
+      injectCraftPreset("torch");
+    });
+    document.getElementById("btnCraftClear").addEventListener("click", clearCraftInventory);
+    document.getElementById("btnCraftSet").addEventListener("click", setCraftInventoryFromInputs);
+    document.getElementById("btnCraftOpen").addEventListener("click", openCraftingModal);
+    document.getElementById("btnCraftAutoShield").addEventListener("click", function () {
+      autoFillCrafting("shield");
+    });
+    document.getElementById("btnCraftAutoTorch").addEventListener("click", function () {
+      autoFillCrafting("torch");
+    });
     document.getElementById("btnGod").addEventListener("click", function () {
       debugGodMode = !debugGodMode;
       this.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
@@ -602,6 +777,41 @@
       },
       prepareDragonLongPressSummon() {
         prepareDragonLongPressSummon();
+      },
+      crafting: {
+        injectShield(multiplier) {
+          const el = document.getElementById("craftMultiplier");
+          if (el && multiplier != null) {
+            el.value = String(Math.max(CRAFTING_MIN_MULTIPLIER, Number(multiplier) || CRAFTING_DEFAULT_MULTIPLIER));
+          }
+          injectCraftPreset("shield");
+        },
+        injectTorch(multiplier) {
+          const el = document.getElementById("craftMultiplier");
+          if (el && multiplier != null) {
+            el.value = String(Math.max(CRAFTING_MIN_MULTIPLIER, Number(multiplier) || CRAFTING_DEFAULT_MULTIPLIER));
+          }
+          injectCraftPreset("torch");
+        },
+        setInventory(values) {
+          if (!values) return;
+          const normalized = {
+            [CRAFTING_KEYS.stick]: normalizeCraftCount(values[CRAFTING_KEYS.stick]),
+            [CRAFTING_KEYS.iron]: normalizeCraftCount(values[CRAFTING_KEYS.iron]),
+            [CRAFTING_KEYS.gunpowder]: normalizeCraftCount(values[CRAFTING_KEYS.gunpowder])
+          };
+          setCraftInventoryInputs(normalized);
+          applyInventorySet(normalized);
+        },
+        clear() {
+          clearCraftInventory();
+        },
+        open() {
+          openCraftingModal();
+        },
+        autoFill(recipeKey) {
+          autoFillCrafting(recipeKey);
+        }
       },
       enterDragonArena() {
         enterDragonArenaDebug();

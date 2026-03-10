@@ -390,30 +390,16 @@ globalThis.bossArena = globalThis.bossArena || {
     },
 
     lockWeaponForBossFight() {
-        if (typeof playerWeapons === "undefined" || !playerWeapons) return;
-        this.weaponLockActive = true;
-        this.weaponBeforeBoss = playerWeapons.current || "sword";
-        if (playerWeapons.current !== "sword") {
-            playerWeapons.current = "sword";
-            playerWeapons.attackCooldown = 0;
-            if (typeof updateWeaponUI === "function") updateWeaponUI();
-            showToast("⚔️ BOSS战已锁定为剑模式");
-        }
+        const currentWeapon = (typeof playerWeapons !== "undefined" && playerWeapons)
+            ? (playerWeapons.current || "sword")
+            : "sword";
+        this.weaponBeforeBoss = currentWeapon;
+        this.weaponLockActive = false;
     },
 
     unlockWeaponAfterBossFight() {
-        if (typeof playerWeapons === "undefined" || !playerWeapons) {
-            this.weaponLockActive = false;
-            this.weaponBeforeBoss = "sword";
-            return;
-        }
-        const prev = this.weaponBeforeBoss || "sword";
-        const unlocked = Array.isArray(playerWeapons.unlocked) ? playerWeapons.unlocked : [];
-        playerWeapons.current = unlocked.includes(prev) ? prev : "sword";
-        playerWeapons.attackCooldown = 0;
         this.weaponLockActive = false;
         this.weaponBeforeBoss = "sword";
-        if (typeof updateWeaponUI === "function") updateWeaponUI();
     },
 
     checkSpawn() {

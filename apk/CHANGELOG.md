@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.37] - 2026-03-11
+### Added
+- **Crafting Improvements**: Optimized crafting modal visuals and introduced debug injection mechanisms.
+- **Codex Constraints**: Updated `AGENTS.md` with refined collaboration rules for assistant plugins.
+
+### Fixed
+- **Dragon Dismount**: Resolved a crash issue when dismounting from dragons and improved associated visuals.
+
 ## [1.19.36] - 2026-03-10
 ### Added
 - **Character Visuals**: Fully refreshed character visuals and added design documentation.

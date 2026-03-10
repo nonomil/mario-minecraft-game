@@ -52,17 +52,24 @@ function drawSteve(x, y, facingRight, attacking) {
     const torsoY = 20;
     const torsoW = 14;
     const torsoH = 20;
-    const armW = 4;
     const armH = 20;
-    const armLeftX = 2;
-    const armRightX = 20;
-    const legW = 6;
     const legH = 12;
     const legY = 40;
-    const legLeftX = 6;
-    const legRightX = 14;
     const shoeH = 2;
-    const gaze = facingRight ? 1 : -1;
+    const nearIsRight = facingRight;
+    const farFaceX = facingRight ? headX : headX + headW - 3;
+    const torsoShadeX = facingRight ? torsoX : torsoX + torsoW - 3;
+    const torsoHighlightX = facingRight ? torsoX + torsoW - 5 : torsoX + 1;
+    const hemX = facingRight ? torsoX : torsoX + torsoW - 4;
+    const nearArmW = 5;
+    const farArmW = 3;
+    const nearArmX = nearIsRight ? 20 : 3;
+    const farArmX = nearIsRight ? 3 : 20;
+    const nearArmHighlightW = Math.max(1, nearArmW - 2);
+    const nearLegW = 7;
+    const farLegW = 5;
+    const nearLegX = nearIsRight ? 13 : 6;
+    const farLegX = nearIsRight ? 6 : 15;
 
     // Head base
     ctx.fillStyle = palette.skin;
@@ -71,72 +78,82 @@ function drawSteve(x, y, facingRight, attacking) {
     // Hair
     ctx.fillStyle = palette.hair;
     ctx.fillRect(x + headX * s, y + headY * s, headW * s, 6 * s);
-    ctx.fillRect(x + headX * s, y + 6 * s, 4 * s, 6 * s);
-    ctx.fillRect(x + (headX + headW - 4) * s, y + 6 * s, 4 * s, 6 * s);
     ctx.fillStyle = palette.hairShadow;
     ctx.fillRect(x + headX * s, y + 2 * s, headW * s, 2 * s);
-    ctx.fillRect(x + (headX + headW - 4) * s, y + 6 * s, 2 * s, 8 * s);
 
     // Face shading
     ctx.fillStyle = palette.skinShade;
     ctx.fillRect(x + (headX + 2) * s, y + 12 * s, 16 * s, 6 * s);
+    ctx.fillRect(x + farFaceX * s, y + 6 * s, 3 * s, 12 * s);
 
     // Eyes
     const eyeY = 6;
-    const eyeLeftX = 6 + gaze;
-    const eyeRightX = 13 + gaze;
+    const nearEyeX = facingRight ? 13 : 6;
+    const farEyeX = facingRight ? 8 : 11;
+    const nearEyeW = 3;
+    const farEyeW = 2;
+    const nearIrisX = nearEyeX + (facingRight ? 2 : 0);
+    const farIrisX = facingRight ? farEyeX + 1 : farEyeX;
     ctx.fillStyle = palette.eyeWhite;
-    ctx.fillRect(x + eyeLeftX * s, y + eyeY * s, 3 * s, 3 * s);
-    ctx.fillRect(x + eyeRightX * s, y + eyeY * s, 3 * s, 3 * s);
+    ctx.fillRect(x + farEyeX * s, y + eyeY * s, farEyeW * s, 3 * s);
+    ctx.fillRect(x + nearEyeX * s, y + eyeY * s, nearEyeW * s, 3 * s);
     ctx.fillStyle = palette.eyeIris;
-    ctx.fillRect(x + (eyeLeftX + 1) * s, y + (eyeY + 1) * s, s, s);
-    ctx.fillRect(x + (eyeRightX + 1) * s, y + (eyeY + 1) * s, s, s);
+    ctx.fillRect(x + farIrisX * s, y + (eyeY + 1) * s, s, s);
+    ctx.fillRect(x + nearIrisX * s, y + (eyeY + 1) * s, s, s);
     ctx.fillStyle = palette.eyeIrisDark;
-    ctx.fillRect(x + (eyeLeftX + 2) * s, y + (eyeY + 2) * s, s, s);
-    ctx.fillRect(x + (eyeRightX + 2) * s, y + (eyeY + 2) * s, s, s);
+    ctx.fillRect(x + farIrisX * s, y + (eyeY + 2) * s, s, s);
+    ctx.fillRect(x + nearIrisX * s, y + (eyeY + 2) * s, s, s);
 
     // Nose + beard
     ctx.fillStyle = palette.nose;
-    ctx.fillRect(x + 11 * s, y + 10 * s, 2 * s, 3 * s);
+    const noseX = facingRight ? 13 : 9;
+    ctx.fillRect(x + noseX * s, y + 10 * s, 2 * s, 3 * s);
     ctx.fillStyle = palette.beard;
-    ctx.fillRect(x + 7 * s, y + 13 * s, 12 * s, 2 * s);
-    ctx.fillRect(x + 9 * s, y + 15 * s, 8 * s, 2 * s);
+    const beardTopX = facingRight ? 9 : 5;
+    const beardBottomX = facingRight ? 11 : 7;
+    ctx.fillRect(x + beardTopX * s, y + 13 * s, 11 * s, 2 * s);
+    ctx.fillRect(x + beardBottomX * s, y + 15 * s, 8 * s, 2 * s);
 
     // Torso
     ctx.fillStyle = palette.shirt;
     ctx.fillRect(x + torsoX * s, y + torsoY * s, torsoW * s, torsoH * s);
     ctx.fillStyle = palette.shirtShade;
-    ctx.fillRect(x + armLeftX * s, y + torsoY * s, armW * s, armH * s);
-    ctx.fillRect(x + armRightX * s, y + torsoY * s, armW * s, armH * s);
+    ctx.fillRect(x + farArmX * s, y + torsoY * s, farArmW * s, armH * s);
+    ctx.fillStyle = palette.shirt;
+    ctx.fillRect(x + nearArmX * s, y + torsoY * s, nearArmW * s, armH * s);
+    ctx.fillStyle = palette.shirtHighlight;
+    ctx.fillRect(x + (nearArmX + 1) * s, y + (torsoY + 4) * s, nearArmHighlightW * s, 2 * s);
     ctx.fillStyle = palette.skin;
-    ctx.fillRect(x + armLeftX * s, y + (torsoY + armH - 3) * s, armW * s, 3 * s);
-    ctx.fillRect(x + armRightX * s, y + (torsoY + armH - 3) * s, armW * s, 3 * s);
+    ctx.fillRect(x + farArmX * s, y + (torsoY + armH - 3) * s, farArmW * s, 3 * s);
+    ctx.fillRect(x + nearArmX * s, y + (torsoY + armH - 3) * s, nearArmW * s, 3 * s);
 
     ctx.fillStyle = palette.shirtShade;
-    ctx.fillRect(x + (torsoX + torsoW - 3) * s, y + torsoY * s, 3 * s, torsoH * s);
+    ctx.fillRect(x + torsoShadeX * s, y + torsoY * s, 3 * s, torsoH * s);
     ctx.fillStyle = palette.shirtHighlight;
-    ctx.fillRect(x + (torsoX + 1) * s, y + (torsoY + 3) * s, 4 * s, 4 * s);
+    ctx.fillRect(x + torsoHighlightX * s, y + (torsoY + 3) * s, 4 * s, 4 * s);
 
     // Left hem drop
     ctx.fillStyle = palette.shirtShade;
-    ctx.fillRect(x + torsoX * s, y + (torsoY + torsoH - 2) * s, 4 * s, 4 * s);
+    ctx.fillRect(x + hemX * s, y + (torsoY + torsoH - 2) * s, 4 * s, 4 * s);
 
     // Pants + legs
     ctx.fillStyle = palette.pants;
     ctx.fillRect(x + torsoX * s, y + legY * s, torsoW * s, legH * s);
-    ctx.fillRect(x + legLeftX * s, y + legY * s, legW * s, legH * s);
-    ctx.fillRect(x + legRightX * s, y + legY * s, legW * s, legH * s);
     ctx.fillStyle = palette.pantsShade;
-    ctx.fillRect(x + (legLeftX + legW - 2) * s, y + legY * s, 2 * s, legH * s);
-    ctx.fillRect(x + (legRightX + legW - 2) * s, y + legY * s, 2 * s, legH * s);
+    ctx.fillRect(x + farLegX * s, y + legY * s, farLegW * s, legH * s);
+    ctx.fillStyle = palette.pants;
+    ctx.fillRect(x + nearLegX * s, y + legY * s, nearLegW * s, legH * s);
+    ctx.fillStyle = palette.pantsShade;
+    ctx.fillRect(x + (farLegX + farLegW - 2) * s, y + legY * s, 2 * s, legH * s);
+    ctx.fillRect(x + (nearLegX + nearLegW - 2) * s, y + legY * s, 2 * s, legH * s);
 
     // Shoes
     ctx.fillStyle = palette.shoe;
-    ctx.fillRect(x + legLeftX * s, y + (legY + legH - shoeH) * s, legW * s, shoeH * s);
-    ctx.fillRect(x + legRightX * s, y + (legY + legH - shoeH) * s, legW * s, shoeH * s);
+    ctx.fillRect(x + farLegX * s, y + (legY + legH - shoeH) * s, farLegW * s, shoeH * s);
+    ctx.fillRect(x + nearLegX * s, y + (legY + legH - shoeH) * s, nearLegW * s, shoeH * s);
     ctx.fillStyle = palette.shoeShade;
-    ctx.fillRect(x + legLeftX * s, y + (legY + legH - 1) * s, legW * s, s);
-    ctx.fillRect(x + legRightX * s, y + (legY + legH - 1) * s, legW * s, s);
+    ctx.fillRect(x + farLegX * s, y + (legY + legH - 1) * s, farLegW * s, s);
+    ctx.fillRect(x + nearLegX * s, y + (legY + legH - 1) * s, nearLegW * s, s);
 
     if (playerEquipment?.armor) {
         const armor = ARMOR_TYPES?.[playerEquipment.armor];

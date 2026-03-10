@@ -41,6 +41,7 @@ const CRAFTING_RECIPE_DEFINITIONS = {
     }
 };
 let craftingSelection = {};
+let craftingActiveRecipeKey = "";
 
 // 末影龙系统
 let dragonList = [];
@@ -557,41 +558,42 @@ function update() {
 
     // 骑乘逻辑
     if (ridingDragon) {
+        const dragon = ridingDragon;
         // 检查末影龙是否还存在
-        if (ridingDragon.remove || !dragonList.includes(ridingDragon)) {
+        if (dragon.remove || !dragonList.includes(dragon)) {
             dismountRider(player);
+        } else if (keys.jump) {
+            dismountRider(player);
+            keys.jump = false;
         } else {
             // 同步玩家位置
-            player.x = ridingDragon.x + (ridingDragon.width - player.width) / 2;
-            player.y = ridingDragon.y - player.height;
+            player.x = dragon.x + (dragon.width - player.width) / 2;
+            player.y = dragon.y - player.height;
             player.velX = 0;
             player.velY = 0;
 
             // 控制末影龙移动
-            const moveSpeed = ridingDragon.speed;
+            const moveSpeed = dragon.speed;
             if (keys.left) {
-                ridingDragon.x -= moveSpeed;
+                dragon.x -= moveSpeed;
                 player.facingRight = false;
-                ridingDragon.facingRight = false;
+                dragon.facingRight = false;
             }
             if (keys.right) {
-                ridingDragon.x += moveSpeed;
+                dragon.x += moveSpeed;
                 player.facingRight = true;
-                ridingDragon.facingRight = true;
+                dragon.facingRight = true;
             }
-            if (keys.jump) {
-                dismountRider(player);
-                keys.jump = false;
-            } else if (keys.up) {
-                ridingDragon.y -= moveSpeed;
+            if (keys.up) {
+                dragon.y -= moveSpeed;
             }
             if (keys.down) {
-                ridingDragon.y += moveSpeed;
+                dragon.y += moveSpeed;
             }
 
             // 边界限制
-            ridingDragon.x = Math.max(cameraX - 50, Math.min(ridingDragon.x, cameraX + canvas.width + 50));
-            ridingDragon.y = Math.max(50, Math.min(ridingDragon.y, groundY - ridingDragon.height));
+            dragon.x = Math.max(cameraX - 50, Math.min(dragon.x, cameraX + canvas.width + 50));
+            dragon.y = Math.max(50, Math.min(dragon.y, groundY - dragon.height));
 
             // 跳过玩家重力更新
             skipPlayerGravity = true;
@@ -1303,12 +1305,17 @@ function getCraftSelectionEntries() {
         }));
 }
 
-function getSelectedRecipeKey() {
-    const normalizedSelection = {};
+function normalizeCraftingSelection() {
+    const normalized = {};
     for (const [key, count] of Object.entries(craftingSelection)) {
         const safeCount = Number(count) || 0;
-        if (safeCount > 0) normalizedSelection[key] = safeCount;
+        if (safeCount > 0) normalized[key] = safeCount;
     }
+    return normalized;
+}
+
+function getSelectedRecipeKey() {
+    const normalizedSelection = normalizeCraftingSelection();
 
     for (const [recipeKey, recipeDef] of Object.entries(CRAFTING_RECIPE_DEFINITIONS)) {
         const ingredients = recipeDef.ingredients || {};
@@ -1321,19 +1328,90 @@ function getSelectedRecipeKey() {
     return "";
 }
 
+function getRecipeDelta(recipeKey, selection) {
+    const recipe = CRAFTING_RECIPE_DEFINITIONS[recipeKey];
+    if (!recipe) return { missing: [], extra: [] };
+    const ingredients = recipe.ingredients || {};
+    const missing = [];
+    const extra = [];
+
+    for (const [itemKey, reqCount] of Object.entries(ingredients)) {
+        const haveCount = Number(selection[itemKey]) || 0;
+        if (haveCount < reqCount) {
+            missing.push({
+                key: itemKey,
+                count: reqCount - haveCount,
+                label: ITEM_LABELS[itemKey] || itemKey
+            });
+        }
+    }
+
+    for (const [itemKey, haveCountRaw] of Object.entries(selection)) {
+        const haveCount = Number(haveCountRaw) || 0;
+        const reqCount = Number(ingredients[itemKey]) || 0;
+        if (haveCount > reqCount) {
+            extra.push({
+                key: itemKey,
+                count: haveCount - reqCount,
+                label: ITEM_LABELS[itemKey] || itemKey
+            });
+        }
+    }
+
+    return { missing, extra };
+}
+
 function clearCraftSelection() {
     craftingSelection = {};
+    craftingActiveRecipeKey = "";
     updateCraftingModal();
 }
 
-function toggleCraftMaterialSelection(itemKey) {
+function adjustCraftMaterial(itemKey, delta, event) {
+    if (event && typeof event.stopPropagation === "function") event.stopPropagation();
     const maxCount = Number(inventory[itemKey]) || 0;
     if (maxCount <= 0) return;
 
     const currentCount = Number(craftingSelection[itemKey]) || 0;
-    const nextCount = currentCount >= maxCount ? 0 : currentCount + 1;
+    let nextCount = currentCount + Number(delta || 0);
+    if (nextCount > maxCount) nextCount = maxCount;
+    if (nextCount < 0) nextCount = 0;
     if (nextCount <= 0) delete craftingSelection[itemKey];
     else craftingSelection[itemKey] = nextCount;
+    if (delta !== 0) craftingActiveRecipeKey = "";
+    updateCraftingModal();
+}
+
+function toggleCraftMaterialSelection(itemKey) {
+    adjustCraftMaterial(itemKey, 1);
+}
+
+function fillCraftingSelection(recipeKey) {
+    const recipe = CRAFTING_RECIPE_DEFINITIONS[recipeKey];
+    if (!recipe) return;
+    craftingSelection = {};
+    Object.entries(recipe.ingredients || {}).forEach(([itemKey, count]) => {
+        const maxCount = Number(inventory[itemKey]) || 0;
+        const nextCount = Math.min(Number(count) || 0, maxCount);
+        if (nextCount > 0) craftingSelection[itemKey] = nextCount;
+    });
+}
+
+function selectCraftRecipe(recipeKey) {
+    if (!CRAFTING_RECIPE_DEFINITIONS[recipeKey]) return;
+    craftingActiveRecipeKey = recipeKey;
+    fillCraftingSelection(recipeKey);
+    updateCraftingModal();
+}
+
+function autoFillCraftingSelection() {
+    const selectedRecipeKey = getSelectedRecipeKey();
+    const recipeKey = craftingActiveRecipeKey || selectedRecipeKey;
+    if (!recipeKey) {
+        showToast("⚒️ 先选择配方或材料");
+        return;
+    }
+    fillCraftingSelection(recipeKey);
     updateCraftingModal();
 }
 
@@ -1357,30 +1435,55 @@ function getPlayerTorchLightRadius() {
 function renderCraftingModal() {
     if (!craftingMaterialListEl || !craftingRecipeListEl || !craftingSelectionSummaryEl || !craftingPreviewEl) return;
 
-    craftingRecipeListEl.innerHTML = Object.values(CRAFTING_RECIPE_DEFINITIONS).map((recipe) => {
+    const selectedRecipeKey = getSelectedRecipeKey();
+    const highlightRecipeKey = selectedRecipeKey || craftingActiveRecipeKey;
+    const normalizedSelection = normalizeCraftingSelection();
+
+    craftingRecipeListEl.innerHTML = Object.entries(CRAFTING_RECIPE_DEFINITIONS).map(([recipeKey, recipe]) => {
         const ingredients = Object.entries(recipe.ingredients || {})
             .map(([itemKey, count]) => `${ITEM_LABELS[itemKey] || itemKey} x${count}`)
             .join(" + ");
-        return `<div class="crafting-recipe-card">
+        const className = recipeKey === highlightRecipeKey ? "crafting-recipe-card active" : "crafting-recipe-card";
+        return `<div class="${className}" data-recipe="${recipeKey}" onclick="window.selectCraftRecipe && window.selectCraftRecipe('${recipeKey}')">
             <div class="crafting-recipe-name">${recipe.icon} ${recipe.label}</div>
             <div>${ingredients}</div>
             <div class="crafting-recipe-desc">${recipe.description}</div>
+            <div class="crafting-recipe-hint">点击填充材料</div>
         </div>`;
     }).join("");
 
     const selectedEntries = getCraftSelectionEntries();
+    if (craftingSelectionChipsEl) {
+        craftingSelectionChipsEl.innerHTML = selectedEntries.length
+            ? selectedEntries.map((entry) => {
+                return `<span class="crafting-chip">${entry.label} x${entry.count}
+                    <button class="crafting-chip-btn" onclick="window.adjustCraftMaterial && window.adjustCraftMaterial('${entry.key}', -1, event)">-</button>
+                </span>`;
+            }).join("")
+            : "";
+    }
     if (!selectedEntries.length) {
-        craftingSelectionSummaryEl.innerHTML = "当前未选择材料。点击下方材料卡片可累计选择数量。";
+        craftingSelectionSummaryEl.innerHTML = "当前未选择材料。点击配方卡或材料卡进行选择。";
+    } else if (highlightRecipeKey && CRAFTING_RECIPE_DEFINITIONS[highlightRecipeKey]) {
+        const recipe = CRAFTING_RECIPE_DEFINITIONS[highlightRecipeKey];
+        craftingSelectionSummaryEl.innerHTML = `目标配方：<b>${recipe.icon} ${recipe.label}</b>`;
     } else {
-        craftingSelectionSummaryEl.innerHTML = selectedEntries
-            .map((entry) => `${entry.label} x${entry.count}`)
-            .join(" · ");
+        craftingSelectionSummaryEl.innerHTML = selectedEntries.map((entry) => `${entry.label} x${entry.count}`).join(" · ");
     }
 
-    const selectedRecipeKey = getSelectedRecipeKey();
     if (selectedRecipeKey) {
         const recipe = CRAFTING_RECIPE_DEFINITIONS[selectedRecipeKey];
         craftingPreviewEl.innerHTML = `已匹配配方：<b>${recipe.icon} ${recipe.label}</b>，点击“开始合成”即可制作。`;
+    } else if (highlightRecipeKey && CRAFTING_RECIPE_DEFINITIONS[highlightRecipeKey]) {
+        const recipe = CRAFTING_RECIPE_DEFINITIONS[highlightRecipeKey];
+        const { missing, extra } = getRecipeDelta(highlightRecipeKey, normalizedSelection);
+        const missingText = missing.length
+            ? `缺少：${missing.map(entry => `${entry.label} x${entry.count}`).join(" · ")}`
+            : "材料齐备";
+        const extraText = extra.length
+            ? `多选：${extra.map(entry => `${entry.label} x${entry.count}`).join(" · ")}`
+            : "";
+        craftingPreviewEl.innerHTML = `目标配方：<b>${recipe.icon} ${recipe.label}</b>。${missingText}${extraText ? `；${extraText}` : ""}`;
     } else {
         craftingPreviewEl.innerHTML = "尚未匹配到有效配方。当前只支持盾牌和火炬的手动合成。";
     }
@@ -1400,7 +1503,13 @@ function renderCraftingModal() {
                     <div class="inventory-item-icon">${entry.icon}</div>
                     <div class="inventory-item-name">${entry.label}</div>
                 </div>
-                <div class="inventory-item-count">${countText}</div>
+                <div class="inventory-item-right">
+                    <div class="inventory-item-count">${countText}</div>
+                    <div class="crafting-material-controls">
+                        <button class="crafting-material-btn" onclick="window.adjustCraftMaterial && window.adjustCraftMaterial('${entry.key}', -1, event)">-</button>
+                        <button class="crafting-material-btn" onclick="window.adjustCraftMaterial && window.adjustCraftMaterial('${entry.key}', 1, event)">+</button>
+                    </div>
+                </div>
             </div>`;
         }).join("");
     }
@@ -1429,6 +1538,7 @@ function hideCraftingModal() {
         popPause();
         craftingPauseHeld = false;
     }
+    craftingActiveRecipeKey = "";
 }
 
 function updateCraftingModal() {
@@ -1439,6 +1549,20 @@ function updateCraftingModal() {
 function craftSelectedMaterials() {
     const recipeKey = getSelectedRecipeKey();
     if (!recipeKey) {
+        if (craftingActiveRecipeKey && CRAFTING_RECIPE_DEFINITIONS[craftingActiveRecipeKey]) {
+            const normalizedSelection = normalizeCraftingSelection();
+            const { missing, extra } = getRecipeDelta(craftingActiveRecipeKey, normalizedSelection);
+            if (missing.length || extra.length) {
+                const missingText = missing.length
+                    ? `缺少：${missing.map(entry => `${entry.label} x${entry.count}`).join(" · ")}`
+                    : "";
+                const extraText = extra.length
+                    ? `多选：${extra.map(entry => `${entry.label} x${entry.count}`).join(" · ")}`
+                    : "";
+                showToast(`⚒️ ${missingText}${missingText && extraText ? "；" : ""}${extraText}`);
+                return false;
+            }
+        }
         showToast("⚒️ 当前材料组合还不能合成");
         return false;
     }
@@ -1779,15 +1903,6 @@ function useInventoryItem(itemKey) {
             iron_pickaxe: "pickaxe"
         };
         const weaponId = weaponMap[itemKey];
-        if (
-            weaponId &&
-            weaponId !== "sword" &&
-            typeof isBossWeaponLockActive === "function" &&
-            isBossWeaponLockActive()
-        ) {
-            showToast("⚔️ BOSS战期间仅可使用剑");
-            return;
-        }
         if (weaponId && playerWeapons.current !== weaponId) {
             playerWeapons.current = weaponId;
             playerWeapons.attackCooldown = 0;
@@ -1846,6 +1961,9 @@ if (typeof window !== "undefined") {
     window.showCraftingModal = showCraftingModal;
     window.hideCraftingModal = hideCraftingModal;
     window.toggleCraftMaterialSelection = toggleCraftMaterialSelection;
+    window.adjustCraftMaterial = adjustCraftMaterial;
+    window.selectCraftRecipe = selectCraftRecipe;
+    window.autoFillCraftingSelection = autoFillCraftingSelection;
     window.clearCraftSelection = clearCraftSelection;
     window.craftSelectedMaterials = craftSelectedMaterials;
     window.getPlayerTorchLightRadius = getPlayerTorchLightRadius;
