@@ -1,5 +1,5 @@
 // Versioned cache strategy - cache name bound to version.json
-let CACHE_NAME = "mmwg-v1.19.35"; // fallback if version.json fails to load
+let CACHE_NAME = "mmwg-v1.19.36"; // fallback if version.json fails to load
 
 const PRECACHE = [
   "./Game.html",

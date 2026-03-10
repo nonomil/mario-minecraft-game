@@ -6,19 +6,137 @@
 function drawSteve(x, y, facingRight, attacking) {
     const s = player.width / 26;
     const hasSunscreen = typeof hasSunscreenBuff === "function" && hasSunscreenBuff();
-    ctx.fillStyle = hasSunscreen ? "#FFFFFF" : "#00AAAA";
-    ctx.fillRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
-    ctx.fillStyle = hasSunscreen ? "#EEEEEE" : "#0000AA";
-    ctx.fillRect(x + 6 * s, y + 40 * s, 14 * s, 12 * s);
-    ctx.fillStyle = "#F5Bca9";
-    ctx.fillRect(x + 3 * s, y, 20 * s, 20 * s);
-    ctx.fillStyle = "#4A332A";
-    ctx.fillRect(x + 3 * s, y, 20 * s, 6 * s);
+    const palette = hasSunscreen
+        ? {
+            skin: "#F6D6C2",
+            skinShade: "#E8B7A0",
+            hair: "#4A332A",
+            hairShadow: "#2B1D16",
+            shirt: "#F3F3F3",
+            shirtShade: "#D0D0D0",
+            shirtHighlight: "#FFFFFF",
+            pants: "#C7CEDA",
+            pantsShade: "#9DA7B8",
+            shoe: "#9EA3A8",
+            shoeShade: "#6F757C",
+            eyeWhite: "#FAFAFA",
+            eyeIris: "#5E86FF",
+            eyeIrisDark: "#2A3F7A",
+            beard: "#4A2E20",
+            nose: "#7A4B2E"
+        }
+        : {
+            skin: "#CFA17B",
+            skinShade: "#B98163",
+            hair: "#3B2A1A",
+            hairShadow: "#24170F",
+            shirt: "#4AA7D8",
+            shirtShade: "#2B6F9C",
+            shirtHighlight: "#6FC9F0",
+            pants: "#4F4B9B",
+            pantsShade: "#2E2A68",
+            shoe: "#8B8F93",
+            shoeShade: "#5C6066",
+            eyeWhite: "#F5F5F5",
+            eyeIris: "#4E9DFF",
+            eyeIrisDark: "#2D4E86",
+            beard: "#4A2E20",
+            nose: "#7A4B2E"
+        };
 
-    // Eyes: Black
-    ctx.fillStyle = "#000";
-    const ex = facingRight ? x + 16 * s : x + 6 * s;
-    ctx.fillRect(ex, y + 6 * s, 4 * s, 4 * s); // Steve's eye
+    const headX = 3;
+    const headY = 0;
+    const headW = 20;
+    const headH = 20;
+    const torsoX = 6;
+    const torsoY = 20;
+    const torsoW = 14;
+    const torsoH = 20;
+    const armW = 4;
+    const armH = 20;
+    const armLeftX = 2;
+    const armRightX = 20;
+    const legW = 6;
+    const legH = 12;
+    const legY = 40;
+    const legLeftX = 6;
+    const legRightX = 14;
+    const shoeH = 2;
+    const gaze = facingRight ? 1 : -1;
+
+    // Head base
+    ctx.fillStyle = palette.skin;
+    ctx.fillRect(x + headX * s, y + headY * s, headW * s, headH * s);
+
+    // Hair
+    ctx.fillStyle = palette.hair;
+    ctx.fillRect(x + headX * s, y + headY * s, headW * s, 6 * s);
+    ctx.fillRect(x + headX * s, y + 6 * s, 4 * s, 6 * s);
+    ctx.fillRect(x + (headX + headW - 4) * s, y + 6 * s, 4 * s, 6 * s);
+    ctx.fillStyle = palette.hairShadow;
+    ctx.fillRect(x + headX * s, y + 2 * s, headW * s, 2 * s);
+    ctx.fillRect(x + (headX + headW - 4) * s, y + 6 * s, 2 * s, 8 * s);
+
+    // Face shading
+    ctx.fillStyle = palette.skinShade;
+    ctx.fillRect(x + (headX + 2) * s, y + 12 * s, 16 * s, 6 * s);
+
+    // Eyes
+    const eyeY = 6;
+    const eyeLeftX = 6 + gaze;
+    const eyeRightX = 13 + gaze;
+    ctx.fillStyle = palette.eyeWhite;
+    ctx.fillRect(x + eyeLeftX * s, y + eyeY * s, 3 * s, 3 * s);
+    ctx.fillRect(x + eyeRightX * s, y + eyeY * s, 3 * s, 3 * s);
+    ctx.fillStyle = palette.eyeIris;
+    ctx.fillRect(x + (eyeLeftX + 1) * s, y + (eyeY + 1) * s, s, s);
+    ctx.fillRect(x + (eyeRightX + 1) * s, y + (eyeY + 1) * s, s, s);
+    ctx.fillStyle = palette.eyeIrisDark;
+    ctx.fillRect(x + (eyeLeftX + 2) * s, y + (eyeY + 2) * s, s, s);
+    ctx.fillRect(x + (eyeRightX + 2) * s, y + (eyeY + 2) * s, s, s);
+
+    // Nose + beard
+    ctx.fillStyle = palette.nose;
+    ctx.fillRect(x + 11 * s, y + 10 * s, 2 * s, 3 * s);
+    ctx.fillStyle = palette.beard;
+    ctx.fillRect(x + 7 * s, y + 13 * s, 12 * s, 2 * s);
+    ctx.fillRect(x + 9 * s, y + 15 * s, 8 * s, 2 * s);
+
+    // Torso
+    ctx.fillStyle = palette.shirt;
+    ctx.fillRect(x + torsoX * s, y + torsoY * s, torsoW * s, torsoH * s);
+    ctx.fillStyle = palette.shirtShade;
+    ctx.fillRect(x + armLeftX * s, y + torsoY * s, armW * s, armH * s);
+    ctx.fillRect(x + armRightX * s, y + torsoY * s, armW * s, armH * s);
+    ctx.fillStyle = palette.skin;
+    ctx.fillRect(x + armLeftX * s, y + (torsoY + armH - 3) * s, armW * s, 3 * s);
+    ctx.fillRect(x + armRightX * s, y + (torsoY + armH - 3) * s, armW * s, 3 * s);
+
+    ctx.fillStyle = palette.shirtShade;
+    ctx.fillRect(x + (torsoX + torsoW - 3) * s, y + torsoY * s, 3 * s, torsoH * s);
+    ctx.fillStyle = palette.shirtHighlight;
+    ctx.fillRect(x + (torsoX + 1) * s, y + (torsoY + 3) * s, 4 * s, 4 * s);
+
+    // Left hem drop
+    ctx.fillStyle = palette.shirtShade;
+    ctx.fillRect(x + torsoX * s, y + (torsoY + torsoH - 2) * s, 4 * s, 4 * s);
+
+    // Pants + legs
+    ctx.fillStyle = palette.pants;
+    ctx.fillRect(x + torsoX * s, y + legY * s, torsoW * s, legH * s);
+    ctx.fillRect(x + legLeftX * s, y + legY * s, legW * s, legH * s);
+    ctx.fillRect(x + legRightX * s, y + legY * s, legW * s, legH * s);
+    ctx.fillStyle = palette.pantsShade;
+    ctx.fillRect(x + (legLeftX + legW - 2) * s, y + legY * s, 2 * s, legH * s);
+    ctx.fillRect(x + (legRightX + legW - 2) * s, y + legY * s, 2 * s, legH * s);
+
+    // Shoes
+    ctx.fillStyle = palette.shoe;
+    ctx.fillRect(x + legLeftX * s, y + (legY + legH - shoeH) * s, legW * s, shoeH * s);
+    ctx.fillRect(x + legRightX * s, y + (legY + legH - shoeH) * s, legW * s, shoeH * s);
+    ctx.fillStyle = palette.shoeShade;
+    ctx.fillRect(x + legLeftX * s, y + (legY + legH - 1) * s, legW * s, s);
+    ctx.fillRect(x + legRightX * s, y + (legY + legH - 1) * s, legW * s, s);
 
     if (playerEquipment?.armor) {
         const armor = ARMOR_TYPES?.[playerEquipment.armor];
@@ -45,15 +163,87 @@ function drawSteve(x, y, facingRight, attacking) {
         }
     }
 
-    if (attacking) {
-        ctx.save();
-        ctx.translate(x + (facingRight ? 26 * s : 0), y + 26 * s);
-        if (!facingRight) ctx.scale(-1, 1);
+    const weaponId = playerWeapons?.current || "sword";
+    const showWeapon = attacking || (weaponId === "bow" && playerWeapons?.isCharging);
+    if (!showWeapon) return;
+
+    const weaponColors = {
+        wood: "#8D6E63",
+        woodShade: "#6D4C41",
+        metal: "#C0C5CC",
+        metalDark: "#8E98A3",
+        metalLight: "#E4E8ED",
+        string: "#E0C9A6"
+    };
+
+    ctx.save();
+    const handX = facingRight ? x + 22 * s : x + 4 * s;
+    const handY = y + 28 * s;
+    ctx.translate(handX, handY);
+    if (!facingRight) ctx.scale(-1, 1);
+
+    if (weaponId !== "bow") {
         ctx.rotate(Math.PI / 4);
-        ctx.fillStyle = "#00FFFF";
-        ctx.fillRect(0, -16 * s, 5 * s, 32 * s);
-        ctx.restore();
     }
+
+    switch (weaponId) {
+        case "axe": {
+            ctx.fillStyle = weaponColors.wood;
+            ctx.fillRect(0, -16 * s, 2 * s, 18 * s);
+            ctx.fillStyle = weaponColors.woodShade;
+            ctx.fillRect(0, -10 * s, 2 * s, 4 * s);
+            ctx.fillStyle = weaponColors.metal;
+            ctx.fillRect(-4 * s, -18 * s, 8 * s, 6 * s);
+            ctx.fillStyle = weaponColors.metalDark;
+            ctx.fillRect(0, -18 * s, 4 * s, 6 * s);
+            break;
+        }
+        case "pickaxe": {
+            ctx.fillStyle = weaponColors.wood;
+            ctx.fillRect(0, -16 * s, 2 * s, 18 * s);
+            ctx.fillStyle = weaponColors.metal;
+            ctx.fillRect(-6 * s, -18 * s, 12 * s, 4 * s);
+            ctx.fillStyle = weaponColors.metalLight;
+            ctx.fillRect(-4 * s, -18 * s, 8 * s, 2 * s);
+            break;
+        }
+        case "bow": {
+            const bowRadius = 6 * s;
+            ctx.strokeStyle = weaponColors.wood;
+            ctx.lineWidth = Math.max(1, s);
+            ctx.beginPath();
+            ctx.arc(0, 0, bowRadius, -Math.PI / 2 - 0.4, Math.PI / 2 + 0.4);
+            ctx.stroke();
+            ctx.strokeStyle = weaponColors.string;
+            ctx.lineWidth = Math.max(1, s * 0.6);
+            ctx.beginPath();
+            ctx.moveTo(0, -bowRadius);
+            ctx.lineTo(0, bowRadius);
+            ctx.stroke();
+            if (playerWeapons?.isCharging || attacking) {
+                ctx.fillStyle = "#C9B08A";
+                ctx.fillRect(-4 * s, -s, 8 * s, 2 * s);
+                ctx.fillStyle = "#CFD8DC";
+                ctx.fillRect(2 * s, -2 * s, 2 * s, 4 * s);
+            }
+            break;
+        }
+        case "sword":
+        default: {
+            ctx.fillStyle = weaponColors.metal;
+            ctx.fillRect(0, -18 * s, 3 * s, 18 * s);
+            ctx.fillStyle = weaponColors.metalLight;
+            ctx.fillRect(1 * s, -18 * s, s, 16 * s);
+            ctx.fillStyle = weaponColors.metalDark;
+            ctx.fillRect(0, -6 * s, 3 * s, 2 * s);
+            ctx.fillStyle = weaponColors.wood;
+            ctx.fillRect(-2 * s, -4 * s, 7 * s, 2 * s);
+            ctx.fillStyle = weaponColors.woodShade;
+            ctx.fillRect(1 * s, -4 * s, 2 * s, 6 * s);
+            break;
+        }
+    }
+    ctx.restore();
 }
 
 function drawMobRect(x, y, s, px, py, pw, ph) {
@@ -65,25 +255,37 @@ function drawCreeperMob(enemy) {
     const s = enemy.width / 16;
     const y = enemy.y + enemy.height - 24 * s;
 
-    // Base greens close to the in-game creeper texture.
-    ctx.fillStyle = "#3AAE2A";
+    const base = "#4CAF50";
+    const shade = "#2E7D32";
+    const highlight = "#6FD65A";
+    const face = "#141414";
+
+    // Base body
+    ctx.fillStyle = base;
     drawMobRect(x, y, s, 0, 0, 16, 8); // head
     drawMobRect(x, y, s, 2, 8, 12, 8); // body
-    // legs
     drawMobRect(x, y, s, 1, 16, 3, 8);
     drawMobRect(x, y, s, 5, 16, 3, 8);
     drawMobRect(x, y, s, 8, 16, 3, 8);
     drawMobRect(x, y, s, 12, 16, 3, 8);
 
-    // Texture patches
-    ctx.fillStyle = "#2E7D32";
+    // Leafy texture patches
+    ctx.fillStyle = shade;
     drawMobRect(x, y, s, 1, 1, 3, 2);
-    drawMobRect(x, y, s, 10, 1, 3, 2);
+    drawMobRect(x, y, s, 6, 1, 2, 2);
+    drawMobRect(x, y, s, 11, 1, 3, 2);
+    drawMobRect(x, y, s, 3, 4, 2, 2);
+    drawMobRect(x, y, s, 9, 4, 2, 2);
     drawMobRect(x, y, s, 4, 9, 2, 2);
     drawMobRect(x, y, s, 11, 10, 2, 2);
 
+    ctx.fillStyle = highlight;
+    drawMobRect(x, y, s, 2, 2, 2, 1);
+    drawMobRect(x, y, s, 12, 2, 2, 1);
+    drawMobRect(x, y, s, 5, 9, 2, 1);
+
     // Face
-    ctx.fillStyle = "#111";
+    ctx.fillStyle = face;
     drawMobRect(x, y, s, 3, 2, 3, 3);  // left eye
     drawMobRect(x, y, s, 10, 2, 3, 3); // right eye
     drawMobRect(x, y, s, 7, 5, 2, 2);  // nose
@@ -559,33 +761,48 @@ function drawZombie(enemy) {
     const s = enemy.width / 16;
     const y = enemy.y + enemy.height - 24 * s;
 
-    // Head (green), shirt (blue), pants (purple) - closer to the classic Minecraft zombie palette.
-    ctx.fillStyle = "#4CAF50";
+    const skin = "#6FB14D";
+    const skinShade = "#4E7C33";
+    const hair = "#2B221C";
+    const shirt = "#45A9D8";
+    const shirtShade = "#2B6F9C";
+    const pants = "#4E4A9B";
+    const pantsShade = "#2E2A68";
+    const shoe = "#7B7F85";
+
+    // Head
+    ctx.fillStyle = skin;
     drawMobRect(x, y, s, 0, 0, 16, 8);
-    ctx.fillStyle = "#2E7D32";
-    drawMobRect(x, y, s, 2, 1, 3, 2);
-    drawMobRect(x, y, s, 11, 2, 3, 2);
+    ctx.fillStyle = hair;
+    drawMobRect(x, y, s, 0, 0, 16, 2);
+    ctx.fillStyle = skinShade;
+    drawMobRect(x, y, s, 1, 5, 14, 2);
 
     // Face
-    ctx.fillStyle = "#1B1B1B";
+    ctx.fillStyle = "#1A1A1A";
     drawMobRect(x, y, s, 4, 3, 2, 2);
     drawMobRect(x, y, s, 10, 3, 2, 2);
     ctx.fillStyle = "#2B2B2B";
     drawMobRect(x, y, s, 7, 5, 2, 1);
 
-    // Torso + arms
-    ctx.fillStyle = "#2E7D9A"; // shirt
+    // Torso + arms (same outfit as Steve)
+    ctx.fillStyle = shirt;
     drawMobRect(x, y, s, 3, 8, 10, 8);
+    ctx.fillStyle = shirtShade;
     drawMobRect(x, y, s, 0, 8, 3, 12);
     drawMobRect(x, y, s, 13, 8, 3, 12);
+    drawMobRect(x, y, s, 11, 8, 2, 8);
 
     // Pants + legs
-    ctx.fillStyle = "#5E35B1";
+    ctx.fillStyle = pants;
     drawMobRect(x, y, s, 3, 16, 5, 8);
     drawMobRect(x, y, s, 8, 16, 5, 8);
-    ctx.fillStyle = "#4527A0";
-    drawMobRect(x, y, s, 3, 22, 5, 2);
-    drawMobRect(x, y, s, 8, 22, 5, 2);
+    ctx.fillStyle = pantsShade;
+    drawMobRect(x, y, s, 6, 16, 2, 8);
+    drawMobRect(x, y, s, 11, 16, 2, 8);
+    ctx.fillStyle = shoe;
+    drawMobRect(x, y, s, 3, 23, 5, 1);
+    drawMobRect(x, y, s, 8, 23, 5, 1);
 }
 
 function drawSpider(enemy) {
@@ -593,19 +810,28 @@ function drawSpider(enemy) {
     const y = enemy.y + enemy.height - 12 * (enemy.width / 22);
     const s = enemy.width / 22;
 
+    const body = "#1B1412";
+    const bodyHighlight = "#2D1F1A";
+    const legDark = "#0F0B0A";
+    const eyeCore = "#D50000";
+    const eyeGlow = "#FF5252";
+
     // Body
-    ctx.fillStyle = "#1B1B1B";
+    ctx.fillStyle = body;
     ctx.fillRect(x + 4 * s, y + 3 * s, 14 * s, 6 * s);
-    ctx.fillStyle = "#2B2B2B";
+    ctx.fillStyle = bodyHighlight;
     ctx.fillRect(x + 6 * s, y + 2 * s, 10 * s, 3 * s);
 
-    // Eyes (red)
-    ctx.fillStyle = "#D50000";
+    // Eyes (glow)
+    ctx.fillStyle = eyeGlow;
+    ctx.fillRect(x + 6 * s, y + 3 * s, 4 * s, 2 * s);
+    ctx.fillRect(x + 12 * s, y + 3 * s, 4 * s, 2 * s);
+    ctx.fillStyle = eyeCore;
     ctx.fillRect(x + 7 * s, y + 3 * s, 2 * s, 2 * s);
     ctx.fillRect(x + 13 * s, y + 3 * s, 2 * s, 2 * s);
 
     // Legs (8)
-    ctx.strokeStyle = "#111";
+    ctx.strokeStyle = legDark;
     ctx.lineWidth = Math.max(2, s);
     const legPairs = [
         [[6, 4], [1, 1]],
@@ -630,32 +856,52 @@ function drawSkeleton(enemy) {
     const s = enemy.width / 16;
     const y = enemy.y + enemy.height - 24 * s;
 
-    ctx.fillStyle = "#E0E0E0";
-    drawMobRect(x, y, s, 0, 0, 16, 8); // head
-    ctx.fillStyle = "#111";
+    const bone = "#E6E0D6";
+    const boneShade = "#CFC7BC";
+    const boneHighlight = "#F5F2EE";
+    const socket = "#1A1A1A";
+
+    // Head
+    ctx.fillStyle = bone;
+    drawMobRect(x, y, s, 0, 0, 16, 8);
+    ctx.fillStyle = boneShade;
+    drawMobRect(x, y, s, 0, 6, 16, 2);
+    ctx.fillStyle = socket;
     drawMobRect(x, y, s, 4, 3, 3, 3);
     drawMobRect(x, y, s, 9, 3, 3, 3);
+    drawMobRect(x, y, s, 7, 6, 2, 1);
 
-    // torso + arms
-    ctx.fillStyle = "#D6D6D6";
+    // Torso + arms
+    ctx.fillStyle = bone;
     drawMobRect(x, y, s, 4, 8, 8, 8);
     drawMobRect(x, y, s, 1, 8, 3, 12);
     drawMobRect(x, y, s, 12, 8, 3, 12);
+    ctx.fillStyle = boneHighlight;
+    drawMobRect(x, y, s, 5, 9, 6, 1);
 
-    // ribs detail
-    ctx.fillStyle = "#BDBDBD";
+    // Ribs detail
+    ctx.fillStyle = boneShade;
     for (let i = 0; i < 4; i++) drawMobRect(x, y, s, 5, 9 + i * 2, 6, 1);
 
-    // legs
-    ctx.fillStyle = "#D6D6D6";
+    // Legs
+    ctx.fillStyle = bone;
     drawMobRect(x, y, s, 5, 16, 3, 8);
     drawMobRect(x, y, s, 8, 16, 3, 8);
+    ctx.fillStyle = boneShade;
+    drawMobRect(x, y, s, 6, 16, 1, 8);
+    drawMobRect(x, y, s, 9, 16, 1, 8);
 
-    // simple bow hint
-    ctx.strokeStyle = "#8B4513";
+    // Bow hint (match player bow style)
+    ctx.strokeStyle = "#8D6E63";
     ctx.lineWidth = Math.max(2, s);
     ctx.beginPath();
-    ctx.arc(x + 1.5 * s, y + 12 * s, 4 * s, 0, Math.PI);
+    ctx.arc(x + 1.5 * s, y + 12 * s, 4 * s, -Math.PI / 2 - 0.3, Math.PI / 2 + 0.3);
+    ctx.stroke();
+    ctx.strokeStyle = "#E0C9A6";
+    ctx.lineWidth = Math.max(1, s);
+    ctx.beginPath();
+    ctx.moveTo(x + 1.5 * s, y + 8 * s);
+    ctx.lineTo(x + 1.5 * s, y + 16 * s);
     ctx.stroke();
 }
 
@@ -851,14 +1097,26 @@ function drawHealthBar(x, y, width, hp, maxHp) {
 
 function drawProjectile(proj) {
     if (proj instanceof Arrow) {
-        ctx.fillStyle = "#8B4513";
         ctx.save();
         ctx.translate(proj.x, proj.y);
         const angle = Math.atan2(proj.velY, proj.velX);
         ctx.rotate(angle);
-        ctx.fillRect(0, -1, 12, 2);
-        ctx.fillStyle = "#C0C0C0";
-        ctx.fillRect(10, -2, 2, 4);
+        const shaftLen = 12;
+        const shaftHeight = 2;
+        const headLen = 3;
+        const featherLen = 3;
+        ctx.fillStyle = "#8B5A2B";
+        ctx.fillRect(0, -shaftHeight / 2, shaftLen, shaftHeight);
+        ctx.fillStyle = "#6D4C41";
+        ctx.fillRect(0, 0, shaftLen, 1);
+        ctx.fillStyle = "#CFD8DC";
+        ctx.fillRect(shaftLen, -2, headLen, 4);
+        ctx.fillStyle = "#B0BEC5";
+        ctx.fillRect(shaftLen + 1, -1, 2, 2);
+        ctx.fillStyle = "#E0F2F1";
+        ctx.fillRect(-featherLen, -2, featherLen, 4);
+        ctx.fillStyle = "#B0BEC5";
+        ctx.fillRect(-2, -1, 1, 2);
         ctx.restore();
     } else if (proj instanceof Snowball) {
         ctx.fillStyle = "#FFFFFF";

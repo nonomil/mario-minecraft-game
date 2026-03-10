@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.36] - 2026-03-10
+### Added
+- **Character Visuals**: Fully refreshed character visuals and added design documentation.
+- **Release Automation**: Integrated `release-and-push` skill and Lane E release gate for automated version management.
+- **Documentation Guides**: Added comprehensive release workflow and release notes management guides.
+
+### Fixed
+- **Vocabulary Switching**: Resolved issues with vocabulary pack switching in both launcher and APK.
+- **Git Hygiene**: Ignored `.worktrees` directory to prevent repository pollution.
+
+### Changed
+- **Documentation Structure**: Reorganized documentation files and moved release notes to `docs/release/` directory.
+- **Repository Cleanup**: Removed legacy documentation and outdated configuration files.
+
 ## [1.19.31] - 2026-03-09
 ### Fixed
 - **Mobile Direction Buttons**: Restored the old bottom-left horizontal left/right touch layout on phones so the movement buttons are no longer too high or too far apart.
