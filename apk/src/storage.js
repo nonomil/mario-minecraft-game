@@ -32,7 +32,10 @@ const ACCOUNT_SCHEMA = {
         items: {},
         equipment: {
             armor: null,
-            armorDurability: 0
+            armorDurability: 0,
+            shieldEquipped: false,
+            shieldDurability: 0,
+            shieldMaxDurability: 100
         },
         armorCollection: []
     },

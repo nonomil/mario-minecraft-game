@@ -289,7 +289,10 @@ async function start() {
 
     window.addEventListener("keydown", e => {
         if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.code)) e.preventDefault();
-        const isJump = matchesBinding(e, keyBindings.jump) || e.code === "ArrowUp" || e.code === "Space";
+        const ridingNow = typeof ridingDragon !== "undefined" && !!ridingDragon;
+        const arrowUpPressed = e.code === "ArrowUp" || e.key === "ArrowUp";
+        const jumpFromArrowUp = arrowUpPressed && !ridingNow;
+        const isJump = (matchesBinding(e, keyBindings.jump) && !arrowUpPressed) || e.code === "Space" || jumpFromArrowUp;
         const isRight = matchesBinding(e, keyBindings.right) || e.code === "ArrowRight" || e.key === "ArrowRight";
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
@@ -300,7 +303,6 @@ async function start() {
         const isPause = e.code === "Escape";
         const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : "";
         const inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
-        const ridingNow = typeof ridingDragon !== "undefined" && !!ridingDragon;
         if (isJump) {
             keys.jump = true;
             if (!ridingNow && !e.repeat) {
@@ -309,7 +311,7 @@ async function start() {
         }
         if (isRight) keys.right = true;
         if (isLeft) keys.left = true;
-        if (e.code === "KeyW" || (e.code === "ArrowUp" && !ridingNow)) keys.up = true;
+        if (e.code === "KeyW" || arrowUpPressed) keys.up = true;
         if (e.code === "ArrowDown" || e.code === "KeyS") keys.down = true;
         if (isAttack) handleAttack("press");
         if (isWeaponSwitch && !e.repeat) {
@@ -347,7 +349,10 @@ async function start() {
         const isRight = matchesBinding(e, keyBindings.right) || e.code === "ArrowRight" || e.key === "ArrowRight";
         const isLeft = matchesBinding(e, keyBindings.left) || e.code === "ArrowLeft" || e.key === "ArrowLeft";
         const isAttack = matchesBinding(e, keyBindings.attack) || String(e.key || "").toLowerCase() === "j";
-        const isJump = matchesBinding(e, keyBindings.jump) || e.code === "ArrowUp" || e.code === "Space";
+        const ridingNow = typeof ridingDragon !== "undefined" && !!ridingDragon;
+        const arrowUpPressed = e.code === "ArrowUp" || e.key === "ArrowUp";
+        const jumpFromArrowUp = arrowUpPressed && !ridingNow;
+        const isJump = (matchesBinding(e, keyBindings.jump) && !arrowUpPressed) || e.code === "Space" || jumpFromArrowUp;
         if (isRight) keys.right = false;
         if (isLeft) keys.left = false;
         if (isJump) keys.jump = false;
@@ -356,7 +361,16 @@ async function start() {
         if (isAttack) handleAttackRelease();
     });
 
-    window.addEventListener("blur", () => { keys.right = false; keys.left = false; keys.up = false; keys.down = false; keys.jump = false; });
+    window.addEventListener("blur", () => {
+        keys.right = false;
+        keys.left = false;
+        keys.up = false;
+        keys.down = false;
+        keys.jump = false;
+        if (typeof clearMountedDragonAttackState === "function") {
+            clearMountedDragonAttackState();
+        }
+    });
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
             if (bgmAudio && !bgmAudio.paused) {

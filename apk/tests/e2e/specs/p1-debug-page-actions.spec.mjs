@@ -1,8 +1,19 @@
 import { test, expect } from "@playwright/test";
 
-async function openDebug(page) {
+async function openDebug(page, options = {}) {
+  const { openToolbar = true } = options;
   await page.goto(`/tests/debug-pages/GameDebug.html?ts=${Date.now()}`, { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(6000);
+  if (!openToolbar) return;
+
+  const toggle = page.locator("#debugPanelToggle");
+  const panel = page.locator("#debugPanel");
+  if (await toggle.count()) {
+    if (await panel.isHidden()) {
+      await toggle.click();
+    }
+    await expect(panel).toBeVisible();
+  }
 }
 
 async function gameEval(page, expression) {
@@ -36,6 +47,36 @@ async function dispatchLongPressAttack(page, durationMs = 900) {
     }));
   }, durationMs);
 }
+
+test("debug page keeps the toolbar collapsed until the toggle is opened", async ({ page }) => {
+  await openDebug(page, { openToolbar: false });
+
+  const toggle = page.locator("#debugPanelToggle");
+  const panel = page.locator("#debugPanel");
+  const readGameBox = async () => {
+    const box = await page.locator("#game").boundingBox();
+    return box ? { top: Math.round(box.y), height: Math.round(box.height) } : { top: -1, height: 0 };
+  };
+
+  await expect(toggle).toBeVisible();
+  await expect(toggle).toContainText("显示调试栏");
+  await expect(panel).toBeHidden();
+  const collapsedBox = await readGameBox();
+  expect(collapsedBox.top).toBe(0);
+  expect(collapsedBox.height).toBeGreaterThan(600);
+
+  await toggle.click();
+  await expect(panel).toBeVisible();
+  await expect(page.locator("#status")).toBeVisible();
+  await expect(toggle).toContainText("隐藏调试栏");
+  const expandedBox = await readGameBox();
+  expect(expandedBox.top).toBe(collapsedBox.top);
+  expect(expandedBox.height).toBe(collapsedBox.height);
+
+  await toggle.click();
+  await expect(panel).toBeHidden();
+  await expect(toggle).toContainText("显示调试栏");
+});
 
 test("debug page buttons mutate real game state", async ({ page }) => {
   await openDebug(page);

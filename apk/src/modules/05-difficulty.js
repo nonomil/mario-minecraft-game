@@ -162,6 +162,7 @@ function getLootConfig() {
 function resetInventory() {
     inventory = { ...INVENTORY_TEMPLATE };
     playerEquipment = { armor: null, armorDurability: 0 };
+    shieldState = { equipped: false, durability: 0, maxDurability: 100 };
     armorInventory = [];
     updateArmorUI();
 }

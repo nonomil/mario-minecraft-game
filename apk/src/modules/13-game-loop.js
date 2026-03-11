@@ -49,6 +49,15 @@ let ridingDragon = null;
 let skipPlayerGravity = false;
 let dismountInvincibleFrames = 0;
 let dragonRemountCooldownFrames = 0;
+const DRAGON_ATTACK_HOLD_THRESHOLD_MS = 800;
+const DRAGON_FIREBALL_MODES = {
+    arc: "arc",
+    straight: "straight"
+};
+let mountedDragonAttackHoldTimer = null;
+let mountedDragonAttackPressStartedAt = 0;
+let mountedDragonAttackPending = false;
+let mountedDragonAttackTriggeredByHold = false;
 
 function pushPause() {
     pauseStack += 1;
@@ -801,6 +810,8 @@ function useWardenEgg() {
 function dismountRider(rider) {
     if (!ridingDragon || !rider) return;
 
+    clearMountedDragonAttackState();
+
     const dragon = ridingDragon;
     dragon.rider = null;
     ridingDragon = null;
@@ -845,14 +856,61 @@ function dismountRider(rider) {
     }
 }
 
-function dragonShootFireball() {
+function clearMountedDragonAttackState() {
+    if (mountedDragonAttackHoldTimer) {
+        clearTimeout(mountedDragonAttackHoldTimer);
+    }
+    mountedDragonAttackHoldTimer = null;
+    mountedDragonAttackPressStartedAt = 0;
+    mountedDragonAttackPending = false;
+    mountedDragonAttackTriggeredByHold = false;
+}
+
+function dragonShootFireball(mode = DRAGON_FIREBALL_MODES.straight) {
     if (!ridingDragon) return false;
 
+    const fireballMode = mode === DRAGON_FIREBALL_MODES.arc
+        ? DRAGON_FIREBALL_MODES.arc
+        : DRAGON_FIREBALL_MODES.straight;
     const dir = player.facingRight ? 1 : -1;
     const targetX = ridingDragon.x + dir * 300;
-    const targetY = ridingDragon.y;
+    const targetY = fireballMode === DRAGON_FIREBALL_MODES.arc
+        ? ridingDragon.y + ridingDragon.height / 2
+        : ridingDragon.y + ridingDragon.height / 2;
 
-    return ridingDragon.shootFireball(targetX, targetY, { straight: true });
+    return ridingDragon.shootFireball(targetX, targetY, {
+        straight: fireballMode === DRAGON_FIREBALL_MODES.straight
+    });
+}
+
+function startMountedDragonAttackPress() {
+    if (!ridingDragon) return false;
+    if (mountedDragonAttackPending) return true;
+
+    mountedDragonAttackPending = true;
+    mountedDragonAttackTriggeredByHold = false;
+    mountedDragonAttackPressStartedAt = Date.now();
+    if (mountedDragonAttackHoldTimer) {
+        clearTimeout(mountedDragonAttackHoldTimer);
+    }
+    mountedDragonAttackHoldTimer = setTimeout(() => {
+        mountedDragonAttackHoldTimer = null;
+        if (!mountedDragonAttackPending || !ridingDragon) return;
+        mountedDragonAttackTriggeredByHold = dragonShootFireball(DRAGON_FIREBALL_MODES.straight);
+    }, DRAGON_ATTACK_HOLD_THRESHOLD_MS);
+    return true;
+}
+
+function releaseMountedDragonAttackPress() {
+    if (!mountedDragonAttackPending) return false;
+
+    const elapsedMs = Math.max(0, Date.now() - mountedDragonAttackPressStartedAt);
+    const shouldFireStraight = elapsedMs >= DRAGON_ATTACK_HOLD_THRESHOLD_MS;
+    const fireballMode = shouldFireStraight ? DRAGON_FIREBALL_MODES.straight : DRAGON_FIREBALL_MODES.arc;
+    const shouldFireOnRelease = !mountedDragonAttackTriggeredByHold;
+    clearMountedDragonAttackState();
+    if (!shouldFireOnRelease) return true;
+    return dragonShootFireball(fireballMode);
 }
 
 function addScore(points) {
@@ -1039,8 +1097,6 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const diff = getDifficultyState();
     const damageUnit = Number(getDifficultyConfig().damageUnit ?? 20) || 20;
     const scaledDamage = Math.max(1, Math.round((baseDamage * diff.enemyDamageMult) / damageUnit));
-    const penalty = scorePenaltyForDamage(baseDamage * diff.enemyDamageMult);
-    addScore(-penalty);
     const defense = getArmorDefense();
     const armorId = playerEquipment.armor;
     const hasArmor = !!(armorId && playerEquipment.armorDurability > 0);
@@ -1059,8 +1115,15 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     const combinedReduction = shieldEquipped
         ? (1 - ((1 - reduction) * (1 - SHIELD_DAMAGE_REDUCTION)))
         : reduction;
-    const minDamage = 1;  // 有无护甲都至少受 1 点伤害，钻石/下界合金不再无敌
-    const actualDamage = Math.max(minDamage, Math.round(scaledDamage * (1 - combinedReduction)));
+    const reducedDamage = scaledDamage * (1 - combinedReduction);
+    const actualDamage = shieldEquipped
+        ? Math.max(0, Math.floor(reducedDamage))
+        : Math.max(1, Math.round(reducedDamage));
+    const penaltyRatio = scaledDamage > 0 ? (actualDamage / scaledDamage) : 0;
+    const penalty = actualDamage > 0
+        ? scorePenaltyForDamage(baseDamage * diff.enemyDamageMult * penaltyRatio)
+        : 0;
+    if (penalty > 0) addScore(-penalty);
     if (shieldEquipped) {
         shieldState.durability = Math.max(0, Number(shieldState.durability) - SHIELD_DURABILITY_COST);
         if (shieldState.durability <= 0) {
@@ -1081,11 +1144,19 @@ function damagePlayer(amount, sourceX, knockback = 90) {
         }
     }
     updateArmorUI();
+    if (actualDamage <= 0) {
+        updateHpUI();
+        updateInventoryUI();
+        showFloatingText("🛡️ 格挡", player.x, player.y - 40, "#64B5F6");
+        return;
+    }
     playerHp = Math.max(0, playerHp - actualDamage);
     if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(8, "", "hurt");
     updateHpUI();
     updateInventoryUI();
-    showFloatingText(`-${penalty}分`, player.x, player.y);
+    if (penalty > 0) {
+        showFloatingText(`-${penalty}分`, player.x, player.y);
+    }
     if (playerHp <= 0 || score <= 0) {
         // 检查图腾复活
         if (playerHp <= 0 && inventory.totem > 0) {
@@ -1936,6 +2007,7 @@ function useInventoryItem(itemKey) {
         if (typeof addDeepDarkNoise === "function") addDeepDarkNoise(10, "", "use_item");
         updateHpUI();
         updateInventoryUI();
+        updateArmorUI();
         updateInventoryModal(); // 刷新背包显示
     }
 
@@ -2044,7 +2116,39 @@ function getArmorDefense() {
 }
 
 function updateArmorUI() {
+    const statusEl = document.getElementById("armor-status");
     if (typeof updateEquipStatus === "function") updateEquipStatus();
+    if (!statusEl) return;
+
+    const shieldEquipped = !!(shieldState?.equipped && Number(shieldState?.durability) > 0 && Number(inventory.shield) > 0);
+    const shieldDurability = Math.max(0, Number(shieldState?.durability) || 0);
+    const shieldMaxDurability = Math.max(1, Number(shieldState?.maxDurability) || SHIELD_MAX_DURABILITY);
+    const hasArmor = !!(playerEquipment?.armor && Number(playerEquipment?.armorDurability) > 0);
+
+    if (shieldEquipped) {
+        const parts = [`盾牌 ${shieldDurability}/${shieldMaxDurability}`];
+        if (hasArmor) {
+            const armor = ARMOR_TYPES?.[playerEquipment.armor];
+            const armorName = armor?.name || playerEquipment.armor;
+            const armorDurability = Math.round(Number(playerEquipment.armorDurability) || 0);
+            parts.push(`${armorName} ${armorDurability}%`);
+        }
+        statusEl.innerText = `🛡️ ${parts.join(" · ")}`;
+        statusEl.classList.add("hud-box-active");
+        return;
+    }
+
+    if (hasArmor) {
+        const armor = ARMOR_TYPES?.[playerEquipment.armor];
+        const armorName = armor?.name || playerEquipment.armor;
+        const armorDurability = Math.round(Number(playerEquipment.armorDurability) || 0);
+        statusEl.innerText = `🛡️ ${armorName} ${armorDurability}%`;
+        statusEl.classList.add("hud-box-active");
+        return;
+    }
+
+    statusEl.innerText = "🛡️ 无";
+    statusEl.classList.remove("hud-box-active");
 }
 
 function showArmorSelectUI() {
@@ -2160,6 +2264,7 @@ function tryCraft(recipeKey) {
         showToast("🛡️ 合成盾牌并自动装备");
         showFloatingText("🛡️ 盾牌", player.x, player.y - 40, "#90CAF9");
         updateInventoryUI();
+        updateArmorUI();
         return true;
     }
     if (recipeKey === "torch") {
@@ -2244,7 +2349,11 @@ function handleAttack(mode = "press") {
     if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) return;
 
     if (ridingDragon) {
-        dragonShootFireball();
+        if (mode === "press") {
+            startMountedDragonAttackPress();
+        } else {
+            dragonShootFireball(mode === "tap" ? DRAGON_FIREBALL_MODES.arc : DRAGON_FIREBALL_MODES.straight);
+        }
         return;
     }
 
@@ -2273,6 +2382,10 @@ function handleAttack(mode = "press") {
 }
 
 function handleAttackRelease() {
+    if (ridingDragon || mountedDragonAttackPending) {
+        releaseMountedDragonAttackPress();
+        return;
+    }
     const weapon = WEAPONS[playerWeapons.current] || WEAPONS.sword;
     if (weapon.type !== "ranged") return;
     if (!playerWeapons.isCharging) return;

@@ -49,6 +49,65 @@ async function dispatchTouchAction(page, action, durationMs = 120) {
   }, { actionName: action, holdMs: durationMs });
 }
 
+async function dispatchGameKey(page, code, holdMs = 120) {
+  await page.evaluate(async ({ keyCode, durationMs }) => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w) throw new Error("game_window_missing");
+
+    const eventInit = {
+      bubbles: true,
+      cancelable: true,
+      code: keyCode,
+      key: keyCode === "Space" ? " " : keyCode,
+      repeat: false
+    };
+
+    w.dispatchEvent(new w.KeyboardEvent("keydown", eventInit));
+    await new Promise(resolve => setTimeout(resolve, durationMs));
+    w.dispatchEvent(new w.KeyboardEvent("keyup", eventInit));
+  }, { keyCode: code, durationMs: holdMs });
+}
+
+async function mountDragon(page) {
+  await gameEval(page, `
+    enemies.length = 0;
+    projectiles.length = 0;
+    inventory.dragon_egg = 1;
+    if (typeof updateInventoryUI === "function") updateInventoryUI();
+    useInventoryItem("dragon_egg");
+    true;
+  `);
+
+  await gameEval(page, `
+    if (dragonList[0]) {
+      player.x = dragonList[0].x + 8;
+      player.y = dragonList[0].y + 8;
+    }
+    true;
+  `);
+
+  await page.waitForFunction(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    return Boolean(w && w.eval("!!ridingDragon && dragonList[0] && dragonList[0].rider === player"));
+  });
+}
+
+async function readLastDragonFireball(page) {
+  return gameEval(page, `(() => {
+    const lastProjectile = Array.isArray(projectiles) && projectiles.length ? projectiles[projectiles.length - 1] : null;
+    if (!lastProjectile) return null;
+    return {
+      name: lastProjectile.constructor ? lastProjectile.constructor.name : null,
+      gravity: Number(lastProjectile.gravity) || 0,
+      dropDelayFrames: Number(lastProjectile.dropDelayFrames) || 0,
+      velX: Number(lastProjectile.velX) || 0,
+      velY: Number(lastProjectile.velY) || 0
+    };
+  })()`);
+}
+
 test.describe("召唤机制与火药增强", () => {
   test("龙蛋可召唤末影龙、自动骑乘并发射火球", async ({ page }) => {
     await openGameDebug(page);
@@ -112,29 +171,7 @@ test.describe("召唤机制与火药增强", () => {
 
   test("触屏按钮可控制骑龙移动并发射火球", async ({ page }) => {
     await openGameDebug(page);
-
-    await gameEval(page, `
-      enemies.length = 0;
-      projectiles.length = 0;
-      inventory.dragon_egg = 1;
-      if (typeof updateInventoryUI === "function") updateInventoryUI();
-      useInventoryItem("dragon_egg");
-      true;
-    `);
-
-    await gameEval(page, `
-      if (dragonList[0]) {
-        player.x = dragonList[0].x + 8;
-        player.y = dragonList[0].y + 8;
-      }
-      true;
-    `);
-
-    await page.waitForFunction(() => {
-      const frame = document.getElementById("game");
-      const w = frame && frame.contentWindow ? frame.contentWindow : null;
-      return Boolean(w && w.eval("!!ridingDragon && dragonList[0] && dragonList[0].rider === player"));
-    });
+    await mountDragon(page);
 
     const beforeMove = await gameEval(page, `({ x: ridingDragon.x, y: ridingDragon.y, rightPressed: !!keys.right })`);
     await dispatchTouchAction(page, "right", 240);
@@ -164,6 +201,30 @@ test.describe("召唤机制与火药增强", () => {
     expect(afterAttack.projectiles).toBeGreaterThan(beforeAttack.projectiles);
     expect(afterAttack.cooldown).toBeGreaterThan(0);
     expect(afterAttack.cooldown).toBeLessThanOrEqual(60);
+  });
+
+  test("骑龙时触屏短按发抛物线火球，长按发水平直射火球", async ({ page }) => {
+    await openGameDebug(page);
+    await mountDragon(page);
+
+    await gameEval(page, `projectiles.length = 0; ridingDragon.fireballCooldown = 0; true;`);
+    await dispatchTouchAction(page, "attack", 120);
+    const touchTapFireball = await readLastDragonFireball(page);
+    expect(touchTapFireball).toMatchObject({
+      name: "EnderDragonFireball"
+    });
+    expect(touchTapFireball.gravity).toBeGreaterThan(0);
+    expect(touchTapFireball.dropDelayFrames).toBeGreaterThan(0);
+
+    await gameEval(page, `projectiles.length = 0; ridingDragon.fireballCooldown = 0; true;`);
+    await dispatchTouchAction(page, "attack", 900);
+    const touchHoldFireball = await readLastDragonFireball(page);
+    expect(touchHoldFireball).toMatchObject({
+      name: "EnderDragonFireball",
+      gravity: 0,
+      dropDelayFrames: 0
+    });
+    expect(Math.abs(touchHoldFireball.velY)).toBe(0);
   });
 
   test("骑龙时点击跳跃按钮会立即下龙", async ({ page }) => {
@@ -225,6 +286,52 @@ test.describe("召唤机制与火药增强", () => {
     const playerAfterMoveX = await gameEval(page, `player.x`);
     expect(playerAfterMoveX).toBeGreaterThan(playerAfterDismountX);
     await gameEval(page, `keys.right = false; true;`);
+  });
+
+  test("骑龙时上键只负责上飞，空格才负责下龙", async ({ page }) => {
+    await openGameDebug(page);
+    await mountDragon(page);
+
+    const beforeFlight = await gameEval(page, `({ x: ridingDragon.x, y: ridingDragon.y, riding: !!ridingDragon })`);
+    await dispatchGameKey(page, "ArrowUp", 260);
+
+    await expect.poll(async () => gameEval(page, `({ y: ridingDragon ? ridingDragon.y : null, riding: !!ridingDragon })`)).toMatchObject({
+      riding: true
+    });
+
+    const afterFlight = await gameEval(page, `({ y: ridingDragon.y, riding: !!ridingDragon })`);
+    expect(afterFlight.riding).toBe(true);
+    expect(afterFlight.y).toBeLessThan(beforeFlight.y);
+
+    await dispatchGameKey(page, "Space", 120);
+
+    await expect.poll(async () => gameEval(page, `({ riding: !!ridingDragon, invincibleFrames: dismountInvincibleFrames })`)).toMatchObject({
+      riding: false
+    });
+  });
+
+  test("骑龙时键盘 J 短按发抛物线火球，长按发水平直射火球", async ({ page }) => {
+    await openGameDebug(page);
+    await mountDragon(page);
+
+    await gameEval(page, `projectiles.length = 0; ridingDragon.fireballCooldown = 0; true;`);
+    await dispatchGameKey(page, "KeyJ", 120);
+    const keyboardTapFireball = await readLastDragonFireball(page);
+    expect(keyboardTapFireball).toMatchObject({
+      name: "EnderDragonFireball"
+    });
+    expect(keyboardTapFireball.gravity).toBeGreaterThan(0);
+    expect(keyboardTapFireball.dropDelayFrames).toBeGreaterThan(0);
+
+    await gameEval(page, `projectiles.length = 0; ridingDragon.fireballCooldown = 0; true;`);
+    await dispatchGameKey(page, "KeyJ", 900);
+    const keyboardHoldFireball = await readLastDragonFireball(page);
+    expect(keyboardHoldFireball).toMatchObject({
+      name: "EnderDragonFireball",
+      gravity: 0,
+      dropDelayFrames: 0
+    });
+    expect(Math.abs(keyboardHoldFireball.velY)).toBe(0);
   });
 
   test("炸药爆炸后会在前方地面留下持续火焰", async ({ page }) => {

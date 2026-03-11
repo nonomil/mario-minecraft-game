@@ -27,6 +27,17 @@
     const DRAGON_X_MAX = 1160;
     const DRAGON_Y_MIN = 140;
     const DRAGON_Y_MAX = 340;
+    const DRAGON_CRYSTAL_SIZE = {
+        width: 28,
+        height: 34
+    };
+    const DRAGON_CRYSTAL_PILLAR_BASE_Y = 284;
+    const DRAGON_CRYSTAL_LAYOUT = [
+        { id: 1, x: 180, y: 208 },
+        { id: 2, x: 320, y: 202 },
+        { id: 3, x: 520, y: 210 },
+        { id: 4, x: 700, y: 220 }
+    ];
 
     function clampPhase(value) {
         return Math.max(1, Math.min(3, Number(value) || 1));
@@ -233,12 +244,15 @@
     }
 
     function createPlaceholderCrystals() {
-        return [
-            { id: 1, alive: true, x: 180, y: 188, width: 28, height: 34, beamActive: false },
-            { id: 2, alive: true, x: 320, y: 162, width: 28, height: 34, beamActive: false },
-            { id: 3, alive: true, x: 520, y: 176, width: 28, height: 34, beamActive: false },
-            { id: 4, alive: true, x: 700, y: 198, width: 28, height: 34, beamActive: false }
-        ];
+        return DRAGON_CRYSTAL_LAYOUT.map((entry) => ({
+            id: entry.id,
+            alive: true,
+            x: entry.x,
+            y: entry.y,
+            width: DRAGON_CRYSTAL_SIZE.width,
+            height: DRAGON_CRYSTAL_SIZE.height,
+            beamActive: false
+        }));
     }
 
     function findCrystalByIndex(crystals, index) {
@@ -580,7 +594,12 @@
             for (const crystal of this.crystals) {
                 if (!crystal || !crystal.alive) continue;
                 ctx.fillStyle = "#251b34";
-                ctx.fillRect(crystal.x - 10, crystal.y + 10, 20, 230 - crystal.y);
+                ctx.fillRect(
+                    crystal.x - 10,
+                    crystal.y + 10,
+                    20,
+                    Math.max(26, DRAGON_CRYSTAL_PILLAR_BASE_Y - crystal.y)
+                );
                 if (crystal.beamActive && this.dragon) {
                     ctx.strokeStyle = "rgba(223, 152, 255, 0.92)";
                     ctx.lineWidth = 5;

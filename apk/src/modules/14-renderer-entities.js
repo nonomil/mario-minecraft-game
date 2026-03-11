@@ -3,264 +3,391 @@
  * 从 14-renderer.js 拆分
  */
 
-function drawSteve(x, y, facingRight, attacking) {
-    const s = player.width / 26;
-    const hasSunscreen = typeof hasSunscreenBuff === "function" && hasSunscreenBuff();
-    const palette = hasSunscreen
-        ? {
-            skin: "#F6D6C2",
-            skinShade: "#E8B7A0",
-            hair: "#4A332A",
-            hairShadow: "#2B1D16",
-            shirt: "#F3F3F3",
-            shirtShade: "#D0D0D0",
-            shirtHighlight: "#FFFFFF",
-            pants: "#C7CEDA",
-            pantsShade: "#9DA7B8",
-            shoe: "#9EA3A8",
-            shoeShade: "#6F757C",
-            eyeWhite: "#FAFAFA",
-            eyeIris: "#5E86FF",
-            eyeIrisDark: "#2A3F7A",
-            beard: "#4A2E20",
-            nose: "#7A4B2E"
-        }
-        : {
-            skin: "#CFA17B",
-            skinShade: "#B98163",
-            hair: "#3B2A1A",
-            hairShadow: "#24170F",
-            shirt: "#4AA7D8",
-            shirtShade: "#2B6F9C",
-            shirtHighlight: "#6FC9F0",
-            pants: "#4F4B9B",
-            pantsShade: "#2E2A68",
-            shoe: "#8B8F93",
-            shoeShade: "#5C6066",
-            eyeWhite: "#F5F5F5",
-            eyeIris: "#4E9DFF",
-            eyeIrisDark: "#2D4E86",
-            beard: "#4A2E20",
-            nose: "#7A4B2E"
+const STEVE_CLASSIC_PALETTE = Object.freeze({
+    skin: "#D4A07A",
+    skinShade: "#B77754",
+    hair: "#3A281B",
+    hairShadow: "#24170F",
+    hairHighlight: "#5A4030",
+    shirt: "#4EA7D9",
+    shirtShade: "#2D6F98",
+    shirtHighlight: "#86D7F2",
+    pants: "#4C4A96",
+    pantsShade: "#2D2A63",
+    boots: "#7E858C",
+    bootsShade: "#4F565E",
+    accent: "#D6B35A",
+    eyeWhite: "#F5FBFF",
+    eyeIris: "#63A5F7",
+    eyeIrisDark: "#2D5A93",
+    brow: "#24170F",
+    belt: "#24170F"
+});
+
+const STEVE_SUNSCREEN_PALETTE = Object.freeze({
+    skin: "#F3D6BE",
+    skinShade: "#D4AE8F",
+    hair: "#4B3426",
+    hairShadow: "#2C1B12",
+    hairHighlight: "#6A4A39",
+    shirt: "#E9F6FF",
+    shirtShade: "#B6D4E5",
+    shirtHighlight: "#FFFFFF",
+    pants: "#7581C5",
+    pantsShade: "#4B4F87",
+    boots: "#A3ACB4",
+    bootsShade: "#66717A",
+    accent: "#E3C878",
+    eyeWhite: "#FFFFFF",
+    eyeIris: "#6BAEFF",
+    eyeIrisDark: "#315A96",
+    brow: "#2C1B12",
+    belt: "#2C1B12"
+});
+
+const STEVE_WEAPON_COLORS = Object.freeze({
+    wood: "#8D6E63",
+    woodShade: "#6D4C41",
+    metal: "#C0C5CC",
+    metalDark: "#8E98A3",
+    metalLight: "#E4E8ED",
+    string: "#E0C9A6"
+});
+
+function drawSteveRect(x, y, scale, px, py, pw, ph) {
+    ctx.fillRect(x + px * scale, y + py * scale, pw * scale, ph * scale);
+}
+
+function getStevePalette(hasSunscreen) {
+    return hasSunscreen ? STEVE_SUNSCREEN_PALETTE : STEVE_CLASSIC_PALETTE;
+}
+
+function getSteveMotionOffset() {
+    const moving = Math.abs(Number(player?.velX) || 0) > 0.25;
+    if (!moving) {
+        return {
+            armSwing: 0,
+            legSwing: 0,
+            bodyBob: 0
         };
-
-    const headX = 3;
-    const headY = 0;
-    const headW = 20;
-    const headH = 20;
-    const torsoX = 6;
-    const torsoY = 20;
-    const torsoW = 14;
-    const torsoH = 20;
-    const armH = 20;
-    const legH = 12;
-    const legY = 40;
-    const shoeH = 2;
-    const nearIsRight = facingRight;
-    const farFaceX = facingRight ? headX : headX + headW - 3;
-    const torsoShadeX = facingRight ? torsoX : torsoX + torsoW - 3;
-    const torsoHighlightX = facingRight ? torsoX + torsoW - 5 : torsoX + 1;
-    const hemX = facingRight ? torsoX : torsoX + torsoW - 4;
-    const nearArmW = 5;
-    const farArmW = 3;
-    const nearArmX = nearIsRight ? 20 : 3;
-    const farArmX = nearIsRight ? 3 : 20;
-    const nearArmHighlightW = Math.max(1, nearArmW - 2);
-    const nearLegW = 7;
-    const farLegW = 5;
-    const nearLegX = nearIsRight ? 13 : 6;
-    const farLegX = nearIsRight ? 6 : 15;
-
-    // Head base
-    ctx.fillStyle = palette.skin;
-    ctx.fillRect(x + headX * s, y + headY * s, headW * s, headH * s);
-
-    // Hair
-    ctx.fillStyle = palette.hair;
-    ctx.fillRect(x + headX * s, y + headY * s, headW * s, 6 * s);
-    ctx.fillStyle = palette.hairShadow;
-    ctx.fillRect(x + headX * s, y + 2 * s, headW * s, 2 * s);
-
-    // Face shading
-    ctx.fillStyle = palette.skinShade;
-    ctx.fillRect(x + (headX + 2) * s, y + 12 * s, 16 * s, 6 * s);
-    ctx.fillRect(x + farFaceX * s, y + 6 * s, 3 * s, 12 * s);
-
-    // Eyes
-    const eyeY = 6;
-    const nearEyeX = facingRight ? 13 : 6;
-    const farEyeX = facingRight ? 8 : 11;
-    const nearEyeW = 3;
-    const farEyeW = 2;
-    const nearIrisX = nearEyeX + (facingRight ? 2 : 0);
-    const farIrisX = facingRight ? farEyeX + 1 : farEyeX;
-    ctx.fillStyle = palette.eyeWhite;
-    ctx.fillRect(x + farEyeX * s, y + eyeY * s, farEyeW * s, 3 * s);
-    ctx.fillRect(x + nearEyeX * s, y + eyeY * s, nearEyeW * s, 3 * s);
-    ctx.fillStyle = palette.eyeIris;
-    ctx.fillRect(x + farIrisX * s, y + (eyeY + 1) * s, s, s);
-    ctx.fillRect(x + nearIrisX * s, y + (eyeY + 1) * s, s, s);
-    ctx.fillStyle = palette.eyeIrisDark;
-    ctx.fillRect(x + farIrisX * s, y + (eyeY + 2) * s, s, s);
-    ctx.fillRect(x + nearIrisX * s, y + (eyeY + 2) * s, s, s);
-
-    // Nose + beard
-    ctx.fillStyle = palette.nose;
-    const noseX = facingRight ? 13 : 9;
-    ctx.fillRect(x + noseX * s, y + 10 * s, 2 * s, 3 * s);
-    ctx.fillStyle = palette.beard;
-    const beardTopX = facingRight ? 9 : 5;
-    const beardBottomX = facingRight ? 11 : 7;
-    ctx.fillRect(x + beardTopX * s, y + 13 * s, 11 * s, 2 * s);
-    ctx.fillRect(x + beardBottomX * s, y + 15 * s, 8 * s, 2 * s);
-
-    // Torso
-    ctx.fillStyle = palette.shirt;
-    ctx.fillRect(x + torsoX * s, y + torsoY * s, torsoW * s, torsoH * s);
-    ctx.fillStyle = palette.shirtShade;
-    ctx.fillRect(x + farArmX * s, y + torsoY * s, farArmW * s, armH * s);
-    ctx.fillStyle = palette.shirt;
-    ctx.fillRect(x + nearArmX * s, y + torsoY * s, nearArmW * s, armH * s);
-    ctx.fillStyle = palette.shirtHighlight;
-    ctx.fillRect(x + (nearArmX + 1) * s, y + (torsoY + 4) * s, nearArmHighlightW * s, 2 * s);
-    ctx.fillStyle = palette.skin;
-    ctx.fillRect(x + farArmX * s, y + (torsoY + armH - 3) * s, farArmW * s, 3 * s);
-    ctx.fillRect(x + nearArmX * s, y + (torsoY + armH - 3) * s, nearArmW * s, 3 * s);
-
-    ctx.fillStyle = palette.shirtShade;
-    ctx.fillRect(x + torsoShadeX * s, y + torsoY * s, 3 * s, torsoH * s);
-    ctx.fillStyle = palette.shirtHighlight;
-    ctx.fillRect(x + torsoHighlightX * s, y + (torsoY + 3) * s, 4 * s, 4 * s);
-
-    // Left hem drop
-    ctx.fillStyle = palette.shirtShade;
-    ctx.fillRect(x + hemX * s, y + (torsoY + torsoH - 2) * s, 4 * s, 4 * s);
-
-    // Pants + legs
-    ctx.fillStyle = palette.pants;
-    ctx.fillRect(x + torsoX * s, y + legY * s, torsoW * s, legH * s);
-    ctx.fillStyle = palette.pantsShade;
-    ctx.fillRect(x + farLegX * s, y + legY * s, farLegW * s, legH * s);
-    ctx.fillStyle = palette.pants;
-    ctx.fillRect(x + nearLegX * s, y + legY * s, nearLegW * s, legH * s);
-    ctx.fillStyle = palette.pantsShade;
-    ctx.fillRect(x + (farLegX + farLegW - 2) * s, y + legY * s, 2 * s, legH * s);
-    ctx.fillRect(x + (nearLegX + nearLegW - 2) * s, y + legY * s, 2 * s, legH * s);
-
-    // Shoes
-    ctx.fillStyle = palette.shoe;
-    ctx.fillRect(x + farLegX * s, y + (legY + legH - shoeH) * s, farLegW * s, shoeH * s);
-    ctx.fillRect(x + nearLegX * s, y + (legY + legH - shoeH) * s, nearLegW * s, shoeH * s);
-    ctx.fillStyle = palette.shoeShade;
-    ctx.fillRect(x + farLegX * s, y + (legY + legH - 1) * s, farLegW * s, s);
-    ctx.fillRect(x + nearLegX * s, y + (legY + legH - 1) * s, nearLegW * s, s);
-
-    if (playerEquipment?.armor) {
-        const armor = ARMOR_TYPES?.[playerEquipment.armor];
-        const dur = Math.max(0, Math.min(100, Number(playerEquipment?.armorDurability) || 0));
-        if (armor && dur > 0) {
-            const alpha = 0.4 + (dur / 100) * 0.35;
-            ctx.save();
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = armor.color || "#90A4AE";
-            // Helmet (on head, slightly wider than hair)
-            ctx.fillRect(x + 2 * s, y - 1 * s, 22 * s, 8 * s);
-            // Chest plate
-            ctx.fillRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
-            // Shoulder pads
-            ctx.fillRect(x + 4 * s, y + 20 * s, 2 * s, 8 * s);
-            ctx.fillRect(x + 20 * s, y + 20 * s, 2 * s, 8 * s);
-            // Leggings
-            ctx.fillRect(x + 6 * s, y + 40 * s, 14 * s, 8 * s);
-            ctx.restore();
-
-            ctx.strokeStyle = "rgba(255,255,255,0.45)";
-            ctx.lineWidth = Math.max(1, s * 0.8);
-            ctx.strokeRect(x + 6 * s, y + 20 * s, 14 * s, 20 * s);
-        }
     }
 
+    const phase = (Number(gameFrame) || 0) / 6;
+    return {
+        armSwing: Math.round(Math.sin(phase)),
+        legSwing: Math.round(Math.sin(phase + Math.PI)),
+        bodyBob: Math.max(0, Math.round(Math.cos(phase)))
+    };
+}
+
+function getStevePose(facingRight, attacking) {
+    const motion = getSteveMotionOffset();
+    const baseY = motion.bodyBob;
+
+    return {
+        head: { x: 3, y: baseY, w: 20, h: 20 },
+        torso: { x: 6, y: 20 + baseY, w: 14, h: 18 },
+        beltY: 38 + baseY,
+        pelvisY: 40 + baseY,
+        farArm: { x: facingRight ? 3 : 19, y: 20 + baseY - motion.armSwing, w: 4, h: 20 },
+        nearArm: { x: facingRight ? 19 : 3, y: 20 + baseY + motion.armSwing + (attacking ? -2 : 0), w: 4, h: 20 },
+        farLeg: { x: facingRight ? 7 : 13, y: 40 + baseY + motion.legSwing, w: 6, h: 12 },
+        nearLeg: { x: facingRight ? 13 : 6, y: 40 + baseY - motion.legSwing, w: 7, h: 12 },
+        faceShadeX: facingRight ? 18 : 5,
+        torsoShadeX: facingRight ? 17 : 6,
+        torsoHighlightX: facingRight ? 8 : 12
+    };
+}
+
+function drawSteveHead(x, y, scale, facingRight, palette, pose) {
+    const head = pose.head;
+    const irisOffset = facingRight ? 1 : 0;
+
+    ctx.fillStyle = palette.skin;
+    drawSteveRect(x, y, scale, head.x, head.y, head.w, head.h);
+
+    ctx.fillStyle = palette.hair;
+    drawSteveRect(x, y, scale, head.x, head.y, head.w, 6);
+    drawSteveRect(x, y, scale, head.x, head.y + 4, 2, 10);
+    drawSteveRect(x, y, scale, head.x + 18, head.y + 4, 2, 10);
+
+    ctx.fillStyle = palette.hairHighlight;
+    drawSteveRect(x, y, scale, head.x + 4, head.y + 1, 8, 1);
+
+    ctx.fillStyle = palette.hairShadow;
+    drawSteveRect(x, y, scale, head.x, head.y + 4, head.w, 2);
+
+    ctx.fillStyle = palette.skinShade;
+    drawSteveRect(x, y, scale, pose.faceShadeX, head.y + 6, 3, 8);
+    drawSteveRect(x, y, scale, head.x + 9, head.y + 10, 2, 4);
+    drawSteveRect(x, y, scale, head.x + 9, head.y + 15, 8, 2);
+    drawSteveRect(x, y, scale, head.x + 7, head.y + 13, 10, 1);
+
+    ctx.fillStyle = palette.brow;
+    drawSteveRect(x, y, scale, head.x + 5, head.y + 7, 4, 1);
+    drawSteveRect(x, y, scale, head.x + 12, head.y + 7, 4, 1);
+
+    ctx.fillStyle = palette.eyeWhite;
+    drawSteveRect(x, y, scale, head.x + 6, head.y + 8, 3, 2);
+    drawSteveRect(x, y, scale, head.x + 13, head.y + 8, 3, 2);
+
+    ctx.fillStyle = palette.eyeIris;
+    drawSteveRect(x, y, scale, head.x + 7 + irisOffset, head.y + 8, 1, 2);
+    drawSteveRect(x, y, scale, head.x + 14 + irisOffset, head.y + 8, 1, 2);
+
+    ctx.fillStyle = palette.eyeIrisDark;
+    drawSteveRect(x, y, scale, head.x + 7 + irisOffset, head.y + 9, 1, 1);
+    drawSteveRect(x, y, scale, head.x + 14 + irisOffset, head.y + 9, 1, 1);
+}
+
+function drawSteveTorso(x, y, scale, facingRight, palette, pose) {
+    const torso = pose.torso;
+    const nearLeg = pose.nearLeg;
+    const strapBlocks = facingRight
+        ? [[8, torso.y + 2], [10, torso.y + 5], [12, torso.y + 8], [14, torso.y + 11], [16, torso.y + 14]]
+        : [[15, torso.y + 2], [13, torso.y + 5], [11, torso.y + 8], [9, torso.y + 11], [7, torso.y + 14]];
+    const legShadeX = facingRight ? nearLeg.x + nearLeg.w - 2 : nearLeg.x;
+
+    ctx.fillStyle = palette.shirt;
+    drawSteveRect(x, y, scale, torso.x, torso.y, torso.w, torso.h);
+
+    ctx.fillStyle = palette.shirtShade;
+    drawSteveRect(x, y, scale, pose.torsoShadeX, torso.y, 3, torso.h);
+    drawSteveRect(x, y, scale, torso.x, torso.y, 3, 1);
+    drawSteveRect(x, y, scale, torso.x + torso.w - 3, torso.y, 3, 1);
+
+    ctx.fillStyle = palette.shirtHighlight;
+    drawSteveRect(x, y, scale, pose.torsoHighlightX, torso.y + 3, 4, 3);
+    drawSteveRect(x, y, scale, torso.x + 1, torso.y + 2, 2, 3);
+    drawSteveRect(x, y, scale, torso.x + torso.w - 3, torso.y + 2, 2, 3);
+
+    ctx.fillStyle = palette.accent;
+    for (const [blockX, blockY] of strapBlocks) {
+        drawSteveRect(x, y, scale, blockX, blockY, 2, 2);
+    }
+
+    ctx.fillStyle = palette.belt;
+    drawSteveRect(x, y, scale, torso.x, pose.beltY, torso.w, 2);
+    ctx.fillStyle = palette.accent;
+    drawSteveRect(x, y, scale, 11, pose.beltY, 4, 2);
+
+    ctx.fillStyle = palette.pants;
+    drawSteveRect(x, y, scale, torso.x, pose.pelvisY, torso.w, 4);
+    drawSteveRect(x, y, scale, nearLeg.x, nearLeg.y, nearLeg.w, nearLeg.h);
+
+    ctx.fillStyle = palette.pantsShade;
+    drawSteveRect(x, y, scale, facingRight ? torso.x : torso.x + torso.w - 3, pose.pelvisY, 3, 4);
+    drawSteveRect(x, y, scale, legShadeX, nearLeg.y, 2, nearLeg.h);
+
+    ctx.fillStyle = palette.bootsShade;
+    drawSteveRect(x, y, scale, nearLeg.x, nearLeg.y + nearLeg.h - 4, nearLeg.w, 1);
+    ctx.fillStyle = palette.boots;
+    drawSteveRect(x, y, scale, nearLeg.x, nearLeg.y + nearLeg.h - 3, nearLeg.w, 3);
+    ctx.fillStyle = palette.bootsShade;
+    drawSteveRect(x, y, scale, nearLeg.x, nearLeg.y + nearLeg.h - 1, nearLeg.w, 1);
+}
+
+function drawSteveLimbs(x, y, scale, facingRight, attacking, palette, pose, layer) {
+    if (layer === "back") {
+        const arm = pose.farArm;
+        const leg = pose.farLeg;
+        const legShadeX = facingRight ? leg.x + leg.w - 2 : leg.x;
+
+        ctx.fillStyle = palette.shirtShade;
+        drawSteveRect(x, y, scale, arm.x, arm.y, arm.w, arm.h - 3);
+        ctx.fillStyle = palette.shirtHighlight;
+        drawSteveRect(x, y, scale, arm.x, arm.y + 1, arm.w, 1);
+        ctx.fillStyle = palette.shirt;
+        drawSteveRect(x, y, scale, arm.x, arm.y + arm.h - 5, arm.w, 2);
+        ctx.fillStyle = palette.skin;
+        drawSteveRect(x, y, scale, arm.x, arm.y + arm.h - 3, arm.w, 3);
+
+        ctx.fillStyle = palette.pantsShade;
+        drawSteveRect(x, y, scale, leg.x, leg.y, leg.w, leg.h);
+        drawSteveRect(x, y, scale, legShadeX, leg.y, 2, leg.h);
+        ctx.fillStyle = palette.bootsShade;
+        drawSteveRect(x, y, scale, leg.x, leg.y + leg.h - 4, leg.w, 1);
+        ctx.fillStyle = palette.boots;
+        drawSteveRect(x, y, scale, leg.x, leg.y + leg.h - 3, leg.w, 3);
+        ctx.fillStyle = palette.bootsShade;
+        drawSteveRect(x, y, scale, leg.x, leg.y + leg.h - 1, leg.w, 1);
+        return;
+    }
+
+    const arm = pose.nearArm;
+    const cuffY = arm.y + arm.h - 5;
+    const armHighlightX = facingRight ? arm.x : arm.x + 1;
+
+    ctx.fillStyle = palette.shirt;
+    drawSteveRect(x, y, scale, arm.x, arm.y, arm.w, arm.h - 3);
+    ctx.fillStyle = palette.shirtHighlight;
+    drawSteveRect(x, y, scale, armHighlightX, arm.y + 3, Math.max(1, arm.w - 1), 3);
+    drawSteveRect(x, y, scale, arm.x, arm.y, arm.w, 1);
+    ctx.fillStyle = palette.shirtShade;
+    drawSteveRect(x, y, scale, arm.x, cuffY, arm.w, 2);
+    if (attacking) {
+        drawSteveRect(x, y, scale, arm.x, arm.y + 1, arm.w, 1);
+    }
+    ctx.fillStyle = palette.skin;
+    drawSteveRect(x, y, scale, arm.x, arm.y + arm.h - 3, arm.w, 3);
+}
+
+function drawSteveArmorOverlay(x, y, scale, palette, pose) {
+    const armor = ARMOR_TYPES?.[playerEquipment?.armor];
+    const durability = Math.max(0, Math.min(100, Number(playerEquipment?.armorDurability) || 0));
+    if (!armor || durability <= 0) return;
+
+    const head = pose.head;
+    const torso = pose.torso;
+    const alpha = 0.38 + (durability / 100) * 0.32;
+    const armorColor = armor.color || "#90A4AE";
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = armorColor;
+    drawSteveRect(x, y, scale, head.x + 1, head.y, 18, 6);
+    drawSteveRect(x, y, scale, head.x, head.y + 2, 2, 4);
+    drawSteveRect(x, y, scale, head.x + 18, head.y + 2, 2, 4);
+    drawSteveRect(x, y, scale, torso.x, torso.y, torso.w, torso.h - 2);
+    drawSteveRect(x, y, scale, torso.x - 1, torso.y + 2, 2, 6);
+    drawSteveRect(x, y, scale, torso.x + torso.w - 1, torso.y + 2, 2, 6);
+    drawSteveRect(x, y, scale, torso.x + 1, pose.pelvisY, torso.w - 2, 6);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.45)";
+    ctx.lineWidth = Math.max(1, scale * 0.75);
+    ctx.strokeRect(x + torso.x * scale, y + torso.y * scale, torso.w * scale, (torso.h - 2) * scale);
+    ctx.restore();
+}
+
+function drawSteveShield(x, y, scale, facingRight, palette, pose, shieldEquipped) {
+    if (!shieldEquipped) return;
+
+    const arm = pose.nearArm;
+    const shieldX = facingRight ? arm.x - 1 : arm.x - 3;
+    const shieldY = arm.y + 3;
+    const shieldW = 8;
+    const shieldH = 11;
+
+    ctx.save();
+    ctx.fillStyle = "#5D4037";
+    drawSteveRect(x, y, scale, shieldX, shieldY, shieldW, shieldH - 2);
+    drawSteveRect(x, y, scale, shieldX + 1, shieldY - 1, shieldW - 2, 1);
+    ctx.beginPath();
+    ctx.moveTo(x + shieldX * scale, y + (shieldY + shieldH - 2) * scale);
+    ctx.lineTo(x + (shieldX + shieldW * 0.5) * scale, y + (shieldY + shieldH + 2) * scale);
+    ctx.lineTo(x + (shieldX + shieldW) * scale, y + (shieldY + shieldH - 2) * scale);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#6D4C41";
+    drawSteveRect(x, y, scale, arm.x + 1, shieldY + 1, 2, 8);
+
+    ctx.fillStyle = "#B0BEC5";
+    drawSteveRect(x, y, scale, shieldX + 1, shieldY + 1, shieldW - 2, shieldH - 4);
+    ctx.beginPath();
+    ctx.moveTo(x + (shieldX + 1) * scale, y + (shieldY + shieldH - 3) * scale);
+    ctx.lineTo(x + (shieldX + shieldW * 0.5) * scale, y + (shieldY + shieldH) * scale);
+    ctx.lineTo(x + (shieldX + shieldW - 1) * scale, y + (shieldY + shieldH - 3) * scale);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = palette.accent;
+    drawSteveRect(x, y, scale, shieldX + 3, shieldY + 2, 2, shieldH - 2);
+    drawSteveRect(x, y, scale, shieldX + 2, shieldY + 5, 4, 2);
+    ctx.restore();
+}
+
+function drawSteveWeapon(x, y, scale, facingRight, attacking, pose) {
     const weaponId = playerWeapons?.current || "sword";
     const showWeapon = attacking || (weaponId === "bow" && playerWeapons?.isCharging);
     if (!showWeapon) return;
 
-    const weaponColors = {
-        wood: "#8D6E63",
-        woodShade: "#6D4C41",
-        metal: "#C0C5CC",
-        metalDark: "#8E98A3",
-        metalLight: "#E4E8ED",
-        string: "#E0C9A6"
-    };
+    const handX = facingRight
+        ? x + (pose.nearArm.x + pose.nearArm.w - 1) * scale
+        : x + (pose.nearArm.x + 1) * scale;
+    const handY = y + (pose.nearArm.y + 8) * scale;
 
     ctx.save();
-    const handX = facingRight ? x + 22 * s : x + 4 * s;
-    const handY = y + 28 * s;
     ctx.translate(handX, handY);
     if (!facingRight) ctx.scale(-1, 1);
 
     if (weaponId !== "bow") {
-        ctx.rotate(Math.PI / 4);
+        ctx.rotate(attacking ? Math.PI / 3 : Math.PI / 4);
     }
 
     switch (weaponId) {
-        case "axe": {
-            ctx.fillStyle = weaponColors.wood;
-            ctx.fillRect(0, -16 * s, 2 * s, 18 * s);
-            ctx.fillStyle = weaponColors.woodShade;
-            ctx.fillRect(0, -10 * s, 2 * s, 4 * s);
-            ctx.fillStyle = weaponColors.metal;
-            ctx.fillRect(-4 * s, -18 * s, 8 * s, 6 * s);
-            ctx.fillStyle = weaponColors.metalDark;
-            ctx.fillRect(0, -18 * s, 4 * s, 6 * s);
+        case "axe":
+            ctx.fillStyle = STEVE_WEAPON_COLORS.wood;
+            ctx.fillRect(0, -16 * scale, 2 * scale, 18 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.woodShade;
+            ctx.fillRect(0, -10 * scale, 2 * scale, 4 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.metal;
+            ctx.fillRect(-4 * scale, -18 * scale, 8 * scale, 6 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.metalDark;
+            ctx.fillRect(0, -18 * scale, 4 * scale, 6 * scale);
             break;
-        }
-        case "pickaxe": {
-            ctx.fillStyle = weaponColors.wood;
-            ctx.fillRect(0, -16 * s, 2 * s, 18 * s);
-            ctx.fillStyle = weaponColors.metal;
-            ctx.fillRect(-6 * s, -18 * s, 12 * s, 4 * s);
-            ctx.fillStyle = weaponColors.metalLight;
-            ctx.fillRect(-4 * s, -18 * s, 8 * s, 2 * s);
+        case "pickaxe":
+            ctx.fillStyle = STEVE_WEAPON_COLORS.wood;
+            ctx.fillRect(0, -16 * scale, 2 * scale, 18 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.metal;
+            ctx.fillRect(-6 * scale, -18 * scale, 12 * scale, 4 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.metalLight;
+            ctx.fillRect(-4 * scale, -18 * scale, 8 * scale, 2 * scale);
             break;
-        }
         case "bow": {
-            const bowRadius = 6 * s;
-            ctx.strokeStyle = weaponColors.wood;
-            ctx.lineWidth = Math.max(1, s);
+            const bowRadius = 6 * scale;
+            ctx.strokeStyle = STEVE_WEAPON_COLORS.wood;
+            ctx.lineWidth = Math.max(1, scale);
             ctx.beginPath();
             ctx.arc(0, 0, bowRadius, -Math.PI / 2 - 0.4, Math.PI / 2 + 0.4);
             ctx.stroke();
-            ctx.strokeStyle = weaponColors.string;
-            ctx.lineWidth = Math.max(1, s * 0.6);
+            ctx.strokeStyle = STEVE_WEAPON_COLORS.string;
+            ctx.lineWidth = Math.max(1, scale * 0.6);
             ctx.beginPath();
             ctx.moveTo(0, -bowRadius);
             ctx.lineTo(0, bowRadius);
             ctx.stroke();
             if (playerWeapons?.isCharging || attacking) {
                 ctx.fillStyle = "#C9B08A";
-                ctx.fillRect(-4 * s, -s, 8 * s, 2 * s);
+                ctx.fillRect(-4 * scale, -scale, 8 * scale, 2 * scale);
                 ctx.fillStyle = "#CFD8DC";
-                ctx.fillRect(2 * s, -2 * s, 2 * s, 4 * s);
+                ctx.fillRect(2 * scale, -2 * scale, 2 * scale, 4 * scale);
             }
             break;
         }
         case "sword":
-        default: {
-            ctx.fillStyle = weaponColors.metal;
-            ctx.fillRect(0, -18 * s, 3 * s, 18 * s);
-            ctx.fillStyle = weaponColors.metalLight;
-            ctx.fillRect(1 * s, -18 * s, s, 16 * s);
-            ctx.fillStyle = weaponColors.metalDark;
-            ctx.fillRect(0, -6 * s, 3 * s, 2 * s);
-            ctx.fillStyle = weaponColors.wood;
-            ctx.fillRect(-2 * s, -4 * s, 7 * s, 2 * s);
-            ctx.fillStyle = weaponColors.woodShade;
-            ctx.fillRect(1 * s, -4 * s, 2 * s, 6 * s);
+        default:
+            ctx.fillStyle = STEVE_WEAPON_COLORS.metal;
+            ctx.fillRect(0, -18 * scale, 3 * scale, 18 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.metalLight;
+            ctx.fillRect(1 * scale, -18 * scale, scale, 16 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.metalDark;
+            ctx.fillRect(0, -6 * scale, 3 * scale, 2 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.wood;
+            ctx.fillRect(-2 * scale, -4 * scale, 7 * scale, 2 * scale);
+            ctx.fillStyle = STEVE_WEAPON_COLORS.woodShade;
+            ctx.fillRect(1 * scale, -4 * scale, 2 * scale, 6 * scale);
             break;
-        }
     }
     ctx.restore();
+}
+
+function drawSteve(x, y, facingRight, attacking) {
+    const s = player.width / 26;
+    const hasSunscreen = typeof hasSunscreenBuff === "function" && hasSunscreenBuff();
+    const palette = getStevePalette(hasSunscreen);
+    const pose = getStevePose(facingRight, attacking);
+    const shieldEquipped = !!(shieldState?.equipped && Number(inventory.shield) > 0 && Number(shieldState?.durability) > 0);
+
+    drawSteveLimbs(x, y, s, facingRight, attacking, palette, pose, "back");
+    drawSteveHead(x, y, s, facingRight, palette, pose);
+    drawSteveTorso(x, y, s, facingRight, palette, pose);
+    drawSteveLimbs(x, y, s, facingRight, attacking, palette, pose, "front");
+    drawSteveArmorOverlay(x, y, s, palette, pose);
+    drawSteveShield(x, y, s, facingRight, palette, pose, shieldEquipped);
+    drawSteveWeapon(x, y, s, facingRight, attacking, pose);
 }
 
 function drawMobRect(x, y, s, px, py, pw, ph) {

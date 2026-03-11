@@ -252,7 +252,7 @@ function testGameLoopSetsReturningStateOnDismount() {
   );
   assert.match(
     source,
-    /ridingDragon\.y\s*=\s*Math\.max\(50,\s*Math\.min\(ridingDragon\.y,\s*groundY\s*-\s*ridingDragon\.height\)\)/,
+    /(ridingDragon|dragon)\.y\s*=\s*Math\.max\(50,\s*Math\.min\((ridingDragon|dragon)\.y,\s*groundY\s*-\s*(ridingDragon|dragon)\.height\)\)/,
     "骑乘末影龙时最低高度应允许降到与地面平齐"
   );
 }
@@ -289,7 +289,7 @@ function testMountedJumpUsesDismountInsteadOfClimb() {
   );
   assert.match(
     source,
-    /if\s*\(\s*keys\.up\s*\)\s*\{\s*ridingDragon\.y\s*-\=\s*moveSpeed;/,
+    /if\s*\(\s*keys\.up\s*\)\s*\{\s*(ridingDragon|dragon)\.y\s*-\=\s*moveSpeed;/,
     "骑龙时向上飞行应只保留给 up 输入，不能再混用 jump"
   );
 }
@@ -303,12 +303,60 @@ function testDismountKeepsGroundMovementAvailable() {
   );
 }
 
-function testDragonShootFireballRequestsStraightFlightWhileMounted() {
+function testMountedArrowUpStaysFlightInput() {
+  const source = readModuleCode("src/modules/17-bootstrap.js");
+  assert.match(
+    source,
+    /const\s+jumpFromArrowUp\s*=\s*arrowUpPressed\s*&&\s*!ridingNow/,
+    "骑龙时 ArrowUp 不应继续映射成 jump，下龙应只保留给真正的跳跃键"
+  );
+  assert.match(
+    source,
+    /if\s*\(\s*e\.code\s*===\s*["']KeyW["']\s*\|\|\s*arrowUpPressed\s*\)\s*keys\.up\s*=\s*true;/,
+    "骑龙时 ArrowUp/W 应继续作为向上飞行输入"
+  );
+}
+
+function testDragonShootFireballSupportsArcAndStraightModes() {
   const source = readModuleCode("src/modules/13-game-loop.js");
   assert.match(
     source,
-    /ridingDragon\.shootFireball\(targetX,\s*targetY,\s*\{\s*straight:\s*true\s*\}\)/,
-    "骑龙喷火应明确请求水平直喷火球配置"
+    /function\s+dragonShootFireball\s*\(\s*mode\s*=\s*DRAGON_FIREBALL_MODES\.straight\s*\)/,
+    "骑龙喷火应支持按模式选择火球轨迹，而不是固定一种形态"
+  );
+  assert.match(
+    source,
+    /straight:\s*fireballMode\s*===\s*DRAGON_FIREBALL_MODES\.straight/,
+    "骑龙喷火应根据 fireballMode 决定是否使用水平直射配置"
+  );
+  assert.match(
+    source,
+    /dragonShootFireball\(mode\s*===\s*["']tap["']\s*\?\s*DRAGON_FIREBALL_MODES\.arc\s*:\s*DRAGON_FIREBALL_MODES\.straight\)/,
+    "骑龙时触屏短按应走 arc，长按应走 straight"
+  );
+}
+
+function testMountedKeyboardAttackUsesHoldThreshold() {
+  const source = readModuleCode("src/modules/13-game-loop.js");
+  assert.match(
+    source,
+    /const\s+DRAGON_ATTACK_HOLD_THRESHOLD_MS\s*=\s*800/,
+    "骑龙键盘攻击应与移动端保持同样的 800ms 长按阈值"
+  );
+  assert.match(
+    source,
+    /function\s+startMountedDragonAttackPress\s*\(/,
+    "骑龙键盘攻击应在 keydown 时启动一次按压计时"
+  );
+  assert.match(
+    source,
+    /setTimeout\(\(\)\s*=>\s*\{[\s\S]*dragonShootFireball\(DRAGON_FIREBALL_MODES\.straight\)/,
+    "骑龙键盘长按达到阈值后应触发水平直射火球"
+  );
+  assert.match(
+    source,
+    /return\s+dragonShootFireball\(fireballMode\);/,
+    "骑龙键盘松开时若还没触发长按，应按短按/长按结果补发对应模式的火球"
   );
 }
 
@@ -414,8 +462,10 @@ function run() {
   testMountAndDismountHintsExplainDragonControls();
   testMobileHoldAttackUsesDragonFireInsteadOfConsumableWhileMounted();
   testMountedJumpUsesDismountInsteadOfClimb();
+  testMountedArrowUpStaysFlightInput();
   testDismountKeepsGroundMovementAvailable();
-  testDragonShootFireballRequestsStraightFlightWhileMounted();
+  testDragonShootFireballSupportsArcAndStraightModes();
+  testMountedKeyboardAttackUsesHoldThreshold();
   testStraightDragonFireballStaysHorizontal();
   testMobileDragonFlightButtonsExistAndAreBound();
   testTraderSellsDragonEggForOneHundredDiamonds();

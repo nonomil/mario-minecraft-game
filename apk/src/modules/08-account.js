@@ -314,7 +314,7 @@ function resetAccountRunState(account) {
 
     account.inventory = account.inventory || {};
     account.inventory.items = { ...INVENTORY_TEMPLATE };
-    account.inventory.equipment = { armor: null, armorDurability: 0 };
+    account.inventory.equipment = { armor: null, armorDurability: 0, shieldEquipped: false, shieldDurability: 0, shieldMaxDurability: 100 };
     account.inventory.armorCollection = [];
 }
 
@@ -397,8 +397,18 @@ function loadAccountData(account) {
             });
         }
     }
+    const savedEquipment = account.inventory?.equipment && typeof account.inventory.equipment === "object"
+        ? account.inventory.equipment
+        : null;
+    const maxShieldDurability = Math.max(1, Number(savedEquipment?.shieldMaxDurability) || 100);
+    const savedShieldDurability = Math.max(0, Math.min(maxShieldDurability, Number(savedEquipment?.shieldDurability) || 0));
     inventory = { ...INVENTORY_TEMPLATE, ...(account.inventory?.items || {}) };
-    playerEquipment = account.inventory?.equipment ? { ...account.inventory.equipment } : { armor: null, armorDurability: 0 };
+    playerEquipment = savedEquipment ? { ...savedEquipment } : { armor: null, armorDurability: 0 };
+    shieldState = {
+        equipped: !!(savedEquipment?.shieldEquipped && Number(inventory.shield) > 0 && savedShieldDurability > 0),
+        durability: savedShieldDurability,
+        maxDurability: maxShieldDurability
+    };
     armorInventory = Array.isArray(account.inventory?.armorCollection) ? [...account.inventory.armorCollection] : [];
     updateInventoryUI();
     updateArmorUI();
@@ -441,7 +451,12 @@ function saveCurrentProgress() {
     currentAccount.vocabulary.currentPack = settings.vocabSelection || "";
     currentAccount.inventory = currentAccount.inventory || {};
     currentAccount.inventory.items = { ...inventory };
-    currentAccount.inventory.equipment = { ...playerEquipment };
+    currentAccount.inventory.equipment = {
+        ...playerEquipment,
+        shieldEquipped: !!shieldState?.equipped,
+        shieldDurability: Math.max(0, Number(shieldState?.durability) || 0),
+        shieldMaxDurability: Math.max(1, Number(shieldState?.maxDurability) || 100)
+    };
     currentAccount.inventory.armorCollection = [...armorInventory];
     storage.saveAccount(currentAccount);
 }
@@ -950,4 +965,3 @@ window.get7DayLearningTrend = get7DayLearningTrend;
 window.getWeeklyStats = getWeeklyStats;
 window.renderLearningStats = renderLearningStats;
 window.getAchievementProgress = getAchievementProgress;
-

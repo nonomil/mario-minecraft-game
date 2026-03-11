@@ -433,6 +433,32 @@ test("Player projectiles can destroy dragon crystals", async ({ page }) => {
   expect(state.projectileCount).toBe(0);
 });
 
+test("Dragon crystals spawn low enough for melee and projectile follow-up", async ({ page }) => {
+  await openDebugPage(page);
+
+  const state = await page.evaluate(() => {
+    window.MMDBG.enterDragonArena();
+    const frame = document.getElementById("game");
+    const gameWindow = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!gameWindow || !gameWindow.endDragonArena || !Array.isArray(gameWindow.endDragonArena.crystals)) {
+      return { count: 0, minY: 0, maxY: 0 };
+    }
+
+    const ys = gameWindow.endDragonArena.crystals
+      .filter((entry) => entry && entry.alive)
+      .map((entry) => Number(entry.y) || 0);
+
+    return {
+      count: ys.length,
+      minY: ys.length ? Math.min(...ys) : 0,
+      maxY: ys.length ? Math.max(...ys) : 0
+    };
+  });
+
+  expect(state.count).toBeGreaterThan(0);
+  expect(state.minY).toBeGreaterThanOrEqual(200);
+});
+
 test("Dragon healing beam follows the nearest alive crystal instead of a fixed pillar", async ({ page }) => {
   await openDebugPage(page);
 
