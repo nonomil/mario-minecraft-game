@@ -522,11 +522,11 @@ if "%DRY_RUN%"=="1" (
     echo [DRY-RUN] 将执行以下操作（不落地、不推送）：
     echo   git -C "%MAIN_REPO%" switch %BRANCH%
     echo   git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
-    echo   robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist" ".worktrees" ".claude" ".trae" ".github" "docs\\plan" "docs\\plans" /XF "主仓库"
+    echo   robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist" ".claude" ".trae" ".github" "%REPO_ROOT%\\.worktrees" "%REPO_ROOT%\\docs\\plan" "%REPO_ROOT%\\docs\\plans" /XF "主仓库"
     echo   git -C "%MAIN_REPO%" add apk
     echo   git -C "%MAIN_REPO%" diff --cached --quiet ^(若无变化则跳过提交^)
     echo   git -C "%MAIN_REPO%" commit -m "sync(apk): publish from apk-only repo"
-    if "%SYNC_ONLY%"=="1" (
+    if "%SYNC_ONLY%"=="1" ( 
         echo   ^(sync-only: 跳过 push^)
     ) else (
         if /i "%PRIMARY%"=="proxy" (
@@ -603,7 +603,7 @@ exit /b 1
 :main_repo_pull_ok
 
 echo [同步] 复制当前仓库内容 -> 主仓库 apk/...
-robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist" ".worktrees" ".claude" ".trae" ".github" "docs\\plan" "docs\\plans" /XF "主仓库" >nul
+robocopy "%REPO_ROOT%" "%MAIN_APK_DIR%" /E /XD ".git" ".gradle" "node_modules" "build" "dist" ".claude" ".trae" ".github" "%REPO_ROOT%\\.worktrees" "%REPO_ROOT%\\docs\\plan" "%REPO_ROOT%\\docs\\plans" /XF "主仓库" >nul
 set "RC=%ERRORLEVEL%"
 if %RC% GEQ 8 (
     echo [错误] robocopy 失败，错误码=%RC%
