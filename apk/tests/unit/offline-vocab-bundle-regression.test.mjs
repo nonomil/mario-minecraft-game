@@ -19,8 +19,12 @@ function rebuildOfflineArtifacts() {
   const outPath = path.join(repoRoot, "out", "Game.offline.html");
   const androidWebDir = path.join(repoRoot, "android-app", "web");
   const androidIndexPath = path.join(androidWebDir, "index.html");
+  const buildDir = path.join(repoRoot, "build");
+  const buildIndexPath = path.join(buildDir, "index.html");
   fs.mkdirSync(androidWebDir, { recursive: true });
+  fs.mkdirSync(buildDir, { recursive: true });
   fs.copyFileSync(outPath, androidIndexPath);
+  fs.copyFileSync(outPath, buildIndexPath);
 }
 
 function assertOfflineBundleIncludesLatestVocabSwitching(bundlePath) {
@@ -78,8 +82,13 @@ function assertOfflineBundleIncludesLatestVocabSwitching(bundlePath) {
   );
   assert.match(
     html,
-    /word:\s*'smile',\s*chinese:\s*'微笑'/,
-    `${bundlePath} 应包含汉字词库的实际数据`
+    /createHanziEntry\(\{\s*character:\s*"人",\s*pinyin:\s*"rén",\s*english:\s*"person"/,
+    `${bundlePath} 应包含新的单字汉字词库实际数据`
+  );
+  assert.doesNotMatch(
+    html,
+    /word:\s*["']smile["']/,
+    `${bundlePath} 不应再残留旧的英文词条式汉字数据`
   );
 }
 
@@ -87,6 +96,7 @@ function run() {
   rebuildOfflineArtifacts();
   assertOfflineBundleIncludesLatestVocabSwitching("out/Game.offline.html");
   assertOfflineBundleIncludesLatestVocabSwitching("android-app/web/index.html");
+  assertOfflineBundleIncludesLatestVocabSwitching("build/index.html");
   console.log("offline vocab bundle regression checks passed");
 }
 

@@ -475,7 +475,10 @@ function registerTestApi() {
                 currentAccount: currentAccount ? { id: currentAccount.id, username: currentAccount.username } : null,
                 currentBiome: currentBiome || null,
                 villageInteriorActive: (typeof isVillageInteriorActive === "function") ? !!isVillageInteriorActive() : false,
-                biomeGateState: (typeof getBiomeGateStateSnapshot === "function") ? getBiomeGateStateSnapshot() : null
+                biomeGateState: (typeof getBiomeGateStateSnapshot === "function") ? getBiomeGateStateSnapshot() : null,
+                learningState: (typeof getLearningStateSnapshot === "function") ? getLearningStateSnapshot() : null,
+                playerShieldLayers: typeof playerShieldLayers !== "undefined" ? playerShieldLayers : 0,
+                dragonEgg: (typeof getDragonEggState === "function") ? getDragonEggState() : null
             };
         },
         setState(patch) {
@@ -522,7 +525,12 @@ function registerTestApi() {
             saveCurrentProgress,
             updateInventoryUI,
             updateArmorUI,
-            updateVocabProgressUI
+            updateVocabProgressUI,
+            recordLearningEvent: typeof recordLearningEvent === "function" ? recordLearningEvent : null,
+            resetLearningState: typeof resetLearningState === "function" ? resetLearningState : null,
+            triggerGateMicrolearn: typeof triggerGateMicrolearn === "function" ? triggerGateMicrolearn : null,
+            answerGateMicrolearn: typeof answerGateMicrolearn === "function" ? answerGateMicrolearn : null,
+            getGateMicrolearnState: typeof getGateMicrolearnState === "function" ? getGateMicrolearnState : null
         }
     };
 }

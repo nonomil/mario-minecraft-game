@@ -1,20 +1,8 @@
-// Merged Vocabulary - Combined from kindergarten, elementary_lower, and elementary_upper
+﻿// Merged Vocabulary - Combined from kindergarten, elementary_lower, and elementary_upper
 // Generated on 2025-09-15T05:57:25.475Z
 
 const MERGED_VOCABULARY = [
 {
-    "word": "英文",
-    "standardized": "英文",
-    "chinese": "中文",
-    "phonetic": "",
-    "phrase": "ä¾å¥",
-    "phraseTranslation": "中文",
-    "difficulty": "basic",
-    "category": "common_adjectives",
-    "stage": "kindergarten",
-    "imageURLs": []
-  },
-  {
     "word": "Above",
     "standardized": "Above",
     "chinese": "上方",

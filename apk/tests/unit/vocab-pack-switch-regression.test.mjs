@@ -61,7 +61,7 @@ function testManifestResolvesMinecraftAndHanziPackGlobals() {
   assert.ok(manifest && Array.isArray(manifest.packs), "manifest 应成功加载 Minecraft/汉字词库");
   assertPackStartsWithWord(manifest, "vocab.minecraft.intermediate", "diamond");
   assertPackStartsWithWord(manifest, "vocab.minecraft.full", "air");
-  assertPackStartsWithWord(manifest, "vocab.kindergarten.hanzi", "smile");
+  assertPackStartsWithWord(manifest, "vocab.kindergarten.hanzi", "一");
 }
 
 function testDefaultVocabSelectionExistsInCurrentManifest() {

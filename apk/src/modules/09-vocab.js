@@ -123,6 +123,9 @@ function saveVocabState() {
     if (storage) storage.saveJson("mmwg:vocabState", vocabState);
 }
 
+const LEARNING_EVENT_SOURCES = Object.freeze(["vocab", "challenge", "village"]);
+const LEARNING_EVENT_RESULTS = Object.freeze(["success", "partial", "fail"]);
+const MAX_RECENT_LEARNING_EVENTS = 100;
 const WORD_QUALITY_DEFAULT = "new";
 const WORD_QUALITY_SET = new Set(["new", "correct_fast", "correct_slow", "wrong"]);
 
@@ -180,6 +183,232 @@ function normalizePackProgressEntry(entry) {
     return out;
 }
 
+function createLearningResultTotals() {
+    return {
+        success: 0,
+        partial: 0,
+        fail: 0,
+        total: 0
+    };
+}
+
+function createEmptyLearningProgressState() {
+    return {
+        recentEvents: [],
+        totals: {
+            all: createLearningResultTotals(),
+            sources: {
+                vocab: createLearningResultTotals(),
+                challenge: createLearningResultTotals(),
+                village: createLearningResultTotals()
+            }
+        },
+        dragonEgg: {
+            points: 0,
+            stage: 0
+        },
+        gatePreview: {
+            active: false,
+            pendingFromBiome: null,
+            pendingToBiome: null,
+            lastResult: null
+        }
+    };
+}
+
+function normalizeLearningMeta(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+    return { ...raw };
+}
+
+function normalizeLearningResultTotals(raw) {
+    const value = raw && typeof raw === "object" ? raw : {};
+    const out = createLearningResultTotals();
+    LEARNING_EVENT_RESULTS.forEach((key) => {
+        out[key] = Math.max(0, toNonNegativeInt(value[key], 0));
+    });
+    out.total = Math.max(0, toNonNegativeInt(value.total, out.success + out.partial + out.fail));
+    return out;
+}
+
+function normalizeLearningProgressState(raw) {
+    const value = raw && typeof raw === "object" ? raw : {};
+    const totals = value.totals && typeof value.totals === "object" ? value.totals : {};
+    const sourceTotals = totals.sources && typeof totals.sources === "object" ? totals.sources : {};
+    const recentEvents = Array.isArray(value.recentEvents) ? value.recentEvents : [];
+    return {
+        recentEvents: recentEvents
+            .map((event) => {
+                const source = LEARNING_EVENT_SOURCES.includes(String(event?.source || "").trim())
+                    ? String(event.source).trim()
+                    : null;
+                const result = LEARNING_EVENT_RESULTS.includes(String(event?.result || "").trim())
+                    ? String(event.result).trim()
+                    : null;
+                if (!source || !result) return null;
+                return {
+                    source,
+                    wordKey: event?.wordKey == null ? null : String(event.wordKey),
+                    themeKey: event?.themeKey == null ? null : String(event.themeKey),
+                    result,
+                    ts: Number(event?.ts) > 0 ? Number(event.ts) : Date.now(),
+                    meta: normalizeLearningMeta(event?.meta)
+                };
+            })
+            .filter(Boolean)
+            .slice(0, MAX_RECENT_LEARNING_EVENTS),
+        totals: {
+            all: normalizeLearningResultTotals(totals.all),
+            sources: {
+                vocab: normalizeLearningResultTotals(sourceTotals.vocab),
+                challenge: normalizeLearningResultTotals(sourceTotals.challenge),
+                village: normalizeLearningResultTotals(sourceTotals.village)
+            }
+        },
+        dragonEgg: {
+            points: Math.max(0, toNonNegativeInt(value.dragonEgg?.points, 0)),
+            stage: Math.max(0, toNonNegativeInt(value.dragonEgg?.stage, 0))
+        },
+        gatePreview: {
+            active: !!value.gatePreview?.active,
+            pendingFromBiome: value.gatePreview?.pendingFromBiome == null ? null : String(value.gatePreview.pendingFromBiome),
+            pendingToBiome: value.gatePreview?.pendingToBiome == null ? null : String(value.gatePreview.pendingToBiome),
+            lastResult: value.gatePreview?.lastResult == null ? null : String(value.gatePreview.lastResult)
+        }
+    };
+}
+
+function ensureLearningProgressState() {
+    if (!progress || typeof progress !== "object") progress = {};
+    progress.learning = normalizeLearningProgressState(progress.learning);
+    return progress.learning;
+}
+
+function pushLearningEventFeedback(event) {
+    if (!event || event.meta?.silent) return;
+    const feedbackText = String(event.meta?.feedbackText || "").trim();
+    if (!feedbackText || typeof showFloatingText !== "function" || typeof player === "undefined" || !player) return;
+    const feedbackColor = String(event.meta?.feedbackColor || "#FFFFFF");
+    showFloatingText(feedbackText, player.x, player.y - 52, feedbackColor);
+}
+
+function recordLearningEvent(payload) {
+    const source = LEARNING_EVENT_SOURCES.includes(String(payload?.source || "").trim())
+        ? String(payload.source).trim()
+        : null;
+    const result = LEARNING_EVENT_RESULTS.includes(String(payload?.result || "").trim())
+        ? String(payload.result).trim()
+        : null;
+    if (!source || !result) return null;
+
+    const state = ensureLearningProgressState();
+    const event = {
+        source,
+        wordKey: payload?.wordKey == null ? null : String(payload.wordKey),
+        themeKey: payload?.themeKey == null ? null : String(payload.themeKey),
+        result,
+        ts: Date.now(),
+        meta: normalizeLearningMeta(payload?.meta)
+    };
+
+    state.recentEvents.unshift(event);
+    if (state.recentEvents.length > MAX_RECENT_LEARNING_EVENTS) {
+        state.recentEvents.length = MAX_RECENT_LEARNING_EVENTS;
+    }
+
+    const sourceBucket = state.totals.sources[source] || createLearningResultTotals();
+    sourceBucket[result] = Math.max(0, toNonNegativeInt(sourceBucket[result], 0)) + 1;
+    sourceBucket.total = Math.max(0, toNonNegativeInt(sourceBucket.total, 0)) + 1;
+    state.totals.sources[source] = sourceBucket;
+
+    const allBucket = state.totals.all || createLearningResultTotals();
+    allBucket[result] = Math.max(0, toNonNegativeInt(allBucket[result], 0)) + 1;
+    allBucket.total = Math.max(0, toNonNegativeInt(allBucket.total, 0)) + 1;
+    state.totals.all = allBucket;
+
+    // M3: Update dragon egg growth
+    updateDragonEggGrowth(state, source, result);
+
+    saveProgress();
+    pushLearningEventFeedback(event);
+    return event;
+}
+
+function getLearningStateSnapshot() {
+    return JSON.parse(JSON.stringify(ensureLearningProgressState()));
+}
+
+function resetLearningState() {
+    if (!progress || typeof progress !== "object") progress = {};
+    progress.learning = createEmptyLearningProgressState();
+    saveProgress();
+    return getLearningStateSnapshot();
+}
+
+// ============ M3: Dragon Egg Growth ============
+
+const DRAGON_EGG_GROWTH_POINTS = {
+    vocab: { success: 2, partial: 0, fail: 0 },
+    challenge: { success: 1, partial: 0, fail: 0 },
+    village: { success: 3, partial: 1, fail: 0 }
+};
+
+const DRAGON_EGG_STAGE_THRESHOLDS = [20, 50, 100];
+
+const DRAGON_EGG_STAGE_NAMES = [
+    "龙蛋（休眠）",
+    "龙蛋（微光）",
+    "龙蛋（裂纹）",
+    "龙蛋（孵化）"
+];
+
+function updateDragonEggGrowth(state, source, result) {
+    if (!state || !state.dragonEgg) return;
+
+    const pointsConfig = DRAGON_EGG_GROWTH_POINTS[source];
+    if (!pointsConfig) return;
+
+    const pointsToAdd = pointsConfig[result] || 0;
+    if (pointsToAdd <= 0) return;
+
+    const oldPoints = state.dragonEgg.points || 0;
+    const oldStage = state.dragonEgg.stage || 0;
+
+    state.dragonEgg.points = oldPoints + pointsToAdd;
+
+    // Calculate new stage
+    let newStage = 0;
+    for (let i = 0; i < DRAGON_EGG_STAGE_THRESHOLDS.length; i++) {
+        if (state.dragonEgg.points >= DRAGON_EGG_STAGE_THRESHOLDS[i]) {
+            newStage = i + 1;
+        }
+    }
+
+    state.dragonEgg.stage = newStage;
+
+    // Show growth feedback
+    if (typeof showFloatingText === "function" && typeof player !== "undefined" && player) {
+        showFloatingText(`🐉 龙蛋成长 +${pointsToAdd}`, player.x, player.y - 60, "#9C27B0");
+    }
+
+    // Show stage upgrade toast
+    if (newStage > oldStage && typeof showToast === "function") {
+        const stageName = DRAGON_EGG_STAGE_NAMES[newStage] || `阶段 ${newStage}`;
+        showToast(`🥚 龙蛋升级：${stageName}`);
+    }
+}
+
+function getDragonEggState() {
+    const state = ensureLearningProgressState();
+    return {
+        points: state.dragonEgg.points || 0,
+        stage: state.dragonEgg.stage || 0,
+        stageName: DRAGON_EGG_STAGE_NAMES[state.dragonEgg.stage || 0] || "未知",
+        nextThreshold: DRAGON_EGG_STAGE_THRESHOLDS[state.dragonEgg.stage || 0] || null
+    };
+}
+
+
 function replayPackQualityToWordPicker(packId) {
     if (!packId || !wordPicker || typeof wordPicker.updateWordQuality !== "function") return;
     const pack = progress?.vocab?.[packId];
@@ -201,6 +430,7 @@ function normalizeProgress(raw) {
     Object.keys(p.vocab).forEach(packId => {
         p.vocab[packId] = normalizePackProgressEntry(p.vocab[packId]);
     });
+    p.learning = normalizeLearningProgressState(p.learning);
     return p;
 }
 
@@ -554,12 +784,38 @@ function loadVocabPackFiles(files) {
 
 function normalizeRawWord(raw) {
     if (!raw || typeof raw !== "object") return null;
-    const en = String(raw.standardized || raw.word || "").trim();
+    const en = String(raw.standardized || raw.word || raw.en || "").trim();
     const zh = String(raw.chinese || raw.zh || raw.translation || "").trim();
     if (!en) return null;
+    const examples = Array.isArray(raw.examples)
+        ? raw.examples
+            .map(item => {
+                if (Array.isArray(item)) {
+                    return {
+                        word: String(item[0] || "").trim(),
+                        english: String(item[1] || "").trim()
+                    };
+                }
+                if (!item || typeof item !== "object") return null;
+                return {
+                    word: String(item.word || "").trim(),
+                    english: String(item.english || "").trim()
+                };
+            })
+            .filter(item => item && item.word)
+        : [];
     return {
+        ...raw,
         en,
         zh: zh || "",
+        word: String(raw.word || en).trim(),
+        chinese: String(raw.chinese || zh || "").trim(),
+        pinyin: String(raw.pinyin || "").trim(),
+        phonetic: String(raw.phonetic || raw.uk || raw.us || "").trim(),
+        english: String(raw.english || "").trim(),
+        character: String(raw.character || raw.chinese || "").trim(),
+        examples,
+        mode: String(raw.mode || "bilingual").trim().toLowerCase() || "bilingual",
         phrase: String(raw.phrase || "").trim() || null,
         phraseZh: String(raw.phraseTranslation || "").trim() || null,
         phraseTranslation: String(raw.phraseTranslation || "").trim() || null,
@@ -792,6 +1048,9 @@ function normalizeWordContent(raw) {
         word,
         chinese: String(raw.chinese || raw.zh || "").trim(),
         pinyin: String(raw.pinyin || "").trim(),
+        english: String(raw.english || "").trim(),
+        character: String(raw.character || raw.chinese || "").trim(),
+        examples: Array.isArray(raw.examples) ? raw.examples : [],
         phonetic: String(raw.phonetic || raw.uk || raw.us || "").trim(),
         phrase: String(raw.phrase || "").trim(),
         phraseTranslation: String(raw.phraseTranslation || raw.phraseZh || "").trim(),
@@ -825,6 +1084,9 @@ function getDisplayContent(wordObj) {
         word: "",
         chinese: "",
         pinyin: "",
+        english: "",
+        character: "",
+        examples: [],
         phonetic: "",
         phrase: "",
         phraseTranslation: ""
@@ -832,6 +1094,19 @@ function getDisplayContent(wordObj) {
     const languageMode = getCurrentLanguageMode();
     const primaryEnglish = safeWord.word;
     const primaryChinese = safeWord.chinese;
+    const isHanziWord = Boolean(safeWord.character && safeWord.examples && safeWord.examples.length);
+
+    if (isHanziWord) {
+        const primaryCharacter = safeWord.character || primaryChinese || primaryEnglish;
+        return {
+            id: primaryEnglish || primaryCharacter,
+            primaryText: primaryCharacter,
+            secondaryText: safeWord.english || primaryEnglish,
+            phoneticText: safeWord.pinyin,
+            phrasePrimary: safeWord.phraseTranslation,
+            phraseSecondary: safeWord.phrase
+        };
+    }
 
     if (languageMode === "chinese") {
         return {

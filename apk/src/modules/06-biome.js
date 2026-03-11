@@ -230,8 +230,40 @@ function startBiomeGate(fromBiomeId, toBiomeId) {
         return false;
     }
     if (bossArena.active) return false;
+
+    // M2: Trigger gate microlearn before entering boss arena
+    if (typeof triggerGateMicrolearn === "function") {
+        const microlearnResult = triggerGateMicrolearn(fromBiomeId, toBiomeId);
+        if (microlearnResult.questionShown) {
+            // Store pending gate info, will continue after microlearn completes
+            biomeGateState.pendingFromBiome = fromBiomeId;
+            biomeGateState.pendingToBiome = toBiomeId;
+            return true;
+        }
+    }
+
+    // Original gate entry logic
     biomeGateState.pendingFromBiome = fromBiomeId;
     biomeGateState.pendingToBiome = toBiomeId;
+    biomeGateState.gateActive = true;
+    biomeGateState.lockedBiome = fromBiomeId;
+    biomeGateState.gateStartedAtMs = Date.now();
+    biomeGateState.stallWarned = false;
+    bossArena.enterBiomeGate(fromBiomeId, toBiomeId, {
+        onVictory: payload => handleBiomeGateVictory(payload)
+    });
+    return true;
+}
+
+function continueGateAfterMicrolearn() {
+    const fromBiomeId = biomeGateState.pendingFromBiome;
+    const toBiomeId = biomeGateState.pendingToBiome;
+    if (!fromBiomeId || !toBiomeId) return false;
+    if (typeof bossArena === "undefined" || !bossArena || typeof bossArena.enterBiomeGate !== "function") {
+        return false;
+    }
+    if (bossArena.active) return false;
+
     biomeGateState.gateActive = true;
     biomeGateState.lockedBiome = fromBiomeId;
     biomeGateState.gateStartedAtMs = Date.now();

@@ -2,6 +2,15 @@
  * 10-ui.js - UI覆盖层、游戏结束、复活
  * 从 main.js 拆分 (原始行 2497-2836)
  */
+function formatSessionSummaryEntry(primary, secondary, count) {
+    primary = String(primary || "").trim();
+    secondary = String(secondary || "").trim();
+    const safeCount = Number(count) || 0;
+    if (!primary || safeCount <= 0) return "";
+    if (!secondary || secondary === primary) return `${primary} x${safeCount}`;
+    return `${primary}(${secondary}) x${safeCount}`;
+}
+
 function getSessionWordSummaryHtml(limit = 6) {
     const counts = sessionWordCounts && typeof sessionWordCounts === "object" ? sessionWordCounts : {};
     const entries = Object.entries(counts)
@@ -14,12 +23,16 @@ function getSessionWordSummaryHtml(limit = 6) {
     const uniqueWords = typeof getUniqueSessionWords === "function" ? getUniqueSessionWords() : [];
     uniqueWords.forEach(w => {
         if (!w?.en) return;
-        wordMap.set(String(w.en), String(w.zh || "").trim());
+        const displayContent = window.BilingualVocab?.getDisplayContent?.(w);
+        wordMap.set(String(w.en), {
+            primary: String(displayContent?.primaryText || w.character || w.chinese || w.zh || w.en || "").trim(),
+            secondary: String(displayContent?.secondaryText || w.english || w.zh || "").trim()
+        });
     });
     const parts = entries.map(([en, cnt]) => {
-        const zh = wordMap.get(en);
-        return `${en}${zh ? `(${zh})` : ""} x${cnt}`;
-    });
+        const wordMeta = wordMap.get(en) || {};
+        return formatSessionSummaryEntry(wordMeta.primary || en, wordMeta.secondary || "", cnt);
+    }).filter(Boolean);
     return `<br><br>🧠 本局高频词: ${parts.join(" · ")}`;
 }
 

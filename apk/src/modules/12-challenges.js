@@ -78,6 +78,15 @@ function recordWordProgress(wordObj) {
     if (!hadEntry) {
         pr.uniqueCount = (pr.uniqueCount || 0) + 1;
         onWordCollected(wordObj);
+        // M1: Record vocab collection event
+        if (typeof recordLearningEvent === "function") {
+            recordLearningEvent({
+                source: "vocab",
+                wordKey: en,
+                themeKey: activeVocabPackId || "",
+                result: "success"
+            });
+        }
         if (pr.total && pr.uniqueCount >= pr.total) {
             pr.completed = true;
             saveProgress();
@@ -142,8 +151,8 @@ function speakSessionWordByText(encodedEn) {
 function getWordDisplayContentSafe(wordObj) {
     const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
     if (displayContent) return displayContent;
-    const englishText = normalizeSpeechText(wordObj?.en, wordObj?.word);
-    const chineseText = normalizeSpeechText(wordObj?.zh, wordObj?.chinese);
+    const englishText = normalizeSpeechText(wordObj?.english, wordObj?.en, wordObj?.word);
+    const chineseText = normalizeSpeechText(wordObj?.character, wordObj?.zh, wordObj?.chinese);
     const phraseText = String(wordObj?.phrase || "").trim();
     const phraseTranslation = String(wordObj?.phraseZh || wordObj?.phraseTranslation || "").trim();
     if (getLanguageModeSafe() === "chinese") {
@@ -985,6 +994,16 @@ function completeLearningChallenge(correct) {
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
             wordPicker.updateWordQuality(wordObj.en, quality);
         }
+        // M1: Record challenge success event
+        if (typeof recordLearningEvent === "function") {
+            recordLearningEvent({
+                source: "challenge",
+                wordKey: wordObj?.en || "",
+                themeKey: activeVocabPackId || "",
+                result: "success",
+                meta: { type: "translate" }
+            });
+        }
         hideLearningChallenge();
         addScore(reward.correct.score);
         inventory.diamond = (inventory.diamond || 0) + (reward.correct.diamond || 0);
@@ -1016,6 +1035,16 @@ function completeLearningChallenge(correct) {
         writeChallengeResultToProgress(wordObj, "wrong");
         if (wordPicker && typeof wordPicker.updateWordQuality === "function" && wordObj?.en) {
             wordPicker.updateWordQuality(wordObj.en, "wrong");
+        }
+        // M1: Record challenge fail event
+        if (typeof recordLearningEvent === "function") {
+            recordLearningEvent({
+                source: "challenge",
+                wordKey: wordObj?.en || "",
+                themeKey: activeVocabPackId || "",
+                result: "fail",
+                meta: { type: "translate" }
+            });
         }
         const penalty = Number(reward?.wrong?.scorePenalty) || 0;
         if (settings.challengeMode && penalty > 0) {
@@ -1143,8 +1172,8 @@ function getSpeakPayload(wordObj) {
 
 function getSpeakSequence(wordObj) {
     const mode = getLanguageModeSafe();
-    const englishText = normalizeSpeechText(wordObj?.en, wordObj?.word);
-    const chineseText = normalizeSpeechText(wordObj?.zh, wordObj?.chinese);
+    const englishText = normalizeSpeechText(wordObj?.english, wordObj?.en, wordObj?.word);
+    const chineseText = normalizeSpeechText(wordObj?.character, wordObj?.zh, wordObj?.chinese);
     const englishRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
     const chineseRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
     const sequence = [];
@@ -1186,6 +1215,130 @@ function speakWord(wordObj) {
     }
 
     legacySpeakWord(wordObj, sequence);
+}
+
+// ============ M2: Gate Microlearn ============
+
+function triggerGateMicrolearn(fromBiome, toBiome) {
+    if (!fromBiome || !toBiome) return { questionShown: false, reason: "Invalid biomes" };
+    if (gateMicrolearnState.active) return { questionShown: false, reason: "Already active" };
+    if (currentLearningChallenge) return { questionShown: false, reason: "Challenge already active" };
+
+    // Pick a random word from current vocab pack
+    const pool = Array.isArray(wordDatabase) ? wordDatabase.filter(w => w?.en) : [];
+    if (!pool.length) return { questionShown: false, reason: "No words available" };
+
+    const wordObj = pool[Math.floor(Math.random() * pool.length)];
+
+    // Use the existing translate challenge generator
+    const translateHandler = CHALLENGE_TYPES.translate;
+    if (!translateHandler) return { questionShown: false, reason: "Translate handler not found" };
+
+    const challenge = translateHandler(wordObj);
+    if (!challenge) return { questionShown: false, reason: "Challenge generation failed" };
+
+    gateMicrolearnState.active = true;
+    gateMicrolearnState.fromBiome = fromBiome;
+    gateMicrolearnState.toBiome = toBiome;
+    gateMicrolearnState.questionData = { wordObj, challenge };
+    gateMicrolearnState.answered = false;
+    gateMicrolearnState.correct = false;
+    gateMicrolearnState.shieldGranted = false;
+
+    // Show challenge with 6 second time limit
+    currentLearningChallenge = {
+        wordObj,
+        type: "translate",
+        timeLimit: 6,
+        ...challenge
+    };
+    challengeOrigin = { type: "gate_microlearn", fromBiome, toBiome };
+
+    if (typeof pushPause === "function") pushPause();
+    else paused = true;
+    if (typeof setInputLocked === "function") setInputLocked(true);
+
+    showLearningChallenge(currentLearningChallenge);
+    challengeDeadline = Date.now() + (currentLearningChallenge.timeLimit * 1000);
+    challengeTimerId = setInterval(() => {
+        updateChallengeTimerDisplay();
+        if (Date.now() >= challengeDeadline) {
+            clearLearningChallengeTimer();
+            completeGateMicrolearn(false);
+        }
+    }, 100);
+
+    return { questionShown: true, wordKey: wordObj.en, fromBiome, toBiome };
+}
+
+function completeGateMicrolearn(correct) {
+    if (!gateMicrolearnState.active) return { completed: false, reason: "Not active" };
+    if (gateMicrolearnState.answered) return { completed: false, reason: "Already answered" };
+
+    gateMicrolearnState.answered = true;
+    gateMicrolearnState.correct = correct;
+
+    clearLearningChallengeTimer();
+
+    const wordObj = gateMicrolearnState.questionData?.wordObj;
+
+    // Record learning event
+    if (typeof recordLearningEvent === "function" && wordObj) {
+        recordLearningEvent({
+            source: "challenge",
+            wordKey: wordObj.en || "",
+            themeKey: activeVocabPackId || "",
+            result: correct ? "success" : "fail",
+            meta: { type: "gate_microlearn" }
+        });
+    }
+
+    // Grant shield if correct
+    if (correct) {
+        if (typeof playerShieldLayers === "undefined") window.playerShieldLayers = 0;
+        playerShieldLayers = (playerShieldLayers || 0) + 1;
+        gateMicrolearnState.shieldGranted = true;
+        showFloatingText("🛡️ 护盾 +1", player.x, player.y - 40, "#4FC3F7");
+        showToast("答对了！获得1层护盾");
+    } else {
+        showFloatingText("❌ 答错了", player.x, player.y - 40, "#FF5252");
+        showToast("答错了，没有护盾");
+    }
+
+    // Hide challenge and continue to gate
+    setTimeout(() => {
+        hideLearningChallenge();
+        currentLearningChallenge = null;
+        challengeOrigin = null;
+        if (typeof popPause === "function") popPause();
+        else paused = false;
+        if (typeof setInputLocked === "function") setInputLocked(false);
+
+        // Reset state
+        gateMicrolearnState.active = false;
+
+        // Continue to biome gate
+        if (typeof continueGateAfterMicrolearn === "function") {
+            continueGateAfterMicrolearn();
+        }
+    }, 1500);
+
+    return { completed: true, correct, shieldGranted: gateMicrolearnState.shieldGranted };
+}
+
+function answerGateMicrolearn(correct) {
+    return completeGateMicrolearn(correct);
+}
+
+function getGateMicrolearnState() {
+    return {
+        active: gateMicrolearnState.active,
+        fromBiome: gateMicrolearnState.fromBiome,
+        toBiome: gateMicrolearnState.toBiome,
+        answered: gateMicrolearnState.answered,
+        correct: gateMicrolearnState.correct,
+        shieldGranted: gateMicrolearnState.shieldGranted
+    };
 }
 
 function legacySpeakWord(wordObj, sequence) {

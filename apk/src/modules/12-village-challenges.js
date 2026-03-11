@@ -437,6 +437,18 @@ function finishVillageChallenge(session, village, correct, total, diamondsEarned
   const isPerfect = correct === total;
   const scoreReward = isPerfect ? (reward.perfect?.score || 100) : (reward.partial?.score || 50);
 
+  // M1: Record village challenge event
+  if (typeof recordLearningEvent === "function") {
+    const result = isPerfect ? "success" : (correct > 0 ? "partial" : "fail");
+    recordLearningEvent({
+      source: "village",
+      wordKey: null,
+      themeKey: village?.biomeId || "",
+      result: result,
+      meta: { correct, total }
+    });
+  }
+
   showVillageChallengeModal(`
     <div class="village-challenge-result">
       <div class="village-challenge-emoji">${isPerfect ? "🏆" : "📖"}</div>

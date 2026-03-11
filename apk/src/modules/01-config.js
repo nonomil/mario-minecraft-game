@@ -98,6 +98,16 @@ let challengeInputEl = null;
 let challengeTimerEl = null;
 let challengeRepeatBtn = null;
 let challengeHintBtn = null;
+let gateMicrolearnState = {
+    active: false,
+    fromBiome: null,
+    toBiome: null,
+    questionData: null,
+    answered: false,
+    correct: false,
+    shieldGranted: false
+};
+let playerShieldLayers = 0;
 let wordMatchScreenEl = null;
 let matchLeftEl = null;
 let matchRightEl = null;

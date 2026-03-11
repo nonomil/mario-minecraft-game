@@ -1009,6 +1009,15 @@ function damagePlayer(amount, sourceX, knockback = 90) {
         if (inv?.invincible) return;
     }
     if (playerInvincibleTimer > 0) return;
+
+    // M2: Shield layer absorption
+    if (typeof playerShieldLayers !== "undefined" && playerShieldLayers > 0) {
+        playerShieldLayers = Math.max(0, playerShieldLayers - 1);
+        showFloatingText("🛡️ 护盾抵挡", player.x, player.y - 40, "#4FC3F7");
+        const invFrames = Number(getDifficultyConfig().invincibleFrames ?? 30) || 30;
+        playerInvincibleTimer = Math.max(10, invFrames);
+        return;
+    }
     const invFrames = Number(getDifficultyConfig().invincibleFrames ?? 30) || 30;
     playerInvincibleTimer = Math.max(10, invFrames);
     lastDamageFrame = gameFrame;

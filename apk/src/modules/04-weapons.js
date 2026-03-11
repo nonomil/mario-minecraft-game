@@ -36,6 +36,9 @@ function syncWeaponsFromInventory() {
 }
 
 function switchWeapon() {
+    if (typeof syncWeaponsFromInventory === "function") {
+        syncWeaponsFromInventory();
+    }
     const list = playerWeapons.unlocked;
     if (!list.length) return;
     if (list.length === 1) {

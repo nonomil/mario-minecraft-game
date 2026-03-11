@@ -10274,9 +10274,9 @@ const MERGED_KINDERGARTEN_VOCAB = [
     "stage": "kindergarten",
     "imageURLs": [
       {
-        "filename": "",
-        "url": "",
-        "type": "Default"
+        "filename": "dig.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/26cf.svg",
+        "type": "Emoji"
       }
     ]
   },
@@ -14976,7 +14976,403 @@ const MERGED_KINDERGARTEN_VOCAB = [
       }
     ]
   },
-];
+  {
+    "word": "pineapple",
+    "standardized": "pineapple",
+    "chinese": "菠萝",
+    "phonetic": "/ˈpaɪnˌæpəl/",
+    "phrase": "Pineapple is sweet",
+    "phraseTranslation": "菠萝很甜",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "pineapple.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f34d.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "cherry",
+    "standardized": "cherry",
+    "chinese": "樱桃",
+    "phonetic": "/ˈtʃeri/",
+    "phrase": "I like cherries",
+    "phraseTranslation": "我喜欢樱桃",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "cherry.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f352.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "lemon",
+    "standardized": "lemon",
+    "chinese": "柠檬",
+    "phonetic": "/ˈlemən/",
+    "phrase": "Lemon is sour",
+    "phraseTranslation": "柠檬很酸",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "lemon.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f34b.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "kiwi",
+    "standardized": "kiwi",
+    "chinese": "猕猴桃",
+    "phonetic": "/ˈkiːwiː/",
+    "phrase": "Kiwi is green",
+    "phraseTranslation": "猕猴桃是绿色的",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "kiwi.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f95d.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "coconut",
+    "standardized": "coconut",
+    "chinese": "椰子",
+    "phonetic": "/ˈkoʊkənʌt/",
+    "phrase": "Coconut has water",
+    "phraseTranslation": "椰子里有水",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "coconut.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f965.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "mango",
+    "standardized": "mango",
+    "chinese": "芒果",
+    "phonetic": "/ˈmæŋɡoʊ/",
+    "phrase": "Mango is tasty",
+    "phraseTranslation": "芒果很好吃",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "mango.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f96d.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "carrot",
+    "standardized": "carrot",
+    "chinese": "胡萝卜",
+    "phonetic": "/ˈkærət/",
+    "phrase": "Carrots are orange",
+    "phraseTranslation": "胡萝卜是橙色的",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "carrot.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f955.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "broccoli",
+    "standardized": "broccoli",
+    "chinese": "西兰花",
+    "phonetic": "/ˈbrɑːkəli/",
+    "phrase": "Broccoli is healthy",
+    "phraseTranslation": "西兰花很健康",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "broccoli.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f966.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "cucumber",
+    "standardized": "cucumber",
+    "chinese": "黄瓜",
+    "phonetic": "/ˈkjuːkʌmbər/",
+    "phrase": "Cucumber is long",
+    "phraseTranslation": "黄瓜很长",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "cucumber.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f952.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "tomato",
+    "standardized": "tomato",
+    "chinese": "番茄",
+    "phonetic": "/təˈmeɪtoʊ/",
+    "phrase": "Tomato is red",
+    "phraseTranslation": "番茄是红色的",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "tomato.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f345.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "potato",
+    "standardized": "potato",
+    "chinese": "土豆",
+    "phonetic": "/pəˈteɪtoʊ/",
+    "phrase": "Potato is round",
+    "phraseTranslation": "土豆是圆的",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "potato.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f954.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "corn",
+    "standardized": "corn",
+    "chinese": "玉米",
+    "phonetic": "/kɔːrn/",
+    "phrase": "Corn is yellow",
+    "phraseTranslation": "玉米是黄色的",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "corn.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f33d.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "mushroom",
+    "standardized": "mushroom",
+    "chinese": "蘑菇",
+    "phonetic": "/ˈmʌʃruːm/",
+    "phrase": "Mushroom is small",
+    "phraseTranslation": "蘑菇很小",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "mushroom.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f344.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "pizza",
+    "standardized": "pizza",
+    "chinese": "披萨",
+    "phonetic": "/ˈpiːtsə/",
+    "phrase": "Pizza is hot",
+    "phraseTranslation": "披萨很热",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "pizza.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f355.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "sandwich",
+    "standardized": "sandwich",
+    "chinese": "三明治",
+    "phonetic": "/ˈsændwɪtʃ/",
+    "phrase": "Sandwich for lunch",
+    "phraseTranslation": "午餐吃三明治",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "sandwich.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f96a.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "dumpling",
+    "standardized": "dumpling",
+    "chinese": "饺子",
+    "phonetic": "/ˈdʌmplɪŋ/",
+    "phrase": "Dumplings are yummy",
+    "phraseTranslation": "饺子很好吃",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "dumpling.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f95f.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "glove",
+    "standardized": "glove",
+    "chinese": "手套",
+    "phonetic": "/ɡlʌv/",
+    "phrase": "Wear gloves",
+    "phraseTranslation": "戴上手套",
+    "difficulty": "basic",
+    "category": "clothing",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "glove.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f9e4.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "onion",
+    "standardized": "onion",
+    "chinese": "洋葱",
+    "phonetic": "/ˈʌnjən/",
+    "phrase": "Onion is round",
+    "phraseTranslation": "洋葱是圆的",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "onion.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f9c5.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "garlic",
+    "standardized": "garlic",
+    "chinese": "大蒜",
+    "phonetic": "/ˈɡɑːrlɪk/",
+    "phrase": "Garlic smells strong",
+    "phraseTranslation": "大蒜味道很重",
+    "difficulty": "basic",
+    "category": "food",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "garlic.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f9c4.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "boot",
+    "standardized": "boot",
+    "chinese": "靴子",
+    "phonetic": "/buːt/",
+    "phrase": "Put on boots",
+    "phraseTranslation": "穿上靴子",
+    "difficulty": "basic",
+    "category": "clothing",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "boot.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f462.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "gray",
+    "standardized": "gray",
+    "chinese": "灰色",
+    "phonetic": "/ɡreɪ/",
+    "phrase": "Gray cloud",
+    "phraseTranslation": "灰色的云",
+    "difficulty": "basic",
+    "category": "colors",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "gray.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/26aa.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  {
+    "word": "bag",
+    "standardized": "bag",
+    "chinese": "书包",
+    "phonetic": "/bæɡ/",
+    "phrase": "Carry your bag to school",
+    "phraseTranslation": "背着书包去上学",
+    "difficulty": "basic",
+    "category": "school",
+    "stage": "kindergarten",
+    "imageURLs": [
+      {
+        "filename": "bag.svg",
+        "url": "https://twemoji.maxcdn.com/v/latest/svg/1f392.svg",
+        "type": "Emoji"
+      }
+    ]
+  },
+  ];
 
 // Export vocabulary data
 if (typeof module !== 'undefined' && module.exports) {

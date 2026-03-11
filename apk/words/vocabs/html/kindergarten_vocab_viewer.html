@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>幼儿园词库查看器 | Kindergarten Vocabulary Viewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fira+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+      color: #2c3e50;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #6c757d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 600;
+      color: #667eea;
+      font-family: 'Fira Code', monospace;
+    }
+    .controls {
+      padding: 30px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Fira Sans', sans-serif;
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Fira Sans', sans-serif;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+    .btn-secondary {
+      background: #f8f9fa;
+      color: #495057;
+      border: 1px solid #dee2e6;
+    }
+    .btn-secondary:hover {
+      background: #e9ecef;
+    }
+    .btn-secondary.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+    .content-area {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 0;
+      min-height: 600px;
+    }
+    .table-container {
+      overflow-x: auto;
+      padding: 30px;
+      border-right: 1px solid #e9ecef;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    thead {
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #495057;
+      border-bottom: 2px solid #dee2e6;
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f1f3f5;
+    }
+    tbody tr {
+      transition: background-color 0.15s;
+    }
+    tbody tr:hover {
+      background: #f8f9fa;
+    }
+    .word-cell {
+      font-family: 'Fira Code', monospace;
+      font-weight: 500;
+      color: #667eea;
+    }
+    .chinese-cell {
+      font-size: 16px;
+    }
+    .pinyin-cell {
+      font-family: 'Fira Code', monospace;
+      color: #6c757d;
+      font-size: 13px;
+    }
+    .phrase-cell {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .difficulty-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    .difficulty-basic {
+      background: #d1f4e0;
+      color: #0f5132;
+    }
+    .difficulty-intermediate {
+      background: #fff3cd;
+      color: #664d03;
+    }
+    .difficulty-advanced {
+      background: #f8d7da;
+      color: #842029;
+    }
+    .generator-panel {
+      background: #f8f9fa;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .generator-panel h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #495057;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Fira Sans', sans-serif;
+    }
+    .form-group textarea {
+      font-family: 'Fira Code', monospace;
+      resize: vertical;
+      min-height: 200px;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .btn-generate {
+      width: 100%;
+      padding: 14px;
+      background: #f76707;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 10px;
+    }
+    .btn-generate:hover {
+      background: #e8590c;
+    }
+    .btn-copy {
+      width: 100%;
+      padding: 14px;
+      background: #20c997;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-copy:hover {
+      background: #1ba87e;
+    }
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    .alert-warning {
+      background: #fff3cd;
+      color: #664d03;
+      border: 1px solid #ffecb5;
+    }
+    .alert-info {
+      background: #cff4fc;
+      color: #055160;
+      border: 1px solid #b6effb;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+    .empty-state svg {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      opacity: 0.3;
+    }
+    @media (max-width: 1024px) {
+      .content-area {
+        grid-template-columns: 1fr;
+      }
+      .table-container {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎓 幼儿园词库查看器</h1>
+      <p>Kindergarten Vocabulary Viewer - 手工审查与扩充工具</p>
+    </header>
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-label">汉字词库总数</div>
+        <div class="stat-value" id="hanzi-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">英文词库总数</div>
+        <div class="stat-value" id="english-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">当前显示</div>
+        <div class="stat-value" id="filtered-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">重复词数</div>
+        <div class="stat-value" id="duplicate-count">0</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="搜索 word / chinese / phrase...">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-secondary active" data-view="english">英文词库</button>
+        <button class="btn btn-secondary" data-view="hanzi">汉字词库</button>
+      </div>
+    </div>
+
+    <div class="content-area">
+      <div class="table-container">
+        <div id="duplicate-alert"></div>
+        <table id="vocab-table">
+          <thead>
+            <tr id="table-header"></tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div id="empty-state" class="empty-state" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <p>未找到匹配的词条</p>
+        </div>
+      </div>
+
+      <div class="generator-panel">
+        <h2>📝 新词条生成器</h2>
+        <div class="alert alert-info">
+          填写下方字段后点击"生成片段"，复制生成的 JSON 代码后手动粘贴到词库文件中。
+        </div>
+
+        <div class="form-group">
+          <label>目标词库</label>
+          <select id="gen-target">
+            <option value="english">英文词库 (幼儿园完整词库.js)</option>
+            <option value="hanzi">汉字词库 (幼儿园汉字.js)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Word / 英文单词</label>
+          <input type="text" id="gen-word" placeholder="例: apple">
+        </div>
+
+        <div class="form-group">
+          <label>Chinese / 中文</label>
+          <input type="text" id="gen-chinese" placeholder="例: 苹果">
+        </div>
+
+        <div class="form-group" id="gen-pinyin-group">
+          <label>Pinyin / 拼音</label>
+          <input type="text" id="gen-pinyin" placeholder="例: píng guǒ">
+        </div>
+
+        <div class="form-group" id="gen-phonetic-group" style="display:none;">
+          <label>Phonetic / 音标</label>
+          <input type="text" id="gen-phonetic" placeholder="例: /ˈæpəl/">
+        </div>
+
+        <div class="form-group">
+          <label>Phrase (English)</label>
+          <input type="text" id="gen-phrase" placeholder="例: Eat an apple">
+        </div>
+
+        <div class="form-group">
+          <label>Phrase Translation (Chinese)</label>
+          <input type="text" id="gen-phrase-translation" placeholder="例: 吃一个苹果">
+        </div>
+
+        <div class="form-group">
+          <label>Emoji Code (Unicode)</label>
+          <input type="text" id="gen-emoji" placeholder="例: 1f34e">
+        </div>
+
+        <button class="btn-generate" onclick="generateEntry()">🔧 生成片段</button>
+        <button class="btn-copy" onclick="copyToClipboard()">📋 复制到剪贴板</button>
+
+        <div class="form-group">
+          <label>生成的 JSON 片段</label>
+          <textarea id="gen-output" readonly></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Load vocabulary data
+    let hanziVocab = [];
+    let englishVocab = [];
+    let currentView = 'english';
+    let searchQuery = '';
+
+    // Load scripts dynamically
+    function loadVocabData() {
+      // Load 幼儿园汉字.js
+      const hanziScript = document.createElement('script');
+      hanziScript.src = '../06_汉字/幼儿园汉字.js';
+      hanziScript.onload = () => {
+        if (window.kindergartenHanzi) {
+          hanziVocab = window.kindergartenHanzi;
+          document.getElementById('hanzi-count').textContent = hanziVocab.length;
+        }
+        checkLoadComplete();
+      };
+      document.head.appendChild(hanziScript);
+
+      // Load 幼儿园完整词库.js
+      const englishScript = document.createElement('script');
+      englishScript.src = '../01_幼儿园/幼儿园完整词库.js';
+      englishScript.onload = () => {
+        if (window.kindergartenComplete) {
+          englishVocab = window.kindergartenComplete;
+          document.getElementById('english-count').textContent = englishVocab.length;
+        }
+        checkLoadComplete();
+      };
+      document.head.appendChild(englishScript);
+    }
+
+    function checkLoadComplete() {
+      if (hanziVocab.length > 0 && englishVocab.length > 0) {
+        detectDuplicates();
+        renderTable();
+      }
+    }
+
+    function detectDuplicates() {
+      const englishWords = englishVocab.map(v => v.word);
+      const englishDups = englishWords.filter((w, i) => englishWords.indexOf(w) !== i);
+      const uniqueDups = [...new Set(englishDups)];
+
+      document.getElementById('duplicate-count').textContent = uniqueDups.length;
+
+      if (uniqueDups.length > 0) {
+        const alert = document.getElementById('duplicate-alert');
+        alert.innerHTML = `
+          <div class="alert alert-warning">
+            ⚠️ 检测到 ${uniqueDups.length} 个重复词条: ${uniqueDups.slice(0, 10).join(', ')}${uniqueDups.length > 10 ? '...' : ''}
+          </div>
+        `;
+      }
+    }
+
+    function renderTable() {
+      const data = currentView === 'english' ? englishVocab : hanziVocab;
+      const filtered = filterData(data);
+
+      document.getElementById('filtered-count').textContent = filtered.length;
+
+      const header = document.getElementById('table-header');
+      const body = document.getElementById('table-body');
+      const emptyState = document.getElementById('empty-state');
+
+      if (filtered.length === 0) {
+        body.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      // Render header
+      if (currentView === 'english') {
+        header.innerHTML = `
+          <th>Word</th>
+          <th>Chinese</th>
+          <th>Phonetic</th>
+          <th>Phrase</th>
+          <th>Translation</th>
+          <th>Difficulty</th>
+        `;
+      } else {
+        header.innerHTML = `
+          <th>Word</th>
+          <th>Chinese</th>
+          <th>Pinyin</th>
+          <th>Phrase (EN)</th>
+          <th>Phrase (ZH)</th>
+          <th>Difficulty</th>
+        `;
+      }
+
+      // Render body
+      body.innerHTML = filtered.map(item => {
+        if (currentView === 'english') {
+          return `
+            <tr>
+              <td class="word-cell">${item.word || ''}</td>
+              <td class="chinese-cell">${item.chinese || ''}</td>
+              <td class="pinyin-cell">${item.phonetic || ''}</td>
+              <td class="phrase-cell">${item.phrase || ''}</td>
+              <td class="phrase-cell">${item.phraseTranslation || ''}</td>
+              <td><span class="difficulty-badge difficulty-${item.difficulty || 'basic'}">${item.difficulty || 'basic'}</span></td>
+            </tr>
+          `;
+        } else {
+          return `
+            <tr>
+              <td class="word-cell">${item.word || ''}</td>
+              <td class="chinese-cell">${item.chinese || ''}</td>
+              <td class="pinyin-cell">${item.pinyin || ''}</td>
+              <td class="phrase-cell">${item.phrase || ''}</td>
+              <td class="phrase-cell">${item.phraseTranslation || ''}</td>
+              <td><span class="difficulty-badge difficulty-${item.difficulty || 'basic'}">${item.difficulty || 'basic'}</span></td>
+            </tr>
+          `;
+        }
+      }).join('');
+    }
+
+    function filterData(data) {
+      if (!searchQuery) return data;
+
+      const query = searchQuery.toLowerCase();
+      return data.filter(item => {
+        return (item.word && item.word.toLowerCase().includes(query)) ||
+               (item.chinese && item.chinese.includes(query)) ||
+               (item.phrase && item.phrase.toLowerCase().includes(query)) ||
+               (item.phraseTranslation && item.phraseTranslation.includes(query)) ||
+               (item.pinyin && item.pinyin.toLowerCase().includes(query));
+      });
+    }
+
+    function generateEntry() {
+      const target = document.getElementById('gen-target').value;
+      const word = document.getElementById('gen-word').value.trim();
+      const chinese = document.getElementById('gen-chinese').value.trim();
+      const phrase = document.getElementById('gen-phrase').value.trim();
+      const phraseTranslation = document.getElementById('gen-phrase-translation').value.trim();
+      const emoji = document.getElementById('gen-emoji').value.trim();
+
+      if (!word || !chinese || !phrase || !phraseTranslation) {
+        alert('请填写必填字段: Word, Chinese, Phrase, Phrase Translation');
+        return;
+      }
+
+      let entry;
+
+      if (target === 'hanzi') {
+        const pinyin = document.getElementById('gen-pinyin').value.trim();
+        if (!pinyin) {
+          alert('汉字词库需要填写拼音');
+          return;
+        }
+
+        entry = {
+          word: word,
+          chinese: chinese,
+          pinyin: pinyin,
+          phrase: phrase,
+          phraseTranslation: phraseTranslation,
+          difficulty: 'basic',
+          stage: 'kindergarten',
+          mode: 'bilingual'
+        };
+
+        if (emoji) {
+          entry.imageURLs = [{
+            filename: `${word}.svg`,
+            url: `https://twemoji.maxcdn.com/v/latest/svg/${emoji}.svg`,
+            type: "Emoji"
+          }];
+        }
+      } else {
+        const phonetic = document.getElementById('gen-phonetic').value.trim();
+
+        entry = {
+          word: word,
+          standardized: word,
+          chinese: chinese,
+          phonetic: phonetic || '',
+          phrase: phrase,
+          phraseTranslation: phraseTranslation,
+          difficulty: 'basic',
+          category: 'general',
+          stage: 'kindergarten'
+        };
+
+        if (emoji) {
+          entry.imageURLs = [{
+            filename: `${word}.svg`,
+            url: `https://twemoji.maxcdn.com/v/latest/svg/${emoji}.svg`,
+            type: "Emoji"
+          }];
+        }
+      }
+
+      const output = JSON.stringify(entry, null, 2);
+      document.getElementById('gen-output').value = output;
+    }
+
+    function copyToClipboard() {
+      const output = document.getElementById('gen-output');
+      if (!output.value) {
+        alert('请先生成片段');
+        return;
+      }
+
+      output.select();
+      document.execCommand('copy');
+      alert('已复制到剪贴板！');
+    }
+
+    // Event listeners
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderTable();
+    });
+
+    document.querySelectorAll('[data-view]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('[data-view]').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentView = e.target.dataset.view;
+        searchQuery = '';
+        document.getElementById('search-input').value = '';
+        renderTable();
+      });
+    });
+
+    document.getElementById('gen-target').addEventListener('change', (e) => {
+      const isHanzi = e.target.value === 'hanzi';
+      document.getElementById('gen-pinyin-group').style.display = isHanzi ? 'block' : 'none';
+      document.getElementById('gen-phonetic-group').style.display = isHanzi ? 'none' : 'block';
+    });
+
+    // Initialize
+    loadVocabData();
+  </script>
+</body>
+</html>
