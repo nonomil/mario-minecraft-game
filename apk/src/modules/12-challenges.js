@@ -2,18 +2,31 @@
  * 12-challenges.js - 单词收集与学习挑战
  * 从 main.js 拆分 (原始行 3401-3817)
  */
+const _root = typeof window !== "undefined" ? window : globalThis;
 let sessionCorrectStreak = 0;
 let sessionWrongStreak = 0;
-window._sessionWordResults = window._sessionWordResults || [];
+_root._sessionWordResults = _root._sessionWordResults || [];
 
 function recordWordResult(wordObj, correct) {
     if (!wordObj?.en) return;
-    window._sessionWordResults.push({
+    _root._sessionWordResults.push({
         word: String(wordObj.en || ""),
         zh: String(wordObj.zh || ""),
         correct: !!correct,
         time: Date.now()
     });
+}
+
+function shuffleArray(arr) {
+    if (typeof shuffle === "function") return shuffle(arr);
+    const out = Array.isArray(arr) ? arr.slice() : [];
+    for (let i = out.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = out[i];
+        out[i] = out[j];
+        out[j] = tmp;
+    }
+    return out;
 }
 
 function dropItem(type, x, y) {
@@ -65,8 +78,9 @@ function recordWordProgress(wordObj) {
     const en = String(wordObj.en);
     sessionWordCounts[en] = (sessionWordCounts[en] || 0) + 1;
 
-    if (!activeVocabPackId) return;
-    const pr = getPackProgress(activeVocabPackId);
+    const packId = typeof activeVocabPackId === "undefined" ? "" : activeVocabPackId;
+    if (!packId) return;
+    const pr = getPackProgress(packId);
     if (!pr.total) pr.total = Array.isArray(wordDatabase) ? wordDatabase.length : 0;
     const hadEntry = !!pr.unique[en];
     const _normalize = typeof normalizeWordEntry === "function" ? normalizeWordEntry : (v) => ({ seen: Math.max(1, Number(v) || 1), correct: 0, wrong: 0, lastSeen: Date.now(), quality: "new" });
@@ -83,7 +97,7 @@ function recordWordProgress(wordObj) {
             recordLearningEvent({
                 source: "vocab",
                 wordKey: en,
-                themeKey: activeVocabPackId || "",
+                themeKey: packId || "",
                 result: "success"
             });
         }
@@ -91,8 +105,8 @@ function recordWordProgress(wordObj) {
             pr.completed = true;
             saveProgress();
             updateVocabProgressUI();
-            const pack = vocabPacks[activeVocabPackId];
-            showToast(`${pack?.title || activeVocabPackId} 已完成，切换下一个词库`);
+            const pack = vocabPacks[packId];
+            showToast(`${pack?.title || packId} 已完成，切换下一个词库`);
             switchToNextPackInOrder();
             return;
         }
@@ -149,18 +163,28 @@ function speakSessionWordByText(encodedEn) {
 }
 
 function getWordDisplayContentSafe(wordObj) {
-    const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
+    const displayContent = _root.BilingualVocab?.getDisplayContent?.(wordObj);
     if (displayContent) return displayContent;
     const englishText = normalizeSpeechText(wordObj?.english, wordObj?.en, wordObj?.word);
     const chineseText = normalizeSpeechText(wordObj?.character, wordObj?.zh, wordObj?.chinese);
+    const pinyinText = normalizeSpeechText(wordObj?.pinyin, wordObj?.phonetic, wordObj?.romanization);
     const phraseText = String(wordObj?.phrase || "").trim();
     const phraseTranslation = String(wordObj?.phraseZh || wordObj?.phraseTranslation || "").trim();
-    if (getLanguageModeSafe() === "chinese") {
+    const languageMode = getLanguageModeSafe();
+    if (languageMode === "chinese") {
         return {
             primaryText: chineseText || englishText,
             secondaryText: englishText,
             phrasePrimary: phraseTranslation,
             phraseSecondary: phraseText
+        };
+    }
+    if (languageMode === "pinyin") {
+        return {
+            primaryText: pinyinText || chineseText || englishText,
+            secondaryText: chineseText || englishText,
+            phrasePrimary: phraseText,
+            phraseSecondary: phraseTranslation
         };
     }
     return {
@@ -268,7 +292,7 @@ function generatePhraseFillBlankChallenge(wordObj) {
             `<div class="challenge-fill-hint">填入缺少的单词</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,
-        options: shuffle(options).map(option => ({ text: option, value: option, correct: option === answer })),
+        options: shuffleArray(options).map(option => ({ text: option, value: option, correct: option === answer })),
         answer
     };
 }
@@ -337,7 +361,7 @@ function generateFillBlankChallenge(wordObj) {
             `<div class="challenge-fill-hint">缺少哪个字母？</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,
-        options: shuffle(options).map(letter => ({ text: letter, value: letter, correct: letter === missingLetter })),
+        options: shuffleArray(options).map(letter => ({ text: letter, value: letter, correct: letter === missingLetter })),
         answer: missingLetter
     };
 }
@@ -408,7 +432,7 @@ function generateMultiBlankChallenge(wordObj) {
             `<div class="challenge-fill-hint">填入缺少的 ${positions.length} 个字母</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,
-        options: shuffle(options).map(opt => ({
+        options: shuffleArray(options).map(opt => ({
             text: formatMissingWithGaps(opt, positions),
             value: opt,
             correct: opt === missing
@@ -421,14 +445,14 @@ function generateMultiBlankChallenge(wordObj) {
 function generateScrambleDistractors(en, count) {
     const out = [];
     const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
-    const candidates = shuffle(pool.filter(w => w?.en && w.en.toLowerCase() !== en && Math.abs(w.en.length - en.length) <= 2));
+    const candidates = shuffleArray(pool.filter(w => w?.en && w.en.toLowerCase() !== en && Math.abs(w.en.length - en.length) <= 2));
     for (const c of candidates) {
         if (out.length >= count) break;
         const v = String(c.en || "").toLowerCase();
         if (!out.some(x => x.value === v)) out.push({ text: v, value: v, correct: false });
     }
     while (out.length < count) {
-        const fake = shuffle(en.split("")).join("");
+        const fake = shuffleArray(en.split("")).join("");
         if (fake !== en && !out.some(x => x.value === fake)) out.push({ text: fake, value: fake, correct: false });
     }
     return out;
@@ -437,7 +461,7 @@ function generateScrambleDistractors(en, count) {
 function generatePhraseUnscrambleDistractors(correctPhrase, count) {
     const out = [];
     const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
-    const candidates = shuffle(
+    const candidates = shuffleArray(
         pool.filter(w => {
             const text = String(w?.en || "").toLowerCase().trim();
             return text && text !== correctPhrase && text.includes(" ");
@@ -458,7 +482,7 @@ function generatePhraseUnscrambleDistractors(correctPhrase, count) {
     let guard = 0;
     while (out.length < count && guard < 40) {
         guard++;
-        const fakeTokens = shuffle([...tokens]);
+        const fakeTokens = shuffleArray([...tokens]);
         if (fakeTokens.length && tokenPool.length && Math.random() < 0.5) {
             const idx = Math.floor(Math.random() * fakeTokens.length);
             fakeTokens[idx] = tokenPool[Math.floor(Math.random() * tokenPool.length)];
@@ -484,10 +508,10 @@ function generateUnscrambleChallenge(wordObj) {
     if (isPhrase) {
         const tokens = enRaw.split(/\s+/).filter(Boolean);
         if (tokens.length < 2) return generateFillBlankChallenge(wordObj);
-        let scrambledTokens = shuffle([...tokens]);
+        let scrambledTokens = shuffleArray([...tokens]);
         let tries = 0;
         while (scrambledTokens.join(" ") === enRaw && tries < 8) {
-            scrambledTokens = shuffle([...tokens]);
+            scrambledTokens = shuffleArray([...tokens]);
             tries++;
         }
         return {
@@ -498,7 +522,7 @@ function generateUnscrambleChallenge(wordObj) {
                 `<div class="challenge-fill-hint">重新排列单词顺序，拼出正确词组</div>` +
                 `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
                 `</div>`,
-            options: shuffle([
+            options: shuffleArray([
                 { text: enRaw, value: enRaw, correct: true },
                 ...generatePhraseUnscrambleDistractors(enRaw, 3)
             ]),
@@ -509,10 +533,10 @@ function generateUnscrambleChallenge(wordObj) {
     const en = enRaw.replace(/[^a-z]/g, "");
     if (en.length < 3) return generateFillBlankChallenge(wordObj);
 
-    let scrambled = shuffle(en.split(""));
+    let scrambled = shuffleArray(en.split(""));
     let tries = 0;
     while (scrambled.join("") === en && tries < 8) {
-        scrambled = shuffle(en.split(""));
+        scrambled = shuffleArray(en.split(""));
         tries++;
     }
 
@@ -524,7 +548,7 @@ function generateUnscrambleChallenge(wordObj) {
             `<div class="challenge-fill-hint">重新排列字母，拼出正确单词</div>` +
             `<div class="challenge-fill-zh">${wordObj?.zh || wordObj?.en || ""}</div>` +
             `</div>`,
-        options: shuffle([
+        options: shuffleArray([
             { text: en, value: en, correct: true },
             ...generateScrambleDistractors(en, 3)
         ]),
@@ -538,10 +562,10 @@ function generateChineseUnscrambleChallenge(wordObj) {
     if (zhRaw.length < 2) return generateChineseFillBlankChallenge(wordObj);
 
     const chars = zhRaw.split("");
-    let scrambled = shuffle([...chars]);
+    let scrambled = shuffleArray([...chars]);
     let tries = 0;
     while (scrambled.join("") === zhRaw && tries < 8) {
-        scrambled = shuffle([...chars]);
+        scrambled = shuffleArray([...chars]);
         tries++;
     }
 
@@ -555,7 +579,7 @@ function generateChineseUnscrambleChallenge(wordObj) {
             `<div class="challenge-fill-hint">重新排列汉字，拼出正确词组</div>` +
             `<div class="challenge-fill-zh">${enHint}</div>` +
             `</div>`,
-        options: shuffle([
+        options: shuffleArray([
             { text: zhRaw, value: zhRaw, correct: true },
             ...generateChineseScrambleDistractors(zhRaw, 3)
         ]),
@@ -566,7 +590,7 @@ function generateChineseUnscrambleChallenge(wordObj) {
 function generateChineseScrambleDistractors(correctZh, count) {
     const out = [];
     const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
-    const candidates = shuffle(pool.filter(w => {
+    const candidates = shuffleArray(pool.filter(w => {
         const zh = String(w?.zh || w?.chinese || "").trim();
         return zh && zh !== correctZh && Math.abs(zh.length - correctZh.length) <= 1;
     }));
@@ -579,7 +603,7 @@ function generateChineseScrambleDistractors(correctZh, count) {
 
     // Generate fake scrambles if not enough
     while (out.length < count) {
-        const fake = shuffle(correctZh.split("")).join("");
+        const fake = shuffleArray(correctZh.split("")).join("");
         if (fake !== correctZh && !out.some(x => x.value === fake)) {
             out.push({ text: fake, value: fake, correct: false });
         }
@@ -633,7 +657,7 @@ function generateChallengeOptions(wordObj, key, count) {
         if (!value) return;
         options.push({ text: value, value, correct: false, lang: optionLang });
     });
-    return shuffle(options).slice(0, Math.max(2, options.length));
+    return shuffleArray(options).slice(0, Math.max(2, options.length));
 }
 
 function getChallengeOptionValue(wordObj, key) {
@@ -646,15 +670,19 @@ function getChallengeOptionValue(wordObj, key) {
 
 function getChallengeOptionLang(key) {
     const mode = getLanguageModeSafe();
-    if (key === "primary") return mode === "chinese" ? "zh-CN" : "en-US";
-    if (key === "secondary") return mode === "chinese" ? "en-US" : "zh-CN";
+    if (key === "primary") {
+        return (mode === "chinese" || mode === "pinyin") ? "zh-CN" : "en-US";
+    }
+    if (key === "secondary") {
+        return mode === "chinese" ? "en-US" : "zh-CN";
+    }
     return key === "zh" ? "zh-CN" : "en-US";
 }
 
 function pickDistinctWords(wordObj, count) {
     if (!Array.isArray(wordDatabase) || !wordDatabase.length) return [];
     const pool = wordDatabase.filter(w => w && w.en && w.en !== wordObj.en);
-    return shuffle(pool).slice(0, Math.max(0, count));
+    return shuffleArray(pool).slice(0, Math.max(0, count));
 }
 
 // Chinese character fill_blank challenge for Chinese mode
@@ -695,7 +723,7 @@ function generateChinesePhraseFillBlankChallenge(wordObj) {
             `<div class="challenge-fill-hint">缺少哪个汉字？</div>` +
             `<div class="challenge-fill-zh">${enHint}</div>` +
             `</div>`,
-        options: shuffle(options).map(char => ({ text: char, value: char, correct: char === missingChar })),
+        options: shuffleArray(options).map(char => ({ text: char, value: char, correct: char === missingChar })),
         answer: missingChar
     };
 }
@@ -718,7 +746,7 @@ function generateChineseCharOptions(correctChar, fullWord, count) {
     }
 
     // Shuffle and pick random characters
-    const shuffled = shuffle(candidates);
+    const shuffled = shuffleArray(candidates);
     for (const char of shuffled) {
         if (options.length >= count) break;
         if (!options.includes(char)) options.push(char);
@@ -810,6 +838,13 @@ function startLearningChallenge(wordObj, forcedType, origin) {
 function showLearningChallenge(challenge) {
     if (!challengeModalEl) return;
     challengeModalEl.classList.add("visible");
+    const titleEl = challengeModalEl.querySelector("#challenge-title");
+    if (titleEl) {
+        const mode = getLanguageModeSafe();
+        titleEl.innerText = mode === "chinese"
+            ? "汉字挑战"
+            : (mode === "pinyin" ? "拼音挑战" : "学习挑战");
+    }
     if (challengeQuestionEl) {
         if (challenge.questionHtml) {
             challengeQuestionEl.innerHTML = challenge.questionHtml;
@@ -849,11 +884,11 @@ function showLearningChallenge(challenge) {
                         ? option.lang
                         : (/^[\u3400-\u9FFF]+$/.test(String(text || "").trim()) ? "zh-CN" : "en-US");
 
-                    if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
+                    if (_root.MMWG_TTS && typeof _root.MMWG_TTS.speak === "function") {
                         const rate = String(optionLang).toLowerCase().startsWith("zh")
                             ? clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0)
                             : clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
-                        window.MMWG_TTS.speak(text, optionLang, { rate });
+                        _root.MMWG_TTS.speak(text, optionLang, { rate });
                     }
                 };
 
@@ -875,12 +910,12 @@ function showLearningChallenge(challenge) {
         challengeHintBtn.disabled = false;
 
         // 清除旧的提示按钮定时器
-        if (window._challengeHintTimerId) {
-            clearTimeout(window._challengeHintTimerId);
+        if (_root._challengeHintTimerId) {
+            clearTimeout(_root._challengeHintTimerId);
         }
 
         // 10秒后显示提示按钮
-        window._challengeHintTimerId = setTimeout(() => {
+        _root._challengeHintTimerId = setTimeout(() => {
             if (challengeHintBtn && currentLearningChallenge) {
                 challengeHintBtn.style.display = "inline-flex";
             }
@@ -906,9 +941,9 @@ function hideLearningChallenge() {
     if (challengeInputEl) challengeInputEl.value = "";
 
     // 清除提示按钮定时器
-    if (window._challengeHintTimerId) {
-        clearTimeout(window._challengeHintTimerId);
-        window._challengeHintTimerId = null;
+    if (_root._challengeHintTimerId) {
+        clearTimeout(_root._challengeHintTimerId);
+        _root._challengeHintTimerId = null;
     }
 }
 
@@ -955,8 +990,9 @@ function useLearningChallengeHint() {
 }
 
 function writeChallengeResultToProgress(wordObj, quality) {
-    if (!wordObj?.en || !activeVocabPackId) return;
-    const pr = getPackProgress(activeVocabPackId);
+    const packId = typeof activeVocabPackId === "undefined" ? "" : activeVocabPackId;
+    if (!wordObj?.en || !packId) return;
+    const pr = getPackProgress(packId);
     const en = String(wordObj.en);
     const isNew = !pr.unique[en];
     const _normalize = typeof normalizeWordEntry === "function" ? normalizeWordEntry : (v) => ({ seen: Math.max(1, Number(v) || 1), correct: 0, wrong: 0, lastSeen: Date.now(), quality: "new" });
@@ -982,6 +1018,7 @@ function completeLearningChallenge(correct) {
     clearLearningChallengeTimer();
     const reward = LEARNING_CONFIG.challenge.rewards;
     const wordObj = currentLearningChallenge.wordObj;
+    const packId = typeof activeVocabPackId === "undefined" ? "" : activeVocabPackId;
     recordWordResult(wordObj, !!correct);
     const timeLimit = LEARNING_CONFIG.challenge.timeLimit || 10000;
     const elapsed = Math.max(0, timeLimit - Math.max(0, challengeDeadline - Date.now()));
@@ -999,7 +1036,7 @@ function completeLearningChallenge(correct) {
             recordLearningEvent({
                 source: "challenge",
                 wordKey: wordObj?.en || "",
-                themeKey: activeVocabPackId || "",
+                themeKey: packId || "",
                 result: "success",
                 meta: { type: "translate" }
             });
@@ -1009,13 +1046,14 @@ function completeLearningChallenge(correct) {
         inventory.diamond = (inventory.diamond || 0) + (reward.correct.diamond || 0);
         updateInventoryUI();
 
-        // Track challenge success count
-        if (!progress.challengeSuccessCount) progress.challengeSuccessCount = 0;
-        progress.challengeSuccessCount++;
-        saveProgress();
-
-        // Check for milestone rewards
-        checkChallengeMilestoneRewards(progress.challengeSuccessCount);
+        if (typeof progress !== "undefined" && progress) {
+            if (!progress.challengeSuccessCount) progress.challengeSuccessCount = 0;
+            progress.challengeSuccessCount++;
+            if (typeof saveProgress === "function") saveProgress();
+            if (typeof checkChallengeMilestoneRewards === "function") {
+                checkChallengeMilestoneRewards(progress.challengeSuccessCount);
+            }
+        }
 
         showFloatingText("🎉 挑战成功", player.x, player.y - 40);
         if (challengeOrigin && challengeOrigin instanceof WordGate) {
@@ -1041,7 +1079,7 @@ function completeLearningChallenge(correct) {
             recordLearningEvent({
                 source: "challenge",
                 wordKey: wordObj?.en || "",
-                themeKey: activeVocabPackId || "",
+                themeKey: packId || "",
                 result: "fail",
                 meta: { type: "translate" }
             });
@@ -1096,7 +1134,7 @@ function updateWordUI(wordObj) {
     if (!el) return;
 
     // Use bilingual display functions to get correct content based on language mode
-    const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
+    const displayContent = _root.BilingualVocab?.getDisplayContent?.(wordObj);
 
     if (displayContent) {
         // In Chinese mode: primaryText is Chinese, secondaryText is English
@@ -1127,7 +1165,9 @@ function updateWordUI(wordObj) {
 
 function getLanguageModeSafe() {
     const mode = settings.languageMode || "english";
-    return mode === "chinese" ? "chinese" : "english";
+    if (mode === "chinese") return "chinese";
+    if (mode === "pinyin") return "pinyin";
+    return "english";
 }
 
 function checkChallengeMilestoneRewards(count) {
@@ -1174,6 +1214,7 @@ function getSpeakSequence(wordObj) {
     const mode = getLanguageModeSafe();
     const englishText = normalizeSpeechText(wordObj?.english, wordObj?.en, wordObj?.word);
     const chineseText = normalizeSpeechText(wordObj?.character, wordObj?.zh, wordObj?.chinese);
+    const pinyinText = normalizeSpeechText(wordObj?.pinyin, wordObj?.phonetic, wordObj?.romanization);
     const englishRate = clamp(Number(settings.speechEnRate) || 1.0, 0.5, 2.0);
     const chineseRate = clamp(Number(settings.speechZhRate) || 1.0, 0.5, 2.0);
     const sequence = [];
@@ -1181,6 +1222,12 @@ function getSpeakSequence(wordObj) {
     if (mode === "chinese") {
         if (chineseText) sequence.push({ text: chineseText, lang: "zh-CN", rate: chineseRate });
         if (settings.speechZhEnabled && englishText) sequence.push({ text: englishText, lang: "en-US", rate: englishRate });
+        if (!sequence.length && englishText) sequence.push({ text: englishText, lang: "en-US", rate: englishRate });
+        return sequence;
+    }
+    if (mode === "pinyin") {
+        if (pinyinText) sequence.push({ text: pinyinText, lang: "zh-CN", rate: chineseRate });
+        if (settings.speechZhEnabled && chineseText) sequence.push({ text: chineseText, lang: "zh-CN", rate: chineseRate });
         if (!sequence.length && englishText) sequence.push({ text: englishText, lang: "en-US", rate: englishRate });
         return sequence;
     }
@@ -1193,7 +1240,7 @@ function getSpeakSequence(wordObj) {
 
 function speakWithProviderSequence(sequence) {
     return sequence.reduce(
-        (chain, item) => chain.then(() => window.MMWG_TTS.speak(item.text, item.lang, { rate: item.rate })),
+        (chain, item) => chain.then(() => _root.MMWG_TTS.speak(item.text, item.lang, { rate: item.rate })),
         Promise.resolve()
     );
 }
@@ -1209,7 +1256,7 @@ function speakWord(wordObj) {
     const sequence = getSpeakSequence(wordObj);
     if (!sequence.length) return;
 
-    if (window.MMWG_TTS && typeof window.MMWG_TTS.speak === "function") {
+    if (_root.MMWG_TTS && typeof _root.MMWG_TTS.speak === "function") {
         speakWithProviderSequence(sequence).catch(() => legacySpeakWord(wordObj, sequence));
         return;
     }
@@ -1287,7 +1334,7 @@ function completeGateMicrolearn(correct) {
         recordLearningEvent({
             source: "challenge",
             wordKey: wordObj.en || "",
-            themeKey: activeVocabPackId || "",
+            themeKey: (typeof activeVocabPackId === "undefined" ? "" : activeVocabPackId) || "",
             result: correct ? "success" : "fail",
             meta: { type: "gate_microlearn" }
         });
@@ -1295,7 +1342,7 @@ function completeGateMicrolearn(correct) {
 
     // Grant shield if correct
     if (correct) {
-        if (typeof playerShieldLayers === "undefined") window.playerShieldLayers = 0;
+        if (typeof playerShieldLayers === "undefined") _root.playerShieldLayers = 0;
         playerShieldLayers = (playerShieldLayers || 0) + 1;
         gateMicrolearnState.shieldGranted = true;
         showFloatingText("🛡️ 护盾 +1", player.x, player.y - 40, "#4FC3F7");
@@ -1381,15 +1428,15 @@ function legacySpeakWord(wordObj, sequence) {
     }
 
     // Web Speech is the best offline fallback on browsers (some WebViews return empty voices but can still speak).
-    const hasSpeech = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+    const hasSpeech = "speechSynthesis" in _root && typeof SpeechSynthesisUtterance !== "undefined";
     if (hasSpeech) {
         try {
             ensureSpeechReady();
             // Still listen for voiceschanged so we can pick better voices later, but do not block speaking on it.
             ensureSpeechVoices();
 
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.resume();
+            _root.speechSynthesis.cancel();
+            _root.speechSynthesis.resume();
 
             const utterances = speakItems.map(item => {
                 const utterance = new SpeechSynthesisUtterance(item.text);
@@ -1404,7 +1451,7 @@ function legacySpeakWord(wordObj, sequence) {
                 if (!utterance) return;
                 utterance.onend = () => speakUtteranceAt(index + 1);
                 utterance.onerror = () => speakUtteranceAt(index + 1);
-                window.speechSynthesis.speak(utterance);
+                _root.speechSynthesis.speak(utterance);
             };
 
             speakUtteranceAt(0);

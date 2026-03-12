@@ -102,6 +102,7 @@ function testNestedModalPauseBehavior() {
   context.pushPause();
   context.pushPause();
   context.inventoryModalEl.classList.add("visible");
+  context.document.getElementById("armor-select-modal").classList.add("visible");
   assert.equal(context.paused, true, "inventory open should pause game");
 
   context.hideArmorSelectUI();

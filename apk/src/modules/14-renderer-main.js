@@ -221,6 +221,17 @@ function draw() {
 
     ctx.restore();
 
+    const darknessAlpha = typeof getBiomeDarknessOverlayAlpha === "function"
+        ? getBiomeDarknessOverlayAlpha(biome)
+        : 0;
+    if (darknessAlpha > 0) {
+        ctx.save();
+        ctx.fillStyle = `rgba(0,0,0,${Math.max(0, Math.min(1, Number(darknessAlpha) || 0))})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+    }
+    if (typeof renderBiomePostEffects === "function") renderBiomePostEffects(ctx, cameraX);
+
     if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
 
     // BOSS血条

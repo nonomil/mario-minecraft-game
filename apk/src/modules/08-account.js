@@ -48,6 +48,35 @@ function ensureStartOverlayContent() {
                     <div class="overlay-section-title">⚙️ 温馨提示</div>
                     <div class="overlay-hints-text">游戏速度、单词词库选择、学习设置等均可在右上角 ⚙️ 设置 中调整。</div>
                 </div>
+                <div id="overlay-language-mode-selection" class="overlay-language-mode-selection overlay-account-section">
+                    <div class="overlay-account-section-header overlay-language-header">
+                        <div class="overlay-language-title">学习模式</div>
+                        <div id="overlay-language-current" class="overlay-language-current"></div>
+                    </div>
+                    <div class="overlay-language-grid">
+                        <button class="game-btn overlay-mode-btn" id="btn-overlay-language-english" type="button">
+                            <span class="overlay-mode-badge">GB</span>
+                            <span class="overlay-mode-copy">
+                                <span class="overlay-mode-title">英语学习</span>
+                                <span class="overlay-mode-desc">英文主显示 · 中文辅助</span>
+                            </span>
+                        </button>
+                        <button class="game-btn overlay-mode-btn" id="btn-overlay-language-chinese" type="button">
+                            <span class="overlay-mode-badge">CN</span>
+                            <span class="overlay-mode-copy">
+                                <span class="overlay-mode-title">汉字学习</span>
+                                <span class="overlay-mode-desc">中文主显示 · 英文辅助</span>
+                            </span>
+                        </button>
+                        <button class="game-btn overlay-mode-btn" id="btn-overlay-language-pinyin" type="button">
+                            <span class="overlay-mode-badge">PY</span>
+                            <span class="overlay-mode-copy">
+                                <span class="overlay-mode-title">拼音学习</span>
+                                <span class="overlay-mode-desc">拼音主显示 · 汉字辅助</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="overlay-page overlay-page-setup" data-page="setup">
                 <div class="overlay-account overlay-account-shell">
@@ -67,28 +96,6 @@ function ensureStartOverlayContent() {
                             <div class="overlay-account-hint">选择继续 / 重玩 / 删除</div>
                         </div>
                         <div id="overlay-accounts-container" class="account-list overlay-account-list"></div>
-                    </div>
-                    <div id="overlay-language-mode-selection" class="overlay-language-mode-selection overlay-account-section">
-                        <div class="overlay-account-section-header overlay-language-header">
-                            <div class="overlay-language-title">学习模式</div>
-                            <div id="overlay-language-current" class="overlay-language-current"></div>
-                        </div>
-                        <div class="overlay-language-grid">
-                            <button class="game-btn overlay-mode-btn" id="btn-overlay-language-english" type="button">
-                                <span class="overlay-mode-badge">GB</span>
-                                <span class="overlay-mode-copy">
-                                    <span class="overlay-mode-title">英语学习</span>
-                                    <span class="overlay-mode-desc">英文主显示 · 中文辅助</span>
-                                </span>
-                            </button>
-                            <button class="game-btn overlay-mode-btn" id="btn-overlay-language-chinese" type="button">
-                                <span class="overlay-mode-badge">CN</span>
-                                <span class="overlay-mode-copy">
-                                    <span class="overlay-mode-title">汉字学习</span>
-                                    <span class="overlay-mode-desc">中文主显示 · 英文辅助</span>
-                                </span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -143,12 +150,15 @@ function wireStartOverlayAccountActions() {
     // Wire language mode selection buttons
     const enBtn = document.getElementById("btn-overlay-language-english");
     const zhBtn = document.getElementById("btn-overlay-language-chinese");
+    const pyBtn = document.getElementById("btn-overlay-language-pinyin");
     const currentDisplay = document.getElementById("overlay-language-current");
 
     const updateLanguageModeDisplay = () => {
         const mode = settings?.languageMode || "english";
         if (currentDisplay) {
-            currentDisplay.innerText = mode === "chinese" ? "当前：汉字学习" : "当前：英语学习";
+            currentDisplay.innerText = mode === "chinese"
+                ? "当前：汉字学习"
+                : (mode === "pinyin" ? "当前：拼音学习" : "当前：英语学习");
         }
         if (enBtn) {
             enBtn.classList.toggle("is-active", mode === "english");
@@ -157,6 +167,10 @@ function wireStartOverlayAccountActions() {
         if (zhBtn) {
             zhBtn.classList.toggle("is-active", mode === "chinese");
             zhBtn.setAttribute("aria-pressed", mode === "chinese" ? "true" : "false");
+        }
+        if (pyBtn) {
+            pyBtn.classList.toggle("is-active", mode === "pinyin");
+            pyBtn.setAttribute("aria-pressed", mode === "pinyin" ? "true" : "false");
         }
     };
 
@@ -178,6 +192,16 @@ function wireStartOverlayAccountActions() {
                 if (typeof saveSettings === "function") saveSettings();
                 updateLanguageModeDisplay();
                 showToast("已切换到汉字学习模式");
+            }
+        });
+    }
+    if (pyBtn) {
+        pyBtn.addEventListener("click", () => {
+            if (settings) {
+                settings.languageMode = "pinyin";
+                if (typeof saveSettings === "function") saveSettings();
+                updateLanguageModeDisplay();
+                showToast("已切换到拼音学习模式");
             }
         });
     }

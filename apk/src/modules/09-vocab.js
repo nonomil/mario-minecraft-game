@@ -79,7 +79,7 @@ function normalizeSettings(raw) {
     if (!["off", "direct", "gap2", "hybrid"].includes(String(merged.phraseFollowMode || ""))) merged.phraseFollowMode = "hybrid";
     if (!["balanced", "reinforce_wrong"].includes(String(merged.wordRepeatBias || ""))) merged.wordRepeatBias = "reinforce_wrong";
     if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
-    if (!["english", "chinese", "bilingual"].includes(String(merged.languageMode || ""))) merged.languageMode = "english";
+    if (!["english", "chinese", "bilingual", "pinyin"].includes(String(merged.languageMode || ""))) merged.languageMode = "english";
     merged.vocabSelection = normalizeVocabSelectionId(merged.vocabSelection);
     merged.biomeSwitchStepScore = Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 300));
     merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
@@ -1070,6 +1070,7 @@ function shouldKeepByMode(wordObj, languageMode) {
     const mode = String((wordObj && wordObj.mode) || "bilingual").toLowerCase();
     if (mode === "bilingual") return true;
     if (languageMode === "chinese") return mode === "chinese";
+    if (languageMode === "pinyin") return mode === "pinyin";
     if (languageMode === "bilingual") return mode === "english" || mode === "chinese";
     return mode === "english";
 }

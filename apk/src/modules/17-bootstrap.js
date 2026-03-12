@@ -558,7 +558,7 @@ function initializeLanguageModeOnboarding() {
     }
 
     const mode = storage ? storage.loadJson("mmwg:settings", {}).languageMode : null;
-    const hasMode = mode === "english" || mode === "chinese";
+    const hasMode = mode === "english" || mode === "chinese" || mode === "pinyin";
 
     // Show/hide language selection in login screen based on whether mode is already set
     const languageSelection = document.getElementById("language-mode-selection");
@@ -571,7 +571,9 @@ function initializeLanguageModeOnboarding() {
     }
 
     const onSelect = (nextMode) => {
-        const normalized = nextMode === "chinese" ? "chinese" : "english";
+        const normalized = nextMode === "chinese"
+            ? "chinese"
+            : (nextMode === "pinyin" ? "pinyin" : "english");
         if (settings) {
             settings.languageMode = normalized;
             saveSettings();
@@ -584,12 +586,16 @@ function initializeLanguageModeOnboarding() {
 
     const enBtn = document.getElementById("btn-language-mode-english");
     const zhBtn = document.getElementById("btn-language-mode-chinese");
+    const pyBtn = document.getElementById("btn-language-mode-pinyin");
 
     if (enBtn) {
         enBtn.addEventListener("click", () => onSelect("english"));
     }
     if (zhBtn) {
         zhBtn.addEventListener("click", () => onSelect("chinese"));
+    }
+    if (pyBtn) {
+        pyBtn.addEventListener("click", () => onSelect("pinyin"));
     }
 }
 

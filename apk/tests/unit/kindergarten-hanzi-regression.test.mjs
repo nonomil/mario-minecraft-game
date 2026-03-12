@@ -30,8 +30,15 @@ function hasSentencePunctuation(value) {
   return /[，。！？,.!?]/.test(String(value || ""));
 }
 
+function exampleUsesOnlyPackCharacters(value, allowed) {
+  const chars = [...String(value || "").trim()];
+  if (chars.length === 0) return false;
+  return chars.every((char) => /[\u4e00-\u9fff]/.test(char) && allowed.has(char));
+}
+
 function testKindergartenHanziUsesSingleCharacterEntries() {
   const pack = loadKindergartenHanzi();
+  const words = new Set(pack.map((entry) => entry.word));
 
   assert.equal(pack.length, 800, "幼儿园汉字包应扩充到 800 个手工筛选与联网调研结合的单字");
   for (const entry of pack) {
@@ -48,9 +55,14 @@ function testKindergartenHanziUsesSingleCharacterEntries() {
     assert.ok(typeof entry.phrase === "string" && entry.phrase.trim(), `phrase 应包含英文例词释义: ${entry.word}`);
     assert.ok(typeof entry.phraseTranslation === "string" && entry.phraseTranslation.trim(), `phraseTranslation 应包含中文例词: ${entry.word}`);
     assert.equal(hasSentencePunctuation(entry.phraseTranslation), false, `phraseTranslation 应是组词而不是整句: ${entry.word}`);
+    for (const example of entry.examples) {
+      assert.ok(
+        exampleUsesOnlyPackCharacters(example.word, words),
+        `examples 应仅使用汉字包内字符: ${entry.word} -> ${example.word}`
+      );
+    }
   }
 
-  const words = new Set(pack.map((entry) => entry.word));
   for (const required of ["人", "大", "小", "学", "家", "猫", "狗", "妈", "爸", "我"]) {
     assert.ok(words.has(required), `汉字包应包含基础单字 ${required}`);
   }

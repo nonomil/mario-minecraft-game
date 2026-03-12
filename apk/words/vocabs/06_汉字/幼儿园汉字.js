@@ -1,8 +1,10 @@
 // Kindergarten hanzi pack: keep the curated 200-character core and expand to 800 entries.
 // Sources: zispace/hanzi-chars common 800 list, makemeahanzi definitions, HSK 1-7 example words.
+const MAX_EXAMPLES = 2;
+
 function createHanziEntry({ character, pinyin, english, examples, imageCode = "" }) {
   const normalizedExamples = (Array.isArray(examples) ? examples : [])
-    .slice(0, 2)
+    .slice(0, MAX_EXAMPLES)
     .map(([word, gloss]) => ({
       word: String(word || "").trim(),
       english: String(gloss || "").trim()
@@ -29,6 +31,183 @@ function createHanziEntry({ character, pinyin, english, examples, imageCode = ""
         }]
       : []
   };
+}
+
+const HANZI_CHAR_RE = /[\u4e00-\u9fff]/;
+
+function normalizeExampleObject(example) {
+  return {
+    word: String(example && example.word ? example.word : "").trim(),
+    english: String(example && example.english ? example.english : "").trim()
+  };
+}
+
+function isHanziWordWithinPack(word, allowed) {
+  const trimmed = String(word || "").trim();
+  if (!trimmed) return false;
+  for (const char of trimmed) {
+    if (!HANZI_CHAR_RE.test(char)) return false;
+    if (!allowed.has(char)) return false;
+  }
+  return true;
+}
+
+function buildFallbackExamples(entry) {
+  return [{
+    word: entry.character,
+    english: entry.english
+  }];
+}
+
+const HANZI_EXAMPLE_OVERRIDES = {
+  "牙": [["牙口", "teeth"]],
+  "贝": [["贝子", "cowrie"]],
+  "玩": [["玩水", "play with water"]],
+  "是": [["可是", "but"]],
+  "谁": [["是谁", "who is"]],
+  "买": [["买书", "buy books"]],
+  "忙": [["忙人", "busy person"]],
+  "洗": [["洗手", "wash hands"]],
+  "南": [["南风", "south wind"]],
+  "贵": [["贵人", "noble person"]],
+  "成": [["成长", "grow up"]],
+  "眼": [["眼光", "vision"]],
+  "船": [["小船", "boat"]],
+  "养": [["养马", "raise horse"]],
+  "借": [["借书", "borrow books"]],
+  "急": [["急忙", "in a hurry"]],
+  "湖": [["湖水", "lake water"]],
+  "者": [["学者", "scholar"]],
+  "指": [["手指", "finger"]],
+  "血": [["血色", "blood color"]],
+  "金": [["金子", "gold"]],
+  "深": [["深水", "deep water"]],
+  "久": [["久久", "for a long time"]],
+  "救": [["救人", "save people"]],
+  "追": [["追人", "chase people"]],
+  "破": [["破门", "break door"]],
+  "传": [["传人", "heir"]],
+  "调": [["调皮", "naughty"]],
+  "保": [["保安", "security"]],
+  "布": [["布包", "cloth bag"]],
+  "香": [["香水", "perfume"]],
+  "领": [["领口", "collar"]],
+  "烟": [["烟火", "fireworks"]],
+  "桥": [["木桥", "wooden bridge"]],
+  "念": [["念书", "study"]],
+  "法": [["方法", "method"]],
+  "局": [["开局", "start"]],
+  "应": [["应用", "apply"]],
+  "投": [["投手", "pitcher"]],
+  "顶": [["顶天", "top"]],
+  "色": [["色光", "color light"]],
+  "治": [["治水", "water control"]],
+  "列": [["列车", "train"]],
+  "脱": [["脱下", "take off"]],
+  "苦": [["苦心", "painstaking"]],
+  "弱": [["弱小", "weak"]],
+  "密": [["密林", "dense forest"]],
+  "末": [["末尾", "end"]],
+  "浅": [["浅水", "shallow water"]],
+  "赏": [["赏花", "enjoy flowers"]],
+  "舞": [["舞步", "dance steps"]],
+  "恨": [["恨心", "resentment"]],
+  "价": [["价目", "price list"]],
+  "害": [["害虫", "pest"]],
+  "因": [["因果", "cause and effect"]],
+  "清": [["清水", "clear water"]],
+  "混": [["混合", "mix"]],
+  "罪": [["罪人", "guilty person"]],
+  "料": [["料子", "material"]],
+  "露": [["露水", "dew"]],
+  "形": [["外形", "shape"]],
+  "判": [["判定", "judge"]],
+  "佛": [["佛寺", "temple"]],
+  "妙": [["美妙", "wonderful"]],
+  "误": [["误入", "enter by mistake"]],
+  "番": [["番外", "extra"]],
+  "寺": [["寺门", "temple gate"]],
+  "感": [["感人", "touching"]],
+  "探": [["探头", "probe"]],
+  "计": [["计时", "timekeeping"]],
+  "告": [["告示", "notice"]],
+  "致": [["致电", "call"]],
+  "免": [["免去", "avoid"]],
+  "浪": [["浪花", "wave splash"]],
+  "消": [["消气", "calm down"]],
+  "祭": [["祭日", "memorial day"]],
+  "续": [["续写", "continue writing"]],
+  "余": [["多余", "extra"]],
+  "栽": [["栽花", "plant flowers"]],
+  "逆": [["逆风", "headwind"]],
+  "弓": [["弓手", "archer"]],
+  "序": [["序列", "sequence"]],
+  "备": [["备用", "spare"]],
+  "医": [["医生", "doctor"]],
+  "休": [["休学", "suspend school"]],
+  "助": [["助手", "assistant"]],
+  "论": [["论文", "paper"]],
+  "客": [["客人", "guest"]],
+  "何": [["何人", "which person"]],
+  "终": [["终日", "all day"]],
+  "技": [["技艺", "skill"]],
+  "责": [["责问", "question"]],
+  "示": [["示人", "show to people"]],
+  "察": [["察看", "inspect"]],
+  "危": [["危机", "crisis"]],
+  "艺": [["艺人", "artist"]],
+  "武": [["武人", "warrior"]],
+  "势": [["势力", "force"]],
+  "屋": [["屋子", "house"]],
+  "政": [["政治", "politics"]],
+  "统": [["统一", "unify"]],
+  "秀": [["秀气", "delicate"]],
+  "呼": [["呼气", "exhale"]],
+  "施": [["施行", "carry out"]],
+  "豆": [["豆花", "tofu pudding"]],
+  "尾": [["尾儿", "tail end"]],
+  "军": [["军人", "soldier"]],
+  "彼": [["彼时", "that time"]],
+  "悲": [["悲伤", "sadness"]],
+  "眠": [["入眠", "fall asleep"]],
+  "惠": [["惠民", "benefit people"]],
+  "勤": [["勤学", "study hard"]],
+  "寿": [["长寿", "long life"]],
+  "威": [["威风", "impressive"]],
+  "怒": [["怒气", "anger"]],
+  "皇": [["皇上", "emperor"]],
+  "奉": [["奉上", "offer"]],
+  "忧": [["忧心", "worry"]],
+  "吉": [["吉日", "lucky day"]],
+  "悟": [["悟心", "realize"]]
+};
+
+function normalizeOverrideExamples(overrides) {
+  if (!Array.isArray(overrides)) return [];
+  return overrides
+    .map(([word, gloss]) => ({
+      word: String(word || "").trim(),
+      english: String(gloss || "").trim()
+    }))
+    .filter((item) => item.word);
+}
+
+function sanitizeKindergartenHanzi(pack) {
+  const allowed = new Set(pack.map((entry) => entry.character));
+
+  for (const entry of pack) {
+    const override = normalizeOverrideExamples(HANZI_EXAMPLE_OVERRIDES[entry.character]);
+    const cleaned = (Array.isArray(entry.examples) ? entry.examples : [])
+      .map(normalizeExampleObject)
+      .filter((example) => isHanziWordWithinPack(example.word, allowed));
+
+    const finalExamples = override.length
+      ? override.slice(0, MAX_EXAMPLES)
+      : (cleaned.length ? cleaned.slice(0, MAX_EXAMPLES) : buildFallbackExamples(entry));
+    entry.examples = finalExamples;
+    entry.phrase = finalExamples.map((example) => example.english).filter(Boolean).join(" / ");
+    entry.phraseTranslation = finalExamples.map((example) => example.word).join(" / ");
+  }
 }
 
 const kindergartenHanzi = [
@@ -833,6 +1012,8 @@ const kindergartenHanzi = [
   createHanziEntry({ character: "欲", pinyin: "yù", english: "desire", examples: [["食欲", "appetite"]] }),
   createHanziEntry({ character: "悟", pinyin: "wù", english: "to apprehend", examples: [["觉悟", "to come to understand"]] }),
 ];
+
+sanitizeKindergartenHanzi(kindergartenHanzi);
 
 if (typeof window !== "undefined") {
   window.kindergartenHanzi = kindergartenHanzi;

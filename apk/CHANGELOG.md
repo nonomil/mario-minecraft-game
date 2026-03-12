@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.38] - 2026-03-12
+### Added
+- **Pinyin + Hanzi Learning**: Introduced pinyin vocab pack, mode selection, quiz routing, and pinyin-hanzi relation data.
+- **M1 Learning Spine**: Implemented a unified learning event spine for consistent learning flows.
+- **M2 Gate Microlearn**: Added gate microlearning with shield buff feedback.
+- **M3 Dragon Egg Growth**: Implemented dragon egg growth system aligned with the learning progression.
+- **Verification Reports**: Added MVP integration completion and 7/7 test verification reports.
+
+### Fixed
+- **Boss Weapon Switching**: Resolved weapon switching issues during boss combat.
+- **Learning State Duplication**: Removed duplicate learningState implementation to prevent drift.
+- **Kindergarten Hanzi Pack**: Expanded the pack to 800 characters and fixed edge cases.
+
 ## [1.19.37] - 2026-03-11
 ### Added
 - **Crafting Improvements**: Optimized crafting modal visuals and introduced debug injection mechanisms.

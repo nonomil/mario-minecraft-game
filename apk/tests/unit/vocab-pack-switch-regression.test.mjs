@@ -55,6 +55,10 @@ function testManifestResolvesMinecraftAndHanziPackGlobals() {
     () => runInContext(context, "words/vocabs/06_汉字/幼儿园汉字.js"),
     "汉字词库文件应兼容浏览器加载，而不是依赖 CommonJS module"
   );
+  assert.doesNotThrow(
+    () => runInContext(context, "words/vocabs/07_拼音/常用拼音.js"),
+    "拼音词库文件应兼容浏览器加载，而不是依赖 CommonJS module"
+  );
   runInContext(context, "words/vocabs/manifest.js");
 
   const manifest = getManifest(context);
@@ -62,6 +66,7 @@ function testManifestResolvesMinecraftAndHanziPackGlobals() {
   assertPackStartsWithWord(manifest, "vocab.minecraft.intermediate", "diamond");
   assertPackStartsWithWord(manifest, "vocab.minecraft.full", "air");
   assertPackStartsWithWord(manifest, "vocab.kindergarten.hanzi", "一");
+  assertPackStartsWithWord(manifest, "vocab.kindergarten.pinyin", "bā");
 }
 
 function testDefaultVocabSelectionExistsInCurrentManifest() {

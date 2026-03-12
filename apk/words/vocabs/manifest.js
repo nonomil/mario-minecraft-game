@@ -175,6 +175,23 @@ window.vocabManifest.packs.push({
 });
 
 // ========================================
+// 拼音 (Pinyin)
+// ========================================
+
+window.vocabManifest.packs.push({
+  id: 'vocab.kindergarten.pinyin',
+  title: '幼儿园拼音',
+  stage: 'kindergarten',
+  difficulty: 'basic',
+  level: 'full',
+  weight: 1,
+  mode: 'pinyin',
+  type: 'pinyin',
+  file: 'words/vocabs/07_拼音/常用拼音.js',
+  globals: ['PINYIN_CORE_PACK']
+});
+
+// ========================================
 // Add getRaw() method to each pack
 // ========================================
 function resolveManifestGlobalArray(globalName) {
