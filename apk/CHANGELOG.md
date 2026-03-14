@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.40] - 2026-03-14
+### Fixed
+- **APK 首页弹窗**: 修复 Android APK 首页弹窗缺失问题（补齐 web/index.html）。
+
 ## [1.19.39] - 2026-03-14
 ### Added
 - **Boss Mechanics - Blaze Rotating Ring**: Added rotating ring telegraph visuals, damage windows, punish timing, and debug flow coverage.
