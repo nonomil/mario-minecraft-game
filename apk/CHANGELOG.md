@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.39] - 2026-03-14
+### Added
+- **Boss Mechanics - Blaze Rotating Ring**: Added rotating ring telegraph visuals, damage windows, punish timing, and debug flow coverage.
+- **Dragon Arena**: Added three-phase player pursuit behavior in the dragon arena.
+
+### Fixed
+- **Pinyin/Bridge Mode**: Stabilized bridge/pinyin display fallback behavior and clarified the mode label.
+- **Boss Debug Flow**: Restored boss debug phase behavior and ghast intent handling.
+
+### Changed
+- **Boss System Refactor**: Split boss classes/core/shared logic into dedicated modules to improve maintainability.
+- **Repository Hygiene**: Updated ignore rules for worktrees/playwright artifacts to reduce repo pollution.
+
 ## [1.19.38] - 2026-03-12
 ### Added
 - **Pinyin + Hanzi Learning**: Introduced pinyin vocab pack, mode selection, quiz routing, and pinyin-hanzi relation data.

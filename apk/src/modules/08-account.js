@@ -71,7 +71,7 @@ function ensureStartOverlayContent() {
                         <button class="game-btn overlay-mode-btn" id="btn-overlay-language-pinyin" type="button">
                             <span class="overlay-mode-badge">PY</span>
                             <span class="overlay-mode-copy">
-                                <span class="overlay-mode-title">拼音学习</span>
+                                <span class="overlay-mode-title">幼小衔接</span>
                                 <span class="overlay-mode-desc">拼音主显示 · 汉字辅助</span>
                             </span>
                         </button>
@@ -158,7 +158,7 @@ function wireStartOverlayAccountActions() {
         if (currentDisplay) {
             currentDisplay.innerText = mode === "chinese"
                 ? "当前：汉字学习"
-                : (mode === "pinyin" ? "当前：拼音学习" : "当前：英语学习");
+                : (mode === "pinyin" ? "当前：幼小衔接" : "当前：英语学习");
         }
         if (enBtn) {
             enBtn.classList.toggle("is-active", mode === "english");
@@ -201,7 +201,7 @@ function wireStartOverlayAccountActions() {
                 settings.languageMode = "pinyin";
                 if (typeof saveSettings === "function") saveSettings();
                 updateLanguageModeDisplay();
-                showToast("已切换到拼音学习模式");
+                showToast("已切换到幼小衔接模式");
             }
         });
     }

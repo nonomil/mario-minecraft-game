@@ -170,8 +170,13 @@ window.vocabManifest.packs.push({
   weight: 1,
   mode: 'chinese',
   type: 'hanzi',
-  file: 'words/vocabs/06_汉字/幼儿园汉字.js',
-  globals: ['kindergartenHanzi']
+  files: [
+    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
+    'words/vocabs/06_汉字/幼儿园汉字.js',
+    'words/vocabs/07_拼音/常用拼音.js',
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js'
+  ],
+  globals: ['BRIDGE_VOCAB_FULL']
 });
 
 // ========================================
@@ -187,9 +192,37 @@ window.vocabManifest.packs.push({
   weight: 1,
   mode: 'pinyin',
   type: 'pinyin',
-  file: 'words/vocabs/07_拼音/常用拼音.js',
-  globals: ['PINYIN_CORE_PACK']
+  files: [
+    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
+    'words/vocabs/06_汉字/幼儿园汉字.js',
+    'words/vocabs/07_拼音/常用拼音.js',
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js'
+  ],
+  globals: ['BRIDGE_VOCAB_FULL']
 });
+
+// ========================================
+// 幼小衔接 (Bridge)
+// ========================================
+
+window.vocabManifest.packs.push({
+  id: 'vocab.bridge.full',
+  title: '幼小衔接-总词库',
+  stage: 'bridge',
+  difficulty: 'full',
+  level: 'full',
+  weight: 1,
+  mode: 'bilingual',
+  type: 'bridge',
+  files: [
+    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
+    'words/vocabs/06_汉字/幼儿园汉字.js',
+    'words/vocabs/07_拼音/常用拼音.js',
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js'
+  ],
+  globals: ['BRIDGE_VOCAB_FULL']
+});
+
 
 // ========================================
 // Add getRaw() method to each pack

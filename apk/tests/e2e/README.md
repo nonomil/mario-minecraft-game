@@ -30,8 +30,9 @@ npm run test:e2e:ui
 
 3. `boss-debug-controls.spec.mjs`
    - Uses `tests/debug-pages/GameDebug.html` and `window.MMDBG` API.
-   - Can force-spawn all 4 bosses and verify active/locked/type state.
+   - Can force-spawn all 6 bosses and verify active/locked/type state.
    - Can set biome/score and verify stay config is available.
+   - Validates Blaze rotating ring debug flow, damage gap checks, and render state.
 
 ## Manual debug page
 
@@ -48,5 +49,7 @@ The page now exposes:
 - `window.MMDBG.setBiome(id)`
 - `window.MMDBG.setScore(score)`
 - `window.MMDBG.spawnBoss(type)`
+- `window.MMDBG.setBlazeRingConfig({ enabled, speed, gapSize })`
+- `window.MMDBG.forceBlazeRing()`
 - `window.MMDBG.getState()`
 

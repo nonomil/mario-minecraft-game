@@ -19,6 +19,8 @@
     .status { font-size: 12px; color: #a9bee6; white-space: pre-wrap; }
     .game-wrap { width: 100vw; height: 100vh; }
     iframe { display: block; width: 100%; height: 100%; border: 0; background: #000; }
+    .toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text); }
+    input[type="checkbox"] { width: 16px; height: 16px; padding: 0; accent-color: var(--accent); }
   </style>
 </head>
 <body class="debug-panel-collapsed">
@@ -50,6 +52,7 @@
       </select>
       <button id="btnBossPhase">设置BOSS阶段</button>
       <button id="btnEnderDragon">末影龙竞技场</button>
+      <label class="toggle"><input id="dragonProjectileCrystals" type="checkbox" checked>投射物可打碎末影龙水晶</label>
       <button id="btnVillage">生成村庄</button>
       <button id="btnGod">无敌: OFF</button>
     </div>
@@ -110,6 +113,8 @@
     const debugPanelToggleEl = document.getElementById("debugPanelToggle");
     const debugPanelEl = document.getElementById("debugPanel");
     let debugGodMode = false;
+    let dragonProjectileCrystalsEnabled = true;
+    let patched = false;
     let iframeLoaded = false;
     let iframeAccessError = "";
     const CRAFTING_MIN_COUNT = 0;
@@ -427,6 +432,11 @@
       w.damagePlayer = debugDamagePlayerPatched;
     }
 
+    function syncDragonProjectileCrystals(w) {
+      if (!w || !w.endDragonArena) return;
+      w.endDragonArena.projectileCrystalsEnabled = dragonProjectileCrystalsEnabled;
+    }
+
     function setBiome() {
       const biomeId = document.getElementById("biome").value;
       withGame(w => {
@@ -683,7 +693,13 @@
     document.getElementById("btnBossGate").addEventListener("click", spawnBossGate);
     document.getElementById("btnBossPhase").addEventListener("click", setBossPhaseFromInput);
     document.getElementById("btnEnderDragon").addEventListener("click", function() {
-      enterDragonArenaDebug();
+      withGame(w => {
+        patchGodMode(w);
+        if (w.endDragonArena && typeof w.endDragonArena.enter === "function") {
+          w.endDragonArena.enter();
+          syncDragonProjectileCrystals(w);
+        }
+      });
     });
     document.getElementById("btnVillage").addEventListener("click", spawnVillage);
     document.getElementById("btnEnemy").addEventListener("click", spawnEnemy);
@@ -713,15 +729,31 @@
 
     setDebugPanelCollapsed(true);
 
+    const dragonProjectileCrystalsEl = document.getElementById("dragonProjectileCrystals");
+    if (dragonProjectileCrystalsEl) {
+      dragonProjectileCrystalsEl.checked = dragonProjectileCrystalsEnabled;
+      dragonProjectileCrystalsEl.addEventListener("change", function () {
+        dragonProjectileCrystalsEnabled = Boolean(this.checked);
+        if (window.MMDBG) window.MMDBG.dragonProjectileCrystalsEnabled = dragonProjectileCrystalsEnabled;
+        withGame(w => {
+          syncDragonProjectileCrystals(w);
+        });
+      });
+    }
+
     gameFrame.addEventListener("load", () => {
       iframeLoaded = true;
       const w = gw();
-      if (w) patchGodMode(w);
+      if (w) {
+        patchGodMode(w);
+        syncDragonProjectileCrystals(w);
+      }
       renderStatus(w);
     });
 
     // Playwright-friendly debug API
     window.MMDBG = {
+      dragonProjectileCrystalsEnabled,
       ready() {
         const w = gw();
         return Boolean(w && w.bossArena);
@@ -775,11 +807,75 @@
           boss.hp = Math.max(1, Math.round(boss.maxHp * ratio));
         });
       },
+      setBossPhase(phaseValue) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss) return;
+          const targetPhase = Math.max(1, Math.min(3, Number(phaseValue) || 1));
+          if (targetPhase < boss.phase) boss.phase = 1;
+          while (boss.phase < targetPhase) {
+            boss.phase += 1;
+            if (typeof boss.onPhaseChange === "function") boss.onPhaseChange(boss.phase);
+          }
+        });
+      },
       setBossState(nextState) {
         withGame((w) => {
           const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
           if (!boss) return;
           boss.state = String(nextState || "idle");
+        });
+      },
+      triggerWitherSkeletonDash() {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (boss && typeof boss.startDash === "function") boss.startDash(w.player || null);
+        });
+      },
+      triggerWitherShieldBreak() {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (boss && typeof boss.triggerShieldBreak === "function") boss.triggerShieldBreak();
+        });
+      },
+      triggerGhastReflect() {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss || typeof boss.onReflectedHit !== "function") return;
+          boss.onReflectedHit({ type: "ghast_fireball" });
+        });
+      },
+      triggerWardenSonicCast() {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (boss && typeof boss.startSonicCast === "function") boss.startSonicCast();
+        });
+      },
+      triggerEvokerShieldBreak() {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (boss && typeof boss.triggerShieldBreak === "function") boss.triggerShieldBreak();
+        });
+      },
+      setBlazeRingConfig(config) {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss || boss.type !== "blaze") return;
+          const nextConfig = config && typeof config === "object" ? config : {};
+          if (typeof nextConfig.enabled === "boolean") boss.ringEnabled = nextConfig.enabled;
+          const speed = Number(nextConfig.speed);
+          if (!Number.isNaN(speed)) boss.ringSpeed = speed;
+          const gapSize = Number(nextConfig.gapSize);
+          if (!Number.isNaN(gapSize)) boss.ringGapSize = gapSize;
+        });
+      },
+      forceBlazeRing() {
+        withGame((w) => {
+          const boss = w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+          if (!boss || boss.type !== "blaze") return;
+          boss.ringEnabled = true;
+          boss.ringState = "telegraph";
+          boss.ringTimer = 0;
         });
       },
       tick(frameCount) {
@@ -799,6 +895,15 @@
         debugGodMode = Boolean(on);
         const btn = document.getElementById("btnGod");
         if (btn) btn.innerText = "无敌: " + (debugGodMode ? "ON" : "OFF");
+      },
+      setDragonProjectileCrystalsEnabled(on) {
+        dragonProjectileCrystalsEnabled = Boolean(on);
+        const el = document.getElementById("dragonProjectileCrystals");
+        if (el) el.checked = dragonProjectileCrystalsEnabled;
+        this.dragonProjectileCrystalsEnabled = dragonProjectileCrystalsEnabled;
+        withGame((w) => {
+          syncDragonProjectileCrystals(w);
+        });
       },
       prepareDragonLongPressSummon() {
         prepareDragonLongPressSummon();
@@ -906,6 +1011,7 @@
           bossVisualKey: boss && boss.visualKey ? boss.visualKey : null,
           bossPhase: boss && boss.phase ? boss.phase : null,
           bossState: boss && boss.state ? boss.state : null,
+          bossStunTimer: boss && typeof boss.stunTimer === "number" ? boss.stunTimer : 0,
           bossIntentKey: boss && boss.intentKey ? boss.intentKey : '',
           bossRewardKey: boss && boss.rewardKey ? boss.rewardKey : '',
           bossVictoryReady: Boolean(boss && boss.alive === false),
@@ -913,6 +1019,9 @@
           bossProjectileTypes: boss && typeof boss.getProjectileTypeSnapshot === "function" ? boss.getProjectileTypeSnapshot() : (boss && Array.isArray(boss.bossProjectiles) ? Array.from(new Set(boss.bossProjectiles.map((entry) => entry && entry.type ? entry.type : 'default'))) : []),
           bossMinionCount: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).length : 0,
           bossMinionTypes: boss && Array.isArray(boss.minions) ? boss.minions.filter((entry) => entry && entry.alive !== false).map((entry) => entry.type || "skeleton_minion") : [],
+          bossRingState: boss && boss.type === "blaze" ? (boss.ringState || "") : "",
+          bossRingSpeed: boss && boss.type === "blaze" ? (Number(boss.ringSpeed) || 0) : 0,
+          bossRingGapSize: boss && boss.type === "blaze" ? (Number(boss.ringGapSize) || 0) : 0,
           bossEnvironmentActive: Boolean(bossEnvironment && bossEnvironment.active),
           bossEnvironmentId: bossEnvironment ? (bossEnvironment.environmentId || null) : null,
           bossEnvironmentLabel: bossEnvironment ? (bossEnvironment.label || "") : "",
@@ -948,6 +1057,9 @@
           dragonCrystalLabel: dragonArena && dragonArena.active && dragonArena.crystalLabel ? dragonArena.crystalLabel : '',
           dragonObjectiveLabel: dragonArena && dragonArena.active && dragonArena.objectiveLabel ? dragonArena.objectiveLabel : '',
           dragonStatusLabel: dragonArena && dragonArena.active && dragonArena.statusLabel ? dragonArena.statusLabel : '',
+          dragonProjectileCrystalsEnabled: dragonArena && typeof dragonArena.projectileCrystalsEnabled !== "undefined"
+            ? Boolean(dragonArena.projectileCrystalsEnabled)
+            : dragonProjectileCrystalsEnabled,
           dragonBannerText: dragonArena && dragonArena.active && dragonArena.bannerText ? dragonArena.bannerText : '',
           dragonPhasePulse: dragonArena && dragonArena.active ? Number(dragonArena.phasePulse) || 0 : 0,
           dragonDamageFlash: dragonArena && dragonArena.active ? Number(dragonArena.damageFlash) || 0 : 0,

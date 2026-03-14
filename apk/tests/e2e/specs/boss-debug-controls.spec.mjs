@@ -149,6 +149,223 @@ test("Ghast storm environment should push the player with crosswind", async ({ p
   expect(Math.abs(state.playerX - 420)).toBeGreaterThan(1);
 });
 
+test("Ghast reflected fireball should trigger a stun window", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "ghast");
+
+  const state = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena && w.bossArena.boss ? w.bossArena.boss : null;
+    if (!boss || typeof boss.updateProjectiles !== "function") return { stunTimer: 0, intentKey: "" };
+    boss.phaseInvulnerableTimer = 0;
+    boss.bossProjectiles.push({
+      x: boss.x + boss.width / 2,
+      y: boss.y + boss.height / 2,
+      vx: 0,
+      vy: 0,
+      damage: 2,
+      size: 16,
+      reflected: true,
+      type: "ghast_fireball",
+      life: 10
+    });
+    boss.updateProjectiles();
+    return { stunTimer: boss.stunTimer || 0, intentKey: boss.intentKey || "" };
+  });
+
+  expect(state.stunTimer).toBeGreaterThan(0);
+  expect(state.intentKey).toBe("stunned");
+});
+
+test("Ghast reflect should enforce a longer stun window", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "ghast");
+  await page.evaluate(() => window.MMDBG.triggerGhastReflect());
+  const state = await getDebugState(page);
+  expect(state.bossIntentKey).toBe("stunned");
+  expect(state.bossStunTimer).toBeGreaterThan(90);
+});
+
+test("Blaze rotating ring debug flow should expose ring state and config", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+  await page.evaluate(() => {
+    if (!window.MMDBG || typeof window.MMDBG.setBlazeRingConfig !== "function") return;
+    window.MMDBG.setBlazeRingConfig({ enabled: true, speed: 0.12, gapSize: 1.2 });
+    if (typeof window.MMDBG.forceBlazeRing === "function") window.MMDBG.forceBlazeRing();
+  });
+  await tickGame(page, 10);
+
+  await page.waitForFunction(() => {
+    if (!window.MMDBG || typeof window.MMDBG.getState !== "function") return false;
+    const state = window.MMDBG.getState();
+    return state && state.bossId === "blaze" && state.bossRingState === "telegraph";
+  });
+  await tickGame(page, 40);
+  await page.waitForFunction(() => {
+    if (!window.MMDBG || typeof window.MMDBG.getState !== "function") return false;
+    const state = window.MMDBG.getState();
+    return state && state.bossId === "blaze" && state.bossRingState === "active";
+  });
+  const snapshot = await getDebugState(page);
+
+  expect(snapshot.bossId).toBe("blaze");
+  expect(["telegraph", "active"]).toContain(snapshot.bossRingState);
+  expect(snapshot.bossRingSpeed).toBeCloseTo(0.12, 2);
+  expect(snapshot.bossRingGapSize).toBeCloseTo(1.2, 2);
+});
+
+test("Blaze rotating ring should damage outside the gap and spare the safe zone", async ({ page }) => {
+  await openDebugPage(page);
+  await page.evaluate(() => {
+    if (window.MMDBG && typeof window.MMDBG.setGodMode === "function") window.MMDBG.setGodMode(false);
+  });
+  await forceBoss(page, "blaze");
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (w && w.bossArena && w.bossArena.environmentController) {
+      w.bossArena.environmentController.active = false;
+    }
+    if (w && w.bossEnvironmentController) {
+      w.bossEnvironmentController.active = false;
+    }
+    if (!window.MMDBG || typeof window.MMDBG.setBlazeRingConfig !== "function") return;
+    window.MMDBG.setBlazeRingConfig({ enabled: true, speed: 0, gapSize: 1.0 });
+    if (typeof window.MMDBG.forceBlazeRing === "function") window.MMDBG.forceBlazeRing();
+  });
+  await tickGame(page, 40);
+
+  const before = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (!boss || !w || typeof w.eval !== "function") return { hp: null };
+    const playerWidth = Number(w.eval('typeof player !== \"undefined\" && player ? player.width : 0')) || 0;
+    const playerHeight = Number(w.eval('typeof player !== \"undefined\" && player ? player.height : 0')) || 0;
+    if (!playerWidth || !playerHeight) return { hp: null };
+    boss.ringState = "active";
+    boss.ringEnabled = true;
+    boss.ringTimer = 0;
+    boss.ringSpeed = 0;
+    boss.ringGapSize = 1.0;
+    boss.ringAngle = 0;
+    boss.ringInnerRadius = Number(boss.ringInnerRadius) || 80;
+    boss.ringOuterRadius = Number(boss.ringOuterRadius) || 140;
+    boss.ringDamageTimer = 0;
+    const inner = Number(boss.ringInnerRadius) || 0;
+    const outer = Number(boss.ringOuterRadius) || 0;
+    const radius = (inner + outer) / 2;
+    const angle = Math.PI;
+    const px = boss.x + boss.width / 2 + Math.cos(angle) * radius - playerWidth / 2;
+    const py = boss.y + boss.height / 2 + Math.sin(angle) * radius - playerHeight / 2;
+    w.eval(`if (typeof player !== \"undefined\" && player) { player.x = ${px}; player.y = ${py}; }`);
+    w.eval('if (typeof playerInvincibleTimer !== \"undefined\") playerInvincibleTimer = 0;');
+    w.eval('if (typeof playerMaxHp !== \"undefined\" && typeof playerHp !== \"undefined\") playerHp = Math.max(3, Number(playerMaxHp) || 3);');
+    return { hp: Number(w.eval('typeof playerHp !== \"undefined\" ? playerHp : 0')) || 0 };
+  });
+  await tickGame(page, 5);
+  const after = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w) return { hp: null };
+    if (typeof w.eval === "function") {
+      return { hp: Number(w.eval('typeof playerHp !== \"undefined\" ? playerHp : 0')) || 0 };
+    }
+    return { hp: typeof w.playerHp !== "undefined" ? Number(w.playerHp) || 0 : null };
+  });
+
+  expect(after.hp).toBeLessThan(before.hp);
+
+  const safeBefore = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (!boss || !w || typeof w.eval !== "function") return { hp: null };
+    const playerWidth = Number(w.eval('typeof player !== \"undefined\" && player ? player.width : 0')) || 0;
+    const playerHeight = Number(w.eval('typeof player !== \"undefined\" && player ? player.height : 0')) || 0;
+    if (!playerWidth || !playerHeight) return { hp: null };
+    boss.ringState = "active";
+    boss.ringEnabled = true;
+    boss.ringTimer = 0;
+    boss.ringSpeed = 0;
+    boss.ringGapSize = 1.0;
+    boss.ringAngle = 0;
+    boss.ringInnerRadius = Number(boss.ringInnerRadius) || 80;
+    boss.ringOuterRadius = Number(boss.ringOuterRadius) || 140;
+    boss.ringDamageTimer = 0;
+    const inner = Number(boss.ringInnerRadius) || 0;
+    const outer = Number(boss.ringOuterRadius) || 0;
+    const radius = (inner + outer) / 2;
+    const angle = 0;
+    const px = boss.x + boss.width / 2 + Math.cos(angle) * radius - playerWidth / 2;
+    const py = boss.y + boss.height / 2 + Math.sin(angle) * radius - playerHeight / 2;
+    w.eval(`if (typeof player !== \"undefined\" && player) { player.x = ${px}; player.y = ${py}; }`);
+    w.eval('if (typeof playerInvincibleTimer !== \"undefined\") playerInvincibleTimer = 0;');
+    w.eval('if (typeof playerMaxHp !== \"undefined\" && typeof playerHp !== \"undefined\") playerHp = Math.max(3, Number(playerMaxHp) || 3);');
+    return { hp: Number(w.eval('typeof playerHp !== \"undefined\" ? playerHp : 0')) || 0 };
+  });
+  await tickGame(page, 5);
+  const safeAfter = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w) return { hp: null };
+    if (typeof w.eval === "function") {
+      return { hp: Number(w.eval('typeof playerHp !== \"undefined\" ? playerHp : 0')) || 0 };
+    }
+    return { hp: typeof w.playerHp !== "undefined" ? Number(w.playerHp) || 0 : null };
+  });
+
+  expect(safeAfter.hp).toBe(safeBefore.hp);
+});
+
+test("Blaze rotating ring visuals should render for telegraph and active states", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "blaze");
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (!boss) return;
+    boss.ringEnabled = true;
+    boss.ringState = "telegraph";
+    boss.ringSpeed = 0;
+    boss.ringAngle = 0;
+    boss.ringInnerRadius = Number(boss.ringInnerRadius) || 80;
+    boss.ringOuterRadius = Number(boss.ringOuterRadius) || 140;
+  });
+
+  await page.waitForFunction(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    return boss && boss.ringRenderState === "telegraph" && (boss.ringRenderTick || 0) > 0;
+  });
+
+  const before = await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    return { tick: boss ? Number(boss.ringRenderTick) || 0 : 0 };
+  });
+
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    if (!boss) return;
+    boss.ringState = "active";
+  });
+
+  await page.waitForFunction((tick) => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    const boss = w && w.bossArena ? w.bossArena.boss : null;
+    return boss && boss.ringRenderState === "active" && (boss.ringRenderTick || 0) > tick;
+  }, before.tick);
+});
+
 test("Blaze phase 3 environment should build volcanic pressure hazards", async ({ page }) => {
   await openDebugPage(page);
   await forceBoss(page, "blaze");
@@ -173,6 +390,14 @@ test("Warden phase 3 environment should build darkness pressure hazards", async 
   expect(state.bossEnvironmentTheme).toBe("darkness");
   expect(state.bossEnvironmentIntensity).toBe(3);
   expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+});
+
+test("Warden sonic cast should expose a warning intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "warden");
+  await page.evaluate(() => window.MMDBG.triggerWardenSonicCast());
+  const state = await getDebugState(page);
+  expect(state.bossIntentKey).toBe("sonic_warn");
 });
 
 test("Wither phase 3 environment should build shadow pressure hazards", async ({ page }) => {
@@ -268,6 +493,15 @@ test("Wither phase 3 should expose an air-pressure barrage intent", async ({ pag
   expect(state.bossProjectileTypes).toContain("wither_tracking_orb");
 });
 
+test("Wither shield should open a punish window", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither");
+  await setBossPhase(page, 2);
+  await page.evaluate(() => window.MMDBG.triggerWitherShieldBreak());
+  const state = await getDebugState(page);
+  expect(state.bossIntentKey).toBe("shield_break");
+});
+
 test("Ghast phase 3 should expose an air-pressure bombardment intent", async ({ page }) => {
   await openDebugPage(page);
   await forceBoss(page, "ghast");
@@ -322,6 +556,19 @@ test("Wither skeleton debug scene should expose blocking and summoning states", 
   expect(summonState.bossVisualKey).toBe("wither_skeleton_v2");
   expect(summonState.bossState).toBe("summoning");
   expect(summonState.bossMinionCount).toBeGreaterThan(0);
+});
+
+test("Wither skeleton dash should telegraph and recover", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "wither_skeleton");
+  await setBossPhase(page, 2);
+  await page.evaluate(() => window.MMDBG.triggerWitherSkeletonDash());
+  await tickGame(page, 10);
+  let state = await getDebugState(page);
+  expect(state.bossIntentKey).toBe("dash_charge");
+  await tickGame(page, 50);
+  state = await getDebugState(page);
+  expect(state.bossIntentKey).toBe("dash_recover");
 });
 
 test("Biome selection control should switch to volcano and keep stay info available", async ({ page }) => {
@@ -549,6 +796,14 @@ test("Evoker phase 3 should expose a spellburst elite intent", async ({ page }) 
   expect(state.bossType).toBe("EvokerBoss");
   expect(state.bossIntentKey).toBe("spellburst");
   expect(state.bossProjectileTypes).toContain("evoker_spellburst");
+});
+
+test("Evoker shield window should expose an output intent", async ({ page }) => {
+  await openDebugPage(page);
+  await forceBoss(page, "evoker");
+  await page.evaluate(() => window.MMDBG.triggerEvokerShieldBreak());
+  const state = await getDebugState(page);
+  expect(state.bossIntentKey).toBe("shield_break");
 });
 
 test("Warden debug scene should expose heavy attacks and upgraded visuals", async ({ page }) => {

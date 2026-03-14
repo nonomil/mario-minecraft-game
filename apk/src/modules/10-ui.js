@@ -11,6 +11,20 @@ function formatSessionSummaryEntry(primary, secondary, count) {
     return `${primary}(${secondary}) x${safeCount}`;
 }
 
+function getWordDisplayPairSafe(wordObj) {
+    const pair = window.BilingualVocab?.getWordDisplayPair?.(wordObj);
+    if (pair && (pair.primary || pair.secondary)) return pair;
+    const primary = String(wordObj?.en || wordObj?.word || wordObj?.zh || "").trim();
+    const secondary = String(wordObj?.zh || wordObj?.chinese || "").trim();
+    return { primary, secondary };
+}
+
+function getWordKeySafe(wordObj) {
+    const key = window.BilingualVocab?.getWordKey?.(wordObj);
+    if (key) return key;
+    return String(wordObj?.en || wordObj?.word || wordObj?.zh || "").trim();
+}
+
 function getSessionWordSummaryHtml(limit = 6) {
     const counts = sessionWordCounts && typeof sessionWordCounts === "object" ? sessionWordCounts : {};
     const entries = Object.entries(counts)
@@ -22,16 +36,14 @@ function getSessionWordSummaryHtml(limit = 6) {
     const wordMap = new Map();
     const uniqueWords = typeof getUniqueSessionWords === "function" ? getUniqueSessionWords() : [];
     uniqueWords.forEach(w => {
-        if (!w?.en) return;
-        const displayContent = window.BilingualVocab?.getDisplayContent?.(w);
-        wordMap.set(String(w.en), {
-            primary: String(displayContent?.primaryText || w.character || w.chinese || w.zh || w.en || "").trim(),
-            secondary: String(displayContent?.secondaryText || w.english || w.zh || "").trim()
-        });
+        const key = getWordKeySafe(w);
+        if (!key) return;
+        const pair = getWordDisplayPairSafe(w);
+        wordMap.set(key, pair);
     });
-    const parts = entries.map(([en, cnt]) => {
-        const wordMeta = wordMap.get(en) || {};
-        return formatSessionSummaryEntry(wordMeta.primary || en, wordMeta.secondary || "", cnt);
+    const parts = entries.map(([key, cnt]) => {
+        const wordMeta = wordMap.get(key) || {};
+        return formatSessionSummaryEntry(wordMeta.primary || key, wordMeta.secondary || "", cnt);
     }).filter(Boolean);
     return `<br><br>🧠 本局高频词: ${parts.join(" · ")}`;
 }
@@ -251,11 +263,45 @@ function maybeLaunchWordMatchRevive() {
     return true;
 }
 
+function buildWordMatchItems(words) {
+    const items = [];
+    const seen = new Set();
+    words.forEach(word => {
+        const key = getWordKeySafe(word);
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        const pair = getWordDisplayPairSafe(word);
+        const primary = pair.primary || key;
+        const secondary = pair.secondary || pair.primary || key;
+        if (!primary || !secondary) return;
+        items.push({ id: key, left: primary, right: secondary, word });
+    });
+    return items;
+}
+
+function getWordMatchHint(words) {
+    const subjects = new Set(words.map(w => String(w?.subject || "").trim()).filter(Boolean));
+    if (subjects.size !== 1) return "将左侧与右侧正确配对，只有1次机会";
+    const subject = [...subjects][0];
+    const mode = settings.languageMode;
+    if (subject === "language") {
+        if (mode === "pinyin") return "将拼音与汉字拉线连对，只有1次机会";
+        if (mode === "chinese") return "将汉字与拼音拉线连对，只有1次机会";
+        return "将词语与释义拉线连对，只有1次机会";
+    }
+    if (subject === "math") return "将概念与关键词拉线连对，只有1次机会";
+    if (subject === "english") return "将英文与拼读拉线连对，只有1次机会";
+    return "将左侧与右侧正确配对，只有1次机会";
+}
+
 class WordMatchGame {
     constructor(words) {
-        this.words = shuffle(words).slice(0, Math.max(1, LEARNING_CONFIG.wordMatch.wordCount || 5));
-        this.leftItems = shuffle(this.words.map(w => ({ id: w.en, text: w.en, word: w })));
-        this.rightItems = shuffle(this.words.map(w => ({ id: w.en, text: w.zh || w.en, word: w })));
+        const entries = buildWordMatchItems(words);
+        this.entries = shuffle(entries).slice(0, Math.max(1, LEARNING_CONFIG.wordMatch.wordCount || 5));
+        this.words = this.entries.map(item => item.word);
+        this.leftItems = shuffle(this.entries.map(item => ({ id: item.id, text: item.left, word: item.word })));
+        this.rightItems = shuffle(this.entries.map(item => ({ id: item.id, text: item.right, word: item.word })));
+        this.matchHint = getWordMatchHint(this.words);
         this.connections = [];
         this.selectedLeftId = null;
         this.timerMs = LEARNING_CONFIG.wordMatch.timeLimit || 30000;
@@ -306,7 +352,7 @@ class WordMatchGame {
             matchResultEl.classList.remove("visible");
             matchResultEl.innerText = "";
         }
-        if (matchSubtitleEl) matchSubtitleEl.innerText = "将英文与中文拉线连对，只有1次机会";
+        if (matchSubtitleEl) matchSubtitleEl.innerText = this.matchHint || "将左侧与右侧正确配对，只有1次机会";
         matchLeftEl.innerHTML = this.leftItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="en">${item.text}</div>`).join("");
         matchRightEl.innerHTML = this.rightItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="zh">${item.text}</div>`).join("");
         matchTotalEl.innerText = String(this.words.length);

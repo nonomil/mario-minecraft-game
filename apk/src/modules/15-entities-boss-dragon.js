@@ -27,17 +27,6 @@
     const DRAGON_X_MAX = 1160;
     const DRAGON_Y_MIN = 140;
     const DRAGON_Y_MAX = 340;
-    const DRAGON_CRYSTAL_SIZE = {
-        width: 28,
-        height: 34
-    };
-    const DRAGON_CRYSTAL_PILLAR_BASE_Y = 284;
-    const DRAGON_CRYSTAL_LAYOUT = [
-        { id: 1, x: 180, y: 208 },
-        { id: 2, x: 320, y: 202 },
-        { id: 3, x: 520, y: 210 },
-        { id: 4, x: 700, y: 220 }
-    ];
 
     function clampPhase(value) {
         return Math.max(1, Math.min(3, Number(value) || 1));
@@ -244,15 +233,12 @@
     }
 
     function createPlaceholderCrystals() {
-        return DRAGON_CRYSTAL_LAYOUT.map((entry) => ({
-            id: entry.id,
-            alive: true,
-            x: entry.x,
-            y: entry.y,
-            width: DRAGON_CRYSTAL_SIZE.width,
-            height: DRAGON_CRYSTAL_SIZE.height,
-            beamActive: false
-        }));
+        return [
+            { id: 1, alive: true, x: 180, y: 188, width: 28, height: 34, hp: 3, maxHp: 3, beamActive: false },
+            { id: 2, alive: true, x: 320, y: 162, width: 28, height: 34, hp: 3, maxHp: 3, beamActive: false },
+            { id: 3, alive: true, x: 520, y: 176, width: 28, height: 34, hp: 3, maxHp: 3, beamActive: false },
+            { id: 4, alive: true, x: 700, y: 198, width: 28, height: 34, hp: 3, maxHp: 3, beamActive: false }
+        ];
     }
 
     function findCrystalByIndex(crystals, index) {
@@ -305,9 +291,18 @@
         updateHudState() {
             const meta = PHASE_META[this.phase] || PHASE_META[1];
             const aliveCrystalCount = countAliveCrystals(this.crystals);
+            const crystalTotals = this.crystals.reduce((acc, entry) => {
+                if (!entry || !entry.alive) return acc;
+                const maxHp = Math.max(1, Number(entry.maxHp) || 3);
+                const currentHp = Math.max(0, Number(entry.hp));
+                return {
+                    hp: acc.hp + (Number.isFinite(currentHp) && currentHp > 0 ? currentHp : maxHp),
+                    maxHp: acc.maxHp + maxHp
+                };
+            }, { hp: 0, maxHp: 0 });
             this.hudTitle = "ENDER DRAGON";
             this.phaseLabel = meta.label;
-            this.crystalLabel = `Crystals: ${aliveCrystalCount}`;
+            this.crystalLabel = `Crystals: ${aliveCrystalCount} (HP ${crystalTotals.hp}/${crystalTotals.maxHp})`;
             this.objectiveLabel = meta.objective;
             if (this.victoryReady && this.exitPortalReady) {
                 this.statusLabel = "Exit Portal Open";
@@ -372,13 +367,14 @@
             const linked = Boolean(crystal.beamActive);
             crystal.alive = false;
             crystal.beamActive = false;
+            crystal.hp = 0;
             if (linked && this.dragon && this.dragon.alive) {
                 this.dragon.takeDamage(10);
             }
             this.queueBanner("Crystal Destroyed", 72);
             this.updateHudState();
         },
-        damageCrystalAtRect(x, y, width, height) {
+        damageCrystalAtRect(x, y, width, height, damage = 1) {
             const hitRect = {
                 x: Number(x) || 0,
                 y: Number(y) || 0,
@@ -388,7 +384,18 @@
             if (hitRect.width <= 0 || hitRect.height <= 0) return -1;
             const hitIndex = this.crystals.findIndex((entry) => entry && entry.alive && rectsIntersect(hitRect, getCrystalBounds(entry)));
             if (hitIndex >= 0) {
-                this.destroyCrystal(hitIndex);
+                const crystal = this.crystals[hitIndex];
+                const maxHp = Math.max(1, Number(crystal && crystal.maxHp) || 3);
+                const currentHp = Math.max(1, Number(crystal && crystal.hp) || maxHp);
+                const nextHp = Math.max(0, currentHp - Math.max(1, Number(damage) || 1));
+                crystal.maxHp = maxHp;
+                crystal.hp = nextHp;
+                if (nextHp <= 0) {
+                    this.destroyCrystal(hitIndex);
+                } else if (typeof showFloatingText === "function") {
+                    showFloatingText(`Crystal Hit ${nextHp}/${maxHp}`, crystal.x, crystal.y - 24, "#bfe9ff");
+                    this.updateHudState();
+                }
             }
             return hitIndex;
         },

@@ -21,52 +21,69 @@ function getManifest(context) {
   return context.window.vocabManifest || context.window.MMWG_VOCAB_MANIFEST;
 }
 
-function assertPackStartsWithWord(manifest, packId, expectedWord) {
+function getPackFirstWord(manifest, packId) {
   const pack = manifest.packs.find((item) => item && item.id === packId);
-  assert.ok(pack, `应能找到词库 pack: ${packId}`);
-
+  assert.ok(pack, `Expected vocab pack: ${packId}`);
   const words = typeof pack.getRaw === "function" ? pack.getRaw() : [];
-  assert.ok(Array.isArray(words), `${packId} 的 getRaw 应返回数组`);
-  assert.ok(words.length > 0, `${packId} 应能取到真实词库，而不是空数组`);
+  assert.ok(Array.isArray(words) && words.length > 0, `${packId} should return a non-empty array`);
+  return String(words[0]?.word || words[0]?.standardized || "").toLowerCase();
+}
+
+function assertPackStartsWithWord(manifest, packId, expectedWord) {
+  const firstWord = getPackFirstWord(manifest, packId);
   assert.equal(
-    String(words[0]?.word || words[0]?.standardized || "").toLowerCase(),
+    firstWord,
     expectedWord,
-    `${packId} 的首词应保持稳定，证明 manifest 命中了正确数据源`
+    `${packId} should keep a stable first word to confirm manifest mapping`
   );
 }
 
 function testManifestResolvesConstDefinedPackGlobals() {
   const context = createBrowserContext();
 
-  runInContext(context, "words/vocabs/05_初中/junior_high_basic.js");
+  runInContext(context, "words/vocabs/05_\u521d\u4e2d/junior_high_basic.js");
   runInContext(context, "words/vocabs/manifest.js");
 
   const manifest = getManifest(context);
-  assert.ok(manifest && Array.isArray(manifest.packs), "manifest 应成功加载");
+  assert.ok(manifest && Array.isArray(manifest.packs), "manifest should load");
   assertPackStartsWithWord(manifest, "vocab.junior_high.basic", "ability");
 }
 
 function testManifestResolvesMinecraftAndHanziPackGlobals() {
   const context = createBrowserContext();
 
-  runInContext(context, "words/vocabs/04_我的世界/minecraft_intermediate.js");
-  runInContext(context, "words/vocabs/04_我的世界/minecraft_words_full.js");
+  runInContext(context, "words/vocabs/04_\u6211\u7684\u4e16\u754c/minecraft_intermediate.js");
+  runInContext(context, "words/vocabs/04_\u6211\u7684\u4e16\u754c/minecraft_words_full.js");
   assert.doesNotThrow(
-    () => runInContext(context, "words/vocabs/06_汉字/幼儿园汉字.js"),
-    "汉字词库文件应兼容浏览器加载，而不是依赖 CommonJS module"
+    () => runInContext(context, "words/vocabs/06_\u6c49\u5b57/\u5e7c\u513f\u56ed\u6c49\u5b57.js"),
+    "hanzi vocab should load in browser context"
   );
   assert.doesNotThrow(
-    () => runInContext(context, "words/vocabs/07_拼音/常用拼音.js"),
-    "拼音词库文件应兼容浏览器加载，而不是依赖 CommonJS module"
+    () => runInContext(context, "words/vocabs/07_\u62fc\u97f3/\u5e38\u7528\u62fc\u97f3.js"),
+    "pinyin vocab should load in browser context"
+  );
+  assert.doesNotThrow(
+    () => runInContext(context, "words/vocabs/08_\u5e7c\u5c0f\u8854\u63a5/\u5e7c\u5c0f\u8854\u63a5\u603b\u8bcd\u5e93.js"),
+    "bridge vocab should load in browser context"
   );
   runInContext(context, "words/vocabs/manifest.js");
 
   const manifest = getManifest(context);
-  assert.ok(manifest && Array.isArray(manifest.packs), "manifest 应成功加载 Minecraft/汉字词库");
+  assert.ok(manifest && Array.isArray(manifest.packs), "manifest should load Minecraft/hanzi");
   assertPackStartsWithWord(manifest, "vocab.minecraft.intermediate", "diamond");
   assertPackStartsWithWord(manifest, "vocab.minecraft.full", "air");
-  assertPackStartsWithWord(manifest, "vocab.kindergarten.hanzi", "一");
-  assertPackStartsWithWord(manifest, "vocab.kindergarten.pinyin", "bā");
+  const bridgeFirst = getPackFirstWord(manifest, "vocab.bridge.full");
+  assert.equal(bridgeFirst, "\u4e00", "bridge pack should start with the expected anchor word");
+  assert.equal(
+    getPackFirstWord(manifest, "vocab.kindergarten.hanzi"),
+    bridgeFirst,
+    "legacy hanzi pack should map to bridge pack"
+  );
+  assert.equal(
+    getPackFirstWord(manifest, "vocab.kindergarten.pinyin"),
+    bridgeFirst,
+    "legacy pinyin pack should map to bridge pack"
+  );
 }
 
 function testDefaultVocabSelectionExistsInCurrentManifest() {
@@ -78,10 +95,10 @@ function testDefaultVocabSelectionExistsInCurrentManifest() {
   const defaultSelection = context.window.MMWG_DEFAULTS?.settings?.vocabSelection;
   const manifest = getManifest(context);
 
-  assert.ok(defaultSelection, "默认设置应声明 vocabSelection");
+  assert.ok(defaultSelection, "default settings should declare vocabSelection");
   assert.ok(
     manifest?.byId?.[defaultSelection],
-    `默认 vocabSelection 应指向 manifest 中存在的 pack，当前为 ${defaultSelection}`
+    `default vocabSelection should exist in manifest, current: ${defaultSelection}`
   );
 }
 

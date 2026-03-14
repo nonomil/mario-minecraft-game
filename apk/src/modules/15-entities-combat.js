@@ -73,10 +73,13 @@ class Projectile extends Entity {
                 }
             }
             if (typeof endDragonArena !== "undefined" && endDragonArena.active && typeof endDragonArena.damageCrystalAtRect === "function") {
-                const hitCrystalIndex = endDragonArena.damageCrystalAtRect(this.x, this.y, this.width, this.height);
-                if (hitCrystalIndex >= 0) {
-                    this.remove = true;
-                    return;
+                const allowProjectileCrystals = endDragonArena.projectileCrystalsEnabled !== false;
+                if (allowProjectileCrystals) {
+                    const hitCrystalIndex = endDragonArena.damageCrystalAtRect(this.x, this.y, this.width, this.height);
+                    if (hitCrystalIndex >= 0) {
+                        this.remove = true;
+                        return;
+                    }
                 }
             }
             // BOSS碰撞

@@ -86,6 +86,10 @@ function draw() {
         if (typeof endDragonArena.renderBackground === 'function') endDragonArena.renderBackground(ctx);
         if (typeof renderBossSystem === 'function') renderBossSystem();
         drawSteve(player.x, player.y, player.facingRight, player.isAttacking);
+        if (typeof renderInkEffect === 'function') renderInkEffect(ctx);
+        if (typeof renderNetherHeatEffect === 'function') renderNetherHeatEffect(ctx);
+        if (typeof renderEndSpeedBuff === 'function') renderEndSpeedBuff(ctx);
+        if (typeof renderMushroomIslandPenaltyWarning === 'function') renderMushroomIslandPenaltyWarning(ctx);
         if (typeof renderDeepDarkNoiseHud === "function") renderDeepDarkNoiseHud(ctx);
         if (typeof endDragonArena.renderHud === 'function') endDragonArena.renderHud(ctx);
         scheduleNextFrame();
@@ -540,6 +544,14 @@ function getWorldWordDisplayText(wordObj) {
     return fallbackChinese || fallbackEnglish;
 }
 
+function getWordGateLabel(wordObj) {
+    const subject = String(wordObj?.subject || "").trim();
+    if (subject === "math") return "数学闸门";
+    if (subject === "english") return "英语闸门";
+    if (subject === "language") return "语文闸门";
+    return "词语闸门";
+}
+
 function drawWordGate(gate) {
     if (!gate || gate.remove) return;
     if (settings?.wordGateEnabled === false) return;
@@ -555,7 +567,7 @@ function drawWordGate(gate) {
     ctx.textAlign = "center";
     ctx.fillText(getWorldWordDisplayText(gate.wordObj) || "词语", gate.x + gate.width / 2, gate.y + 28);
     ctx.font = "14px Verdana";
-    ctx.fillText(gate.locked ? "词语闸门" : "已解锁", gate.x + gate.width / 2, gate.y + gate.height - 12);
+    ctx.fillText(gate.locked ? getWordGateLabel(gate.wordObj) : "已解锁", gate.x + gate.width / 2, gate.y + gate.height - 12);
     ctx.restore();
 }
 

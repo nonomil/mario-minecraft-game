@@ -6,6 +6,12 @@ export async function openDebugPage(page) {
     window.MMDBG.ensureRunning();
     window.MMDBG.setGodMode(true);
   });
+  await page.evaluate(() => {
+    const toggle = document.getElementById("debugPanelToggle");
+    if (toggle && document.body.classList.contains("debug-panel-collapsed")) {
+      toggle.click();
+    }
+  });
 }
 
 export async function getDebugState(page) {

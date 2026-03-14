@@ -6,6 +6,8 @@ const LEGACY_VOCAB_SELECTION_ALIASES = Object.freeze({
     "vocab.kindergarten": "vocab.kindergarten.full",
     "vocab.kindergarten.basic": "vocab.kindergarten.full",
     "vocab.kindergarten.supplement": "vocab.kindergarten.full",
+    "vocab.kindergarten.hanzi": "vocab.bridge.full",
+    "vocab.kindergarten.pinyin": "vocab.bridge.full",
     "vocab.elementary_lower": "vocab.elementary.basic",
     "vocab.elementary_lower.basic": "vocab.elementary.basic",
     "vocab.elementary_lower.supplement": "vocab.elementary.full",
@@ -804,6 +806,13 @@ function normalizeRawWord(raw) {
             })
             .filter(item => item && item.word)
         : [];
+    const keywords = Array.isArray(raw.keywords)
+        ? raw.keywords.map(item => String(item || "").trim()).filter(Boolean)
+        : (raw.keywords ? [String(raw.keywords || "").trim()].filter(Boolean) : []);
+    const subject = String(raw.subject || "").trim();
+    const moduleName = String(raw.module || "").trim();
+    const concept = String(raw.concept || raw.word || en).trim();
+    const phonics = String(raw.phonics || raw.phonetic || "").trim();
     return {
         ...raw,
         en,
@@ -812,6 +821,11 @@ function normalizeRawWord(raw) {
         chinese: String(raw.chinese || zh || "").trim(),
         pinyin: String(raw.pinyin || "").trim(),
         phonetic: String(raw.phonetic || raw.uk || raw.us || "").trim(),
+        phonics,
+        subject,
+        module: moduleName,
+        concept,
+        keywords,
         english: String(raw.english || "").trim(),
         character: String(raw.character || raw.chinese || "").trim(),
         examples,
@@ -1037,12 +1051,76 @@ window.startWeakWordsPractice = startWeakWordsPractice;
 
 // --- Bilingual vocabulary support ---
 
+function isBridgeMode() {
+    const packId = typeof activeVocabPackId === "string" ? activeVocabPackId : "";
+    const pack = packId && typeof vocabPacks === "object" ? vocabPacks[packId] : null;
+    const stage = String(pack?.stage || "").toLowerCase();
+    const type = String(pack?.type || "").toLowerCase();
+    if (stage === "bridge" || type === "bridge") return true;
+    return packId.startsWith("vocab.bridge");
+}
+
+let cachedHanziPinyinMap = null;
+let cachedHanziPinyinMapHasSource = false;
+const HANZI_CHAR_RE = /[\u4e00-\u9fff]/;
+
+function getHanziPinyinMap() {
+    const root = typeof window !== "undefined" ? window : globalThis;
+    const source = Array.isArray(root.kindergartenHanzi) ? root.kindergartenHanzi : [];
+    if (cachedHanziPinyinMap && (cachedHanziPinyinMapHasSource || source.length === 0)) {
+        return cachedHanziPinyinMap;
+    }
+    const map = new Map();
+    source.forEach(entry => {
+        const char = String(entry?.character || entry?.chinese || entry?.word || "").trim();
+        const pinyin = String(entry?.pinyin || "").trim();
+        if (char.length === 1 && pinyin) {
+            map.set(char, pinyin);
+        }
+    });
+
+    BRIDGE_PINYIN_OVERRIDES.forEach((pinyin, char) => {
+        if (!map.has(char)) {
+            map.set(char, pinyin);
+        }
+    });
+    cachedHanziPinyinMap = map;
+    cachedHanziPinyinMapHasSource = source.length > 0;
+    return map;
+}
+
+function buildPinyinFromHanzi(text) {
+    const map = getHanziPinyinMap();
+    if (!map || !map.size) return "";
+    const out = [];
+    for (const char of String(text || "")) {
+        if (!HANZI_CHAR_RE.test(char)) continue;
+        const py = map.get(char);
+        if (!py) return "";
+        out.push(py);
+    }
+    return out.length ? out.join(" ") : "";
+}
+
+function getPinyinFallback(safeWord) {
+    const direct = String(safeWord.pinyin || "").trim();
+    if (direct) return direct;
+    const source = String(safeWord.chinese || safeWord.character || safeWord.word || "").trim();
+    if (!source) return "";
+    return buildPinyinFromHanzi(source);
+}
+
 function normalizeWordContent(raw) {
     if (!raw || typeof raw !== "object") return null;
     const word = String(raw.word || raw.en || raw.standardized || "").trim();
     if (!word) return null;
     const mode = String(raw.mode || "bilingual").trim().toLowerCase();
-    const normalizedMode = (mode === "english" || mode === "chinese" || mode === "bilingual") ? mode : "bilingual";
+    const normalizedMode = (mode === "english" || mode === "chinese" || mode === "bilingual" || mode === "pinyin")
+        ? mode
+        : "bilingual";
+    const keywords = Array.isArray(raw.keywords)
+        ? raw.keywords.map(item => String(item || "").trim()).filter(Boolean)
+        : (raw.keywords ? [String(raw.keywords || "").trim()].filter(Boolean) : []);
     return {
         ...raw,
         word,
@@ -1052,6 +1130,11 @@ function normalizeWordContent(raw) {
         character: String(raw.character || raw.chinese || "").trim(),
         examples: Array.isArray(raw.examples) ? raw.examples : [],
         phonetic: String(raw.phonetic || raw.uk || raw.us || "").trim(),
+        phonics: String(raw.phonics || "").trim(),
+        subject: String(raw.subject || "").trim(),
+        module: String(raw.module || "").trim(),
+        concept: String(raw.concept || raw.word || "").trim(),
+        keywords,
         phrase: String(raw.phrase || "").trim(),
         phraseTranslation: String(raw.phraseTranslation || raw.phraseZh || "").trim(),
         difficulty: String(raw.difficulty || "basic").trim(),
@@ -1062,7 +1145,7 @@ function normalizeWordContent(raw) {
 
 function getCurrentLanguageMode() {
     const mode = settings.languageMode;
-    if (mode === "chinese" || mode === "bilingual") return mode;
+    if (mode === "chinese" || mode === "bilingual" || mode === "pinyin") return mode;
     return "english";
 }
 
@@ -1080,6 +1163,74 @@ function filterWordsByLanguageMode(words, languageMode) {
     return words.filter(item => item && shouldKeepByMode(item, languageMode));
 }
 
+function getBridgeDisplayContent(safeWord, languageMode) {
+    const subject = String(safeWord.subject || "").trim().toLowerCase();
+    const primaryEnglish = safeWord.english || safeWord.word;
+    const primaryChinese = safeWord.chinese || safeWord.word;
+    const pinyinText = safeWord.pinyin;
+    const phonicsText = safeWord.phonics || safeWord.phonetic || safeWord.english || safeWord.word;
+    const conceptText = safeWord.concept || safeWord.word || primaryChinese || primaryEnglish;
+    const keywordText = Array.isArray(safeWord.keywords) && safeWord.keywords.length
+        ? String(safeWord.keywords[0] || "").trim()
+        : (safeWord.module || primaryChinese || primaryEnglish);
+
+    if (subject === "english") {
+        return {
+            id: primaryEnglish,
+            primaryText: primaryEnglish,
+            secondaryText: phonicsText || primaryEnglish,
+            phoneticText: safeWord.phonetic,
+            phrasePrimary: safeWord.phrase,
+            phraseSecondary: safeWord.phraseTranslation
+        };
+    }
+
+    if (subject === "math") {
+        return {
+            id: conceptText,
+            primaryText: conceptText,
+            secondaryText: keywordText,
+            phoneticText: safeWord.phonetic,
+            phrasePrimary: safeWord.phrase,
+            phraseSecondary: safeWord.phraseTranslation
+        };
+    }
+
+    const isSamePrimary = Boolean(primaryEnglish && primaryChinese && String(primaryEnglish).trim() === String(primaryChinese).trim());
+    const fallbackEnglish = isSamePrimary ? "" : primaryEnglish;
+
+    if (languageMode === "chinese") {
+        return {
+            id: primaryChinese || primaryEnglish,
+            primaryText: primaryChinese || primaryEnglish,
+            secondaryText: pinyinText || fallbackEnglish,
+            phoneticText: pinyinText,
+            phrasePrimary: safeWord.phraseTranslation,
+            phraseSecondary: safeWord.phrase
+        };
+    }
+
+    if (languageMode === "pinyin") {
+        return {
+            id: primaryChinese || primaryEnglish,
+            primaryText: pinyinText || primaryChinese || primaryEnglish,
+            secondaryText: primaryChinese || fallbackEnglish,
+            phoneticText: pinyinText,
+            phrasePrimary: safeWord.phrase,
+            phraseSecondary: safeWord.phraseTranslation
+        };
+    }
+
+    return {
+        id: primaryEnglish || primaryChinese,
+        primaryText: primaryEnglish || primaryChinese,
+        secondaryText: isSamePrimary ? (pinyinText || "") : (primaryChinese || pinyinText),
+        phoneticText: safeWord.phonetic,
+        phrasePrimary: safeWord.phrase,
+        phraseSecondary: safeWord.phraseTranslation
+    };
+}
+
 function getDisplayContent(wordObj) {
     const safeWord = normalizeWordContent(wordObj) || {
         word: "",
@@ -1089,6 +1240,11 @@ function getDisplayContent(wordObj) {
         character: "",
         examples: [],
         phonetic: "",
+        phonics: "",
+        subject: "",
+        module: "",
+        concept: "",
+        keywords: [],
         phrase: "",
         phraseTranslation: ""
     };
@@ -1097,8 +1253,22 @@ function getDisplayContent(wordObj) {
     const primaryChinese = safeWord.chinese;
     const isHanziWord = Boolean(safeWord.character && safeWord.examples && safeWord.examples.length);
 
+    if (isBridgeMode() && safeWord.subject) {
+        return getBridgeDisplayContent(safeWord, languageMode);
+    }
+
     if (isHanziWord) {
         const primaryCharacter = safeWord.character || primaryChinese || primaryEnglish;
+        if (languageMode === "pinyin") {
+            return {
+                id: primaryCharacter,
+                primaryText: safeWord.pinyin || primaryCharacter,
+                secondaryText: primaryCharacter,
+                phoneticText: safeWord.pinyin,
+                phrasePrimary: safeWord.phraseTranslation,
+                phraseSecondary: safeWord.phrase
+            };
+        }
         return {
             id: primaryEnglish || primaryCharacter,
             primaryText: primaryCharacter,
@@ -1120,6 +1290,18 @@ function getDisplayContent(wordObj) {
         };
     }
 
+    if (languageMode === "pinyin") {
+        const fallbackPinyin = getPinyinFallback(safeWord);
+        return {
+            id: primaryEnglish,
+            primaryText: fallbackPinyin || safeWord.pinyin || primaryChinese || primaryEnglish,
+            secondaryText: primaryChinese || primaryEnglish,
+            phoneticText: fallbackPinyin || safeWord.pinyin,
+            phrasePrimary: safeWord.phrase,
+            phraseSecondary: safeWord.phraseTranslation
+        };
+    }
+
     return {
         id: primaryEnglish,
         primaryText: primaryEnglish,
@@ -1130,10 +1312,29 @@ function getDisplayContent(wordObj) {
     };
 }
 
+function getWordDisplayPair(wordObj) {
+    const display = getDisplayContent(wordObj) || {};
+    return {
+        primary: String(display.primaryText || "").trim(),
+        secondary: String(display.secondaryText || "").trim()
+    };
+}
+
+function getWordKey(wordObj) {
+    const display = getDisplayContent(wordObj) || {};
+    const id = String(display.id || "").trim();
+    if (id) return id;
+    const safeWord = normalizeWordContent(wordObj) || {};
+    return String(safeWord.word || safeWord.en || safeWord.english || safeWord.chinese || "").trim();
+}
+
 window.BilingualVocab = {
     normalizeWordContent,
     getCurrentLanguageMode,
     filterWordsByLanguageMode,
-    getDisplayContent
+    getDisplayContent,
+    getWordDisplayPair,
+    getWordKey,
+    isBridgeMode
 };
 

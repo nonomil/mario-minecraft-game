@@ -1,50 +1,18 @@
-// ============ BOSS 战斗系统 ============
+// ============ BOSS 战斗系统（拆分占位）===========
+// 说明：BOSS 实现已拆分到独立模块，本文件保留占位以兼容旧引用。
+if (false) {
 
-function isPlayerProtectedFromWitherInVillage() {
-    return typeof playerInVillage !== 'undefined' && !!playerInVillage;
-}
-
-const BOSS_VISUAL_TOKENS = Object.freeze({
-    blazeCoreDark: '#38210A',
-    blazeCoreMid: '#5A3310',
-    blazeGlowWarm: '#FFB300',
-    blazeGlowHot: '#FFF59D',
-    blazeRodLight: '#FFD54F',
-    blazeRodMid: '#FFB300',
-    blazeRodShadow: '#A85A00',
-    blazeFace: '#251300',
-    blazeEye: '#FFE082',
-    blazeEmber: 'rgba(255, 140, 0, 0.55)',
-    ashDark: 'rgba(28, 28, 28, 0.78)',
-    ashLight: 'rgba(108, 108, 108, 0.48)',
-    boneDark: '#1A1A1A',
-    boneMid: '#343434',
-    boneLight: '#565656',
-    boneAsh: '#7A7A7A',
-    eyeRed: '#D32F2F',
-    eyeHot: '#FF6B6B',
-    swordEdge: '#A8B0B8',
-    swordMid: '#7E8791',
-    swordGuard: '#5D646B',
-    swordGrip: '#34261D'
-});
-
-const BOSS_REGISTRY = Object.freeze([
-    { id: 'wither', score: 2000, flying: true, debugCtor: 'WitherBoss' },
-    { id: 'ghast', score: 4000, flying: true, debugCtor: 'GhastBoss' },
-    { id: 'blaze', score: 6000, flying: true, debugCtor: 'BlazeBoss' },
-    { id: 'wither_skeleton', score: 8000, flying: false, debugCtor: 'WitherSkeletonBoss' },
-    { id: 'warden', score: 10000, flying: false, debugCtor: 'WardenBoss' },
-    { id: 'evoker', score: 12000, flying: false, debugCtor: 'EvokerBoss' }
-]);
-
-const DEFAULT_BOSS_REWARDS = Object.freeze({
-    wither: Object.freeze({ key: 'wither_relic', drops: Object.freeze(['diamond', 'diamond', 'potion']) }),
-    ghast: Object.freeze({ key: 'ghast_tear_cache', drops: Object.freeze(['diamond', 'iron', 'potion']) }),
-    blaze: Object.freeze({ key: 'blaze_powder_cache', drops: Object.freeze(['blaze_powder', 'magma_cream']) }),
-    wither_skeleton: Object.freeze({ key: 'ashen_bone_cache', drops: Object.freeze(['coal', 'iron']) }),
-    warden: Object.freeze({ key: 'echo_cache', drops: Object.freeze(['echo_shard', 'sculk_vein']) }),
-    evoker: Object.freeze({ key: 'arcane_cache', drops: Object.freeze(['emerald', 'potion']) })
+const BLAZE_RING_DEFAULTS = Object.freeze({
+    telegraphFrames: 36,
+    activeFrames: 260,
+    punishFrames: 90,
+    cooldownFrames: 360,
+    innerRadius: 80,
+    outerRadius: 140,
+    damageCooldown: 24,
+    speed: 0.1,
+    gapSize: 1.2,
+    punishDamageMultiplier: 1.5
 });
 
 function getBossRewardConfig(type) {
@@ -248,6 +216,7 @@ class Boss {
         return Array.from(seen);
     }
 // PLACEHOLDER_BOSS_METHODS
+    onReflectedHit(projectile) {}
 
     updateProjectiles() {
         for (let i = this.bossProjectiles.length - 1; i >= 0; i--) {
@@ -275,6 +244,7 @@ class Boss {
                 if (Math.abs(p.x - this.x - this.width / 2) < p.size + this.width / 2 &&
                     Math.abs(p.y - this.y - this.height / 2) < p.size + this.height / 2) {
                     this.takeDamage(p.damage);
+                    this.onReflectedHit(p);
                     this.bossProjectiles.splice(i, 1);
                     continue;
                 }
@@ -1059,6 +1029,10 @@ class GhastBoss extends Boss {
         this.rushing = false;
         this.rushTarget = null;
         this.startX = spawnX;
+        this.fireballWindup = 0;
+        this.pendingFireballCount = 0;
+        this.fireballWindupFrames = 24;
+        this.reflectStunDuration = 90;
     }
 // PLACEHOLDER_GHAST_PART1
 
@@ -1093,13 +1067,24 @@ class GhastBoss extends Boss {
         this.y = 80 + Math.sin(this.moveAngle * 2) * 60;
 
         // 攻击
-        this.setIntent(this.phase >= 3 ? 'bombardment' : 'hover_fire');
         const interval = this.phase === 1 ? 150 : this.phase === 2 ? 90 : 60;
-        this.attackTimer++;
-        if (this.attackTimer >= interval) {
-            const count = this.phase === 1 ? 1 : this.phase === 2 ? 2 : 3;
-            this.shootFireball(playerRef, count);
-            this.attackTimer = 0;
+        if (this.fireballWindup > 0) {
+            this.setIntent('charge_fire');
+            this.fireballWindup--;
+            if (this.fireballWindup === 0 && this.pendingFireballCount > 0) {
+                this.shootFireball(playerRef, this.pendingFireballCount);
+                this.pendingFireballCount = 0;
+            }
+        } else {
+            this.setIntent(this.phase >= 3 ? 'bombardment' : 'hover_fire');
+            this.attackTimer++;
+            if (this.attackTimer >= interval) {
+                this.pendingFireballCount = this.phase === 1 ? 1 : this.phase === 2 ? 2 : 3;
+                this.fireballWindup = Math.max(10, Number(this.fireballWindupFrames) || 24);
+                this.attackTimer = 0;
+                this.flashTimer = Math.max(this.flashTimer || 0, 12);
+                showFloatingText('⚠️', this.x + this.width / 2, this.y - 20, '#FFB74D');
+            }
         }
 
         // 突进计时
@@ -1160,6 +1145,23 @@ class GhastBoss extends Boss {
         }
     }
 
+    onReflectedHit(projectile) {
+        const type = projectile && projectile.type ? String(projectile.type) : '';
+        if (!type.startsWith('ghast_fireball')) return;
+        const stunDuration = Math.max(30, Number(this.reflectStunDuration) || 90);
+        this.stunTimer = Math.max(this.stunTimer, stunDuration);
+        this.rushing = false;
+        this.rushTarget = null;
+        this.rushTimer = 0;
+        this.fireballWindup = 0;
+        this.pendingFireballCount = 0;
+        this.attackTimer = 0;
+        this.setIntent('stunned');
+        if (typeof showFloatingText === 'function') {
+            showFloatingText('反弹命中!', this.x + this.width / 2, this.y - 28, '#FFE082');
+        }
+    }
+
     takeDamage(amount) {
         super.takeDamage(amount);
         this.hitCount++;
@@ -1215,7 +1217,7 @@ class GhastBoss extends Boss {
     render(ctx, camX) {
         const drawX = this.x - camX;
         const drawY = this.y;
-        const attacking = this.rushing || this.attackTimer > 0 && this.attackTimer < 18;
+        const attacking = this.rushing || this.fireballWindup > 0 || this.attackTimer > 0 && this.attackTimer < 18;
         ctx.globalAlpha = this.crying ? 0.6 : 0.95;
         ctx.fillStyle = this.flashTimer > 0 ? '#FFFFFF' : '#F0F0F0';
         ctx.fillRect(drawX, drawY, this.width, this.height);
@@ -1287,11 +1289,24 @@ class BlazeBoss extends Boss {
         this.burstTimer = 0;
         this.fireColumnTimer = 0;
         this.ringCooldown = 180;
+        this.ringEnabled = false;
+        this.ringState = 'idle';
+        this.ringTimer = 0;
+        this.ringSpeed = BLAZE_RING_DEFAULTS.speed;
+        this.ringGapSize = BLAZE_RING_DEFAULTS.gapSize;
+        this.ringAngle = 0;
+        this.ringInnerRadius = BLAZE_RING_DEFAULTS.innerRadius;
+        this.ringOuterRadius = BLAZE_RING_DEFAULTS.outerRadius;
+        this.ringDamageCooldown = BLAZE_RING_DEFAULTS.damageCooldown;
+        this.ringDamageTimer = 0;
     }
 
     updateBehavior(playerRef) {
+        this.updateRingState();
+        this.updateRingDamage(playerRef);
         this.updateFloat();
-        const hasFlameRing = this.bossProjectiles.some((projectile) => projectile && projectile.type === 'blaze_ring_orb' && (projectile.life || 0) > 0);
+        const hasRingState = this.ringState !== 'idle' && this.ringState !== 'cooldown';
+        const hasFlameRing = hasRingState || this.bossProjectiles.some((projectile) => projectile && projectile.type === 'blaze_ring_orb' && (projectile.life || 0) > 0);
         this.setIntent(hasFlameRing ? 'flame_ring' : (this.phase >= 3 ? 'ember_pressure' : 'fireburst'));
         this.updateBurstQueue(playerRef);
         this.updateFireColumns(playerRef);
@@ -1345,6 +1360,132 @@ class BlazeBoss extends Boss {
             });
         }
         showFloatingText('🔥 火焰环!', cx, this.y - 20, '#FFB300');
+    }
+
+    updateRingState() {
+        if (!this.ringEnabled && this.ringState === 'idle') return;
+        this.ringTimer += 1;
+        let nextState = null;
+
+        switch (this.ringState) {
+            case 'idle':
+                if (this.ringEnabled) nextState = 'telegraph';
+                break;
+            case 'telegraph':
+                if (this.ringTimer >= BLAZE_RING_DEFAULTS.telegraphFrames) nextState = 'active';
+                break;
+            case 'active':
+                if (this.ringTimer >= BLAZE_RING_DEFAULTS.activeFrames) nextState = 'punish';
+                break;
+            case 'punish':
+                if (this.ringTimer >= BLAZE_RING_DEFAULTS.punishFrames) nextState = 'cooldown';
+                break;
+            case 'cooldown':
+                if (this.ringTimer >= BLAZE_RING_DEFAULTS.cooldownFrames) nextState = 'idle';
+                break;
+            default:
+                nextState = 'idle';
+                break;
+        }
+
+        if (nextState) {
+            this.ringState = nextState;
+            this.ringTimer = 0;
+        }
+    }
+
+    updateRingDamage(playerRef) {
+        if (this.ringState !== 'active') {
+            if (this.ringDamageTimer > 0) this.ringDamageTimer -= 1;
+            return;
+        }
+        const target = playerRef || (typeof player !== 'undefined' ? player : null);
+        if (!target) return;
+
+        this.ringAngle += this.ringSpeed;
+        if (this.ringDamageTimer > 0) {
+            this.ringDamageTimer -= 1;
+            return;
+        }
+
+        const centerX = this.x + this.width / 2;
+        const centerY = this.y + this.height / 2;
+        const playerCenterX = target.x + target.width / 2;
+        const playerCenterY = target.y + target.height / 2;
+        const dx = playerCenterX - centerX;
+        const dy = playerCenterY - centerY;
+        const distance = Math.hypot(dx, dy);
+        if (distance < this.ringInnerRadius || distance > this.ringOuterRadius) return;
+
+        const angle = Math.atan2(dy, dx);
+        const delta = Math.atan2(Math.sin(angle - this.ringAngle), Math.cos(angle - this.ringAngle));
+        const gapHalf = Math.max(0, Number(this.ringGapSize) || 0) / 2;
+        if (Math.abs(delta) <= gapHalf) return;
+
+        if (typeof damagePlayer === 'function') {
+            damagePlayer(1, this.x, 120);
+            this.ringDamageTimer = this.ringDamageCooldown;
+        }
+    }
+
+    takeDamage(amount) {
+        const multiplier = this.ringState === 'punish' ? BLAZE_RING_DEFAULTS.punishDamageMultiplier : 1;
+        const scaledAmount = Math.ceil((Number(amount) || 0) * multiplier);
+        super.takeDamage(scaledAmount);
+    }
+
+    renderRing(ctx, centerX, centerY) {
+        if (this.ringState === 'idle' || this.ringState === 'cooldown') return;
+        const inner = Math.max(0, Number(this.ringInnerRadius) || 0);
+        const outer = Math.max(inner + 4, Number(this.ringOuterRadius) || inner + 4);
+        const twoPi = Math.PI * 2;
+        const rawGapSize = Math.max(0, Number(this.ringGapSize) || 0);
+        const gapSize = Math.min(rawGapSize, twoPi - 0.01);
+        const gapHalf = gapSize / 2;
+        const gapStart = this.ringAngle - gapHalf;
+        const gapEnd = this.ringAngle + gapHalf;
+
+        const normalize = (angle) => {
+            let value = angle % twoPi;
+            if (value < 0) value += twoPi;
+            return value;
+        };
+
+        const drawBand = (start, end, color, alpha) => {
+            if (end <= start) return;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outer, start, end);
+            ctx.arc(centerX, centerY, inner, end, start, true);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        };
+
+        const start = normalize(gapEnd);
+        const end = normalize(gapStart);
+        const baseColor = this.ringState === 'telegraph' ? '#FFB300' : '#FF6F00';
+        const baseAlpha = this.ringState === 'telegraph' ? 0.35 : 0.55;
+        if (start <= end) {
+            drawBand(start, end, baseColor, baseAlpha);
+        } else {
+            drawBand(start, twoPi, baseColor, baseAlpha);
+            drawBand(0, end, baseColor, baseAlpha);
+        }
+
+        ctx.save();
+        ctx.strokeStyle = this.ringState === 'telegraph' ? '#FFE082' : '#FFD54F';
+        ctx.globalAlpha = this.ringState === 'telegraph' ? 0.8 : 1;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, outer + 2, gapStart, gapEnd);
+        ctx.stroke();
+        ctx.restore();
+
+        this.ringRenderState = this.ringState;
+        this.ringRenderTick = (this.ringRenderTick || 0) + 1;
     }
 // PLACEHOLDER_BLAZE_CONTINUE
 
@@ -1509,6 +1650,8 @@ class BlazeBoss extends Boss {
         const timeValue = Date.now() / 220;
         const rotationSpeed = this.phase >= 3 ? 0.15 : this.phase === 2 ? 0.11 : 0.08;
         this.rotationAngle += rotationSpeed;
+
+        this.renderRing(ctx, centerX, centerY);
 
         drawBlazeFigure(ctx, centerX, centerY, {
             size: 1,
@@ -2453,4 +2596,5 @@ class EvokerBoss extends Boss {
         ctx.globalAlpha = 1;
         ctx.restore();
     }
+}
 }

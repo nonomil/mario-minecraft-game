@@ -1350,14 +1350,13 @@ function showInventoryModal() {
 
 function hideInventoryModal() {
     if (!inventoryModalEl) return;
-    const wasVisible = inventoryModalEl.classList.contains("visible");
-    if (!wasVisible && !inventoryPauseHeld) return;
+    if (!inventoryModalEl.classList.contains("visible") && !inventoryPauseHeld) return;
     inventoryModalEl.classList.remove("visible");
     inventoryModalEl.setAttribute("aria-hidden", "true");
-    if (inventoryPauseHeld || wasVisible) {
+    if (inventoryPauseHeld) {
         popPause();
+        inventoryPauseHeld = false;
     }
-    inventoryPauseHeld = false;
 }
 
 function updateInventoryModal() {
@@ -1611,20 +1610,19 @@ function showCraftingModal() {
 }
 
 function hideCraftingModal() {
-    if (typeof craftingModalEl === "undefined" || !craftingModalEl) return;
-    const wasVisible = craftingModalEl.classList.contains("visible");
-    if (!wasVisible && !craftingPauseHeld) return;
+    if (!craftingModalEl) return;
+    if (!craftingModalEl.classList.contains("visible") && !craftingPauseHeld) return;
     craftingModalEl.classList.remove("visible");
     craftingModalEl.setAttribute("aria-hidden", "true");
-    if (craftingPauseHeld || wasVisible) {
+    if (craftingPauseHeld) {
         popPause();
+        craftingPauseHeld = false;
     }
-    craftingPauseHeld = false;
     craftingActiveRecipeKey = "";
 }
 
 function updateCraftingModal() {
-    if (typeof craftingModalEl === "undefined" || !craftingModalEl || !craftingModalEl.classList.contains("visible")) return;
+    if (!craftingModalEl || !craftingModalEl.classList.contains("visible")) return;
     renderCraftingModal();
 }
 
@@ -2212,13 +2210,12 @@ function showArmorSelectUI() {
 function hideArmorSelectUI() {
     const modal = document.getElementById("armor-select-modal");
     if (!modal) return;
-    const wasVisible = modal.classList.contains("visible");
     modal.classList.remove("visible");
     modal.setAttribute("aria-hidden", "true");
-    if (armorPauseHeld || wasVisible) {
+    if (armorPauseHeld) {
         popPause();
+        armorPauseHeld = false;
     }
-    armorPauseHeld = false;
 }
 
 const RECIPES = {

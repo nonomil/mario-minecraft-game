@@ -226,9 +226,12 @@ class Chest extends Entity {
             if (d.item === "word_card") {
                 const learnedWord = typeof pickWordForSpawn === "function" ? pickWordForSpawn() : null;
                 addScore(d.count);
-                if (learnedWord && learnedWord.en) {
-                    const zh = learnedWord.zh ? ` (${learnedWord.zh})` : "";
-                    showFloatingText(`📘 ${learnedWord.en}${zh} +${d.count}`, this.x, this.y - 20, "#7FB3FF");
+                if (learnedWord) {
+                    const pair = window.BilingualVocab?.getWordDisplayPair?.(learnedWord) || {};
+                    const primary = String(pair.primary || learnedWord.en || learnedWord.word || "").trim();
+                    const secondary = String(pair.secondary || "").trim();
+                    const suffix = secondary ? ` (${secondary})` : "";
+                    showFloatingText(`📘 ${primary}${suffix} +${d.count}`, this.x, this.y - 20, "#7FB3FF");
                     if (typeof speakWord === "function") speakWord(learnedWord);
                 } else {
                     showFloatingText(`📘 +${d.count}`, this.x, this.y - 20, "#7FB3FF");

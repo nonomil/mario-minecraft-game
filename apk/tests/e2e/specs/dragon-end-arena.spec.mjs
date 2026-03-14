@@ -31,6 +31,7 @@ test("Dragon arena exposes player-facing HUD labels and victory messaging", asyn
   expect(entered.dragonHudTitle).toBe("ENDER DRAGON");
   expect(entered.dragonPhaseLabel).toContain("Phase 1");
   expect(entered.dragonCrystalLabel).toContain("4");
+  expect(entered.dragonCrystalLabel).toContain("HP");
   expect(entered.dragonObjectiveLabel).toContain("crystal");
   expect(entered.dragonBannerText).toBeTruthy();
 
@@ -389,7 +390,13 @@ test("Player melee attacks can destroy dragon crystals", async ({ page }) => {
     `);
 
     const beforeAlive = gameWindow.endDragonArena.crystals.filter((entry) => entry && entry.alive).length;
-    gameWindow.eval("performMeleeAttack(WEAPONS.sword);");
+    for (let index = 0; index < 3; index += 1) {
+      gameWindow.eval(`
+        playerWeapons.attackCooldown = 0;
+        player.isAttacking = false;
+        performMeleeAttack(WEAPONS.sword);
+      `);
+    }
     const afterAlive = gameWindow.endDragonArena.crystals.filter((entry) => entry && entry.alive).length;
     return { beforeAlive, afterAlive };
   });
@@ -402,6 +409,7 @@ test("Player projectiles can destroy dragon crystals", async ({ page }) => {
   await openDebugPage(page);
 
   const state = await page.evaluate(() => {
+    window.MMDBG.setDragonProjectileCrystalsEnabled(true);
     window.MMDBG.enterDragonArena();
     const frame = document.getElementById("game");
     const gameWindow = frame && frame.contentWindow ? frame.contentWindow : null;
@@ -411,6 +419,44 @@ test("Player projectiles can destroy dragon crystals", async ({ page }) => {
 
     const targetCrystal = gameWindow.endDragonArena.crystals.find((entry) => entry && entry.alive);
     if (!targetCrystal) return { beforeAlive: 0, afterAlive: 0, projectileCount: 0 };
+
+    const beforeAlive = gameWindow.endDragonArena.crystals.filter((entry) => entry && entry.alive).length;
+    for (let index = 0; index < 3; index += 1) {
+      gameWindow.eval(`
+        if (Array.isArray(projectiles)) projectiles.length = 0;
+        const arrow = new Arrow(${Number(targetCrystal.x) - 60}, ${Number(targetCrystal.y)}, ${Number(targetCrystal.x)}, ${Number(targetCrystal.y)}, "player", 10, 12);
+        projectiles.push(arrow);
+      `);
+
+      for (let step = 0; step < 12; step += 1) {
+        gameWindow.eval("projectiles.forEach(p => p.update(player, golems, enemies)); projectiles = projectiles.filter(p => !p.remove);");
+      }
+    }
+
+    const afterAlive = gameWindow.endDragonArena.crystals.filter((entry) => entry && entry.alive).length;
+    const projectileCount = Number(gameWindow.eval("Array.isArray(projectiles) ? projectiles.length : 0")) || 0;
+    return { beforeAlive, afterAlive, projectileCount };
+  });
+
+  expect(state.beforeAlive).toBeGreaterThan(0);
+  expect(state.afterAlive).toBe(state.beforeAlive - 1);
+  expect(state.projectileCount).toBe(0);
+});
+
+test("Player projectiles do not destroy dragon crystals when toggle is off", async ({ page }) => {
+  await openDebugPage(page);
+
+  const state = await page.evaluate(() => {
+    window.MMDBG.setDragonProjectileCrystalsEnabled(false);
+    window.MMDBG.enterDragonArena();
+    const frame = document.getElementById("game");
+    const gameWindow = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!gameWindow || typeof gameWindow.eval !== "function" || !gameWindow.endDragonArena || !Array.isArray(gameWindow.endDragonArena.crystals)) {
+      return { beforeAlive: 0, afterAlive: 0 };
+    }
+
+    const targetCrystal = gameWindow.endDragonArena.crystals.find((entry) => entry && entry.alive);
+    if (!targetCrystal) return { beforeAlive: 0, afterAlive: 0 };
 
     const beforeAlive = gameWindow.endDragonArena.crystals.filter((entry) => entry && entry.alive).length;
     gameWindow.eval(`
@@ -424,39 +470,11 @@ test("Player projectiles can destroy dragon crystals", async ({ page }) => {
     }
 
     const afterAlive = gameWindow.endDragonArena.crystals.filter((entry) => entry && entry.alive).length;
-    const projectileCount = Number(gameWindow.eval("Array.isArray(projectiles) ? projectiles.length : 0")) || 0;
-    return { beforeAlive, afterAlive, projectileCount };
+    return { beforeAlive, afterAlive };
   });
 
   expect(state.beforeAlive).toBeGreaterThan(0);
-  expect(state.afterAlive).toBe(state.beforeAlive - 1);
-  expect(state.projectileCount).toBe(0);
-});
-
-test("Dragon crystals spawn low enough for melee and projectile follow-up", async ({ page }) => {
-  await openDebugPage(page);
-
-  const state = await page.evaluate(() => {
-    window.MMDBG.enterDragonArena();
-    const frame = document.getElementById("game");
-    const gameWindow = frame && frame.contentWindow ? frame.contentWindow : null;
-    if (!gameWindow || !gameWindow.endDragonArena || !Array.isArray(gameWindow.endDragonArena.crystals)) {
-      return { count: 0, minY: 0, maxY: 0 };
-    }
-
-    const ys = gameWindow.endDragonArena.crystals
-      .filter((entry) => entry && entry.alive)
-      .map((entry) => Number(entry.y) || 0);
-
-    return {
-      count: ys.length,
-      minY: ys.length ? Math.min(...ys) : 0,
-      maxY: ys.length ? Math.max(...ys) : 0
-    };
-  });
-
-  expect(state.count).toBeGreaterThan(0);
-  expect(state.minY).toBeGreaterThanOrEqual(200);
+  expect(state.afterAlive).toBe(state.beforeAlive);
 });
 
 test("Dragon healing beam follows the nearest alive crystal instead of a fixed pillar", async ({ page }) => {

@@ -16,13 +16,12 @@ echo.
 REM -----------------------------
 REM 参数解析
 REM 支持:
-REM   --mode auto|proxy|direct|schannel|openssl
+REM   --mode auto|proxy|direct
 REM   --dry-run
 REM   --yes
 REM   --no-pause
 REM -----------------------------
 set "MODE="
-set "SSLBACKEND_PREF="
 set "DRY_RUN=0"
 set "ASSUME_YES=0"
 set "NO_PAUSE=0"
@@ -247,17 +246,9 @@ if /i "%MODE%"=="auto" (
 ) else if /i "%MODE%"=="direct" (
     echo [模式] 强制直连
     set "PRIMARY=direct"
-) else if /i "%MODE%"=="schannel" (
-    echo [模式] 强制直连 (schannel)
-    set "PRIMARY=direct"
-    set "SSLBACKEND_PREF=schannel"
-) else if /i "%MODE%"=="openssl" (
-    echo [模式] 强制直连 (openssl)
-    set "PRIMARY=direct"
-    set "SSLBACKEND_PREF=openssl"
 ) else (
     echo [错误] --mode 参数无效: %MODE%
-    echo [提示] 允许值: auto / proxy / direct / schannel / openssl
+    echo [提示] 允许值: auto / proxy / direct
     echo.
     call :exit_with_pause 1
     exit /b 1
@@ -275,11 +266,7 @@ if "%DRY_RUN%"=="1" (
     if /i "%PRIMARY%"=="proxy" (
         echo   git -c http.proxy=http://127.0.0.1:10808 -c https.proxy=http://127.0.0.1:10808 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
     ) else (
-        if defined SSLBACKEND_PREF (
-            echo   git -c http.version=HTTP/1.1 -c http.sslBackend=%SSLBACKEND_PREF% push %REMOTE% HEAD:%BRANCH%
-        ) else (
-            echo   git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
-        )
+        echo   git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
     )
     echo.
     exit /b 0
@@ -355,28 +342,18 @@ if /i "%PRIMARY%"=="proxy" (
 )
 
 :push_direct
-if defined SSLBACKEND_PREF (
-    git -c http.version=HTTP/1.1 -c http.sslBackend=%SSLBACKEND_PREF% push %REMOTE% HEAD:%BRANCH%
-    if not errorlevel 1 goto :push_success
-    echo.
-    echo [重试] 预设后端推送失败，尝试默认直连推送...
-)
 git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :push_success
 
 echo.
-if /i not "%SSLBACKEND_PREF%"=="schannel" (
-    echo [重试 1] 直连推送失败，尝试使用 schannel 后端重试...
-    git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% HEAD:%BRANCH%
-    if not errorlevel 1 goto :push_success
-)
+echo [重试 1] 直连推送失败，尝试使用 schannel 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :push_success
 
 echo.
-if /i not "%SSLBACKEND_PREF%"=="openssl" (
-    echo [重试 2] 直连推送失败，尝试使用 openssl 后端重试...
-    git -c http.version=HTTP/1.1 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
-    if not errorlevel 1 goto :push_success
-)
+echo [重试 2] 直连推送失败，尝试使用 openssl 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :push_success
 
 if /i "%MODE%"=="auto" if "%PROXY_OK%"=="1" (
     echo.
@@ -533,15 +510,9 @@ if /i "%MODE%"=="auto" (
     set "PRIMARY=proxy"
 ) else if /i "%MODE%"=="direct" (
     set "PRIMARY=direct"
-) else if /i "%MODE%"=="schannel" (
-    set "PRIMARY=direct"
-    set "SSLBACKEND_PREF=schannel"
-) else if /i "%MODE%"=="openssl" (
-    set "PRIMARY=direct"
-    set "SSLBACKEND_PREF=openssl"
 ) else (
     echo [错误] --mode 参数无效: %MODE%
-    echo [提示] 允许值: auto / proxy / direct / schannel / openssl
+    echo [提示] 允许值: auto / proxy / direct
     echo.
     call :exit_with_pause 1
     exit /b 1
@@ -561,11 +532,7 @@ if "%DRY_RUN%"=="1" (
         if /i "%PRIMARY%"=="proxy" (
             echo   git -C "%MAIN_REPO%" -c http.proxy=http://127.0.0.1:10808 -c https.proxy=http://127.0.0.1:10808 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
         ) else (
-        if defined SSLBACKEND_PREF (
-            echo   git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=%SSLBACKEND_PREF% push %REMOTE% HEAD:%BRANCH%
-        ) else (
             echo   git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
-        )
         )
     )
     echo.
@@ -613,20 +580,12 @@ if /i "%PRIMARY%"=="proxy" (
         git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.proxy=socks5://127.0.0.1:10808 -c https.proxy=socks5://127.0.0.1:10808 pull --ff-only %REMOTE% %BRANCH%
     )
 ) else (
-    if defined SSLBACKEND_PREF (
-        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=%SSLBACKEND_PREF% pull --ff-only %REMOTE% %BRANCH%
-        if not errorlevel 1 goto main_repo_pull_ok
-    )
     git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 pull --ff-only %REMOTE% %BRANCH%
     if errorlevel 1 (
-        if /i not "%SSLBACKEND_PREF%"=="schannel" (
-            git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=schannel pull --ff-only %REMOTE% %BRANCH%
-        )
+        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=schannel pull --ff-only %REMOTE% %BRANCH%
     )
     if errorlevel 1 (
-        if /i not "%SSLBACKEND_PREF%"=="openssl" (
-            git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
-        )
+        git -C "%MAIN_REPO%" -c http.version=HTTP/1.1 -c http.sslBackend=openssl pull --ff-only %REMOTE% %BRANCH%
     )
 )
 if not errorlevel 1 goto main_repo_pull_ok
@@ -699,28 +658,18 @@ if /i "%PRIMARY%"=="proxy" (
 )
 
 :publish_push_direct
-if defined SSLBACKEND_PREF (
-    git -c http.version=HTTP/1.1 -c http.sslBackend=%SSLBACKEND_PREF% push %REMOTE% HEAD:%BRANCH%
-    if not errorlevel 1 goto :publish_push_success
-    echo.
-    echo [重试] 预设后端推送失败，尝试默认直连推送...
-)
 git -c http.version=HTTP/1.1 push %REMOTE% HEAD:%BRANCH%
 if not errorlevel 1 goto :publish_push_success
 
 echo.
-if /i not "%SSLBACKEND_PREF%"=="schannel" (
-    echo [重试 1] 直连推送失败，尝试使用 schannel 后端重试...
-    git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% HEAD:%BRANCH%
-    if not errorlevel 1 goto :publish_push_success
-)
+echo [重试 1] 直连推送失败，尝试使用 schannel 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=schannel push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :publish_push_success
 
 echo.
-if /i not "%SSLBACKEND_PREF%"=="openssl" (
-    echo [重试 2] 直连推送失败，尝试使用 openssl 后端重试...
-    git -c http.version=HTTP/1.1 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
-    if not errorlevel 1 goto :publish_push_success
-)
+echo [重试 2] 直连推送失败，尝试使用 openssl 后端重试...
+git -c http.version=HTTP/1.1 -c http.sslBackend=openssl push %REMOTE% HEAD:%BRANCH%
+if not errorlevel 1 goto :publish_push_success
 
 if /i "%MODE%"=="auto" if "%PROXY_OK%"=="1" (
     echo.

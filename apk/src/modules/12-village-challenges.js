@@ -5,6 +5,33 @@
 
 let villageChallengeSession = null;
 
+function getWordDisplayPairSafe(wordObj) {
+  const pair = window.BilingualVocab?.getWordDisplayPair?.(wordObj);
+  if (pair && (pair.primary || pair.secondary)) return pair;
+  const primary = String(wordObj?.en || wordObj?.word || wordObj?.zh || "").trim();
+  const secondary = String(wordObj?.zh || wordObj?.chinese || "").trim();
+  return { primary, secondary };
+}
+
+function getWordKeySafe(wordObj) {
+  const key = window.BilingualVocab?.getWordKey?.(wordObj);
+  if (key) return key;
+  return String(wordObj?.en || wordObj?.word || wordObj?.zh || "").trim();
+}
+
+function getVillageQuestionHint(wordObj) {
+  const subject = String(wordObj?.subject || "").trim();
+  const mode = settings.languageMode;
+  if (subject === "language") {
+    if (mode === "pinyin") return "请选择对应的汉字";
+    if (mode === "chinese") return "请选择对应的拼音";
+    return "请选择对应的词语含义";
+  }
+  if (subject === "math") return "请选择对应的关键词";
+  if (subject === "english") return "请选择对应的拼读/释义";
+  return "请选择对应的含义";
+}
+
 function getVillageChallengeModal() {
   let modal = document.getElementById("village-challenge-modal");
   if (modal) return modal;
@@ -113,6 +140,12 @@ function resolveVillageChallengeWord(rawWord) {
   if (typeof rawWord === "string") {
     en = rawWord.trim();
   } else if (rawWord && typeof rawWord === "object") {
+    if (rawWord.subject) return rawWord;
+    const key = getWordKeySafe(rawWord);
+    if (key && Array.isArray(wordDatabase)) {
+      const matched = wordDatabase.find((w) => getWordKeySafe(w) === key);
+      if (matched) return matched;
+    }
     en = String(rawWord.en || rawWord.word || rawWord.english || rawWord.standardized || "").trim();
     zh = String(rawWord.zh || rawWord.chinese || rawWord.translation || "").trim();
     phrase = String(rawWord.phrase || "").trim();
@@ -158,9 +191,9 @@ function buildVillageChallengeWords(village, questionCount) {
   const selected = [];
 
   const pushUnique = (word) => {
-    const en = String(word?.en || "").trim().toLowerCase();
-    if (!en || seen.has(en)) return false;
-    seen.add(en);
+    const key = getWordKeySafe(word).toLowerCase();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
     selected.push(word);
     return true;
   };
@@ -170,16 +203,16 @@ function buildVillageChallengeWords(village, questionCount) {
   const sessionWords = Array.isArray(sessionCollectedWords)
     ? sessionCollectedWords
         .map(resolveVillageChallengeWord)
-        .filter((w) => !!w && !!String(w.en || "").trim())
+        .filter((w) => !!w && !!getWordKeySafe(w))
     : [];
 
   const biomeWords = typeof getVillageWords === "function" ? getVillageWords(village?.biomeId) : [];
   const normalizedBiomeWords = Array.isArray(biomeWords)
-    ? biomeWords.map(resolveVillageChallengeWord).filter((w) => !!w && !!String(w.en || "").trim())
+    ? biomeWords.map(resolveVillageChallengeWord).filter((w) => !!w && !!getWordKeySafe(w))
     : [];
 
   const fallbackWords = Array.isArray(wordDatabase)
-    ? wordDatabase.map(resolveVillageChallengeWord).filter((w) => !!w && !!String(w.en || "").trim())
+    ? wordDatabase.map(resolveVillageChallengeWord).filter((w) => !!w && !!getWordKeySafe(w))
     : [];
 
   for (const word of shuffle(sessionWords)) {
@@ -205,11 +238,15 @@ function buildVillageChallengeWords(village, questionCount) {
   return selected;
 }
 
-function buildVillageZhOptions(correctWord, wordsPool) {
-  const correct = String(correctWord?.zh || "").trim() || String(correctWord?.en || "").trim();
+function buildVillageAnswerOptions(correctWord, wordsPool) {
+  const correctPair = getWordDisplayPairSafe(correctWord);
+  const correct = String(correctPair.secondary || correctPair.primary || "").trim();
   const distractorPool = (Array.isArray(wordsPool) ? wordsPool : [])
-    .map((w) => String(w?.zh || "").trim())
-    .filter((zh) => zh && zh !== correct);
+    .map((w) => {
+      const pair = getWordDisplayPairSafe(w);
+      return String(pair.secondary || pair.primary || "").trim();
+    })
+    .filter((value) => value && value !== correct);
 
   const unique = [...new Set(distractorPool)].sort(() => Math.random() - 0.5).slice(0, 3);
   while (unique.length < 3) {
@@ -267,8 +304,9 @@ function startVillageChallenge(village, onComplete, options = {}) {
         showFloatingText("💎 +1", player?.x || 120, (player?.y || 120) - 30, "#FFD54F");
       }
       progress.currentQuestion++;
-      if (progress.currentWord?.en && !progress.wordsSeen.includes(progress.currentWord.en)) {
-        progress.wordsSeen.push(progress.currentWord.en);
+      const seenKey = getWordKeySafe(progress.currentWord);
+      if (seenKey && !progress.wordsSeen.includes(seenKey)) {
+        progress.wordsSeen.push(seenKey);
       }
 
       if (progress.currentQuestion >= selectedWords.length) {
@@ -295,8 +333,8 @@ function showVillageChallengeIntro(session, biomeId, count, onStart) {
   showVillageChallengeModal(`
     <div class="village-challenge-intro">
       <div class="village-challenge-emoji">📚</div>
-      <h3 class="village-challenge-title">${biomeName}村庄 · 单词挑战</h3>
-      <p class="village-challenge-subtitle">共 ${count} 题，题型：英文词义选择</p>
+      <h3 class="village-challenge-title">${biomeName}村庄 · 词汇挑战</h3>
+      <p class="village-challenge-subtitle">共 ${count} 题，题型：词汇配对选择</p>
       <p class="village-challenge-tip">每题答对奖励：💎 x1</p>
       <div class="village-challenge-actions">
         <button id="btn-village-challenge-start" class="game-btn">开始挑战</button>
@@ -327,14 +365,16 @@ function showVillageQuestion(session, words, progress, onAnswer) {
   progress.currentWord = word;
   progress.hintUsedCurrent = false;
 
-  const questionEn = String(word.en || "").trim();
-  const options = buildVillageZhOptions(word, words);
+  const pair = getWordDisplayPairSafe(word);
+  const questionText = String(pair.primary || getWordKeySafe(word) || "").trim();
+  const options = buildVillageAnswerOptions(word, words);
+  const hintText = getVillageQuestionHint(word);
 
   showVillageChallengeModal(`
     <div class="village-question-wrap">
       <p class="village-question-progress">第 ${progress.currentQuestion + 1} / ${words.length} 题</p>
-      <div class="village-question-word">${questionEn}</div>
-      <p class="village-question-hint">请选择对应的中文含义</p>
+      <div class="village-question-word">${questionText}</div>
+      <p class="village-question-hint">${hintText}</p>
       <div class="village-question-controls">
         <button id="btn-village-question-hint" class="game-btn game-btn-small" style="display:none;">提示</button>
         ${session.options?.forced ? "" : '<button id="btn-village-challenge-exit" class="game-btn game-btn-small village-btn-muted">退出挑战</button>'}
@@ -349,8 +389,8 @@ function showVillageQuestion(session, words, progress, onAnswer) {
 
   if (typeof speakWord === "function") {
     speakWord({
-      en: word.en,
-      zh: word.zh,
+      en: pair.primary,
+      zh: pair.secondary,
       phrase: word.phrase,
       phraseZh: word.phraseTranslation,
       phraseTranslation: word.phraseTranslation
@@ -403,9 +443,10 @@ function showVillageQuestion(session, words, progress, onAnswer) {
       if (!isCorrect) btn.classList.add("wrong");
 
       if (typeof speakWord === "function") {
+        const pair = getWordDisplayPairSafe(word);
         speakWord({
-          en: word.en,
-          zh: word.zh,
+          en: pair.primary,
+          zh: pair.secondary,
           phrase: word.phrase,
           phraseZh: word.phraseTranslation,
           phraseTranslation: word.phraseTranslation
