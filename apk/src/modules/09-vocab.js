@@ -1063,6 +1063,7 @@ function isBridgeMode() {
 let cachedHanziPinyinMap = null;
 let cachedHanziPinyinMapHasSource = false;
 const HANZI_CHAR_RE = /[\u4e00-\u9fff]/;
+const BRIDGE_PINYIN_OVERRIDES = new Map();
 
 function getHanziPinyinMap() {
     const root = typeof window !== "undefined" ? window : globalThis;

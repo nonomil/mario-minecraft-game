@@ -87,6 +87,10 @@ function makeInlineScript(content) {
   return `<script>\n${content}\n</script>`;
 }
 
+function wrapInIife(content) {
+  return `(() => {\n${content}\n})();`;
+}
+
 function makeInlineStyle(css) {
   return `<style>\n${css}\n</style>`;
 }
@@ -257,7 +261,9 @@ function buildSingleFile({ projectRoot, templateHtmlPath, outPath }) {
 
   const moduleEntries = extractModuleScriptTagsFromHtml(templateHtml);
   const vocabFiles = extractVocabFilesFromManifest(manifestJs);
-  const vocabScripts = vocabFiles.map((f) => makeInlineScript(readText(path.join(projectRoot, f)))).join("\n");
+  const vocabScripts = vocabFiles
+    .map((f) => makeInlineScript(wrapInIife(readText(path.join(projectRoot, f)))))
+    .join("\n");
 
   const embeddedJson = {
     "config/game.json": readJson(path.join(projectRoot, "config", "game.json")),

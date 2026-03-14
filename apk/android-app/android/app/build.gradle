@@ -1,5 +1,17 @@
 apply plugin: 'com.android.application'
 
+def webSourceDir = file("$rootDir/../web")
+def webTargetDir = file("$projectDir/src/main/assets/public")
+
+tasks.register("syncWebAssets", Copy) {
+    from(webSourceDir)
+    include("**/*")
+    into(webTargetDir)
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+preBuild.dependsOn(tasks.named("syncWebAssets"))
+
 android {
     namespace "com.nonomil.mariominecraftgame"
     compileSdk rootProject.ext.compileSdkVersion
