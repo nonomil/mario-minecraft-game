@@ -25,8 +25,7 @@ test("P1 crafting modal supports multi-select recipes for shield and torch", asy
   await openGameAndBoot(page);
 
   await page.evaluate(() => {
-    inventory.stick = 3;
-    inventory.iron = 1;
+    inventory.stick = 6;
     inventory.gunpowder = 1;
     if (typeof updateInventoryUI === "function") updateInventoryUI();
   });
@@ -36,15 +35,15 @@ test("P1 crafting modal supports multi-select recipes for shield and torch", asy
   await expect(page.locator('[data-action="craft"]')).toHaveCount(1);
 
   const stickCard = page.locator('#crafting-material-list .inventory-item[data-item="stick"]');
-  const ironCard = page.locator('#crafting-material-list .inventory-item[data-item="iron"]');
   const gunpowderCard = page.locator('#crafting-material-list .inventory-item[data-item="gunpowder"]');
 
   await stickCard.click({ force: true });
   await stickCard.click({ force: true });
-  await ironCard.click({ force: true });
+  await stickCard.click({ force: true });
+  await stickCard.click({ force: true });
+  await stickCard.click({ force: true });
 
-  await expect(page.locator("#crafting-selection-summary")).toContainText("木棍 x2");
-  await expect(page.locator("#crafting-selection-summary")).toContainText("铁块 x1");
+  await expect(page.locator("#crafting-selection-summary")).toContainText("目标配方");
   await expect(page.locator("#crafting-preview")).toContainText("盾牌");
 
   await page.click("#btn-crafting-confirm", { force: true });
@@ -53,15 +52,13 @@ test("P1 crafting modal supports multi-select recipes for shield and torch", asy
     shieldCount: Number(inventory.shield) || 0,
     shieldEquipped: !!(shieldState && shieldState.equipped),
     shieldDurability: Number(shieldState?.durability) || 0,
-    stickCount: Number(inventory.stick) || 0,
-    ironCount: Number(inventory.iron) || 0
+    stickCount: Number(inventory.stick) || 0
   }));
 
   expect(shieldResult.shieldCount).toBe(1);
   expect(shieldResult.shieldEquipped).toBe(true);
   expect(shieldResult.shieldDurability).toBeGreaterThan(0);
   expect(shieldResult.stickCount).toBe(1);
-  expect(shieldResult.ironCount).toBe(0);
 
   await stickCard.click({ force: true });
   await gunpowderCard.click({ force: true });

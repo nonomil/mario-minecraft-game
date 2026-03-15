@@ -22,15 +22,15 @@ let inventoryPauseHeld = false;
 let armorPauseHeld = false;
 let craftingPauseHeld = false;
 
-const SHIELD_DAMAGE_REDUCTION = 0.45;
-const SHIELD_DURABILITY_COST = 18;
-const SHIELD_MAX_DURABILITY = 100;
-const CRAFTING_MODAL_SELECTABLE_ITEMS = ["stick", "iron", "gunpowder"];
+const SHIELD_DAMAGE_REDUCTION = 0.30;
+const SHIELD_DURABILITY_COST = 10;
+const SHIELD_MAX_DURABILITY = 50;
+const CRAFTING_MODAL_SELECTABLE_ITEMS = ["stick", "gunpowder"];
 const CRAFTING_RECIPE_DEFINITIONS = {
     shield: {
         label: "盾牌",
         icon: "🛡️",
-        ingredients: { stick: 2, iron: 1 },
+        ingredients: { stick: 5 },
         description: "减免部分伤害，并拥有独立耐久"
     },
     torch: {
@@ -1127,9 +1127,16 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     if (shieldEquipped) {
         shieldState.durability = Math.max(0, Number(shieldState.durability) - SHIELD_DURABILITY_COST);
         if (shieldState.durability <= 0) {
-            shieldState.equipped = false;
             inventory.shield = Math.max(0, (Number(inventory.shield) || 0) - 1);
-            showToast("🛡️ 盾牌已损坏");
+            if (Number(inventory.shield) > 0) {
+                shieldState.equipped = true;
+                shieldState.maxDurability = SHIELD_MAX_DURABILITY;
+                shieldState.durability = SHIELD_MAX_DURABILITY;
+                showToast("🛡️ 盾牌破损，已自动续用");
+            } else {
+                shieldState.equipped = false;
+                showToast("🛡️ 盾牌已损坏");
+            }
         }
     }
     if (hasArmor) {
@@ -2126,7 +2133,8 @@ function updateArmorUI() {
     const hasArmor = !!(playerEquipment?.armor && Number(playerEquipment?.armorDurability) > 0);
 
     if (shieldEquipped) {
-        const parts = [`盾牌 ${shieldDurability}/${shieldMaxDurability}`];
+        const shieldCount = Math.max(0, Number(inventory.shield) || 0);
+        const parts = [`盾牌 ${shieldCount} · ${shieldDurability}/${shieldMaxDurability}`];
         if (hasArmor) {
             const armor = ARMOR_TYPES?.[playerEquipment.armor];
             const armorName = armor?.name || playerEquipment.armor;
@@ -2222,7 +2230,7 @@ const RECIPES = {
     iron_golem: { iron: 3 },
     snow_golem: { pumpkin: 1, snow_block: 2 },
     silent_boots: { sculk_vein: 5 },
-    shield: { stick: 2, iron: 1 },
+    shield: { stick: 5 },
     torch: { stick: 1, gunpowder: 1 }
 };
 

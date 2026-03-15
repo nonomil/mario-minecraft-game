@@ -17,6 +17,13 @@ const LEGACY_VOCAB_SELECTION_ALIASES = Object.freeze({
     "vocab.minecraft": "vocab.minecraft.full"
 });
 
+const BRIDGE_AUTO_SELECTION = "vocab.bridge.auto";
+const BRIDGE_PACK_IDS = Object.freeze([
+    "vocab.bridge.language",
+    "vocab.bridge.math",
+    "vocab.bridge.english"
+]);
+
 const LEGACY_VOCAB_STAGE_FALLBACKS = Object.freeze({
     "vocab.kindergarten": "vocab.kindergarten.full",
     "vocab.elementary": "vocab.elementary.full",
@@ -27,11 +34,13 @@ const LEGACY_VOCAB_STAGE_FALLBACKS = Object.freeze({
 function normalizeVocabSelectionId(selection) {
     const raw = String(selection || "").trim();
     if (!raw || raw === "auto") return "auto";
+    if (raw === BRIDGE_AUTO_SELECTION) return BRIDGE_AUTO_SELECTION;
     return LEGACY_VOCAB_SELECTION_ALIASES[raw] || raw;
 }
 
 function resolveVocabSelectionId(selection) {
     const normalized = normalizeVocabSelectionId(selection);
+    if (normalized === BRIDGE_AUTO_SELECTION) return BRIDGE_AUTO_SELECTION;
     if (normalized === "auto") return "auto";
 
     const engine = ensureVocabEngine();
@@ -83,6 +92,13 @@ function normalizeSettings(raw) {
     if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
     if (!["english", "chinese", "bilingual", "pinyin"].includes(String(merged.languageMode || ""))) merged.languageMode = "english";
     merged.vocabSelection = normalizeVocabSelectionId(merged.vocabSelection);
+    if (merged.languageMode === "pinyin") {
+        const currentSelection = String(merged.vocabSelection || "").trim();
+        const hasExplicitBridge = BRIDGE_PACK_IDS.includes(currentSelection) || currentSelection === BRIDGE_AUTO_SELECTION;
+        if (!hasExplicitBridge) {
+            merged.vocabSelection = BRIDGE_AUTO_SELECTION;
+        }
+    }
     merged.biomeSwitchStepScore = Math.max(150, Math.min(2000, Number(merged.biomeSwitchStepScore) || 300));
     merged.challengeFrequency = clamp(Number(merged.challengeFrequency) || 0.3, 0.05, 0.9);
     merged.wordCardDuration = Math.max(300, Math.min(3000, Number(merged.wordCardDuration) || 1200));
@@ -619,8 +635,9 @@ function renderVocabSelect() {
     });
 
     // Define stage order and labels
-    const stageOrder = ["kindergarten", "elementary", "junior_high", "minecraft", "custom"];
+    const stageOrder = ["bridge", "kindergarten", "elementary", "junior_high", "minecraft", "custom"];
     const stageLabels = {
+        "bridge": "幼小衔接",
         "kindergarten": "幼儿园",
         "elementary": "小学",
         "junior_high": "初中",
@@ -641,6 +658,10 @@ function renderVocabSelect() {
     stageOrder.forEach(stage => {
         if (!grouped[stage]) return;
         const group = add(null, stageLabels[stage] || stage, true);
+
+        if (stage === "bridge") {
+            addToGroup(group, BRIDGE_AUTO_SELECTION, "幼小衔接-语文/数学/英语轮询");
+        }
 
         // Sort packs by level
         const packs = grouped[stage].sort((a, b) => {
@@ -674,6 +695,10 @@ function updateVocabPreview(selection) {
     const key = selection || settings.vocabSelection || "auto";
     if (key === "auto") {
         preview.innerHTML = `<strong>自动轮换</strong><br>根据阶段与难度智能匹配`;
+        return;
+    }
+    if (key === BRIDGE_AUTO_SELECTION) {
+        preview.innerHTML = `<strong>幼小衔接-语文/数学/英语轮询</strong><br>在三科之间顺序切换`;
         return;
     }
     const pack = vocabPacks[key];
@@ -764,6 +789,24 @@ function pickPackAuto() {
     return scored.length ? scored[scored.length - 1].id : null;
 }
 
+function getBridgeAutoPackIds() {
+    const engine = ensureVocabEngine();
+    if (!engine) return [];
+    return BRIDGE_PACK_IDS.filter(id => vocabPacks && vocabPacks[id]);
+}
+
+function pickBridgeAutoPack() {
+    const ids = getBridgeAutoPackIds();
+    if (!ids.length) return null;
+    if (!vocabState || typeof vocabState !== "object") vocabState = { runCounts: {}, lastPackId: null };
+    const last = vocabState.bridgeAutoLastId;
+    const idx = last ? ids.indexOf(last) : -1;
+    const nextId = ids[(idx + 1 + ids.length) % ids.length];
+    vocabState.bridgeAutoLastId = nextId;
+    saveVocabState();
+    return nextId;
+}
+
 function loadVocabPackFile(file) {
     if (!file) return Promise.reject(new Error("missing vocab file"));
     if (loadedVocabFiles[file]) return loadedVocabFiles[file];
@@ -850,7 +893,9 @@ async function setActiveVocabPack(selection) {
         settings.vocabSelection = resolvedSelection;
         saveSettings();
     }
-    const pickId = resolvedSelection === "auto" ? pickPackAuto() : resolvedSelection;
+    const pickId = resolvedSelection === BRIDGE_AUTO_SELECTION
+        ? (pickBridgeAutoPack() || pickPackAuto())
+        : (resolvedSelection === "auto" ? pickPackAuto() : resolvedSelection);
     const pack = pickId ? vocabPacks[pickId] : null;
     if (!pack) return false;
 
@@ -1214,8 +1259,8 @@ function getBridgeDisplayContent(safeWord, languageMode) {
     if (languageMode === "pinyin") {
         return {
             id: primaryChinese || primaryEnglish,
-            primaryText: pinyinText || primaryChinese || primaryEnglish,
-            secondaryText: primaryChinese || fallbackEnglish,
+            primaryText: primaryChinese || primaryEnglish,
+            secondaryText: pinyinText || fallbackEnglish,
             phoneticText: pinyinText,
             phrasePrimary: safeWord.phrase,
             phraseSecondary: safeWord.phraseTranslation
@@ -1263,8 +1308,8 @@ function getDisplayContent(wordObj) {
         if (languageMode === "pinyin") {
             return {
                 id: primaryCharacter,
-                primaryText: safeWord.pinyin || primaryCharacter,
-                secondaryText: primaryCharacter,
+                primaryText: primaryCharacter,
+                secondaryText: safeWord.pinyin || primaryCharacter,
                 phoneticText: safeWord.pinyin,
                 phrasePrimary: safeWord.phraseTranslation,
                 phraseSecondary: safeWord.phrase
@@ -1294,9 +1339,9 @@ function getDisplayContent(wordObj) {
     if (languageMode === "pinyin") {
         const fallbackPinyin = getPinyinFallback(safeWord);
         return {
-            id: primaryEnglish,
-            primaryText: fallbackPinyin || safeWord.pinyin || primaryChinese || primaryEnglish,
-            secondaryText: primaryChinese || primaryEnglish,
+            id: primaryChinese || primaryEnglish,
+            primaryText: primaryChinese || primaryEnglish,
+            secondaryText: fallbackPinyin || safeWord.pinyin || "",
             phoneticText: fallbackPinyin || safeWord.pinyin,
             phrasePrimary: safeWord.phrase,
             phraseSecondary: safeWord.phraseTranslation

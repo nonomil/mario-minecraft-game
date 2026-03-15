@@ -30,7 +30,16 @@ function getWordKeySafe(wordObj) {
 
 function getBridgeChallengeTypePool(wordObj, languageMode) {
     const subject = getWordSubjectSafe(wordObj);
+    const isPinyinMode = languageMode === "pinyin";
+    const hasHanzi = String(wordObj?.chinese || wordObj?.zh || "").trim();
+    const hasPinyin = String(wordObj?.pinyin || "").trim();
     if (subject === "math") return ["math_concept"];
+    if (isPinyinMode) {
+        if (hasHanzi && hasPinyin) {
+            return ["pinyin_to_hanzi", "pinyin_tone", "hanzi_to_pinyin"];
+        }
+        return ["listen"];
+    }
     if (subject === "english") return ["listen", "fill_blank", "multi_blank", "unscramble", "translate"];
     if (subject === "language") {
         if (languageMode === "pinyin") {
@@ -101,6 +110,12 @@ function bumpWordDisplay() {
 function showWordCard(wordObj) {
     const card = document.getElementById("word-card");
     if (!card) return;
+    const subject = String(wordObj?.subject || "").trim();
+    if (subject === "math") {
+        card.classList.remove("visible");
+        card.setAttribute("aria-hidden", "true");
+        return;
+    }
     const en = document.getElementById("word-card-en");
     const zh = document.getElementById("word-card-zh");
     const phrase = document.getElementById("word-card-phrase");
@@ -237,8 +252,8 @@ function getWordDisplayContentSafe(wordObj) {
     }
     if (languageMode === "pinyin") {
         return {
-            primaryText: pinyinText || chineseText || englishText,
-            secondaryText: chineseText || englishText,
+            primaryText: chineseText || englishText,
+            secondaryText: pinyinText || "",
             phrasePrimary: phraseText,
             phraseSecondary: phraseTranslation
         };
@@ -817,9 +832,11 @@ const CHALLENGE_TYPES = {
         const promptText = getChallengeOptionValue(wordObj, "primary");
         const answerText = getChallengeOptionValue(wordObj, "secondary") || promptText;
         const options = generateChallengeOptions(wordObj, "secondary", LEARNING_CONFIG.challenge.baseOptions);
+        const mode = getLanguageModeSafe();
+        const question = mode === "pinyin" ? "请选择合适的拼音" : `Translate \"${promptText}\"`;
         return {
             mode: "options",
-            question: `Translate "${promptText}"`,
+            question,
             options,
             answer: answerText
         };
@@ -1450,8 +1467,7 @@ function getSpeakSequence(wordObj) {
         return sequence;
     }
     if (mode === "pinyin") {
-        if (pinyinText) sequence.push({ text: pinyinText, lang: "zh-CN", rate: chineseRate });
-        if (settings.speechZhEnabled && chineseText) sequence.push({ text: chineseText, lang: "zh-CN", rate: chineseRate });
+        if (chineseText) sequence.push({ text: chineseText, lang: "zh-CN", rate: chineseRate });
         if (!sequence.length && englishText) sequence.push({ text: englishText, lang: "en-US", rate: englishRate });
         return sequence;
     }

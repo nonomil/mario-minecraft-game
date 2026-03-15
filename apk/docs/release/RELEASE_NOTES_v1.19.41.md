@@ -1,0 +1,327 @@
+# Release Notes - v1.19.41
+
+**发布日期**: 2026-03-15
+
+## 📋 变更概述
+✨ 新功能40项，🐛 Bug 修复59项，🔧 优化改进14项，📝 文档更新42项，🧪 测试更新6项，其他139项
+
+## ✨ 新功能
+- feat: enlarge shield render (docs/plans/2026-03-15-shield-balance-plan.md)
+- feat: balance wooden shield usage (docs/plans/2026-03-15-shield-balance-plan.md)
+- feat: expand bridge vocab packs and manifest wiring (docs/plans/2026-03-15-words-vocab-reorg-and-bridge-expansion-plan.md)
+- feat: add evoker shield wave rhythm (docs/plans/2026-03-14-boss-optimization-rounds.md)
+- feat: add warden sonic warning (docs/plans/2026-03-14-boss-optimization-rounds.md)
+- feat: tune ghast reflect window (docs/plans/2026-03-14-boss-optimization-rounds.md)
+- feat: add wither shield window (docs/plans/2026-03-14-boss-optimization-rounds.md)
+- feat: add wither skeleton dash rhythm (docs/plans/2026-03-14-boss-optimization-rounds.md)
+- feat: add blaze ring telegraph visuals
+- feat: add blaze ring damage and punish window
+- feat: add blaze ring state machine
+- feat: refresh character visuals (docs/plan/人物角色形象优化/2026-03-10-人物角色形象优化-实施计划.md)
+- feat: integrate lane e release gate
+- feat: add release-and-push skill for automated version releases
+- feat: add three-phase player pursuit to dragon arena
+- feat: add three-phase player pursuit to dragon arena
+- feat: reorganize settings interface into main and advanced panels
+- feat: auto-enter dragon arena from end biome
+- feat: integrate ender dragon end arena
+- feat: add dragon crystals and hazards
+- feat: add dragon boss flight phases
+- feat: add dragon arena foundation
+- feat: integrate boss second-pass gameplay
+- feat: deepen warden and evoker elite phases
+- feat: deepen blaze and wither skeleton pressure
+- feat: deepen wither and ghast air pressure
+- feat: add boss second-pass reward hooks
+- feat: integrate expanded boss roster
+- feat: add evoker boss encounter
+- feat: add warden boss encounter
+- feat: redesign foundation boss visuals
+- feat: 中文模式专属挑战和语音提示
+- feat: merge bilingual mode to main branch
+- feat: add language mode and pinyin settings to UI
+- feat: add language mode onboarding modal
+- feat: add TTS language switching for bilingual mode
+- feat: add bilingual mode data migration logic
+- feat: add Chinese vocabulary and pinyin tool
+- feat: 单词测验提示按钮延迟10秒显示
+- feat: 优化弹窗字体大小并添加滚动条
+
+## 🐛 Bug 修复
+- fix: align pinyin quiz and shield balance behavior (docs/plans/2026-03-15-shield-balance-plan.md)
+- fix: restore dragon arena render baseline (docs/plans/2026-03-15-shield-balance-plan.md)
+- fix: prevent hanzi pack reload errors (docs/plans/2026-03-15-words-vocab-reorg-and-bridge-expansion-plan.md)
+- fix: sync android web assets before build
+- fix: restore android web index for apk
+- fix: stabilize warden dark pulse intent (docs/plans/2026-03-14-boss-optimization-rounds.md)
+- fix: pinyin fallback from hanzi map (src/modules/09-vocab.js)
+- fix: bridge display fallback to pinyin (src/modules/09-vocab.js)
+- fix: rename pinyin mode label to bridge (src/modules/08-account.js)
+- fix: restore boss debug phase and ghast intent (docs/plans/2026-03-13-boss-file-split-implementation-plan.md)
+- fix: add ghast reflect-stun and windup (docs/plan/BOSS战优化/2026-03-13-ghast-step-plan.md)
+- fix: resolve ender dragon arena debug flow (docs/plans/2026-03-13-dragon-crystal-projectile-toggle-design.md)
+- fix: expand kindergarten hanzi vocab to 800 chars
+- fix: resolve boss weapon switch in combat (src/modules/04-weapons.js)
+- fix: update codex constraints (AGENTS.md)
+- fix: dragon dismount crash and visuals
+- fix: ignore .worktrees directory (docs/plan/人物角色形象优化/2026-03-10-人物角色形象优化-实施计划.md)
+- fix: resolve vocab switching in launcher and apk
+- fix: resolve vocab pack switching legacy ids
+- fix: update push script proxy port
+- fix: 默认隐藏上下飞行按键，只在骑龙时显示
+- fix: APK词汇库切换不生效 + 移动端骑龙控制优化
+- fix: allow workflow to build Debug APK without signing secrets
+- fix: improve boss environment visibility and debug controls
+- fix: harden publish-main pull
+- fix: silence push.bat success url
+- fix: stabilize push.bat output
+- fix: 添加禁用缓存的HTTP响应头到开发服务器
+- fix: 修复GameDebug.html中BOSS触发失败问题
+- fix: 修复BOSS战斗文本乱码，添加末影龙和门禁BOSS调试功能
+- fix: replace smart quotes with standard ASCII quotes in Game.html
+- fix: correct quote characters in settings interface
+- fix: update vocab select stage labels to match simplified classification
+- fix: correct global variable names in vocabulary manifest
+- fix: add MMWG_VOCAB_MANIFEST compatibility and getRaw() method
+- fix: restore all vocabulary packs to manifest.js
+- fix: resolve village interaction and quiz regressions
+- fix: resolve summon dragon debug and touch regressions (docs/plan/召唤机制/2026-03-06-summon-dragon.md)
+- fix: refine account selection overlay ui
+- fix: 修复中文模式显示和语言选择集成
+- fix: handle both login and game screen states in tests
+- fix: clear localStorage in tests to ensure fresh state
+- fix: make manifest browser-compatible and fix test timeouts
+- fix: 修复存档界面文字颜色问题
+- fix: resolve header button sizing in ui styles
+- fix: add End biome config and update biome tests
+- fix: 更正UI分析文档数量统计（5份→7份）
+- fix: harden ui-analysis settings click against modal overlap
+- fix: harden ui-analysis settings click against modal overlap
+- fix: harden ui-analysis settings click against modal overlap
+- fix: harden ui-analysis settings click against modal overlap
+- fix: resolve ui quality gate stability in e2e specs
+- fix: resolve ui quality gate stability in e2e specs
+- fix: resolve ui quality gate stability in e2e specs
+- fix: align P0 interaction tests and increase touch target
+- fix: resolve ui quality gate stability in e2e specs
+- fix: sync v1.19.9 release records and ignore test artifacts
+- fix: syntax error in 12-challenges.js catch block
+- fix: resolve test failures from parallel development
+
+## 🔧 优化改进
+- chore: refresh lockfiles after e2e run (docs/plans/2026-03-15-shield-balance-plan.md)
+- refactor: split boss classes into modules (docs/plans/2026-03-13-boss-file-split-implementation-plan.md)
+- refactor: split boss core and shared modules (docs/plans/2026-03-13-boss-file-split-implementation-plan.md)
+- chore: ignore worktrees (docs/plans/2026-03-13-boss-file-split-implementation-plan.md)
+- chore: ignore playwright test results
+- chore: ignore tmp artifacts in worktree
+- chore: reorganize release notes to docs/release directory
+- chore: reorganize documentation structure and cleanup legacy files
+- chore: remove backup file
+- chore: remove duplicate vocabs/ directory
+- refactor: adjust vocabulary classification per user feedback
+- refactor: simplify vocabulary classification from 53 to 12 packs
+- chore: reorganize development documentation
+- chore: ignore .worktrees in git
+
+## 📝 文档更新
+- docs: add shield balance plan (docs/plans/2026-03-15-shield-balance-plan.md)
+- docs: add shield balance design (docs/plans/2026-03-15-shield-balance-design.md)
+- docs: add vocab audit tooling and report (docs/plans/2026-03-15-words-vocab-reorg-and-bridge-expansion-plan.md)
+- docs: add words vocab reorg execution plan (docs/plans/2026-03-15-words-vocab-reorg-and-bridge-expansion-plan.md)
+- docs: words directory reorg design (docs/plans/2026-03-15-words-directory-reorg-design.md)
+- docs: bridge mode vocab display/tts design (docs/plans/2026-03-15-bridge-mode-vocab-display-tts-design.md)
+- docs: add boss file split implementation plan (docs/plans/2026-03-13-boss-file-split-implementation-plan.md)
+- docs: add boss file split design (docs/plans/2026-03-13-boss-file-split-design.md)
+- docs: document blaze ring debug usage
+- docs: add blaze ring implementation plan (docs/plans/2026-03-13-blaze-rotating-ring-implementation-plan.md)
+- docs: add blaze rotating ring design (docs/plans/2026-03-13-blaze-rotating-ring-design.md)
+- docs: add boss battle optimization plans
+- docs: add pinyin hanzi learning plan
+- docs: add MVP test verification report with 7/7 passing tests
+- docs: add MVP learning integration completion report
+- docs: add character visuals docs (docs/plan/人物角色形象优化/2026-03-10-人物角色形象优化-实施计划.md)
+- docs: add comprehensive release workflow guide
+- docs: add release notes management guide
+- docs: update v1.19.29 changelog and release notes
+- docs: add v1.19.28 to changelog and release notes
+- docs: add v1.19.27 changelog entries
+- docs: add final work summary for 2026-03-08
+- docs: add vocab stage label fix documentation
+- docs: add 2026-03-08 work summary and settings optimization plan
+- docs: add ender dragon end arena plans
+- docs: add v1.19.20 release notes
+- docs: update summon dragon plan - mark phases complete
+- docs: release notes and changelog for v1.19.12
+- docs: add bilingual mode completion summary and E2E tests
+- docs: add Phase 2 completion report
+- docs: add CHANGELOG for consumable equipment system
+- docs: complete Phase 4.5 decoupling review and task split
+- docs: add detailed issue analysis report
+- docs: update lessons learned from parallel development
+- docs: add complete parallel development summary
+- docs: add parallel task plans and scan results
+- docs: add automated test report for parallel development
+- docs: update merge control and add final summary
+- docs: update worktree-D plan with completion status
+- docs: add parallel development execution summary report
+- docs: update merge control with A/B/C merge records
+- docs: update parallel development plan and archive backups
+
+## 🧪 测试更新
+- test: add shield balance coverage (docs/plans/2026-03-15-shield-balance-plan.md)
+- test: add bridge vocab expansion thresholds (docs/plans/2026-03-15-words-vocab-reorg-and-bridge-expansion-plan.md)
+- test: add blaze ring debug flow coverage
+- test: add dragon arena debug helpers
+- test: add manual debug dragon summon coverage (docs/plan/召唤机制/2026-03-06-summon-dragon.md)
+- test: add bilingual mode basic integration tests
+
+## 📦 其他变更
+- codex: add design for words vocab reorg and bridge expansion
+- codex: implement bridge mode vocab display/tts (docs/plans/2026-03-15-bridge-mode-vocab-display-tts-design.md)
+- codex: merge boss split + boss optimizations
+- codex: add boss optimization implementation plan (docs/plans/2026-03-14-boss-optimization-rounds.md)
+- codex: add boss optimization design (docs/plans/2026-03-14-boss-optimization-rounds-design.md)
+- codex: bridge vocab rules + plans (docs/plan/幼小衔接设计/2026-03-13-幼小衔接玩法规则-implementation.md)
+- codex: prepare boss split scripts (docs/plans/2026-03-13-boss-file-split-implementation-plan.md)
+- codex: initial implementation of pinyin mode design (docs/plans/2026-03-12-pinyin-mode-design.md)
+- codex: expand pinyin pack and relations
+- claude-review: fix edge cases in kindergarten hanzi pack
+- codex: initial implementation of pinyin quiz routing
+- codex: initial implementation of hanzi and pinyin relations
+- codex: initial implementation of pinyin vocab pack
+- codex: initial implementation of pinyin mode selection
+- checkpoint: 15:33
+- checkpoint: 14:56
+- checkpoint: 14:10
+- feat(m3): implement dragon egg growth system
+- feat(m2): implement gate microlearn with shield buff
+- fix(m1): remove duplicate learningState implementation
+- checkpoint: 11:36
+- feat(m1): implement unified learning event spine
+- checkpoint: 11:26
+- checkpoint: 11:22
+- codex: add mvp learning integration design and plan
+- codex: improve crafting modal + debug injection (docs/plan/人物角色形象优化/2026-03-10-crafting-debug-injection.md)
+- checkpoint: 00:28
+- checkpoint: 23:45
+- checkpoint: 17:12
+- checkpoint: 17:04
+- docs/plan/游戏优化设计/ 放总览、统一架构、模式分层、跨模式索引 docs/plan/汉语拼音学习优化设计/ 放幼儿园专项设计、数值、模式切换、内容库、桥接路径
+- checkpoint: 16:45
+- checkpoint: 00:27
+- checkpoint: 22:26
+- checkpoint: 16:25
+- checkpoint: 16:23
+- checkpoint: 16:22
+- checkpoint: 16:12
+- checkpoint: 16:06
+- checkpoint: 15:48
+- checkpoint: 15:40
+- checkpoint: 15:32
+- checkpoint: 15:29
+- checkpoint: 15:25
+- checkpoint: 15:13
+- checkpoint: 15:06
+- checkpoint: 15:02
+- checkpoint: 15:00
+- checkpoint: 14:57
+- checkpoint: 14:30
+- checkpoint: 14:09
+- checkpoint: 14:01
+- checkpoint: 12:03
+- checkpoint: 10:45
+- checkpoint: 22:53
+- feat(weapons): enhance gunpowder with ground fire effect
+- checkpoint: 22:49
+- feat(entities): add EnderDragon and EnderDragonFireball classes
+- checkpoint: 22:40
+- checkpoint: 22:35
+- checkpoint: 22:31
+- checkpoint: 22:22
+- checkpoint: 22:14
+- checkpoint: 22:09
+- checkpoint: 21:57
+- checkpoint: 21:55
+- checkpoint: 21:48
+- checkpoint: 21:42
+- checkpoint: 21:07
+- checkpoint: 21:01
+- checkpoint: 18:36
+- checkpoint: 17:42
+- checkpoint: 14:31
+- checkpoint: 11:01
+- checkpoint: 09:54
+- checkpoint: 09:28
+- codex: initial implementation of styles modular split
+- checkpoint: 23:36
+- checkpoint: 22:51
+- feat(ui): Phase 2 - CSS变量迁移和组件扩展
+- checkpoint: 22:46
+- checkpoint: 22:44
+- checkpoint: 22:40
+- checkpoint: 22:32
+- feat(consumable): 实现消耗品槽 UI 和集成逻辑
+- feat(input): implement long-press detection for consumables
+- checkpoint: 22:15
+- feat(combat): implement debuff system and particle pool
+- feat(config): implement consumable config infrastructure
+- checkpoint: 22:06
+- checkpoint: 21:19
+- checkpoint: 21:06
+- checkpoint: 20:17
+- checkpoint: 20:05
+- checkpoint: 19:55
+- checkpoint: 19:54
+- checkpoint: 19:53
+- checkpoint: 19:48
+- codex: initial implementation of ui components baseline v2
+- codex: initial implementation of ui module split baseline v2
+- codex: initial implementation of ui components baseline v2
+- codex: initial implementation of ui foundation tokens v2
+- checkpoint: 22:35
+- checkpoint: 22:32
+- checkpoint: 22:30
+- checkpoint: 22:29
+- checkpoint: 22:28
+- checkpoint: 22:27
+- docs(task1): update task status to completed
+- feat(task1-phase3): add error handling and state recovery
+- perf(task1-phase2): optimize collision detection with early exit
+- checkpoint: 22:21
+- feat(task1-phase1): add performance monitoring to game loop
+- docs(task2): update task status to completed
+- feat(task2-phase3): add backup and recovery system
+- feat(task2-phase2): enhance config loading with validation
+- feat(task2-phase1): add save version management and compression
+- checkpoint: 22:12
+- checkpoint: 22:09
+- checkpoint: 22:03
+- checkpoint: 21:57
+- refactor(worktree-D-phase3): introduce TTS provider abstraction
+- checkpoint: 20:52
+- feat(worktree-D-phase2): add challenge sound effects
+- feat(worktree-A): add new achievements and enhance progress tracking
+- feat(worktree-D-phase1): add speech test and TTS diagnostics
+- feat(worktree-A): add weekly comparison (this week vs last week)
+- feat(worktree-B): add weak words practice entry (placeholder)
+- feat(worktree-A): add 7-day learning trend
+- feat(worktree-C): add versioned cache strategy
+- feat(worktree-B): add profile save export/import shortcuts
+- feat(worktree-A): add learning accuracy metric
+- feat(worktree-C): register service worker in bootstrap
+- checkpoint: 20:43
+- checkpoint: 20:42
+- checkpoint: 20:40
+- checkpoint: 20:29
+- checkpoint: 20:28
+- init: 添加 Claude Code 工作流配置和项目文档
+
+## 🎯 下一步计划
+- 持续收敛幼小衔接与拼音挑战体验
+- 继续完善 BOSS 调试入口与战斗表现
+- 跟进 APK 打包链路稳定性
+
+---
+
+**完整变更**: 300 commits

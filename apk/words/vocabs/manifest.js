@@ -174,7 +174,10 @@ window.vocabManifest.packs.push({
     'words/vocabs/01_幼儿园/幼儿园完整词库.js',
     'words/vocabs/06_汉字/幼儿园汉字.js',
     'words/vocabs/07_拼音/常用拼音.js',
-    'words/vocabs/08_幼小衔接/幼小衔接总词库.js'
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_语文.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_数学.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_英语.js'
   ],
   globals: ['BRIDGE_VOCAB_FULL']
 });
@@ -196,7 +199,10 @@ window.vocabManifest.packs.push({
     'words/vocabs/01_幼儿园/幼儿园完整词库.js',
     'words/vocabs/06_汉字/幼儿园汉字.js',
     'words/vocabs/07_拼音/常用拼音.js',
-    'words/vocabs/08_幼小衔接/幼小衔接总词库.js'
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_语文.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_数学.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_英语.js'
   ],
   globals: ['BRIDGE_VOCAB_FULL']
 });
@@ -218,9 +224,72 @@ window.vocabManifest.packs.push({
     'words/vocabs/01_幼儿园/幼儿园完整词库.js',
     'words/vocabs/06_汉字/幼儿园汉字.js',
     'words/vocabs/07_拼音/常用拼音.js',
-    'words/vocabs/08_幼小衔接/幼小衔接总词库.js'
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_语文.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_数学.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_英语.js'
   ],
   globals: ['BRIDGE_VOCAB_FULL']
+});
+
+window.vocabManifest.packs.push({
+  id: 'vocab.bridge.language',
+  title: '幼小衔接-语文',
+  stage: 'bridge',
+  difficulty: 'language',
+  level: 'full',
+  weight: 1,
+  mode: 'bilingual',
+  type: 'bridge',
+  files: [
+    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
+    'words/vocabs/06_汉字/幼儿园汉字.js',
+    'words/vocabs/07_拼音/常用拼音.js',
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_语文.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_数学.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_英语.js'
+  ],
+  globals: ['BRIDGE_VOCAB_LANGUAGE']
+});
+
+window.vocabManifest.packs.push({
+  id: 'vocab.bridge.math',
+  title: '幼小衔接-数学',
+  stage: 'bridge',
+  difficulty: 'math',
+  level: 'full',
+  weight: 1,
+  mode: 'bilingual',
+  type: 'bridge',
+  files: [
+    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
+    'words/vocabs/06_汉字/幼儿园汉字.js',
+    'words/vocabs/07_拼音/常用拼音.js',
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_语文.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_数学.js',
+    'words/vocabs/08_幼小衔接/幼小衔接_英语.js'
+  ],
+  globals: ['BRIDGE_VOCAB_MATH']
+});
+
+window.vocabManifest.packs.push({
+  id: 'vocab.bridge.english',
+  title: '幼小衔接-英语',
+  stage: 'bridge',
+  difficulty: 'english',
+  level: 'full',
+  weight: 1,
+  mode: 'bilingual',
+  type: 'bridge',
+  files: [
+    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
+    'words/vocabs/06_汉字/幼儿园汉字.js',
+    'words/vocabs/07_拼音/常用拼音.js',
+    'words/vocabs/08_幼小衔接/幼小衔接总词库.js'
+  ],
+  globals: ['BRIDGE_VOCAB_ENGLISH']
 });
 
 

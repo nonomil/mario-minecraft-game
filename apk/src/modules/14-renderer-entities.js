@@ -3,6 +3,11 @@
  * 从 14-renderer.js 拆分
  */
 
+const SHIELD_RENDER_SCALE = 2;
+if (typeof window !== "undefined") {
+    window.MMWG_SHIELD_RENDER_SCALE = SHIELD_RENDER_SCALE;
+}
+
 const STEVE_CLASSIC_PALETTE = Object.freeze({
     skin: "#D4A07A",
     skinShade: "#B77754",
@@ -265,37 +270,85 @@ function drawSteveShield(x, y, scale, facingRight, palette, pose, shieldEquipped
     if (!shieldEquipped) return;
 
     const arm = pose.nearArm;
-    const shieldX = facingRight ? arm.x - 1 : arm.x - 3;
-    const shieldY = arm.y + 3;
-    const shieldW = 8;
-    const shieldH = 11;
+    const unit = SHIELD_RENDER_SCALE;
+    const baseX = facingRight ? arm.x - 1 : arm.x - 3;
+    const baseY = arm.y + 3;
+    const baseWidth = 8;
+    const baseHeight = 11;
+    const baseRim = 1;
+    const baseTipDepth = 2;
+    const baseInnerInset = 1;
+    const baseInnerDepth = 4;
+    const baseInnerTipInset = 3;
+    const baseAccentStripeX = 3;
+    const baseAccentStripeY = 2;
+    const baseAccentStripeW = 2;
+    const baseAccentBarX = 2;
+    const baseAccentBarY = 5;
+    const baseAccentBarW = 4;
+    const baseAccentBarH = 2;
+    const baseHandleW = 2;
+    const baseHandleH = 8;
+
+    const shieldW = baseWidth * unit;
+    const shieldH = baseHeight * unit;
+    const shieldX = facingRight ? baseX : baseX + baseWidth - shieldW;
+    const shieldY = baseY;
+
+    const rim = baseRim * unit;
+    const tipDepth = baseTipDepth * unit;
+    const innerInset = baseInnerInset * unit;
+    const innerDepth = baseInnerDepth * unit;
+    const innerTipInset = baseInnerTipInset * unit;
+    const accentStripeX = baseAccentStripeX * unit;
+    const accentStripeY = baseAccentStripeY * unit;
+    const accentStripeW = baseAccentStripeW * unit;
+    const accentBarX = baseAccentBarX * unit;
+    const accentBarY = baseAccentBarY * unit;
+    const accentBarW = baseAccentBarW * unit;
+    const accentBarH = baseAccentBarH * unit;
+    const handleW = Math.min(arm.w, baseHandleW * unit);
+    const handleH = baseHandleH * unit;
+    const handleX = arm.x + Math.floor((arm.w - handleW) / 2);
+    const handleY = shieldY + Math.floor((shieldH - handleH) / 2);
+
+    if (typeof window !== "undefined") {
+        window.MMWG_SHIELD_RENDER_INFO = {
+            scale: SHIELD_RENDER_SCALE,
+            width: shieldW,
+            height: shieldH,
+            x: shieldX,
+            y: shieldY,
+            facingRight
+        };
+    }
 
     ctx.save();
     ctx.fillStyle = "#5D4037";
-    drawSteveRect(x, y, scale, shieldX, shieldY, shieldW, shieldH - 2);
-    drawSteveRect(x, y, scale, shieldX + 1, shieldY - 1, shieldW - 2, 1);
+    drawSteveRect(x, y, scale, shieldX, shieldY, shieldW, shieldH - tipDepth);
+    drawSteveRect(x, y, scale, shieldX + rim, shieldY - rim, shieldW - rim * 2, rim);
     ctx.beginPath();
-    ctx.moveTo(x + shieldX * scale, y + (shieldY + shieldH - 2) * scale);
-    ctx.lineTo(x + (shieldX + shieldW * 0.5) * scale, y + (shieldY + shieldH + 2) * scale);
-    ctx.lineTo(x + (shieldX + shieldW) * scale, y + (shieldY + shieldH - 2) * scale);
+    ctx.moveTo(x + shieldX * scale, y + (shieldY + shieldH - tipDepth) * scale);
+    ctx.lineTo(x + (shieldX + shieldW * 0.5) * scale, y + (shieldY + shieldH + tipDepth) * scale);
+    ctx.lineTo(x + (shieldX + shieldW) * scale, y + (shieldY + shieldH - tipDepth) * scale);
     ctx.closePath();
     ctx.fill();
 
     ctx.fillStyle = "#6D4C41";
-    drawSteveRect(x, y, scale, arm.x + 1, shieldY + 1, 2, 8);
+    drawSteveRect(x, y, scale, handleX, handleY, handleW, handleH);
 
     ctx.fillStyle = "#B0BEC5";
-    drawSteveRect(x, y, scale, shieldX + 1, shieldY + 1, shieldW - 2, shieldH - 4);
+    drawSteveRect(x, y, scale, shieldX + innerInset, shieldY + innerInset, shieldW - innerInset * 2, shieldH - innerDepth);
     ctx.beginPath();
-    ctx.moveTo(x + (shieldX + 1) * scale, y + (shieldY + shieldH - 3) * scale);
+    ctx.moveTo(x + (shieldX + innerInset) * scale, y + (shieldY + shieldH - innerTipInset) * scale);
     ctx.lineTo(x + (shieldX + shieldW * 0.5) * scale, y + (shieldY + shieldH) * scale);
-    ctx.lineTo(x + (shieldX + shieldW - 1) * scale, y + (shieldY + shieldH - 3) * scale);
+    ctx.lineTo(x + (shieldX + shieldW - innerInset) * scale, y + (shieldY + shieldH - innerTipInset) * scale);
     ctx.closePath();
     ctx.fill();
 
     ctx.fillStyle = palette.accent;
-    drawSteveRect(x, y, scale, shieldX + 3, shieldY + 2, 2, shieldH - 2);
-    drawSteveRect(x, y, scale, shieldX + 2, shieldY + 5, 4, 2);
+    drawSteveRect(x, y, scale, shieldX + accentStripeX, shieldY + accentStripeY, accentStripeW, shieldH - tipDepth);
+    drawSteveRect(x, y, scale, shieldX + accentBarX, shieldY + accentBarY, accentBarW, accentBarH);
     ctx.restore();
 }
 

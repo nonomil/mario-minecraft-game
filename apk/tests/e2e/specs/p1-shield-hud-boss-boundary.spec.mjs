@@ -100,21 +100,21 @@ test("P1 evoker should be clamped back inside the boss arena when pushed outside
   expect(before).not.toBeNull();
   expect(before.bossX).toBeGreaterThan(before.rightWall);
 
-  await tickGame(page, 2);
+  await tickGame(page, 6);
 
-  const after = await page.evaluate(() => {
-    const frame = document.getElementById("game");
-    const w = frame && frame.contentWindow ? frame.contentWindow : null;
-    if (!w || typeof w.eval !== "function") return null;
-    return {
-      bossX: Number(w.eval('bossArena && bossArena.boss ? bossArena.boss.x : 0')) || 0,
-      rightWall: Number(w.eval('bossArena ? bossArena.rightWall : 0')) || 0,
-      bossWidth: Number(w.eval('bossArena && bossArena.boss ? bossArena.boss.width : 0')) || 0,
-      bossAlive: Boolean(w.eval('bossArena && bossArena.boss ? bossArena.boss.alive : false'))
-    };
-  });
-
-  expect(after).not.toBeNull();
-  expect(after.bossAlive).toBe(true);
-  expect(after.bossX + after.bossWidth).toBeLessThanOrEqual(after.rightWall);
+  await expect.poll(async () => {
+    const data = await page.evaluate(() => {
+      const frame = document.getElementById("game");
+      const w = frame && frame.contentWindow ? frame.contentWindow : null;
+      if (!w || typeof w.eval !== "function") return null;
+      return {
+        bossX: Number(w.eval('bossArena && bossArena.boss ? bossArena.boss.x : 0')) || 0,
+        rightWall: Number(w.eval('bossArena ? bossArena.rightWall : 0')) || 0,
+        bossWidth: Number(w.eval('bossArena && bossArena.boss ? bossArena.boss.width : 0')) || 0,
+        bossAlive: Boolean(w.eval('bossArena && bossArena.boss ? bossArena.boss.alive : false'))
+      };
+    });
+    if (!data || !data.bossAlive) return false;
+    return data.bossX + data.bossWidth <= data.rightWall;
+  }, { timeout: 3000 }).toBe(true);
 });

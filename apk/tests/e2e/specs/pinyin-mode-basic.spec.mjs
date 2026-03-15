@@ -13,7 +13,7 @@ test("Pinyin mode appears in overlay and persists", async ({ page }) => {
   await pinyinBtn.click();
 
   const current = page.locator("#overlay-language-current");
-  await expect(current).toContainText("拼音学习");
+  await expect(current).toContainText("幼小衔接");
 
   const settings = await page.evaluate(() => JSON.parse(localStorage.getItem("mmwg:settings")));
   expect(settings.languageMode).toBe("pinyin");

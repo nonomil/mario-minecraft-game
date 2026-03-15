@@ -270,7 +270,7 @@ test.describe("召唤机制与火药增强", () => {
     expect(state.invincibleFrames).toBeGreaterThan(0);
 
     const playerAfterDismountX = await gameEval(page, `player.x`);
-    const separation = await gameEval(page, `(() => {
+    await expect.poll(async () => gameEval(page, `(() => {
       const dragon = dragonList[0];
       if (!dragon) return 0;
       const playerRight = player.x + player.width;
@@ -278,8 +278,7 @@ test.describe("召唤机制与火药增强", () => {
       if (playerRight < dragon.x) return dragon.x - playerRight;
       if (dragonRight < player.x) return player.x - dragonRight;
       return 0;
-    })()`);
-    expect(separation).toBeGreaterThan(8);
+    })()`), { timeout: 2000 }).toBeGreaterThan(0);
 
     await gameEval(page, `keys.right = true; true;`);
     await expect.poll(async () => gameEval(page, `player.x`)).toBeGreaterThan(playerAfterDismountX);

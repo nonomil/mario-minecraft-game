@@ -170,6 +170,9 @@ test("Dragon arena renders a visible dragon silhouette with bright wing bones", 
     const gameWindow = frame && frame.contentWindow ? frame.contentWindow : null;
     const arena = gameWindow && gameWindow.endDragonArena ? gameWindow.endDragonArena : null;
     const dragon = arena && arena.dragon ? arena.dragon : null;
+    if (gameWindow && typeof gameWindow.draw === "function") {
+      gameWindow.draw();
+    }
     const canvas = gameWindow && gameWindow.document ? gameWindow.document.getElementById("gameCanvas") : null;
     const ctx = canvas ? canvas.getContext("2d", { willReadFrequently: true }) : null;
     if (!dragon || !canvas || !ctx) {
@@ -178,8 +181,8 @@ test("Dragon arena renders a visible dragon silhouette with bright wing bones", 
 
     const sampleWidth = 280;
     const sampleHeight = 170;
-    const left = Math.max(0, Math.round(dragon.x - sampleWidth / 2));
-    const top = Math.max(0, Math.round(dragon.y - sampleHeight / 2));
+    const left = Math.max(0, Math.round((Number(dragon.x) || 0) - sampleWidth / 2));
+    const top = Math.max(0, Math.round((Number(dragon.y) || 0) - sampleHeight / 2));
     const width = Math.min(sampleWidth, canvas.width - left);
     const height = Math.min(sampleHeight, canvas.height - top);
     const pixels = ctx.getImageData(left, top, width, height).data;

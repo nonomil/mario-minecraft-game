@@ -178,6 +178,9 @@ function wireStartOverlayAccountActions() {
         enBtn.addEventListener("click", () => {
             if (settings) {
                 settings.languageMode = "english";
+                if (typeof normalizeSettings === "function") {
+                    settings = normalizeSettings(settings);
+                }
                 if (typeof saveSettings === "function") saveSettings();
                 updateLanguageModeDisplay();
                 showToast("已切换到英语学习模式");
@@ -189,6 +192,9 @@ function wireStartOverlayAccountActions() {
         zhBtn.addEventListener("click", () => {
             if (settings) {
                 settings.languageMode = "chinese";
+                if (typeof normalizeSettings === "function") {
+                    settings = normalizeSettings(settings);
+                }
                 if (typeof saveSettings === "function") saveSettings();
                 updateLanguageModeDisplay();
                 showToast("已切换到汉字学习模式");
@@ -199,6 +205,9 @@ function wireStartOverlayAccountActions() {
         pyBtn.addEventListener("click", () => {
             if (settings) {
                 settings.languageMode = "pinyin";
+                if (typeof normalizeSettings === "function") {
+                    settings = normalizeSettings(settings);
+                }
                 if (typeof saveSettings === "function") saveSettings();
                 updateLanguageModeDisplay();
                 showToast("已切换到幼小衔接模式");
@@ -356,6 +365,10 @@ async function loginWithAccount(account, options) {
     storage.setCurrentAccountId(account.id);
     storage.saveAccount(currentAccount);
     loadAccountData(account);
+    if (typeof normalizeSettings === "function") {
+        settings = normalizeSettings(settings);
+        if (typeof saveSettings === "function") saveSettings();
+    }
     const startOverlayVisible = isStartOverlayVisible();
     const screen = document.getElementById("login-screen");
     if (screen) {

@@ -1,3 +1,6 @@
+if (typeof window !== "undefined" && window.kindergartenHanzi) {
+  // Already loaded.
+} else {
 // Kindergarten hanzi pack: keep the curated 200-character core and expand to 800 entries.
 // Sources: zispace/hanzi-chars common 800 list, makemeahanzi definitions, HSK 1-7 example words.
 const MAX_EXAMPLES = 2;
@@ -33,7 +36,7 @@ function createHanziEntry({ character, pinyin, english, examples, imageCode = ""
   };
 }
 
-const HANZI_CHAR_RE = /[\u4e00-\u9fff]/;
+const KINDER_HANZI_CHAR_RE = /[\u4e00-\u9fff]/;
 
 function normalizeExampleObject(example) {
   return {
@@ -46,7 +49,7 @@ function isHanziWordWithinPack(word, allowed) {
   const trimmed = String(word || "").trim();
   if (!trimmed) return false;
   for (const char of trimmed) {
-    if (!HANZI_CHAR_RE.test(char)) return false;
+    if (!KINDER_HANZI_CHAR_RE.test(char)) return false;
     if (!allowed.has(char)) return false;
   }
   return true;
@@ -1021,4 +1024,5 @@ if (typeof window !== "undefined") {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = kindergartenHanzi;
+}
 }

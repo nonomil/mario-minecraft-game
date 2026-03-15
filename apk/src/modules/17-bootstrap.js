@@ -576,6 +576,15 @@ function initializeLanguageModeOnboarding() {
             : (nextMode === "pinyin" ? "pinyin" : "english");
         if (settings) {
             settings.languageMode = normalized;
+            if (normalized === "pinyin") {
+                const bridgeAutoId = "vocab.bridge.auto";
+                const bridgePackIds = new Set(["vocab.bridge.language", "vocab.bridge.math", "vocab.bridge.english"]);
+                const currentSelection = String(settings.vocabSelection || "").trim();
+                const hasExplicitBridge = bridgePackIds.has(currentSelection) || currentSelection === bridgeAutoId;
+                if (!hasExplicitBridge) {
+                    settings.vocabSelection = bridgeAutoId;
+                }
+            }
             saveSettings();
         }
         // Hide language selection after selection

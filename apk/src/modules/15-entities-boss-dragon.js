@@ -36,6 +36,18 @@
         return Math.max(min, Math.min(max, Number(value) || 0));
     }
 
+    function get_dragon_crystal_pillar_base_y(ctx) {
+        const ground_y = Number.isFinite(globalThis.groundY) ? globalThis.groundY : null;
+        if (ground_y != null) return ground_y;
+        const config_y = (globalThis.gameConfig && globalThis.gameConfig.physics && Number.isFinite(globalThis.gameConfig.physics.groundY))
+            ? globalThis.gameConfig.physics.groundY
+            : null;
+        if (config_y != null) return config_y;
+        const canvas_height = ctx && ctx.canvas ? Number(ctx.canvas.height) : NaN;
+        if (Number.isFinite(canvas_height)) return Math.max(0, canvas_height - 70);
+        return 530;
+    }
+
     function readCurrentBiome() {
         if (typeof globalThis.eval === "function") {
             try {
@@ -598,6 +610,7 @@
         renderEntities(ctx) {
             if (!ctx || !this.active) return;
             ctx.save();
+            const pillar_base_y = get_dragon_crystal_pillar_base_y(ctx);
             for (const crystal of this.crystals) {
                 if (!crystal || !crystal.alive) continue;
                 ctx.fillStyle = "#251b34";
@@ -605,7 +618,7 @@
                     crystal.x - 10,
                     crystal.y + 10,
                     20,
-                    Math.max(26, DRAGON_CRYSTAL_PILLAR_BASE_Y - crystal.y)
+                    Math.max(26, pillar_base_y - crystal.y)
                 );
                 if (crystal.beamActive && this.dragon) {
                     ctx.strokeStyle = "rgba(223, 152, 255, 0.92)";

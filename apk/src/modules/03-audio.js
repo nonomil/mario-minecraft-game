@@ -99,13 +99,14 @@ function speakNativeTts(tts, text, lang, rate) {
     }
 }
 
-function normalizeSpeechText(primary, fallback) {
-    const main = primary == null ? "" : String(primary);
-    const alt = fallback == null ? "" : String(fallback);
-    const trimmed = main.trim();
-    if (trimmed) return trimmed;
-    const altTrimmed = alt.trim();
-    return altTrimmed || "";
+function normalizeSpeechText(primary, fallback, ...rest) {
+    const candidates = [primary, fallback, ...rest];
+    for (const value of candidates) {
+        if (value == null) continue;
+        const trimmed = String(value).trim();
+        if (trimmed) return trimmed;
+    }
+    return "";
 }
 
 function buildOnlineTtsUrl(text, lang) {
