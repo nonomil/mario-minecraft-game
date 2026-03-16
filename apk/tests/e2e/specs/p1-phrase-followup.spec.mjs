@@ -75,17 +75,30 @@ test("P1 direct mode should spawn follow-up phrase immediately", async ({ page }
   });
   expect(result).toBeTruthy();
 
-  const source = await pickWordWithPhrase(page);
-  expect(source).toBeTruthy();
+  const picked = await page.evaluate((tries) => {
+    let source = null;
+    for (let i = 0; i < tries; i++) {
+      const w = pickWordForSpawn();
+      if (!w || w.__followUpPhrase) continue;
+      if (!String(w.phrase || "").trim()) continue;
+      source = w;
+      break;
+    }
+    if (!source) return { source: null, next: null };
+    const next = pickWordForSpawn();
+    const map = (w) => (w ? { en: w.en, follow: !!w.__followUpPhrase, source: w.__sourceWordEn || "" } : null);
+    return {
+      source: { en: source.en, phrase: source.phrase, zh: source.zh || "" },
+      next: map(next)
+    };
+  }, 240);
 
-  const next = await page.evaluate(() => {
-    const w = pickWordForSpawn();
-    return w ? { en: w.en, follow: !!w.__followUpPhrase, source: w.__sourceWordEn || "" } : null;
-  });
-  expect(next).toBeTruthy();
-  expect(next.follow).toBeTruthy();
-  expect(next.en).toBe(source.phrase);
-  expect(next.source).toBe(source.en);
+  expect(picked).toBeTruthy();
+  expect(picked.source).toBeTruthy();
+  expect(picked.next).toBeTruthy();
+  expect(picked.next.follow).toBeTruthy();
+  expect(picked.next.en).toBe(picked.source.phrase);
+  expect(picked.next.source).toBe(picked.source.en);
 });
 
 test("P1 gap2 mode should spawn follow-up phrase after two normal words", async ({ page }) => {

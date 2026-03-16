@@ -181,6 +181,9 @@ function triggerGravityCheck(digLeft, digRight, platformY) {
 }
 
 function update() {
+    if (typeof tickLearningReportPlaytime === "function") {
+        tickLearningReportPlaytime();
+    }
     if (paused) return;
     if (typeof isVillageInteriorActive === "function" && isVillageInteriorActive()) {
         if (typeof updateVillageInteriorMode === "function") updateVillageInteriorMode();

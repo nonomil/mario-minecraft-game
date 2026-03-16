@@ -1,9 +1,9 @@
 {
-  "version": "1.19.42",
-  "versionCode": 94,
-  "buildNumber": 94,
-  "buildDate": "2026-03-15T11:33:06Z",
-  "gitCommit": "b1f6de8",
+  "version": "1.19.43",
+  "versionCode": 95,
+  "buildNumber": 95,
+  "buildDate": "2026-03-16T03:25:29.869Z",
+  "gitCommit": "9f5caea",
   "gitBranch": "main",
-  "buildId": "local-20260315-v1.19.42"
+  "buildId": "local-20260316-v1.19.43"
 }

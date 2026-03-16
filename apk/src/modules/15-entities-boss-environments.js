@@ -230,7 +230,7 @@
             if (this.theme === "arcane") {
                 if (this.sealFrames > 0) this.sealFrames -= 1;
                 if (this.intensity >= 3 && this.updateCount % 18 === 0) {
-                    this.sealFrames = 12;
+                    this.sealFrames = 18;
                 }
             } else {
                 this.sealFrames = 0;

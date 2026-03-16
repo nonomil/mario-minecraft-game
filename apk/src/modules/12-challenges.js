@@ -160,16 +160,18 @@ function recordWordProgress(wordObj) {
 
     if (!hadEntry) {
         pr.uniqueCount = (pr.uniqueCount || 0) + 1;
-        onWordCollected(wordObj);
         // M1: Record vocab collection event
         if (typeof recordLearningEvent === "function") {
+            const pair = getWordDisplayPairSafe(wordObj);
             recordLearningEvent({
                 source: "vocab",
                 wordKey: key,
                 themeKey: packId || "",
-                result: "success"
+                result: "success",
+                meta: { type: "collect", primary: pair.primary, secondary: pair.secondary }
             });
         }
+        onWordCollected(wordObj);
         if (pr.total && pr.uniqueCount >= pr.total) {
             pr.completed = true;
             saveProgress();
@@ -1074,6 +1076,7 @@ function startLearningChallenge(wordObj, forcedType, origin) {
 function showLearningChallenge(challenge) {
     if (!challengeModalEl) return;
     challengeModalEl.classList.add("visible");
+    challengeModalEl.setAttribute("aria-hidden", "false");
     const titleEl = challengeModalEl.querySelector("#challenge-title");
     if (titleEl) {
         const mode = getLanguageModeSafe();
@@ -1173,7 +1176,10 @@ function clearLearningChallengeTimer() {
 }
 
 function hideLearningChallenge() {
-    if (challengeModalEl) challengeModalEl.classList.remove("visible");
+    if (challengeModalEl) {
+        challengeModalEl.classList.remove("visible");
+        challengeModalEl.setAttribute("aria-hidden", "true");
+    }
     if (challengeInputEl) challengeInputEl.value = "";
 
     // 清除提示按钮定时器
@@ -1269,12 +1275,13 @@ function completeLearningChallenge(correct) {
         }
         // M1: Record challenge success event
         if (typeof recordLearningEvent === "function") {
+            const pair = getWordDisplayPairSafe(wordObj);
             recordLearningEvent({
                 source: "challenge",
-                wordKey: wordObj?.en || "",
+                wordKey: getWordKeySafe(wordObj),
                 themeKey: packId || "",
                 result: "success",
-                meta: { type: "translate" }
+                meta: { type: "translate", primary: pair.primary, secondary: pair.secondary }
             });
         }
         hideLearningChallenge();
@@ -1313,12 +1320,13 @@ function completeLearningChallenge(correct) {
         }
         // M1: Record challenge fail event
         if (typeof recordLearningEvent === "function") {
+            const pair = getWordDisplayPairSafe(wordObj);
             recordLearningEvent({
                 source: "challenge",
-                wordKey: wordObj?.en || "",
+                wordKey: getWordKeySafe(wordObj),
                 themeKey: packId || "",
                 result: "fail",
-                meta: { type: "translate" }
+                meta: { type: "translate", primary: pair.primary, secondary: pair.secondary }
             });
         }
         const penalty = Number(reward?.wrong?.scorePenalty) || 0;
@@ -1571,12 +1579,13 @@ function completeGateMicrolearn(correct) {
 
     // Record learning event
     if (typeof recordLearningEvent === "function" && wordObj) {
+        const pair = getWordDisplayPairSafe(wordObj);
         recordLearningEvent({
             source: "challenge",
-            wordKey: wordObj.en || "",
+            wordKey: getWordKeySafe(wordObj),
             themeKey: (typeof activeVocabPackId === "undefined" ? "" : activeVocabPackId) || "",
             result: correct ? "success" : "fail",
-            meta: { type: "gate_microlearn" }
+            meta: { type: "gate_microlearn", primary: pair.primary, secondary: pair.secondary }
         });
     }
 

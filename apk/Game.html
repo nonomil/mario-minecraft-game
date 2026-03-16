@@ -146,6 +146,7 @@
             <button class="overlay-btn overlay-btn-primary" id="btn-overlay-pick-account">&#x9009;&#x62E9;&#x6863;&#x6848;</button>
             <button class="overlay-btn" id="btn-overlay-action">开始游戏</button>
             <button class="overlay-btn overlay-score" id="btn-overlay-score-revive" style="display:none;">积分复活</button>
+            <button class="overlay-btn overlay-btn-secondary" id="btn-overlay-learning-report" style="display:none;">📊 今日学习报告</button>
             <button class="overlay-btn overlay-leaderboard" id="btn-overlay-leaderboard" style="display:none;">🏆 排行榜</button>
         </div>
     </div>
@@ -535,8 +536,25 @@
         </div>
         <div class="profile-actions">
             <button class="game-btn" id="btn-profile-save-leaderboard">保存并查看排行榜</button>
+            <button class="game-btn" id="btn-profile-learning-report">📊 今日学习报告</button>
             <button class="game-btn" id="btn-profile-export-save">📤 导出存档</button>
             <button class="game-btn" id="btn-profile-import-save">📥 导入存档</button>
+        </div>
+    </div>
+</div>
+
+<div id="learning-report-modal" class="learning-report-modal" aria-hidden="true">
+    <div class="learning-report-sheet" role="dialog" aria-modal="true">
+        <div class="learning-report-header">
+            <div class="learning-report-heading">
+                <div class="learning-report-title" id="learning-report-title">今日学习报告</div>
+                <div class="learning-report-subtitle" id="learning-report-subtitle"></div>
+            </div>
+            <button class="game-btn game-btn-small" id="btn-learning-report-close">关闭</button>
+        </div>
+        <div id="learning-report-content" class="learning-report-content"></div>
+        <div class="learning-report-footer">
+            <button class="game-btn" id="btn-learning-report-share">截图分享给家长 ↗</button>
         </div>
     </div>
 </div>

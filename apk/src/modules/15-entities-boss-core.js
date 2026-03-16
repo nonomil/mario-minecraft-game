@@ -330,6 +330,7 @@ globalThis.bossArena = globalThis.bossArena || {
         this.lockedCamX = cameraX;
         this.leftWall = cameraX;
         this.rightWall = cameraX + canvas.width;
+        this.clampBossToArena();
         const supportText = grantedRangedSupport ? '（已补给弓箭）' : '';
         if (this.currentEncounter.source === "biome_gate") {
             const fromBiome = this.currentEncounter.fromBiome || "?";
@@ -361,6 +362,18 @@ globalThis.bossArena = globalThis.bossArena || {
             case 'warden': return (typeof WardenBoss === 'function') ? new WardenBoss(spawnX) : new WitherSkeletonBoss(spawnX);
             case 'evoker': return (typeof EvokerBoss === 'function') ? new EvokerBoss(spawnX) : new BlazeBoss(spawnX);
             default: return new WitherBoss(spawnX);
+        }
+    },
+
+    clampBossToArena() {
+        if (!this.active || !this.boss) return;
+        const padding = 20;
+        const bossWidth = Math.max(0, Number(this.boss.width) || 0);
+        const minX = (Number(this.leftWall) || 0) + padding;
+        const maxX = (Number(this.rightWall) || (canvas ? canvas.width : 0)) - bossWidth - padding;
+        if (!Number.isFinite(minX) || !Number.isFinite(maxX)) return;
+        if (maxX >= minX) {
+            this.boss.x = Math.max(minX, Math.min(maxX, Number(this.boss.x) || minX));
         }
     },
 
@@ -522,6 +535,7 @@ globalThis.bossArena = globalThis.bossArena || {
             return;
         }
         this.boss.update(player);
+        this.clampBossToArena();
         let environmentSnapshot = null;
         if (this.environmentController && typeof this.environmentController.update === "function") {
             this.environmentController.update(this);

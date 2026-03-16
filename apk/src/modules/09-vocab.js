@@ -144,6 +144,11 @@ function saveVocabState() {
 const LEARNING_EVENT_SOURCES = Object.freeze(["vocab", "challenge", "village"]);
 const LEARNING_EVENT_RESULTS = Object.freeze(["success", "partial", "fail"]);
 const MAX_RECENT_LEARNING_EVENTS = 100;
+
+const LEARNING_REPORT_VERSION = 1;
+const LEARNING_REPORT_MAX_DAYS = 120;
+const LEARNING_REPORT_PLAYTIME_SAVE_THROTTLE_MS = 15000;
+const LEARNING_REPORT_PLAYTIME_MAX_FRAME_DELTA_MS = 5000;
 const WORD_QUALITY_DEFAULT = "new";
 const WORD_QUALITY_SET = new Set(["new", "correct_fast", "correct_slow", "wrong"]);
 
@@ -151,6 +156,203 @@ function toNonNegativeInt(value, fallback = 0) {
     const n = Number(value);
     if (!Number.isFinite(n)) return fallback;
     return Math.max(0, Math.floor(n));
+}
+
+function pad2(value) {
+    return String(Math.max(0, toNonNegativeInt(value, 0))).padStart(2, "0");
+}
+
+function getLocalDayKey(ts = Date.now()) {
+    const date = new Date(Number(ts) || Date.now());
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+}
+
+function dayKeyToEpochDay(dayKey) {
+    if (!dayKey) return null;
+    const parts = String(dayKey).split("-").map(Number);
+    if (parts.length !== 3) return null;
+    const [year, month, day] = parts;
+    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return null;
+    const date = new Date(year, month - 1, day);
+    if (!Number.isFinite(date.getTime())) return null;
+    return Math.floor(date.getTime() / 86400000);
+}
+
+function isLikelyValidWordKey(wordKey) {
+    const key = String(wordKey || "").trim();
+    if (!key) return false;
+    if (key.length > 80) return false;
+    return true;
+}
+
+function createEmptyLearningReportState() {
+    return {
+        version: LEARNING_REPORT_VERSION,
+        days: {},
+        streak: {
+            current: 0,
+            lastDayKey: null
+        }
+    };
+}
+
+function normalizeLearningReportWordEntry(raw) {
+    const value = raw && typeof raw === "object" ? raw : {};
+    const lastTsRaw = Number(value.lastTs);
+    return {
+        seen: toNonNegativeInt(value.seen, 0),
+        correct: toNonNegativeInt(value.correct, 0),
+        wrong: toNonNegativeInt(value.wrong, 0),
+        lastTs: Number.isFinite(lastTsRaw) && lastTsRaw > 0 ? lastTsRaw : 0,
+        primary: value.primary == null ? "" : String(value.primary),
+        secondary: value.secondary == null ? "" : String(value.secondary)
+    };
+}
+
+function normalizeLearningReportDay(raw) {
+    const value = raw && typeof raw === "object" ? raw : {};
+    const wordsRaw = value.words && typeof value.words === "object" ? value.words : {};
+    const challengeRaw = value.challenge && typeof value.challenge === "object" ? value.challenge : {};
+    const words = {};
+    Object.keys(wordsRaw).forEach((key) => {
+        words[key] = normalizeLearningReportWordEntry(wordsRaw[key]);
+    });
+    return {
+        playSeconds: toNonNegativeInt(value.playSeconds, 0),
+        words,
+        challenge: {
+            success: toNonNegativeInt(challengeRaw.success, 0),
+            fail: toNonNegativeInt(challengeRaw.fail, 0)
+        }
+    };
+}
+
+function normalizeLearningReportState(raw) {
+    const value = raw && typeof raw === "object" ? raw : {};
+    const daysRaw = value.days && typeof value.days === "object" ? value.days : {};
+    const streakRaw = value.streak && typeof value.streak === "object" ? value.streak : {};
+
+    const dayKeys = Object.keys(daysRaw).filter(Boolean).sort();
+    const trimmedKeys = dayKeys.length > LEARNING_REPORT_MAX_DAYS
+        ? dayKeys.slice(dayKeys.length - LEARNING_REPORT_MAX_DAYS)
+        : dayKeys;
+
+    const days = {};
+    trimmedKeys.forEach((dayKey) => {
+        days[dayKey] = normalizeLearningReportDay(daysRaw[dayKey]);
+    });
+
+    const lastDayKey = streakRaw.lastDayKey == null ? null : String(streakRaw.lastDayKey);
+
+    return {
+        version: LEARNING_REPORT_VERSION,
+        days,
+        streak: {
+            current: toNonNegativeInt(streakRaw.current, 0),
+            lastDayKey: lastDayKey && /^\d{4}-\d{2}-\d{2}$/.test(lastDayKey) ? lastDayKey : null
+        }
+    };
+}
+
+function ensureLearningReportState() {
+    if (!progress || typeof progress !== "object") progress = {};
+    progress.learningReport = normalizeLearningReportState(progress.learningReport);
+    return progress.learningReport;
+}
+
+function ensureLearningReportDay(state, dayKey) {
+    if (!state || typeof state !== "object") return null;
+    const safeKey = String(dayKey || "").trim();
+    if (!safeKey) return null;
+    if (!state.days || typeof state.days !== "object") state.days = {};
+    state.days[safeKey] = normalizeLearningReportDay(state.days[safeKey]);
+    return state.days[safeKey];
+}
+
+function updateLearningReportStreak(state, dayKey) {
+    if (!state || typeof state !== "object") return;
+    state.streak = state.streak && typeof state.streak === "object" ? state.streak : { current: 0, lastDayKey: null };
+    const safeDayKey = String(dayKey || "").trim();
+    if (!safeDayKey) return;
+    if (state.streak.lastDayKey === safeDayKey) return;
+
+    const prev = state.streak.lastDayKey;
+    const currentEpoch = dayKeyToEpochDay(safeDayKey);
+    const prevEpoch = dayKeyToEpochDay(prev);
+    const isNextDay = currentEpoch != null && prevEpoch != null && (currentEpoch - prevEpoch === 1);
+
+    state.streak.current = isNextDay ? Math.max(1, toNonNegativeInt(state.streak.current, 0)) + 1 : 1;
+    state.streak.lastDayKey = safeDayKey;
+}
+
+function updateLearningReportFromEvent(event) {
+    if (!event || typeof event !== "object") return;
+    const state = ensureLearningReportState();
+    const dayKey = getLocalDayKey(event.ts);
+    const day = ensureLearningReportDay(state, dayKey);
+    if (!day) return;
+
+    const wordKey = event.wordKey == null ? "" : String(event.wordKey).trim();
+    if (isLikelyValidWordKey(wordKey)) {
+        day.words = day.words && typeof day.words === "object" ? day.words : {};
+        const entry = normalizeLearningReportWordEntry(day.words[wordKey]);
+        entry.seen = Math.max(0, toNonNegativeInt(entry.seen, 0)) + 1;
+        entry.lastTs = Number(event.ts) || Date.now();
+
+        const primary = String(event.meta?.primary || "").trim();
+        const secondary = String(event.meta?.secondary || "").trim();
+        if (primary) entry.primary = primary;
+        if (secondary) entry.secondary = secondary;
+
+        day.words[wordKey] = entry;
+
+        if (event.source === "challenge") {
+            if (event.result === "success") entry.correct = Math.max(0, toNonNegativeInt(entry.correct, 0)) + 1;
+            if (event.result === "fail") entry.wrong = Math.max(0, toNonNegativeInt(entry.wrong, 0)) + 1;
+            day.words[wordKey] = entry;
+        }
+    }
+
+    if (event.source === "challenge") {
+        day.challenge = day.challenge && typeof day.challenge === "object" ? day.challenge : { success: 0, fail: 0 };
+        if (event.result === "success") day.challenge.success = Math.max(0, toNonNegativeInt(day.challenge.success, 0)) + 1;
+        if (event.result === "fail") day.challenge.fail = Math.max(0, toNonNegativeInt(day.challenge.fail, 0)) + 1;
+    }
+
+    updateLearningReportStreak(state, dayKey);
+}
+
+let learningReportPlaytimeLastTickAt = Date.now();
+let learningReportPlaytimeCarryMs = 0;
+let learningReportPlaytimeLastSaveAt = 0;
+
+function tickLearningReportPlaytime() {
+    const now = Date.now();
+    const deltaMs = Math.min(
+        LEARNING_REPORT_PLAYTIME_MAX_FRAME_DELTA_MS,
+        Math.max(0, now - learningReportPlaytimeLastTickAt)
+    );
+    learningReportPlaytimeLastTickAt = now;
+
+    if (typeof startedOnce !== "undefined" && !startedOnce) return;
+    if (typeof paused !== "undefined" && paused) return;
+
+    learningReportPlaytimeCarryMs += deltaMs;
+    const addSeconds = Math.floor(learningReportPlaytimeCarryMs / 1000);
+    if (addSeconds <= 0) return;
+    learningReportPlaytimeCarryMs = learningReportPlaytimeCarryMs % 1000;
+
+    const state = ensureLearningReportState();
+    const dayKey = getLocalDayKey(now);
+    const day = ensureLearningReportDay(state, dayKey);
+    if (!day) return;
+
+    day.playSeconds = Math.max(0, toNonNegativeInt(day.playSeconds, 0)) + addSeconds;
+
+    if (now - learningReportPlaytimeLastSaveAt >= LEARNING_REPORT_PLAYTIME_SAVE_THROTTLE_MS) {
+        learningReportPlaytimeLastSaveAt = now;
+        saveProgress();
+    }
 }
 
 function normalizeWordEntry(value) {
@@ -322,7 +524,7 @@ function recordLearningEvent(payload) {
     const state = ensureLearningProgressState();
     const event = {
         source,
-        wordKey: payload?.wordKey == null ? null : String(payload.wordKey),
+        wordKey: payload?.wordKey == null ? null : String(payload.wordKey).trim(),
         themeKey: payload?.themeKey == null ? null : String(payload.themeKey),
         result,
         ts: Date.now(),
@@ -346,6 +548,8 @@ function recordLearningEvent(payload) {
 
     // M3: Update dragon egg growth
     updateDragonEggGrowth(state, source, result);
+
+    updateLearningReportFromEvent(event);
 
     saveProgress();
     pushLearningEventFeedback(event);

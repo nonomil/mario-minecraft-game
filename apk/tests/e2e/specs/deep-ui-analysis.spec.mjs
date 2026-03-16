@@ -482,6 +482,31 @@ async function skipInitialModal(page) {
       await page.waitForTimeout(1000);
     }
   }
+
+  // Deep UI flow should not be interrupted by random learning modals.
+  await page.evaluate(() => {
+    try {
+      if (typeof settings !== "undefined" && settings) {
+        settings.challengeEnabled = false;
+        settings.wordMatchEnabled = false;
+      }
+      if (typeof hideLearningChallenge === "function") {
+        hideLearningChallenge();
+      }
+      const challengeModal = document.getElementById("challenge-modal");
+      if (challengeModal) {
+        challengeModal.classList.remove("visible");
+        challengeModal.setAttribute("aria-hidden", "true");
+      }
+      const matchScreen = document.getElementById("word-match-screen");
+      if (matchScreen) {
+        matchScreen.classList.remove("visible");
+        matchScreen.setAttribute("aria-hidden", "true");
+      }
+    } catch (e) {
+      // Best-effort: ignore UI cleanup errors in analysis helper.
+    }
+  });
 }
 
 async function extractModalData(page, selector, name) {

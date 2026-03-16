@@ -235,6 +235,14 @@ async function start() {
             showLeaderboardModal();
         });
     }
+    const overlayLearningReportBtn = document.getElementById("btn-overlay-learning-report");
+    if (overlayLearningReportBtn) {
+        overlayLearningReportBtn.addEventListener("click", () => {
+            if (typeof showLearningReportModal === "function") {
+                showLearningReportModal();
+            }
+        });
+    }
     // Leaderboard modal event listeners
     const leaderboardCloseBtn = document.getElementById("btn-leaderboard-close");
     if (leaderboardCloseBtn) {

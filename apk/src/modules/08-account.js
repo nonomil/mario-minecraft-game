@@ -422,8 +422,10 @@ function bootGameLoopIfNeeded() {
 function loadAccountData(account) {
     score = account?.progress?.currentCoins || 0;
     levelScore = 0;
+    const priorLearningReport = progress?.learningReport;
     progress = normalizeProgress({
-        vocab: (account.vocabulary && account.vocabulary.packProgress) ? account.vocabulary.packProgress : {}
+        vocab: (account.vocabulary && account.vocabulary.packProgress) ? account.vocabulary.packProgress : {},
+        learningReport: account?.vocabulary?.learningReport || priorLearningReport
     });
     if (account.vocabulary?.currentPack) {
         settings.vocabSelection = account.vocabulary.currentPack;
@@ -486,6 +488,7 @@ function saveCurrentProgress() {
     currentAccount.vocabulary = currentAccount.vocabulary || {};
     currentAccount.vocabulary.packProgress = progress.vocab || {};
     currentAccount.vocabulary.currentPack = settings.vocabSelection || "";
+    currentAccount.vocabulary.learningReport = progress?.learningReport || null;
     currentAccount.inventory = currentAccount.inventory || {};
     currentAccount.inventory.items = { ...inventory };
     currentAccount.inventory.equipment = {
@@ -669,6 +672,7 @@ function wireProfileModal() {
     const modal = document.getElementById("profile-modal");
     const btnClose = document.getElementById("btn-profile-close");
     const btnSaveLeaderboard = document.getElementById("btn-profile-save-leaderboard");
+    const btnLearningReport = document.getElementById("btn-profile-learning-report");
     const btnExportSave = document.getElementById("btn-export-save");
     const btnImportSave = document.getElementById("btn-import-save");
     const btnProfileExportSave = document.getElementById("btn-profile-export-save");
@@ -678,6 +682,14 @@ function wireProfileModal() {
         btnSaveLeaderboard.addEventListener("click", () => {
             if (typeof saveCurrentProgress === "function") saveCurrentProgress();
             if (typeof saveProfileScoreToLeaderboard === "function") saveProfileScoreToLeaderboard();
+        });
+    }
+    if (btnLearningReport) {
+        btnLearningReport.addEventListener("click", () => {
+            if (typeof showLearningReportModal === "function") {
+                showLearningReportModal();
+            }
+            hideProfileModal();
         });
     }
     if (btnExportSave) btnExportSave.addEventListener("click", handleExportSave);

@@ -252,6 +252,273 @@
     justify-content: center;
 }
 
+/* 学习报告（家长报告风 / 白底） */
+.learning-report-modal {
+    position: fixed;
+    inset: 0;
+    background: #F5F6F8;
+    display: none;
+    overflow-y: auto;
+    z-index: 240;
+    padding: calc(var(--safe-top) + 14px) calc(var(--safe-right) + 14px) calc(var(--safe-bottom) + 16px) calc(var(--safe-left) + 14px);
+    color: #111827;
+}
+
+.learning-report-modal.visible {
+    display: block;
+}
+
+.learning-report-sheet {
+    width: min(520px, 100%);
+    margin: 0 auto;
+}
+
+.learning-report-modal .game-btn {
+    background: #111827;
+    border-color: #111827;
+    color: #FFFFFF;
+}
+
+.learning-report-modal .game-btn.game-btn-small {
+    background: transparent;
+    border: 1px solid #E5E7EB;
+    color: #111827;
+}
+
+.learning-report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.learning-report-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.learning-report-subtitle {
+    font-size: 13px;
+    color: #6B7280;
+    margin-top: 4px;
+}
+
+.learning-report-content {
+    display: grid;
+    gap: 12px;
+}
+
+.learning-report-card {
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 12px 14px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.learning-report-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+@media (max-width: 420px) {
+    .learning-report-kpis {
+        grid-template-columns: 1fr;
+    }
+}
+
+.learning-report-kpi-value {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.learning-report-kpi-label {
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 4px;
+}
+
+.learning-report-streak {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.learning-report-streak-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.learning-report-streak-days {
+    font-size: 22px;
+    font-weight: 900;
+}
+
+.learning-report-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.learning-report-word-list {
+    display: grid;
+    gap: 8px;
+}
+
+.learning-report-word-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    min-height: 44px;
+}
+
+.learning-report-word-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.learning-report-word-primary {
+    font-weight: 800;
+    color: #111827;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.learning-report-word-secondary {
+    font-size: 12px;
+    color: #6B7280;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.learning-report-tag {
+    font-size: 12px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    flex: 0 0 auto;
+}
+
+.learning-report-tag.ok {
+    background: rgba(34, 197, 94, 0.12);
+    color: #16A34A;
+    border-color: rgba(34, 197, 94, 0.35);
+}
+
+.learning-report-tag.bad {
+    background: rgba(239, 68, 68, 0.12);
+    color: #DC2626;
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+.learning-report-more {
+    width: 100%;
+    background: transparent;
+    border: 1px dashed #CBD5E1;
+    color: #374151;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 700;
+}
+
+.learning-report-trend {
+    display: grid;
+    gap: 8px;
+}
+
+.learning-report-trend-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 40px;
+    gap: 10px;
+    align-items: center;
+}
+
+.learning-report-trend-label {
+    font-size: 12px;
+    color: #6B7280;
+}
+
+.learning-report-trend-bar {
+    height: 10px;
+    background: #E5E7EB;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.learning-report-trend-bar > span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: #111827;
+    opacity: 0.85;
+    border-radius: 999px;
+}
+
+.learning-report-trend-value {
+    text-align: right;
+    font-size: 12px;
+    color: #111827;
+    font-weight: 800;
+}
+
+.learning-report-trend-row.is-today .learning-report-trend-label {
+    color: #111827;
+    font-weight: 800;
+}
+
+.learning-report-trend-row.is-today .learning-report-trend-bar > span {
+    background: #2563EB;
+    opacity: 1;
+}
+
+.learning-report-footer {
+    margin-top: 12px;
+    padding: 8px 0 22px;
+}
+
+.learning-report-footer .game-btn {
+    width: 100%;
+}
+
+.learning-report-empty {
+    text-align: center;
+    padding: 16px;
+}
+
+.learning-report-empty-title {
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 6px;
+}
+
+.learning-report-empty-desc {
+    font-size: 13px;
+    color: #6B7280;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
 .achievement-item {
     display: flex;
     align-items: center;

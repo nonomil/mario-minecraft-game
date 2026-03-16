@@ -80,6 +80,7 @@ function setOverlay(visible, mode) {
     const btnSkip = document.getElementById("btn-overlay-skip");
     const btnPick = document.getElementById("btn-overlay-pick-account");
     const btnScoreRevive = document.getElementById("btn-overlay-score-revive");
+    const btnLearningReport = document.getElementById("btn-overlay-learning-report");
     const btnLeaderboard = document.getElementById("btn-overlay-leaderboard");
     const btnWrap = overlay.querySelector(".overlay-buttons");
 
@@ -102,6 +103,7 @@ function setOverlay(visible, mode) {
             wireIntroConfirmButton();
             if (title) title.innerText = "Minecraft 单词游戏";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLearningReport) btnLearningReport.style.display = "none";
             if (btnLeaderboard) btnLeaderboard.style.display = "none";
             updateStartOverlayButtons();
         } else if (mode === "pause") {
@@ -110,6 +112,7 @@ function setOverlay(visible, mode) {
             if (btn) btn.innerText = "继续";
             if (btn) btn.style.display = "block";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLearningReport) btnLearningReport.style.display = "none";
             if (btnLeaderboard) btnLeaderboard.style.display = "none";
             hideStartButtons();
         } else if (mode === "error") {
@@ -125,6 +128,7 @@ function setOverlay(visible, mode) {
             if (btn) btn.innerText = "Reload";
             if (btn) btn.style.display = "block";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLearningReport) btnLearningReport.style.display = "none";
             if (btnLeaderboard) btnLeaderboard.style.display = "none";
             hideStartButtons();
         } else if (mode === "gameover") {
@@ -159,6 +163,7 @@ function setOverlay(visible, mode) {
                     ? `积分复活 (${scoreCost}分)`
                     : `积分复活 (需要${scoreCost}分)`;
             }
+            if (btnLearningReport) btnLearningReport.style.display = "block";
             // Show leaderboard button on gameover
             if (btnLeaderboard) btnLeaderboard.style.display = "block";
             hideStartButtons();
@@ -168,6 +173,7 @@ function setOverlay(visible, mode) {
             if (btn) btn.innerText = "开始游戏";
             if (btn) btn.style.display = "block";
             if (btnScoreRevive) btnScoreRevive.style.display = "none";
+            if (btnLearningReport) btnLearningReport.style.display = "none";
             if (btnLeaderboard) btnLeaderboard.style.display = "none";
             hideStartButtons();
         }
@@ -180,9 +186,384 @@ function setOverlay(visible, mode) {
         }
         overlayMode = "start";
         if (btnScoreRevive) btnScoreRevive.style.display = "none";
+        if (btnLearningReport) btnLearningReport.style.display = "none";
         if (btnLeaderboard) btnLeaderboard.style.display = "none";
         hideStartButtons();
     }
+}
+
+function escapeLearningReportHtml(raw) {
+    return String(raw ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function formatLearningReportCnDate(dayKey) {
+    const parts = String(dayKey || "").split("-").map(Number);
+    if (parts.length !== 3) return "";
+    const [year, month, day] = parts;
+    if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return "";
+    return `${year}年${month}月${day}日`;
+}
+
+function getLearningReportTodaySnapshot() {
+    const state = typeof ensureLearningReportState === "function"
+        ? ensureLearningReportState()
+        : (progress?.learningReport || null);
+    const todayKey = typeof getLocalDayKey === "function"
+        ? getLocalDayKey()
+        : (() => {
+            const d = new Date();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const day = String(d.getDate()).padStart(2, "0");
+            return `${d.getFullYear()}-${m}-${day}`;
+        })();
+
+    const day = state?.days?.[todayKey];
+    const words = day?.words && typeof day.words === "object" ? day.words : {};
+    const wordEntries = Object.entries(words).map(([key, entry]) => {
+        const safeEntry = entry && typeof entry === "object" ? entry : {};
+        const primary = String(safeEntry.primary || "").trim() || key;
+        const secondary = String(safeEntry.secondary || "").trim();
+        return {
+            key,
+            primary,
+            secondary: secondary || "(暂无释义)",
+            seen: Math.max(0, Number(safeEntry.seen) || 0),
+            correct: Math.max(0, Number(safeEntry.correct) || 0),
+            wrong: Math.max(0, Number(safeEntry.wrong) || 0),
+            lastTs: Math.max(0, Number(safeEntry.lastTs) || 0)
+        };
+    });
+
+    const challengeSuccess = Math.max(0, Number(day?.challenge?.success) || 0);
+    const challengeFail = Math.max(0, Number(day?.challenge?.fail) || 0);
+    const challengeTotal = challengeSuccess + challengeFail;
+    const accuracy = challengeTotal > 0 ? Math.round((challengeSuccess / challengeTotal) * 100) : null;
+
+    const uniqueWords = wordEntries.length;
+    const playSeconds = Math.max(0, Number(day?.playSeconds) || 0);
+    const playMinutes = playSeconds > 0 ? Math.max(1, Math.ceil(playSeconds / 60)) : (uniqueWords > 0 ? 1 : 0);
+
+    const correctWords = wordEntries
+        .filter(w => w.correct > 0)
+        .sort((a, b) => (b.correct - a.correct) || (b.lastTs - a.lastTs));
+
+    const wrongWords = wordEntries
+        .filter(w => w.wrong > 0)
+        .sort((a, b) => (b.wrong - a.wrong) || (b.lastTs - a.lastTs));
+
+    const streakDays = Math.max(0, Number(state?.streak?.current) || 0);
+
+    return {
+        state,
+        todayKey,
+        uniqueWords,
+        accuracy,
+        challengeSuccess,
+        challengeFail,
+        playMinutes,
+        playSeconds,
+        streakDays,
+        correctWords,
+        wrongWords
+    };
+}
+
+function buildLearningReportWordRowHtml(word, tagText, tagClass) {
+    const primary = escapeLearningReportHtml(word?.primary || word?.key || "");
+    const secondary = escapeLearningReportHtml(word?.secondary || "");
+    return `
+        <div class="learning-report-word-row">
+            <div class="learning-report-word-text">
+                <div class="learning-report-word-primary">${primary}</div>
+                <div class="learning-report-word-secondary">${secondary}</div>
+            </div>
+            <span class="learning-report-tag ${tagClass}">${escapeLearningReportHtml(tagText)}</span>
+        </div>
+    `;
+}
+
+function buildLearningReportWordSectionHtml(title, words, opts) {
+    const list = Array.isArray(words) ? words : [];
+    const safeTitle = escapeLearningReportHtml(title);
+    const tagText = opts?.tagText || "";
+    const tagClass = opts?.tagClass || "";
+    const limit = Math.max(0, Number(opts?.limit) || 0);
+    const sectionKey = String(opts?.sectionKey || "").trim();
+
+    if (list.length === 0) {
+        const emptyText = escapeLearningReportHtml(opts?.emptyText || "完成一次挑战后会显示。");
+        return `
+            <div class="learning-report-card">
+                <div class="learning-report-section-title"><span>${safeTitle}</span></div>
+                <div style="color:#6B7280;font-size:13px;line-height:1.6;">${emptyText}</div>
+            </div>
+        `;
+    }
+
+    const shouldCollapse = limit > 0 && list.length > limit && sectionKey;
+    const visible = shouldCollapse ? list.slice(0, limit) : list;
+    const hidden = shouldCollapse ? list.slice(limit) : [];
+
+    const visibleHtml = visible.map(w => buildLearningReportWordRowHtml(w, tagText, tagClass)).join("");
+    const hiddenHtml = hidden.map(w => buildLearningReportWordRowHtml(w, tagText, tagClass)).join("");
+
+    const toggleHtml = shouldCollapse
+        ? `<button class="learning-report-more" data-lr-toggle="${escapeLearningReportHtml(sectionKey)}" data-lr-expanded="0">还有 ${hidden.length} 个…</button>`
+        : "";
+
+    return `
+        <div class="learning-report-card" data-lr-section="${escapeLearningReportHtml(sectionKey)}">
+            <div class="learning-report-section-title"><span>${safeTitle}</span></div>
+            <div class="learning-report-word-list">
+                ${visibleHtml}
+            </div>
+            ${shouldCollapse ? `<div class="learning-report-word-list" data-lr-hidden="1" style="display:none;">${hiddenHtml}</div>` : ""}
+            ${toggleHtml}
+        </div>
+    `;
+}
+
+function buildLearningReportTrendHtml(state, todayKey) {
+    const safeState = state && typeof state === "object" ? state : { days: {} };
+    const days = safeState.days && typeof safeState.days === "object" ? safeState.days : {};
+    const rows = [];
+    const today = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        const entry = days[key];
+        const wordCount = entry?.words && typeof entry.words === "object" ? Object.keys(entry.words).length : 0;
+        rows.push({
+            key,
+            label: `${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`,
+            count: Math.max(0, Number(wordCount) || 0)
+        });
+    }
+
+    const maxCount = Math.max(1, ...rows.map(r => r.count));
+    const itemsHtml = rows.map(r => {
+        const width = Math.round((r.count / maxCount) * 100);
+        const isToday = r.key === todayKey;
+        return `
+            <div class="learning-report-trend-row ${isToday ? "is-today" : ""}">
+                <div class="learning-report-trend-label">${escapeLearningReportHtml(r.label)}${isToday ? " · 今天" : ""}</div>
+                <div class="learning-report-trend-bar"><span style="width:${width}%;"></span></div>
+                <div class="learning-report-trend-value">${r.count}</div>
+            </div>
+        `;
+    }).join("");
+
+    return `
+        <div class="learning-report-card">
+            <div class="learning-report-section-title"><span>本周学习/答题趋势</span></div>
+            <div class="learning-report-trend">${itemsHtml}</div>
+        </div>
+    `;
+}
+
+function buildLearningReportShareText(snapshot) {
+    const title = currentAccount?.username ? `${currentAccount.username}的学习报告` : "今日学习报告";
+    const dateText = formatLearningReportCnDate(snapshot?.todayKey) || String(snapshot?.todayKey || "");
+    const uniqueWords = Number(snapshot?.uniqueWords) || 0;
+    const playMinutes = Number(snapshot?.playMinutes) || 0;
+    const acc = snapshot?.accuracy == null ? "—" : `${snapshot.accuracy}%`;
+
+    const wrongTop = Array.isArray(snapshot?.wrongWords) ? snapshot.wrongWords.slice(0, 6) : [];
+    const wrongText = wrongTop.length
+        ? wrongTop.map(w => `${w.primary}${w.secondary ? `（${w.secondary}）` : ""}`).join("、")
+        : "无";
+
+    return [
+        title,
+        `${dateText} · 今天`,
+        `单词遇见：${uniqueWords}`,
+        `答对率：${acc}`,
+        `游戏分钟：${playMinutes}`,
+        `还需练习：${wrongText}`
+    ].join("\n");
+}
+
+function renderLearningReportModal() {
+    const modal = document.getElementById("learning-report-modal");
+    const titleEl = document.getElementById("learning-report-title");
+    const subtitleEl = document.getElementById("learning-report-subtitle");
+    const contentEl = document.getElementById("learning-report-content");
+    const shareBtn = document.getElementById("btn-learning-report-share");
+    if (!modal || !titleEl || !subtitleEl || !contentEl) return;
+
+    const snapshot = getLearningReportTodaySnapshot();
+    modal.dataset.lrTodayKey = snapshot.todayKey;
+
+    const titleText = currentAccount?.username ? `${currentAccount.username}的学习报告` : "今日学习报告";
+    titleEl.innerText = titleText;
+    subtitleEl.innerText = `${formatLearningReportCnDate(snapshot.todayKey) || snapshot.todayKey} · 今天`;
+
+    const hasAnyLearning = snapshot.uniqueWords > 0 || snapshot.playSeconds > 0 || (snapshot.challengeSuccess + snapshot.challengeFail) > 0;
+    if (!hasAnyLearning) {
+        contentEl.innerHTML = `
+            <div class="learning-report-card learning-report-empty">
+                <div class="learning-report-empty-title">今天还没有学习记录</div>
+                <div class="learning-report-empty-desc">先玩一局并完成一次挑战，报告会自动生成。</div>
+                <button class="game-btn" id="btn-learning-report-back">返回游戏</button>
+            </div>
+        `;
+        if (shareBtn) shareBtn.disabled = true;
+        return;
+    }
+
+    const accText = snapshot.accuracy == null ? "—" : `${snapshot.accuracy}%`;
+    const minutesText = snapshot.playMinutes > 0 ? `${snapshot.playMinutes}` : "—";
+
+    const kpiHtml = `
+        <div class="learning-report-kpis">
+            <div class="learning-report-card">
+                <div class="learning-report-kpi-value">${snapshot.uniqueWords}</div>
+                <div class="learning-report-kpi-label">单词遇见</div>
+            </div>
+            <div class="learning-report-card">
+                <div class="learning-report-kpi-value">${escapeLearningReportHtml(accText)}</div>
+                <div class="learning-report-kpi-label">答对率</div>
+            </div>
+            <div class="learning-report-card">
+                <div class="learning-report-kpi-value">${escapeLearningReportHtml(minutesText)}</div>
+                <div class="learning-report-kpi-label">游戏分钟</div>
+            </div>
+        </div>
+    `;
+
+    const streakHtml = `
+        <div class="learning-report-card">
+            <div class="learning-report-streak">
+                <div class="learning-report-streak-left">
+                    <div style="font-size:18px;">🔥</div>
+                    <div>
+                        <div style="font-weight:800;">连续学习</div>
+                        <div style="font-size:13px;color:#6B7280;">保持下去！</div>
+                    </div>
+                </div>
+                <div class="learning-report-streak-days">${snapshot.streakDays}天</div>
+            </div>
+        </div>
+    `;
+
+    const correctTitle = `答对的词（${snapshot.correctWords.length}个）`;
+    const wrongTitle = `还需练习（${snapshot.wrongWords.length}个）`;
+    const challengeTotal = snapshot.challengeSuccess + snapshot.challengeFail;
+    const correctEmptyText = challengeTotal > 0 ? "今天还没有答对的词，再试一次挑战吧！" : "完成一次挑战后会显示。";
+    const wrongEmptyText = challengeTotal > 0 ? "今天没有答错的词，继续保持！" : "完成一次挑战后会显示。";
+    const correctHtml = buildLearningReportWordSectionHtml(correctTitle, snapshot.correctWords, {
+        tagText: "答对",
+        tagClass: "ok",
+        limit: 3,
+        sectionKey: "correct",
+        emptyText: correctEmptyText
+    });
+    const wrongHtml = buildLearningReportWordSectionHtml(wrongTitle, snapshot.wrongWords, {
+        tagText: "答错",
+        tagClass: "bad",
+        limit: 5,
+        sectionKey: "wrong",
+        emptyText: wrongEmptyText
+    });
+
+    const trendHtml = buildLearningReportTrendHtml(snapshot.state, snapshot.todayKey);
+
+    contentEl.innerHTML = kpiHtml + streakHtml + correctHtml + wrongHtml + trendHtml;
+    if (shareBtn) shareBtn.disabled = false;
+}
+
+function wireLearningReportModal() {
+    const modal = document.getElementById("learning-report-modal");
+    if (!modal || modal.dataset.wired) return;
+    modal.dataset.wired = "1";
+
+    const btnClose = document.getElementById("btn-learning-report-close");
+    const btnShare = document.getElementById("btn-learning-report-share");
+
+    if (btnClose) btnClose.addEventListener("click", hideLearningReportModal);
+    if (btnShare) {
+        btnShare.addEventListener("click", async () => {
+            const snapshot = getLearningReportTodaySnapshot();
+            const text = buildLearningReportShareText(snapshot);
+            let copied = false;
+            try {
+                if (navigator?.clipboard?.writeText) {
+                    await navigator.clipboard.writeText(text);
+                    copied = true;
+                }
+            } catch {
+                copied = false;
+            }
+            if (typeof showToast === "function") {
+                showToast(copied ? "✅ 已复制学习摘要，建议截图分享" : "请使用系统截图功能分享（复制摘要失败）");
+            }
+        });
+    }
+
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) hideLearningReportModal();
+    });
+
+    modal.addEventListener("click", (e) => {
+        const target = e.target;
+        const toggleKey = target && target.dataset ? String(target.dataset.lrToggle || "").trim() : "";
+        if (!toggleKey) return;
+        const section = modal.querySelector(`[data-lr-section="${toggleKey}"]`);
+        if (!section) return;
+        const hidden = section.querySelector(`[data-lr-hidden="1"]`);
+        if (!hidden) return;
+        const expanded = String(target.dataset.lrExpanded || "0") === "1";
+        hidden.style.display = expanded ? "none" : "";
+        target.dataset.lrExpanded = expanded ? "0" : "1";
+        if (!expanded) target.innerText = "收起";
+        else {
+            const count = hidden.querySelectorAll(".learning-report-word-row").length;
+            target.innerText = `还有 ${count} 个…`;
+        }
+    });
+
+    modal.addEventListener("click", (e) => {
+        const backBtn = e.target && e.target.id === "btn-learning-report-back" ? e.target : null;
+        if (!backBtn) return;
+        hideLearningReportModal();
+    });
+}
+
+function showLearningReportModal() {
+    const modal = document.getElementById("learning-report-modal");
+    if (!modal) return;
+    wireLearningReportModal();
+    renderLearningReportModal();
+    modal.classList.add("visible");
+    modal.setAttribute("aria-hidden", "false");
+
+    const overlay = document.getElementById("screen-overlay");
+    const overlayVisible = !!(overlay && overlay.classList.contains("visible"));
+    if (overlayVisible) return;
+
+    if (typeof pushPause === "function") pushPause();
+    else paused = true;
+}
+
+function hideLearningReportModal() {
+    const modal = document.getElementById("learning-report-modal");
+    if (!modal) return;
+    modal.classList.remove("visible");
+    modal.setAttribute("aria-hidden", "true");
+
+    const overlay = document.getElementById("screen-overlay");
+    const overlayVisible = !!(overlay && overlay.classList.contains("visible"));
+    if (overlayVisible) return;
+
+    if (typeof popPause === "function") popPause();
+    else paused = false;
 }
 function wireIntroConfirmButton() {
     const btn = document.getElementById("btn-overlay-intro-confirm");
