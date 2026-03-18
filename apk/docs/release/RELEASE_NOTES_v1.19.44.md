@@ -25,7 +25,7 @@
 - `package.json` -> `1.19.44`
 - `android-app/package.json` -> `1.19.44`
 - `android-app/android/app/build.gradle` -> `versionCode 96`, `versionName 1.19.44`
-- `android-app/web/build-info.json` -> `version 1.19.44`, `buildNumber 96`, `gitCommit 77cb316`
+- `android-app/web/build-info.json` -> `version 1.19.44`, `buildNumber 96`, `gitCommit cadb2e3`
 - `service-worker.js` -> cache `v1.19.44`
 - `Game.html` -> cache busting query param `v=1.19.44`
 
