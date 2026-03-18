@@ -19,6 +19,7 @@ function loadPinyinPack() {
 function testPinyinPackExists() {
   const pack = loadPinyinPack();
   assert.ok(Array.isArray(pack) && pack.length > 0, "拼音词库应存在且非空");
+  assert.equal(pack.length, 800, `拼音词库应覆盖 800 个汉字映射条目，实际为 ${pack.length}`);
   for (const entry of pack) {
     assert.ok(entry.pinyin && entry.base, `拼音条目必须包含 pinyin/base: ${entry.word}`);
     assert.equal(entry.mode, "pinyin", "拼音条目应标记为 pinyin 模式");

@@ -6,6 +6,7 @@ const _root = typeof window !== "undefined" ? window : globalThis;
 let sessionCorrectStreak = 0;
 let sessionWrongStreak = 0;
 _root._sessionWordResults = _root._sessionWordResults || [];
+let recoveryQuizSession = null;
 
 // --- Bridge play rules ---
 const BRIDGE_DEFAULT_CHALLENGE_TYPES = ["translate", "listen", "fill_blank", "multi_blank", "unscramble"];
@@ -28,14 +29,179 @@ function getWordKeySafe(wordObj) {
     return String(wordObj?.en || wordObj?.word || wordObj?.zh || "").trim();
 }
 
+function getWordModuleSafe(wordObj) {
+    return String(wordObj?.module || "").trim();
+}
+
+function getWordGradeBandSafe(wordObj) {
+    return String(wordObj?.gradeBand || "").trim();
+}
+
+function formatBridgeGradeBandLabel(gradeBand) {
+    const normalized = String(gradeBand || "").trim();
+    if (!normalized) return "";
+    const labelMap = {
+        "学前": "学前启蒙",
+        "一年级": "小学一年级",
+        "二年级": "小学二年级",
+        "学前-一年级": "学前到小学一年级",
+        "学前-二年级": "学前到小学二年级",
+        "学前到一年级": "学前到小学一年级",
+        "学前到二年级": "学前到小学二年级"
+    };
+    return labelMap[normalized] || normalized.replace(/-/g, "到");
+}
+
+function getCurrentBridgeGradeScopeLabel() {
+    const scope = _root.BilingualVocab?.normalizeBridgeGradeScope?.(settings?.bridgeGradeScope || "");
+    if (!scope || scope === "all") return "";
+    return _root.BilingualVocab?.getBridgeGradeScopeLabel?.(scope) || "";
+}
+
+function shouldShowCurrentBridgeGradeScope(wordObj, languageMode) {
+    const subject = getWordSubjectSafe(wordObj);
+    const mode = languageMode || getLanguageModeSafe();
+    return _root.BilingualVocab?.isBridgeMode?.()
+        || subject === "language"
+        || mode === "chinese"
+        || mode === "pinyin";
+}
+
+function withBridgeGradeScopeTitle(title, wordObj, languageMode) {
+    const safeTitle = String(title || "").trim();
+    if (!safeTitle) return "";
+    if (!shouldShowCurrentBridgeGradeScope(wordObj, languageMode)) return safeTitle;
+    const scopeLabel = getCurrentBridgeGradeScopeLabel();
+    return scopeLabel ? `${scopeLabel} · ${safeTitle}` : safeTitle;
+}
+
+function getBridgeLearningLabel(wordObj, languageMode, challengeType = "") {
+    const moduleName = getWordModuleSafe(wordObj);
+    if (isSingleCharacterLearningWord(wordObj) || moduleName === "识字") {
+        return challengeType === "hanzi_example" ? "识字组词" : "识字认读";
+    }
+    if (moduleName === "词语") return languageMode === "pinyin" ? "拼音认读" : "词语认读";
+    if (moduleName === "拓展词汇") return languageMode === "pinyin" ? "拼音认读" : "拓展识词";
+    if (moduleName === "表达") return "表达练习";
+    if (moduleName === "古诗") return "古诗朗读";
+    return "";
+}
+
+function getChineseTextLength(wordObj) {
+    return [...String(wordObj?.chinese || wordObj?.zh || wordObj?.character || "").trim()].length;
+}
+
+function getBridgeContextHint(wordObj, languageMode, challengeType = "") {
+    const moduleName = getBridgeLearningLabel(wordObj, languageMode || getLanguageModeSafe(), challengeType) || getWordModuleSafe(wordObj);
+    const gradeBand = getWordGradeBandSafe(wordObj);
+    const scopeLabel = shouldShowCurrentBridgeGradeScope(wordObj, languageMode) ? getCurrentBridgeGradeScopeLabel() : "";
+    const scopeHint = scopeLabel ? `当前层级：${scopeLabel}` : "";
+    return [scopeHint, moduleName, formatBridgeGradeBandLabel(gradeBand)].filter(Boolean).join(" · ");
+}
+
+function getWordPrimaryHanzi(wordObj) {
+    return String(wordObj?.character || wordObj?.chinese || wordObj?.zh || "").trim();
+}
+
+function isSingleCharacterLearningWord(wordObj) {
+    return [...getWordPrimaryHanzi(wordObj)].length === 1;
+}
+
+function getAdaptiveChallengeTitle(wordObj, challengeType, languageMode) {
+    const subject = getWordSubjectSafe(wordObj);
+    const mode = languageMode || getLanguageModeSafe();
+
+    if (subject === "math") return withBridgeGradeScopeTitle("数学闯关", wordObj, mode);
+    if (subject === "english") return withBridgeGradeScopeTitle("英语挑战", wordObj, mode);
+    if (subject === "language") {
+        const moduleLabel = getBridgeLearningLabel(wordObj, mode, challengeType);
+        if (moduleLabel) return withBridgeGradeScopeTitle(moduleLabel, wordObj, mode);
+        if (mode === "pinyin") return withBridgeGradeScopeTitle("拼音认读", wordObj, mode);
+        if (mode === "chinese") return withBridgeGradeScopeTitle("汉字挑战", wordObj, mode);
+        return withBridgeGradeScopeTitle("语文挑战", wordObj, mode);
+    }
+    return mode === "pinyin"
+        ? withBridgeGradeScopeTitle("拼音挑战", wordObj, mode)
+        : (mode === "chinese" ? withBridgeGradeScopeTitle("汉字挑战", wordObj, mode) : "学习挑战");
+}
+
+function getWordCardThemeClass(wordObj) {
+    const mode = getLanguageModeSafe();
+    const moduleName = getWordModuleSafe(wordObj);
+    if (mode === "pinyin") return "word-card-theme-pinyin";
+    if (mode === "chinese" || isSingleCharacterLearningWord(wordObj) || moduleName === "识字") return "word-card-theme-chinese";
+    return "";
+}
+
+function formatChallengePromptWithHint(prefix, payload, hint) {
+    const safePrefix = String(prefix || "").trim();
+    const safePayload = String(payload || "").trim();
+    const safeHint = String(hint || "").trim();
+    if (!safePrefix || !safePayload) return "";
+    return safeHint ? `${safePrefix} ${safePayload}（${safeHint}）` : `${safePrefix} ${safePayload}`;
+}
+
+function getPinyinToHanziPrompt(wordObj, pinyin, hint) {
+    const moduleName = getWordModuleSafe(wordObj);
+    if (moduleName === "古诗") return `${formatChallengePromptWithHint("根据拼音", pinyin, hint)} 认出诗句片段`;
+    if (isSingleCharacterLearningWord(wordObj) || moduleName === "识字") {
+        return `${formatChallengePromptWithHint("根据拼音", pinyin, hint)} 选出正确汉字`;
+    }
+    if (moduleName === "词语" || moduleName === "拓展词汇") {
+        return `${formatChallengePromptWithHint("根据拼音", pinyin, hint)} 拼出正确词语`;
+    }
+    return `${formatChallengePromptWithHint("根据拼音", pinyin, hint)} 选出正确汉字`;
+}
+
+function getHanziToPinyinPrompt(wordObj, hanzi, hint) {
+    const moduleName = getWordModuleSafe(wordObj);
+    if (moduleName === "古诗") return `${formatChallengePromptWithHint("给诗句片段", hanzi, hint)} 选出正确读音`;
+    if (moduleName === "词语" || moduleName === "拓展词汇") {
+        return `${formatChallengePromptWithHint("给词语", hanzi, hint)} 选出正确读音`;
+    }
+    return `${formatChallengePromptWithHint("给汉字", hanzi, hint)} 选出正确读音`;
+}
+
+function getPinyinTonePrompt(wordObj, base) {
+    const moduleName = getWordModuleSafe(wordObj);
+    if (moduleName === "词语" || moduleName === "拓展词汇") return `给词语拼音 ${base} 选对声调`;
+    return `给拼音 ${base} 选对声调`;
+}
+
+function getChineseFillHintText(wordObj) {
+    const moduleName = getWordModuleSafe(wordObj);
+    if (moduleName === "古诗") return "补全诗句片段";
+    if (moduleName === "表达") return "补全完整表达";
+    if (moduleName === "词语" || moduleName === "拓展词汇") return "缺少哪个字？";
+    return "缺少哪个汉字？";
+}
+
+function getKnownHanziCharacters() {
+    const pack = Array.isArray(_root.kindergartenHanzi) ? _root.kindergartenHanzi : [];
+    return Array.from(new Set(
+        pack
+            .map(item => String(item?.character || item?.chinese || item?.word || "").trim())
+            .filter(Boolean)
+    ));
+}
+
 function getBridgeChallengeTypePool(wordObj, languageMode) {
     const subject = getWordSubjectSafe(wordObj);
     const isPinyinMode = languageMode === "pinyin";
     const hasHanzi = String(wordObj?.chinese || wordObj?.zh || "").trim();
     const hasPinyin = String(wordObj?.pinyin || "").trim();
+    const moduleName = getWordModuleSafe(wordObj);
+    const textLength = getChineseTextLength(wordObj);
+    const isSingleHanzi = isSingleCharacterLearningWord(wordObj);
     if (subject === "math") return ["math_concept"];
     if (isPinyinMode) {
         if (hasHanzi && hasPinyin) {
+            if (isSingleHanzi) {
+                return ["pinyin_to_hanzi", "hanzi_to_pinyin"];
+            }
+            if (moduleName === "古诗" || textLength >= 4) {
+                return ["pinyin_to_hanzi", "hanzi_to_pinyin"];
+            }
             return ["pinyin_to_hanzi", "pinyin_tone", "hanzi_to_pinyin"];
         }
         return ["listen"];
@@ -43,9 +209,21 @@ function getBridgeChallengeTypePool(wordObj, languageMode) {
     if (subject === "english") return ["listen", "fill_blank", "multi_blank", "unscramble", "translate"];
     if (subject === "language") {
         if (languageMode === "pinyin") {
+            if (isSingleHanzi) {
+                return ["pinyin_to_hanzi", "hanzi_to_pinyin"];
+            }
+            if (moduleName === "古诗" || textLength >= 4) {
+                return ["pinyin_to_hanzi", "hanzi_to_pinyin"];
+            }
             return ["pinyin_to_hanzi", "pinyin_tone", "hanzi_to_pinyin"];
         }
         if (languageMode === "chinese") {
+            if (isSingleHanzi || moduleName === "识字") {
+                return ["hanzi_example", "hanzi_to_pinyin", "listen"];
+            }
+            if (moduleName === "表达" || moduleName === "古诗" || textLength >= 4) {
+                return ["listen", "fill_blank", "hanzi_to_pinyin"];
+            }
             return ["hanzi_to_pinyin", "fill_blank", "listen"];
         }
         return ["listen", "translate", "fill_blank"];
@@ -55,11 +233,18 @@ function getBridgeChallengeTypePool(wordObj, languageMode) {
 
 function pickBridgeWordGateType(wordObj, languageMode) {
     const subject = getWordSubjectSafe(wordObj);
+    const moduleName = getWordModuleSafe(wordObj);
+    const textLength = getChineseTextLength(wordObj);
+    const isSingleHanzi = isSingleCharacterLearningWord(wordObj);
     if (subject === "math") return "math_concept";
     if (subject === "english") return "fill_blank";
     if (subject === "language") {
         if (languageMode === "pinyin") return "pinyin_to_hanzi";
-        if (languageMode === "chinese") return wordObj?.pinyin ? "hanzi_to_pinyin" : "fill_blank";
+        if (languageMode === "chinese") {
+            if (isSingleHanzi || moduleName === "识字") return "hanzi_example";
+            if (moduleName === "表达" || moduleName === "古诗" || textLength >= 4) return "listen";
+            return wordObj?.pinyin ? "hanzi_to_pinyin" : "fill_blank";
+        }
         return "listen";
     }
     const pool = getBridgeChallengeTypePool(wordObj, languageMode);
@@ -111,6 +296,7 @@ function showWordCard(wordObj) {
     const card = document.getElementById("word-card");
     if (!card) return;
     const subject = String(wordObj?.subject || "").trim();
+    card.classList.remove("word-card-theme-chinese", "word-card-theme-pinyin");
     if (subject === "math") {
         card.classList.remove("visible");
         card.setAttribute("aria-hidden", "true");
@@ -118,10 +304,21 @@ function showWordCard(wordObj) {
     }
     const en = document.getElementById("word-card-en");
     const zh = document.getElementById("word-card-zh");
+    const meta = document.getElementById("word-card-meta");
     const phrase = document.getElementById("word-card-phrase");
     const displayContent = getWordDisplayContentSafe(wordObj);
     if (en) en.innerText = displayContent.primaryText || "";
     if (zh) zh.innerText = displayContent.secondaryText || "";
+    if (meta) {
+        const metaText = formatWordDisplayPair(displayContent.metaText, displayContent.tipText, " · ");
+        if (metaText) {
+            meta.innerText = metaText;
+            meta.style.display = "inline-flex";
+        } else {
+            meta.innerText = "";
+            meta.style.display = "none";
+        }
+    }
     if (phrase) {
         const phraseText = formatWordDisplayPair(displayContent.phrasePrimary, displayContent.phraseSecondary, " · ");
         if (phraseText) {
@@ -132,6 +329,8 @@ function showWordCard(wordObj) {
             phrase.style.display = "none";
         }
     }
+    const themeClass = getWordCardThemeClass(wordObj);
+    if (themeClass) card.classList.add(themeClass);
     updateWordImage(wordObj);
     card.classList.add("visible");
     card.setAttribute("aria-hidden", "false");
@@ -700,6 +899,47 @@ function buildTextOptions(correct, candidates, count) {
     return shuffleArray(options);
 }
 
+function normalizeExampleWords(wordObj) {
+    return [...new Set(
+        (Array.isArray(wordObj?.examples) ? wordObj.examples : [])
+            .map(item => String(item?.word || "").trim())
+            .filter(Boolean)
+    )];
+}
+
+function generateHanziExampleChallenge(wordObj) {
+    const char = getWordPrimaryHanzi(wordObj);
+    if ([...char].length !== 1) return generateHanziToPinyinChallenge(wordObj);
+
+    const exampleWords = normalizeExampleWords(wordObj)
+        .filter(word => word.includes(char))
+        .filter(word => [...word].length >= 2 && [...word].length <= 4);
+    const correct = exampleWords[0] || "";
+    if (!correct) return generateHanziToPinyinChallenge(wordObj);
+
+    const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
+    const distractors = [];
+    for (const entry of pool) {
+        if (distractors.length >= 12) break;
+        for (const exampleWord of normalizeExampleWords(entry)) {
+            const text = String(exampleWord || "").trim();
+            if (!text || text === correct || text.includes(char)) continue;
+            if (Math.abs([...text].length - [...correct].length) > 1) continue;
+            distractors.push(text);
+        }
+    }
+
+    const pinyin = String(wordObj?.pinyin || "").trim();
+    const hint = getBridgeContextHint(wordObj, getLanguageModeSafe(), "hanzi_example");
+    const hintText = [pinyin, hint].filter(Boolean).join(" · ");
+    return {
+        mode: "options",
+        question: hintText ? `选择含有“${char}”的正确组词（${hintText}）` : `选择含有“${char}”的正确组词`,
+        options: buildTextOptions(correct, distractors, 4),
+        answer: correct
+    };
+}
+
 const PINYIN_TONE_GROUPS = {
     a: ["a", "ā", "á", "ǎ", "à"],
     e: ["e", "ē", "é", "ě", "è"],
@@ -764,12 +1004,24 @@ function generatePinyinToHanziChallenge(wordObj) {
     const hanzi = String(wordObj?.chinese || wordObj?.zh || "").trim();
     if (!pinyin || !hanzi) return null;
     const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
-    const candidates = pool
-        .map(w => String(w?.chinese || w?.zh || "").trim())
-        .filter(v => v && v !== hanzi);
+    const sameLengthPool = pool
+        .map(w => ({
+            hanzi: String(w?.chinese || w?.zh || "").trim(),
+            pinyin: String(w?.pinyin || "").trim()
+        }))
+        .filter(item => item.hanzi && item.hanzi !== hanzi && item.pinyin && item.pinyin !== pinyin)
+        .filter(item => [...item.hanzi].length === [...hanzi].length);
+    const fallbackPool = pool
+        .map(w => ({
+            hanzi: String(w?.chinese || w?.zh || "").trim(),
+            pinyin: String(w?.pinyin || "").trim()
+        }))
+        .filter(item => item.hanzi && item.hanzi !== hanzi && item.pinyin && item.pinyin !== pinyin);
+    const candidates = (sameLengthPool.length >= 3 ? sameLengthPool : fallbackPool).map(item => item.hanzi);
+    const hint = [String(wordObj?.english || wordObj?.en || "").trim(), getBridgeContextHint(wordObj, getLanguageModeSafe())].filter(Boolean).join(" · ");
     return {
         mode: "options",
-        question: `选择拼音 ${pinyin} 对应的汉字`,
+        question: getPinyinToHanziPrompt(wordObj, pinyin, hint),
         options: buildTextOptions(hanzi, candidates, 4),
         answer: hanzi
     };
@@ -780,12 +1032,18 @@ function generateHanziToPinyinChallenge(wordObj) {
     const pinyin = String(wordObj?.pinyin || "").trim();
     if (!hanzi || !pinyin) return null;
     const pool = Array.isArray(wordDatabase) ? wordDatabase : [];
-    const candidates = pool
+    const syllableCount = pinyin.split(/\s+/).filter(Boolean).length;
+    const sameSizeCandidates = pool
         .map(w => String(w?.pinyin || "").trim())
-        .filter(v => v && v !== pinyin);
+        .filter(v => v && v !== pinyin)
+        .filter(v => v.split(/\s+/).filter(Boolean).length === syllableCount);
+    const candidates = (sameSizeCandidates.length >= 3 ? sameSizeCandidates : pool
+        .map(w => String(w?.pinyin || "").trim())
+        .filter(v => v && v !== pinyin));
+    const contextHint = getBridgeContextHint(wordObj, getLanguageModeSafe());
     return {
         mode: "options",
-        question: `选择汉字 ${hanzi} 对应的拼音`,
+        question: getHanziToPinyinPrompt(wordObj, hanzi, contextHint),
         options: buildTextOptions(pinyin, candidates, 4),
         answer: pinyin
     };
@@ -801,7 +1059,7 @@ function generatePinyinToneChallenge(wordObj) {
     const correct = applyPinyinTone(base, tone);
     return {
         mode: "options",
-        question: `选择拼音 ${base} 的正确声调`,
+        question: getPinyinTonePrompt(wordObj, base),
         options: buildTextOptions(correct, options, 4),
         answer: correct
     };
@@ -861,6 +1119,9 @@ const CHALLENGE_TYPES = {
     }, 
     unscramble(wordObj) {
         return generateUnscrambleChallenge(wordObj);
+    },
+    hanzi_example(wordObj) {
+        return generateHanziExampleChallenge(wordObj);
     },
     pinyin_to_hanzi(wordObj) {
         return generatePinyinToHanziChallenge(wordObj);
@@ -944,14 +1205,14 @@ function generateChinesePhraseFillBlankChallenge(wordObj) {
     // Generate similar Chinese character options
     const options = generateChineseCharOptions(missingChar, zhRaw, 4);
 
-    const enHint = wordObj?.en ? String(wordObj.en) : "";
+    const enHint = [wordObj?.en ? String(wordObj.en) : "", getBridgeContextHint(wordObj, getLanguageModeSafe())].filter(Boolean).join(" · ");
 
     return {
         mode: "fill_blank",
         questionHtml:
             `<div class="challenge-fill">` +
             `<div class="${getChallengeWordDisplayClass(wordDisplay)}">${wordDisplay}</div>` +
-            `<div class="challenge-fill-hint">缺少哪个汉字？</div>` +
+            `<div class="challenge-fill-hint">${getChineseFillHintText(wordObj)}</div>` +
             `<div class="challenge-fill-zh">${enHint}</div>` +
             `</div>`,
         options: shuffleArray(options).map(char => ({ text: char, value: char, correct: char === missingChar })),
@@ -983,15 +1244,12 @@ function generateChineseCharOptions(correctChar, fullWord, count) {
         if (!options.includes(char)) options.push(char);
     }
 
-    // If still not enough, use common Chinese characters as fallback
-    const commonChars = "的一是不了人我在有他这为之大来以个中上们到说国和地也子时道出而要于就下得可你年生自会那后能对着事其里所去行过家十用发天如然作方成者多日都三小军二无同么经法当起与好看学进种将还分此心前面又定见只主没公从";
-    let idx = 0;
-    while (options.length < count && idx < commonChars.length) {
-        const char = commonChars[idx];
+    const fallbackChars = getKnownHanziCharacters();
+    for (const char of fallbackChars) {
+        if (options.length >= count) break;
         if (!options.includes(char) && !fullWord.includes(char)) {
             options.push(char);
         }
-        idx++;
     }
 
     return options;
@@ -1042,8 +1300,149 @@ function pickChallengeType(forced, wordObj) {
         const pool = getBridgeChallengeTypePool(wordObj, mode);
         if (pool.length) return pool[Math.floor(Math.random() * pool.length)];
     }
+    if (isSingleCharacterLearningWord(wordObj)) {
+        if (mode === "chinese") {
+            const pool = ["hanzi_example", "hanzi_to_pinyin", "listen"];
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+        if (mode === "pinyin") {
+            const pool = ["pinyin_to_hanzi", "hanzi_to_pinyin"];
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+    }
     const pool = mode === "pinyin" ? PINYIN_CHALLENGE_TYPE_KEYS : CHALLENGE_TYPE_KEYS;
     return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function buildRecoveryQuizWords(words, questionCount) {
+    const count = Math.max(1, Number(questionCount) || 1);
+    const seen = new Set();
+    const pool = [];
+    (Array.isArray(words) ? words : []).forEach((wordObj) => {
+        const key = getWordKeySafe(wordObj);
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        pool.push(wordObj);
+    });
+    return shuffleArray(pool).slice(0, count);
+}
+
+function getRecoveryQuizTypePool(wordObj) {
+    const subject = getWordSubjectSafe(wordObj);
+    const mode = getLanguageModeSafe();
+    if (subject === "math") return ["math_concept"];
+    if (subject === "english") return ["listen", "fill_blank", "multi_blank", "unscramble"];
+    if (_root.BilingualVocab?.isBridgeMode?.()) {
+        const pool = getBridgeChallengeTypePool(wordObj, mode);
+        if (Array.isArray(pool) && pool.length) {
+            const filteredPool = pool.filter(type => type !== "translate");
+            if (filteredPool.length) return filteredPool;
+        }
+    }
+    if (isSingleCharacterLearningWord(wordObj)) {
+        if (mode === "chinese") return ["hanzi_example", "hanzi_to_pinyin", "listen"];
+        if (mode === "pinyin") return ["pinyin_to_hanzi", "hanzi_to_pinyin"];
+    }
+    if (mode === "pinyin") return ["pinyin_to_hanzi", "hanzi_to_pinyin", "pinyin_tone"];
+    if (subject === "language" && mode === "chinese") return ["hanzi_to_pinyin", "fill_blank", "listen"];
+    return ["listen", "fill_blank", "multi_blank", "unscramble"];
+}
+
+function buildRecoveryQuizTitle(session) {
+    if (!session) return "恢复测验";
+    const prefix = session.context === "boss_emergency" ? "BOSS急救测验" : "复活测验";
+    return `${prefix} ${session.currentIndex + 1}/${session.questionCount}`;
+}
+
+function launchRecoveryQuizStep(session) {
+    if (!session) return false;
+    const wordObj = session.words[session.currentIndex];
+    if (!wordObj) return false;
+    const pool = getRecoveryQuizTypePool(wordObj);
+    const forcedType = pool[session.currentIndex % pool.length] || pickChallengeType(null, wordObj);
+    startLearningChallenge(wordObj, forcedType, {
+        type: "recovery_quiz",
+        sessionId: session.id,
+        context: session.context,
+        title: buildRecoveryQuizTitle(session)
+    });
+    return true;
+}
+
+function startRecoveryQuizSession(options = {}) {
+    if (currentLearningChallenge) return false;
+    const questionCount = Math.max(1, Number(options.questionCount) || 1);
+    const words = buildRecoveryQuizWords(options.words, questionCount);
+    if (words.length < questionCount) return false;
+    recoveryQuizSession = {
+        id: `recovery_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        context: String(options.context || "death"),
+        currentIndex: 0,
+        correctCount: 0,
+        questionCount: words.length,
+        words,
+        onSuccess: typeof options.onSuccess === "function" ? options.onSuccess : null,
+        onFailure: typeof options.onFailure === "function" ? options.onFailure : null
+    };
+    return launchRecoveryQuizStep(recoveryQuizSession);
+}
+
+function isRecoveryQuizOrigin(origin) {
+    return !!(origin && origin.type === "recovery_quiz" && recoveryQuizSession && recoveryQuizSession.id === origin.sessionId);
+}
+
+function clearActiveChallengeState() {
+    hideLearningChallenge();
+    currentLearningChallenge = null;
+    challengeOrigin = null;
+    if (typeof popPause === "function") popPause();
+    else paused = false;
+    if (typeof setInputLocked === "function") setInputLocked(false);
+}
+
+function finishRecoveryQuizSession(success, wordObj) {
+    const session = recoveryQuizSession;
+    recoveryQuizSession = null;
+    const callback = success ? session?.onSuccess : session?.onFailure;
+    if (typeof callback === "function") {
+        callback({
+            context: session?.context || "",
+            correctCount: session?.correctCount || 0,
+            totalQuestions: session?.questionCount || 0,
+            wordObj: wordObj || null
+        });
+    }
+}
+
+function handleRecoveryQuizChallengeResult(correct, wordObj) {
+    if (!(challengeOrigin && challengeOrigin.type === "recovery_quiz")) return false;
+    if (!isRecoveryQuizOrigin(challengeOrigin)) return true;
+    const session = recoveryQuizSession;
+    if (!session) return true;
+
+    if (correct) {
+        session.correctCount += 1;
+        const solved = session.currentIndex + 1;
+        const isLastQuestion = solved >= session.questionCount;
+        showFloatingText(`✅ ${solved}/${session.questionCount}`, player?.x || 120, (player?.y || 120) - 36, "#66BB6A");
+        setTimeout(() => {
+            clearActiveChallengeState();
+            if (isLastQuestion) {
+                finishRecoveryQuizSession(true, wordObj);
+                return;
+            }
+            session.currentIndex += 1;
+            launchRecoveryQuizStep(session);
+        }, 680);
+        return true;
+    }
+
+    showChallengeCorrection(wordObj);
+    setTimeout(() => {
+        clearActiveChallengeState();
+        finishRecoveryQuizSession(false, wordObj);
+    }, 1800);
+    return true;
 }
 
 function startLearningChallenge(wordObj, forcedType, origin) {
@@ -1079,10 +1478,12 @@ function showLearningChallenge(challenge) {
     challengeModalEl.setAttribute("aria-hidden", "false");
     const titleEl = challengeModalEl.querySelector("#challenge-title");
     if (titleEl) {
-        const mode = getLanguageModeSafe();
-        titleEl.innerText = mode === "chinese"
-            ? "汉字挑战"
-            : (mode === "pinyin" ? "拼音挑战" : "学习挑战");
+        if (challengeOrigin && challengeOrigin.type === "recovery_quiz" && challengeOrigin.title) {
+            titleEl.innerText = challengeOrigin.title;
+        } else {
+            const mode = getLanguageModeSafe();
+            titleEl.innerText = getAdaptiveChallengeTitle(challenge.wordObj, challenge.type, mode);
+        }
     }
     if (challengeQuestionEl) {
         if (challenge.questionHtml) {
@@ -1284,6 +1685,7 @@ function completeLearningChallenge(correct) {
                 meta: { type: "translate", primary: pair.primary, secondary: pair.secondary }
             });
         }
+        if (handleRecoveryQuizChallengeResult(true, wordObj)) return;
         hideLearningChallenge();
         addScore(reward.correct.score);
         inventory.diamond = (inventory.diamond || 0) + (reward.correct.diamond || 0);
@@ -1329,6 +1731,7 @@ function completeLearningChallenge(correct) {
                 meta: { type: "translate", primary: pair.primary, secondary: pair.secondary }
             });
         }
+        if (handleRecoveryQuizChallengeResult(false, wordObj)) return;
         const penalty = Number(reward?.wrong?.scorePenalty) || 0;
         if (settings.challengeMode && penalty > 0) {
             addScore(-penalty);
@@ -1392,6 +1795,12 @@ function updateWordUI(wordObj) {
 
         const zhEl = document.getElementById("word-display-zh");
         if (zhEl) zhEl.innerText = displayContent.secondaryText || "";
+        const metaEl = document.getElementById("word-display-meta");
+        if (metaEl) {
+            const metaText = formatWordDisplayPair(displayContent.metaText, displayContent.tipText, " · ");
+            metaEl.innerText = metaText || "";
+            metaEl.style.display = metaText ? "block" : "none";
+        }
     } else {
         // Fallback to old behavior if BilingualVocab not available
         const en = wordObj?.en ? String(wordObj.en) : "Start!";
@@ -1400,6 +1809,11 @@ function updateWordUI(wordObj) {
 
         const zhEl = document.getElementById("word-display-zh");
         if (zhEl) zhEl.innerText = zh;
+        const metaEl = document.getElementById("word-display-meta");
+        if (metaEl) {
+            metaEl.innerText = "";
+            metaEl.style.display = "none";
+        }
     }
 
     const block = document.getElementById("word-display-block");

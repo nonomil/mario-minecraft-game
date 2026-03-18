@@ -27,23 +27,532 @@ const HANZI_SOURCE = normalizeArray(typeof kindergartenHanzi !== "undefined" ? k
 const PINYIN_SOURCE = normalizeArray(typeof PINYIN_CORE_PACK !== "undefined" ? PINYIN_CORE_PACK : []);
 const KINDER_VOCAB_SOURCE = normalizeArray(typeof MERGED_KINDERGARTEN_VOCAB !== "undefined" ? MERGED_KINDERGARTEN_VOCAB : []);
 
+const FALLBACK_PINYIN_PAIRS = [
+  ["没", "méi"],
+  ["系", "xì"],
+  ["喝", "hē"],
+  ["帮", "bāng"],
+  ["边", "biān"],
+  ["面", "miàn"],
+  ["具", "jù"],
+  ["耍", "shuǎ"],
+  ["两", "liǎng"],
+  ["哥", "gē"],
+  ["姐", "jiě"],
+  ["叔", "shū"],
+  ["阿", "ā"],
+  ["姨", "yí"],
+  ["伯", "bó"],
+  ["舅", "jiù"],
+  ["姑", "gū"],
+  ["婆", "pó"],
+  ["孩", "hái"],
+  ["嘴", "zuǐ"],
+  ["巴", "bā"],
+  ["脸", "liǎn"],
+  ["脚", "jiǎo"],
+  ["丫", "yā"],
+  ["肚", "dù"],
+  ["操", "cāo"],
+  ["图", "tú"],
+  ["馆", "guǎn"],
+  ["班", "bān"],
+  ["级", "jí"],
+  ["桌", "zhuō"],
+  ["复", "fù"],
+  ["习", "xí"],
+  ["预", "yù"],
+  ["提", "tí"],
+  ["朗", "lǎng"],
+  ["读", "dú"],
+  ["背", "bèi"],
+  ["诵", "sòng"],
+  ["阅", "yuè"],
+  ["拼", "pīn"],
+  ["词", "cí"],
+  ["语", "yǔ"],
+  ["标", "biāo"],
+  ["点", "diǎn"],
+  ["睡", "shuì"],
+  ["觉", "jué"],
+  ["休", "xiū"],
+  ["息", "xī"],
+  ["澡", "zǎo"],
+  ["穿", "chuān"],
+  ["整", "zhěng"],
+  ["扫", "sǎo"],
+  ["擦", "cā"],
+  ["倒", "dào"],
+  ["跑", "pǎo"],
+  ["步", "bù"],
+  ["跳", "tiào"],
+  ["绳", "shéng"],
+  ["踢", "tī"],
+  ["戏", "xì"],
+  ["舞", "wǔ"],
+  ["条", "tiáo"],
+  ["饺", "jiǎo"],
+  ["馒", "mán"],
+  ["头", "tóu"],
+  ["饼", "bǐng"],
+  ["糖", "táng"],
+  ["苹", "píng"],
+  ["香", "xiāng"],
+  ["蕉", "jiāo"],
+  ["葡", "pú"],
+  ["萄", "táo"],
+  ["莓", "méi"],
+  ["橙", "chéng"],
+  ["梨", "lí"],
+  ["桃", "táo"],
+  ["蛋", "dàn"],
+  ["汁", "zhī"],
+  ["豆", "dòu"],
+  ["腐", "fǔ"],
+  ["萝", "luó"],
+  ["卜", "bo"],
+  ["椅", "yǐ"],
+  ["台", "tái"],
+  ["灯", "dēng"],
+  ["闹", "nào"],
+  ["钟", "zhōng"],
+  ["钥", "yào"],
+  ["匙", "shí"],
+  ["铅", "qiān"],
+  ["橡", "xiàng"],
+  ["彩", "cǎi"],
+  ["剪", "jiǎn"],
+  ["肥", "féi"],
+  ["伞", "sǎn"],
+  ["裤", "kù"],
+  ["裙", "qún"],
+  ["鞋", "xié"],
+  ["袜", "wà"],
+  ["帽", "mào"],
+  ["套", "tào"],
+  ["围", "wéi"],
+  ["积", "jī"],
+  ["筝", "zhēng"],
+  ["厨", "chú"],
+  ["客", "kè"],
+  ["厅", "tīng"],
+  ["卧", "wò"],
+  ["卫", "wèi"],
+  ["院", "yuàn"],
+  ["站", "zhàn"],
+  ["害", "hài"],
+  ["怕", "pà"],
+  ["紧", "jǐn"],
+  ["张", "zhāng"],
+  ["努", "nǔ"],
+  ["耐", "nài"],
+  ["礼", "lǐ"],
+  ["貌", "mào"],
+  ["享", "xiǎng"],
+  ["排", "pái"],
+  ["识", "shí"],
+  ["写", "xiě"],
+  ["默", "mò"],
+  ["记", "jì"],
+  ["周", "zhōu"],
+  ["课", "kè"],
+  ["代", "dài"],
+  ["表", "biǎo"],
+  ["园", "yuán"],
+  ["地", "dì"],
+  ["外", "wài"],
+  ["角", "jiǎo"],
+  ["领", "lǐng"],
+  ["说", "shuō"],
+  ["想", "xiǎng"],
+  ["打", "dǎ"],
+  ["做", "zuò"],
+  ["座", "zuò"],
+  ["位", "wèi"],
+  ["值", "zhí"],
+  ["组", "zǔ"],
+  ["校", "xiào"],
+  ["路", "lù"],
+  ["前", "qián"],
+  ["准", "zhǔn"],
+  ["备", "bèi"],
+  ["堂", "táng"],
+  ["笔", "bǐ"],
+  ["感", "gǎn"],
+  ["后", "hòu"],
+  ["员", "yuán"],
+  ["查", "chá"],
+  ["练", "liàn"],
+  ["题", "tí"],
+  ["句", "jù"],
+  ["抄", "chāo"],
+  ["摆", "bǎi"],
+  ["卫", "wèi"],
+  ["姓", "xìng"],
+  ["名", "míng"],
+  ["新", "xīn"],
+  ["皮", "pí"],
+  ["告", "gào"],
+  ["健", "jiàn"],
+  ["插", "chā"],
+  ["圈", "quān"],
+  ["段", "duàn"],
+  ["短", "duǎn"],
+  ["队", "duì"],
+  ["互", "hù"],
+  ["相", "xiāng"],
+  ["遵", "zūn"],
+  ["守", "shǒu"],
+  ["规", "guī"],
+  ["则", "zé"],
+  ["专", "zhuān"],
+  ["环", "huán"],
+  ["境", "jìng"],
+  ["护", "hù"],
+  ["保", "bǎo"],
+  ["动", "dòng"],
+  ["物", "wù"],
+  ["为", "wèi"],
+  ["文", "wén"],
+  ["明", "míng"],
+  ["乐", "lè"],
+  ["睛", "jīng"],
+  ["朵", "duǒ"],
+  ["齿", "chǐ"],
+  ["刷", "shuā"],
+  ["汽", "qì"],
+  ["房", "fáng"],
+  ["只", "zhī"],
+  ["卡", "kǎ"],
+  ["鸡", "jī"],
+  ["宝", "bǎo"],
+  ["壳", "ké"],
+  ["杯", "bēi"],
+  ["瓶", "píng"],
+  ["巾", "jīn"],
+  ["皂", "zào"],
+  ["厕", "cè"],
+  ["超", "chāo"],
+  ["市", "shì"]
+];
+
+// From kindergarten vocab (MERGED_KINDERGARTEN_VOCAB) chinese translations that were filtered out due to
+// missing single-character pinyin mappings.
+const KINDER_TRANSLATION_PINYIN_PAIRS = [
+  ["丛", "cóng"],
+  ["串", "chuàn"],
+  ["丽", "lì"],
+  ["么", "me"],
+  ["乌", "wū"],
+  ["些", "xiē"],
+  ["亮", "liàng"],
+  ["什", "shén"],
+  ["仓", "cāng"],
+  ["仔", "zǎi"],
+  ["仪", "yí"],
+  ["企", "qǐ"],
+  ["侄", "zhí"],
+  ["值", "zhí"],
+  ["做", "zuò"],
+  ["偶", "ǒu"],
+  ["傍", "bàng"],
+  ["傲", "ào"],
+  ["克", "kè"],
+  ["兔", "tù"],
+  ["兰", "lán"],
+  ["击", "jī"],
+  ["刺", "cì"],
+  ["剧", "jù"],
+  ["勺", "sháo"],
+  ["升", "shēng"],
+  ["叉", "chā"],
+  ["叠", "dié"],
+  ["吵", "chǎo"],
+  ["吸", "xī"],
+  ["吻", "wěn"],
+  ["员", "yuán"],
+  ["哈", "hā"],
+  ["哪", "nǎ"],
+  ["唇", "chún"],
+  ["喷", "pēn"],
+  ["器", "qì"],
+  ["嚏", "tì"],
+  ["圾", "jī"],
+  ["坏", "huài"],
+  ["坐", "zuò"],
+  ["垃", "lā"],
+  ["垫", "diàn"],
+  ["塔", "tǎ"],
+  ["壤", "rǎng"],
+  ["壶", "hú"],
+  ["夹", "jiā"],
+  ["奋", "fèn"],
+  ["娃", "wá"],
+  ["孔", "kǒng"],
+  ["孤", "gū"],
+  ["宠", "chǒng"],
+  ["宫", "gōng"],
+  ["岩", "yán"],
+  ["崽", "zǎi"],
+  ["帐", "zhàng"],
+  ["帚", "zhǒu"],
+  ["带", "dài"],
+  ["幼", "yòu"],
+  ["底", "dǐ"],
+  ["御", "yù"],
+  ["微", "wēi"],
+  ["怎", "zěn"],
+  ["恐", "kǒng"],
+  ["恤", "xù"],
+  ["惑", "huò"],
+  ["慢", "màn"],
+  ["扮", "bàn"],
+  ["扰", "rǎo"],
+  ["找", "zhǎo"],
+  ["把", "bǎ"],
+  ["折", "zhé"],
+  ["披", "pī"],
+  ["担", "dān"],
+  ["拇", "mǔ"],
+  ["拉", "lā"],
+  ["拍", "pāi"],
+  ["拖", "tuō"],
+  ["拥", "yōng"],
+  ["挖", "wā"],
+  ["换", "huàn"],
+  ["捷", "jié"],
+  ["掌", "zhǎng"],
+  ["掘", "jué"],
+  ["摸", "mō"],
+  ["攻", "gōng"],
+  ["斑", "bān"],
+  ["旋", "xuán"],
+  ["昆", "kūn"],
+  ["晨", "chén"],
+  ["术", "shù"],
+  ["板", "bǎn"],
+  ["枕", "zhěn"],
+  ["架", "jià"],
+  ["柔", "róu"],
+  ["柜", "guì"],
+  ["柠", "níng"],
+  ["柱", "zhù"],
+  ["栏", "lán"],
+  ["样", "yàng"],
+  ["桶", "tǒng"],
+  ["梯", "tī"],
+  ["梳", "shū"],
+  ["棒", "bàng"],
+  ["棕", "zōng"],
+  ["森", "sēn"],
+  ["椭", "tuǒ"],
+  ["椰", "yē"],
+  ["模", "mó"],
+  ["樱", "yīng"],
+  ["檬", "méng"],
+  ["欠", "qiàn"],
+  ["毯", "tǎn"],
+  ["池", "chí"],
+  ["沙", "shā"],
+  ["泥", "ní"],
+  ["泰", "tài"],
+  ["泳", "yǒng"],
+  ["浴", "yù"],
+  ["涂", "tú"],
+  ["淋", "lín"],
+  ["渴", "kě"],
+  ["湿", "shī"],
+  ["滑", "huá"],
+  ["滩", "tān"],
+  ["漂", "piāo"],
+  ["漠", "mò"],
+  ["灰", "huī"],
+  ["炉", "lú"],
+  ["烤", "kǎo"],
+  ["照", "zhào"],
+  ["熊", "xióng"],
+  ["爽", "shuǎng"],
+  ["状", "zhuàng"],
+  ["狐", "hú"],
+  ["狮", "shī"],
+  ["狸", "lí"],
+  ["猕", "mí"],
+  ["猬", "wèi"],
+  ["猴", "hóu"],
+  ["玫", "méi"],
+  ["珠", "zhū"],
+  ["琴", "qín"],
+  ["瑰", "guī"],
+  ["瓢", "piáo"],
+  ["甜", "tián"],
+  ["甲", "jiǎ"],
+  ["疗", "liáo"],
+  ["盒", "hé"],
+  ["盖", "gài"],
+  ["盘", "pán"],
+  ["眉", "méi"],
+  ["眨", "zhǎ"],
+  ["矮", "ǎi"],
+  ["磁", "cí"],
+  ["称", "chēng"],
+  ["稀", "xī"],
+  ["箭", "jiàn"],
+  ["箱", "xiāng"],
+  ["篷", "péng"],
+  ["粉", "fěn"],
+  ["糕", "gāo"],
+  ["索", "suǒ"],
+  ["紫", "zǐ"],
+  ["累", "lèi"],
+  ["绒", "róng"],
+  ["缸", "gāng"],
+  ["罩", "zhào"],
+  ["置", "zhì"],
+  ["羞", "xiū"],
+  ["肌", "jī"],
+  ["肘", "zhǒu"],
+  ["肤", "fū"],
+  ["肩", "jiān"],
+  ["胎", "tāi"],
+  ["胞", "bāo"],
+  ["胡", "hú"],
+  ["胶", "jiāo"],
+  ["脏", "zàng"],
+  ["脑", "nǎo"],
+  ["脖", "bó"],
+  ["腕", "wàn"],
+  ["腰", "yāo"],
+  ["膀", "bǎng"],
+  ["膏", "gāo"],
+  ["膝", "xī"],
+  ["臂", "bì"],
+  ["芒", "máng"],
+  ["茄", "jiā"],
+  ["菇", "gū"],
+  ["菠", "bō"],
+  ["菱", "líng"],
+  ["萨", "sà"],
+  ["葱", "cōng"],
+  ["葵", "kuí"],
+  ["蒜", "suàn"],
+  ["蓝", "lán"],
+  ["藏", "cáng"],
+  ["蘑", "mó"],
+  ["虹", "hóng"],
+  ["蚁", "yǐ"],
+  ["蚂", "mǎ"],
+  ["蛙", "wā"],
+  ["蛛", "zhū"],
+  ["蜂", "fēng"],
+  ["蜗", "wō"],
+  ["蜘", "zhī"],
+  ["蜜", "mì"],
+  ["蜡", "là"],
+  ["蝴", "hú"],
+  ["蝶", "dié"],
+  ["螃", "páng"],
+  ["螺", "luó"],
+  ["蟹", "xiè"],
+  ["蠕", "rú"],
+  ["衫", "shān"],
+  ["衬", "chèn"],
+  ["袋", "dài"],
+  ["装", "zhuāng"],
+  ["触", "chù"],
+  ["警", "jǐng"],
+  ["讶", "yà"],
+  ["豚", "tún"],
+  ["象", "xiàng"],
+  ["贴", "tiē"],
+  ["趾", "zhǐ"],
+  ["跟", "gēn"],
+  ["跷", "qiāo"],
+  ["踝", "huái"],
+  ["蹈", "dǎo"],
+  ["躲", "duǒ"],
+  ["软", "ruǎn"],
+  ["轴", "zhóu"],
+  ["迪", "dí"],
+  ["迷", "mí"],
+  ["酸", "suān"],
+  ["钢", "gāng"],
+  ["锥", "zhuī"],
+  ["锯", "jù"],
+  ["镜", "jìng"],
+  ["闪", "shǎn"],
+  ["附", "fù"],
+  ["险", "xiǎn"],
+  ["隧", "suì"],
+  ["雀", "què"],
+  ["靴", "xuē"],
+  ["颈", "jǐng"],
+  ["颊", "jiá"],
+  ["颜", "yán"],
+  ["额", "é"],
+  ["餐", "cān"],
+  ["饥", "jī"],
+  ["饿", "è"],
+  ["骄", "jiāo"],
+  ["验", "yàn"],
+  ["魔", "mó"],
+  ["鲨", "shā"],
+  ["鲸", "jīng"],
+  ["鳄", "è"],
+  ["鸭", "yā"],
+  ["鹅", "é"],
+  ["鹉", "wǔ"],
+  ["鹦", "yīng"],
+  ["鹰", "yīng"],
+  ["鹿", "lù"],
+  ["鼠", "shǔ"],
+  ["龙", "lóng"],
+  ["龟", "guī"]
+];
+
+function addPinyinIfMissing(map, char, pinyin) {
+  const normalizedChar = String(char || "").trim();
+  const normalizedPinyin = String(pinyin || "").trim();
+  if (normalizedChar.length !== 1 || !normalizedPinyin) return;
+  if (map.has(normalizedChar)) return;
+  map.set(normalizedChar, normalizedPinyin);
+}
+
 const HANZI_PINYIN_MAP = (() => {
   const map = new Map();
   HANZI_SOURCE.forEach((entry) => {
     const char = String(entry.character || entry.chinese || entry.word || "").trim();
     const pinyin = String(entry.pinyin || "").trim();
-    if (char.length === 1 && pinyin) {
-      map.set(char, pinyin);
-    }
+    addPinyinIfMissing(map, char, pinyin);
   });
+  PINYIN_SOURCE.forEach((entry) => {
+    const char = String(entry.chinese || entry.word || "").trim();
+    const pinyin = String(entry.pinyin || "").trim();
+    addPinyinIfMissing(map, char, pinyin);
+
+    const homophones = Array.isArray(entry.homophones) ? entry.homophones : [];
+    homophones.forEach((homophone) => {
+      addPinyinIfMissing(map, homophone, pinyin);
+    });
+  });
+  FALLBACK_PINYIN_PAIRS.forEach(([char, pinyin]) => addPinyinIfMissing(map, char, pinyin));
+  KINDER_TRANSLATION_PINYIN_PAIRS.forEach(([char, pinyin]) => addPinyinIfMissing(map, char, pinyin));
   return map;
 })();
 
 const HANZI_RE = /[\u4e00-\u9fff]/;
 
+const PHRASE_PINYIN_OVERRIDES = new Map([
+  ["睡觉", "shuì jiào"],
+  ["午觉", "wǔ jiào"],
+  ["音乐", "yīn yuè"]
+]);
+
 function toPinyin(text) {
+  const normalized = String(text || "").trim();
+  const override = PHRASE_PINYIN_OVERRIDES.get(normalized);
+  if (override) return override;
   const out = [];
-  for (const char of String(text || "")) {
+  for (const char of normalized) {
     if (!HANZI_RE.test(char)) continue;
     const py = HANZI_PINYIN_MAP.get(char);
     if (!py) return "";
@@ -52,10 +561,17 @@ function toPinyin(text) {
   return out.join(" ");
 }
 
+if (typeof window !== "undefined") {
+  window.BRIDGE_HANZI_PINYIN_MAP = HANZI_PINYIN_MAP;
+  window.BRIDGE_TO_PINYIN = toPinyin;
+}
+
 function createLanguageEntry(word, moduleName, options = {}) {
   const chinese = String(word || "").trim();
+  if (!chinese || containsExcludedBridgeFragment(chinese)) return null;
+  if (moduleName === "表达" && !isBridgeExpression(chinese)) return null;
   const pinyin = toPinyin(chinese);
-  if (!chinese || !pinyin) return null;
+  if (!pinyin) return null;
   const entry = {
     subject: "language",
     module: moduleName,
@@ -107,46 +623,395 @@ function collectKindergartenWords(entries) {
   return words;
 }
 
-const EXAMPLE_WORDS = uniqueList(collectExampleWords(HANZI_SOURCE))
-  .filter((word) => word.length >= 2 && word.length <= 4);
+function collectKindergartenExpressions(entries) {
+  const phrases = [];
+  entries.forEach((entry) => {
+    const phrase = String(entry?.phraseTranslation || "").trim();
+    if (!isBridgeExpression(phrase)) return;
+    phrases.push(phrase);
+  });
+  return phrases;
+}
+
+function isAllHanzi(text) {
+  const chars = [...String(text || "").trim()];
+  return chars.length > 0 && chars.every((char) => HANZI_RE.test(char));
+}
+
+const BRIDGE_EXCLUDED_FRAGMENTS = [
+  "传送",
+  "附魔",
+  "出生点",
+  "采集木头"
+];
+
+function containsExcludedBridgeFragment(text) {
+  const normalized = String(text || "").trim();
+  return Boolean(normalized) && BRIDGE_EXCLUDED_FRAGMENTS.some((fragment) => normalized.includes(fragment));
+}
+
+function hasLengthInRange(text, minLen, maxLen) {
+  const length = [...String(text || "").trim()].length;
+  return length >= minLen && length <= maxLen;
+}
+
+function isBridgeReadyText(text, { minLen = 1, maxLen = 99 } = {}) {
+  const normalized = String(text || "").trim();
+  return Boolean(normalized)
+    && hasLengthInRange(normalized, minLen, maxLen)
+    && isAllHanzi(normalized)
+    && !containsExcludedBridgeFragment(normalized)
+    && Boolean(toPinyin(normalized));
+}
+
+function isBridgeExpression(text) {
+  return isBridgeReadyText(text, { minLen: 2, maxLen: 6 });
+}
+
+function filterPinyinReadyWords(words, { minLen = 1, maxLen = 99 } = {}) {
+  return uniqueList(words)
+    .map((word) => String(word || "").trim())
+    .filter((word) => isBridgeReadyText(word, { minLen, maxLen }));
+}
+
+const EXAMPLE_WORDS = uniqueList([
+  ...collectExampleWords(HANZI_SOURCE),
+  ...collectExampleWords(PINYIN_SOURCE)
+]).filter((word) => word.length >= 2 && word.length <= 4);
 const KINDER_CHINESE_WORDS = uniqueList(collectKindergartenWords(KINDER_VOCAB_SOURCE));
-const COMBINED_WORDS = uniqueList([...EXAMPLE_WORDS, ...KINDER_CHINESE_WORDS]);
+const KINDER_EXPRESSIONS = uniqueList(collectKindergartenExpressions(KINDER_VOCAB_SOURCE));
 
-const LANGUAGE_WORDS = COMBINED_WORDS.slice(0, 1200);
-
-const EXPRESSION_BASE = [
-  "你好", "早上好", "晚上好", "午安", "晚安", "再见", "谢谢", "不客气", "对不起", "没关系",
-  "请问", "请进", "请坐", "请慢走", "你好吗", "你真棒", "别着急", "慢慢来", "请等一下",
-  "再试一次", "生日快乐", "节日快乐", "新年快乐", "我爱你", "我想你", "请安静", "请排队",
-  "我们开始", "我们结束", "可以吗", "不可以", "谢谢老师", "谢谢妈妈", "请帮忙", "我明白了"
+const EXTRA_SEASONS = ["春", "夏", "秋", "冬"];
+const EXTRA_WEATHER = ["天", "风", "雨", "雪"];
+const EXTRA_SIZE_PREFIXES = ["小", "大"];
+const EXTRA_ANIMALS = [
+  "狗", "猫", "鱼", "鸟", "兔", "马", "牛", "羊", "鸡", "鸭", "熊", "虎",
+  "熊猫", "袋鼠", "仓鼠", "孔雀", "企鹅", "海豚", "鳄鱼", "乌龟",
+  "狐狸", "狮子", "刺猬", "松鼠",
+  "蝴蝶", "蜜蜂", "蚂蚁", "瓢虫", "蜘蛛", "蜗牛", "螃蟹",
+  "鲨鱼", "鲸鱼", "鹦鹉", "老鹰"
+];
+const EXTRA_NATURE_OBJECTS = ["山", "河", "海", "树", "花", "草", "云", "星", "月", "日"];
+const EXTRA_NUM_PREFIXES = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+const EXTRA_NUM_SUFFIXES = ["月"];
+const EXTRA_COLORS = ["红", "黄", "蓝", "绿", "白"];
+const EXTRA_COLOR_OBJECTS = ["花", "球", "车", "书包", "风筝", "帽", "伞", "鞋", "衣服"];
+const EXTRA_COUNT_PREFIXES = ["一只", "两只", "三只"];
+const EXTRA_COUNT_OBJECTS = [
+  "小狗", "小猫", "小鸟", "小兔", "小鱼", "小鸡", "小鸭",
+  "熊猫", "乌龟", "蝴蝶", "蜜蜂", "蜗牛"
 ];
 
-const EXPRESSION_PREFIXES = [
-  "我想要", "我喜欢", "我要", "请给我", "请帮我", "我想吃", "我想喝", "我想玩", "我想去",
-  "我们一起", "你能给我", "请告诉我", "我们一起做", "我来", "你来", "我来帮忙", "我们去"
+const EXTRA_MEASURE_PHRASES = uniqueList([
+  ...combine(["一朵", "两朵"], ["花", "白云", "雪花"]),
+  ...combine(["一张", "两张"], ["纸", "画", "卡片"]),
+  ...combine(["一条", "两条"], ["鱼", "绳子", "毛巾", "围巾"]),
+  ...combine(["一件", "两件"], ["衣服", "外套", "礼物"]),
+  ...combine(["一杯", "两杯"], ["水", "牛奶", "果汁"]),
+  ...combine(["一瓶", "两瓶"], ["水", "牛奶", "果汁"]),
+  ...combine(["一碗", "两碗"], ["米饭", "面条"]),
+  ...combine(["一把", "两把"], ["伞", "钥匙", "剪刀", "铅笔"]),
+  ...combine(["一双", "两双"], ["鞋", "袜", "手套"]),
+  ...combine(["一本", "两本"], ["书", "课本", "本子"]),
+  ...combine(["一支", "两支"], ["笔", "铅笔", "彩笔"])
+]);
+const EXTRA_SIZED_NOUNS = [
+  "书包", "课本", "本子", "玩具", "积木", "皮球", "风筝",
+  "水杯", "毛巾", "牙刷", "雨伞", "雨衣",
+  "桌子", "椅子", "房间", "教室", "操场", "公园", "超市", "医院",
+  "书桌", "书架", "黑板", "讲台", "窗户", "门口",
+  "地毯", "毛毯", "枕头", "柜子", "盒子", "盘子", "水壶",
+  "扫帚", "围巾", "手套", "外套", "衬衫", "泳衣",
+  "礼物", "蛋糕", "饼干", "糖果",
+  "玩偶", "娃娃", "拼图",
+  "卡片", "贴纸", "画纸",
+  "书柜", "水桶", "箱子", "浴缸",
+  "雨靴", "拖鞋",
+  "柠檬", "樱桃", "菠萝", "蘑菇", "蜂蜜",
+  "机器人", "玩具车", "口罩", "面具",
+  "杯子", "纸杯", "香皂", "牙膏", "拖把",
+  "钢琴", "相机", "铅笔盒", "橡皮擦"
 ];
 
-const EXPRESSION_VERBS = [
-  "我要", "我想", "我会", "我能", "我来", "一起", "请你", "请帮", "我们去", "我们来"
+const EXTRA_FAMILY_WORDS = [
+  "家人", "家庭", "父母", "家长", "亲人",
+  "爸爸", "妈妈", "爷爷", "奶奶", "外公", "外婆",
+  "哥哥", "姐姐", "弟弟", "妹妹", "叔叔", "阿姨", "伯伯", "舅舅", "姑姑",
+  "孩子", "宝宝", "朋友"
 ];
 
-const EXPRESSION_SCENES = [
-  "在家", "在学校", "在操场", "在公园", "在教室", "在路上", "在图书馆", "在食堂"
+const EXTRA_BODY_WORDS = [
+  "身体", "头发", "眼睛", "耳朵", "鼻子", "嘴巴", "牙齿", "脸蛋",
+  "小手", "手心", "手指", "小脚", "脚丫", "肚子"
 ];
 
-const EXPRESSION_SUFFIXES = [
-  "好吗", "可以吗", "行吗", "一起吧", "马上吧", "慢慢来", "别着急"
+const EXTRA_SCHOOL_WORDS = [
+  "学校", "教室", "操场", "图书馆", "课堂", "课间", "班级", "同桌",
+  "老师", "同学", "学生",
+  "书包", "课本", "本子", "作业", "练习", "复习", "预习",
+  "听讲", "回答", "提问", "问题", "朗读", "背诵", "阅读", "写作",
+  "拼音", "汉字", "词语", "句子", "标点", "故事", "童话", "儿歌"
 ];
 
-const EXPRESSION_ITEMS = COMBINED_WORDS.slice(0, 360);
+const EXTRA_DAILY_WORDS = [
+  "起床", "睡觉", "午休", "休息", "洗手", "洗脸", "洗澡", "刷牙", "穿衣", "脱衣",
+  "吃饭", "喝水", "饮水", "整理", "收拾", "打扫", "擦桌", "倒水",
+  "运动", "散步", "跑步", "跳绳", "踢球", "打球", "游戏", "玩耍",
+  "唱歌", "跳舞", "画画", "写字", "读书"
+];
+
+const EXTRA_FOOD_WORDS = [
+  "米饭", "面包", "面条", "饺子", "包子", "馒头", "饼干", "糖果",
+  "水果", "苹果", "香蕉", "葡萄", "草莓", "西瓜", "橙子", "梨子", "桃子",
+  "鸡蛋", "牛奶", "果汁", "豆腐", "青菜", "土豆", "萝卜",
+  "柠檬", "樱桃", "菠萝", "蘑菇", "蜂蜜", "酸奶",
+  "芒果", "茄子", "蒜头", "葱花", "月饼"
+];
+
+const EXTRA_OBJECT_WORDS = [
+  "桌子", "椅子", "书桌", "台灯", "闹钟", "钥匙",
+  "铅笔", "橡皮", "尺子", "文具", "彩笔", "画笔", "剪刀",
+  "粉笔", "黑板擦", "橡皮擦", "铅笔盒", "卡片", "贴纸",
+  "水杯", "毛巾", "纸巾", "肥皂", "牙刷", "雨伞", "雨衣",
+  "纸杯", "杯子", "拖把", "香皂", "牙膏", "扫帚",
+  "衣服", "裤子", "裙子", "鞋子", "袜子", "帽子", "手套", "围巾",
+  "口罩", "面具", "相机", "钢琴",
+  "枕头", "毛毯", "地毯", "帐篷", "浴缸",
+  "盘子", "盒子", "柜子", "水壶",
+  "玩具", "积木", "皮球", "风筝"
+];
+
+const EXTRA_PLACE_WORDS = [
+  "家里", "房间", "厨房", "客厅", "卧室", "卫生间", "厕所",
+  "公园", "超市", "医院", "马路", "车站"
+];
+
+const EXTRA_EMOTION_WORDS = [
+  "开心", "快乐", "高兴", "难过", "伤心", "生气", "害怕", "紧张", "放心", "着急",
+  "勇敢", "认真", "努力", "耐心", "礼貌", "分享", "合作", "帮助", "排队",
+  "兴奋", "骄傲", "害羞", "困惑", "担心"
+];
+
+const EXTRA_4CHAR_PHRASES = [
+  "互相帮助", "团结友爱", "遵守规则", "认真听讲", "专心学习", "文明礼貌",
+  "早睡早起", "爱护环境", "保护动物", "开开心心", "助人为乐"
+];
+
+const EXTRA_GRADE12_LANGUAGE_WORDS = [
+  "语文书", "生字卡", "生字卡片", "识字卡", "拼音卡", "写字本", "练字本", "听写本", "作文本", "阅读卡",
+  "田字本", "方格本", "横线格", "拼音格", "练习册", "练习题", "口算本", "口算题", "算式", "题目",
+  "课文", "课题", "课后题", "段落", "自然段", "词组", "组词", "造句", "写话", "看图",
+  "看图写话", "读拼音", "认读", "拼读", "跟读", "齐读", "领读", "晨读", "早读", "午读",
+  "背课文", "抄生字", "写生字", "学拼音", "声母", "韵母", "声调", "整体认读", "句号", "逗号",
+  "问号", "感叹号", "标点符号"
+];
+
+const EXTRA_CAMPUS_SCENE_WORDS = [
+  "值日", "值日生", "值日表", "课程表", "作息表", "座位", "座位表", "排座位", "换座位", "班长",
+  "组长", "小组长", "课代表", "同学们", "老师好", "红领巾", "队礼", "队旗", "升旗", "校服",
+  "校门", "进校门", "出校门", "教室门", "走廊", "楼梯", "楼道", "图书角", "黑板报", "公告栏",
+  "领奖台", "讲故事", "听故事", "读故事", "故事书", "童话书", "图画书", "课外书", "借书卡", "借书",
+  "还书", "文具盒", "书皮", "包书皮", "削铅笔", "装书包", "整理书包", "收作业", "发作业", "交作业",
+  "改作业", "讲题", "答题", "提问题", "做眼操", "广播操", "眼保健操", "排队走", "排好队", "站整齐",
+  "坐端正", "举小手", "写姓名"
+];
+
+const EXTRA_LIFE_PLAY_WORDS = [
+  "小水壶", "小饭盒", "保温杯", "餐巾纸", "湿纸巾", "洗手液", "洗脸盆", "小板凳", "小桌灯", "小书架",
+  "削笔刀", "转笔刀", "订书机", "透明胶", "双面胶", "彩泥", "橡皮泥", "蜡笔", "水彩笔", "图画纸",
+  "折纸船", "折飞机", "折星星", "拍皮球", "丢沙包", "跳房子", "滑滑梯", "荡秋千", "捉迷藏", "过家家",
+  "木头人", "小火车", "老鹰捉鸡", "拔河", "接力跑", "吹泡泡", "搭积木", "拼拼图", "玩水枪", "洗袜子",
+  "叠衣服", "叠被子", "铺被子", "扫地", "拖地", "擦黑板", "擦桌子", "倒垃圾", "扔垃圾", "收玩具",
+  "摆椅子", "端水杯", "开水龙头", "关水龙头"
+];
+
+const EXTRA_READING_WRITING_WORDS = [
+  "识字表", "写字表", "生字表", "组词本", "默写本", "写话本", "日记本", "周记本", "语文园地", "看图说话",
+  "课外阅读", "读书角", "朗读本", "阅读本", "拼读本", "写字纸", "生字卡", "词语表", "句子本", "课堂笔记",
+  "阅读单", "小练笔", "读后感", "背课文", "抄词语", "查字表", "查词卡", "句子条", "词语条", "识字卡",
+  "听写词", "默写词", "读一读", "写一写", "说一说", "想一想", "写日记", "做笔记", "读课文", "写词语"
+];
+
+const EXTRA_CLASS_ROUTINE_WORDS = [
+  "打铃", "上操", "做操", "小队长", "值日组", "排座位", "换座位", "进教室", "出教室", "回座位",
+  "放学路队", "排队走", "站整齐", "坐端正", "举小手", "写姓名", "发新书", "包书皮", "交本子", "收本子",
+  "摆桌椅", "清洁区", "卫生角", "图书角", "图书袋", "黑板报", "公告栏", "上课铃", "下课铃", "预备铃",
+  "眼保健操", "进校园", "出校园", "小组合作", "合作学习", "发本子"
+];
+
+const EXTRA_STUDY_ACTION_WORDS = [
+  "课前准备", "课后题", "读课文", "学课文", "认生字", "读词语", "写短句", "看插图", "找词语", "圈生字",
+  "分段落", "找段意", "读题目", "看题目", "听老师", "看黑板", "讲故事", "读故事", "写作业", "改作业",
+  "看课本", "翻课本", "写拼音", "读拼音", "写生字", "读句子", "写句子", "找自然段", "读短文", "写短文"
+];
+
+const EXTRA_CURATED_COLOR_WORDS = [
+  "红花", "红旗", "红灯", "红叶", "黄花", "黄豆", "黄瓜", "蓝天", "白云", "白雪",
+  "白兔", "绿草", "绿叶", "绿树", "彩笔", "彩纸"
+];
+
+const BRIDGE_LANGUAGE_WORD_BLACKLIST = new Set([
+  "一个", "三个", "四个", "五个", "六个", "七个", "八个", "九个", "十个",
+  "蓝球", "白车", "黄车",
+  "大云", "小云", "大星", "小星", "大月", "小月", "大日", "小日",
+  "大医院", "小医院", "大超市", "小超市", "大公园", "小公园", "大操场", "小操场",
+  "大教室", "小教室", "大门口", "小门口", "大香皂", "小香皂", "大牙膏", "小牙膏",
+  "大蜂蜜", "小蜂蜜"
+]);
+
+function isNaturalLanguageWord(word) {
+  const value = String(word || "").trim();
+  if (!value) return false;
+  if (BRIDGE_LANGUAGE_WORD_BLACKLIST.has(value)) return false;
+  return !/^[一二三四五六七八九十]个$/.test(value);
+}
+
+const EXTRA_LANGUAGE_WORDS = filterPinyinReadyWords(
+  [
+    // 常用礼貌/课堂口令
+    "你好", "早上好", "晚上好", "午安", "晚安", "再见", "谢谢", "不客气", "对不起", "没关系",
+    "请问", "请进", "请坐", "请慢走", "别着急", "慢慢来", "请等一下", "再试一次",
+    "生日快乐", "节日快乐", "新年快乐", "你真棒", "我爱你", "我想你", "我明白了", "我知道了",
+    "谢谢老师", "谢谢妈妈", "请帮忙",
+    "请安静", "请排队", "我们开始", "我们结束", "可以吗", "不可以",
+
+    // 家庭/校园
+    ...EXTRA_FAMILY_WORDS,
+    ...EXTRA_SCHOOL_WORDS,
+    "公园",
+    "黑板", "上学", "放学", "上课", "下课", "学习", "走路",
+
+    // 时间/自然
+    "今天", "明天", "昨天", "早上", "晚上", "中午", "上午", "下午",
+    "太阳", "明月", "月光", "星星", "白云", "蓝天", "下雨", "下雪", "大风",
+    "彩虹", "沙滩", "沙漠", "丛林", "森林", "岩石", "土壤", "星空", "月亮",
+    ...combine(EXTRA_SEASONS, EXTRA_WEATHER),
+
+    // 颜色/形状/方位
+    "红色", "黄色", "蓝色", "绿色", "黑色", "白色",
+    "橙色", "粉色", "紫色", "棕色", "灰色", "彩色",
+    "圆形", "方形", "三角形", "长方形", "大小", "高低", "长短", "多少", "远近", "早晚", "冷热", "轻重",
+    "椭圆形", "菱形", "梯形", "星形", "五角星",
+    "左右", "前后", "里面", "外面", "上面", "下面", "中间",
+
+    // 生活动作/习惯
+    ...EXTRA_DAILY_WORDS,
+    "开门", "关门", "系鞋", "系鞋带", "打哈欠", "打扮", "拥抱", "亲吻",
+
+    // 食物/物品（尽量短且高频）
+    ...EXTRA_FOOD_WORDS,
+    ...EXTRA_OBJECT_WORDS,
+    "粉笔", "黑板擦", "胶水", "剪纸", "折纸",
+    "枕头", "盒子", "盘子", "柜子", "地毯", "毛毯", "帐篷", "水壶",
+    "垃圾", "垃圾桶",
+    ...EXTRA_BODY_WORDS,
+    ...EXTRA_PLACE_WORDS,
+    ...EXTRA_EMOTION_WORDS,
+    ...EXTRA_4CHAR_PHRASES,
+    ...EXTRA_GRADE12_LANGUAGE_WORDS,
+    ...EXTRA_CAMPUS_SCENE_WORDS,
+    ...EXTRA_LIFE_PLAY_WORDS,
+    ...EXTRA_READING_WRITING_WORDS,
+    ...EXTRA_CLASS_ROUTINE_WORDS,
+    ...EXTRA_STUDY_ACTION_WORDS,
+    ...EXTRA_CURATED_COLOR_WORDS,
+    ...EXTRA_MEASURE_PHRASES,
+
+    // 动物/常见事物（生成）
+    ...combine(EXTRA_SIZE_PREFIXES, EXTRA_ANIMALS),
+    ...combine(EXTRA_SIZE_PREFIXES, EXTRA_NATURE_OBJECTS),
+    ...combine(EXTRA_SIZE_PREFIXES, EXTRA_SIZED_NOUNS),
+    ...combine(EXTRA_COUNT_PREFIXES, EXTRA_COUNT_OBJECTS),
+    ...combine(EXTRA_NUM_PREFIXES, EXTRA_NUM_SUFFIXES),
+    ...combine(EXTRA_COLORS, EXTRA_COLOR_OBJECTS)
+  ],
+  { minLen: 2, maxLen: 4 }
+).filter(isNaturalLanguageWord);
+
+const COMBINED_WORDS = uniqueList([...EXAMPLE_WORDS, ...KINDER_CHINESE_WORDS, ...EXTRA_LANGUAGE_WORDS])
+  .filter(isNaturalLanguageWord);
+
+const LANGUAGE_WORDS = filterPinyinReadyWords(COMBINED_WORDS, { minLen: 2, maxLen: 4 }).slice(0, 2000);
+
+const EXPRESSION_BASE = filterPinyinReadyWords(
+  [
+    "你好", "早上好", "晚上好", "午安", "晚安", "再见", "谢谢", "不客气", "对不起",
+    "请问", "请进", "请坐", "请慢走", "你好吗", "你真棒", "别着急", "慢慢来", "请等一下",
+    "再试一次", "生日快乐", "节日快乐", "新年快乐", "我爱你", "我想你", "请安静", "请排队",
+    "我们开始", "我们结束", "可以吗", "不可以", "我明白了", "我知道了"
+  ],
+  { minLen: 2, maxLen: 8 }
+);
+
+function isLikelyObjectWord(word) {
+  const value = String(word || "").trim();
+  if (!value || value.length < 2 || value.length > 4) return false;
+  const endings = [
+    "子", "车", "书", "包", "衣", "鞋", "帽", "花", "鱼", "鸟", "猫", "狗", "兔",
+    "马", "牛", "羊", "鸡", "鸭", "果", "菜", "饭", "面", "水", "奶", "汁", "灯", "球"
+  ];
+  return endings.some((ending) => value.endsWith(ending));
+}
+
+const REQUEST_PREFIXES = filterPinyinReadyWords(["我想要", "我要", "请给我"], { minLen: 2, maxLen: 4 });
+const LIKE_PREFIXES = filterPinyinReadyWords(["我喜欢", "我爱"], { minLen: 2, maxLen: 4 });
+
+const ABILITY_PREFIXES = filterPinyinReadyWords(["我会", "我能"], { minLen: 2, maxLen: 2 });
+const GROUP_PREFIXES = filterPinyinReadyWords(["我们一起", "我们来", "一起"], { minLen: 1, maxLen: 4 });
+const GO_PREFIXES = filterPinyinReadyWords(["我想去", "我们去", "去"], { minLen: 1, maxLen: 4 });
+const SCENE_PREFIXES = filterPinyinReadyWords(["在家", "在学校", "在操场", "在公园", "在教室", "在图书馆"], { minLen: 2, maxLen: 4 });
+const POLITE_PREFIXES = filterPinyinReadyWords(["请", "请你", "请老师", "请妈妈"], { minLen: 1, maxLen: 4 });
+
+const PLACE_WORDS = filterPinyinReadyWords(["家", "学校", "操场", "公园", "教室", "图书馆"], { minLen: 1, maxLen: 4 });
+
+const ACTION_WORDS = filterPinyinReadyWords(
+  [
+    "学习", "上学", "上课", "下课", "放学", "读书", "写字", "画画", "唱歌", "跳舞", "跑步", "走路",
+    "排队", "安静", "坐下", "站好", "举手", "开始", "结束", "休息",
+    "洗手", "洗脸", "洗澡", "穿衣", "吃饭", "饮水", "整理", "收拾", "开门", "关门"
+  ],
+  { minLen: 2, maxLen: 4 }
+);
+
+const WANT_OBJECT_WORDS = filterPinyinReadyWords(
+  [
+    "水", "米饭", "面包", "水果", "苹果", "香蕉", "葡萄", "草莓", "西瓜", "鸡蛋", "牛奶", "果汁",
+    "书包", "课本", "本子", "纸", "桌子", "椅子", "黑板",
+    ...combine(EXTRA_SIZE_PREFIXES, EXTRA_ANIMALS),
+    ...combine(EXTRA_COLORS, EXTRA_COLOR_OBJECTS),
+    ...LANGUAGE_WORDS.filter(isLikelyObjectWord).slice(0, 260)
+  ],
+  { minLen: 1, maxLen: 4 }
+);
+
+const LIKE_OBJECT_WORDS = filterPinyinReadyWords(
+  [
+    ...WANT_OBJECT_WORDS,
+    ...PLACE_WORDS,
+    ...ACTION_WORDS,
+    "太阳", "明月", "月光", "星星", "白云", "蓝天", "下雨", "下雪", "春天", "夏天", "秋天", "冬天"
+  ],
+  { minLen: 1, maxLen: 4 }
+);
+
+const POLITE_ACTIONS = filterPinyinReadyWords(
+  ["开门", "关门", "坐下", "坐好", "站好", "排队", "安静", "等一下", "再试一次", "慢慢来"],
+  { minLen: 2, maxLen: 4 }
+);
 
 const LANGUAGE_EXPRESSIONS = uniqueList([
   ...EXPRESSION_BASE,
-  ...combine(EXPRESSION_PREFIXES, EXPRESSION_ITEMS),
-  ...combine(EXPRESSION_VERBS, EXPRESSION_ITEMS),
-  ...combine(EXPRESSION_SCENES, EXPRESSION_ITEMS),
-  ...combine(EXPRESSION_ITEMS, EXPRESSION_SUFFIXES)
-]).slice(0, 900);
+  ...KINDER_EXPRESSIONS,
+  ...combine(REQUEST_PREFIXES, WANT_OBJECT_WORDS),
+  ...combine(LIKE_PREFIXES, LIKE_OBJECT_WORDS),
+  ...combine(ABILITY_PREFIXES, ACTION_WORDS),
+  ...combine(GROUP_PREFIXES, ACTION_WORDS),
+  ...combine(GO_PREFIXES, PLACE_WORDS),
+  ...combine(SCENE_PREFIXES, ACTION_WORDS),
+  ...combine(POLITE_PREFIXES, POLITE_ACTIONS)
+])
+  .filter((text) => isBridgeExpression(text))
+  .slice(0, 2000);
 
 const SEASONS = ["春", "夏", "秋", "冬"];
 const TIMES = ["晨", "夜", "晚", "朝", "暮"];

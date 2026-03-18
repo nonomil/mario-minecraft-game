@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.44] - 2026-03-18
+### Added
+- **Learning Report**: 新增学习报告与档案页 UI，并补齐配套流程文档。
+- **Bridge 词库扩展**: 扩充幼小衔接/桥接词库与清单联动，并新增词库审计工具与回归覆盖。
+
+### Fixed
+- **Boss Arena 稳定性**: 修复 BOSS 竞技场与学习弹窗的稳定性问题，恢复龙竞技场渲染基线。
+- **Shield Balance**: 调整盾牌表现与使用节奏，并对拼音测验/护盾交互做一致性修复。
+
 ## [1.19.40] - 2026-03-14
 ### Fixed
 - **APK 首页弹窗**: 修复 Android APK 首页弹窗缺失问题（补齐 web/index.html）。

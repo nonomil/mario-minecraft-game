@@ -115,6 +115,136 @@
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
+.login-grade-scope-selection {
+    margin: 12px 0 18px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.login-grade-scope-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.login-grade-scope-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 0.02em;
+}
+
+.login-grade-current {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(220, 227, 238, 0.72);
+}
+
+.login-grade-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.login-grade-btn {
+    min-height: 54px;
+    padding: 10px 10px;
+    justify-content: flex-start;
+    gap: 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.login-grade-btn:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 20px rgba(0, 0, 0, 0.28);
+}
+
+.login-grade-btn.is-active {
+    border-color: rgba(106, 226, 101, 0.58);
+    background: linear-gradient(180deg, rgba(61, 147, 58, 0.3), rgba(45, 98, 44, 0.24));
+    box-shadow: 0 0 0 2px rgba(106, 226, 101, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.login-grade-badge {
+    flex: 0 0 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #ffe082, #ffbe3b);
+    color: #23180c;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+
+.login-grade-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    text-align: left;
+}
+
+.login-grade-name {
+    font-size: 13px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.96);
+    line-height: 1.05;
+}
+
+.login-grade-desc {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(220, 227, 238, 0.7);
+    line-height: 1.2;
+}
+
+.login-grade-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 225, 106, 0.18), 0 0 0 1px rgba(255, 225, 106, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.login-grade-btn.is-active:focus-visible {
+    box-shadow: 0 0 0 3px rgba(106, 226, 101, 0.18), 0 0 0 1px rgba(106, 226, 101, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.login-grade-btn:focus-visible .login-grade-badge {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.login-grade-btn.is-active .login-grade-badge {
+    background: linear-gradient(180deg, #d9f99d, #4ade80);
+    color: #052e16;
+}
+
+.login-grade-btn.is-active .login-grade-name {
+    color: #ffffff;
+}
+
+.login-grade-btn.is-active .login-grade-desc {
+    color: rgba(233, 255, 239, 0.9);
+}
+
+@media (max-width: 520px) {
+    .login-container {
+        padding: 22px;
+    }
+
+    .login-grade-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .login-form .form-group {
     margin-bottom: 16px;
     text-align: left;
@@ -214,14 +344,15 @@
 }
 
 .profile-modal-content {
-    background: rgba(15, 15, 15, 0.95);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
     border-radius: 20px;
     padding: 24px;
     width: min(460px, 90vw);
     max-height: 80vh;
     overflow-y: auto;
-    border: 2px solid rgba(255, 215, 0, 0.6);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: #111827;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
 }
 
 .profile-header {
@@ -231,11 +362,23 @@
     margin-bottom: 16px;
 }
 
+.profile-header h2 {
+    color: #111827;
+}
+
 .profile-stats {
     display: grid;
     gap: 8px;
     margin-bottom: 16px;
-    color: #fff;
+    color: #1F2937;
+}
+
+.profile-stats > div {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 18px rgba(148, 163, 184, 0.12);
 }
 
 .profile-achievements {
@@ -244,12 +387,37 @@
 
 .profile-achievements h3 {
     margin-bottom: 10px;
+    color: #111827;
 }
 
 .profile-actions {
     margin-top: 14px;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.profile-modal .bridge-grade-scope-presets {
+    justify-content: flex-start;
+    max-width: none;
+}
+
+.profile-modal .bridge-grade-scope-chip {
+    border-color: rgba(59, 130, 246, 0.18);
+    background: rgba(241, 245, 249, 0.96);
+    color: #1E3A8A;
+}
+
+.profile-modal .bridge-grade-scope-chip:hover,
+.profile-modal .bridge-grade-scope-chip:focus-visible {
+    background: rgba(219, 234, 254, 0.98);
+    border-color: rgba(96, 165, 250, 0.72);
+}
+
+.profile-modal .bridge-grade-scope-chip.active,
+.profile-modal .bridge-grade-scope-chip[aria-pressed="true"] {
+    color: #EFF6FF;
 }
 
 /* 学习报告（家长报告风 / 白底） */
@@ -571,19 +739,22 @@
     flex: 1;
     padding: 8px 10px;
     border-radius: 8px;
-    background: rgba(76, 175, 80, 0.15);
+    background: linear-gradient(180deg, rgba(240, 249, 255, 0.96) 0%, rgba(224, 242, 254, 0.92) 100%);
+    border: 1px solid rgba(125, 211, 252, 0.55);
+    color: #1F2937;
     text-align: center;
 }
 
 .weak-words-section {
     margin-top: 10px;
+    color: #1F2937;
 }
 
 .weak-word-item {
     display: flex;
     justify-content: space-between;
     padding: 6px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .weak-word-item .error-rate {
@@ -591,7 +762,8 @@
 }
 
 .weak-word-empty {
-    opacity: 0.8;
+    opacity: 0.85;
+    color: #64748B;
 }
 
 /* Optimization 0226: achievement progress */
@@ -599,7 +771,7 @@
     height: 6px;
     margin-top: 6px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(148, 163, 184, 0.25);
     overflow: hidden;
 }
 

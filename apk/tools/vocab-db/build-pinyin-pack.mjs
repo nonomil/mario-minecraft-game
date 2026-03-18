@@ -95,57 +95,81 @@ function buildEntry(entry, homophones, nearPhones) {
     base,
     chinese: entry.character,
     english: entry.english,
+    gradeBand: String(entry.gradeBand || "").trim(),
     examples,
     homophones,
     nearPhones
   };
 }
 
-function generatePack(limit = 180) {
+function generatePack(limit = 800) {
   const hanzi = loadKindergartenHanzi();
   const byPinyin = new Map();
-  const order = [];
+  const baseIndex = new Set();
+
   for (const entry of hanzi) {
     const pinyin = String(entry.pinyin || "").trim();
     if (!pinyin) continue;
-    if (!byPinyin.has(pinyin)) {
-      byPinyin.set(pinyin, []);
-      order.push(pinyin);
-    }
+    const base = stripTone(pinyin);
+    if (base) baseIndex.add(base);
+
+    if (!byPinyin.has(pinyin)) byPinyin.set(pinyin, []);
     byPinyin.get(pinyin).push(entry);
   }
 
-  const preferred = ["bā"];
-  for (const pinyin of preferred.reverse()) {
-    const index = order.indexOf(pinyin);
-    if (index > 0) {
-      order.splice(index, 1);
-      order.unshift(pinyin);
-    }
-  }
-
   const entries = [];
-  const baseIndex = new Set();
-  for (const pinyin of order) {
+  for (const entry of hanzi) {
     if (entries.length >= limit) break;
-    const list = byPinyin.get(pinyin);
-    if (!list || list.length === 0) continue;
-    const representative = list[0];
-    const base = stripTone(pinyin);
-    baseIndex.add(base);
+    const pinyin = String(entry.pinyin || "").trim();
+    if (!pinyin) continue;
+    const list = byPinyin.get(pinyin) || [];
     const homophones = Array.from(new Set(list.map((item) => item.character))).slice(0, 6);
-    entries.push(buildEntry(representative, homophones, []));
-  }
-
-  for (const entry of entries) {
-    entry.nearPhones = buildNearPhones(entry.base, baseIndex);
+    const built = buildEntry(entry, homophones, []);
+    built.nearPhones = buildNearPhones(built.base, baseIndex);
+    entries.push(built);
   }
 
   return entries;
 }
 
 function renderPack(entries) {
-  const header = `function createPinyinEntry({\n  pinyin,\n  base,\n  chinese,\n  english,\n  examples,\n  homophones = [],\n  nearPhones = []\n}) {\n  const normalizedExamples = (Array.isArray(examples) ? examples : [])\n    .slice(0, 2)\n    .map((item) => ({\n      word: String(item?.word || \"\").trim(),\n      english: String(item?.english || \"\").trim()\n    }))\n    .filter((item) => item.word);\n\n  return {\n    word: pinyin,\n    pinyin,\n    base,\n    chinese,\n    english,\n    examples: normalizedExamples,\n    homophones: Array.isArray(homophones) ? homophones : [],\n    nearPhones: Array.isArray(nearPhones) ? nearPhones : [],\n    difficulty: \"basic\",\n    stage: \"kindergarten\",\n    mode: \"pinyin\",\n    imageURLs: []\n  };\n}\n\nconst PINYIN_CORE_PACK = [\n`;
+  const header = `function createPinyinEntry({
+  pinyin,
+  base,
+  chinese,
+  english,
+  gradeBand = "",
+  examples,
+  homophones = [],
+  nearPhones = []
+}) {
+  const normalizedExamples = (Array.isArray(examples) ? examples : [])
+    .slice(0, 2)
+    .map((item) => ({
+      word: String(item?.word || "").trim(),
+      english: String(item?.english || "").trim()
+    }))
+    .filter((item) => item.word);
+
+  return {
+    word: pinyin,
+    pinyin,
+    base,
+    chinese,
+    english,
+    gradeBand,
+    examples: normalizedExamples,
+    homophones: Array.isArray(homophones) ? homophones : [],
+    nearPhones: Array.isArray(nearPhones) ? nearPhones : [],
+    difficulty: "basic",
+    stage: "kindergarten",
+    mode: "pinyin",
+    imageURLs: []
+  };
+}
+
+const PINYIN_CORE_PACK = [
+`;
 
   const body = entries
     .map((entry) => {
@@ -154,6 +178,7 @@ function renderPack(entries) {
         base: entry.base,
         chinese: entry.chinese,
         english: entry.english,
+        gradeBand: entry.gradeBand,
         examples: entry.examples,
         homophones: entry.homophones,
         nearPhones: entry.nearPhones
@@ -168,7 +193,7 @@ function renderPack(entries) {
   return `${header}${body}${footer}`;
 }
 
-const entries = generatePack(180);
+const entries = generatePack(800);
 const output = renderPack(entries);
 fs.writeFileSync(new URL("../../words/vocabs/07_拼音/常用拼音.js", import.meta.url), output, "utf8");
 console.log(`Generated ${entries.length} pinyin entries.`);

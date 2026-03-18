@@ -10,7 +10,7 @@ const BOSS_REGISTRY = Object.freeze([
     { id: 'blaze', score: 6000, flying: true, debugCtor: 'BlazeBoss' },
     { id: 'wither_skeleton', score: 8000, flying: false, debugCtor: 'WitherSkeletonBoss' },
     { id: 'warden', score: 10000, flying: false, debugCtor: 'WardenBoss' },
-    { id: 'evoker', score: 12000, flying: false, debugCtor: 'EvokerBoss' }
+    { id: 'ravager', score: 12000, flying: false, debugCtor: 'RavagerBoss' }
 ]);
 
 const DEFAULT_BOSS_REWARDS = Object.freeze({
@@ -19,7 +19,7 @@ const DEFAULT_BOSS_REWARDS = Object.freeze({
     blaze: Object.freeze({ key: 'blaze_powder_cache', drops: Object.freeze(['blaze_powder', 'magma_cream']) }),
     wither_skeleton: Object.freeze({ key: 'ashen_bone_cache', drops: Object.freeze(['coal', 'iron']) }),
     warden: Object.freeze({ key: 'echo_cache', drops: Object.freeze(['echo_shard', 'sculk_vein']) }),
-    evoker: Object.freeze({ key: 'arcane_cache', drops: Object.freeze(['emerald', 'potion']) })
+    ravager: Object.freeze({ key: 'ravager_horn_cache', drops: Object.freeze(['shield', 'beef', 'diamond']) })
 });
 
 function getBossRewardConfig(type) {
@@ -170,10 +170,13 @@ class Boss {
 
     takeDamage(amount) {
         if (this.phaseInvulnerableTimer > 0) return;
-        if (this.stunTimer > 0) amount = Math.ceil(amount * 1.5);
-        this.hp -= amount;
+        let finalDamage = Math.max(1, Number(amount) || 1);
+        if (this.stunTimer > 0) finalDamage = Math.ceil(finalDamage * 1.5);
+        const damageMultiplier = Math.max(0.1, Number(settings?.bossDamageTakenMultiplier) || 1);
+        finalDamage = Math.max(1, Math.round(finalDamage * damageMultiplier));
+        this.hp -= finalDamage;
         this.flashTimer = 10;
-        showFloatingText(`-${amount}`, this.x + this.width / 2, this.y - 10, '#FF4444');
+        showFloatingText(`-${finalDamage}`, this.x + this.width / 2, this.y - 10, '#FF4444');
         if (this.hp <= 0) {
             this.hp = 0;
             this.die();
@@ -211,6 +214,7 @@ globalThis.bossArena = globalThis.bossArena || {
     gateBossRotationCursor: 0,
     weaponLockActive: false,
     weaponBeforeBoss: "sword",
+    emergencyQuizUsed: false,
     lastEnvironmentPulseSerial: 0,
     comboCooldowns: { volcanic: 0, shadow: 0, arcane: 0 },
     environmentController: (typeof globalThis.bossEnvironmentController !== "undefined") ? globalThis.bossEnvironmentController : null,
@@ -297,6 +301,7 @@ globalThis.bossArena = globalThis.bossArena || {
         this.victoryTimer = 0;
         this.phaseFlashTimer = 0;
         this.phaseBannerText = '';
+        this.emergencyQuizUsed = false;
         this.currentEncounter = {
             source: String(options.source || "manual"),
             fromBiome: options.fromBiome || null,
@@ -360,7 +365,7 @@ globalThis.bossArena = globalThis.bossArena || {
             case 'blaze': return new BlazeBoss(spawnX);
             case 'wither_skeleton': return new WitherSkeletonBoss(spawnX);
             case 'warden': return (typeof WardenBoss === 'function') ? new WardenBoss(spawnX) : new WitherSkeletonBoss(spawnX);
-            case 'evoker': return (typeof EvokerBoss === 'function') ? new EvokerBoss(spawnX) : new BlazeBoss(spawnX);
+            case 'ravager': return (typeof RavagerBoss === 'function') ? new RavagerBoss(spawnX) : new WitherSkeletonBoss(spawnX);
             default: return new WitherBoss(spawnX);
         }
     },
@@ -384,6 +389,7 @@ globalThis.bossArena = globalThis.bossArena || {
         this.unlockWeaponAfterBossFight();
         this.lastEnvironmentPulseSerial = 0;
         this.comboCooldowns = { volcanic: 0, shadow: 0, arcane: 0 };
+        this.emergencyQuizUsed = false;
         this.active = false;
         this.boss = null;
         this.currentEncounter = null;

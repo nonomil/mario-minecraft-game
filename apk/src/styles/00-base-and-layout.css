@@ -517,6 +517,12 @@ body {
     gap: 6px;
 }
 
+#overlay-start .overlay-grade-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+}
+
 #overlay-start .overlay-mode-btn {
     min-height: 44px;
     padding: 6px 8px;
@@ -671,6 +677,10 @@ body {
     }
 
     #overlay-start .overlay-language-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #overlay-start .overlay-grade-grid {
         grid-template-columns: 1fr;
     }
 

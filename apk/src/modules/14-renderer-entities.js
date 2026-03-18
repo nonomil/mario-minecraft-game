@@ -1139,6 +1139,22 @@ function drawGolem(golem) {
         ctx.fillStyle = "#FF5722";
         ctx.fillRect(x + 12, y + 3, 4, 4);
         ctx.fillRect(x + 22, y + 3, 4, 4);
+    } else if (golem.type === "warden") {
+        const w = golem.width;
+        const h = golem.height;
+        ctx.fillStyle = "#0D1F2B";
+        ctx.fillRect(x + w * 0.08, y + h * 0.08, w * 0.84, h * 0.88);
+        ctx.fillStyle = "#173748";
+        ctx.fillRect(x + w * 0.16, y + h * 0.14, w * 0.68, h * 0.62);
+        ctx.fillStyle = "#63D8D1";
+        ctx.beginPath();
+        ctx.arc(x + w * 0.5, y + h * 0.46, Math.max(5, w * 0.18), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#87E5FF";
+        ctx.fillRect(x + w * 0.2, y + h * 0.18, w * 0.12, h * 0.08);
+        ctx.fillRect(x + w * 0.68, y + h * 0.18, w * 0.12, h * 0.08);
+        ctx.fillStyle = "rgba(99, 216, 209, 0.28)";
+        ctx.fillRect(x - 4, y + h * 0.28, w + 8, h * 0.16);
     } else {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(x + 8, y + 15, 16, 16);

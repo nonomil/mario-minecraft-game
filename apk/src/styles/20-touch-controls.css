@@ -226,6 +226,49 @@
     font-size: 14px;
 }
 
+.bridge-grade-scope-stack {
+    display: grid;
+    gap: 8px;
+    justify-items: end;
+}
+
+.bridge-grade-scope-presets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    max-width: 320px;
+}
+
+.bridge-grade-scope-chip {
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.08);
+    color: #F8FAFC;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.bridge-grade-scope-chip:hover,
+.bridge-grade-scope-chip:focus-visible {
+    background: rgba(56, 189, 248, 0.18);
+    border-color: rgba(125, 211, 252, 0.72);
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.bridge-grade-scope-chip.active,
+.bridge-grade-scope-chip[aria-pressed="true"] {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(14, 165, 233, 0.88));
+    border-color: rgba(191, 219, 254, 0.95);
+    color: #EFF6FF;
+    box-shadow: 0 8px 16px rgba(14, 165, 233, 0.22);
+}
+
 .settings-input {
     width: 100%;
     padding: 8px 10px;

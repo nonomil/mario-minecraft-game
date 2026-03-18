@@ -34,9 +34,15 @@ test("Visual smoke: warden attack scene renders heavy silhouette", async ({ page
   });
 });
 
-test("Visual smoke: evoker casting scene renders spell silhouette", async ({ page }) => {
-  await captureBossScene(page, "evoker", async () => {
+test("Visual smoke: ravager charge scene renders heavy silhouette", async ({ page }) => {
+  await captureBossScene(page, "ravager", async () => {
     await setBossPhase(page, 3);
-    await tickGame(page, 40);
+    await page.evaluate(() => {
+      const frame = document.getElementById("game");
+      const w = frame && frame.contentWindow ? frame.contentWindow : null;
+      if (!w || typeof w.eval !== "function") return;
+      w.eval('if (typeof bossArena !== "undefined" && bossArena && bossArena.boss && typeof bossArena.boss.startCharge === "function" && typeof player !== "undefined" && player) { bossArena.boss.startCharge(player); }');
+    });
+    await tickGame(page, 8);
   });
 });

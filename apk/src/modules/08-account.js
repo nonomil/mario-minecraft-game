@@ -77,6 +77,42 @@ function ensureStartOverlayContent() {
                         </button>
                     </div>
                 </div>
+                <div id="overlay-grade-scope-selection" class="overlay-account-section overlay-grade-section">
+                    <div class="overlay-account-section-header overlay-language-header">
+                        <div class="overlay-language-title">学习层级</div>
+                        <div id="overlay-grade-current" class="overlay-language-current"></div>
+                    </div>
+                    <div class="overlay-grade-grid">
+                        <button class="game-btn overlay-mode-btn overlay-grade-btn" id="btn-overlay-grade-scope-preschool" type="button">
+                            <span class="overlay-mode-badge">PRE</span>
+                            <span class="overlay-mode-copy">
+                                <span class="overlay-mode-title">学前启蒙</span>
+                                <span class="overlay-mode-desc">拼音启蒙 · 基础识字</span>
+                            </span>
+                        </button>
+                        <button class="game-btn overlay-mode-btn overlay-grade-btn" id="btn-overlay-grade-scope-grade1" type="button">
+                            <span class="overlay-mode-badge">G1</span>
+                            <span class="overlay-mode-copy">
+                                <span class="overlay-mode-title">小学一年级</span>
+                                <span class="overlay-mode-desc">高频识字 · 词语认读</span>
+                            </span>
+                        </button>
+                        <button class="game-btn overlay-mode-btn overlay-grade-btn" id="btn-overlay-grade-scope-grade2" type="button">
+                            <span class="overlay-mode-badge">G2</span>
+                            <span class="overlay-mode-copy">
+                                <span class="overlay-mode-title">小学二年级</span>
+                                <span class="overlay-mode-desc">拓展词汇 · 表达训练</span>
+                            </span>
+                        </button>
+                        <button class="game-btn overlay-mode-btn overlay-grade-btn" id="btn-overlay-grade-scope-full" type="button">
+                            <span class="overlay-mode-badge">ALL</span>
+                            <span class="overlay-mode-copy">
+                                <span class="overlay-mode-title">全阶段</span>
+                                <span class="overlay-mode-desc">学前到二年级综合词库</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="overlay-page overlay-page-setup" data-page="setup">
                 <div class="overlay-account overlay-account-shell">
@@ -152,6 +188,13 @@ function wireStartOverlayAccountActions() {
     const zhBtn = document.getElementById("btn-overlay-language-chinese");
     const pyBtn = document.getElementById("btn-overlay-language-pinyin");
     const currentDisplay = document.getElementById("overlay-language-current");
+    const gradePreschoolBtn = document.getElementById("btn-overlay-grade-scope-preschool");
+    const grade1Btn = document.getElementById("btn-overlay-grade-scope-grade1");
+    const grade2Btn = document.getElementById("btn-overlay-grade-scope-grade2");
+    const gradeFullBtn = document.getElementById("btn-overlay-grade-scope-full");
+    const gradeCurrentDisplay = document.getElementById("overlay-grade-current");
+    const normalizeGradeScope = (scope) => _root.BilingualVocab?.normalizeBridgeGradeScope?.(scope || "") || "preschool_grade2";
+    const formatGradeScope = (scope) => _root.BilingualVocab?.getBridgeGradeScopeLabel?.(scope || "") || "学前到小学二年级";
 
     const updateLanguageModeDisplay = () => {
         const mode = settings?.languageMode || "english";
@@ -172,6 +215,36 @@ function wireStartOverlayAccountActions() {
             pyBtn.classList.toggle("is-active", mode === "pinyin");
             pyBtn.setAttribute("aria-pressed", mode === "pinyin" ? "true" : "false");
         }
+    };
+
+    const updateGradeScopeDisplay = () => {
+        const gradeScope = normalizeGradeScope(settings?.bridgeGradeScope);
+        if (gradeCurrentDisplay) {
+            gradeCurrentDisplay.innerText = `当前：${formatGradeScope(gradeScope)}`;
+        }
+        const states = [
+            [gradePreschoolBtn, "preschool"],
+            [grade1Btn, "grade1"],
+            [grade2Btn, "grade2"],
+            [gradeFullBtn, "preschool_grade2"]
+        ];
+        states.forEach(([button, value]) => {
+            if (!button) return;
+            const active = gradeScope === value;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+    };
+
+    const applyGradeScope = (nextScope, message) => {
+        if (!settings) return;
+        settings.bridgeGradeScope = normalizeGradeScope(nextScope);
+        if (typeof normalizeSettings === "function") {
+            settings = normalizeSettings(settings);
+        }
+        if (typeof saveSettings === "function") saveSettings();
+        updateGradeScopeDisplay();
+        if (message) showToast(message);
     };
 
     if (enBtn) {
@@ -215,7 +288,21 @@ function wireStartOverlayAccountActions() {
         });
     }
 
+    if (gradePreschoolBtn) {
+        gradePreschoolBtn.addEventListener("click", () => applyGradeScope("preschool", "已切换到学前启蒙层级"));
+    }
+    if (grade1Btn) {
+        grade1Btn.addEventListener("click", () => applyGradeScope("grade1", "已切换到小学一年级层级"));
+    }
+    if (grade2Btn) {
+        grade2Btn.addEventListener("click", () => applyGradeScope("grade2", "已切换到小学二年级层级"));
+    }
+    if (gradeFullBtn) {
+        gradeFullBtn.addEventListener("click", () => applyGradeScope("preschool_grade2", "已切换到全阶段层级"));
+    }
+
     updateLanguageModeDisplay();
+    updateGradeScopeDisplay();
 }
 
 function updateStartOverlayActionState() {

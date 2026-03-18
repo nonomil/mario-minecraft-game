@@ -7,10 +7,10 @@ const BOSSES = [
   { id: "blaze", ctor: "BlazeBoss" },
   { id: "wither_skeleton", ctor: "WitherSkeletonBoss" },
   { id: "warden", ctor: "WardenBoss" },
-  { id: "evoker", ctor: "EvokerBoss" }
+  { id: "ravager", ctor: "RavagerBoss" }
 ];
 
-const PLANNED_BOSSES = ["wither", "ghast", "blaze", "wither_skeleton", "warden", "evoker"];
+const PLANNED_BOSSES = ["wither", "ghast", "blaze", "wither_skeleton", "warden", "ravager"];
 
 test("GameDebug controls should expose a working MMDBG API", async ({ page }) => {
   await openDebugPage(page);
@@ -426,17 +426,18 @@ test("Wither skeleton phase 3 environment should build bone pressure hazards", a
   expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
 });
 
-test("Evoker phase 3 environment should build arcane pressure hazards", async ({ page }) => {
+test("Ravager phase 3 environment should build ashen pressure hazards", async ({ page }) => {
   await openDebugPage(page);
-  await forceBoss(page, "evoker");
+  await forceBoss(page, "ravager");
   await setBossPhase(page, 3);
   await tickGame(page, 40);
   const state = await getDebugState(page);
 
-  expect(state.bossEnvironmentId).toBe("totem_hall");
-  expect(state.bossEnvironmentTheme).toBe("arcane");
+  expect(state.bossEnvironmentId).toBe("siege_ring");
+  expect(state.bossEnvironmentTheme).toBe("ashen");
   expect(state.bossEnvironmentIntensity).toBe(3);
   expect(state.bossEnvironmentHazardCount).toBeGreaterThan(0);
+  expect(state.bossEnvironmentSafeZoneInset).toBeGreaterThan(0);
 });
 
 test("Boss victory should grant boss-specific reward drops", async ({ page }) => {
@@ -660,9 +661,9 @@ test("Wither shadow environment should drag the player toward the arena center",
   expect(after.playerX).toBeLessThan(before.playerX);
 });
 
-test("Evoker arcane environment should repel the player from the sigil edge", async ({ page }) => {
+test("Ravager ashen environment should clamp the player away from the arena edge", async ({ page }) => {
   await openDebugPage(page);
-  await forceBoss(page, "evoker");
+  await forceBoss(page, "ravager");
   await setBossPhase(page, 3);
   await page.evaluate(() => {
     const frame = document.getElementById("game");
@@ -671,11 +672,11 @@ test("Evoker arcane environment should repel the player from the sigil edge", as
     w.eval('if (typeof player !== "undefined" && player && typeof bossArena !== "undefined" && bossArena) { player.x = bossArena.rightWall - player.width - 12; player.velX = 6; }');
   });
   const before = await getDebugState(page);
-  await tickGame(page, 24);
+  await tickGame(page, 12);
   const after = await getDebugState(page);
 
-  expect(after.bossEnvironmentTheme).toBe("arcane");
-  expect(after.bossEnvironmentSealFrames).toBeGreaterThan(0);
+  expect(after.bossEnvironmentTheme).toBe("ashen");
+  expect(after.bossEnvironmentSafeZoneInset).toBeGreaterThan(0);
   expect(after.playerX).toBeLessThan(before.playerX);
 });
 
@@ -713,21 +714,22 @@ test("Wither void drift should combo into a tracking barrage", async ({ page }) 
   expect(state.bossProjectileTypes).toContain("wither_tracking_orb");
 });
 
-test("Evoker sigil seal should combo into a fang line signature attack", async ({ page }) => {
+test("Ravager roar should launch a shockwave projectile volley", async ({ page }) => {
   await openDebugPage(page);
-  await forceBoss(page, "evoker");
+  await forceBoss(page, "ravager");
   await setBossPhase(page, 3);
   await page.evaluate(() => {
     const frame = document.getElementById("game");
     const w = frame && frame.contentWindow ? frame.contentWindow : null;
     if (!w || typeof w.eval !== "function") return;
-    w.eval('if (typeof player !== "undefined" && player && typeof bossArena !== "undefined" && bossArena) { player.x = bossArena.rightWall - player.width - 12; player.velX = 6; }');
+    w.eval('if (typeof bossArena !== "undefined" && bossArena && bossArena.boss && typeof bossArena.boss.startRoar === "function") { bossArena.boss.startRoar(); }');
   });
   await tickGame(page, 24);
   const state = await getDebugState(page);
 
-  expect(state.bossEnvironmentComboKey).toBe("sigil_fangline");
-  expect(state.bossProjectileTypes).toContain("evoker_fang");
+  expect(state.bossType).toBe("RavagerBoss");
+  expect(state.bossProjectileTypes).toContain("ravager_roar");
+  expect(state.bossProjectileCount).toBeGreaterThan(0);
 });
 
 test("Blaze phase 3 should expose a flame-ring pressure intent", async ({ page }) => {
@@ -781,29 +783,36 @@ test("Warden phase 3 should expose a darkness-pulse elite intent", async ({ page
   expect(state.bossProjectileTypes).toContain("warden_dark_pulse");
 });
 
-test("Evoker phase 3 should expose a spellburst elite intent", async ({ page }) => {
+test("Ravager phase 3 should expose a charge elite intent", async ({ page }) => {
   await openDebugPage(page);
-  await forceBoss(page, "evoker");
+  await forceBoss(page, "ravager");
   await setBossPhase(page, 3);
   await page.evaluate(() => {
     const frame = document.getElementById("game");
     const w = frame && frame.contentWindow ? frame.contentWindow : null;
-    const boss = w && w.bossArena ? w.bossArena.boss : null;
-    if (boss && typeof boss.castSpellBurst === "function") boss.castSpellBurst();
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof bossArena !== "undefined" && bossArena && bossArena.boss && typeof bossArena.boss.startCharge === "function" && typeof player !== "undefined" && player) { bossArena.boss.startCharge(player); }');
   });
   const state = await getDebugState(page);
 
-  expect(state.bossType).toBe("EvokerBoss");
-  expect(state.bossIntentKey).toBe("spellburst");
-  expect(state.bossProjectileTypes).toContain("evoker_spellburst");
+  expect(state.bossType).toBe("RavagerBoss");
+  expect(state.bossIntentKey).toBe("charge");
+  expect(state.bossState).toBe("charge");
 });
 
-test("Evoker shield window should expose an output intent", async ({ page }) => {
+test("Ravager stomp should expose a melee pressure intent", async ({ page }) => {
   await openDebugPage(page);
-  await forceBoss(page, "evoker");
-  await page.evaluate(() => window.MMDBG.triggerEvokerShieldBreak());
+  await forceBoss(page, "ravager");
+  await page.evaluate(() => {
+    const frame = document.getElementById("game");
+    const w = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!w || typeof w.eval !== "function") return;
+    w.eval('if (typeof bossArena !== "undefined" && bossArena && bossArena.boss && typeof bossArena.boss.performStomp === "function" && typeof player !== "undefined" && player) { bossArena.boss.performStomp(player); }');
+  });
   const state = await getDebugState(page);
-  expect(state.bossIntentKey).toBe("shield_break");
+  expect(state.bossType).toBe("RavagerBoss");
+  expect(state.bossIntentKey).toBe("stomp");
+  expect(state.bossState).toBe("stomp");
 });
 
 test("Warden debug scene should expose heavy attacks and upgraded visuals", async ({ page }) => {
@@ -826,22 +835,23 @@ test("Warden debug scene should expose heavy attacks and upgraded visuals", asyn
   expect(state.bossProjectileCount).toBeGreaterThan(0);
 });
 
-test("Evoker debug scene should expose fang spells and upgraded visuals", async ({ page }) => {
+test("Ravager debug scene should expose roar projectiles and upgraded visuals", async ({ page }) => {
   await openDebugPage(page);
-  await forceBoss(page, "evoker");
+  await forceBoss(page, "ravager");
   await setBossPhase(page, 3);
   await page.evaluate(() => {
     const frame = document.getElementById("game");
     const w = frame && frame.contentWindow ? frame.contentWindow : null;
     const boss = w && w.bossArena ? w.bossArena.boss : null;
     if (!boss) return;
-    boss.castFangLine({ x: boss.x + 180 });
+    if (typeof boss.startRoar === "function") boss.startRoar();
   });
-  await tickGame(page, 4);
+  await tickGame(page, 24);
   const state = await getDebugState(page);
 
-  expect(state.bossType).toBe("EvokerBoss");
-  expect(state.bossVisualKey).toBe("evoker_v1");
+  expect(state.bossType).toBe("RavagerBoss");
+  expect(state.bossVisualKey).toBe("ravager_v1");
   expect(state.bossPhase).toBe(3);
   expect(state.bossProjectileCount).toBeGreaterThan(0);
+  expect(state.bossProjectileTypes).toContain("ravager_roar");
 });

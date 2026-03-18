@@ -45,13 +45,13 @@
                 phase3: { interval: 9, ttl: 30, kind: "sonic_rift" }
             }
         },
-        evoker: {
-            id: "totem_hall",
-            label: "图腾秘厅",
-            theme: "arcane",
+        ravager: {
+            id: "siege_ring",
+            label: "掠夺兽围场",
+            theme: "ashen",
             hazardProfile: {
-                phase2: { interval: 15, ttl: 24, kind: "totem_glow" },
-                phase3: { interval: 8, ttl: 30, kind: "arcane_fang" }
+                phase2: { interval: 15, ttl: 24, kind: "ash_burst" },
+                phase3: { interval: 8, ttl: 30, kind: "bone_spike" }
             }
         }
     };

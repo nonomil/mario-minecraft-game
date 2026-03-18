@@ -226,7 +226,7 @@ const ITEM_DESCRIPTIONS = {
     ender_pearl:  { desc: "向前方传送200px，穿越障碍物+60秒隐身", cost: "消耗: 1个", cd: "冷却: 8秒" },
     string:       { desc: "放置蛛网陷阱，减速敌人80%持续5秒", cost: "消耗: 2个", cd: "冷却: 6秒" },
     dragon_egg:   { desc: "释放全屏龙息，对所有敌人造成50伤害", cost: "消耗: 1个", cd: "冷却: 12秒" },
-    warden_egg:   { desc: "在前方召唤一只坚守者，适合主动挑战强敌", cost: "消耗: 1个", cd: "冷却: 15秒" },
+    warden_egg:   { desc: "在前方召唤一只坚守者伙伴，作为友军协助作战", cost: "消耗: 1个", cd: "冷却: 15秒" },
     totem:        { desc: "被动：HP归零时自动触发，回复3❤️并获得3秒无敌", cost: "自动消耗: 1个", cd: "被动触发" },
     flower:       { desc: "花香护体30秒，敌人攻击频率降低30%", cost: "消耗: 1个", cd: "冷却: 10秒" },
     mushroom:     { desc: "2个蘑菇合成1个蘑菇煲（回复2❤️）", cost: "消耗: 2个", cd: "无冷却" },
@@ -387,7 +387,7 @@ const UI_TEXTS = {
     cooldown: (sec) => `⏳ 冷却中 (${sec}秒)`,
     cooldownShort: '⏳ 冷却中',
     reviveUsed: '复活机会已用完',
-    reviveSuccess: '✨ 词语匹配复活成功！',
+    reviveSuccess: '✨ 全部答对，满血复活！',
     selectAccount: '请先选择或创建档案',
     scoreSaved: '📝 成绩已保存到排行榜',
     restAlready: '💤 已经休息过了',
@@ -848,6 +848,10 @@ const LEARNING_CONFIG = {
         minCorrectToRevive: 4,
         reviveHp: 3,
         bonusPerMatch: 10
+    },
+    reviveQuiz: {
+        deathQuestionCount: 4,
+        bossQuestionCount: 3
     }
 };
 let foodCooldown = 0;

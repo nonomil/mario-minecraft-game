@@ -85,12 +85,14 @@ function normalizeSettings(raw) {
     if (typeof merged.villageAutoSave !== "boolean") merged.villageAutoSave = defaultSettings.villageAutoSave ?? true;
     if (typeof merged.languageMode !== "string") merged.languageMode = defaultSettings.languageMode ?? "english";
     if (typeof merged.showPinyin !== "boolean") merged.showPinyin = defaultSettings.showPinyin ?? true;
+    if (typeof merged.bridgeGradeScope !== "string") merged.bridgeGradeScope = defaultSettings.bridgeGradeScope ?? "preschool_grade2";
     if (typeof merged.movementSpeedLevel !== "string" || !(merged.movementSpeedLevel in SPEED_LEVELS)) merged.movementSpeedLevel = "normal";
     if (typeof merged.difficultySelection !== "string" || !merged.difficultySelection) merged.difficultySelection = "auto";
     if (!["off", "direct", "gap2", "hybrid"].includes(String(merged.phraseFollowMode || ""))) merged.phraseFollowMode = "hybrid";
     if (!["balanced", "reinforce_wrong"].includes(String(merged.wordRepeatBias || ""))) merged.wordRepeatBias = "reinforce_wrong";
     if (!["auto", "phone", "tablet"].includes(String(merged.deviceMode || ""))) merged.deviceMode = "auto";
     if (!["english", "chinese", "bilingual", "pinyin"].includes(String(merged.languageMode || ""))) merged.languageMode = "english";
+    merged.bridgeGradeScope = normalizeBridgeGradeScope(merged.bridgeGradeScope);
     merged.vocabSelection = normalizeVocabSelectionId(merged.vocabSelection);
     if (merged.languageMode === "pinyin") {
         const currentSelection = String(merged.vocabSelection || "").trim();
@@ -897,12 +899,13 @@ function updateVocabPreview(selection) {
     const preview = document.getElementById("vocab-preview");
     if (!preview) return;
     const key = selection || settings.vocabSelection || "auto";
+    const scopeLine = getBridgeGradeScopePreviewLine(key, vocabPacks[key]);
     if (key === "auto") {
-        preview.innerHTML = `<strong>自动轮换</strong><br>根据阶段与难度智能匹配`;
+        preview.innerHTML = `<strong>自动轮换</strong><br>根据阶段与难度智能匹配${scopeLine ? `<br>${scopeLine}` : ""}`;
         return;
     }
     if (key === BRIDGE_AUTO_SELECTION) {
-        preview.innerHTML = `<strong>幼小衔接-语文/数学/英语轮询</strong><br>在三科之间顺序切换`;
+        preview.innerHTML = `<strong>幼小衔接-语文/数学/英语轮询</strong><br>在三科之间顺序切换${scopeLine ? `<br>${scopeLine}` : ""}`;
         return;
     }
     const pack = vocabPacks[key];
@@ -918,15 +921,19 @@ function updateVocabPreview(selection) {
         details.push(stageLabel);
     }
     if (pack.difficulty) details.push(pack.difficulty);
+    if (scopeLine) details.push(scopeLine);
     preview.innerHTML = `<strong>${pack.title}</strong>${details.length ? `<br>${details.join(" 路 ")}` : ""}`;
 }
 
 function showVocabSwitchEffect() {
     const title = getActivePackTitle();
+    const pack = activeVocabPackId ? vocabPacks[activeVocabPackId] : null;
+    const scopeLabel = getBridgeGradeScopePreviewLine(activeVocabPackId, pack);
+    const displayTitle = scopeLabel ? `${title} · ${scopeLabel}` : title;
     const px = player ? player.x : cameraX;
     const py = player ? player.y - 60 : canvas.height / 2;
-    showFloatingText(`切换词库：{title}`, px, py);
-    showToast(`已切换至 ${title}`);
+    showFloatingText(`切换词库：${displayTitle}`, px, py);
+    showToast(`已切换至 ${displayTitle}`);
 }
 
 function getPackProgress(packId) {
@@ -1033,8 +1040,15 @@ function loadVocabPackFiles(files) {
 
 function normalizeRawWord(raw) {
     if (!raw || typeof raw !== "object") return null;
-    const en = String(raw.standardized || raw.word || raw.en || "").trim();
+    const mode = String(raw.mode || "bilingual").trim().toLowerCase();
+    const fallbackEn = String(raw.standardized || raw.word || raw.en || "").trim();
     const zh = String(raw.chinese || raw.zh || raw.translation || "").trim();
+    const chinese = String(raw.chinese || zh || "").trim();
+    let en = fallbackEn;
+    if (mode === "pinyin") {
+        const charKey = String(raw.chinese || raw.character || zh || "").trim();
+        if (charKey) en = charKey;
+    }
     if (!en) return null;
     const examples = Array.isArray(raw.examples)
         ? raw.examples
@@ -1065,7 +1079,7 @@ function normalizeRawWord(raw) {
         en,
         zh: zh || "",
         word: String(raw.word || en).trim(),
-        chinese: String(raw.chinese || zh || "").trim(),
+        chinese,
         pinyin: String(raw.pinyin || "").trim(),
         phonetic: String(raw.phonetic || raw.uk || raw.us || "").trim(),
         phonics,
@@ -1076,7 +1090,7 @@ function normalizeRawWord(raw) {
         english: String(raw.english || "").trim(),
         character: String(raw.character || raw.chinese || "").trim(),
         examples,
-        mode: String(raw.mode || "bilingual").trim().toLowerCase() || "bilingual",
+        mode: mode || "bilingual",
         phrase: String(raw.phrase || "").trim() || null,
         phraseZh: String(raw.phraseTranslation || "").trim() || null,
         phraseTranslation: String(raw.phraseTranslation || "").trim() || null,
@@ -1136,14 +1150,22 @@ async function setActiveVocabPack(selection) {
         const fallbackSource = Array.isArray(defaultWords) ? defaultWords : [];
         const fallbackWords = fallbackSource.map(w => normalizeRawWord(w)).filter(Boolean);
         const target = mapped.length ? mapped : fallbackWords;
+        const shouldFilterByGradeScope = shouldApplyBridgeGradeScope(pack, target);
+        const filteredTarget = shouldFilterByGradeScope
+            ? filterWordsByBridgeGradeScope(target, settings.bridgeGradeScope)
+            : target;
+        const finalTarget = filteredTarget.length ? filteredTarget : target;
+        if (shouldFilterByGradeScope && target.length && !filteredTarget.length) {
+            console.warn(`[Vocab] Grade scope ${settings.bridgeGradeScope} produced no words for ${pack.id}, fallback to full target`);
+        }
         if (!target.length) {
             console.warn(`[Vocab] Pack ${pack.id} produced no words and no fallback data`);
         }
-        if (target.length) {
-            wordDatabase = target;
+        if (finalTarget.length) {
+            wordDatabase = finalTarget;
             wordPicker = null;
             const pr = getPackProgress(pack.id);
-            pr.total = target.length;
+            pr.total = finalTarget.length;
             saveProgress();
 
             if (typeof buildWordPicker === "function") {
@@ -1260,11 +1282,16 @@ function showVocabPromptModal() {
     const modal = document.getElementById("vocab-prompt-modal");
     if (!modal) return;
     const sel = document.getElementById("vocab-prompt-select");
+    const gradeSel = document.getElementById("vocab-prompt-grade-scope");
     if (sel) {
         const source = document.getElementById("opt-vocab");
         if (source) sel.innerHTML = source.innerHTML;
         sel.value = settings.vocabSelection || "auto";
     }
+    if (gradeSel) {
+        gradeSel.value = normalizeBridgeGradeScope(settings.bridgeGradeScope);
+    }
+    syncBridgeGradeScopePresetState(modal);
     modal.classList.add("visible");
     modal.setAttribute("aria-hidden", "false");
     if (typeof pushPause === "function") pushPause();
@@ -1283,11 +1310,14 @@ function hideVocabPromptModal() {
 
 async function confirmVocabPrompt() {
     const sel = document.getElementById("vocab-prompt-select");
+    const gradeSel = document.getElementById("vocab-prompt-grade-scope");
     if (sel) {
         settings.vocabSelection = sel.value || "auto";
-        saveSettings();
-        await setActiveVocabPack(settings.vocabSelection);
     }
+    if (gradeSel) settings.bridgeGradeScope = gradeSel.value || "preschool_grade2";
+    settings = normalizeSettings(settings);
+    saveSettings();
+    await setActiveVocabPack(settings.vocabSelection);
     hideVocabPromptModal();
     showToast("📚 词库已设置");
 }
@@ -1299,6 +1329,143 @@ function startWeakWordsPractice() {
 window.startWeakWordsPractice = startWeakWordsPractice;
 
 // --- Bilingual vocabulary support ---
+
+function normalizeBridgeGradeScope(scope) {
+    const raw = String(scope || "").trim();
+    const aliasMap = {
+        "": "preschool_grade2",
+        auto: "preschool_grade2",
+        preschool: "preschool",
+        grade1: "grade1",
+        grade2: "grade2",
+        preschool_grade1: "preschool_grade1",
+        preschool_grade2: "preschool_grade2",
+        all: "all",
+        学前: "preschool",
+        一年级: "grade1",
+        二年级: "grade2",
+        "学前-一年级": "preschool_grade1",
+        "学前到一年级": "preschool_grade1",
+        "学前-二年级": "preschool_grade2",
+        "学前到二年级": "preschool_grade2",
+        全部: "all",
+        全部内容: "all"
+    };
+    return aliasMap[raw] || "preschool_grade2";
+}
+
+function getBridgeGradeScopeLabel(scope) {
+    const normalized = normalizeBridgeGradeScope(scope);
+    const labelMap = {
+        preschool: "学前启蒙",
+        grade1: "小学一年级",
+        grade2: "小学二年级",
+        preschool_grade1: "学前到小学一年级",
+        preschool_grade2: "学前到小学二年级",
+        all: "全部内容"
+    };
+    return labelMap[normalized] || "学前到小学二年级";
+}
+
+function getBridgeScopeTagsFromGradeBand(gradeBand) {
+    const normalized = String(gradeBand || "").trim();
+    if (!normalized) return [];
+    const explicitMap = {
+        学前: ["preschool"],
+        一年级: ["grade1"],
+        二年级: ["grade2"],
+        "学前-一年级": ["preschool", "grade1"],
+        "学前-二年级": ["preschool", "grade1", "grade2"],
+        学前到一年级: ["preschool", "grade1"],
+        学前到二年级: ["preschool", "grade1", "grade2"]
+    };
+    if (explicitMap[normalized]) return explicitMap[normalized];
+    const tags = [];
+    if (normalized.includes("学前")) tags.push("preschool");
+    if (normalized.includes("一年级")) tags.push("grade1");
+    if (normalized.includes("二年级")) tags.push("grade2");
+    return [...new Set(tags)];
+}
+
+function getBridgeGradeScopeTags(scope) {
+    const normalized = normalizeBridgeGradeScope(scope);
+    const scopeMap = {
+        preschool: ["preschool"],
+        grade1: ["grade1"],
+        grade2: ["grade2"],
+        preschool_grade1: ["preschool", "grade1"],
+        preschool_grade2: ["preschool", "grade1", "grade2"],
+        all: ["preschool", "grade1", "grade2"]
+    };
+    return scopeMap[normalized] || scopeMap.preschool_grade2;
+}
+
+function doesWordMatchBridgeGradeScope(wordObj, scope) {
+    const normalizedScope = normalizeBridgeGradeScope(scope);
+    if (normalizedScope === "all") return true;
+    const gradeTags = getBridgeScopeTagsFromGradeBand(wordObj?.gradeBand);
+    if (!gradeTags.length) return true;
+    const scopeTags = getBridgeGradeScopeTags(normalizedScope);
+    return gradeTags.some(tag => scopeTags.includes(tag));
+}
+
+function filterWordsByBridgeGradeScope(words, scope) {
+    if (!Array.isArray(words)) return [];
+    return words.filter(item => item && doesWordMatchBridgeGradeScope(item, scope));
+}
+
+function shouldApplyBridgeGradeScope(pack, words) {
+    if (!Array.isArray(words) || !words.length) return false;
+    const packId = String(pack?.id || "").trim();
+    const packStage = String(pack?.stage || "").trim().toLowerCase();
+    const languageMode = getCurrentLanguageMode();
+    if (packStage === "bridge" || packId === "vocab.bridge.full" || packId === BRIDGE_AUTO_SELECTION || BRIDGE_PACK_IDS.includes(packId)) {
+        return true;
+    }
+    if (languageMode === "chinese" || languageMode === "pinyin") {
+        return words.some(item => String(item?.gradeBand || "").trim());
+    }
+    return false;
+}
+
+function shouldShowBridgeGradeScope(selection, pack) {
+    const languageMode = getCurrentLanguageMode();
+    const packId = String(pack?.id || selection || "").trim();
+    const packStage = String(pack?.stage || "").trim().toLowerCase();
+    return languageMode === "chinese"
+        || languageMode === "pinyin"
+        || packStage === "bridge"
+        || packId === "vocab.bridge.full"
+        || packId === BRIDGE_AUTO_SELECTION
+        || BRIDGE_PACK_IDS.includes(packId);
+}
+
+function getBridgeGradeScopePreviewLine(selection, pack) {
+    if (!shouldShowBridgeGradeScope(selection, pack)) return "";
+    return `当前层级：${getBridgeGradeScopeLabel(settings.bridgeGradeScope)}`;
+}
+
+function syncBridgeGradeScopePresetState(root) {
+    const doc = typeof document !== "undefined" ? document : null;
+    const scopeRoot = root && typeof root.querySelectorAll === "function"
+        ? root
+        : (doc && typeof doc.querySelectorAll === "function" ? doc : null);
+    if (!scopeRoot) return;
+    const groups = Array.from(scopeRoot.querySelectorAll("[data-grade-scope-target]"));
+    groups.forEach(group => {
+        const targetId = String(group?.dataset?.gradeScopeTarget || "").trim();
+        if (!targetId) return;
+        const selectEl = doc?.getElementById?.(targetId);
+        const currentScope = normalizeBridgeGradeScope(selectEl?.value || settings?.bridgeGradeScope);
+        const buttons = Array.from(group.querySelectorAll("[data-bridge-grade-scope]"));
+        buttons.forEach(button => {
+            const buttonScope = normalizeBridgeGradeScope(button?.dataset?.bridgeGradeScope || "");
+            const isActive = buttonScope === currentScope;
+            if (button.classList?.toggle) button.classList.toggle("active", isActive);
+            if (typeof button.setAttribute === "function") button.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+    });
+}
 
 function isBridgeMode() {
     const packId = typeof activeVocabPackId === "string" ? activeVocabPackId : "";
@@ -1360,6 +1527,91 @@ function getPinyinFallback(safeWord) {
     return buildPinyinFromHanzi(source);
 }
 
+function joinWordMetaParts(parts, maxParts = 3) {
+    return (Array.isArray(parts) ? parts : [])
+        .map(part => String(part || "").trim())
+        .filter(Boolean)
+        .slice(0, maxParts)
+        .join(" · ");
+}
+
+function formatWordGradeBandLabel(gradeBand) {
+    const normalized = String(gradeBand || "").trim();
+    if (!normalized) return "";
+    const labelMap = {
+        "学前": "学前启蒙",
+        "一年级": "小学一年级",
+        "二年级": "小学二年级",
+        "学前-一年级": "学前到小学一年级",
+        "学前-二年级": "学前到小学二年级",
+        "学前到一年级": "学前到小学一年级",
+        "学前到二年级": "学前到小学二年级"
+    };
+    return labelMap[normalized] || normalized.replace(/-/g, "到");
+}
+
+function getWordModuleLabel(moduleName, languageMode, isHanziWord) {
+    if (isHanziWord) {
+        return languageMode === "pinyin" ? "识字拼读" : "识字组词";
+    }
+    switch (String(moduleName || "").trim()) {
+        case "词语":
+            return "词语积累";
+        case "拓展词汇":
+            return "拓展识词";
+        case "表达":
+            return "情境表达";
+        case "古诗":
+            return "古诗诵读";
+        case "识字":
+            return "识字组词";
+        default:
+            return languageMode === "pinyin" ? "拼音练习" : String(moduleName || "").trim();
+    }
+}
+
+function getWordMetaText(safeWord, languageMode) {
+    const subject = String(safeWord?.subject || "").trim().toLowerCase();
+    const stage = String(safeWord?.stage || "").trim().toLowerCase();
+    const moduleName = String(safeWord?.module || "").trim();
+    const gradeBand = String(safeWord?.gradeBand || "").trim();
+    const isHanziWord = Boolean(safeWord?.character && safeWord?.examples && safeWord.examples.length);
+    const stageLabel = isHanziWord
+        ? "汉字模式"
+        : (stage === "bridge" ? "幼小衔接" : (stage === "kindergarten" ? "幼儿园" : ""));
+    const moduleLabel = subject === "language"
+        ? getWordModuleLabel(moduleName, languageMode, isHanziWord)
+        : moduleName;
+    return joinWordMetaParts([stageLabel, moduleLabel, formatWordGradeBandLabel(gradeBand)]);
+}
+
+function getWordTipText(safeWord, languageMode) {
+    const subject = String(safeWord?.subject || "").trim().toLowerCase();
+    const moduleName = String(safeWord?.module || "").trim();
+    const gradeBand = String(safeWord?.gradeBand || "").trim();
+    const textLength = [...String(safeWord?.chinese || safeWord?.character || safeWord?.word || "").trim()].length;
+    const isHanziWord = Boolean(safeWord?.character && safeWord?.examples && safeWord.examples.length);
+
+    if (isHanziWord) {
+        return languageMode === "pinyin"
+            ? "看汉字，读拼音，再说组词"
+            : (gradeBand === "学前" ? "先认一认字形，再借组词记住它" : "先认字，再读拼音，再看组词");
+    }
+
+    if (subject === "language") {
+        if (languageMode === "pinyin") return textLength >= 4 ? "先按拼音分段，再连成词组" : "拼音对应汉字，注意声调";
+        if (moduleName === "表达") return "联系生活场景，把话说完整";
+        if (moduleName === "古诗") return "先读顺，再想画面和节奏";
+        if (moduleName === "拓展词汇") return gradeBand.includes("二年级") ? "联系课文和生活场景理解词义" : "联系生活场景理解词义";
+        if (moduleName === "词语") return "先认词，再说它常出现的场景";
+        return "先认词，再理解意思";
+    }
+
+    if (subject === "math") return "先看概念，再找关键词";
+    if (subject === "english") return "先认读，再看拼读";
+    return "";
+}
+
 function normalizeWordContent(raw) {
     if (!raw || typeof raw !== "object") return null;
     const word = String(raw.word || raw.en || raw.standardized || "").trim();
@@ -1387,6 +1639,7 @@ function normalizeWordContent(raw) {
         keywords,
         phrase: String(raw.phrase || "").trim(),
         phraseTranslation: String(raw.phraseTranslation || raw.phraseZh || "").trim(),
+        gradeBand: String(raw.gradeBand || "").trim(),
         difficulty: String(raw.difficulty || "basic").trim(),
         stage: String(raw.stage || "").trim(),
         mode: normalizedMode
@@ -1423,6 +1676,8 @@ function getBridgeDisplayContent(safeWord, languageMode) {
     const keywordText = Array.isArray(safeWord.keywords) && safeWord.keywords.length
         ? String(safeWord.keywords[0] || "").trim()
         : (safeWord.module || primaryChinese || primaryEnglish);
+    const metaText = getWordMetaText(safeWord, languageMode);
+    const tipText = getWordTipText(safeWord, languageMode);
 
     if (subject === "english") {
         return {
@@ -1431,7 +1686,9 @@ function getBridgeDisplayContent(safeWord, languageMode) {
             secondaryText: phonicsText || primaryEnglish,
             phoneticText: safeWord.phonetic,
             phrasePrimary: safeWord.phrase,
-            phraseSecondary: safeWord.phraseTranslation
+            phraseSecondary: safeWord.phraseTranslation,
+            metaText,
+            tipText
         };
     }
 
@@ -1442,7 +1699,9 @@ function getBridgeDisplayContent(safeWord, languageMode) {
             secondaryText: keywordText,
             phoneticText: safeWord.phonetic,
             phrasePrimary: safeWord.phrase,
-            phraseSecondary: safeWord.phraseTranslation
+            phraseSecondary: safeWord.phraseTranslation,
+            metaText,
+            tipText
         };
     }
 
@@ -1456,18 +1715,22 @@ function getBridgeDisplayContent(safeWord, languageMode) {
             secondaryText: pinyinText || fallbackEnglish,
             phoneticText: pinyinText,
             phrasePrimary: safeWord.phraseTranslation,
-            phraseSecondary: safeWord.phrase
+            phraseSecondary: safeWord.phrase,
+            metaText,
+            tipText
         };
     }
 
     if (languageMode === "pinyin") {
         return {
             id: primaryChinese || primaryEnglish,
-            primaryText: primaryChinese || primaryEnglish,
-            secondaryText: pinyinText || fallbackEnglish,
+            primaryText: pinyinText || primaryChinese || primaryEnglish,
+            secondaryText: primaryChinese || fallbackEnglish,
             phoneticText: pinyinText,
             phrasePrimary: safeWord.phrase,
-            phraseSecondary: safeWord.phraseTranslation
+            phraseSecondary: safeWord.phraseTranslation,
+            metaText,
+            tipText
         };
     }
 
@@ -1477,7 +1740,9 @@ function getBridgeDisplayContent(safeWord, languageMode) {
         secondaryText: isSamePrimary ? (pinyinText || "") : (primaryChinese || pinyinText),
         phoneticText: safeWord.phonetic,
         phrasePrimary: safeWord.phrase,
-        phraseSecondary: safeWord.phraseTranslation
+        phraseSecondary: safeWord.phraseTranslation,
+        metaText,
+        tipText
     };
 }
 
@@ -1502,6 +1767,8 @@ function getDisplayContent(wordObj) {
     const primaryEnglish = safeWord.word;
     const primaryChinese = safeWord.chinese;
     const isHanziWord = Boolean(safeWord.character && safeWord.examples && safeWord.examples.length);
+    const metaText = getWordMetaText(safeWord, languageMode);
+    const tipText = getWordTipText(safeWord, languageMode);
 
     if (isBridgeMode() && safeWord.subject) {
         return getBridgeDisplayContent(safeWord, languageMode);
@@ -1509,23 +1776,29 @@ function getDisplayContent(wordObj) {
 
     if (isHanziWord) {
         const primaryCharacter = safeWord.character || primaryChinese || primaryEnglish;
+        const groupText = safeWord.phraseTranslation || safeWord.phrase || safeWord.english || "";
+        const meaningText = safeWord.english || safeWord.phrase || "";
         if (languageMode === "pinyin") {
             return {
                 id: primaryCharacter,
                 primaryText: primaryCharacter,
-                secondaryText: safeWord.pinyin || primaryCharacter,
+                secondaryText: safeWord.pinyin || groupText || primaryCharacter,
                 phoneticText: safeWord.pinyin,
-                phrasePrimary: safeWord.phraseTranslation,
-                phraseSecondary: safeWord.phrase
+                phrasePrimary: groupText,
+                phraseSecondary: meaningText,
+                metaText,
+                tipText
             };
         }
         return {
-            id: primaryEnglish || primaryCharacter,
+            id: primaryCharacter,
             primaryText: primaryCharacter,
-            secondaryText: safeWord.english || primaryEnglish,
+            secondaryText: safeWord.pinyin || groupText || safeWord.english || primaryEnglish,
             phoneticText: safeWord.pinyin,
-            phrasePrimary: safeWord.phraseTranslation,
-            phraseSecondary: safeWord.phrase
+            phrasePrimary: groupText,
+            phraseSecondary: meaningText,
+            metaText,
+            tipText
         };
     }
 
@@ -1536,7 +1809,9 @@ function getDisplayContent(wordObj) {
             secondaryText: primaryEnglish,
             phoneticText: safeWord.pinyin,
             phrasePrimary: safeWord.phraseTranslation,
-            phraseSecondary: safeWord.phrase
+            phraseSecondary: safeWord.phrase,
+            metaText,
+            tipText
         };
     }
 
@@ -1548,7 +1823,9 @@ function getDisplayContent(wordObj) {
             secondaryText: fallbackPinyin || safeWord.pinyin || "",
             phoneticText: fallbackPinyin || safeWord.pinyin,
             phrasePrimary: safeWord.phrase,
-            phraseSecondary: safeWord.phraseTranslation
+            phraseSecondary: safeWord.phraseTranslation,
+            metaText,
+            tipText
         };
     }
 
@@ -1558,7 +1835,9 @@ function getDisplayContent(wordObj) {
         secondaryText: primaryChinese,
         phoneticText: safeWord.phonetic,
         phrasePrimary: safeWord.phrase,
-        phraseSecondary: safeWord.phraseTranslation
+        phraseSecondary: safeWord.phraseTranslation,
+        metaText,
+        tipText
     };
 }
 
@@ -1581,6 +1860,11 @@ function getWordKey(wordObj) {
 window.BilingualVocab = {
     normalizeWordContent,
     getCurrentLanguageMode,
+    normalizeBridgeGradeScope,
+    getBridgeGradeScopeLabel,
+    doesWordMatchBridgeGradeScope,
+    filterWordsByBridgeGradeScope,
+    syncBridgeGradeScopePresetState,
     filterWordsByLanguageMode,
     getDisplayContent,
     getWordDisplayPair,

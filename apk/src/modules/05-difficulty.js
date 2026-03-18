@@ -187,8 +187,9 @@ function getEnemyConfig() {
 function getGolemConfig() {
     const base = {
         maxCount: MAX_GOLEMS,
-        ironGolem: { hp: 100, damage: 20, speed: 1.5 },
-        snowGolem: { hp: 50, damage: 10, speed: 2.0 }
+        ironGolem: { hp: 100, damage: 20, speed: 1.5, attackRange: 80, followDelay: 30 },
+        snowGolem: { hp: 50, damage: 10, speed: 2.0, attackRange: 120, followDelay: 30 },
+        wardenGolem: { hp: 220, damage: 32, speed: 1.35, attackRange: 220, meleeRange: 84, sonicDamage: 18, followDelay: 18, attackCooldown: 90, size: { w: 32, h: 48 } }
     };
     return mergeDeep(base, gameConfig.golems || {});
 }

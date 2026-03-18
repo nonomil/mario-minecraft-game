@@ -122,6 +122,85 @@ class DragonFireball extends Projectile {
     }
 }
 
+const SPIDER_CLIMB_SPEED = 5;
+const SPIDER_CLIMB_LOOKAHEAD = 18;
+const SPIDER_CLIMB_SIDE_STICK = 4;
+const SPIDER_CLIMB_VERTICAL_TRIGGER = 18;
+const SPIDER_CLIMB_TOP_TOLERANCE = 6;
+
+function isSpiderClimbablePlatform(platform) {
+    return !!(platform && !platform.remove && platform.type === "grass" && Number(platform.width) > 0 && Number(platform.height) > 0);
+}
+
+function getSpiderTreeTrunkBounds(tree) {
+    if (!tree || tree.remove) return null;
+    return {
+        x: tree.x + (tree.width - 30) / 2,
+        y: tree.y + tree.height - 60,
+        width: 30,
+        height: 60
+    };
+}
+
+function getSpiderClimbSurfaces(platformsRef, treesRef) {
+    const platformSurfaces = (Array.isArray(platformsRef) ? platformsRef : [])
+        .filter(isSpiderClimbablePlatform)
+        .map((platform) => ({
+            x: Number(platform.x) || 0,
+            y: Number(platform.y) || 0,
+            width: Number(platform.width) || 0,
+            height: Number(platform.height) || 0
+        }));
+    const treeSurfaces = (Array.isArray(treesRef) ? treesRef : [])
+        .map(getSpiderTreeTrunkBounds)
+        .filter(Boolean);
+    return platformSurfaces.concat(treeSurfaces);
+}
+
+function findSpiderClimbSurface(enemy, moveDir, platformsRef, treesRef) {
+    if (!enemy || !moveDir) return null;
+    const unit = Math.max(1, Number(worldScale?.unit) || 1);
+    const lookAhead = SPIDER_CLIMB_LOOKAHEAD * unit;
+    const spiderFrontX = moveDir > 0 ? enemy.x + enemy.width : enemy.x;
+    const spiderTop = enemy.y;
+    const spiderBottom = enemy.y + enemy.height;
+    return getSpiderClimbSurfaces(platformsRef, treesRef).find((surface) => {
+        const sideX = moveDir > 0 ? surface.x : (surface.x + surface.width);
+        const closeToWall = Math.abs(spiderFrontX - sideX) <= lookAhead;
+        const overlapsWallHeight = spiderBottom > surface.y + SPIDER_CLIMB_TOP_TOLERANCE
+            && spiderTop < surface.y + surface.height - SPIDER_CLIMB_TOP_TOLERANCE;
+        const ledgeAboveSpider = surface.y < spiderBottom - SPIDER_CLIMB_TOP_TOLERANCE;
+        return closeToWall && overlapsWallHeight && ledgeAboveSpider;
+    }) || null;
+}
+
+function startSpiderClimb(enemy, surface, moveDir) {
+    if (!enemy || !surface || !moveDir) return false;
+    const unit = Math.max(1, Number(worldScale?.unit) || 1);
+    const gravity = Math.max(0, Number(gameConfig?.physics?.gravity) || 0);
+    const wallX = moveDir > 0 ? surface.x : (surface.x + surface.width);
+    const clingX = moveDir > 0
+        ? wallX - enemy.width + SPIDER_CLIMB_SIDE_STICK * unit
+        : wallX - SPIDER_CLIMB_SIDE_STICK * unit;
+    const topY = surface.y - enemy.height;
+
+    enemy.state = "climb";
+    enemy.dir = moveDir;
+    enemy.climbSurface = surface;
+    enemy.x = moveDir > 0 ? Math.min(enemy.x, clingX) : Math.max(enemy.x, clingX);
+    enemy.grounded = false;
+
+    if (enemy.y <= topY + SPIDER_CLIMB_TOP_TOLERANCE * unit) {
+        enemy.y = topY;
+        enemy.velY = 0;
+        enemy.grounded = true;
+        return true;
+    }
+
+    enemy.velY = -((SPIDER_CLIMB_SPEED * unit) + gravity);
+    return true;
+}
+
 // ============ EnderDragonFireball 类 ============
 class EnderDragonFireball extends Projectile {
     constructor(x, y, targetX, targetY, options = {}) {
@@ -223,6 +302,7 @@ class Enemy extends Entity {
         this.velY = 0;
         this.grounded = false;
         this.webbed = 0; // 蛛网减速计时器
+        this.climbSurface = null;
 
         // ===== 新增：Debuff 系统状态 =====
         this.debuffs = [];           // Debuff 数组
@@ -388,9 +468,21 @@ class Enemy extends Entity {
     updateSpider(playerRef) {
         const dist = Math.abs(this.x - playerRef.x);
         const speedMult = this.webbed > 0 ? 0.2 : 1;
+        const moveDir = playerRef.x > this.x ? 1 : -1;
+        const playerBottom = (Number(playerRef.y) || 0) + (Number(playerRef.height) || 0);
+        const spiderBottom = this.y + this.height;
+        const playerIsHigher = playerBottom < spiderBottom - (SPIDER_CLIMB_VERTICAL_TRIGGER * Math.max(1, Number(worldScale?.unit) || 1));
+        const climbSurface = findSpiderClimbSurface(this, moveDir, platforms, trees) || this.climbSurface;
+        const canKeepClimbing = !!(climbSurface && this.y > (climbSurface.y - this.height));
+        if (climbSurface && (playerIsHigher || canKeepClimbing)) {
+            startSpiderClimb(this, climbSurface, moveDir);
+            return;
+        }
+        this.climbSurface = null;
         if (dist < 240) {
             this.state = "chase";
-            this.x += (playerRef.x > this.x ? 1 : -1) * this.speed * speedMult;
+            this.dir = moveDir;
+            this.x += moveDir * this.speed * speedMult;
         } else {
             this.state = "patrol";
             this.updateBasic();
@@ -458,18 +550,23 @@ class Enemy extends Entity {
 
 class Golem extends Entity {
     constructor(x, y, type = "iron") {
-        const sizeScale = worldScale.unit;
-        super(x, y, type === "iron" ? 40 * sizeScale : 32 * sizeScale, type === "iron" ? 48 * sizeScale : 40 * sizeScale);
         const config = getGolemConfig();
-        const stats = type === "iron" ? config.ironGolem : config.snowGolem;
+        const configKey = type === "warden" ? "wardenGolem" : (type === "iron" ? "ironGolem" : "snowGolem");
+        const stats = config[configKey] || config.ironGolem;
+        const sizeScale = worldScale.unit;
+        const rawSize = stats.size || (type === "iron" ? { w: 40, h: 48 } : { w: 32, h: 40 });
+        super(x, y, rawSize.w * sizeScale, rawSize.h * sizeScale);
         this.type = type;
         this.hp = stats.hp;
         this.maxHp = stats.hp;
         this.damage = stats.damage;
         this.speed = stats.speed;
-        this.followDelay = 30;
+        this.followDelay = Math.max(8, Number(stats.followDelay) || 30);
         this.attackCooldown = 0;
-        this.attackRange = (type === "iron" ? 80 : 120) * sizeScale;
+        this.attackCooldownFrames = Math.max(24, Number(stats.attackCooldown) || 60);
+        this.attackRange = Math.max(60, Number(stats.attackRange) || (type === "iron" ? 80 : 120)) * sizeScale;
+        this.meleeRange = Math.max(44, Number(stats.meleeRange) || (type === "iron" ? 80 : 56)) * sizeScale;
+        this.sonicDamage = Math.max(1, Number(stats.sonicDamage) || Math.max(6, Math.round(this.damage * 0.75)));
         this.velX = 0;
         this.velY = 0;
         this.grounded = false;
@@ -483,7 +580,10 @@ class Golem extends Entity {
     updateFollow(playerHistory, platformsRef, playerRef) {
         if (playerHistory.length < this.followDelay) return;
         const target = playerHistory[playerHistory.length - this.followDelay];
-        const dx = target.x - this.x;
+        const targetX = this.type === "warden" && playerRef
+            ? target.x + ((playerRef.facingRight ? 1 : -1) * 72 * worldScale.unit)
+            : target.x;
+        const dx = targetX - this.x;
         if (Math.abs(dx) > 30 * worldScale.unit) {
             this.velX = Math.sign(dx) * this.speed;
             this.facingRight = dx > 0;
@@ -593,11 +693,35 @@ class Golem extends Entity {
             if (this.type === "snow") {
                 const snowball = projectilePool.getSnowball(this.x + this.width / 2, this.y + this.height / 2, nearest.x, nearest.y);
                 if (!projectiles.includes(snowball)) projectiles.push(snowball);
+            } else if (this.type === "warden") {
+                const targetCenterX = nearest.x + nearest.width / 2;
+                const golemCenterX = this.x + this.width / 2;
+                const targetDistance = Math.abs(targetCenterX - golemCenterX);
+                this.facingRight = targetCenterX >= golemCenterX;
+                if (targetDistance <= this.meleeRange) {
+                    nearest.takeDamage(this.damage);
+                    nearest.x += this.facingRight ? 18 : -18;
+                    showFloatingText(`💥 ${this.damage}`, nearest.x, nearest.y - 20, "#66E0E0");
+                } else {
+                    nearest.takeDamage(this.sonicDamage);
+                    showFloatingText(`🔊 ${this.sonicDamage}`, nearest.x, nearest.y - 20, "#8CF4FF");
+                    if (typeof particles !== "undefined" && Array.isArray(particles)) {
+                        for (let waveIndex = 0; waveIndex < 4; waveIndex++) {
+                            particles.push({
+                                x: golemCenterX + waveIndex * (this.facingRight ? 14 : -14),
+                                y: this.y + this.height * 0.42,
+                                vx: this.facingRight ? 1.6 + waveIndex * 0.2 : -1.6 - waveIndex * 0.2,
+                                vy: (Math.random() - 0.5) * 0.4,
+                                life: 0.8
+                            });
+                        }
+                    }
+                }
             } else {
                 nearest.takeDamage(this.damage);
+                showFloatingText(`⚔️ ${this.damage}`, nearest.x, nearest.y - 20);
             }
-            this.attackCooldown = 60;
-            showFloatingText(`⚔️ ${this.damage}`, nearest.x, nearest.y - 20);
+            this.attackCooldown = this.attackCooldownFrames;
         }
     }
 
@@ -606,7 +730,7 @@ class Golem extends Entity {
         if (this.hp <= 0) {
             this.remove = true;
             if (Math.random() < 0.5) {
-                const dropType = this.type === "iron" ? "iron" : "pumpkin";
+                const dropType = this.type === "iron" ? "iron" : (this.type === "warden" ? "sculk_vein" : "pumpkin");
                 dropItem(dropType, this.x, this.y);
             }
         }

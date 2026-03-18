@@ -75,9 +75,9 @@ test("P1 shield should block a normal contact hit and still lose durability", as
   expect(result.afterDurability).toBeLessThan(result.beforeDurability);
 });
 
-test("P1 evoker should be clamped back inside the boss arena when pushed outside", async ({ page }) => {
+test("P1 ravager should be clamped back inside the boss arena when pushed outside", async ({ page }) => {
   await openDebugPage(page);
-  await forceBoss(page, "evoker");
+  await forceBoss(page, "ravager");
 
   const before = await page.evaluate(() => {
     const frame = document.getElementById("game");
@@ -86,8 +86,7 @@ test("P1 evoker should be clamped back inside the boss arena when pushed outside
     w.eval(`
       if (typeof bossArena !== "undefined" && bossArena && bossArena.boss) {
         bossArena.boss.x = bossArena.rightWall + 160;
-        bossArena.boss.state = "reposition";
-        bossArena.boss.repositionTimer = 10;
+        bossArena.boss.state = "charge";
       }
     `);
     return {

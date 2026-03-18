@@ -144,13 +144,15 @@ function setOverlay(visible, mode) {
                     `💎 钻石: ${diamonds}<br>` +
                     `⭐ 当前积分: ${score}<br>` +
                     `⚔️ 击杀敌人: ${enemyKillStats.total || 0}<br>` +
-                    `🏅 玩家等级: ${level}` +
+                    `🏅 玩家等级: ${level}<br>` +
+                    `📘 单词测验：答对全部题目可满血复活<br>` +
+                    `⭐ 积分复活仅恢复1格血` +
                     sessionSummary;
             }
             if (btn) {
                 const cfg = getReviveConfig();
                 const diamondCost = Number(cfg.diamondCost) || 10;
-                btn.innerText = diamonds >= diamondCost ? `💎${diamondCost} 复活` : "重新开始";
+                btn.innerText = diamonds >= diamondCost ? `💎${diamondCost} 满血复活` : "重新开始";
                 btn.style.display = "block";
             }
             if (btnScoreRevive) {
@@ -160,8 +162,8 @@ function setOverlay(visible, mode) {
                 btnScoreRevive.style.display = "block";
                 btnScoreRevive.disabled = !enoughScore;
                 btnScoreRevive.innerText = enoughScore
-                    ? `积分复活 (${scoreCost}分)`
-                    : `积分复活 (需要${scoreCost}分)`;
+                    ? `积分复活 (${scoreCost}分 / 1格血)`
+                    : `积分复活 (需要${scoreCost}分 / 1格血)`;
             }
             if (btnLearningReport) btnLearningReport.style.display = "block";
             // Show leaderboard button on gameover
@@ -636,25 +638,74 @@ function triggerGameOver() {
     showGameReview(window._sessionWordResults || []);
 }
 function maybeLaunchWordMatchRevive() {
-    if (!settings.wordMatchEnabled || wordMatchActive || !matchLeftEl || !matchRightEl) return false;
+    if (!settings.wordMatchEnabled || typeof startRecoveryQuizSession !== "function") return false;
     const words = getUniqueSessionWords();
-    if (words.length < (LEARNING_CONFIG.wordMatch.wordCount || 5)) return false;
-    activeWordMatch = new WordMatchGame(words);
-    activeWordMatch.start();
-    return true;
+    const questionCount = Math.max(1, Number(LEARNING_CONFIG?.reviveQuiz?.deathQuestionCount) || 4);
+    if (words.length < questionCount) return false;
+    return !!startRecoveryQuizSession({
+        context: "death",
+        words,
+        questionCount,
+        onSuccess: () => {
+            const cfg = getReviveConfig();
+            playerHp = playerMaxHp;
+            updateHpUI();
+            playerInvincibleTimer = Number(cfg.invincibleFrames) || 180;
+            paused = false;
+            startedOnce = true;
+            setOverlay(false);
+            showToast(UI_TEXTS.reviveSuccess);
+        },
+        onFailure: () => {
+            setOverlay(true, "gameover");
+        }
+    });
+}
+
+function maybeOfferBossEmergencyQuiz() {
+    if (typeof bossArena === "undefined" || !bossArena?.active || !bossArena?.boss?.alive) return false;
+    if (bossArena.emergencyQuizUsed) return false;
+    if (playerHp <= 0 || playerHp >= Math.min(3, playerMaxHp)) return false;
+    if (typeof startRecoveryQuizSession !== "function" || currentLearningChallenge) return false;
+    const words = getUniqueSessionWords();
+    const questionCount = Math.max(1, Number(LEARNING_CONFIG?.reviveQuiz?.bossQuestionCount) || 3);
+    if (words.length < questionCount) return false;
+    const started = startRecoveryQuizSession({
+        context: "boss_emergency",
+        words,
+        questionCount,
+        onSuccess: () => {
+            playerHp = playerMaxHp;
+            updateHpUI();
+            playerInvincibleTimer = Math.max(Number(playerInvincibleTimer) || 0, 120);
+            showToast("答对全部题目，生命已回满");
+        },
+        onFailure: () => {
+            showToast("急救测验未通过，继续坚持");
+        }
+    });
+    if (started) bossArena.emergencyQuizUsed = true;
+    return !!started;
 }
 
 function buildWordMatchItems(words) {
     const items = [];
-    const seen = new Set();
+    const seenKeys = new Set();
+    const seenSecondary = new Set();
+    const mode = settings?.languageMode;
     words.forEach(word => {
         const key = getWordKeySafe(word);
-        if (!key || seen.has(key)) return;
-        seen.add(key);
+        if (!key || seenKeys.has(key)) return;
         const pair = getWordDisplayPairSafe(word);
         const primary = pair.primary || key;
         const secondary = pair.secondary || pair.primary || key;
         if (!primary || !secondary) return;
+        const subject = String(word?.subject || "").trim();
+        if (subject === "language" && (mode === "pinyin" || mode === "chinese")) {
+            if (seenSecondary.has(secondary)) return;
+            seenSecondary.add(secondary);
+        }
+        seenKeys.add(key);
         items.push({ id: key, left: primary, right: secondary, word });
     });
     return items;
@@ -662,17 +713,17 @@ function buildWordMatchItems(words) {
 
 function getWordMatchHint(words) {
     const subjects = new Set(words.map(w => String(w?.subject || "").trim()).filter(Boolean));
-    if (subjects.size !== 1) return "将左侧与右侧正确配对，只有1次机会";
+    if (subjects.size !== 1) return "将左侧与右侧全部正确配对才能复活，错配会自动消失";
     const subject = [...subjects][0];
     const mode = settings.languageMode;
     if (subject === "language") {
-        if (mode === "pinyin") return "将拼音与汉字拉线连对，只有1次机会";
-        if (mode === "chinese") return "将汉字与拼音拉线连对，只有1次机会";
-        return "将词语与释义拉线连对，只有1次机会";
+        if (mode === "pinyin") return "将拼音与汉字全部连对才能复活，错配会自动消失";
+        if (mode === "chinese") return "将汉字与拼音全部连对才能复活，错配会自动消失";
+        return "将词语与释义全部连对才能复活，错配会自动消失";
     }
-    if (subject === "math") return "将概念与关键词拉线连对，只有1次机会";
-    if (subject === "english") return "将英文与拼读拉线连对，只有1次机会";
-    return "将左侧与右侧正确配对，只有1次机会";
+    if (subject === "math") return "将概念与关键词全部连对才能复活，错配会自动消失";
+    if (subject === "english") return "将英文与拼读全部连对才能复活，错配会自动消失";
+    return "将左侧与右侧全部正确配对才能复活，错配会自动消失";
 }
 
 class WordMatchGame {
@@ -684,6 +735,7 @@ class WordMatchGame {
         this.rightItems = shuffle(this.entries.map(item => ({ id: item.id, text: item.right, word: item.word })));
         this.matchHint = getWordMatchHint(this.words);
         this.connections = [];
+        this.lockedIds = new Set();
         this.selectedLeftId = null;
         this.timerMs = LEARNING_CONFIG.wordMatch.timeLimit || 30000;
         this.timerEndAt = 0;
@@ -733,9 +785,9 @@ class WordMatchGame {
             matchResultEl.classList.remove("visible");
             matchResultEl.innerText = "";
         }
-        if (matchSubtitleEl) matchSubtitleEl.innerText = this.matchHint || "将左侧与右侧正确配对，只有1次机会";
-        matchLeftEl.innerHTML = this.leftItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="en">${item.text}</div>`).join("");
-        matchRightEl.innerHTML = this.rightItems.map(item => `<div class="match-item" data-id="${item.id}" data-type="zh">${item.text}</div>`).join("");
+        if (matchSubtitleEl) matchSubtitleEl.innerText = this.matchHint || "将左侧与右侧全部正确配对才能复活，错配会自动消失";
+        matchLeftEl.innerHTML = this.leftItems.map(item => `<div class="match-item${this.lockedIds.has(item.id) ? " correct" : ""}" data-id="${item.id}" data-type="en">${item.text}</div>`).join("");
+        matchRightEl.innerHTML = this.rightItems.map(item => `<div class="match-item${this.lockedIds.has(item.id) ? " correct" : ""}" data-id="${item.id}" data-type="zh">${item.text}</div>`).join("");
         matchTotalEl.innerText = String(this.words.length);
         this.bindEvents();
         this.updateMatchCount();
@@ -759,8 +811,9 @@ class WordMatchGame {
     selectLeft(el) {
         if (!el) return;
         this.pauseTimerOnFirstInteraction();
+        if (this.lockedIds.has(el.dataset.id)) return;
         this.selectedLeftId = el.dataset.id;
-        matchLeftEl.querySelectorAll(".match-item").forEach(item => item.classList.remove("selected"));
+        this.clearSelectedLeft();
         el.classList.add("selected");
     }
 
@@ -769,13 +822,50 @@ class WordMatchGame {
         this.pauseTimerOnFirstInteraction();
         const leftId = this.selectedLeftId;
         const rightId = el.dataset.id;
+        this.selectedLeftId = null;
+        this.clearSelectedLeft();
+        if (this.lockedIds.has(leftId) || this.lockedIds.has(rightId)) return;
+        if (leftId !== rightId) {
+            this.flashWrongPair(leftId, rightId);
+            return;
+        }
         const existingIndex = this.connections.findIndex(conn => conn.left === leftId || conn.right === rightId);
         if (existingIndex >= 0) this.connections.splice(existingIndex, 1);
         this.connections.push({ left: leftId, right: rightId });
-        this.selectedLeftId = null;
-        matchLeftEl.querySelectorAll(".match-item").forEach(item => item.classList.remove("selected"));
+        this.lockedIds.add(leftId);
+        this.markCorrectPair(leftId, rightId);
         this.drawLines();
         this.updateMatchCount();
+    }
+
+    clearSelectedLeft() {
+        matchLeftEl?.querySelectorAll(".match-item").forEach(item => item.classList.remove("selected"));
+    }
+
+    getMatchItem(container, id) {
+        if (!container || !id) return null;
+        return container.querySelector(`[data-id="${id}"]`);
+    }
+
+    markCorrectPair(leftId, rightId) {
+        const leftEl = this.getMatchItem(matchLeftEl, leftId);
+        const rightEl = this.getMatchItem(matchRightEl, rightId);
+        [leftEl, rightEl].forEach(item => {
+            item?.classList.remove("wrong");
+            item?.classList.add("correct");
+        });
+    }
+
+    flashWrongPair(leftId, rightId) {
+        const leftEl = this.getMatchItem(matchLeftEl, leftId);
+        const rightEl = this.getMatchItem(matchRightEl, rightId);
+        [leftEl, rightEl].forEach(item => {
+            item?.classList.remove("selected");
+            item?.classList.add("wrong");
+        });
+        setTimeout(() => {
+            [leftEl, rightEl].forEach(item => item?.classList.remove("wrong"));
+        }, 360);
     }
 
     drawLines() {
@@ -793,8 +883,7 @@ class WordMatchGame {
             const y1 = leftRect.top + leftRect.height / 2 - containerRect.top;
             const x2 = rightRect.left - containerRect.left;
             const y2 = rightRect.top + rightRect.height / 2 - containerRect.top;
-            const isCorrect = conn.left === conn.right;
-            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${isCorrect ? "#4CAF50" : "#FFCA28"}" stroke-width="3"/>`;
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#4CAF50" stroke-width="3"/>`;
         }).join("");
         matchLinesEl.innerHTML = lines;
     }
@@ -829,7 +918,7 @@ class WordMatchGame {
         this.stopTimer();
         if (matchSubmitBtn) matchSubmitBtn.disabled = true;
         const correct = this.connections.filter(conn => conn.left === conn.right).length;
-        const success = correct >= (LEARNING_CONFIG.wordMatch.minCorrectToRevive || 4);
+        const success = correct >= this.words.length;
         this.showResult(success, correct);
     }
 
@@ -844,7 +933,7 @@ class WordMatchGame {
             matchSubtitleEl.innerText = success ? "继续前行！" : "重整旗鼓再来一次";
         }
         if (success) {
-            playerHp = Math.min(playerMaxHp, LEARNING_CONFIG.wordMatch.reviveHp || 3);
+            playerHp = playerMaxHp;
             addScore(correctCount * (LEARNING_CONFIG.wordMatch.bonusPerMatch || 10));
             updateHpUI();
             showToast(UI_TEXTS.reviveSuccess);
@@ -954,7 +1043,7 @@ function getReviveConfig() {
     return {
         diamondCost: revive.diamondCost ?? 10,
         scoreCost: revive.scoreCost ?? 500,
-        scoreReviveHpPercent: revive.scoreReviveHpPercent ?? 0.5,
+        scoreReviveHp: revive.scoreReviveHp ?? 1,
         invincibleFrames: revive.invincibleFrames ?? 180
     };
 }
@@ -970,8 +1059,7 @@ function reviveWithScore() {
     if (score < 0) score = 0;
     const scoreEl = document.getElementById("score");
     if (scoreEl) scoreEl.innerText = score;
-    const hpPercent = Math.max(0, Math.min(1, Number(cfg.scoreReviveHpPercent) || 0.5));
-    playerHp = Math.max(1, Math.floor(playerMaxHp * hpPercent));
+    playerHp = Math.min(playerMaxHp, Math.max(1, Number(cfg.scoreReviveHp) || 1));
     updateHpUI();
     playerInvincibleTimer = Number(cfg.invincibleFrames) || 180;
     paused = false;
@@ -980,7 +1068,7 @@ function reviveWithScore() {
     const px = player ? player.x : cameraX;
     const py = player ? player.y - 50 : canvas.height / 2;
     showFloatingText("积分复活", px, py);
-    showToast("积分复活成功");
+    showToast("积分复活成功，仅恢复1格血");
 }
 
 function keyLabel(code) {

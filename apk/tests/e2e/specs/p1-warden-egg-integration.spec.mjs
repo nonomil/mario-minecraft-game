@@ -44,15 +44,16 @@ test("P1 warden egg is present in runtime legendary chest pool", async ({ page }
   expect(result.weight).toBeGreaterThan(0);
 });
 
-test("P1 warden egg summons a warden enemy and consumes inventory", async ({ page }) => {
+test("P1 warden egg summons a friendly warden companion and consumes inventory", async ({ page }) => {
   await openGameAndBoot(page);
 
   const result = await page.evaluate(() => {
+    golems.length = 0;
     enemies.length = 0;
     inventory.warden_egg = 1;
     if (typeof updateInventoryUI === "function") updateInventoryUI();
     useInventoryItem("warden_egg");
-    const spawned = enemies.find((enemy) => enemy && !enemy.remove && enemy.type === "warden");
+    const spawned = golems.find((golem) => golem && !golem.remove && golem.type === "warden");
     return {
       wardenEggCount: Number(inventory.warden_egg) || 0,
       spawnedType: spawned?.type || "",
@@ -69,6 +70,7 @@ test("P1 warden egg can still be used while riding a summoned dragon", async ({ 
   await openGameAndBoot(page);
 
   const result = await page.evaluate(() => {
+    golems.length = 0;
     enemies.length = 0;
     projectiles.length = 0;
     dragonList.length = 0;
@@ -86,13 +88,13 @@ test("P1 warden egg can still be used while riding a summoned dragon", async ({ 
     }
 
     useInventoryItem("warden_egg");
-    const spawned = enemies.find((enemy) => enemy && !enemy.remove && enemy.type === "warden");
+    const spawned = golems.find((golem) => golem && !golem.remove && golem.type === "warden");
     return {
       riding: !!ridingDragon,
       dragonEggCount: Number(inventory.dragon_egg) || 0,
       wardenEggCount: Number(inventory.warden_egg) || 0,
       dragonCount: Array.isArray(dragonList) ? dragonList.length : 0,
-      wardenCount: enemies.filter((enemy) => enemy && !enemy.remove && enemy.type === "warden").length,
+      wardenCount: golems.filter((golem) => golem && !golem.remove && golem.type === "warden").length,
       spawnedType: spawned?.type || ""
     };
   });

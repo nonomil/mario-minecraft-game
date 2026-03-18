@@ -577,6 +577,45 @@ function initializeLanguageModeOnboarding() {
             languageSelection.style.display = "block";
         }
     }
+    const gradeSelection = document.getElementById("login-grade-scope-selection");
+    if (gradeSelection) {
+        gradeSelection.style.display = "block";
+    }
+
+    const normalizeGradeScope = (scope) => window.BilingualVocab?.normalizeBridgeGradeScope?.(scope || "") || "preschool_grade2";
+    const formatGradeScope = (scope) => window.BilingualVocab?.getBridgeGradeScopeLabel?.(scope || "") || "学前到小学二年级";
+    const gradeCurrent = document.getElementById("login-grade-current");
+    const preschoolBtn = document.getElementById("btn-grade-scope-preschool");
+    const grade1Btn = document.getElementById("btn-grade-scope-grade1");
+    const grade2Btn = document.getElementById("btn-grade-scope-grade2");
+    const gradeFullBtn = document.getElementById("btn-grade-scope-full");
+
+    const updateGradeScopeDisplay = () => {
+        const scope = normalizeGradeScope(settings?.bridgeGradeScope);
+        if (gradeCurrent) gradeCurrent.innerText = `当前：${formatGradeScope(scope)}`;
+        const states = [
+            [preschoolBtn, "preschool"],
+            [grade1Btn, "grade1"],
+            [grade2Btn, "grade2"],
+            [gradeFullBtn, "preschool_grade2"]
+        ];
+        states.forEach(([button, value]) => {
+            if (!button) return;
+            const active = scope === value;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+    };
+
+    const applyGradeScope = (nextScope) => {
+        if (!settings) return;
+        settings.bridgeGradeScope = normalizeGradeScope(nextScope);
+        if (typeof normalizeSettings === "function") {
+            settings = normalizeSettings(settings);
+        }
+        saveSettings();
+        updateGradeScopeDisplay();
+    };
 
     const onSelect = (nextMode) => {
         const normalized = nextMode === "chinese"
@@ -614,6 +653,19 @@ function initializeLanguageModeOnboarding() {
     if (pyBtn) {
         pyBtn.addEventListener("click", () => onSelect("pinyin"));
     }
+    if (preschoolBtn) {
+        preschoolBtn.addEventListener("click", () => applyGradeScope("preschool"));
+    }
+    if (grade1Btn) {
+        grade1Btn.addEventListener("click", () => applyGradeScope("grade1"));
+    }
+    if (grade2Btn) {
+        grade2Btn.addEventListener("click", () => applyGradeScope("grade2"));
+    }
+    if (gradeFullBtn) {
+        gradeFullBtn.addEventListener("click", () => applyGradeScope("preschool_grade2"));
+    }
+    updateGradeScopeDisplay();
 }
 
 if (document.readyState === "loading") {

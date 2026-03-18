@@ -782,17 +782,24 @@ function useDragonEgg() {
 }
 
 function useWardenEgg() {
-    const existingWarden = enemies.some(enemy => enemy && !enemy.remove && enemy.type === "warden");
+    const existingWarden = golems.some(g => g && !g.remove && g.type === "warden");
     if (existingWarden) {
-        showToast("⚠️ 已有坚守者存在");
+        showToast("⚠️ 已有友军坚守者在场");
         return false;
     }
     if ((inventory.warden_egg || 0) <= 0) {
         showToast("❌ 没有坚守者的蛋");
         return false;
     }
-    if (typeof WardenEnemy !== "function") {
+    if (typeof Golem !== "function") {
         showToast("⚠️ 坚守者暂不可召唤");
+        return false;
+    }
+    const golemConfig = typeof getGolemConfig === "function" ? getGolemConfig() : null;
+    const activeGolems = Array.isArray(golems) ? golems.filter(g => g && !g.remove).length : 0;
+    const maxCount = Math.max(1, Number(golemConfig?.maxCount) || 3);
+    if (activeGolems >= maxCount) {
+        showToast(`⚠️ 最多同时存在 ${maxCount} 个傀儡伙伴`);
         return false;
     }
 
@@ -803,10 +810,10 @@ function useWardenEgg() {
 
     const spawnOffset = player.facingRight ? 220 : -220;
     const spawnX = player.x + spawnOffset;
-    const spawnY = Math.max(40, groundY - 60);
-    enemies.push(new WardenEnemy(spawnX, spawnY));
-    showToast("🧿 坚守者已苏醒！");
-    showFloatingText("🧿 Warden!", player.x, player.y - 54, "#66E0E0");
+    const spawnY = Math.max(40, groundY - 72);
+    golems.push(new Golem(spawnX, spawnY, "warden"));
+    showToast("🧿 友军坚守者已到场！");
+    showFloatingText("🛡️ 伙伴坚守者", player.x, player.y - 54, "#66E0E0");
     return true;
 }
 
@@ -1166,6 +1173,9 @@ function damagePlayer(amount, sourceX, knockback = 90) {
     updateInventoryUI();
     if (penalty > 0) {
         showFloatingText(`-${penalty}分`, player.x, player.y);
+    }
+    if (playerHp > 0 && score > 0) {
+        if (typeof maybeOfferBossEmergencyQuiz === "function") maybeOfferBossEmergencyQuiz();
     }
     if (playerHp <= 0 || score <= 0) {
         // 检查图腾复活

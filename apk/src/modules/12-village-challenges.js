@@ -4,6 +4,7 @@
  */
 
 let villageChallengeSession = null;
+const PERFECT_WORD_HOUSE_REWARDS = ["dragon_egg", "warden_egg"];
 
 function getWordDisplayPairSafe(wordObj) {
   const pair = window.BilingualVocab?.getWordDisplayPair?.(wordObj);
@@ -477,6 +478,14 @@ function finishVillageChallenge(session, village, correct, total, diamondsEarned
   const reward = getVillageRewardConfig();
   const isPerfect = correct === total;
   const scoreReward = isPerfect ? (reward.perfect?.score || 100) : (reward.partial?.score || 50);
+  const rewardCursor = Math.max(0, Number(currentAccount?.progress?.wordHousePerfectRewardCursor) || 0);
+  const specialRewardItem = isPerfect ? PERFECT_WORD_HOUSE_REWARDS[rewardCursor % PERFECT_WORD_HOUSE_REWARDS.length] : "";
+  const specialReward = specialRewardItem ? {
+    item: specialRewardItem,
+    icon: ITEM_ICONS?.[specialRewardItem] || "🎁",
+    label: ITEM_LABELS?.[specialRewardItem] || specialRewardItem,
+    nextCursor: (rewardCursor + 1) % PERFECT_WORD_HOUSE_REWARDS.length
+  } : null;
 
   // M1: Record village challenge event
   if (typeof recordLearningEvent === "function") {
@@ -496,6 +505,7 @@ function finishVillageChallenge(session, village, correct, total, diamondsEarned
       <h3 class="village-challenge-title">${isPerfect ? "完美通关" : "挑战完成"}</h3>
       <p class="village-challenge-subtitle">正确 ${correct} / ${total}</p>
       <p class="village-challenge-tip">本局奖励：💎 ${diamondsEarned}，积分 +${scoreReward}</p>
+      ${specialReward ? `<p class="village-challenge-tip">完美额外奖励：${specialReward.icon} ${specialReward.label} ×1（龙蛋 / 坚守者蛋轮换）</p>` : ""}
       <div class="village-challenge-actions">
         <button id="btn-village-challenge-done" class="game-btn">继续冒险</button>
       </div>
@@ -506,6 +516,16 @@ function finishVillageChallenge(session, village, correct, total, diamondsEarned
   modal.querySelector("#btn-village-challenge-done")?.addEventListener("click", () => {
     if (!isVillageChallengeActive(session)) return;
 
+    if (specialReward) {
+      inventory[specialReward.item] = (Number(inventory?.[specialReward.item]) || 0) + 1;
+      if (currentAccount) {
+        currentAccount.progress = currentAccount.progress || {};
+        currentAccount.progress.wordHousePerfectRewardCursor = specialReward.nextCursor;
+      }
+      if (typeof saveCurrentProgress === "function") saveCurrentProgress();
+      showFloatingText(`${specialReward.icon} +1`, player?.x || 120, (player?.y || 120) - 48, "#FFD54F");
+      showToast(`🏆 完美奖励：${specialReward.label} 已放入背包`);
+    }
     score += scoreReward;
     if (typeof updateInventoryUI === "function") updateInventoryUI();
     if (typeof grantBiomeReward === "function") grantBiomeReward(village.biomeId);

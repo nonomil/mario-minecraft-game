@@ -26,7 +26,7 @@ window.MMWG_DEFAULTS = {
         revive: {
             diamondCost: 10,
             scoreCost: 500,
-            scoreReviveHpPercent: 0.5,
+            scoreReviveHp: 1,
             invincibleFrames: 180
         },
         jump: {
@@ -228,6 +228,7 @@ window.MMWG_DEFAULTS = {
         wordRepeatBias: "reinforce_wrong",
         fixedBossEnabled: true,
         bossHpMultiplier: 2,
+        bossDamageTakenMultiplier: 0.65,
         showWordImage: true,
         showEnvironmentLabels: true,
         biomeSwitchStepScore: 300,
@@ -241,6 +242,7 @@ window.MMWG_DEFAULTS = {
         villageFrequency: 500,
         villageAutoSave: true,
         languageMode: "english",
-        showPinyin: true
+        showPinyin: true,
+        bridgeGradeScope: "preschool_grade2"
     }
 };

@@ -49,8 +49,15 @@ function wireSettingsModal() {
     const optTouch = document.getElementById("opt-touch");
     const optNoRepeat = document.getElementById("opt-no-repeat");
     const optVocab = document.getElementById("opt-vocab");
+    const optBridgeGradeScope = document.getElementById("opt-bridge-grade-scope");
+    const bridgeGradeScopePresets = document.getElementById("bridge-grade-scope-presets");
+    const vocabPromptGradeScope = document.getElementById("vocab-prompt-grade-scope");
+    const vocabPromptGradePresets = document.getElementById("vocab-prompt-grade-presets");
     if (optVocab) {
         optVocab.addEventListener("change", () => updateVocabPreview(optVocab.value));
+    }
+    if (optBridgeGradeScope) {
+        optBridgeGradeScope.addEventListener("change", () => updateVocabPreview(optVocab ? optVocab.value : settings.vocabSelection));
     }
     if (optSpeechZhEnabled && optSpeechZh) {
         optSpeechZhEnabled.addEventListener("change", () => {
@@ -67,6 +74,31 @@ function wireSettingsModal() {
     let resetArmed = false;
     let resetTimer = null;
     let advancedModalVisible = false;
+
+    function syncBridgePresetUI(root = document) {
+        window.BilingualVocab?.syncBridgeGradeScopePresetState?.(root);
+    }
+
+    function bindBridgeGradeScopePresetGroup(container, selectEl, onChange) {
+        if (!container || !selectEl) return;
+        if (typeof selectEl.addEventListener === "function") {
+            selectEl.addEventListener("change", () => syncBridgePresetUI(document));
+        }
+        if (typeof container.addEventListener === "function") {
+            container.addEventListener("click", (event) => {
+                const target = event?.target;
+                const button = target && typeof target.closest === "function"
+                    ? target.closest("[data-bridge-grade-scope]")
+                    : null;
+                if (!button || (typeof container.contains === "function" && !container.contains(button))) return;
+                const nextScope = String(button.dataset?.bridgeGradeScope || "").trim() || "preschool_grade2";
+                selectEl.value = nextScope;
+                syncBridgePresetUI(document);
+                if (typeof onChange === "function") onChange(nextScope);
+            });
+        }
+        syncBridgePresetUI(document);
+    }
 
     function readFollowUpMetrics() {
         const m = globalThis.__MMWG_FOLLOWUP_METRICS || {};
@@ -174,9 +206,11 @@ function wireSettingsModal() {
         if (optSpeed) optSpeed.value = settings.movementSpeedLevel || "normal";
         if (optKeys) optKeys.value = settings.keyCodes || [keyBindings.jump, keyBindings.attack, keyBindings.interact, keyBindings.switch, keyBindings.useDiamond].join(",");
         if (optLanguageMode) optLanguageMode.value = settings.languageMode || "english";
+        if (optBridgeGradeScope) optBridgeGradeScope.value = settings.bridgeGradeScope || "preschool_grade2";
         if (optShowPinyin) optShowPinyin.checked = settings.showPinyin !== false;
         if (progressVocab) updateVocabProgressUI();
         if (optVocab) updateVocabPreview(optVocab.value);
+        syncBridgePresetUI(document);
     }
 
     function open() {
@@ -227,6 +261,7 @@ function wireSettingsModal() {
         if (optSpeed) settings.movementSpeedLevel = String(optSpeed.value || "normal");
         if (optKeys) settings.keyCodes = String(optKeys.value || "");
         if (optLanguageMode) settings.languageMode = String(optLanguageMode.value || "english");
+        if (optBridgeGradeScope) settings.bridgeGradeScope = String(optBridgeGradeScope.value || "preschool_grade2");
         if (optShowPinyin) settings.showPinyin = !!optShowPinyin.checked;
 
         settings = normalizeSettings(settings);
@@ -279,6 +314,13 @@ function wireSettingsModal() {
             }
         });
     }
+
+    bindBridgeGradeScopePresetGroup(
+        bridgeGradeScopePresets,
+        optBridgeGradeScope,
+        () => updateVocabPreview(optVocab ? optVocab.value : settings.vocabSelection)
+    );
+    bindBridgeGradeScopePresetGroup(vocabPromptGradePresets, vocabPromptGradeScope);
 
     if (btnTtsSelfCheck) {
         btnTtsSelfCheck.addEventListener("click", () => {

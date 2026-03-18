@@ -14,7 +14,8 @@ const ACCOUNT_SCHEMA = {
         totalScore: 0,
         totalCoins: 0,
         currentCoins: 0,
-        currentDiamonds: 0
+        currentDiamonds: 0,
+        wordHousePerfectRewardCursor: 0
     },
     vocabulary: {
         learnedWords: [],

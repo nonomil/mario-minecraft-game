@@ -27,6 +27,8 @@
     const DRAGON_X_MAX = 1160;
     const DRAGON_Y_MIN = 140;
     const DRAGON_Y_MAX = 340;
+    const PLAYER_ARENA_MARGIN_X = 96;
+    const PLAYER_ARENA_MIN_Y = 120;
 
     function clampPhase(value) {
         return Math.max(1, Math.min(3, Number(value) || 1));
@@ -96,6 +98,78 @@
             };
         }
         return null;
+    }
+
+    function readArenaPlayerBounds(playerSnapshot = null) {
+        const canvasWidth = Math.max(640, Number(globalThis.canvas?.width) || 1280);
+        const canvasHeight = Math.max(360, Number(globalThis.canvas?.height) || 720);
+        const playerWidth = Math.max(18, Number(playerSnapshot?.width) || 26);
+        const playerHeight = Math.max(30, Number(playerSnapshot?.height) || 40);
+        const floorY = Number.isFinite(globalThis.groundY)
+            ? Number(globalThis.groundY)
+            : Math.max(260, canvasHeight - 70);
+        return {
+            minX: PLAYER_ARENA_MARGIN_X,
+            maxX: Math.max(PLAYER_ARENA_MARGIN_X, canvasWidth - PLAYER_ARENA_MARGIN_X - playerWidth),
+            minY: PLAYER_ARENA_MIN_Y,
+            maxY: Math.max(PLAYER_ARENA_MIN_Y, floorY - playerHeight)
+        };
+    }
+
+    function patchArenaPlayerPosition(patch = {}) {
+        const payload = {
+            x: Number.isFinite(patch.x) ? Number(patch.x) : null,
+            y: Number.isFinite(patch.y) ? Number(patch.y) : null,
+            velX: Number.isFinite(patch.velX) ? Number(patch.velX) : null,
+            velY: Number.isFinite(patch.velY) ? Number(patch.velY) : null,
+            grounded: typeof patch.grounded === "boolean" ? patch.grounded : null,
+            jumpCount: Number.isFinite(patch.jumpCount) ? Number(patch.jumpCount) : null
+        };
+        if (typeof globalThis.eval === "function") {
+            try {
+                return !!globalThis.eval(`(() => {
+                    if (typeof player === "undefined" || !player) return false;
+                    const patch = ${JSON.stringify(payload)};
+                    if (typeof patch.x === "number") player.x = patch.x;
+                    if (typeof patch.y === "number") player.y = patch.y;
+                    if (typeof patch.velX === "number") player.velX = patch.velX;
+                    if (typeof patch.velY === "number") player.velY = patch.velY;
+                    if (typeof patch.grounded === "boolean") player.grounded = patch.grounded;
+                    if (typeof patch.jumpCount === "number") player.jumpCount = patch.jumpCount;
+                    return true;
+                })()`);
+            } catch (error) {}
+        }
+        if (!globalThis.player) return false;
+        if (typeof payload.x === "number") globalThis.player.x = payload.x;
+        if (typeof payload.y === "number") globalThis.player.y = payload.y;
+        if (typeof payload.velX === "number") globalThis.player.velX = payload.velX;
+        if (typeof payload.velY === "number") globalThis.player.velY = payload.velY;
+        if (typeof payload.grounded === "boolean") globalThis.player.grounded = payload.grounded;
+        if (typeof payload.jumpCount === "number") globalThis.player.jumpCount = payload.jumpCount;
+        return true;
+    }
+
+    function syncArenaPlayer(forceGround = false) {
+        const playerSnapshot = readPlayerSnapshot();
+        if (!playerSnapshot) return null;
+        const bounds = readArenaPlayerBounds(playerSnapshot);
+        const clampedX = forceGround
+            ? clampNumber(DRAGON_ARENA_CENTER_X - playerSnapshot.width * 0.5, bounds.minX, bounds.maxX)
+            : clampNumber(playerSnapshot.x, bounds.minX, bounds.maxX);
+        const clampedY = forceGround
+            ? bounds.maxY
+            : clampNumber(playerSnapshot.y, bounds.minY, bounds.maxY);
+        const onGround = clampedY >= bounds.maxY - 0.5;
+        patchArenaPlayerPosition({
+            x: clampedX,
+            y: clampedY,
+            velX: forceGround ? 0 : null,
+            velY: forceGround || onGround ? 0 : null,
+            grounded: onGround || forceGround,
+            jumpCount: onGround || forceGround ? 0 : null
+        });
+        return readPlayerSnapshot();
     }
 
     function countAliveCrystals(crystals) {
@@ -344,6 +418,7 @@
             };
             this.returnContext = Object.assign({}, this.entryContext);
             writeCurrentBiome("end");
+            syncArenaPlayer(true);
             this.queueBanner("Enter the End Arena", 120);
             this.phasePulse = 0;
             this.damageFlash = 0;
@@ -552,6 +627,7 @@
         update() {
             if (!this.active || !this.dragon) return;
             this.updateCount += 1;
+            syncArenaPlayer(false);
             if (this.state === "intro") {
                 this.state = "combat";
             }

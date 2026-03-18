@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>我的世界：单词大冒险 (宝箱增强版)</title>
-    <link rel="stylesheet" href="src/styles/index.css?v=1.19.40">
-    <link rel="stylesheet" href="src/design-tokens.css?v=1.19.40">
-    <link rel="stylesheet" href="src/components/buttons.css?v=1.19.40">
-    <link rel="stylesheet" href="src/components/modals.css?v=1.19.40">
-    <link rel="stylesheet" href="src/components/forms.css?v=1.19.40">
-    <link rel="manifest" href="manifest.json?v=1.19.40">
+    <link rel="stylesheet" href="src/styles/index.css?v=1.19.44">
+    <link rel="stylesheet" href="src/design-tokens.css?v=1.19.44">
+    <link rel="stylesheet" href="src/components/buttons.css?v=1.19.44">
+    <link rel="stylesheet" href="src/components/modals.css?v=1.19.44">
+    <link rel="stylesheet" href="src/components/forms.css?v=1.19.44">
+    <link rel="manifest" href="manifest.json?v=1.19.44">
 </head>
 <body>
 
@@ -24,6 +24,42 @@
                 <button class="game-btn" id="btn-language-mode-english" style="flex:1;">🇬🇧 英语学习</button>
                 <button class="game-btn" id="btn-language-mode-chinese" style="flex:1;">🇨🇳 汉字学习</button>
                 <button class="game-btn" id="btn-language-mode-pinyin" style="flex:1;">🇨🇳 幼小衔接</button>
+            </div>
+        </div>
+        <div id="login-grade-scope-selection" class="login-grade-scope-selection">
+            <div class="login-grade-scope-header">
+                <div class="login-grade-scope-title">学习层级</div>
+                <div id="login-grade-current" class="login-grade-current"></div>
+            </div>
+            <div class="login-grade-grid">
+                <button class="game-btn login-grade-btn" id="btn-grade-scope-preschool" type="button">
+                    <span class="login-grade-badge">PRE</span>
+                    <span class="login-grade-copy">
+                        <span class="login-grade-name">学前启蒙</span>
+                        <span class="login-grade-desc">拼音启蒙与基础识字</span>
+                    </span>
+                </button>
+                <button class="game-btn login-grade-btn" id="btn-grade-scope-grade1" type="button">
+                    <span class="login-grade-badge">G1</span>
+                    <span class="login-grade-copy">
+                        <span class="login-grade-name">小学一年级</span>
+                        <span class="login-grade-desc">高频识字与短句认读</span>
+                    </span>
+                </button>
+                <button class="game-btn login-grade-btn" id="btn-grade-scope-grade2" type="button">
+                    <span class="login-grade-badge">G2</span>
+                    <span class="login-grade-copy">
+                        <span class="login-grade-name">小学二年级</span>
+                        <span class="login-grade-desc">扩展词汇与表达练习</span>
+                    </span>
+                </button>
+                <button class="game-btn login-grade-btn" id="btn-grade-scope-full" type="button">
+                    <span class="login-grade-badge">ALL</span>
+                    <span class="login-grade-copy">
+                        <span class="login-grade-name">全阶段</span>
+                        <span class="login-grade-desc">学前到二年级综合内容</span>
+                    </span>
+                </button>
             </div>
         </div>
 
@@ -63,6 +99,7 @@
                 <div class="word-display-block" id="word-display-block" aria-live="polite">
                     <div id="word-display" class="word-display-title">Start!</div>
                     <div id="word-display-zh" class="word-display-sub"></div>
+                    <div id="word-display-meta" class="word-display-meta" style="display:none;"></div>
                 </div>
             </div>
 
@@ -102,6 +139,7 @@
             <div class="word-card-inner">
                 <div class="word-card-en" id="word-card-en"></div>
                 <div class="word-card-zh" id="word-card-zh"></div>
+                <div class="word-card-meta" id="word-card-meta" style="display:none;"></div>
                 <div class="word-card-phrase" id="word-card-phrase" style="display:none;"></div>
                 <img class="word-card-image" id="word-card-image" alt="" style="display:none;">
             </div>
@@ -184,6 +222,25 @@
                 <option value="chinese">🇨🇳 汉字学习</option>
                 <option value="pinyin">🇨🇳 幼小衔接</option>
             </select>
+        </div>
+        <div class="settings-row">
+            <div class="settings-label">学习层级</div>
+            <div class="bridge-grade-scope-stack">
+                <select class="settings-select" id="opt-bridge-grade-scope">
+                    <option value="preschool_grade2">学前到小学二年级</option>
+                    <option value="preschool">学前启蒙</option>
+                    <option value="grade1">小学一年级</option>
+                    <option value="grade2">小学二年级</option>
+                    <option value="preschool_grade1">学前到小学一年级</option>
+                    <option value="all">全部内容</option>
+                </select>
+                <div class="bridge-grade-scope-presets" id="bridge-grade-scope-presets" data-grade-scope-target="opt-bridge-grade-scope">
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="preschool">学前启蒙</button>
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="grade1">小学一年级</button>
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="grade2">小学二年级</button>
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="preschool_grade2">全阶段</button>
+                </div>
+            </div>
         </div>
         <div class="settings-row">
             <label class="settings-label"><input type="checkbox" id="opt-speech"> 朗读单词</label>
@@ -611,6 +668,24 @@
         <div class="profile-stats">
             <p style="margin:0 0 12px;color:#ccc;">欢迎！请先选择一个适合的词库，游戏需要词库才能正常运行。</p>
             <select class="settings-select" id="vocab-prompt-select" style="width:100%;margin-bottom:12px;"></select>
+            <div style="margin:0 0 6px;font-size:13px;font-weight:700;color:#ffd166;">学习层级</div>
+            <div class="bridge-grade-scope-stack">
+                <select class="settings-select" id="vocab-prompt-grade-scope" style="width:100%;margin-bottom:8px;">
+                    <option value="preschool_grade2">学前到小学二年级</option>
+                    <option value="preschool">学前启蒙</option>
+                    <option value="grade1">小学一年级</option>
+                    <option value="grade2">小学二年级</option>
+                    <option value="preschool_grade1">学前到小学一年级</option>
+                    <option value="all">全部内容</option>
+                </select>
+                <div class="bridge-grade-scope-presets" id="vocab-prompt-grade-presets" data-grade-scope-target="vocab-prompt-grade-scope">
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="preschool">学前启蒙</button>
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="grade1">小学一年级</button>
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="grade2">小学二年级</button>
+                    <button type="button" class="bridge-grade-scope-chip" data-bridge-grade-scope="preschool_grade2">全阶段</button>
+                </div>
+            </div>
+            <div class="settings-hint" style="text-align:left;">汉字模式、拼音模式、幼小衔接词库会按所选层级投放内容。</div>
         </div>
         <div class="profile-actions">
             <button class="game-btn" id="btn-vocab-prompt-confirm">确认选择</button>
@@ -619,61 +694,61 @@
     </div>
 </div>
 
-<script src="src/defaults.js?v=1.19.40"></script>
-<script src="src/storage.js?v=1.19.40"></script>
-<script src="words/vocabs/manifest.js?v=1.19.40"></script>
+<script src="src/defaults.js?v=1.19.44"></script>
+<script src="src/storage.js?v=1.19.44"></script>
+<script src="words/vocabs/manifest.js?v=1.19.44"></script>
 <!-- TTS Provider 抽象层 -->
-<script src="src/tts/index.js?v=1.19.40"></script>
-<script src="src/tts/provider-web.js?v=1.19.40"></script>
-<script src="src/tts/provider-apk.js?v=1.19.40"></script>
-<script src="src/tts/provider-mini.js?v=1.19.40"></script>
+<script src="src/tts/index.js?v=1.19.44"></script>
+<script src="src/tts/provider-web.js?v=1.19.44"></script>
+<script src="src/tts/provider-apk.js?v=1.19.44"></script>
+<script src="src/tts/provider-mini.js?v=1.19.44"></script>
 <!-- main.js 模块化拆分 (将 main.js 按功能拆分为以下模块) -->
-<script src="src/modules/01-config.js?v=1.19.40"></script>
-<script src="src/modules/02-utils.js?v=1.19.40"></script>
-<script src="src/modules/03-audio.js?v=1.19.40"></script>
-<script src="src/modules/04-weapons.js?v=1.19.40"></script>
-<script src="src/modules/05-difficulty.js?v=1.19.40"></script>
-<script src="src/modules/06-biome.js?v=1.19.40"></script>
-<script src="src/modules/07-viewport.js?v=1.19.40"></script>
-<script src="src/modules/08-account.js?v=1.19.40"></script>
-<script src="src/modules/09-vocab.js?v=1.19.40"></script>
-<script src="src/modules/10-ui.js?v=1.19.40"></script>
+<script src="src/modules/01-config.js?v=1.19.44"></script>
+<script src="src/modules/02-utils.js?v=1.19.44"></script>
+<script src="src/modules/03-audio.js?v=1.19.44"></script>
+<script src="src/modules/04-weapons.js?v=1.19.44"></script>
+<script src="src/modules/05-difficulty.js?v=1.19.44"></script>
+<script src="src/modules/06-biome.js?v=1.19.44"></script>
+<script src="src/modules/07-viewport.js?v=1.19.44"></script>
+<script src="src/modules/08-account.js?v=1.19.44"></script>
+<script src="src/modules/09-vocab.js?v=1.19.44"></script>
+<script src="src/modules/10-ui.js?v=1.19.44"></script>
     <!-- 实体类必须在游戏逻辑和渲染之前加载 -->
-    <script src="src/modules/15-entities-base.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-decorations.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-particles.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-combat.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-environments.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-shared.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-core.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-wither.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-ghast.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-blaze.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-wither-skeleton.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-warden.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-evoker.js?v=1.19.40"></script>
-    <script src="src/modules/15-entities-boss-dragon.js?v=1.19.40"></script>
+    <script src="src/modules/15-entities-base.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-decorations.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-particles.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-combat.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-environments.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-shared.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-core.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-wither.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-ghast.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-blaze.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-wither-skeleton.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-warden.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-evoker.js?v=1.19.44"></script>
+    <script src="src/modules/15-entities-boss-dragon.js?v=1.19.44"></script>
 <!-- 村庄系统模块 (v1.8.0) -->
-<script src="src/modules/18-village.js?v=1.19.40"></script>
-<script src="src/modules/18-village-render.js?v=1.19.40"></script>
-<script src="src/modules/18-interaction-chains.js?v=1.19.40"></script>
-<script src="src/modules/19-biome-visuals.js?v=1.19.40"></script>
+<script src="src/modules/18-village.js?v=1.19.44"></script>
+<script src="src/modules/18-village-render.js?v=1.19.44"></script>
+<script src="src/modules/18-interaction-chains.js?v=1.19.44"></script>
+<script src="src/modules/19-biome-visuals.js?v=1.19.44"></script>
 <!-- 新群系敌人系统 -->
-<script src="src/modules/20-enemies-new.js?v=1.19.40"></script>
+<script src="src/modules/20-enemies-new.js?v=1.19.44"></script>
 <!-- 新群系装饰系统 -->
-<script src="src/modules/21-decorations-new.js?v=1.19.40"></script>
+<script src="src/modules/21-decorations-new.js?v=1.19.44"></script>
 <!-- 游戏逻辑和渲染模块 -->
-<script src="src/modules/12-challenges.js?v=1.19.40"></script>
-<script src="src/modules/11-game-init.js?v=1.19.40"></script>
-<script src="src/modules/12-village-challenges.js?v=1.19.40"></script>
-<script src="src/modules/22-performance.js?v=1.19.40"></script>
-<script src="src/modules/23-error-handler.js?v=1.19.40"></script>
-<script src="src/modules/13-game-loop.js?v=1.19.40"></script>
-<script src="src/modules/13-game-loop-dragon-controls.js?v=1.19.40"></script>
-<script src="src/modules/14-renderer-main.js?v=1.19.40"></script>
-<script src="src/modules/14-renderer-entities.js?v=1.19.40"></script>
-<script src="src/modules/14-renderer-decorations.js?v=1.19.40"></script>
-<script src="src/modules/16-events.js?v=1.19.40"></script>
-<script src="src/modules/17-bootstrap.js?v=1.19.40"></script>
+<script src="src/modules/12-challenges.js?v=1.19.44"></script>
+<script src="src/modules/11-game-init.js?v=1.19.44"></script>
+<script src="src/modules/12-village-challenges.js?v=1.19.44"></script>
+<script src="src/modules/22-performance.js?v=1.19.44"></script>
+<script src="src/modules/23-error-handler.js?v=1.19.44"></script>
+<script src="src/modules/13-game-loop.js?v=1.19.44"></script>
+<script src="src/modules/13-game-loop-dragon-controls.js?v=1.19.44"></script>
+<script src="src/modules/14-renderer-main.js?v=1.19.44"></script>
+<script src="src/modules/14-renderer-entities.js?v=1.19.44"></script>
+<script src="src/modules/14-renderer-decorations.js?v=1.19.44"></script>
+<script src="src/modules/16-events.js?v=1.19.44"></script>
+<script src="src/modules/17-bootstrap.js?v=1.19.44"></script>
 </body>
 </html>

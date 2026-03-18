@@ -71,6 +71,22 @@
     text-shadow: 1px 1px 0 #000;
 }
 
+.word-display-meta {
+    max-width: 420px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(17, 34, 58, 0.88), rgba(12, 24, 42, 0.72));
+    border: 1px solid rgba(144, 202, 249, 0.38);
+    color: #CBE7FF;
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 1.35;
+    letter-spacing: 0.04em;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.65);
+    box-shadow: 0 8px 18px rgba(6, 14, 28, 0.28);
+    backdrop-filter: blur(6px);
+}
+
 @keyframes word-slide-in {
     from {
         transform: translateY(-8px);
@@ -356,6 +372,41 @@
     text-shadow: 2px 2px 0 #000;
 }
 
+.word-card-meta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    max-width: min(100%, 360px);
+    background: linear-gradient(180deg, rgba(53, 78, 120, 0.9), rgba(40, 61, 96, 0.72));
+    border: 1px solid rgba(255, 213, 79, 0.38);
+    color: #D8EDFF;
+    font-size: clamp(11px, 2vw, 13px);
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    box-shadow: 0 10px 24px rgba(12, 20, 38, 0.22);
+}
+
+.word-card-phrase {
+    margin-top: 10px;
+    max-width: min(100%, 360px);
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #F8FBFF;
+    font-size: clamp(13px, 2.2vw, 15px);
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    box-shadow: 0 10px 24px rgba(6, 12, 28, 0.22);
+}
+
 .word-card-image {
     width: 260px;
     height: 160px;
@@ -364,5 +415,51 @@
     margin-top: 14px;
     border: 3px solid rgba(255,255,255,0.35);
     background: rgba(255,255,255,0.08);
+}
+
+#word-card.word-card-theme-chinese .word-card-inner {
+    background: linear-gradient(180deg, rgba(64, 20, 20, 0.96), rgba(27, 10, 10, 0.92));
+    border-color: rgba(255, 213, 79, 0.78);
+    box-shadow: 0 0 32px rgba(122, 35, 22, 0.55);
+}
+
+#word-card.word-card-theme-chinese .word-card-en {
+    color: #FFE082;
+}
+
+#word-card.word-card-theme-chinese .word-card-meta {
+    background: linear-gradient(180deg, rgba(138, 42, 34, 0.88), rgba(88, 24, 20, 0.78));
+    border-color: rgba(255, 224, 130, 0.55);
+    color: #FFF3D1;
+}
+
+#word-card.word-card-theme-chinese .word-card-phrase {
+    background: rgba(255, 224, 178, 0.12);
+    border-color: rgba(255, 224, 178, 0.22);
+}
+
+#word-card.word-card-theme-pinyin .word-card-inner {
+    background: linear-gradient(180deg, rgba(20, 34, 74, 0.96), rgba(10, 18, 43, 0.92));
+    border-color: rgba(120, 198, 255, 0.78);
+    box-shadow: 0 0 34px rgba(46, 89, 189, 0.45);
+}
+
+#word-card.word-card-theme-pinyin .word-card-en {
+    color: #8DEBFF;
+}
+
+#word-card.word-card-theme-pinyin .word-card-zh {
+    color: #E9F7FF;
+}
+
+#word-card.word-card-theme-pinyin .word-card-meta {
+    background: linear-gradient(180deg, rgba(25, 83, 146, 0.88), rgba(19, 50, 99, 0.78));
+    border-color: rgba(141, 235, 255, 0.42);
+    color: #DDF6FF;
+}
+
+#word-card.word-card-theme-pinyin .word-card-phrase {
+    background: rgba(141, 235, 255, 0.1);
+    border-color: rgba(141, 235, 255, 0.18);
 }
 

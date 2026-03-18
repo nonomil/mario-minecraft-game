@@ -208,6 +208,42 @@ test("Dragon arena renders a visible dragon silhouette with bright wing bones", 
   expect(metrics.magentaEyePixels).toBeGreaterThan(2);
 });
 
+test("Dragon arena should keep the player visible and inside the combat screen on entry", async ({ page }) => {
+  await openDebugPage(page);
+
+  const state = await page.evaluate(async () => {
+    const frame = document.getElementById("game");
+    const gameWindow = frame && frame.contentWindow ? frame.contentWindow : null;
+    if (!gameWindow || typeof gameWindow.eval !== "function") {
+      return { canvasWidth: 0, canvasHeight: 0, playerX: -1, playerY: -1, playerWidth: 0, playerHeight: 0 };
+    }
+
+    gameWindow.eval("player.x = 4200; player.y = -260; player.velX = 0; player.velY = 0;");
+    window.MMDBG.enterDragonArena();
+    window.MMDBG.tick(2);
+    if (typeof gameWindow.draw === "function") {
+      gameWindow.draw();
+    }
+
+    const canvas = gameWindow.document ? gameWindow.document.getElementById("gameCanvas") : null;
+    return {
+      canvasWidth: Number(canvas?.width) || 0,
+      canvasHeight: Number(canvas?.height) || 0,
+      playerX: Number(gameWindow.eval("player.x")) || 0,
+      playerY: Number(gameWindow.eval("player.y")) || 0,
+      playerWidth: Number(gameWindow.eval("player.width")) || 0,
+      playerHeight: Number(gameWindow.eval("player.height")) || 0
+    };
+  });
+
+  expect(state.canvasWidth).toBeGreaterThan(0);
+  expect(state.canvasHeight).toBeGreaterThan(0);
+  expect(state.playerX).toBeGreaterThanOrEqual(0);
+  expect(state.playerY).toBeGreaterThanOrEqual(0);
+  expect(state.playerX + state.playerWidth).toBeLessThanOrEqual(state.canvasWidth);
+  expect(state.playerY + state.playerHeight).toBeLessThanOrEqual(state.canvasHeight);
+});
+
 test("Dragon phase 1 tracks the player's horizontal position", async ({ page }) => {
   await openDebugPage(page);
 
