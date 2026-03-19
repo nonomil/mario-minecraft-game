@@ -755,6 +755,18 @@ body {
     text-align: center;
  }
 
+#word-match-screen.word-match-theme-chinese .word-match-content {
+    background: linear-gradient(180deg, rgba(64, 20, 20, 0.97), rgba(22, 10, 10, 0.94));
+    border-color: rgba(255, 213, 79, 0.72);
+    box-shadow: 0 0 48px rgba(122, 35, 22, 0.52);
+}
+
+#word-match-screen.word-match-theme-pinyin .word-match-content {
+    background: linear-gradient(180deg, rgba(20, 34, 74, 0.97), rgba(10, 18, 43, 0.94));
+    border-color: rgba(120, 198, 255, 0.72);
+    box-shadow: 0 0 48px rgba(46, 89, 189, 0.44);
+}
+
 .learning-modal-header {
     font-size: clamp(18px, 2.5vw, 24px);
     font-weight: 900;
@@ -789,6 +801,27 @@ body {
     min-height: 40px;
     white-space: normal;
     overflow-wrap: anywhere;
+}
+
+.challenge-context-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: min(100%, 420px);
+    margin: 0 auto 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(22, 45, 84, 0.92), rgba(13, 29, 55, 0.82));
+    border: 1px solid rgba(144, 202, 249, 0.4);
+    color: #D9EEFF;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: 0.04em;
+    text-align: center;
+    box-shadow: 0 10px 22px rgba(8, 18, 36, 0.28);
 }
 
 .challenge-fill {
@@ -831,12 +864,19 @@ body {
 
 .challenge-fill-hint {
     font-size: 14px;
-    opacity: 0.9;
+    opacity: 0.96;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(120, 198, 255, 0.12);
+    border: 1px solid rgba(120, 198, 255, 0.22);
+    color: #DDF5FF;
+    box-shadow: 0 8px 18px rgba(8, 16, 32, 0.2);
 }
 
 .challenge-fill-zh {
     font-size: 15px;
     color: #FFE082;
+    line-height: 1.45;
 }
 
 .learning-modal-options {
@@ -929,8 +969,35 @@ body {
 .word-match-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
+}
+
+.word-match-header-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.word-match-header-copy h2 {
+    margin: 0;
+}
+
+.word-match-scope-label {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
 }
 
 .match-timer {
@@ -943,6 +1010,26 @@ body {
     font-size: 14px;
     color: #f0f0f0;
     margin-bottom: 10px;
+}
+
+#word-match-screen.word-match-theme-chinese .word-match-subtitle {
+    color: #FFE7BE;
+}
+
+#word-match-screen.word-match-theme-chinese .word-match-scope-label {
+    background: rgba(255, 213, 79, 0.14);
+    border-color: rgba(255, 224, 178, 0.28);
+    color: #FFE7BE;
+}
+
+#word-match-screen.word-match-theme-pinyin .word-match-subtitle {
+    color: #DDF6FF;
+}
+
+#word-match-screen.word-match-theme-pinyin .word-match-scope-label {
+    background: rgba(141, 235, 255, 0.12);
+    border-color: rgba(141, 235, 255, 0.24);
+    color: #DDF6FF;
 }
 
 .match-top-actions {
@@ -987,15 +1074,45 @@ body {
     transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
+#word-match-screen.word-match-theme-chinese .match-item {
+    background: rgba(255, 224, 178, 0.08);
+    border-color: rgba(255, 224, 130, 0.28);
+}
+
+#word-match-screen.word-match-theme-pinyin .match-item {
+    background: rgba(141, 235, 255, 0.08);
+    border-color: rgba(141, 235, 255, 0.24);
+}
+
 .match-item.selected {
     border-color: var(--color-accent);
     transform: scale(1.02);
+}
+
+#word-match-screen.word-match-theme-chinese .match-item.selected {
+    border-color: #FFD54F;
+    box-shadow: 0 0 0 2px rgba(255, 213, 79, 0.18);
+}
+
+#word-match-screen.word-match-theme-pinyin .match-item.selected {
+    border-color: #8DEBFF;
+    box-shadow: 0 0 0 2px rgba(141, 235, 255, 0.16);
 }
 
 .match-item.correct {
     background: var(--color-primary);
     border-color: #1b5e20;
     color: #fff;
+}
+
+#word-match-screen.word-match-theme-chinese .match-item.correct {
+    background: linear-gradient(180deg, rgba(186, 104, 30, 0.92), rgba(138, 52, 35, 0.92));
+    border-color: rgba(255, 224, 178, 0.6);
+}
+
+#word-match-screen.word-match-theme-pinyin .match-item.correct {
+    background: linear-gradient(180deg, rgba(43, 128, 255, 0.92), rgba(24, 83, 186, 0.92));
+    border-color: rgba(193, 244, 255, 0.58);
 }
 
 .match-item.wrong {
@@ -1032,6 +1149,24 @@ body {
 
 .match-result.visible {
     display: block;
+}
+
+#word-match-screen.word-match-theme-chinese .match-timer {
+    color: #FFD54F;
+}
+
+#word-match-screen.word-match-theme-pinyin .match-timer {
+    color: #8DEBFF;
+}
+
+#word-match-screen.word-match-theme-chinese .match-result.visible {
+    border-color: rgba(255, 213, 79, 0.52);
+    background: rgba(88, 24, 20, 0.45);
+}
+
+#word-match-screen.word-match-theme-pinyin .match-result.visible {
+    border-color: rgba(120, 198, 255, 0.52);
+    background: rgba(13, 39, 92, 0.45);
 }
 canvas {
     background-color: #87CEEB;

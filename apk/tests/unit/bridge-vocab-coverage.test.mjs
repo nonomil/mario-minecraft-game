@@ -74,7 +74,12 @@ const bannedFragments = ["传送", "附魔", "出生点", "采集木头"];
 const languageWords = new Set();
 const allLanguageWords = new Set();
 const extensionWords = new Set();
+const extensionGradeCounts = {};
+const languageWordGradeCounts = {};
+const languageWordBands = new Map();
 const expressionWords = new Set();
+const expressionGradeCounts = {};
+const expressionBands = new Map();
 for (const entry of pack) {
   if (String(entry?.subject || "").trim() !== "language") continue;
   const word = String(entry?.chinese || entry?.word || "").trim();
@@ -84,10 +89,22 @@ for (const entry of pack) {
     false,
     `language entry should not include banned fragment: ${word}`
   );
-  if (String(entry?.module || "").trim() === "词语") languageWords.add(word);
-  if (String(entry?.module || "").trim() === "拓展词汇") extensionWords.add(word);
-  if (String(entry?.module || "").trim() === "表达") expressionWords.add(word);
+  if (String(entry?.module || "").trim() === "词语") {
+    languageWords.add(word);
+    const band = String(entry?.gradeBand || "").trim() || "none";
+    languageWordGradeCounts[band] = (languageWordGradeCounts[band] || 0) + 1;
+    if (!languageWordBands.has(word)) languageWordBands.set(word, band);
+  }
+  if (String(entry?.module || "").trim() === "拓展词汇") {
+    extensionWords.add(word);
+    const band = String(entry?.gradeBand || "").trim() || "none";
+    extensionGradeCounts[band] = (extensionGradeCounts[band] || 0) + 1;
+  }
   if (String(entry?.module || "").trim() === "表达") {
+    expressionWords.add(word);
+    const band = String(entry?.gradeBand || "").trim() || "none";
+    expressionGradeCounts[band] = (expressionGradeCounts[band] || 0) + 1;
+    if (!expressionBands.has(word)) expressionBands.set(word, band);
     assert.ok([...word].length <= 6, `language::表达 应限制为 2-6 字短表达: ${word}`);
   }
 }
@@ -95,9 +112,15 @@ for (const entry of pack) {
 const extensionOverlapWithWords = [...extensionWords].filter((word) => languageWords.has(word));
 const extensionOverlapWithExpressions = [...extensionWords].filter((word) => expressionWords.has(word));
 assert.ok(languageWords.size >= 2000, `language::词语 应继续扩充到至少 2000 条自然常用词，实际为 ${languageWords.size}`);
-assert.ok(extensionWords.size >= 600, `language::拓展词汇 应保留至少 600 条真正可用的新词，实际为 ${extensionWords.size}`);
+assert.ok(extensionWords.size >= 630, `language::拓展词汇 应继续扩充到至少 630 条自然常用的新词，实际为 ${extensionWords.size}`);
 assert.equal(extensionOverlapWithWords.length, 0, `language::拓展词汇 不应与 language::词语 重复: ${extensionOverlapWithWords.slice(0, 10).join(", ")}`);
 assert.equal(extensionOverlapWithExpressions.length, 0, `language::拓展词汇 不应与 language::表达 重复: ${extensionOverlapWithExpressions.slice(0, 10).join(", ")}`);
+assert.ok((languageWordGradeCounts["学前-一年级"] || 0) >= 30, `language::词语 应至少有 30 条学前到一年级的分层词，实际为 ${languageWordGradeCounts["学前-一年级"] || 0}`);
+assert.ok((languageWordGradeCounts["一年级-二年级"] || 0) >= 30, `language::词语 应至少有 30 条一年级到二年级的分层词，实际为 ${languageWordGradeCounts["一年级-二年级"] || 0}`);
+assert.ok((extensionGradeCounts["学前-一年级"] || 0) >= 30, `language::拓展词汇 应至少补足 30 条学前到一年级校园生活词，实际为 ${extensionGradeCounts["学前-一年级"] || 0}`);
+assert.ok((extensionGradeCounts["一年级-二年级"] || 0) >= 30, `language::拓展词汇 应至少补足 30 条一年级到二年级进阶词，实际为 ${extensionGradeCounts["一年级-二年级"] || 0}`);
+assert.ok((expressionGradeCounts["学前-一年级"] || 0) >= 40, `language::表达 应至少补足 40 条学前到一年级的口语表达，实际为 ${expressionGradeCounts["学前-一年级"] || 0}`);
+assert.ok((expressionGradeCounts["一年级-二年级"] || 0) >= 30, `language::表达 应至少补足 30 条一年级到二年级的课堂表达，实际为 ${expressionGradeCounts["一年级-二年级"] || 0}`);
 
 const abstractExtensionWords = [
   "合作力",
@@ -134,6 +157,80 @@ for (const required of ["看图写话", "生字卡片", "听写本", "练习册"
 
 for (const required of ["识字表", "写字表", "生字表", "组词本", "默写本", "语文园地", "日记本", "看图说话", "课外阅读", "读书角", "打铃", "上操", "做操"]) {
   assert.equal(allLanguageWords.has(required), true, `language 语文包应继续补充更贴近小学低年级课内外生活的词语: ${required}`);
+}
+
+for (const required of ["书写提示", "我的发现", "课文插图", "口语交际", "课后题", "阅读题", "练习题", "晨检表", "午餐盘", "餐巾纸", "借阅架", "护眼操"]) {
+  assert.equal(allLanguageWords.has(required), true, `language 语文包应继续覆盖一年级到二年级更常见的课堂与校园生活词: ${required}`);
+}
+
+for (const required of ["展示台", "日积月累", "查字典", "部首查字", "音序查字", "课前准备", "朗读课文", "借助拼音", "读准字音", "分角色读"]) {
+  assert.equal(allLanguageWords.has(required), true, `language 语文包应继续补足更贴近统编小学低年级教材结构的词语: ${required}`);
+}
+
+for (const required of ["快乐读书吧", "读书分享会", "整本书阅读", "课堂展示台", "阅读交流卡"]) {
+  assert.equal(allLanguageWords.has(required), true, `language 语文包应继续补足更贴近低年级整本书阅读与展示活动的扩展词: ${required}`);
+}
+
+for (const required of ["音序表", "部首表", "阅读交流", "课堂展示"]) {
+  assert.equal(allLanguageWords.has(required), true, `language 语文包应继续补足更贴近查字典与课堂展示的新词: ${required}`);
+}
+
+for (const required of ["书写提示", "我的发现", "课文插图", "口语交际", "课后题", "阅读题", "晨检表", "午餐盘", "借阅架", "护眼操"]) {
+  assert.equal(languageWords.has(required), true, `language::词语 应继续直接覆盖小学低年级课堂词，而不只停留在拓展词汇: ${required}`);
+}
+
+for (const required of ["展示台", "日积月累", "查字典", "部首查字", "音序查字", "课前准备", "朗读课文", "借助拼音", "读准字音", "分角色读"]) {
+  assert.equal(languageWords.has(required), true, `language::词语 应继续直接覆盖更贴近一二年级课本的栏目词与课堂任务词: ${required}`);
+}
+
+for (const required of ["音序表", "部首表", "阅读交流", "课堂展示"]) {
+  assert.equal(languageWords.has(required), true, `language::词语 应继续直接覆盖查字典与课堂展示类高频词: ${required}`);
+}
+
+for (const [word, expectedBand] of [
+  ["课前准备", "学前-一年级"],
+  ["朗读课文", "学前-一年级"],
+  ["借助拼音", "学前-一年级"],
+  ["读准字音", "学前-一年级"],
+  ["展示台", "一年级-二年级"],
+  ["日积月累", "一年级-二年级"],
+  ["查字典", "一年级-二年级"],
+  ["部首查字", "一年级-二年级"],
+  ["音序查字", "一年级-二年级"],
+  ["分角色读", "一年级-二年级"],
+  ["音序表", "一年级-二年级"],
+  ["部首表", "一年级-二年级"],
+  ["阅读交流", "一年级-二年级"],
+  ["课堂展示", "一年级-二年级"]
+]) {
+  assert.equal(languageWordBands.get(word), expectedBand, `language::词语 应为 ${word} 标注更准确的学习层级`);
+}
+
+for (const required of ["请你先说", "我来回答", "认真听讲", "我们齐读", "请再读一遍", "我先举手"]) {
+  assert.equal(expressionWords.has(required), true, `language::表达 应继续补足更贴近学前到一年级课堂互动的短表达: ${required}`);
+}
+
+for (const required of ["我先读一段", "请补充一句", "请完整表达", "我来讲一讲", "说说你发现", "我会查字典", "我来做分享", "请说说想法"]) {
+  assert.equal(expressionWords.has(required), true, `language::表达 应继续补足更贴近一到二年级口语交际与阅读分享的短表达: ${required}`);
+}
+
+for (const [word, expectedBand] of [
+  ["请你先说", "学前-一年级"],
+  ["我来回答", "学前-一年级"],
+  ["认真听讲", "学前-一年级"],
+  ["我们齐读", "学前-一年级"],
+  ["请再读一遍", "学前-一年级"],
+  ["我先举手", "学前-一年级"],
+  ["我先读一段", "一年级-二年级"],
+  ["请补充一句", "一年级-二年级"],
+  ["请完整表达", "一年级-二年级"],
+  ["我来讲一讲", "一年级-二年级"],
+  ["说说你发现", "一年级-二年级"],
+  ["我会查字典", "一年级-二年级"],
+  ["我来做分享", "一年级-二年级"],
+  ["请说说想法", "一年级-二年级"]
+]) {
+  assert.equal(expressionBands.get(word), expectedBand, `language::表达 应为 ${word} 标注更准确的学习层级`);
 }
 
 for (const banned of ["一个", "三个", "四个", "五个", "六个", "七个", "八个", "九个", "十个", "蓝球", "白车", "黄车"]) {

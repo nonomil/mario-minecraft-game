@@ -783,6 +783,7 @@ function wireTouchControls() {
 
 function wireLearningModals() {
     challengeModalEl = document.getElementById("challenge-modal");
+    challengeContextBadgeEl = document.getElementById("challenge-context-badge");
     challengeQuestionEl = document.getElementById("challenge-question");
     challengeOptionsEl = document.getElementById("challenge-options");
     challengeInputWrapperEl = document.getElementById("challenge-input-wrapper");

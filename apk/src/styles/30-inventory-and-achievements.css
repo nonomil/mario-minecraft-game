@@ -441,6 +441,14 @@
     margin: 0 auto;
 }
 
+.learning-report-modal[data-lr-mode="chinese"] {
+    background: linear-gradient(180deg, #fff5f0 0%, #f9f4ef 100%);
+}
+
+.learning-report-modal[data-lr-mode="pinyin"] {
+    background: linear-gradient(180deg, #eef6ff 0%, #f6faff 100%);
+}
+
 .learning-report-modal .game-btn {
     background: #111827;
     border-color: #111827;
@@ -467,6 +475,14 @@
     color: #111827;
 }
 
+.learning-report-modal[data-lr-mode="chinese"] .learning-report-title {
+    color: #9a4525;
+}
+
+.learning-report-modal[data-lr-mode="pinyin"] .learning-report-title {
+    color: #245ea8;
+}
+
 .learning-report-subtitle {
     font-size: 13px;
     color: #6B7280;
@@ -484,6 +500,14 @@
     padding: 12px 14px;
     border: 1px solid #E5E7EB;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.learning-report-modal[data-lr-mode="chinese"] .learning-report-card {
+    border-color: rgba(189, 105, 63, 0.18);
+}
+
+.learning-report-modal[data-lr-mode="pinyin"] .learning-report-card {
+    border-color: rgba(78, 132, 210, 0.16);
 }
 
 .learning-report-kpis {
@@ -508,6 +532,14 @@
     font-size: 12px;
     color: #6B7280;
     margin-top: 4px;
+}
+
+.learning-report-modal[data-lr-mode="chinese"] .learning-report-kpi-label {
+    color: #9b654d;
+}
+
+.learning-report-modal[data-lr-mode="pinyin"] .learning-report-kpi-label {
+    color: #5372a8;
 }
 
 .learning-report-streak {

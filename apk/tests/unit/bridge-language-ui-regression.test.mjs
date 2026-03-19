@@ -57,6 +57,17 @@ function testBridgeChallengeUiShowsCurrentGradeScope() {
   assert.match(source, /小学一年级/, "挑战文案应使用正式年级层级名称");
 }
 
+function testBridgeChallengeUiHasContextBadge() {
+  const html = read("Game.html");
+  const source = read("src/modules/12-challenges.js");
+  const styles = read("src/styles/00-base-and-layout.css");
+
+  assert.match(html, /id="challenge-context-badge"/, "挑战弹窗应预留课堂上下文标签位");
+  assert.match(source, /challenge-context-badge/, "挑战逻辑应回填课堂上下文标签");
+  assert.match(source, /getBridgeContextHint/, "挑战弹窗应复用桥接学习上下文提示");
+  assert.match(styles, /\.challenge-context-badge/, "挑战弹窗样式应提供上下文标签样式");
+}
+
 function testBridgeWordCardHasModeThemes() {
   const source = read("src/modules/12-challenges.js");
   const styles = read("src/styles/10-hud-and-panels.css");
@@ -75,6 +86,53 @@ function testBridgeChallengePromptsAreMoreClassroomLike() {
   assert.match(source, /选出正确读音/, "汉字到拼音挑战应使用更自然的课堂化提示");
 }
 
+function testLearningReportUsesModeSpecificLabels() {
+  const source = read("src/modules/10-ui.js");
+
+  assert.match(source, /function getLearningReportModeProfile\(/, "学习报告应按模式生成专属文案配置");
+  assert.match(source, /识字遇见/, "汉字模式报告应使用识字向标签");
+  assert.match(source, /拼音认读/, "幼小衔接报告应使用拼音向标签");
+  assert.match(source, /今天还没有识字记录/, "空状态应按模式切换为更贴切的提示");
+}
+
+function testWordMatchUsesClassroomModeHints() {
+  const source = read("src/modules/10-ui.js");
+
+  assert.match(source, /function getWordMatchHint\(/, "复活配对应保留独立提示生成器");
+  assert.match(source, /把拼音卡和汉字卡全部连好/, "幼小衔接复活配对提示应更像课堂卡片任务");
+  assert.match(source, /把汉字卡和拼音卡全部连好/, "汉字模式复活配对提示应更像识字卡片任务");
+}
+
+function testWordMatchHasModeThemes() {
+  const source = read("src/modules/10-ui.js");
+  const styles = read("src/styles/00-base-and-layout.css");
+
+  assert.match(source, /word-match-theme-pinyin/, "复活配对逻辑应为幼小衔接模式添加主题类");
+  assert.match(source, /word-match-theme-chinese/, "复活配对逻辑应为汉字模式添加主题类");
+  assert.match(styles, /#word-match-screen\.word-match-theme-pinyin/, "复活配对样式应提供幼小衔接主题");
+  assert.match(styles, /#word-match-screen\.word-match-theme-chinese/, "复活配对样式应提供汉字主题");
+}
+
+function testWordMatchUsesModeSpecificTitles() {
+  const source = read("src/modules/10-ui.js");
+
+  assert.match(source, /function getWordMatchTitle\(/, "复活配对标题应保留独立的模式文案生成器");
+  assert.match(source, /拼音配对复活/, "幼小衔接模式复活配对标题应更贴近拼音课堂");
+  assert.match(source, /识字配对复活/, "汉字模式复活配对标题应更贴近识字课堂");
+}
+
+function testWordMatchShowsCurrentGradeScope() {
+  const html = read("Game.html");
+  const source = read("src/modules/10-ui.js");
+  const styles = read("src/styles/00-base-and-layout.css");
+
+  assert.match(html, /id="match-scope-label"/, "复活配对弹窗应预留当前学习层级标签位");
+  assert.match(source, /function getWordMatchScopeLabel\(/, "复活配对应按当前学习层级生成标签");
+  assert.match(source, /match-scope-label/, "复活配对逻辑应回填当前学习层级标签");
+  assert.match(source, /getBridgeGradeScopeLabel/, "复活配对应复用统一的学习层级文案");
+  assert.match(styles, /\.word-match-scope-label/, "复活配对样式应提供学习层级标签样式");
+}
+
 function run() {
   testBridgeModeShowsLearningMeta();
   testBridgeDisplayContentCarriesGradeAndTip();
@@ -82,8 +140,14 @@ function run() {
   testSingleHanziUsesExampleAwareChallenge();
   testAdaptiveChallengeTitleExists();
   testBridgeChallengeUiShowsCurrentGradeScope();
+  testBridgeChallengeUiHasContextBadge();
   testBridgeWordCardHasModeThemes();
   testBridgeChallengePromptsAreMoreClassroomLike();
+  testLearningReportUsesModeSpecificLabels();
+  testWordMatchUsesClassroomModeHints();
+  testWordMatchHasModeThemes();
+  testWordMatchUsesModeSpecificTitles();
+  testWordMatchShowsCurrentGradeScope();
   console.log("bridge language ui regression checks passed");
 }
 

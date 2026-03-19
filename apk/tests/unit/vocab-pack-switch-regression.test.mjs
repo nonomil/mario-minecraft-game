@@ -102,10 +102,19 @@ function testDefaultVocabSelectionExistsInCurrentManifest() {
   );
 }
 
+function testVocabSelectUsesPackTitlesInsteadOfDuplicateLevelOnlyLabels() {
+  const source = read("src/modules/09-vocab.js");
+
+  assert.match(source, /function getVocabPackOptionLabel\(/, "词库设置应提供独立的选项标签生成器");
+  assert.match(source, /String\(pack\?\.title \|\| ""\)\.trim\(\)/, "词库设置标签应优先保留 pack.title");
+  assert.doesNotMatch(source, /const title = levelLabel \? `\$\{levelLabel\}` : p\.title;/, "词库设置不应再只显示重复的等级名");
+}
+
 function run() {
   testManifestResolvesConstDefinedPackGlobals();
   testManifestResolvesMinecraftAndHanziPackGlobals();
   testDefaultVocabSelectionExistsInCurrentManifest();
+  testVocabSelectUsesPackTitlesInsteadOfDuplicateLevelOnlyLabels();
   console.log("vocab pack switch regression checks passed");
 }
 

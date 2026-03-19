@@ -370,8 +370,88 @@ function buildLearningReportTrendHtml(state, todayKey) {
     `;
 }
 
+function getLearningReportCurrentMode() {
+    const mode = String(settings?.languageMode || "english").trim().toLowerCase();
+    if (mode === "chinese" || mode === "pinyin") return mode;
+    return "english";
+}
+
+function getLearningReportModeProfile() {
+    const mode = getLearningReportCurrentMode();
+    if (mode === "chinese") {
+        return {
+            mode,
+            titleNoun: "识字报告",
+            modeLabel: "汉字模式",
+            uniqueLabel: "识字遇见",
+            accuracyLabel: "闯关答对率",
+            minutesLabel: "学习分钟",
+            emptyTitle: "今天还没有识字记录",
+            emptyDesc: "先认几个汉字并完成一次识字挑战，报告会自动生成。",
+            correctTitleBase: "认会的字词",
+            wrongTitleBase: "还需巩固",
+            correctEmptyText: "今天还没有认会的字词，再试一次识字挑战吧！",
+            wrongEmptyText: "今天没有需要巩固的字词，继续保持！",
+            wrongShareLabel: "还需巩固"
+        };
+    }
+    if (mode === "pinyin") {
+        return {
+            mode,
+            titleNoun: "拼音认读报告",
+            modeLabel: "幼小衔接",
+            uniqueLabel: "拼音认读",
+            accuracyLabel: "认读答对率",
+            minutesLabel: "学习分钟",
+            emptyTitle: "今天还没有拼音认读记录",
+            emptyDesc: "先读几个拼音词并完成一次认读挑战，报告会自动生成。",
+            correctTitleBase: "读准的词",
+            wrongTitleBase: "还需再读",
+            correctEmptyText: "今天还没有读准的词，再试一次认读挑战吧！",
+            wrongEmptyText: "今天没有读错的词，继续保持！",
+            wrongShareLabel: "还需再读"
+        };
+    }
+    return {
+        mode,
+        titleNoun: "学习报告",
+        modeLabel: "英语学习",
+        uniqueLabel: "单词遇见",
+        accuracyLabel: "答对率",
+        minutesLabel: "游戏分钟",
+        emptyTitle: "今天还没有学习记录",
+        emptyDesc: "先玩一局并完成一次挑战，报告会自动生成。",
+        correctTitleBase: "答对的词",
+        wrongTitleBase: "还需练习",
+        correctEmptyText: "今天还没有答对的词，再试一次挑战吧！",
+        wrongEmptyText: "今天没有答错的词，继续保持！",
+        wrongShareLabel: "还需练习"
+    };
+}
+
+function getLearningReportScopeLabel() {
+    if (getLearningReportCurrentMode() === "english") return "";
+    const normalizedScope = window.BilingualVocab?.normalizeBridgeGradeScope?.(settings?.bridgeGradeScope || "")
+        || String(settings?.bridgeGradeScope || "").trim();
+    if (!normalizedScope || normalizedScope === "all") return "";
+    return window.BilingualVocab?.getBridgeGradeScopeLabel?.(normalizedScope) || "";
+}
+
+function getLearningReportTitleText(profile) {
+    const noun = String(profile?.titleNoun || "学习报告").trim();
+    return currentAccount?.username ? `${currentAccount.username}的${noun}` : `今日${noun}`;
+}
+
+function getLearningReportSubtitleText(profile, todayKey) {
+    const dateText = formatLearningReportCnDate(todayKey) || String(todayKey || "");
+    const modeLabel = String(profile?.modeLabel || "").trim();
+    const scopeLabel = getLearningReportScopeLabel();
+    return [dateText ? `${dateText} · 今天` : "", modeLabel, scopeLabel].filter(Boolean).join(" · ");
+}
+
 function buildLearningReportShareText(snapshot) {
-    const title = currentAccount?.username ? `${currentAccount.username}的学习报告` : "今日学习报告";
+    const profile = getLearningReportModeProfile();
+    const title = getLearningReportTitleText(profile);
     const dateText = formatLearningReportCnDate(snapshot?.todayKey) || String(snapshot?.todayKey || "");
     const uniqueWords = Number(snapshot?.uniqueWords) || 0;
     const playMinutes = Number(snapshot?.playMinutes) || 0;
@@ -384,11 +464,11 @@ function buildLearningReportShareText(snapshot) {
 
     return [
         title,
-        `${dateText} · 今天`,
-        `单词遇见：${uniqueWords}`,
-        `答对率：${acc}`,
-        `游戏分钟：${playMinutes}`,
-        `还需练习：${wrongText}`
+        getLearningReportSubtitleText(profile, snapshot?.todayKey),
+        `${profile.uniqueLabel}：${uniqueWords}`,
+        `${profile.accuracyLabel}：${acc}`,
+        `${profile.minutesLabel}：${playMinutes}`,
+        `${profile.wrongShareLabel}：${wrongText}`
     ].join("\n");
 }
 
@@ -401,18 +481,19 @@ function renderLearningReportModal() {
     if (!modal || !titleEl || !subtitleEl || !contentEl) return;
 
     const snapshot = getLearningReportTodaySnapshot();
+    const profile = getLearningReportModeProfile();
     modal.dataset.lrTodayKey = snapshot.todayKey;
+    modal.dataset.lrMode = profile.mode;
 
-    const titleText = currentAccount?.username ? `${currentAccount.username}的学习报告` : "今日学习报告";
-    titleEl.innerText = titleText;
-    subtitleEl.innerText = `${formatLearningReportCnDate(snapshot.todayKey) || snapshot.todayKey} · 今天`;
+    titleEl.innerText = getLearningReportTitleText(profile);
+    subtitleEl.innerText = getLearningReportSubtitleText(profile, snapshot.todayKey);
 
     const hasAnyLearning = snapshot.uniqueWords > 0 || snapshot.playSeconds > 0 || (snapshot.challengeSuccess + snapshot.challengeFail) > 0;
     if (!hasAnyLearning) {
         contentEl.innerHTML = `
             <div class="learning-report-card learning-report-empty">
-                <div class="learning-report-empty-title">今天还没有学习记录</div>
-                <div class="learning-report-empty-desc">先玩一局并完成一次挑战，报告会自动生成。</div>
+                <div class="learning-report-empty-title">${escapeLearningReportHtml(profile.emptyTitle)}</div>
+                <div class="learning-report-empty-desc">${escapeLearningReportHtml(profile.emptyDesc)}</div>
                 <button class="game-btn" id="btn-learning-report-back">返回游戏</button>
             </div>
         `;
@@ -427,15 +508,15 @@ function renderLearningReportModal() {
         <div class="learning-report-kpis">
             <div class="learning-report-card">
                 <div class="learning-report-kpi-value">${snapshot.uniqueWords}</div>
-                <div class="learning-report-kpi-label">单词遇见</div>
+                <div class="learning-report-kpi-label">${escapeLearningReportHtml(profile.uniqueLabel)}</div>
             </div>
             <div class="learning-report-card">
                 <div class="learning-report-kpi-value">${escapeLearningReportHtml(accText)}</div>
-                <div class="learning-report-kpi-label">答对率</div>
+                <div class="learning-report-kpi-label">${escapeLearningReportHtml(profile.accuracyLabel)}</div>
             </div>
             <div class="learning-report-card">
                 <div class="learning-report-kpi-value">${escapeLearningReportHtml(minutesText)}</div>
-                <div class="learning-report-kpi-label">游戏分钟</div>
+                <div class="learning-report-kpi-label">${escapeLearningReportHtml(profile.minutesLabel)}</div>
             </div>
         </div>
     `;
@@ -455,20 +536,20 @@ function renderLearningReportModal() {
         </div>
     `;
 
-    const correctTitle = `答对的词（${snapshot.correctWords.length}个）`;
-    const wrongTitle = `还需练习（${snapshot.wrongWords.length}个）`;
+    const correctTitle = `${profile.correctTitleBase}（${snapshot.correctWords.length}个）`;
+    const wrongTitle = `${profile.wrongTitleBase}（${snapshot.wrongWords.length}个）`;
     const challengeTotal = snapshot.challengeSuccess + snapshot.challengeFail;
-    const correctEmptyText = challengeTotal > 0 ? "今天还没有答对的词，再试一次挑战吧！" : "完成一次挑战后会显示。";
-    const wrongEmptyText = challengeTotal > 0 ? "今天没有答错的词，继续保持！" : "完成一次挑战后会显示。";
+    const correctEmptyText = challengeTotal > 0 ? profile.correctEmptyText : "完成一次挑战后会显示。";
+    const wrongEmptyText = challengeTotal > 0 ? profile.wrongEmptyText : "完成一次挑战后会显示。";
     const correctHtml = buildLearningReportWordSectionHtml(correctTitle, snapshot.correctWords, {
-        tagText: "答对",
+        tagText: getLearningReportCurrentMode() === "english" ? "答对" : "掌握",
         tagClass: "ok",
         limit: 3,
         sectionKey: "correct",
         emptyText: correctEmptyText
     });
     const wrongHtml = buildLearningReportWordSectionHtml(wrongTitle, snapshot.wrongWords, {
-        tagText: "答错",
+        tagText: getLearningReportCurrentMode() === "english" ? "答错" : "待练",
         tagClass: "bad",
         limit: 5,
         sectionKey: "wrong",
@@ -717,13 +798,85 @@ function getWordMatchHint(words) {
     const subject = [...subjects][0];
     const mode = settings.languageMode;
     if (subject === "language") {
-        if (mode === "pinyin") return "将拼音与汉字全部连对才能复活，错配会自动消失";
-        if (mode === "chinese") return "将汉字与拼音全部连对才能复活，错配会自动消失";
-        return "将词语与释义全部连对才能复活，错配会自动消失";
+        if (mode === "pinyin") return "把拼音卡和汉字卡全部连好，配对成功就能复活";
+        if (mode === "chinese") return "把汉字卡和拼音卡全部连好，配对成功就能复活";
+        return "把词语卡和意思卡全部连好，配对成功就能复活";
     }
-    if (subject === "math") return "将概念与关键词全部连对才能复活，错配会自动消失";
-    if (subject === "english") return "将英文与拼读全部连对才能复活，错配会自动消失";
+    if (subject === "math") return "把概念卡和关键词卡全部连好，配对成功就能复活";
+    if (subject === "english") return "把英文卡和拼读卡全部连好，配对成功就能复活";
     return "将左侧与右侧全部正确配对才能复活，错配会自动消失";
+}
+
+function getWordMatchTitle(words) {
+    const subjects = new Set(words.map(w => String(w?.subject || "").trim()).filter(Boolean));
+    if (subjects.size !== 1) return "配对复活";
+    const subject = [...subjects][0];
+    const mode = settings.languageMode;
+    if (subject === "language") {
+        if (mode === "pinyin") return "拼音配对复活";
+        if (mode === "chinese") return "识字配对复活";
+        return "词语配对复活";
+    }
+    if (subject === "math") return "数学配对复活";
+    if (subject === "english") return "英语配对复活";
+    return "配对复活";
+}
+
+function getWordMatchScopeLabel(words) {
+    const safeWords = Array.isArray(words) ? words : [];
+    const subjects = new Set(safeWords.map(word => String(word?.subject || "").trim()).filter(Boolean));
+    if (subjects.size !== 1 || !subjects.has("language")) return "";
+    const mode = settings?.languageMode;
+    if (mode !== "pinyin" && mode !== "chinese") return "";
+    const rawScope = settings?.bridgeGradeScope || "";
+    const normalizedScope = window.BilingualVocab?.normalizeBridgeGradeScope?.(rawScope) || String(rawScope).trim();
+    if (!normalizedScope || normalizedScope === "all") return "";
+    const scopeLabel = window.BilingualVocab?.getBridgeGradeScopeLabel?.(normalizedScope) || "";
+    return scopeLabel ? `当前层级：${scopeLabel}` : "";
+}
+
+const WORD_MATCH_THEME_CLASSES = ["word-match-theme-pinyin", "word-match-theme-chinese"];
+
+function isSingleHanziMatchText(raw) {
+    const text = String(raw || "").trim();
+    return text.length === 1 && /[\u3400-\u9fff]/.test(text);
+}
+
+function getWordMatchThemeClass(words) {
+    const safeWords = Array.isArray(words) ? words : [];
+    const subjects = new Set(safeWords.map(word => String(word?.subject || "").trim()).filter(Boolean));
+    if (subjects.size !== 1 || !subjects.has("language")) return "";
+    const mode = settings?.languageMode;
+    if (mode === "pinyin") return "word-match-theme-pinyin";
+    if (mode === "chinese") return "word-match-theme-chinese";
+    const hasSingleHanziCard = safeWords.some(word => {
+        const moduleName = String(word?.module || word?.lesson || "").trim();
+        const pair = getWordDisplayPairSafe(word);
+        return moduleName === "识字"
+            || isSingleHanziMatchText(pair.primary)
+            || isSingleHanziMatchText(pair.secondary);
+    });
+    return hasSingleHanziCard ? "word-match-theme-chinese" : "";
+}
+
+function applyWordMatchTheme(themeClass) {
+    if (!wordMatchScreenEl) return;
+    wordMatchScreenEl.classList.remove(...WORD_MATCH_THEME_CLASSES);
+    if (themeClass) wordMatchScreenEl.classList.add(themeClass);
+}
+
+function applyWordMatchTitle(titleText) {
+    if (!wordMatchScreenEl) return;
+    const titleEl = wordMatchScreenEl.querySelector(".word-match-header h2");
+    if (titleEl) titleEl.innerText = titleText || "配对复活";
+}
+
+function applyWordMatchScopeLabel(labelText) {
+    const labelEl = document?.getElementById?.("match-scope-label");
+    if (!labelEl) return;
+    const safeLabel = String(labelText || "").trim();
+    labelEl.innerText = safeLabel;
+    labelEl.style.display = safeLabel ? "inline-flex" : "none";
 }
 
 class WordMatchGame {
@@ -733,7 +886,10 @@ class WordMatchGame {
         this.words = this.entries.map(item => item.word);
         this.leftItems = shuffle(this.entries.map(item => ({ id: item.id, text: item.left, word: item.word })));
         this.rightItems = shuffle(this.entries.map(item => ({ id: item.id, text: item.right, word: item.word })));
+        this.matchTitle = getWordMatchTitle(this.words);
         this.matchHint = getWordMatchHint(this.words);
+        this.scopeLabel = getWordMatchScopeLabel(this.words);
+        this.themeClass = getWordMatchThemeClass(this.words);
         this.connections = [];
         this.lockedIds = new Set();
         this.selectedLeftId = null;
@@ -759,6 +915,9 @@ class WordMatchGame {
         this.timerPaused = false;
         this.pausedAt = 0;
         wordMatchActive = true;
+        applyWordMatchTheme(this.themeClass);
+        applyWordMatchTitle(this.matchTitle);
+        applyWordMatchScopeLabel(this.scopeLabel);
         wordMatchScreenEl.classList.add("visible");
         this.render();
         this.startTimer();
@@ -785,6 +944,8 @@ class WordMatchGame {
             matchResultEl.classList.remove("visible");
             matchResultEl.innerText = "";
         }
+        applyWordMatchTitle(this.matchTitle);
+        applyWordMatchScopeLabel(this.scopeLabel);
         if (matchSubtitleEl) matchSubtitleEl.innerText = this.matchHint || "将左侧与右侧全部正确配对才能复活，错配会自动消失";
         matchLeftEl.innerHTML = this.leftItems.map(item => `<div class="match-item${this.lockedIds.has(item.id) ? " correct" : ""}" data-id="${item.id}" data-type="en">${item.text}</div>`).join("");
         matchRightEl.innerHTML = this.rightItems.map(item => `<div class="match-item${this.lockedIds.has(item.id) ? " correct" : ""}" data-id="${item.id}" data-type="zh">${item.text}</div>`).join("");
@@ -951,6 +1112,8 @@ class WordMatchGame {
         wordMatchActive = false;
         activeWordMatch = null;
         if (matchResultEl) matchResultEl.classList.remove("visible");
+        applyWordMatchTheme("");
+        applyWordMatchScopeLabel("");
         if (wordMatchScreenEl) wordMatchScreenEl.classList.remove("visible");
         if (success) {
             paused = false;

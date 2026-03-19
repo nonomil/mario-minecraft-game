@@ -125,6 +125,22 @@ function runVocabModule(context) {
   });
 }
 
+function loadActualBridgePack() {
+  const context = { console };
+  context.window = context;
+  vm.createContext(context);
+  [
+    "words/vocabs/01_\u5e7c\u513f\u56ed/\u5e7c\u513f\u56ed\u5b8c\u6574\u8bcd\u5e93.js",
+    "words/vocabs/06_\u6c49\u5b57/\u5e7c\u513f\u56ed\u6c49\u5b57.js",
+    "words/vocabs/07_\u62fc\u97f3/\u5e38\u7528\u62fc\u97f3.js",
+    "words/vocabs/08_\u5e7c\u5c0f\u8854\u63a5/\u5e7c\u5c0f\u8854\u63a5\u603b\u8bcd\u5e93.js",
+    "words/vocabs/08_\u5e7c\u5c0f\u8854\u63a5/\u5e7c\u5c0f\u8854\u63a5_\u8bed\u6587.js"
+  ].forEach((relPath) => {
+    vm.runInContext(read(relPath), context, { filename: relPath });
+  });
+  return vm.runInContext("BRIDGE_VOCAB_FULL", context) || [];
+}
+
 function loadVocabRuntime() {
   const context = createContext();
   runVocabModule(context);
@@ -187,6 +203,9 @@ function testRuntimeExportsGradeScopeHelpers() {
   assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "学前" }, "preschool"), true);
   assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "学前" }, "grade2"), false);
   assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "学前-一年级" }, "grade1"), true);
+  assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "一年级-二年级" }, "grade1"), false);
+  assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "一年级-二年级" }, "grade2"), true);
+  assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "一年级-二年级" }, "preschool_grade1"), false);
   assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "二年级" }, "grade1"), false);
   assert.equal(vocab.doesWordMatchBridgeGradeScope({ gradeBand: "" }, "grade1"), true);
 }
@@ -255,8 +274,45 @@ async function testHanziModeAlsoFiltersBySelectedGradeScope() {
   assert.deepEqual(words, ["读"], "汉字模式应跟随学习层级过滤单字内容");
 }
 
+async function testActualBridgePackSeparatesGradeBands() {
+  const actualBridgePack = loadActualBridgePack();
+  const pack = {
+    id: "bridge-real-pack",
+    title: "真实桥接词包",
+    stage: "bridge",
+    getRaw() {
+      return actualBridgePack;
+    }
+  };
+
+  const grade1Words = await loadFilteredWords({
+    settingsPatch: {
+      languageMode: "chinese",
+      bridgeGradeScope: "grade1"
+    },
+    pack
+  });
+
+  assert.equal(grade1Words.includes("书写提示"), true, "一年级层级应保留一年级课堂词");
+  assert.equal(grade1Words.includes("口语交际"), true, "一年级层级应保留低年级口语交际词");
+  assert.equal(grade1Words.includes("讲评课"), false, "一年级层级不应过早放入更偏二年级的讲评课");
+  assert.equal(grade1Words.includes("阅读笔记"), false, "一年级层级不应过早放入更偏二年级的阅读笔记");
+
+  const grade2Words = await loadFilteredWords({
+    settingsPatch: {
+      languageMode: "chinese",
+      bridgeGradeScope: "grade2"
+    },
+    pack
+  });
+
+  assert.equal(grade2Words.includes("讲评课"), true, "二年级层级应开放更进阶的课堂词");
+  assert.equal(grade2Words.includes("阅读笔记"), true, "二年级层级应开放更进阶的阅读训练词");
+}
+
 await testBridgePackFiltersBySelectedGradeScope();
 await testHanziModeAlsoFiltersBySelectedGradeScope();
+await testActualBridgePackSeparatesGradeBands();
 testDefaultsDeclareBridgeGradeScope();
 testUiExposesGradeScopeSelectors();
 testRuntimeExportsGradeScopeHelpers();

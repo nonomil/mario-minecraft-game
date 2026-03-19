@@ -1,5 +1,37 @@
 ﻿# Release Notes
 
+## v1.19.45 (2026-03-19)
+
+### 📚 Bridge Learning
+- **幼小衔接语文继续扩容**:
+  - 补齐 `展示台 / 日积月累 / 查字典 / 音序表 / 部首表 / 阅读交流 / 课堂展示` 等更贴近统编低年级教材与课堂活动的词语
+  - 继续扩展 `快乐读书吧 / 读书分享会 / 整本书阅读 / 课堂展示台 / 阅读交流卡` 等一二年级阅读场景词
+  - 新增 `请你先说 / 我来回答 / 我先读一段 / 请补充一句 / 请完整表达 / 我会查字典` 等分层课堂短表达
+
+### 🛠️ UX / 设置修复
+- **词库设置标签去重**:
+  - 修复设置下拉框把多个词库压成同名 `初级 / 中级 / 完整` 的问题
+  - 词库项现在优先显示真实 `pack.title`，并保留冲突兜底标签，避免用户选错包
+- **学习层级提示增强**:
+  - 词语配对复活弹窗显示当前学习层级
+  - 挑战弹窗显示课堂上下文徽标
+  - 学习报告按 `chinese / pinyin` 模式切换更贴切的主题风格
+
+### 🧪 Verification
+- `node tests/unit/bridge-vocab-coverage.test.mjs`
+- `node tests/unit/bridge-language-ui-regression.test.mjs`
+- `node tests/unit/bridge-grade-scope-regression.test.mjs`
+- `node tests/unit/vocab-pack-switch-regression.test.mjs`
+- `node tests/unit/kindergarten-hanzi-regression.test.mjs`
+- `node tests/unit/pinyin-pack-regression.test.mjs`
+- `node tests/unit/bridge-play-display.test.mjs`
+
+### 📦 Technical Changes
+- 统一版本元数据到 `v1.19.45 / build 97`
+- 更新 `version.json`、`package.json`、`android-app/package.json`、`android-app/android/app/build.gradle`、`android-app/web/build-info.json`
+- 更新 `service-worker.js` 缓存版本与 `Game.html` 资源缓存戳到 `v1.19.45`
+- 提取本次相关 Git 记录：`7905f41 feat: expand bridge vocab content and learning ui`
+
 ## v1.19.35 (2026-03-10)
 
 ### 🎮 Gameplay Integration

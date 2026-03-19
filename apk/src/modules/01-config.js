@@ -91,6 +91,7 @@ let challengeTimerId = null;
 let challengeDeadline = 0;
 let challengeOrigin = null;
 let challengeModalEl = null;
+let challengeContextBadgeEl = null;
 let challengeQuestionEl = null;
 let challengeOptionsEl = null;
 let challengeInputWrapperEl = null;

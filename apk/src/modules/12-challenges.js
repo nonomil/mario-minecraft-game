@@ -99,6 +99,15 @@ function getBridgeContextHint(wordObj, languageMode, challengeType = "") {
     return [scopeHint, moduleName, formatBridgeGradeBandLabel(gradeBand)].filter(Boolean).join(" · ");
 }
 
+function applyChallengeContextBadge(challenge) {
+    const badgeEl = challengeContextBadgeEl || document?.getElementById?.("challenge-context-badge");
+    if (!badgeEl) return;
+    const mode = getLanguageModeSafe();
+    const contextText = getBridgeContextHint(challenge?.wordObj, mode, challenge?.type || "");
+    badgeEl.innerText = contextText || "";
+    badgeEl.style.display = contextText ? "inline-flex" : "none";
+}
+
 function getWordPrimaryHanzi(wordObj) {
     return String(wordObj?.character || wordObj?.chinese || wordObj?.zh || "").trim();
 }
@@ -1485,6 +1494,7 @@ function showLearningChallenge(challenge) {
             titleEl.innerText = getAdaptiveChallengeTitle(challenge.wordObj, challenge.type, mode);
         }
     }
+    applyChallengeContextBadge(challenge);
     if (challengeQuestionEl) {
         if (challenge.questionHtml) {
             challengeQuestionEl.innerHTML = challenge.questionHtml;
@@ -1580,6 +1590,11 @@ function hideLearningChallenge() {
     if (challengeModalEl) {
         challengeModalEl.classList.remove("visible");
         challengeModalEl.setAttribute("aria-hidden", "true");
+    }
+    const badgeEl = challengeContextBadgeEl || document?.getElementById?.("challenge-context-badge");
+    if (badgeEl) {
+        badgeEl.innerText = "";
+        badgeEl.style.display = "none";
     }
     if (challengeInputEl) challengeInputEl.value = "";
 

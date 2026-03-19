@@ -67,6 +67,7 @@
     ["词", "cí"],
     ["语", "yǔ"],
     ["标", "biāo"],
+    ["典", "diǎn"],
     ["点", "diǎn"],
     ["睡", "shuì"],
     ["觉", "jué"],
@@ -97,6 +98,35 @@
     ["栏", "lán"],
     ["瓶", "píng"],
     ["盒", "hé"],
+    ["书", "shū"],
+    ["写", "xiě"],
+    ["示", "shì"],
+    ["发", "fā"],
+    ["现", "xiàn"],
+    ["课", "kè"],
+    ["文", "wén"],
+    ["插", "chā"],
+    ["交", "jiāo"],
+    ["题", "tí"],
+    ["晨", "chén"],
+    ["午", "wǔ"],
+    ["纸", "zhǐ"],
+    ["借", "jiè"],
+    ["眼", "yǎn"],
+    ["护", "hù"],
+    ["巾", "jīn"],
+    ["岗", "gǎng"],
+    ["检", "jiǎn"],
+    ["盘", "pán"],
+    ["姿", "zī"],
+    ["势", "shì"],
+    ["握", "wò"],
+    ["架", "jià"],
+    ["册", "cè"],
+    ["评", "píng"],
+    ["际", "jì"],
+    ["闯", "chuǎng"],
+    ["餐", "cān"],
     ["栽", "zāi"],
     ["漂", "piāo"],
     ["审", "shěn"],
@@ -198,6 +228,7 @@
     ["堂", "táng"],
     ["笔", "bǐ"],
     ["感", "gǎn"],
+    ["吧", "ba"],
     ["后", "hòu"],
     ["员", "yuán"],
     ["查", "chá"],
@@ -233,6 +264,22 @@
     ["守", "shǒu"],
     ["规", "guī"],
     ["则", "zé"],
+    ["认", "rèn"],
+    ["真", "zhēn"],
+    ["听", "tīng"],
+    ["讲", "jiǎng"],
+    ["齐", "qí"],
+    ["遍", "biàn"],
+    ["举", "jǔ"],
+    ["答", "dá"],
+    ["达", "dá"],
+    ["补", "bǔ"],
+    ["充", "chōng"],
+    ["完", "wán"],
+    ["法", "fǎ"],
+    ["把", "bǎ"],
+    ["指", "zhǐ"],
+    ["师", "shī"],
     ["专", "zhuān"],
     ["环", "huán"],
     ["境", "jìng"],
@@ -302,7 +349,9 @@
   }
 
   function toPinyin(text) {
-    return SHARED_TO_PINYIN ? SHARED_TO_PINYIN(text) : localToPinyin(text);
+    if (!SHARED_TO_PINYIN) return localToPinyin(text);
+    const shared = String(SHARED_TO_PINYIN(text) || "").trim();
+    return shared || localToPinyin(text);
   }
 
   const BRIDGE_EXCLUDED_FRAGMENTS = [
@@ -381,6 +430,12 @@
       entry.gradeBand = String(options.gradeBand).trim();
     }
     return entry;
+  }
+
+  function buildLanguageEntries(words, moduleName, options = {}) {
+    return uniqueList(words)
+      .map((word) => createLanguageEntry(word, moduleName, options))
+      .filter(Boolean);
   }
 
   function collectChineseWords(entries) {
@@ -606,6 +661,39 @@
     "写字板", "展示栏", "作品栏", "留言卡", "摘抄栏", "好词本", "好句本", "查字表", "查词卡", "拼读条"
   ];
 
+  const FIRST_GRADE_SUPPORT_WORDS = [
+    "书写提示", "我的发现", "课文插图", "口语交际", "写字姿势", "握笔姿势",
+    "识字加油站", "字词句运用", "课后题", "阅读题", "练习题", "晨读任务",
+    "朗读评价", "读书记录", "识字墙", "词语墙", "拼音游戏", "识字游戏",
+    "语文作业本", "班级课程表", "教室图书角", "阅读记录卡", "图画故事书",
+    "校园公告栏", "彩色铅笔盒", "课间值日表", "拼音练习册", "写字练习纸",
+    "课前准备", "朗读课文", "借助拼音", "读准字音", "课堂任务卡", "朗读任务卡"
+  ];
+
+  const CAMPUS_SERVICE_WORDS = [
+    "晨检表", "午餐盘", "餐巾纸", "洗手台", "护眼操", "借阅架",
+    "成长册", "值日岗", "值日牌", "安静牌", "书包柜", "水壶架",
+    "午休铃", "晨读铃", "坐姿歌", "写字歌", "护眼提示", "阅读架",
+    "班级牌", "年级卡", "图书袋", "借书袋", "小水杯", "小帽子",
+    "小袜子", "小雨伞", "小书桌", "小椅子", "小水壶", "小饭盒",
+    "小毛巾", "小牙刷"
+  ];
+
+  const SECOND_GRADE_PROGRESS_WORDS = [
+    "故事复述", "看图表达", "句子接龙", "词语接龙", "识字闯关", "拼音闯关",
+    "阅读闯关", "讲评课", "观察册", "写话单", "阅读单元", "阅读题卡",
+    "讲评卡", "分享栏", "写话栏", "阅读栏", "整理单", "记录册",
+    "观察日记", "阅读笔记", "写话练习", "词语练习", "短文练习", "拼音练习",
+    "写字练习", "听写练习", "默写练习", "组词练习", "朗读比赛", "故事表演",
+    "诗歌朗诵", "看图说话", "阅读分享", "成语故事", "句子练习", "读书笔记",
+    "观察记录", "学习记录", "识字卡片", "拼音卡片", "晨读卡", "拼读本",
+    "组词本", "写话本子", "字词句", "故事时间", "读书时间", "阅读本",
+    "朗读本", "看图本", "拼音纸", "阅读任务", "写话卡", "说话卡",
+    "展示台", "日积月累", "查字典", "部首查字", "音序查字", "分角色读",
+    "我爱阅读", "快乐读书", "读书单", "预习单", "学习单", "读书分享会",
+    "整本书阅读", "课堂展示台", "阅读交流卡", "快乐读书吧"
+  ];
+
   const EXTENSION_CANDIDATE_POOL = uniqueList([
     ...PRIORITY_EXTENSION_WORDS,
     ...EXTENSION_CANDIDATE_WORDS,
@@ -626,6 +714,18 @@
     { minLen: 2, maxLen: 5 }
   ).filter((word) => isConcreteExtensionWord(word)).slice(0, 1000);
 
+  const GRADE1_CURATED_EXTENSION_WORDS = filterNovelLanguageWords(
+    [...FIRST_GRADE_SUPPORT_WORDS, ...CAMPUS_SERVICE_WORDS],
+    EXISTING_LANGUAGE_TEXTS,
+    { minLen: 2, maxLen: 5 }
+  ).filter((word) => isConcreteExtensionWord(word));
+
+  const GRADE12_CURATED_EXTENSION_WORDS = filterNovelLanguageWords(
+    SECOND_GRADE_PROGRESS_WORDS,
+    EXISTING_LANGUAGE_TEXTS,
+    { minLen: 2, maxLen: 5 }
+  ).filter((word) => isConcreteExtensionWord(word));
+
   const EXTRA_OBJECTS = uniqueList([
     "水", "牛奶", "果汁", "面包", "米饭", "苹果", "香蕉", "葡萄", "草莓", "西瓜", "鸡蛋",
     "书包", "课本", "铅笔", "橡皮", "尺子", "彩笔", "画笔", "纸", "玩具", "积木", "球"
@@ -644,17 +744,24 @@
     "开门", "关门", "系鞋带", "拿书包", "找老师", "找妈妈", "找爸爸", "收拾玩具", "整理书包"
   ]);
 
-  const EXTRA_READING_EXPRESSIONS = uniqueList([
+  const GRADE1_CLASSROOM_EXPRESSIONS = uniqueList([
     "我来领读", "请看黑板", "请读课文", "请看拼音", "我会写字", "我来写字", "一起早读", "一起朗读",
-    "我来听写", "我来默写", "我会造句", "我会看图", "我来分享", "先排好队", "请轻声说", "请坐端正",
-    "请你举手", "我先回答", "我来观察", "我来记录", "我读给你听", "请你跟读", "我们分组学", "一起做值日",
-    "一起收图书", "我会讲故事", "我会写拼音", "我会认生字", "我来读句子", "我来写句子",
-    "我来做记录", "请先读一读", "我会查字表", "先看题目", "我来分段落", "请你读一段",
-    "我能找词语", "我来写短句", "先想再回答", "我会做摘抄", "一起读日记", "我来讲画面",
-    "请说完整句", "我先找重点", "我会看插图", "我们一起观察", "我来圈生字", "我来画词语"
+    "先排好队", "请轻声说", "请坐端正", "请你举手", "我先回答", "我来观察", "我读给你听", "请你跟读",
+    "我们分组学", "一起做值日", "一起收图书", "我会讲故事", "我会写拼音", "我会认生字", "我来读句子", "我来写句子",
+    "我来画词语", "请你先说", "我来回答", "认真听讲", "我们齐读", "请再读一遍", "我先举手", "先听老师说",
+    "请看老师写", "我来读一读", "我们一起读", "我来说一句", "请你跟我读", "先坐端正", "请先看图", "我来指一指"
   ]);
 
-  const EXTRA_EXPRESSIONS = uniqueList([
+  const GRADE12_CLASSROOM_EXPRESSIONS = uniqueList([
+    "我来听写", "我来默写", "我会造句", "我会看图", "我来分享", "我来记录", "我来做记录",
+    "请先读一读", "我会查字表", "先看题目", "我来分段落", "请你读一段", "我能找词语", "我来写短句",
+    "先想再回答", "我会做摘抄", "一起读日记", "我来讲画面", "请说完整句", "我先找重点", "我会看插图", "我们一起观察",
+    "我来圈生字", "我先读一段", "请补充一句", "请完整表达", "我来讲一讲", "说说你发现", "我会查字典", "我来做分享",
+    "请说说想法", "我先做笔记", "先读再回答", "我来读短文", "请听我补充", "我先看插图", "我能分段读", "我会读整句",
+    "请把话说完"
+  ]);
+
+  const GENERAL_EXTRA_EXPRESSIONS = uniqueList([
     "我可以吗", "我来试试", "请再来一次", "我们一起玩", "我们一起学", "我想帮助你", "请等一下",
     ...combine(["我想要", "我要", "请给我", "我喜欢"], EXTRA_OBJECTS.slice(0, 16)),
     ...combine(["我想吃"], EXTRA_OBJECTS.filter((w) => ["面包", "米饭", "苹果", "香蕉", "葡萄", "草莓", "西瓜", "鸡蛋"].includes(w))),
@@ -662,8 +769,7 @@
     ...combine(["我会", "我能"], EXTRA_SKILL_ACTIONS),
     ...combine(["请帮我"], EXTRA_HELP_ACTIONS),
     ...combine(["我们一起"], EXTRA_GROUP_ACTIONS),
-    ...combine(["在家", "在学校", "在公园", "在教室"], EXTRA_GROUP_ACTIONS),
-    ...EXTRA_READING_EXPRESSIONS
+    ...combine(["在家", "在学校", "在公园", "在教室"], EXTRA_GROUP_ACTIONS)
   ]).slice(0, 2000);
 
   const EXTRA_POEM_TITLES = uniqueList([
@@ -672,9 +778,13 @@
   ]);
 
   const extraLanguageEntries = [
-    ...LANGUAGE_EXTRA_WORDS.map((word) => createLanguageEntry(word, "拓展词汇", { gradeBand: "学前-二年级" })).filter(Boolean),
-    ...EXTRA_EXPRESSIONS.map((word) => createLanguageEntry(word, "表达", { tags: ["口语"], gradeBand: "学前-一年级" })).filter(Boolean),
-    ...EXTRA_POEM_TITLES.map((word) => createLanguageEntry(word, "古诗", { gradeBand: "学前-二年级" })).filter(Boolean)
+    ...buildLanguageEntries(GRADE1_CURATED_EXTENSION_WORDS, "拓展词汇", { gradeBand: "学前-一年级" }),
+    ...buildLanguageEntries(GRADE12_CURATED_EXTENSION_WORDS, "拓展词汇", { gradeBand: "一年级-二年级" }),
+    ...buildLanguageEntries(LANGUAGE_EXTRA_WORDS, "拓展词汇", { gradeBand: "学前-二年级" }),
+    ...buildLanguageEntries(GRADE1_CLASSROOM_EXPRESSIONS, "表达", { tags: ["口语"], gradeBand: "学前-一年级" }),
+    ...buildLanguageEntries(GRADE12_CLASSROOM_EXPRESSIONS, "表达", { tags: ["口语"], gradeBand: "一年级-二年级" }),
+    ...buildLanguageEntries(GENERAL_EXTRA_EXPRESSIONS, "表达", { tags: ["口语"], gradeBand: "学前-一年级" }),
+    ...buildLanguageEntries(EXTRA_POEM_TITLES, "古诗", { gradeBand: "学前-二年级" })
   ];
 
   const target = EXISTING_LANGUAGE_TARGET;

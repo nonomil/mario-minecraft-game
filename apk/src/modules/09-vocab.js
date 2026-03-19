@@ -805,6 +805,45 @@ window.getVocabPackList = getVocabPackList;
 window.handleVocabFileImport = handleVocabFileImport;
 window.handleVocabTextImport = handleVocabTextImport;
 
+const VOCAB_STAGE_ORDER = ["bridge", "kindergarten", "elementary", "junior_high", "minecraft", "custom"];
+const VOCAB_STAGE_LABELS = {
+    "bridge": "幼小衔接",
+    "kindergarten": "幼儿园",
+    "elementary": "小学",
+    "junior_high": "初中",
+    "minecraft": "我的世界",
+    "custom": "自定义"
+};
+const VOCAB_LEVEL_ORDER = ["basic", "intermediate", "advanced", "full"];
+const VOCAB_LEVEL_LABELS = {
+    "basic": "初级",
+    "intermediate": "中级",
+    "advanced": "高级",
+    "full": "完整"
+};
+
+function getVocabPackOptionLabel(pack) {
+    const title = String(pack?.title || "").trim();
+    if (title) return title;
+    const levelLabel = VOCAB_LEVEL_LABELS[pack?.level] || String(pack?.level || "").trim();
+    if (levelLabel) return levelLabel;
+    return String(pack?.id || "未命名词库").trim() || "未命名词库";
+}
+
+function getUniqueVocabPackOptionLabels(packs) {
+    const labelCounts = new Map();
+    packs.forEach((pack) => {
+        const label = getVocabPackOptionLabel(pack);
+        labelCounts.set(label, (labelCounts.get(label) || 0) + 1);
+    });
+    return packs.map((pack) => {
+        const label = getVocabPackOptionLabel(pack);
+        if ((labelCounts.get(label) || 0) <= 1) return [pack.id, label];
+        const fallback = String(pack?.id || "").trim().split(".").pop() || "pack";
+        return [pack.id, `${label}（${fallback}）`];
+    });
+}
+
 function renderVocabSelect() {
     const sel = document.getElementById("opt-vocab");
     if (!sel) return;
@@ -840,30 +879,10 @@ function renderVocabSelect() {
         grouped[stage].push(p);
     });
 
-    // Define stage order and labels
-    const stageOrder = ["bridge", "kindergarten", "elementary", "junior_high", "minecraft", "custom"];
-    const stageLabels = {
-        "bridge": "幼小衔接",
-        "kindergarten": "幼儿园",
-        "elementary": "小学",
-        "junior_high": "初中",
-        "minecraft": "我的世界",
-        "custom": "自定义"
-    };
-
-    // Define level order
-    const levelOrder = ["basic", "intermediate", "advanced", "full"];
-    const levelLabels = {
-        "basic": "初级",
-        "intermediate": "中级",
-        "advanced": "高级",
-        "full": "完整"
-    };
-
     // Render grouped options
-    stageOrder.forEach(stage => {
+    VOCAB_STAGE_ORDER.forEach(stage => {
         if (!grouped[stage]) return;
-        const group = add(null, stageLabels[stage] || stage, true);
+        const group = add(null, VOCAB_STAGE_LABELS[stage] || stage, true);
 
         if (stage === "bridge") {
             addToGroup(group, BRIDGE_AUTO_SELECTION, "幼小衔接-语文/数学/英语轮询");
@@ -873,13 +892,11 @@ function renderVocabSelect() {
         const packs = grouped[stage].sort((a, b) => {
             const aLevel = a.level || "full";
             const bLevel = b.level || "full";
-            return levelOrder.indexOf(aLevel) - levelOrder.indexOf(bLevel);
+            return VOCAB_LEVEL_ORDER.indexOf(aLevel) - VOCAB_LEVEL_ORDER.indexOf(bLevel);
         });
 
-        packs.forEach(p => {
-            const levelLabel = levelLabels[p.level] || p.level || "";
-            const title = levelLabel ? `${levelLabel}` : p.title;
-            addToGroup(group, p.id, title);
+        getUniqueVocabPackOptionLabels(packs).forEach(([id, label]) => {
+            addToGroup(group, id, label);
         });
     });
 
@@ -1367,8 +1384,25 @@ function getBridgeGradeScopeLabel(scope) {
     return labelMap[normalized] || "学前到小学二年级";
 }
 
+function normalizeBridgeGradeBand(gradeBand) {
+    const raw = String(gradeBand || "").trim();
+    const aliasMap = {
+        "": "",
+        学前: "学前",
+        一年级: "一年级",
+        二年级: "二年级",
+        "学前-一年级": "学前-一年级",
+        学前到一年级: "学前-一年级",
+        "学前-二年级": "学前-二年级",
+        学前到二年级: "学前-二年级",
+        "一年级-二年级": "一年级-二年级",
+        一年级到二年级: "一年级-二年级"
+    };
+    return aliasMap[raw] || raw;
+}
+
 function getBridgeScopeTagsFromGradeBand(gradeBand) {
-    const normalized = String(gradeBand || "").trim();
+    const normalized = normalizeBridgeGradeBand(gradeBand);
     if (!normalized) return [];
     const explicitMap = {
         学前: ["preschool"],
@@ -1376,8 +1410,10 @@ function getBridgeScopeTagsFromGradeBand(gradeBand) {
         二年级: ["grade2"],
         "学前-一年级": ["preschool", "grade1"],
         "学前-二年级": ["preschool", "grade1", "grade2"],
+        "一年级-二年级": ["grade1", "grade2"],
         学前到一年级: ["preschool", "grade1"],
-        学前到二年级: ["preschool", "grade1", "grade2"]
+        学前到二年级: ["preschool", "grade1", "grade2"],
+        一年级到二年级: ["grade1", "grade2"]
     };
     if (explicitMap[normalized]) return explicitMap[normalized];
     const tags = [];
@@ -1400,10 +1436,27 @@ function getBridgeGradeScopeTags(scope) {
     return scopeMap[normalized] || scopeMap.preschool_grade2;
 }
 
+function getBridgeAllowedGradeBands(scope) {
+    const normalized = normalizeBridgeGradeScope(scope);
+    const allowMap = {
+        preschool: ["学前", "学前-一年级", "学前-二年级"],
+        grade1: ["一年级", "学前-一年级", "学前-二年级"],
+        grade2: ["二年级", "一年级-二年级", "学前-二年级"],
+        preschool_grade1: ["学前", "一年级", "学前-一年级", "学前-二年级"],
+        preschool_grade2: ["学前", "一年级", "二年级", "学前-一年级", "一年级-二年级", "学前-二年级"],
+        all: ["学前", "一年级", "二年级", "学前-一年级", "一年级-二年级", "学前-二年级"]
+    };
+    return allowMap[normalized] || allowMap.preschool_grade2;
+}
+
 function doesWordMatchBridgeGradeScope(wordObj, scope) {
     const normalizedScope = normalizeBridgeGradeScope(scope);
     if (normalizedScope === "all") return true;
-    const gradeTags = getBridgeScopeTagsFromGradeBand(wordObj?.gradeBand);
+    const normalizedGradeBand = normalizeBridgeGradeBand(wordObj?.gradeBand);
+    if (!normalizedGradeBand) return true;
+    const allowedGradeBands = getBridgeAllowedGradeBands(normalizedScope);
+    if (allowedGradeBands.length) return allowedGradeBands.includes(normalizedGradeBand);
+    const gradeTags = getBridgeScopeTagsFromGradeBand(normalizedGradeBand);
     if (!gradeTags.length) return true;
     const scopeTags = getBridgeGradeScopeTags(normalizedScope);
     return gradeTags.some(tag => scopeTags.includes(tag));
