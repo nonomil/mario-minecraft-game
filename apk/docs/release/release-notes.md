@@ -1,5 +1,49 @@
 ﻿# Release Notes
 
+## v1.19.46 (2026-03-20)
+
+### 📚 Vocabulary / Learning
+- **汉字 / 拼音词库入口独立**:
+  - `vocab.kindergarten.hanzi` 与 `vocab.kindergarten.pinyin` 改为真正独立的汉字 / 拼音包，不再回退到桥接总包
+  - 设置页与预览文案按模式单独分组，减少重名和误选
+- **幼小衔接课堂化收口**:
+  - 继续清理幼小衔接单词卡、提示文案、测验纠错和 HUD 元信息
+  - 英语 / 汉字模式不再显示幼小衔接层级选择，拼音模式保留更合适的年级范围
+
+### 🛠️ Stability / UX Fixes
+- **TTS 发音恢复**:
+  - 修复 APK TTS provider 不可用时所有词库都无法发音的问题
+  - 现在会优先判断原生 provider 是否真的可用，再自动回退到 Web TTS
+- **抽词与测验去重稳定**:
+  - 抽词器、跟随短语、挑战候选统一改用稳定词条键
+  - 修复汉字模式切换后重复刷出少数几个词、候选池误排除和短语跟随重复的问题
+- **显示风格更贴近课堂**:
+  - 拼音模式圆圈默认显示汉字，不再默认露出拼音
+  - 拼音/汉字/幼小衔接模式的标题、提示、上下文徽标与报告文案更统一
+
+### 🧪 Verification
+- `node --check src/modules/09-vocab.js`
+- `node --check src/modules/10-ui.js`
+- `node --check src/modules/11-game-init.js`
+- `node --check src/modules/12-challenges.js`
+- `node --check src/modules/13-game-loop.js`
+- `node --check src/modules/14-renderer-main.js`
+- `node --check src/modules/16-events.js`
+- `node --check src/modules/17-bootstrap.js`
+- `node --check words/vocabs/manifest.js`
+- `node tests/unit/vocab-pack-switch-regression.test.mjs`
+- `node tests/unit/bridge-language-ui-regression.test.mjs`
+- `node tests/unit/bridge-grade-scope-regression.test.mjs`
+- `node tests/unit/kindergarten-hanzi-regression.test.mjs`
+- `node tests/unit/pinyin-pack-regression.test.mjs`
+- `node tests/unit/bridge-play-display.test.mjs`
+
+### 📦 Technical Changes
+- 统一版本元数据到 `v1.19.46 / build 98`
+- 更新 `version.json`、`package.json`、`android-app/package.json`、`android-app/android/app/build.gradle`、`android-app/web/build-info.json`
+- 更新 `service-worker.js` 缓存版本与 `Game.html` 资源缓存戳到 `v1.19.46`
+- 提取本次相关 Git 记录：`5599e8e feat: finalize bridge vocab curation and learning polish`
+
 ## v1.19.45 (2026-03-19)
 
 ### 📚 Bridge Learning

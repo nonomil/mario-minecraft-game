@@ -650,15 +650,17 @@ function update() {
         if (rectIntersect(player.x, player.y, player.width, player.height, item.x, item.y + item.floatY, 30, 30)) {
             item.collected = true;
             addScore(gameConfig.scoring.word);
-            if (wordPicker && typeof wordPicker.updateWordQuality === "function" && item.wordObj?.en) {
-                wordPicker.updateWordQuality(item.wordObj.en, "correct_slow");
+            if (wordPicker && typeof wordPicker.updateWordQuality === "function") {
+                wordPicker.updateWordQuality(item.wordObj, "correct_slow");
             }
             recordWordProgress(item.wordObj);
             speakWord(item.wordObj);
 
             // Show floating text based on language mode
             const displayContent = window.BilingualVocab?.getDisplayContent?.(item.wordObj);
-            const floatingText = displayContent ? displayContent.primaryText : (item.wordObj.zh || item.wordObj.en);
+            const floatingText = typeof getWorldWordDisplayText === "function"
+                ? getWorldWordDisplayText(item.wordObj)
+                : (displayContent ? displayContent.primaryText : (item.wordObj.zh || item.wordObj.en));
             showFloatingText(floatingText, item.x, item.y);
 
             maybeTriggerLearningChallenge(item.wordObj);

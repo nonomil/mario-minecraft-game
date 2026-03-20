@@ -3,28 +3,40 @@
  * 从 main.js 拆分 (原始行 7402-7663)
  */
 
+function canUseApkTtsProvider() {
+    try {
+        const Cap = window.Capacitor;
+        return !!(Cap && typeof Cap.isNativePlatform === "function" && Cap.isNativePlatform());
+    } catch {
+        return false;
+    }
+}
+
 function initializeTtsProvider() {
-    // Detect platform and initialize appropriate TTS provider
     const platformTarget = window.MMWG_PLATFORM_TARGET || "web";
 
     try {
-        if (platformTarget === "apk" || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
-            // Use APK provider for Capacitor environment
-            if (typeof ApkTtsProvider !== "undefined") {
-                window.MMWG_TTS = new ApkTtsProvider();
+        const isNativeApk = canUseApkTtsProvider();
+        if ((platformTarget === "apk" || isNativeApk) && typeof ApkTtsProvider !== "undefined") {
+            const apkProvider = new ApkTtsProvider();
+            const apkDiagnosis = typeof apkProvider.diagnose === "function" ? apkProvider.diagnose() : null;
+            if (apkDiagnosis?.available || isNativeApk) {
+                window.MMWG_TTS = apkProvider;
                 console.log("[TTS] Initialized APK TTS Provider");
                 return;
             }
-        } else if (platformTarget === "mini") {
-            // Use Mini provider for miniprogram environment
-            if (typeof MiniTtsProvider !== "undefined") {
-                window.MMWG_TTS = new MiniTtsProvider();
+        }
+
+        if (platformTarget === "mini" && typeof MiniTtsProvider !== "undefined") {
+            const miniProvider = new MiniTtsProvider();
+            const miniDiagnosis = typeof miniProvider.diagnose === "function" ? miniProvider.diagnose() : null;
+            if (miniDiagnosis?.environment && miniDiagnosis.environment !== "none") {
+                window.MMWG_TTS = miniProvider;
                 console.log("[TTS] Initialized Mini TTS Provider");
                 return;
             }
         }
 
-        // Default to Web provider
         if (typeof WebTtsProvider !== "undefined") {
             window.MMWG_TTS = new WebTtsProvider();
             console.log("[TTS] Initialized Web TTS Provider");
@@ -578,9 +590,14 @@ function initializeLanguageModeOnboarding() {
         }
     }
     const gradeSelection = document.getElementById("login-grade-scope-selection");
-    if (gradeSelection) {
-        gradeSelection.style.display = "block";
+    function syncLoginBridgeGradeScopeVisibility(nextMode) {
+        if (!gradeSelection) return;
+        const normalized = nextMode === "pinyin" ? "pinyin" : (nextMode === "chinese" ? "chinese" : "english");
+        const visible = normalized === "pinyin";
+        gradeSelection.style.display = visible ? "block" : "none";
+        gradeSelection.setAttribute("aria-hidden", visible ? "false" : "true");
     }
+    syncLoginBridgeGradeScopeVisibility(mode);
 
     const normalizeGradeScope = (scope) => window.BilingualVocab?.normalizeBridgeGradeScope?.(scope || "") || "preschool_grade2";
     const formatGradeScope = (scope) => window.BilingualVocab?.getBridgeGradeScopeLabel?.(scope || "") || "学前到小学二年级";
@@ -638,6 +655,7 @@ function initializeLanguageModeOnboarding() {
         if (languageSelection) {
             languageSelection.style.display = "none";
         }
+        syncLoginBridgeGradeScopeVisibility(normalized);
     };
 
     const enBtn = document.getElementById("btn-language-mode-english");

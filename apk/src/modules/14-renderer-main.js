@@ -537,6 +537,11 @@ function drawItem(x, y, text) {
 
 function getWorldWordDisplayText(wordObj) {
     const displayContent = window.BilingualVocab?.getDisplayContent?.(wordObj);
+    const languageMode = window.BilingualVocab?.getCurrentLanguageMode?.() || "english";
+    if (languageMode === "pinyin") {
+        const bridgeChinese = String(wordObj?.chinese || wordObj?.zh || wordObj?.character || "").trim();
+        if (bridgeChinese) return bridgeChinese;
+    }
     const primaryText = String(displayContent?.primaryText || "").trim();
     if (primaryText) return primaryText;
     const fallbackChinese = String(wordObj?.zh || wordObj?.chinese || "").trim();

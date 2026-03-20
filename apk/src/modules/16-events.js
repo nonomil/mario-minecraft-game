@@ -51,13 +51,18 @@ function wireSettingsModal() {
     const optVocab = document.getElementById("opt-vocab");
     const optBridgeGradeScope = document.getElementById("opt-bridge-grade-scope");
     const bridgeGradeScopePresets = document.getElementById("bridge-grade-scope-presets");
+    const settingsBridgeGradeScopeRow = document.getElementById("settings-bridge-grade-scope-row");
     const vocabPromptGradeScope = document.getElementById("vocab-prompt-grade-scope");
     const vocabPromptGradePresets = document.getElementById("vocab-prompt-grade-presets");
+    const vocabPromptGradeScopeSection = document.getElementById("vocab-prompt-grade-scope-section");
     if (optVocab) {
         optVocab.addEventListener("change", () => updateVocabPreview(optVocab.value));
     }
     if (optBridgeGradeScope) {
         optBridgeGradeScope.addEventListener("change", () => updateVocabPreview(optVocab ? optVocab.value : settings.vocabSelection));
+    }
+    if (optLanguageMode) {
+        optLanguageMode.addEventListener("change", () => syncBridgeGradeScopeVisibility(optLanguageMode.value));
     }
     if (optSpeechZhEnabled && optSpeechZh) {
         optSpeechZhEnabled.addEventListener("change", () => {
@@ -78,6 +83,17 @@ function wireSettingsModal() {
     function syncBridgePresetUI(root = document) {
         window.BilingualVocab?.syncBridgeGradeScopePresetState?.(root);
     }
+
+    function syncBridgeGradeScopeVisibility(nextMode) {
+        const mode = nextMode === "pinyin" ? "pinyin" : (nextMode === "chinese" ? "chinese" : "english");
+        const visible = mode === "pinyin";
+        [settingsBridgeGradeScopeRow, vocabPromptGradeScopeSection].forEach((section) => {
+            if (!section) return;
+            section.style.display = visible ? "" : "none";
+            section.setAttribute("aria-hidden", visible ? "false" : "true");
+        });
+    }
+    window.syncBridgeGradeScopeVisibility = syncBridgeGradeScopeVisibility;
 
     function bindBridgeGradeScopePresetGroup(container, selectEl, onChange) {
         if (!container || !selectEl) return;
@@ -211,6 +227,7 @@ function wireSettingsModal() {
         if (progressVocab) updateVocabProgressUI();
         if (optVocab) updateVocabPreview(optVocab.value);
         syncBridgePresetUI(document);
+        syncBridgeGradeScopeVisibility(settings.languageMode);
     }
 
     function open() {

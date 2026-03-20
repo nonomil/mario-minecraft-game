@@ -152,8 +152,14 @@ function shuffle(arr) {
     return a;
 }
 
+function getWordPickerKey(wordObj) {
+    const key = window.BilingualVocab?.getWordKey?.(wordObj);
+    if (key) return String(key).trim();
+    return String(wordObj?.en || wordObj?.word || wordObj?.zh || "").trim();
+}
+
 function buildWordPicker() {
-    const base = Array.isArray(wordDatabase) ? wordDatabase.filter(w => w && w.en) : [];
+    const base = Array.isArray(wordDatabase) ? wordDatabase.filter(w => w && getWordPickerKey(w)) : [];
     let bag = shuffle(base);
     let cursor = 0;
     const INTERVALS = {
@@ -164,14 +170,17 @@ function buildWordPicker() {
     const stats = Object.create(null);
     const due = Object.create(null);
     const recentWords = [];
-    const unseen = shuffle(base.map(w => w.en));
+    const unseen = shuffle(base.map(w => getWordPickerKey(w)).filter(Boolean));
     let tick = 0;
-    const byEn = Object.create(null);
-    base.forEach(w => { byEn[w.en] = w; });
-    function ensureStat(en) {
-        if (!en) return null;
-        if (!stats[en]) {
-            stats[en] = {
+    const byKey = Object.create(null);
+    base.forEach(w => {
+        const key = getWordPickerKey(w);
+        if (key && !byKey[key]) byKey[key] = w;
+    });
+    function ensureStat(wordKey) {
+        if (!wordKey) return null;
+        if (!stats[wordKey]) {
+            stats[wordKey] = {
                 count: 0,
                 quality: "correct_slow",
                 mastery: 0,
@@ -181,7 +190,7 @@ function buildWordPicker() {
                 lastTick: 0
             };
         }
-        return stats[en];
+        return stats[wordKey];
     }
 
     function getRepeatBias() {
@@ -193,15 +202,15 @@ function buildWordPicker() {
         return Math.max(1, Number(settings?.wordRepeatWindow) || 6);
     }
 
-    function pushRecentWord(en) {
-        if (!en) return;
-        recentWords.push(en);
+    function pushRecentWord(wordKey) {
+        if (!wordKey) return;
+        recentWords.push(wordKey);
         const windowSize = getRepeatWindow();
         while (recentWords.length > windowSize) recentWords.shift();
     }
 
-    function getCandidateScore(wordObj, nextDueTick, bias) {
-        const st = ensureStat(wordObj.en);
+    function getCandidateScore(wordKey, nextDueTick, bias) {
+        const st = ensureStat(wordKey);
         const dueReady = Math.max(0, tick - nextDueTick);
         const weakBoost = Math.max(0, 2 - Number(st.mastery || 0));
         const wrongBoost = bias === "reinforce_wrong" ? Math.min(4, Number(st.wrong || 0)) : 0;
@@ -213,11 +222,12 @@ function buildWordPicker() {
         let bestScore = -Infinity;
         for (let i = 0; i < base.length; i++) {
             const w = bag[cursor++ % bag.length];
-            if (!w || excludes.has(w.en)) continue;
-            const nextDue = typeof due[w.en] === "number" ? due[w.en] : 0;
+            const wordKey = getWordPickerKey(w);
+            if (!w || !wordKey || excludes.has(wordKey)) continue;
+            const nextDue = typeof due[wordKey] === "number" ? due[wordKey] : 0;
             if (nextDue > tick) continue;
-            if (!allowRecentWords && windowSet.has(w.en)) continue;
-            const score = getCandidateScore(w, nextDue, bias);
+            if (!allowRecentWords && windowSet.has(wordKey)) continue;
+            const score = getCandidateScore(wordKey, nextDue, bias);
             if (score > bestScore) {
                 best = w;
                 bestScore = score;
@@ -235,21 +245,21 @@ function buildWordPicker() {
             tick++;
 
             for (let tries = 0; tries < unseen.length; tries++) {
-                const en = unseen[0];
-                if (!en) break;
-                if (!excludes.has(en) && !stats[en]) {
+                const wordKey = unseen[0];
+                if (!wordKey) break;
+                if (!excludes.has(wordKey) && !stats[wordKey]) {
                     unseen.shift();
-                    const st = ensureStat(en);
+                    const st = ensureStat(wordKey);
                     st.count = 1;
                     st.seen = (st.seen || 0) + 1;
                     st.lastTick = tick;
                     const ivl = INTERVALS.correct_slow;
-                    due[en] = tick + ivl[Math.min(st.count, ivl.length - 1)];
-                    pushRecentWord(en);
-                    return byEn[en] || base[0];
+                    due[wordKey] = tick + ivl[Math.min(st.count, ivl.length - 1)];
+                    pushRecentWord(wordKey);
+                    return byKey[wordKey] || base[0];
                 }
                 unseen.shift();
-                unseen.push(en);
+                unseen.push(wordKey);
             }
 
             const bias = getRepeatBias();
@@ -257,19 +267,21 @@ function buildWordPicker() {
             let best = pickBestDueWord(excludes, windowSet, bias, false);
             if (!best) best = pickBestDueWord(excludes, windowSet, bias, true);
             const chosen = best || base[Math.floor(Math.random() * base.length)];
-            const st = ensureStat(chosen.en);
+            const chosenKey = getWordPickerKey(chosen);
+            const st = ensureStat(chosenKey);
             st.count++;
             st.seen = (st.seen || 0) + 1;
             st.lastTick = tick;
             const q = st.quality || "correct_slow";
             const ivl = INTERVALS[q] || INTERVALS.correct_slow;
-            due[chosen.en] = tick + ivl[Math.min(st.count, ivl.length - 1)];
-            pushRecentWord(chosen.en);
+            due[chosenKey] = tick + ivl[Math.min(st.count, ivl.length - 1)];
+            pushRecentWord(chosenKey);
             return chosen;
         },
-        updateWordQuality(en, quality) {
-            if (!en) return;
-            const st = ensureStat(en);
+        updateWordQuality(wordKeyOrWord, quality) {
+            const wordKey = typeof wordKeyOrWord === "string" ? String(wordKeyOrWord).trim() : getWordPickerKey(wordKeyOrWord);
+            if (!wordKey) return;
+            const st = ensureStat(wordKey);
             st.quality = quality || "correct_slow";
             if (quality === "wrong") {
                 st.mastery = Math.max(-3, Number(st.mastery || 0) - 2);
@@ -283,11 +295,13 @@ function buildWordPicker() {
                 st.streak = Math.max(0, Number(st.streak || 0)) + 1;
             }
             if (quality === "wrong") {
-                due[en] = tick;
+                due[wordKey] = tick;
             }
         },
-        getWordStats(en) {
-            const key = String(en || "").trim();
+        getWordStats(wordKeyOrWord) {
+            const key = typeof wordKeyOrWord === "string"
+                ? String(wordKeyOrWord).trim()
+                : getWordPickerKey(wordKeyOrWord);
             const st = key ? stats[key] : null;
             return st ? { ...st } : null;
         }
@@ -356,7 +370,7 @@ function createFollowUpPhraseItem(wordObj, gapRemaining) {
         phraseZh: "",
         phraseTranslation: "",
         __followUpPhrase: true,
-        __sourceWordEn: String(wordObj.en || "").trim(),
+        __sourceWordKey: getWordPickerKey(wordObj),
         __gapRemaining: Math.max(0, Number(gapRemaining) || 0)
     };
 }
@@ -389,7 +403,7 @@ function maybeEnqueueFollowUpPhrase(wordObj) {
     } else if (mode === "hybrid") {
         let directRatio = Math.max(0, Math.min(1, Number(settings?.phraseFollowDirectRatio) || 0.7));
         if (isPhraseFollowAdaptiveEnabled() && wordPicker && typeof wordPicker.getWordStats === "function") {
-            const st = wordPicker.getWordStats(wordObj.en);
+            const st = wordPicker.getWordStats(wordObj);
             const mastery = Number(st?.mastery || 0);
             if (mastery <= -1) directRatio = Math.max(directRatio, 0.9);
             else if (mastery >= 3) directRatio = Math.min(directRatio, 0.25);
@@ -400,11 +414,11 @@ function maybeEnqueueFollowUpPhrase(wordObj) {
     const phraseItem = createFollowUpPhraseItem(wordObj, gapRemaining);
     if (!phraseItem) return;
     const phraseKey = normalizeWordKey(phraseItem.en);
-    const sourceKey = normalizeWordKey(phraseItem.__sourceWordEn);
+    const sourceKey = normalizeWordKey(phraseItem.__sourceWordKey);
     const duplicate = followUpQueue.some(q =>
         q &&
         normalizeWordKey(q.en) === phraseKey &&
-        normalizeWordKey(q.__sourceWordEn) === sourceKey
+        normalizeWordKey(q.__sourceWordKey) === sourceKey
     );
     if (duplicate) return;
     const metrics = ensureFollowUpMetrics();
@@ -458,8 +472,12 @@ function pickWordForSpawn() {
     metrics.pickCalls++;
     const exclude = new Set();
     if (settings.avoidWordRepeats) {
-        items.forEach(i => { if (i && i.wordObj && i.wordObj.en) exclude.add(i.wordObj.en); });
-        if (lastWord && lastWord.en) exclude.add(lastWord.en);
+        items.forEach(i => {
+            const wordKey = i && i.wordObj ? getWordPickerKey(i.wordObj) : "";
+            if (wordKey) exclude.add(wordKey);
+        });
+        const lastWordKey = getWordPickerKey(lastWord);
+        if (lastWordKey) exclude.add(lastWordKey);
     }
     const followWord = maybeTakeFollowUpPhrase(exclude);
     if (followWord) {

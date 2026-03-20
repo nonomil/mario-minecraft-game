@@ -164,22 +164,14 @@ window.vocabManifest.packs.push({
 window.vocabManifest.packs.push({
   id: 'vocab.kindergarten.hanzi',
   title: '幼儿园汉字',
-  stage: 'kindergarten',
+  stage: 'hanzi',
   difficulty: 'basic',
   level: 'full',
   weight: 1,
   mode: 'chinese',
   type: 'hanzi',
-  files: [
-    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
-    'words/vocabs/06_汉字/幼儿园汉字.js',
-    'words/vocabs/07_拼音/常用拼音.js',
-    'words/vocabs/08_幼小衔接/幼小衔接总词库.js',
-    'words/vocabs/08_幼小衔接/幼小衔接_语文.js',
-    'words/vocabs/08_幼小衔接/幼小衔接_数学.js',
-    'words/vocabs/08_幼小衔接/幼小衔接_英语.js'
-  ],
-  globals: ['BRIDGE_VOCAB_FULL']
+  file: 'words/vocabs/06_汉字/幼儿园汉字.js',
+  globals: ['kindergartenHanzi']
 });
 
 // ========================================
@@ -189,22 +181,14 @@ window.vocabManifest.packs.push({
 window.vocabManifest.packs.push({
   id: 'vocab.kindergarten.pinyin',
   title: '幼儿园拼音',
-  stage: 'kindergarten',
+  stage: 'pinyin',
   difficulty: 'basic',
   level: 'full',
   weight: 1,
   mode: 'pinyin',
   type: 'pinyin',
-  files: [
-    'words/vocabs/01_幼儿园/幼儿园完整词库.js',
-    'words/vocabs/06_汉字/幼儿园汉字.js',
-    'words/vocabs/07_拼音/常用拼音.js',
-    'words/vocabs/08_幼小衔接/幼小衔接总词库.js',
-    'words/vocabs/08_幼小衔接/幼小衔接_语文.js',
-    'words/vocabs/08_幼小衔接/幼小衔接_数学.js',
-    'words/vocabs/08_幼小衔接/幼小衔接_英语.js'
-  ],
-  globals: ['BRIDGE_VOCAB_FULL']
+  file: 'words/vocabs/07_拼音/常用拼音.js',
+  globals: ['PINYIN_CORE_PACK']
 });
 
 // ========================================

@@ -22,6 +22,28 @@ function testBridgeDisplayContentCarriesGradeAndTip() {
   assert.match(source, /拓展识词/, "拓展词汇模块应有更明确的学习标签");
 }
 
+function testBridgeWorldItemsDoNotDefaultToPinyinOnOrbLabel() {
+  const source = read("src/modules/14-renderer-main.js");
+
+  assert.match(source, /function getWorldWordDisplayText\(/, "世界中的词条圆圈应保留独立显示文案函数");
+  assert.match(source, /getCurrentLanguageMode\?\.?\(\)/, "世界词条显示应识别当前学习模式");
+  assert.match(source, /wordObj\?\.chinese/, "幼小衔接圆圈文案应优先回退到汉字");
+  assert.match(source, /if \(languageMode === "pinyin"\)/, "幼小衔接圆圈应为拼音模式单独处理显示文案");
+}
+
+function testBridgeGradeScopeUiOnlyShowsInPinyinMode() {
+  const html = read("Game.html");
+  const bootstrapSource = read("src/modules/17-bootstrap.js");
+  const eventsSource = read("src/modules/16-events.js");
+
+  assert.match(html, /id="settings-bridge-grade-scope-row"/, "设置页应为学习层级提供独立容器");
+  assert.match(html, /id="vocab-prompt-grade-scope-section"/, "词库提示弹窗应为学习层级提供独立容器");
+  assert.match(bootstrapSource, /function syncLoginBridgeGradeScopeVisibility\(/, "登录页应提供学习层级显隐同步函数");
+  assert.match(bootstrapSource, /normalized === "pinyin"/, "登录页学习层级应仅在幼小衔接模式显示");
+  assert.match(eventsSource, /function syncBridgeGradeScopeVisibility\(/, "设置页应提供学习层级显隐同步函数");
+  assert.match(eventsSource, /mode === "pinyin"/, "设置页与词库弹窗学习层级应仅在幼小衔接模式显示");
+}
+
 function testBridgeChallengeUiUsesMetaAndKnownHanziPool() {
   const source = read("src/modules/12-challenges.js");
 
@@ -78,12 +100,22 @@ function testBridgeWordCardHasModeThemes() {
   assert.match(styles, /#word-card\.word-card-theme-pinyin/, "词卡样式应提供幼小衔接模式主题");
 }
 
+function testPinyinWordCardHidesNoisyTips() {
+  const source = read("src/modules/12-challenges.js");
+
+  assert.match(source, /function getWordCardMetaText\(/, "词卡元信息应通过独立函数生成");
+  assert.match(source, /languageMode === "pinyin"/, "幼小衔接词卡应支持单独的元信息裁剪");
+  assert.match(source, /return displayContent\?\.metaText \|\| ""/, "幼小衔接词卡应仅保留必要元信息，不再拼接提示口号");
+  assert.match(source, /function getHudMetaText\(/, "主 HUD 元信息应通过独立函数生成");
+  assert.match(source, /return displayContent\?\.metaText \|\| ""/, "幼小衔接主 HUD 应仅保留必要元信息");
+}
+
 function testBridgeChallengePromptsAreMoreClassroomLike() {
   const source = read("src/modules/12-challenges.js");
 
-  assert.match(source, /拼出正确词语/, "拼音到汉字挑战应支持更贴近低年级课堂的词语提示");
-  assert.match(source, /认出诗句片段/, "古诗挑战应给出更贴近朗读场景的提示");
-  assert.match(source, /选出正确读音/, "汉字到拼音挑战应使用更自然的课堂化提示");
+  assert.match(source, /看拼音，选汉字/, "幼小衔接拼音到汉字题面应收敛为短指令");
+  assert.match(source, /看词语，选拼音/, "幼小衔接汉字到拼音题面应收敛为短指令");
+  assert.match(source, /选对声调/, "幼小衔接声调题面应保持简短明确");
 }
 
 function testLearningReportUsesModeSpecificLabels() {
@@ -91,16 +123,17 @@ function testLearningReportUsesModeSpecificLabels() {
 
   assert.match(source, /function getLearningReportModeProfile\(/, "学习报告应按模式生成专属文案配置");
   assert.match(source, /识字遇见/, "汉字模式报告应使用识字向标签");
-  assert.match(source, /拼音认读/, "幼小衔接报告应使用拼音向标签");
+  assert.match(source, /拼音学习/, "幼小衔接报告应使用更简洁的拼音向标签");
   assert.match(source, /今天还没有识字记录/, "空状态应按模式切换为更贴切的提示");
+  assert.match(source, /先读几个拼音词，报告会自动生成/, "幼小衔接空状态说明应更精简");
 }
 
 function testWordMatchUsesClassroomModeHints() {
   const source = read("src/modules/10-ui.js");
 
   assert.match(source, /function getWordMatchHint\(/, "复活配对应保留独立提示生成器");
-  assert.match(source, /把拼音卡和汉字卡全部连好/, "幼小衔接复活配对提示应更像课堂卡片任务");
-  assert.match(source, /把汉字卡和拼音卡全部连好/, "汉字模式复活配对提示应更像识字卡片任务");
+  assert.match(source, /拼音卡配汉字卡/, "幼小衔接复活配对提示应更短更聚焦");
+  assert.match(source, /汉字卡配拼音卡/, "汉字模式复活配对提示应更短更聚焦");
 }
 
 function testWordMatchHasModeThemes() {
@@ -117,8 +150,33 @@ function testWordMatchUsesModeSpecificTitles() {
   const source = read("src/modules/10-ui.js");
 
   assert.match(source, /function getWordMatchTitle\(/, "复活配对标题应保留独立的模式文案生成器");
-  assert.match(source, /拼音配对复活/, "幼小衔接模式复活配对标题应更贴近拼音课堂");
-  assert.match(source, /识字配对复活/, "汉字模式复活配对标题应更贴近识字课堂");
+  assert.match(source, /拼音配对/, "幼小衔接模式复活配对标题应更简洁");
+  assert.match(source, /识字配对/, "汉字模式复活配对标题应更简洁");
+}
+
+function testPinyinChallengeContextIsCompact() {
+  const source = read("src/modules/12-challenges.js");
+
+  assert.match(source, /function getCompactPinyinContextHint\(/, "幼小衔接挑战上下文应提供精简文案函数");
+  assert.match(source, /scopeHint \|\| moduleName \|\| formatBridgeGradeBandLabel/, "幼小衔接挑战提示应优先保留必要层级信息");
+  assert.match(source, /getLanguageModeSafe\(\) === "pinyin"\s*\?\s*getCompactPinyinContextHint/, "幼小衔接题面应切换到精简提示来源");
+}
+
+function testPinyinChallengeCorrectionHidesExtraExplanation() {
+  const source = read("src/modules/12-challenges.js");
+
+  assert.match(source, /function getChallengeCorrectionText\(/, "挑战纠正区应通过独立函数生成说明文案");
+  assert.match(source, /mode === "pinyin"/, "幼小衔接挑战纠正区应支持单独裁剪");
+  assert.match(source, /return "";/, "幼小衔接挑战纠正区应允许隐藏扩展说明");
+}
+
+function testPinyinDisplayContentDropsExtraGloss() {
+  const vocabSource = read("src/modules/09-vocab.js");
+  const challengeSource = read("src/modules/12-challenges.js");
+
+  assert.match(vocabSource, /if \(languageMode === "pinyin"\)/, "幼小衔接显示内容应单独分支处理");
+  assert.match(vocabSource, /phraseSecondary:\s*""/, "幼小衔接展示内容不应默认附带扩展释义");
+  assert.match(challengeSource, /phraseSecondary:\s*""/, "幼小衔接兜底显示内容也不应默认附带扩展释义");
 }
 
 function testWordMatchShowsCurrentGradeScope() {
@@ -135,14 +193,20 @@ function testWordMatchShowsCurrentGradeScope() {
 
 function run() {
   testBridgeModeShowsLearningMeta();
-  testBridgeDisplayContentCarriesGradeAndTip();
+testBridgeDisplayContentCarriesGradeAndTip();
+testBridgeWorldItemsDoNotDefaultToPinyinOnOrbLabel();
+  testBridgeGradeScopeUiOnlyShowsInPinyinMode();
   testBridgeChallengeUiUsesMetaAndKnownHanziPool();
   testSingleHanziUsesExampleAwareChallenge();
   testAdaptiveChallengeTitleExists();
   testBridgeChallengeUiShowsCurrentGradeScope();
   testBridgeChallengeUiHasContextBadge();
   testBridgeWordCardHasModeThemes();
+  testPinyinWordCardHidesNoisyTips();
   testBridgeChallengePromptsAreMoreClassroomLike();
+  testPinyinChallengeContextIsCompact();
+  testPinyinChallengeCorrectionHidesExtraExplanation();
+  testPinyinDisplayContentDropsExtraGloss();
   testLearningReportUsesModeSpecificLabels();
   testWordMatchUsesClassroomModeHints();
   testWordMatchHasModeThemes();

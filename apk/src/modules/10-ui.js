@@ -398,16 +398,16 @@ function getLearningReportModeProfile() {
     if (mode === "pinyin") {
         return {
             mode,
-            titleNoun: "拼音认读报告",
-            modeLabel: "幼小衔接",
-            uniqueLabel: "拼音认读",
-            accuracyLabel: "认读答对率",
+            titleNoun: "拼音学习报告",
+            modeLabel: "拼音模式",
+            uniqueLabel: "拼音学习",
+            accuracyLabel: "认读正确率",
             minutesLabel: "学习分钟",
             emptyTitle: "今天还没有拼音认读记录",
-            emptyDesc: "先读几个拼音词并完成一次认读挑战，报告会自动生成。",
+            emptyDesc: "先读几个拼音词，报告会自动生成。",
             correctTitleBase: "读准的词",
             wrongTitleBase: "还需再读",
-            correctEmptyText: "今天还没有读准的词，再试一次认读挑战吧！",
+            correctEmptyText: "今天还没有读准的词，再读几组试试吧！",
             wrongEmptyText: "今天没有读错的词，继续保持！",
             wrongShareLabel: "还需再读"
         };
@@ -798,8 +798,8 @@ function getWordMatchHint(words) {
     const subject = [...subjects][0];
     const mode = settings.languageMode;
     if (subject === "language") {
-        if (mode === "pinyin") return "把拼音卡和汉字卡全部连好，配对成功就能复活";
-        if (mode === "chinese") return "把汉字卡和拼音卡全部连好，配对成功就能复活";
+        if (mode === "pinyin") return "拼音卡配汉字卡";
+        if (mode === "chinese") return "汉字卡配拼音卡";
         return "把词语卡和意思卡全部连好，配对成功就能复活";
     }
     if (subject === "math") return "把概念卡和关键词卡全部连好，配对成功就能复活";
@@ -813,8 +813,8 @@ function getWordMatchTitle(words) {
     const subject = [...subjects][0];
     const mode = settings.languageMode;
     if (subject === "language") {
-        if (mode === "pinyin") return "拼音配对复活";
-        if (mode === "chinese") return "识字配对复活";
+        if (mode === "pinyin") return "拼音配对";
+        if (mode === "chinese") return "识字配对";
         return "词语配对复活";
     }
     if (subject === "math") return "数学配对复活";
