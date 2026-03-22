@@ -55,6 +55,7 @@ function wireSettingsModal() {
     const vocabPromptGradeScope = document.getElementById("vocab-prompt-grade-scope");
     const vocabPromptGradePresets = document.getElementById("vocab-prompt-grade-presets");
     const vocabPromptGradeScopeSection = document.getElementById("vocab-prompt-grade-scope-section");
+    const optLanguageMode = document.getElementById("opt-language-mode");
     if (optVocab) {
         optVocab.addEventListener("change", () => updateVocabPreview(optVocab.value));
     }
@@ -74,7 +75,6 @@ function wireSettingsModal() {
     const optWordMatch = document.getElementById("opt-word-match");
     const optSpeed = document.getElementById("opt-speed");
     const optKeys = document.getElementById("opt-keys");
-    const optLanguageMode = document.getElementById("opt-language-mode");
     const optShowPinyin = document.getElementById("opt-show-pinyin");
     let resetArmed = false;
     let resetTimer = null;
