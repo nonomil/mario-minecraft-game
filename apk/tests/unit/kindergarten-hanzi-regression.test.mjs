@@ -60,6 +60,10 @@ function testKindergartenHanziUsesSingleCharacterEntries() {
     assert.equal(hasSentencePunctuation(entry.phraseTranslation), false, `phraseTranslation 应是组词而不是整句: ${entry.word}`);
     for (const example of entry.examples) {
       assert.ok(
+        [...String(example.word || "").trim()].length >= 2,
+        `examples 应提供真实组词而不是单字回退: ${entry.word} -> ${example.word}`
+      );
+      assert.ok(
         exampleUsesOnlyPackCharacters(example.word, words),
         `examples 应仅使用汉字包内字符: ${entry.word} -> ${example.word}`
       );

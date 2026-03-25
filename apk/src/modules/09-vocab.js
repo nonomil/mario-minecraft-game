@@ -1683,6 +1683,7 @@ function getWordMetaText(safeWord, languageMode) {
     const moduleName = String(safeWord?.module || "").trim();
     const gradeBand = String(safeWord?.gradeBand || "").trim();
     const isHanziWord = Boolean(safeWord?.character && safeWord?.examples && safeWord.examples.length);
+    if (isHanziWord || stage === "bridge") return "";
     const stageLabel = isHanziWord
         ? "汉字模式"
         : (stage === "bridge" ? "幼小衔接" : (stage === "kindergarten" ? "幼儿园" : ""));
@@ -1698,6 +1699,9 @@ function getWordTipText(safeWord, languageMode) {
     const gradeBand = String(safeWord?.gradeBand || "").trim();
     const textLength = [...String(safeWord?.chinese || safeWord?.character || safeWord?.word || "").trim()].length;
     const isHanziWord = Boolean(safeWord?.character && safeWord?.examples && safeWord.examples.length);
+    const stage = String(safeWord?.stage || "").trim().toLowerCase();
+
+    if (isHanziWord || stage === "bridge") return "";
 
     if (isHanziWord) {
         return languageMode === "pinyin"

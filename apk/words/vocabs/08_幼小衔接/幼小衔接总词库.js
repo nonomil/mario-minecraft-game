@@ -227,6 +227,8 @@ const FALLBACK_PINYIN_PAIRS = [
   ["文", "wén"],
   ["明", "míng"],
   ["乐", "lè"],
+  ["完", "wán"],
+  ["达", "dá"],
   ["睛", "jīng"],
   ["朵", "duǒ"],
   ["齿", "chǐ"],
@@ -678,7 +680,12 @@ const BRIDGE_EXCLUDED_FRAGMENTS = [
   "传送",
   "附魔",
   "出生点",
-  "采集木头"
+  "采集木头",
+  "坐标",
+  "上方",
+  "下方",
+  "餐厅",
+  "收音机"
 ];
 
 function containsExcludedBridgeFragment(text) {
@@ -700,8 +707,65 @@ function isBridgeReadyText(text, { minLen = 1, maxLen = 99 } = {}) {
     && Boolean(toPinyin(normalized));
 }
 
+const BRIDGE_EXPRESSION_FIXED_TEXTS = new Set([
+  "你好", "早上好", "晚上好", "午安", "晚安", "再见", "谢谢", "不客气", "对不起",
+  "请问", "请进", "请坐", "请慢走", "你好吗", "你真棒", "别着急", "慢慢来", "请等一下",
+  "再试一次", "生日快乐", "节日快乐", "新年快乐", "我爱你", "我想你", "请安静", "请排队",
+  "我们开始", "我们结束", "可以吗", "不可以", "我明白了", "我知道了"
+]);
+
+const BRIDGE_EXPRESSION_ALLOWED_PREFIXES = [
+  "我", "我们", "请", "请你", "请老师", "请妈妈", "一起", "在家", "在学校", "在操场",
+  "在公园", "在教室", "在图书馆", "去", "先", "再", "慢慢", "别", "谢谢", "对不起",
+  "你好", "早上好", "晚上好", "午安", "晚安", "再见"
+];
+
+const BRIDGE_EXPRESSION_ALLOWED_TOKENS = [
+  "读", "写", "说", "讲", "听", "看", "问", "答", "朗读", "跟读", "回答", "补充",
+  "表达", "分享", "查字典", "读书", "写字", "画画", "唱歌", "跳舞", "跑步", "走路",
+  "排队", "安静", "开始", "结束", "休息", "洗手", "洗脸", "洗澡", "穿衣", "吃饭",
+  "喝水", "整理", "收拾", "开门", "关门", "上学", "上课", "下课", "放学", "举手",
+  "游泳", "买", "给"
+];
+
+const BRIDGE_EXPRESSION_ALLOWED_POSSESSIVE_PREFIXES = [
+  "我的", "你的", "我们的", "谢谢你的"
+];
+
+const BRIDGE_EXPRESSION_ALLOWED_NOUN_PHRASES = new Set([
+  "我的家人", "我的同学", "我的朋友"
+]);
+
+const BRIDGE_EXPRESSION_ALLOWED_NUMERIC_PREFIXES = [
+  "我想要", "我要", "请给我", "我喜欢"
+];
+
 function isBridgeExpression(text) {
-  return isBridgeReadyText(text, { minLen: 2, maxLen: 6 });
+  const normalized = String(text || "").trim();
+  if (!isBridgeReadyText(normalized, { minLen: 2, maxLen: 8 })) return false;
+  if (BRIDGE_EXPRESSION_FIXED_TEXTS.has(normalized)) return true;
+  if (BRIDGE_EXPRESSION_ALLOWED_NOUN_PHRASES.has(normalized)) return true;
+  if (normalized.includes("的") && !BRIDGE_EXPRESSION_ALLOWED_POSSESSIVE_PREFIXES.some((prefix) => normalized.startsWith(prefix))) {
+    return false;
+  }
+  if ((normalized.startsWith("我的") || normalized.startsWith("你的") || normalized.startsWith("我们的"))
+    && !BRIDGE_EXPRESSION_ALLOWED_NOUN_PHRASES.has(normalized)) {
+    return false;
+  }
+  if (/^(一|二|三|四|五|六|七|八|九|十|两|几|第)/.test(normalized)
+    && !BRIDGE_EXPRESSION_ALLOWED_NUMERIC_PREFIXES.some((prefix) => normalized.startsWith(prefix))) {
+    return false;
+  }
+  if (normalized.endsWith("天气") && !normalized.startsWith("今天天气")) {
+    return false;
+  }
+  if (BRIDGE_EXPRESSION_ALLOWED_PREFIXES.some((prefix) => normalized.startsWith(prefix))) {
+    return normalized.startsWith("请")
+      || normalized.startsWith("谢谢")
+      || normalized.startsWith("对不起")
+      || BRIDGE_EXPRESSION_ALLOWED_TOKENS.some((token) => normalized.includes(token));
+  }
+  return BRIDGE_EXPRESSION_ALLOWED_TOKENS.some((token) => normalized.includes(token));
 }
 
 function filterPinyinReadyWords(words, { minLen = 1, maxLen = 99 } = {}) {
@@ -813,7 +877,7 @@ const EXTRA_OBJECT_WORDS = [
   "衣服", "裤子", "裙子", "鞋子", "袜子", "帽子", "手套", "围巾",
   "口罩", "面具", "相机", "钢琴",
   "枕头", "毛毯", "地毯", "帐篷", "浴缸",
-  "盘子", "盒子", "柜子", "水壶",
+  "盘子", "盒子", "柜子", "水壶", "小勺",
   "玩具", "积木", "皮球", "风筝"
 ];
 
@@ -847,7 +911,7 @@ const EXTRA_GRADE12_LANGUAGE_WORDS = [
 const EXTRA_CAMPUS_SCENE_WORDS = [
   "值日", "值日生", "值日表", "课程表", "作息表", "座位", "座位表", "排座位", "换座位", "班长",
   "组长", "小组长", "课代表", "同学们", "老师好", "红领巾", "队礼", "队旗", "升旗", "校服",
-  "校门", "进校门", "出校门", "教室门", "走廊", "楼梯", "楼道", "图书角", "黑板报", "公告栏",
+  "校门", "进校门", "出校门", "教室门", "走廊", "楼梯", "楼道", "图书角", "黑板报", "书架",
   "领奖台", "讲故事", "听故事", "读故事", "故事书", "童话书", "图画书", "课外书", "借书卡", "借书",
   "还书", "文具盒", "书皮", "包书皮", "削铅笔", "装书包", "整理书包", "收作业", "发作业", "交作业",
   "改作业", "讲题", "答题", "提问题", "做眼操", "广播操", "眼保健操", "排队走", "排好队", "站整齐",
@@ -868,7 +932,7 @@ const EXTRA_READING_WRITING_WORDS = [
   "课外阅读", "读书角", "朗读本", "阅读本", "拼读本", "写字纸", "生字卡", "词语表", "句子本", "课堂笔记",
   "阅读单", "小练笔", "读后感", "背课文", "抄词语", "查字表", "查词卡", "句子条", "词语条", "识字卡",
   "听写词", "默写词", "读一读", "写一写", "说一说", "想一想", "写日记", "做笔记", "读课文", "写词语",
-  "展示台", "日积月累", "我爱阅读", "快乐读书", "读书分享", "课本剧", "整本书", "读书单", "预习单", "学习单",
+  "语文园地", "日积月累", "故事时间", "读书时间", "故事书", "图画书", "图书角", "借书袋", "书架", "观察日记",
   "查字典", "部首查字", "音序查字", "课前准备", "朗读课文", "借助拼音", "读准字音", "分角色读",
   "音序表", "部首表", "阅读交流", "课堂展示",
   "讲评课", "观察日记", "阅读笔记", "写话练习", "词语练习", "短文练习", "听写练习", "默写练习", "组词练习"
@@ -877,7 +941,7 @@ const EXTRA_READING_WRITING_WORDS = [
 const EXTRA_CLASS_ROUTINE_WORDS = [
   "打铃", "上操", "做操", "小队长", "值日组", "排座位", "换座位", "进教室", "出教室", "回座位",
   "放学路队", "排队走", "站整齐", "坐端正", "举小手", "写姓名", "发新书", "包书皮", "交本子", "收本子",
-  "摆桌椅", "清洁区", "卫生角", "图书角", "图书袋", "黑板报", "公告栏", "上课铃", "下课铃", "预备铃",
+  "摆桌椅", "清洁区", "卫生角", "图书角", "图书袋", "黑板报", "书架", "上课铃", "下课铃", "预备铃",
   "眼保健操", "进校园", "出校园", "小组合作", "合作学习", "发本子"
 ];
 
@@ -898,13 +962,33 @@ const BRIDGE_LANGUAGE_WORD_BLACKLIST = new Set([
   "大云", "小云", "大星", "小星", "大月", "小月", "大日", "小日",
   "大医院", "小医院", "大超市", "小超市", "大公园", "小公园", "大操场", "小操场",
   "大教室", "小教室", "大门口", "小门口", "大香皂", "小香皂", "大牙膏", "小牙膏",
-  "大蜂蜜", "小蜂蜜"
+  "大蜂蜜", "小蜂蜜",
+  "课程表", "作息表", "座位表", "公告栏", "告示栏", "借阅架", "借书卡", "阅读卡", "查词卡",
+  "记录表", "提示卡", "题卡", "词卡", "图示卡", "读书卡", "读书台", "摘抄栏",
+  "午睡室", "保健室", "值班室", "公交卡",
+  "观察册", "写话单", "记录册", "预习单", "学习单", "读书单", "任务单", "任务卡",
+  "记录卡", "阅读交流卡", "课堂展示台", "读书分享会", "整本书阅读", "图书漂流", "评价表",
+  "打卡表", "值日册", "点名册", "通知单", "请假条", "校门队", "队列表", "评比栏",
+  "轮流表", "分组表", "早读表", "句式表", "阅读表", "阅读台", "展示台", "课堂展示",
+  "阅读交流", "讲评课", "讲评卡", "阅读栏", "写话栏", "分享栏", "观察表", "计划表",
+  "评分表", "朗读单", "练习单", "实验单", "句式卡", "好词卡", "好句卡", "摘抄卡",
+  "词语条", "读书条", "朗读条", "拼读条",
+  "留言卡", "展示栏", "作品栏", "阅读任务", "观察记录", "学习记录", "阅读题卡", "整理单"
 ]);
+
+const BRIDGE_LANGUAGE_WORD_FRAGMENT_BLACKLIST = [
+  "公告栏", "告示栏", "课程表", "作息表", "座位表", "记录表", "提示卡", "题卡", "词卡",
+  "图示卡", "读书卡", "读书台", "摘抄栏", "借阅架", "保健室", "值班室", "午睡室",
+  "服务台", "售票处", "候车亭", "管理员", "保育员", "清洁工", "任务单", "记录卡",
+  "评价表", "打卡表", "轮流表", "分组表", "值日册", "队列表", "点名册", "流程图", "路线图",
+  "阅读交流卡", "讲评卡", "读书分享", "整本书", "讲评", "评分", "词语条", "读书条", "朗读条", "拼读条"
+];
 
 function isNaturalLanguageWord(word) {
   const value = String(word || "").trim();
   if (!value) return false;
   if (BRIDGE_LANGUAGE_WORD_BLACKLIST.has(value)) return false;
+  if (BRIDGE_LANGUAGE_WORD_FRAGMENT_BLACKLIST.some((fragment) => value.includes(fragment))) return false;
   return !/^[一二三四五六七八九十]个$/.test(value);
 }
 
@@ -983,17 +1067,17 @@ const GRADE1_TAGGED_LANGUAGE_WORDS = new Set(filterPinyinReadyWords(uniqueList([
   "上课铃", "下课铃", "预备铃", "书写提示", "我的发现", "课文插图", "口语交际", "课前准备", "朗读课文",
   "借助拼音", "读准字音", "晨检表",
   "午餐盘", "借阅架", "护眼操", "餐巾纸"
-]), { minLen: 2, maxLen: 4 }));
+]), { minLen: 2, maxLen: 4 }).filter(isNaturalLanguageWord));
 
 const GRADE12_TAGGED_LANGUAGE_WORDS = new Set(filterPinyinReadyWords(uniqueList([
   "识字表", "写字表", "生字表", "组词本", "默写本", "语文园地", "日记本", "周记本", "看图说话", "课外阅读",
   "读书角", "朗读本", "阅读本", "拼读本", "写字纸", "词语表", "句子本", "阅读单", "小练笔", "读后感",
   "查字表", "查词卡", "句子条", "词语条", "故事复述", "看图表达", "句子接龙", "词语接龙", "阅读题", "练习题",
-  "展示台", "日积月累", "我爱阅读", "快乐读书", "读书分享", "课本剧", "整本书", "读书单", "预习单", "学习单",
+  "语文园地", "日积月累", "故事时间", "读书时间", "故事书", "图画书", "图书角", "借书袋", "书架", "观察日记",
   "查字典", "部首查字", "音序查字", "分角色读", "音序表", "部首表", "阅读交流", "课堂展示",
   "讲评课", "观察日记", "阅读笔记", "写话练习", "词语练习", "短文练习", "听写练习", "默写练习", "组词练习",
   "识字卡片", "拼音卡片"
-]), { minLen: 2, maxLen: 4 }));
+]), { minLen: 2, maxLen: 4 }).filter(isNaturalLanguageWord));
 
 const EXPRESSION_BASE = filterPinyinReadyWords(
   [
@@ -1075,11 +1159,6 @@ const LANGUAGE_EXPRESSIONS = uniqueList([
   .filter((text) => isBridgeExpression(text))
   .slice(0, 2000);
 
-const SEASONS = ["春", "夏", "秋", "冬"];
-const TIMES = ["晨", "夜", "晚", "朝", "暮"];
-const NATURE = ["风", "雨", "雪", "月", "花", "水", "山", "云", "星", "林", "溪", "田", "草", "鸟", "松"];
-const SCENES = ["江", "湖", "海", "田", "园", "村", "桥", "路", "竹", "柳", "河", "岭", "泉", "石", "沙"];
-const POEM_ACTIONS = ["行", "歌", "望", "游", "梦", "思", "吟", "听", "看", "归", "行旅"];
 const POEM_EXTRA = [
   "山水", "江南", "小池", "梅花", "春晓", "秋思", "月夜", "风雨", "花香", "渔歌",
   "牧童", "静夜", "春风", "秋月", "夏雨", "冬雪", "松风", "竹影", "清泉", "归舟",
@@ -1087,14 +1166,12 @@ const POEM_EXTRA = [
 ];
 
 const POEM_TITLES = uniqueList([
-  ...combine(SEASONS, NATURE),
-  ...combine(SEASONS, SCENES),
-  ...combine(TIMES, NATURE),
-  ...combine(TIMES, SCENES),
-  ...combine(NATURE, SCENES),
-  ...combine(SCENES, POEM_ACTIONS),
+  "咏鹅", "春晓", "静夜思", "悯农", "画", "江南", "池上", "小池", "所见", "村居",
+  "梅花", "风", "画鸡", "蜂", "古朗月行", "寻隐者不遇", "登鹳雀楼", "赠汪伦",
+  "夜宿山寺", "早发白帝城", "望庐山瀑布", "绝句", "山行", "清明", "相思", "鹿柴",
+  "鸟鸣涧", "游子吟", "赋得古原草送别", "九月九日忆山东兄弟", "江雪", "夜雨寄北",
   ...POEM_EXTRA
-]).slice(0, 220);
+]).slice(0, 80);
 
 const BRIDGE_LANGUAGE_WORDS = LANGUAGE_WORDS
   .map((word, index) => {
@@ -1146,72 +1223,149 @@ function uniqueModuleItems(items) {
   });
 }
 
-function buildModuleItems(baseWords, comboSpecs, limit) {
-  const items = [];
-  baseWords.forEach((word) => items.push([word, [word]]));
-  comboSpecs.forEach(([prefixes, suffixes]) => {
-    prefixes.forEach((p) => {
-      suffixes.forEach((s) => {
-        const word = `${p}${s}`;
-        items.push([word, [p, s]]);
-      });
-    });
-  });
-  return uniqueModuleItems(items).slice(0, limit);
+const BRIDGE_MATH_WORD_BLACKLIST = new Set([
+  "统计",
+  "换算",
+  "估算",
+  "对称",
+  "组合",
+  "验证",
+  "项目任务",
+  "活动计划",
+  "时间安排",
+  "路线图",
+  "调查表",
+  "观察表",
+  "记录表",
+  "任务卡"
+]);
+
+const BRIDGE_MATH_WORD_FRAGMENT_BLACKLIST = [
+  "方法",
+  "规则",
+  "项目",
+  "计划",
+  "安排",
+  "路线图",
+  "调查表",
+  "观察表",
+  "记录表",
+  "任务卡"
+];
+
+function isConcreteMathWord(word) {
+  const normalized = String(word || "").trim();
+  if (!normalized) return false;
+  if (BRIDGE_MATH_WORD_BLACKLIST.has(normalized)) return false;
+  return !BRIDGE_MATH_WORD_FRAGMENT_BLACKLIST.some((fragment) => normalized.includes(fragment));
 }
 
-const NUM_LIMITS = ["十以内", "二十以内", "三十以内", "五十以内", "一百以内", "两位数", "三位数"];
-const NUM_OPERATIONS = ["加法", "减法", "加减", "连加", "连减", "比较", "排序", "倍数", "凑整", "平均", "口算", "心算"];
-const NUM_TASKS = ["练习", "题", "计算", "应用"];
+function buildCuratedModuleItems(words, limit) {
+  return uniqueModuleItems(
+    uniqueList(words).map((word) => [word, [word]])
+  )
+    .filter(([word]) => isConcreteMathWord(word))
+    .slice(0, limit);
+}
+
+function buildMappedModuleItems(baseWords, mappedSpecs, limit) {
+  const items = [];
+  baseWords.forEach((word) => items.push([word, [word]]));
+  mappedSpecs.forEach(([prefix, suffixes]) => {
+    normalizeArray(suffixes).forEach((suffix) => {
+      const word = `${prefix}${suffix}`;
+      items.push([word, [prefix, suffix]]);
+    });
+  });
+  return uniqueModuleItems(items)
+    .filter(([word]) => isConcreteMathWord(word))
+    .slice(0, limit);
+}
+
 const NUM_BASE = [
-  "数数", "数一数", "数一数有几", "多少", "一共", "合并", "拆分", "等于", "大于", "小于",
-  "多一些", "少一些", "相等", "顺序", "单位", "整数", "奇数", "偶数", "凑十", "进位",
-  "退位", "借位", "进位加法", "退位减法", "加倍", "分成", "平分", "平均分", "分组",
-  "比较大小", "排列", "数位", "个位", "十位", "百位"
+  "数数", "数一数", "数一数有几", "几个", "多少", "一共", "合起来", "分一分", "分成", "平分",
+  "等于", "大于", "小于", "相等", "多一些", "少一些", "同样多", "比较大小", "排序", "顺序",
+  "个位", "十位", "凑十", "加法", "减法", "连加", "连减", "口算", "比大小", "按顺序排",
+  "十以内", "二十以内", "一百以内", "两位数", "排第几", "第几个", "前一个", "后一个",
+  "多1", "少1", "多2", "少2", "十个一", "一个十"
+];
+const NUM_MAPPED = [
+  ["十以内", ["加减", "比较"]],
+  ["二十以内", ["加减", "比较", "进位"]],
+  ["一百以内", ["加减", "比较"]],
+  ["两位数", ["比较", "排序"]],
+  ["比", ["大小", "多少"]]
 ];
 
-const LOGIC_BASE = [
-  "分类", "配对", "规律", "推理", "判断", "推断", "条件", "结果", "可能", "一定",
-  "相同", "不同", "比较", "排序", "对应", "组合", "拆分", "对称", "位置", "方向",
-  "先后", "左右", "前后", "里外", "因果", "顺序", "递推", "联想", "选择", "排除",
-  "猜测", "验证"
+const LOGIC_WORDS = [
+  "找规律", "看规律", "接着排", "接着画", "补一补", "排顺序", "圈一圈", "连一连",
+  "分一分", "配一配", "摆一摆", "找相同", "找不同", "同一类", "不同类", "大中小",
+  "长短", "高矮", "轻重", "前后", "左右", "里外", "上面", "下面", "中间",
+  "看位置", "认方向", "先后顺序", "左右顺序", "前后位置", "按大小规律", "按颜色分",
+  "按形状分", "按长短排", "按高矮排", "按轻重排", "颜色配对", "图形配对", "数量配对",
+  "下一组", "缺的图形", "缺的数字", "缺的位置", "规律积木", "规律珠子", "规律图形"
 ];
-const LOGIC_PREFIXES = ["规律", "条件", "逻辑", "推理", "分类", "排序", "比较", "判断", "组合", "对应", "位置", "方向"];
-const LOGIC_SUFFIXES = ["关系", "问题", "练习", "任务", "游戏", "方法", "顺序", "规则", "图", "表"];
 
-const MEASURE_BASE = [
-  "长短", "高低", "轻重", "快慢", "早晚", "冷热", "多少", "时间表", "统计图", "表格",
-  "图表", "对比", "记录", "统计", "换算", "估算"
+const MEASURE_WORDS = [
+  "长短", "高低", "轻重", "快慢", "早晚", "冷热", "比多少", "整点", "半点", "几点",
+  "几分", "时针", "分针", "钟面", "看钟面", "认钟面", "看时间", "认时间", "现在几点",
+  "早上", "上午", "中午", "下午", "晚上", "昨天", "今天", "明天", "看日历", "看星期",
+  "看月份", "星期顺序", "月份顺序", "一元", "五角", "一角", "纸币", "硬币", "认钱币",
+  "数钱", "换零钱", "找零钱", "比价钱", "看价签", "买东西", "买文具", "买水果", "付钱",
+  "找回", "数一数", "分一分", "看条形图", "画条形图", "数玩具", "数水果", "数铅笔", "数图形", "数小动物"
 ];
-const MEASURES = ["长度", "高度", "重量", "速度", "时间", "温度", "面积", "体积", "容量", "距离", "钱币", "日期", "星期", "月份"];
-const MEASURE_ACTIONS = ["比较", "测量", "记录", "统计", "估算", "换算", "读数", "排序", "整理", "对比", "观察", "选择"];
 
-const SHAPE_BASE = [
-  "图形", "空间", "形状", "边数", "角数", "立体图形", "平面图形", "对称轴", "方向感", "坐标"
+const SHAPE_WORDS = [
+  "图形", "形状", "圆形", "三角形", "正方形", "长方形", "直线", "曲线",
+  "角", "边", "图形分类", "图形配对", "图形拼搭", "图形拼图", "拼图形", "摆图形", "找图形",
+  "数图形", "分图形", "看位置", "认方向", "左右", "前后", "上面", "下面", "里面",
+  "外面", "图形比较", "小房子", "小火箭", "七巧板"
 ];
-const SHAPES = ["圆形", "三角形", "正方形", "长方形", "梯形", "菱形", "圆柱", "圆锥", "球体", "立方体", "长方体", "平面", "直线", "曲线", "角", "边", "顶点"];
-const SHAPE_ACTIONS = ["识别", "分类", "拼搭", "对称", "旋转", "平移", "比较", "组合", "拆分", "观察", "位置", "方向"];
 
 const STORY_BASE = [
-  "应用题", "文字题", "看图题", "数量关系", "求一共", "求还剩", "求差", "求和",
-  "比较题", "分配题", "加减法题", "多多少少"
+  "圈出最多的", "圈出最少的", "圈出一样多的", "分给几个小朋友", "分给几个同学", "分给几个伙伴",
+  "分成两份", "分成三份", "分成四份", "分成五份",
+  "苹果比梨多几个", "苹果比梨少几个", "糖果比饼干多几个", "糖果比饼干少几个",
+  "铅笔比橡皮多几个", "铅笔比橡皮少几个", "积木比气球多几个", "积木比气球少几个",
+  "图书比玩具多几个", "图书比玩具少几个", "小花比小树多几个", "小花比小树少几个"
 ];
-const STORY_VERBS = ["买了", "用了", "还剩", "一共", "平均", "每个", "每份", "分给", "多了", "少了", "增加", "减少", "合起来", "去掉", "剩下", "多几个", "少几个", "比一比"];
-const STORY_OBJECTS = ["苹果", "糖果", "铅笔", "玩具", "书", "小朋友", "气球", "花", "鱼", "饼干", "金币", "积木", "球", "橡皮", "贴纸"];
+const STORY_COUNT_ITEMS = [
+  "几个苹果", "几颗糖果", "几支铅笔", "几块积木", "几个气球", "几本图书", "几朵小花",
+  "几个玩具", "几块饼干", "几个梨", "几根香蕉", "几只小鸭", "几个皮球", "几个桃子"
+];
+const STORY_SHARE_ITEMS = [
+  "几个苹果", "几颗糖果", "几支铅笔", "几块积木", "几个气球", "几本图书", "几块饼干", "几根香蕉"
+];
+const STORY_COMPARE_ITEMS = [
+  "苹果和梨", "糖果和饼干", "铅笔和橡皮", "积木和气球", "图书和玩具", "小花和小树"
+];
+const STORY_MAPPED = [
+  ["一共有", STORY_COUNT_ITEMS],
+  ["还剩", STORY_COUNT_ITEMS],
+  ["又来了", STORY_COUNT_ITEMS],
+  ["拿走", STORY_COUNT_ITEMS],
+  ["还差", STORY_COUNT_ITEMS],
+  ["合起来", STORY_COUNT_ITEMS],
+  ["每人分", STORY_SHARE_ITEMS],
+  ["每份放", STORY_SHARE_ITEMS],
+  ["比一比", STORY_COMPARE_ITEMS]
+];
 
-const PRACTICE_BASE = [
-  "小实验", "实践活动", "项目任务", "调查表", "观察表", "记录表", "活动计划", "时间安排", "路线图", "任务卡"
+const PRACTICE_WORDS = [
+  "量一量", "比一比", "数一数玩具", "数一数水果", "数一数积木", "数一数贴纸", "分一分水果", "分一分玩具",
+  "分一分贴纸", "摆一摆积木", "摆一摆图形", "拼一拼图形", "拼七巧板", "看日历", "看星期", "看月份",
+  "认时钟", "认钱币", "看价签", "买文具", "买水果", "付钱", "找零钱", "看钟面",
+  "数气球", "数小花", "数铅笔", "分水果", "分糖果", "摆图形", "找规律", "看位置",
+  "画条形图", "比长短", "比高矮", "按颜色分", "按形状分"
 ];
-const PRACTICE_TASKS = ["统计", "记录", "整理", "分类", "测量", "观察", "调查", "计划", "安排", "实验", "制作", "绘图", "对比", "总结", "分享", "实践", "探索"];
-const PRACTICE_CONTEXTS = ["天气", "植物", "动物", "玩具", "家庭", "时间", "路线", "购物", "运动", "校园", "节日", "交通", "社区", "食物", "安全"];
 
 const MATH_MODULES = {
-  "数与运算": buildModuleItems(NUM_BASE, [[NUM_LIMITS, NUM_OPERATIONS], [NUM_OPERATIONS, NUM_TASKS]], 180),
-  "逻辑推理": buildModuleItems(LOGIC_BASE, [[LOGIC_PREFIXES, LOGIC_SUFFIXES]], 180),
-  "量与统计": buildModuleItems(MEASURE_BASE, [[MEASURES, MEASURE_ACTIONS]], 180),
-  "图形与空间": buildModuleItems(SHAPE_BASE, [[SHAPES, SHAPE_ACTIONS]], 180),
-  "应用题专项": buildModuleItems(STORY_BASE, [[STORY_VERBS, STORY_OBJECTS]], 180),
-  "综合实践": buildModuleItems(PRACTICE_BASE, [[PRACTICE_TASKS, PRACTICE_CONTEXTS]], 180)
+  "数与运算": buildMappedModuleItems(NUM_BASE, NUM_MAPPED, 180),
+  "逻辑推理": buildCuratedModuleItems(LOGIC_WORDS, 180),
+  "量与统计": buildCuratedModuleItems(MEASURE_WORDS, 180),
+  "图形与空间": buildCuratedModuleItems(SHAPE_WORDS, 180),
+  "应用题专项": buildMappedModuleItems(STORY_BASE, STORY_MAPPED, 180),
+  "综合实践": buildCuratedModuleItems(PRACTICE_WORDS, 180)
 };
 
 const BRIDGE_MATH_PACK = Object.entries(MATH_MODULES).flatMap(([moduleName, items]) =>
@@ -1267,13 +1421,12 @@ const ENGLISH_SOUND_PATTERNS = [
   "sh", "ch", "th", "ph", "wh", "qu", "ee", "oo", "ea", "ai",
   "ay", "oa", "oe", "ou", "ow", "ie", "igh", "ar", "er", "ir",
   "or", "ur", "ng", "nk", "ck", "ll", "ss", "ff", "zz", "tch",
-  "dge", "tion", "sion", "ing", "ed", "er", "est"
+  "ing", "ed", "er", "est"
 ];
 
 const ENGLISH_BLEND_ONSETS = [
   "bl", "cl", "fl", "gl", "pl", "sl", "br", "cr", "dr", "fr",
-  "gr", "pr", "tr", "sk", "sp", "st", "sm", "sn", "sw", "tw",
-  "spr", "spl", "str"
+  "gr", "pr", "tr", "sk", "sp", "st", "sm", "sn", "sw", "tw", "spr", "str"
 ];
 
 const ENGLISH_RIMES = [
@@ -1295,6 +1448,12 @@ const ENGLISH_WORDS_BASE = [
 
 const KINDER_ENGLISH_WORDS = uniqueList(collectEnglishWords(KINDER_VOCAB_SOURCE));
 const ENGLISH_WORD_POOL = KINDER_ENGLISH_WORDS.length ? KINDER_ENGLISH_WORDS : ENGLISH_WORDS_BASE;
+
+function isSoundExampleWord(word) {
+  return ENGLISH_SOUND_PATTERNS.some((pattern) => word.includes(pattern))
+    || ENGLISH_BLEND_ONSETS.some((onset) => word.startsWith(onset))
+    || ENGLISH_RIMES.some((rime) => word.endsWith(rime));
+}
 
 const ENGLISH_LETTER_COMBOS = uniqueList([
   ...ENGLISH_SOUND_PATTERNS,
@@ -1323,11 +1482,18 @@ const ENGLISH_PHONICS_WORDS = uniqueList([
   ...ENGLISH_WORD_POOL.filter(isSimplePhonics)
 ]).slice(0, 320);
 
+const ENGLISH_SOUND_EXAMPLE_WORDS = uniqueList(
+  ENGLISH_WORD_POOL
+    .filter((word) => /^[a-z]{2,8}$/.test(word))
+    .filter((word) => word.length >= 2)
+    .filter(isSoundExampleWord)
+);
+
 const ENGLISH_SOUND_ITEMS = uniqueList([
   ...ENGLISH_SOUND_PATTERNS,
   ...ENGLISH_BLEND_ONSETS,
   ...ENGLISH_RIMES,
-  ...combine(ENGLISH_BLEND_ONSETS, ENGLISH_RIMES)
+  ...ENGLISH_SOUND_EXAMPLE_WORDS
 ]).slice(0, 320);
 
 const ENGLISH_WORDS = uniqueList(ENGLISH_WORD_POOL).slice(0, 320);

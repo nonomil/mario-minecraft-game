@@ -23,7 +23,7 @@ test("Bridge vocab packs should be expanded", async ({ page }) => {
   }));
 
   expect(counts.language).toBeGreaterThanOrEqual(260);
-  expect(counts.math).toBeGreaterThanOrEqual(1200);
-  expect(counts.english).toBeGreaterThanOrEqual(1400);
-  expect(counts.full).toBeGreaterThanOrEqual(3000);
+  expect(counts.math).toBeGreaterThanOrEqual(680);
+  expect(counts.english).toBeGreaterThanOrEqual(1200);
+  expect(counts.full).toBeGreaterThanOrEqual(2400);
 });

@@ -7,49 +7,260 @@ if (typeof window !== "undefined" && window.kindergartenHanzi) {
 // Sources: zispace/hanzi-chars common 800 list, makemeahanzi definitions, HSK 1-7 example words.
 const MAX_EXAMPLES = 2;
 const HANZI_ENTRY_OVERRIDES = Object.freeze({
+  "厂": { english: "factory", examples: [["工厂", "factory"], ["厂门", "factory gate"]] },
+  "贝": { english: "shell", examples: [["贝壳", "shell"]] },
+  "布": { english: "cloth", examples: [["布袋", "cloth bag"], ["花布", "printed cloth"]] },
+  "成": { english: "grow", examples: [["成长", "grow up"], ["长成", "grow into"]] },
+  "传": { english: "pass on", examples: [["传球", "pass the ball"], ["传话", "pass a message"]] },
+  "调": { english: "adjust", examples: [["调色", "mix colors"], ["空调", "air conditioner"]] },
+  "豆": { english: "bean", examples: [["豆子", "bean"], ["豆花", "bean curd jelly"]] },
+  "告": { english: "tell", examples: [["告诉", "tell"], ["告别", "say goodbye"]] },
+  "感": { english: "feel", examples: [["感觉", "feeling"], ["感动", "moved"]] },
+  "何": { english: "what", examples: [["如何", "how"], ["何时", "when"]] },
+  "呼": { english: "call", examples: [["招呼", "greet"], ["欢呼", "cheer"]] },
+  "湖": { english: "lake", examples: [["湖水", "lake water"], ["湖边", "lakeside"]] },
+  "户": { english: "door", examples: [["户外", "outdoors"], ["窗户", "window"]] },
+  "及": { english: "reach", examples: [["来不及", "too late"], ["及时", "in time"]] },
+  "计": { english: "count", examples: [["计数", "count"], ["计时", "time counting"]] },
+  "久": { english: "long time", examples: [["不久", "before long"], ["久等", "wait long"]] },
+  "局": { english: "game round", examples: [["棋局", "chess game"]] },
+  "力": { english: "strength", examples: [["力气", "strength"], ["有力", "strong"]] },
+  "人": { english: "person", examples: [["家人", "family"], ["人们", "people"]] },
+  "入": { english: "enter", examples: [["入口", "entrance"], ["进入", "go in"]] },
   "保": { english: "protect", examples: [["保护", "protect"]] },
+  "口": { english: "mouth", examples: [["开口", "open mouth"], ["口袋", "pocket"]] },
+  "苦": { english: "bitter", examples: [["苦瓜", "bitter melon"], ["苦味", "bitter taste"]] },
+  "客": { english: "guest", examples: [["客人", "guest"], ["客厅", "living room"]] },
+  "料": { english: "material", examples: [["布料", "cloth"], ["材料", "material"]] },
+  "浪": { english: "wave", examples: [["海浪", "sea wave"], ["浪花", "wave splash"]] },
+  "列": { english: "row", examples: [["队列", "line"], ["排列", "arrange"]] },
+  "领": { english: "neck", examples: [["领口", "collar"], ["红领巾", "red scarf"]] },
+  "露": { english: "show", examples: [["露出", "show"], ["雨露", "dew"]] },
   "中": { english: "middle", examples: [["中间", "middle"]] },
   "古": { english: "old", examples: [["古老", "old"]] },
+  "贵": { english: "expensive", examples: [["贵的", "expensive"], ["宝贵", "precious"]] },
+  "过": { english: "pass", examples: [["过去", "go over"], ["过桥", "cross the bridge"]] },
+  "妙": { english: "wonderful", examples: [["巧妙", "clever"], ["美妙", "wonderful"]] },
+  "忙": { english: "busy", examples: [["忙着", "busy"], ["很忙", "very busy"]] },
+  "末": { english: "end", examples: [["周末", "weekend"], ["月末", "end of month"]] },
+  "免": { english: "free from", examples: [["免费", "free"], ["难免", "hard to avoid"]] },
+  "念": { english: "read aloud", examples: [["念书", "study"], ["想念", "miss"]] },
+  "南": { english: "south", examples: [["南方", "south"], ["南北", "south and north"]] },
   "新": { english: "new", examples: [["新年", "New Year"]] },
-  "第": { english: "order", examples: [["第二", "second"]] },
+  "内": { english: "inside", examples: [["内外", "inside and outside"], ["室内", "indoors"]] },
+  "爪": { english: "paw", examples: [["爪子", "paw"]] },
+  "公": { english: "public", examples: [["公园", "park"], ["公鸡", "rooster"]] },
+  "共": { english: "together", examples: [["一共", "altogether"], ["共同", "together"]] },
+  "国": { english: "country", examples: [["国旗", "national flag"], ["国家", "country"]] },
+  "破": { english: "break", examples: [["打破", "break"], ["破了", "broken"]] },
+  "玩": { english: "play", examples: [["玩具", "toy"], ["玩球", "play ball"]] },
+  "尾": { english: "tail", examples: [["尾巴", "tail"], ["鱼尾", "fish tail"]] },
+  "望": { english: "hope", examples: [["希望", "hope"], ["看望", "visit"]] },
+  "误": { english: "mistake", examples: [["误会", "misunderstanding"], ["错误", "mistake"]] },
+  "目": { english: "eye", examples: [["目光", "look"]] },
+  "屋": { english: "house", examples: [["小屋", "small house"], ["房屋", "house"]] },
+  "洗": { english: "wash", examples: [["洗手", "wash hands"], ["洗头", "wash hair"]] },
+  "香": { english: "fragrant", examples: [["花香", "flower fragrance"], ["香气", "good smell"]] },
+  "续": { english: "continue", examples: [["继续", "continue"], ["后续", "follow-up"]] },
+  "秀": { english: "pretty", examples: [["秀气", "pretty"], ["秀美", "graceful"]] },
+  "弓": { english: "bow", examples: [["弓步", "bow stance"], ["拉弓", "draw a bow"]] },
+  "学": { english: "study", examples: [["学习", "study"], ["学校", "school"]] },
+  "血": { english: "blood", examples: [["血色", "blood color"], ["心血", "effort"]] },
+  "医": { english: "doctor", examples: [["医生", "doctor"], ["医院", "hospital"]] },
+  "艺": { english: "art", examples: [["手艺", "craft"], ["工艺", "craftwork"]] },
+  "应": { english: "answer", examples: [["答应", "agree"], ["回应", "reply"]] },
+  "余": { english: "extra", examples: [["多余", "extra"], ["其余", "the rest"]] },
+  "运": { english: "move", examples: [["运动", "exercise"], ["好运", "good luck"]] },
+  "栽": { english: "plant", examples: [["栽花", "plant flowers"], ["栽树", "plant trees"]] },
+  "终": { english: "end", examples: [["终于", "finally"], ["终点", "finish line"]] },
+  "的": { english: "of", examples: [["好的", "good one"], ["红的", "red one"]] },
+  "着": { english: "ongoing", examples: [["看着", "looking"], ["听着", "listening"]] },
+  "第": { english: "first", examples: [["第一", "first"]] },
   "读": { english: "read", examples: [["读书", "read a book"]] },
-  "满": { english: "full", examples: [["满意", "satisfied"]] },
+  "等": { english: "wait", examples: [["等车", "wait for a bus"], ["等等", "wait a moment"]] },
+  "法": { english: "way", examples: [["办法", "way"], ["想法", "idea"]] },
+  "翻": { english: "turn over", examples: [["翻书", "turn pages"], ["翻开", "open and turn"]] },
+  "跟": { english: "follow", examples: [["跟着", "follow"], ["跟我", "follow me"]] },
+  "备": { english: "prepare", examples: [["准备", "prepare"], ["备用", "spare"]] },
+  "番": { english: "times", examples: [["一番", "one time"], ["番茄", "tomato"]] },
+  "防": { english: "guard against", examples: [["防雨", "rainproof"], ["防风", "windproof"]] },
+  "形": { english: "shape", examples: [["图形", "shape"], ["圆形", "round shape"]] },
+  "金": { english: "gold", examples: [["金鱼", "goldfish"], ["金色", "gold color"]] },
+  "急": { english: "anxious", examples: [["着急", "anxious"], ["急忙", "in a hurry"]] },
+  "借": { english: "borrow", examples: [["借书", "borrow a book"], ["借用", "borrow and use"]] },
+  "解": { english: "understand", examples: [["了解", "understand"], ["讲解", "explain"]] },
+  "技": { english: "skill", examples: [["球技", "ball skill"], ["技艺", "skill"]] },
+  "讲": { english: "talk", examples: [["讲话", "talk"], ["讲故事", "tell a story"]] },
+  "救": { english: "save", examples: [["救人", "save a person"], ["救火", "put out a fire"]] },
+  "肩": { english: "shoulder", examples: [["肩膀", "shoulder"], ["并肩", "side by side"]] },
+  "勤": { english: "hard-working", examples: [["勤快", "hard-working"], ["勤学", "study hard"]] },
+  "空": { english: "empty", examples: [["天空", "sky"], ["空手", "empty-handed"]] },
+  "可": { english: "can", examples: [["可以", "can"], ["可爱", "lovely"]] },
+  "舍": { english: "room", examples: [["宿舍", "dorm room"], ["校舍", "school building"]] },
+  "满": { english: "full", examples: [["满分", "full marks"]] },
   "凉": { english: "cool", examples: [["凉快", "cool"]] },
   "约": { english: "about", examples: [["大约", "about"]] },
   "朝": { english: "toward", examples: [["朝着", "toward"]] },
   "烟": { english: "smoke", examples: [["烟花", "firework"]] },
   "非": { english: "not", examples: [["非常", "very"]] },
-  "法": { english: "way", examples: [["办法", "way"]] },
+  "深": { english: "deep", examples: [["深水", "deep water"], ["深色", "dark color"]] },
+  "示": { english: "show", examples: [["表示", "show"], ["出示", "show"]] },
+  "谁": { english: "who", examples: [["谁的", "whose"], ["是谁", "who is it"]] },
+  "是": { english: "be", examples: [["是的", "yes"], ["不是", "not"]] },
+  "受": { english: "receive", examples: [["接受", "accept"], ["难受", "feel bad"]] },
+  "视": { english: "look at", examples: [["看电视", "watch TV"], ["注视", "look at"]] },
+  "史": { english: "history", examples: [["史书", "history book"], ["史话", "historical story"]] },
+  "势": { english: "posture", examples: [["姿势", "posture"], ["气势", "vigor"]] },
+  "投": { english: "throw", examples: [["投球", "throw a ball"], ["投进", "throw in"]] },
+  "探": { english: "look for", examples: [["探路", "look for the way"], ["探看", "look around"]] },
+  "脱": { english: "take off", examples: [["脱衣", "take off clothes"], ["脱鞋", "take off shoes"]] },
+  "话": { english: "talk", examples: [["说话", "talk"], ["讲话", "speak"]] },
+  "官": { english: "face", examples: [["五官", "face parts"]] },
+  "令": { english: "order", examples: [["口令", "command"]] },
+  "屋": { english: "house", examples: [["房屋", "house"], ["小屋", "small house"]] },
+  "尾": { english: "tail", examples: [["尾巴", "tail"], ["鱼尾", "fish tail"]] },
+  "外": { english: "outside", examples: [["外面", "outside"], ["户外", "outdoors"]] },
+  "样": { english: "appearance", examples: [["样子", "appearance"], ["这样", "like this"]] },
+  "药": { english: "medicine", examples: [["吃药", "take medicine"], ["药水", "medicine water"]] },
+  "养": { english: "raise", examples: [["养花", "grow flowers"], ["养鱼", "raise fish"]] },
+  "意": { english: "idea", examples: [["意思", "meaning"], ["愿意", "be willing"]] },
+  "院": { english: "yard", examples: [["院子", "yard"], ["医院", "hospital"]] },
+  "者": { english: "person", examples: [["作者", "writer"], ["学者", "scholar"]] },
+  "追": { english: "chase", examples: [["追上", "catch up"], ["追跑", "chase while running"]] },
+  "嘴": { english: "mouth", examples: [["嘴巴", "mouth"], ["张嘴", "open mouth"]] },
+  "才": { english: "just", examples: [["才会", "just can"], ["才来", "just came"]] },
   "诗": { english: "poem", examples: [["诗歌", "poem"]] },
-  "密": { english: "secret", examples: [["秘密", "secret"]] },
+  "密": { english: "thick", examples: [["密云", "thick cloud"]] },
   "尺": { english: "ruler", examples: [["尺寸", "size"]] },
   "浅": { english: "shallow", examples: [["浅水", "shallow water"]] },
   "礼": { english: "gift", examples: [["礼物", "gift"]] },
   "印": { english: "print", examples: [["打印", "print"]] },
   "佛": { english: "seem", examples: [["仿佛", "seem"]] },
+  "谈": { english: "talk", examples: [["谈话", "talk"]] },
+  "证": { english: "prove", examples: [["证明", "prove"]] },
+  "操": { english: "exercise", examples: [["操场", "playground"]] },
   "以": { english: "with", examples: [["可以", "can"]] },
   "则": { english: "then", examples: [["否则", "otherwise"]] },
-  "德": { english: "virtue", examples: [["道德", "virtue"]] },
+  "德": { english: "kindness", examples: [["品德", "good character"]] },
   "业": { english: "schoolwork", examples: [["作业", "homework"]] },
-  "告": { english: "tell", examples: [["告诉", "tell"]] },
   "乡": { english: "hometown", examples: [["家乡", "hometown"]] },
-  "寺": { english: "temple", examples: [["寺里", "temple"]] },
-  "华": { english: "splendid", examples: [["华美", "splendid"]] },
+  "寺": { english: "temple", examples: [["山寺", "mountain temple"]] },
+  "华": { english: "bright", examples: [["华灯", "bright lights"]] },
   "陆": { english: "land", examples: [["陆地", "land"]] },
-  "望": { english: "hope", examples: [["希望", "hope"]] },
-  "扬": { english: "praise", examples: [["表扬", "praise"]] },
-  "壮": { english: "strong", examples: [["强壮", "strong"]] }
+  "扬": { english: "raise", examples: [["扬起", "lift up"]] },
+  "壮": { english: "strong", examples: [["强壮", "strong"]] },
+  "买": { english: "buy", examples: [["买书", "buy a book"], ["买米", "buy rice"]] },
+  "保": { english: "protect", examples: [["保护", "protect"], ["保暖", "keep warm"]] },
+  "贝": { english: "shell", examples: [["贝壳", "shell"]] },
+  "嘴": { english: "mouth", examples: [["嘴里", "in the mouth"]] },
+  "因": { english: "reason", examples: [["原因", "reason"]] },
+  "吉": { english: "lucky", examples: [["吉他", "guitar"]] },
+  "局": { english: "game round", examples: [["棋局", "chess game"]] },
+  "列": { english: "row", examples: [["列车", "train"], ["队列", "line"]] },
+  "密": { english: "thick", examples: [["密云", "thick cloud"]] },
+  "桥": { english: "bridge", examples: [["小桥", "small bridge"], ["木桥", "wooden bridge"]] },
+  "抱": { english: "hold", examples: [["抱球", "hold a ball"]] },
+  "清": { english: "clear", examples: [["清水", "clear water"]] },
+  "色": { english: "color", examples: [["红色", "red"], ["白色", "white"]] },
+  "助": { english: "help", examples: [["助手", "helper"]] },
+  "指": { english: "finger", examples: [["手指", "finger"]] },
+  "治": { english: "treat", examples: [["医治", "treat"], ["治牙", "treat teeth"]] },
+  "持": { english: "hold", examples: [["手持", "hold in the hand"], ["保持", "keep"]] },
+  "休": { english: "rest", examples: [["午休", "noon break"]] },
+  "害": { english: "harm", examples: [["伤害", "hurt"]] },
+  "消": { english: "calm down", examples: [["消气", "calm down"]] },
+  "舞": { english: "dance", examples: [["跳舞", "dance"], ["舞步", "dance step"]] },
+  "片": { english: "piece", examples: [["一片", "one piece"]] },
+  "居": { english: "live", examples: [["居中", "in the middle"]] },
+  "船": { english: "boat", examples: [["小船", "boat"], ["木船", "wooden boat"]] },
+  "肩": { english: "shoulder", examples: [["肩上", "on the shoulder"]] },
+  "谈": { english: "talk", examples: [["谈话", "talk"]] },
+  "蜂": { english: "bee", examples: [["蜂王", "queen bee"]] },
+  "内": { english: "inside", examples: [["室内", "indoors"], ["内外", "inside/outside"]] },
+  "目": { english: "eye", examples: [["目光", "look"]] },
+  "着": { english: "-ing", examples: [["看着", "watching"], ["听着", "listening"]] },
+  "官": { english: "face parts", examples: [["五官", "face parts"]] },
+  "尺": { english: "ruler", examples: [["尺子", "ruler"]] },
+  "德": { english: "kindness", examples: [["品德", "good character"]] },
+  "业": { english: "homework", examples: [["作业", "homework"]] },
+  "华": { english: "bright", examples: [["华灯", "bright lights"]] },
+  "当": { english: "when", examples: [["当心", "careful"], ["当下", "right now"]] },
+  "药": { english: "medicine", examples: [["吃药", "take medicine"], ["药水", "medicine"]] },
+  "科": { english: "subject", examples: [["学科", "subject"], ["科学", "science"]] },
+  "单": { english: "list", examples: [["名单", "name list"], ["单人", "one person"]] },
+  "寸": { english: "inch", examples: [["一寸", "one inch"]] },
+  "观": { english: "watch", examples: [["观看", "watch"], ["参观", "visit"]] },
+  "注": { english: "notice", examples: [["注意", "pay attention"]] },
+  "支": { english: "one pen", examples: [["一支笔", "one pen"]] },
+  "扶": { english: "hold", examples: [["扶手", "handrail"], ["扶好", "hold steady"]] },
+  "拾": { english: "tidy", examples: [["收拾", "tidy up"]] },
+  "除": { english: "except", examples: [["除了", "except"]] },
+  "扬": { english: "raise", examples: [["扬起", "lift up"]] },
+  "重": { english: "heavy", examples: [["重的", "heavy"]] },
+  "困": { english: "sleepy", examples: [["困了", "sleepy"]] },
+  "卷": { english: "paper", examples: [["卷子", "paper"]] },
+  "族": { english: "family", examples: [["家族", "family"]] },
+  "京": { english: "capital", examples: [["北京", "Beijing"]] },
+  "值": { english: "duty", examples: [["值日", "on duty"]] },
+  "步": { english: "step", examples: [["跑步", "run"], ["大步", "big step"]] },
+  "场": { english: "place", examples: [["广场", "square"], ["操场", "playground"]] },
+  "代": { english: "replace", examples: [["代替", "replace"]] },
+  "短": { english: "short", examples: [["长短", "long and short"], ["短跑", "short race"]] },
+  "各": { english: "each", examples: [["各种", "all kinds"]] },
+  "举": { english: "raise", examples: [["举手", "raise a hand"]] },
+  "京": { english: "capital", examples: [["京城", "capital city"]] },
+  "旧": { english: "old", examples: [["旧书", "old book"]] },
+  "冷": { english: "cold", examples: [["冷水", "cold water"], ["冰冷", "icy cold"]] },
+  "满": { english: "full", examples: [["满月", "full moon"], ["装满", "fill up"]] },
+  "美": { english: "beautiful", examples: [["美好", "beautiful"]] },
+  "无": { english: "none", examples: [["无人", "no person"], ["无声", "silent"]] },
+  "位": { english: "seat", examples: [["座位", "seat"]] },
+  "闻": { english: "smell", examples: [["闻到", "smell"], ["闻花香", "smell flowers"]] },
+  "西": { english: "west", examples: [["西瓜", "watermelon"]] },
+  "线": { english: "line", examples: [["线条", "line"], ["红线", "red line"]] },
+  "登": { english: "climb", examples: [["登山", "climb a mountain"]] },
+  "修": { english: "fix", examples: [["修车", "fix a car"]] },
+  "由": { english: "from", examples: [["由来", "origin"]] },
+  "亿": { english: "hundred million", examples: [["亿万", "hundred million"]] },
+  "纸": { english: "paper", examples: [["画纸", "drawing paper"], ["纸船", "paper boat"]] },
+  "钟": { english: "clock", examples: [["时钟", "clock"], ["闹钟", "alarm clock"]] },
+  "祝": { english: "wish", examples: [["祝福", "wish well"]] },
+  "信": { english: "letter", examples: [["信纸", "letter paper"]] },
+  "席": { english: "mat", examples: [["凉席", "cool mat"]] }
 });
+
+const ENGLISH_GLOSS_OVERRIDES = Object.freeze({
+  "exercise title": "title",
+  "at that time": "then",
+  "of course": "sure",
+  "inside and outside": "inside/outside",
+  "ongoing": "-ing",
+  "branch of study": "subject",
+  "a unit of length": "inch",
+  "point of view": "idea",
+  "splendid": "bright",
+  "virtue": "kindness"
+});
+
+function simplifyEnglishGloss(text) {
+  let value = String(text || "").trim();
+  if (!value) return "";
+  if (ENGLISH_GLOSS_OVERRIDES[value]) return ENGLISH_GLOSS_OVERRIDES[value];
+  value = value.replace(/^to\s+/i, "");
+  value = value.replace(/^(a|an|the)\s+/i, "");
+  value = value.replace(/\s+/g, " ").trim();
+  return ENGLISH_GLOSS_OVERRIDES[value] || value;
+}
 
 function createHanziEntry({ character, pinyin, english, examples, imageCode = "" }) {
   const override = HANZI_ENTRY_OVERRIDES[String(character || "").trim()] || null;
-  const resolvedEnglish = String(override?.english || english || "").trim();
+  const resolvedEnglish = simplifyEnglishGloss(override?.english || english || "");
   const resolvedExamples = Array.isArray(override?.examples) ? override.examples : examples;
   const normalizedExamples = (Array.isArray(resolvedExamples) ? resolvedExamples : [])
     .slice(0, MAX_EXAMPLES)
     .map(([word, gloss]) => ({
       word: String(word || "").trim(),
-      english: String(gloss || "").trim()
+      english: simplifyEnglishGloss(gloss || "")
     }))
     .filter((item) => item.word);
 
@@ -60,7 +271,7 @@ function createHanziEntry({ character, pinyin, english, examples, imageCode = ""
     english: resolvedEnglish,
     pinyin,
     examples: normalizedExamples,
-    phrase: normalizedExamples.map((item) => item.english).filter(Boolean).join(" / "),
+    phrase: simplifyEnglishGloss(normalizedExamples.map((item) => item.english).filter(Boolean).join(" / ")),
     phraseTranslation: normalizedExamples.map((item) => item.word).join(" / "),
     difficulty: "basic",
     stage: "kindergarten",
@@ -80,7 +291,7 @@ const KINDER_HANZI_CHAR_RE = /[\u4e00-\u9fff]/;
 function normalizeExampleObject(example) {
   return {
     word: String(example && example.word ? example.word : "").trim(),
-    english: String(example && example.english ? example.english : "").trim()
+    english: simplifyEnglishGloss(example && example.english ? example.english : "")
   };
 }
 
@@ -101,43 +312,113 @@ function buildFallbackExamples(entry) {
   }];
 }
 
-const HANZI_EXAMPLE_OVERRIDES = {};
+const HANZI_EXAMPLE_OVERRIDES = {
+  "操": [["操场", "playground"]],
+  "讲": [["讲故事", "tell a story"]],
+  "谈": [["谈话", "talk"]],
+  "寺": [["山寺", "mountain temple"]],
+  "密": [["密云", "thick cloud"]],
+  "位": [["位子", "seat"]]
+};
 
 function normalizeOverrideExamples(overrides) {
   if (!Array.isArray(overrides)) return [];
   return overrides
     .map(([word, gloss]) => ({
       word: String(word || "").trim(),
-      english: String(gloss || "").trim()
+      english: simplifyEnglishGloss(gloss || "")
     }))
     .filter((item) => item.word);
 }
 
 const BANNED_EXAMPLE_WORDS = new Set([
+  "厂房",
   "暴力",
+  "大人",
   "战争",
   "死亡",
   "罪人",
   "犯罪",
   "皇帝",
+  "居民",
   "政治",
   "政府",
   "法律",
   "历史",
+  "教授",
   "论文",
   "改革",
+  "入学",
   "研究",
   "贫困",
+  "人才",
+  "才艺",
   "威胁",
   "危机",
   "崇拜",
   "悲剧",
   "丧失",
   "佛寺",
-  "祭日"
+  "用力",
+  "住户",
+  "祭日",
+  "题目",
+  "当时",
+  "当然",
+  "尺寸",
+  "观点",
+  "支持",
+  "抱怨",
+  "自杀",
+  "谈判",
+  "发射",
+  "华美",
+  "满意",
+  "保证",
+  "道德",
+  "寺里",
+  "表扬",
+  "试卷",
+  "药店",
+  "重要",
+  "困难",
+  "酒店",
+  "短信",
+  "信仰",
+  "主席",
+  "权利",
+  "调查",
+  "宣传",
+  "外卖",
+  "税收",
+  "新闻",
+  "经理",
+  "学者",
+  "自然段",
+  "抢救",
+  "破坏",
+  "亿元",
+  "美元",
+  "自习",
+  "课代表",
+  "登记",
+  "北京",
+  "民族",
+  "值班"
 ]);
 
+const BANNED_EXAMPLE_FRAGMENTS = [
+  "主席",
+  "税",
+  "权",
+  "仰",
+  "短信",
+  "快递"
+];
+
 const BANNED_ENGLISH_TOKENS = new Set([
+  "adult",
+  "blade",
   "politics",
   "government",
   "history",
@@ -151,12 +432,33 @@ const BANNED_ENGLISH_TOKENS = new Set([
   "tragedy",
   "worship",
   "crisis",
+  "enroll",
+  "force",
+  "professor",
+  "property",
   "reform",
   "research",
+  "resident",
+  "talent",
   "china",
   "ethnic",
   "mainland",
-  "buddhist"
+  "buddhist",
+  "splendid",
+  "virtue",
+  "guarantee"
+]);
+
+const FORCED_FALLBACK_CHARACTERS = new Set([
+  "佛",
+  "仰",
+  "亿",
+  "由",
+  "权",
+  "税",
+  "性",
+  "血",
+  "酒"
 ]);
 
 function englishTokens(text) {
@@ -171,6 +473,7 @@ function englishTokens(text) {
 function isBannedExample(example) {
   const word = String(example?.word || "").trim();
   if (BANNED_EXAMPLE_WORDS.has(word)) return true;
+  if (BANNED_EXAMPLE_FRAGMENTS.some((fragment) => word.includes(fragment))) return true;
 
   const tokens = englishTokens(example?.english);
   if (!tokens.length) return false;
@@ -184,6 +487,7 @@ function sanitizeKindergartenHanzi(pack) {
       .filter(Boolean)
   );
   for (const entry of pack) {
+    entry.english = simplifyEnglishGloss(entry.english);
     const override = normalizeOverrideExamples(HANZI_EXAMPLE_OVERRIDES[entry.character])
       .filter((example) => example.word && example.word.includes(entry.character))
       .filter((example) => example.word.length <= 4)
@@ -196,12 +500,14 @@ function sanitizeKindergartenHanzi(pack) {
       .filter((example) => isHanziWordWithinPack(example.word, allowed))
       .filter((example) => !isBannedExample(example));
 
-    const finalExamples = cleaned.length
-      ? cleaned.slice(0, MAX_EXAMPLES)
-      : (override.length ? override.slice(0, MAX_EXAMPLES) : buildFallbackExamples(entry));
+    const finalExamples = FORCED_FALLBACK_CHARACTERS.has(entry.character)
+      ? buildFallbackExamples(entry)
+      : (override.length
+        ? override.slice(0, MAX_EXAMPLES)
+        : (cleaned.length ? cleaned.slice(0, MAX_EXAMPLES) : buildFallbackExamples(entry)));
     entry.examples = finalExamples;
     const phraseParts = finalExamples.map((example) => example.english).filter(Boolean);
-    entry.phrase = phraseParts.length ? phraseParts.join(" / ") : entry.english;
+    entry.phrase = simplifyEnglishGloss(phraseParts.length ? phraseParts.join(" / ") : entry.english);
     entry.phraseTranslation = finalExamples.map((example) => example.word).join(" / ");
   }
 }
@@ -248,25 +554,25 @@ kindergartenHanzi = [
   createHanziEntry({ character: "一", pinyin: "yī", english: "one", examples: [["一天", "one day"], ["一只", "one piece"]] }),
   createHanziEntry({ character: "二", pinyin: "èr", english: "two", examples: [["二月", "February"], ["二人", "two people"]] }),
   createHanziEntry({ character: "十", pinyin: "shí", english: "ten", examples: [["十个", "ten items"], ["十天", "ten days"]] }),
-  createHanziEntry({ character: "厂", pinyin: "chǎng", english: "factory", examples: [["工厂", "factory"], ["厂房", "workshop"]] }),
+  createHanziEntry({ character: "厂", pinyin: "chǎng", english: "factory", examples: [["工厂", "factory"], ["厂门", "factory gate"]] }),
   createHanziEntry({ character: "七", pinyin: "qī", english: "seven", examples: [["七天", "seven days"], ["七个", "seven items"]] }),
   createHanziEntry({ character: "儿", pinyin: "ér", english: "child", examples: [["儿子", "son"], ["女儿", "daughter"]] }),
   createHanziEntry({ character: "八", pinyin: "bā", english: "eight", examples: [["八月", "August"], ["八个", "eight items"]] }),
-  createHanziEntry({ character: "人", pinyin: "rén", english: "person", examples: [["大人", "adult"], ["人们", "people"]], imageCode: "1f9d1" }),
-  createHanziEntry({ character: "入", pinyin: "rù", english: "enter", examples: [["入口", "entrance"], ["入学", "enroll"]] }),
+  createHanziEntry({ character: "人", pinyin: "rén", english: "person", examples: [["家人", "family"], ["人们", "people"]], imageCode: "1f9d1" }),
+  createHanziEntry({ character: "入", pinyin: "rù", english: "enter", examples: [["入口", "entrance"], ["进入", "go in"]] }),
   createHanziEntry({ character: "几", pinyin: "jǐ", english: "how many", examples: [["几个", "how many"], ["几天", "how many days"]] }),
   createHanziEntry({ character: "九", pinyin: "jiǔ", english: "nine", examples: [["九个", "nine items"], ["九月", "September"]] }),
   createHanziEntry({ character: "了", pinyin: "le", english: "done", examples: [["好了", "all right"], ["走了", "gone"]] }),
   createHanziEntry({ character: "刀", pinyin: "dāo", english: "knife", examples: [["小刀", "knife"], ["刀子", "blade"]], imageCode: "1f52a" }),
-  createHanziEntry({ character: "力", pinyin: "lì", english: "strength", examples: [["力气", "strength"], ["用力", "use force"]] }),
+  createHanziEntry({ character: "力", pinyin: "lì", english: "strength", examples: [["力气", "strength"], ["有力", "strong"]] }),
   createHanziEntry({ character: "又", pinyin: "yòu", english: "again", examples: [["又来", "come again"], ["又见", "see again"]] }),
   createHanziEntry({ character: "三", pinyin: "sān", english: "three", examples: [["三天", "three days"], ["三个", "three items"]] }),
   createHanziEntry({ character: "干", pinyin: "gān", english: "dry", examples: [["饼干", "biscuit"], ["干衣", "dry clothes"]] }),
   createHanziEntry({ character: "工", pinyin: "gōng", english: "work", examples: [["工人", "worker"], ["工厂", "factory"]] }),
   createHanziEntry({ character: "土", pinyin: "tǔ", english: "earth", examples: [["土地", "land"], ["泥土", "soil"]] }),
-  createHanziEntry({ character: "才", pinyin: "cái", english: "talent", examples: [["人才", "talent"], ["才艺", "skill"]] }),
+  createHanziEntry({ character: "才", pinyin: "cái", english: "just", examples: [["才会", "just can"], ["才来", "just came"]] }),
   createHanziEntry({ character: "下", pinyin: "xià", english: "down", examples: [["下面", "below"], ["下雨", "rain down"]] }),
-  createHanziEntry({ character: "大", pinyin: "dà", english: "big", examples: [["大山", "big mountain"], ["大人", "adult"]], imageCode: "1f7e5" }),
+  createHanziEntry({ character: "大", pinyin: "dà", english: "big", examples: [["大山", "big mountain"], ["大树", "big tree"]], imageCode: "1f7e5" }),
   createHanziEntry({ character: "上", pinyin: "shàng", english: "up", examples: [["上学", "go to school"], ["上面", "upper side"]] }),
   createHanziEntry({ character: "小", pinyin: "xiǎo", english: "small", examples: [["小手", "small hand"], ["小狗", "puppy"]], imageCode: "1f90f" }),
   createHanziEntry({ character: "口", pinyin: "kǒu", english: "mouth", examples: [["口水", "saliva"], ["口袋", "pocket"]], imageCode: "1f444" }),
@@ -300,9 +606,9 @@ kindergartenHanzi = [
   createHanziEntry({ character: "止", pinyin: "zhǐ", english: "stop", examples: [["停止", "stop"], ["止步", "halt"]] }),
   createHanziEntry({ character: "少", pinyin: "shǎo", english: "few", examples: [["多少", "how many"], ["少儿", "children"]] }),
   createHanziEntry({ character: "日", pinyin: "rì", english: "sun", examples: [["日出", "sunrise"], ["生日", "birthday"]], imageCode: "2600" }),
-  createHanziEntry({ character: "中", pinyin: "zhōng", english: "middle", examples: [["中国", "China"], ["中间", "middle"]] }),
+  createHanziEntry({ character: "中", pinyin: "zhōng", english: "middle", examples: [["中间", "middle"], ["中午", "noon"]] }),
   createHanziEntry({ character: "贝", pinyin: "bèi", english: "shell", examples: [["宝贝", "treasure"], ["贝壳", "shell"]] }),
-  createHanziEntry({ character: "内", pinyin: "nèi", english: "inside", examples: [["内外", "inside and outside"], ["内衣", "underwear"]] }),
+  createHanziEntry({ character: "内", pinyin: "nèi", english: "inside", examples: [["内外", "inside and outside"], ["室内", "indoors"]] }),
   createHanziEntry({ character: "水", pinyin: "shuǐ", english: "water", examples: [["喝水", "drink water"], ["水果", "fruit"]], imageCode: "1f4a7" }),
   createHanziEntry({ character: "见", pinyin: "jiàn", english: "see", examples: [["看见", "see"], ["再见", "goodbye"]] }),
   createHanziEntry({ character: "午", pinyin: "wǔ", english: "noon", examples: [["上午", "morning"], ["中午", "noon"]] }),
@@ -312,20 +618,20 @@ kindergartenHanzi = [
   createHanziEntry({ character: "毛", pinyin: "máo", english: "hair", examples: [["毛衣", "sweater"], ["羽毛", "feather"]] }),
   createHanziEntry({ character: "长", pinyin: "cháng", english: "long", examples: [["长大", "grow up"], ["长高", "grow taller"]] }),
   createHanziEntry({ character: "片", pinyin: "piàn", english: "slice", examples: [["叶片", "leaf blade"], ["卡片", "card"]] }),
-  createHanziEntry({ character: "爪", pinyin: "zhǎo", english: "claw", examples: [["爪子", "claw"], ["鸡爪", "chicken claw"]] }),
+  createHanziEntry({ character: "爪", pinyin: "zhǎo", english: "claw", examples: [["爪子", "paw"], ["爪印", "paw print"]] }),
   createHanziEntry({ character: "反", pinyin: "fǎn", english: "opposite", examples: [["反面", "back side"], ["相反", "opposite"]] }),
   createHanziEntry({ character: "父", pinyin: "fù", english: "father", examples: [["父母", "parents"], ["父子", "father and son"]] }),
   createHanziEntry({ character: "从", pinyin: "cóng", english: "follow", examples: [["从前", "long ago"], ["从来", "always"]] }),
   createHanziEntry({ character: "今", pinyin: "jīn", english: "today", examples: [["今天", "today"], ["今早", "this morning"]] }),
   createHanziEntry({ character: "分", pinyin: "fēn", english: "divide", examples: [["分开", "separate"], ["分工", "share work"]] }),
-  createHanziEntry({ character: "公", pinyin: "gōng", english: "public", examples: [["公园", "park"], ["公共", "public"]] }),
+  createHanziEntry({ character: "公", pinyin: "gōng", english: "public", examples: [["公园", "park"], ["公鸡", "rooster"]] }),
   createHanziEntry({ character: "月", pinyin: "yuè", english: "moon", examples: [["月亮", "moon"], ["月光", "moonlight"]], imageCode: "1f319" }),
   createHanziEntry({ character: "风", pinyin: "fēng", english: "wind", examples: [["大风", "strong wind"], ["风车", "windmill"]], imageCode: "1f32c" }),
   createHanziEntry({ character: "六", pinyin: "liù", english: "six", examples: [["六个", "six items"], ["六月", "June"]] }),
   createHanziEntry({ character: "文", pinyin: "wén", english: "language", examples: [["文字", "written words"], ["语文", "Chinese language"]] }),
   createHanziEntry({ character: "方", pinyin: "fāng", english: "direction", examples: [["方向", "direction"], ["方块", "square"]] }),
   createHanziEntry({ character: "火", pinyin: "huǒ", english: "fire", examples: [["火车", "train"], ["火山", "volcano"]], imageCode: "1f525" }),
-  createHanziEntry({ character: "户", pinyin: "hù", english: "household", examples: [["户外", "outdoor"], ["住户", "resident"]] }),
+  createHanziEntry({ character: "户", pinyin: "hù", english: "door", examples: [["户外", "outdoors"], ["窗户", "window"]] }),
   createHanziEntry({ character: "心", pinyin: "xīn", english: "heart", examples: [["开心", "happy"], ["爱心", "love"]], imageCode: "2764" }),
   createHanziEntry({ character: "双", pinyin: "shuāng", english: "pair", examples: [["双手", "two hands"], ["双脚", "two feet"]] }),
   createHanziEntry({ character: "书", pinyin: "shū", english: "book", examples: [["书本", "book"], ["读书", "read books"]], imageCode: "1f4d6" }),
@@ -342,7 +648,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "平", pinyin: "píng", english: "flat", examples: [["平地", "flat ground"], ["平安", "safe"]] }),
   createHanziEntry({ character: "北", pinyin: "běi", english: "north", examples: [["北方", "north"], ["北风", "north wind"]] }),
   createHanziEntry({ character: "旦", pinyin: "dàn", english: "dawn", examples: [["元旦", "new year day"]] }),
-  createHanziEntry({ character: "目", pinyin: "mù", english: "eye", examples: [["目光", "gaze"], ["目录", "catalog"]], imageCode: "1f441" }),
+  createHanziEntry({ character: "目", pinyin: "mù", english: "eye", examples: [["题目", "exercise title"], ["目光", "eyesight"]], imageCode: "1f441" }),
   createHanziEntry({ character: "电", pinyin: "diàn", english: "electricity", examples: [["电灯", "lamp"], ["电话", "telephone"]], imageCode: "26a1" }),
   createHanziEntry({ character: "田", pinyin: "tián", english: "field", examples: [["田地", "field"], ["水田", "paddy field"]] }),
   createHanziEntry({ character: "叫", pinyin: "jiào", english: "call", examples: [["叫声", "call"], ["叫好", "cheer"]] }),
@@ -373,7 +679,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "老", pinyin: "lǎo", english: "old", examples: [["老师", "teacher"], ["老人", "old person"]] }),
   createHanziEntry({ character: "地", pinyin: "dì", english: "ground", examples: [["地上", "on the ground"], ["土地", "land"]] }),
   createHanziEntry({ character: "耳", pinyin: "ěr", english: "ear", examples: [["耳朵", "ear"], ["木耳", "fungus"]], imageCode: "1f442" }),
-  createHanziEntry({ character: "共", pinyin: "gòng", english: "together", examples: [["共同", "together"], ["公共", "public"]] }),
+  createHanziEntry({ character: "共", pinyin: "gòng", english: "together", examples: [["共同", "together"], ["一共", "altogether"]] }),
   createHanziEntry({ character: "机", pinyin: "jī", english: "machine", examples: [["飞机", "airplane"], ["机器", "machine"]] }),
   createHanziEntry({ character: "过", pinyin: "guò", english: "pass", examples: [["过去", "past"], ["走过", "walk past"]] }),
   createHanziEntry({ character: "在", pinyin: "zài", english: "at", examples: [["在家", "at home"], ["正在", "in progress"]] }),
@@ -435,7 +741,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "青", pinyin: "qīng", english: "green-blue", examples: [["青草", "green grass"], ["青山", "green mountain"]] }),
   createHanziEntry({ character: "雨", pinyin: "yǔ", english: "rain", examples: [["下雨", "rain"], ["雨衣", "raincoat"]], imageCode: "1f327" }),
   createHanziEntry({ character: "果", pinyin: "guǒ", english: "fruit", examples: [["水果", "fruit"], ["果汁", "juice"]], imageCode: "1f34e" }),
-  createHanziEntry({ character: "国", pinyin: "guó", english: "country", examples: [["中国", "China"], ["国家", "country"]] }),
+  createHanziEntry({ character: "国", pinyin: "guó", english: "country", examples: [["国旗", "national flag"], ["国家", "country"]] }),
   createHanziEntry({ character: "明", pinyin: "míng", english: "bright", examples: [["明天", "tomorrow"], ["明亮", "bright"]] }),
   createHanziEntry({ character: "和", pinyin: "hé", english: "together", examples: [["和好", "make up"], ["和气", "kindness"]] }),
   createHanziEntry({ character: "爸", pinyin: "bà", english: "dad", examples: [["爸爸", "dad"], ["老爸", "father"]], imageCode: "1f468" }),
@@ -445,7 +751,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "学", pinyin: "xué", english: "learn", examples: [["学习", "study"], ["学校", "school"]] }),
   createHanziEntry({ character: "家", pinyin: "jiā", english: "home", examples: [["回家", "go home"], ["家人", "family"]], imageCode: "1f3e0" }),
   createHanziEntry({ character: "猫", pinyin: "māo", english: "cat", examples: [["小猫", "kitten"], ["猫咪", "cat"]], imageCode: "1f408" }),
-  createHanziEntry({ character: "的", pinyin: "de", english: "possessive", examples: [["别的", "else"]] }),
+  createHanziEntry({ character: "的", pinyin: "de", english: "of", examples: [["好的", "good one"], ["红的", "red one"]] }),
   createHanziEntry({ character: "是", pinyin: "shì", english: "be", examples: [["还是", "still"]] }),
   createHanziEntry({ character: "就", pinyin: "jiù", english: "then", examples: [["就要", "will"]] }),
   createHanziEntry({ character: "要", pinyin: "yào", english: "want", examples: [["想要", "want"]] }),
@@ -453,7 +759,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "都", pinyin: "dōu", english: "all", examples: [["全都", "all"]] }),
   createHanziEntry({ character: "对", pinyin: "duì", english: "right", examples: [["不对", "incorrect"]] }),
   createHanziEntry({ character: "到", pinyin: "dào", english: "arrive", examples: [["看到", "to see"]] }),
-  createHanziEntry({ character: "着", pinyin: "zhe", english: "ongoing", examples: [["看着", "looking at"]] }),
+  createHanziEntry({ character: "着", pinyin: "zhe", english: "ongoing", examples: [["看着", "looking"], ["听着", "listening"]] }),
   createHanziEntry({ character: "想", pinyin: "xiǎng", english: "to think", examples: [["想到", "to think of"]] }),
   createHanziEntry({ character: "能", pinyin: "néng", english: "can", examples: [["能力", "ability"]] }),
   createHanziEntry({ character: "给", pinyin: "gěi", english: "give", examples: [["送给", "give to"]] }),
@@ -471,7 +777,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "谁", pinyin: "shuí", english: "who", examples: [["谁啊", "who"]] }),
   createHanziEntry({ character: "新", pinyin: "xīn", english: "abbr. for Xinjiang 疆 or Singapore", examples: [["新年", "New Year"]] }),
   createHanziEntry({ character: "快", pinyin: "kuài", english: "rapid", examples: [["快乐", "happy"]] }),
-  createHanziEntry({ character: "话", pinyin: "huà", english: "dialect", examples: [["电话", "telephone"]] }),
+  createHanziEntry({ character: "话", pinyin: "huà", english: "speech", examples: [["说话", "speak"], ["讲话", "talk"]] }),
   createHanziEntry({ character: "起", pinyin: "qǐ", english: "rise", examples: [["一起", "in the same place"]] }),
   createHanziEntry({ character: "别", pinyin: "bié", english: "other", examples: [["别人", "other people"]] }),
   createHanziEntry({ character: "请", pinyin: "qǐng", english: "to ask", examples: [["请问", "Excuse me"]] }),
@@ -682,7 +988,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "季", pinyin: "jì", english: "season", examples: [["季节", "time"]] }),
   createHanziEntry({ character: "顶", pinyin: "dǐng", english: "apex", examples: [["顶级", "top-notch"]] }),
   createHanziEntry({ character: "货", pinyin: "huò", english: "goods", examples: [["百货", "general merchandise"]] }),
-  createHanziEntry({ character: "官", pinyin: "guān", english: "government official", examples: [["法官", "judge"]] }),
+  createHanziEntry({ character: "官", pinyin: "guān", english: "official", examples: [["五官", "facial features"]] }),
   createHanziEntry({ character: "色", pinyin: "sè", english: "color", examples: [["颜色", "color"]] }),
   createHanziEntry({ character: "结", pinyin: "jié", english: "to produce", examples: [["结果", "to bear fruit"]] }),
   createHanziEntry({ character: "卷", pinyin: "juǎn", english: "to roll up", examples: [["试卷", "examination paper"]] }),
@@ -981,7 +1287,7 @@ kindergartenHanzi = [
   createHanziEntry({ character: "固", pinyin: "gù", english: "to solidify", examples: [["固定", "to fix"]] }),
   createHanziEntry({ character: "妇", pinyin: "fù", english: "married woman", examples: [["夫妇", "a"]] }),
   createHanziEntry({ character: "均", pinyin: "jūn", english: "equal", examples: [["平均", "average"]] }),
-  createHanziEntry({ character: "陆", pinyin: "lù", english: "land", examples: [["大陆", "mainland China"]] }),
+  createHanziEntry({ character: "陆", pinyin: "lù", english: "land", examples: [["陆地", "land"]] }),
   createHanziEntry({ character: "植", pinyin: "zhí", english: "tree", examples: [["植物", "plant"]] }),
   createHanziEntry({ character: "窗", pinyin: "chuāng", english: "window", examples: [["窗户", "window"]] }),
   createHanziEntry({ character: "胸", pinyin: "xiōng", english: "breast", examples: [["胸部", "chest"]] }),
@@ -1052,7 +1358,10 @@ const UNSUITABLE_KINDER_HANZI = new Set([
   "妻", "妇", "皇", "拜", "崇", "奉", "雄", "威", "亡", "寿", "私", "宿", "革",
   "荣", "惠", "悲", "忧", "欲", "悟", "授", "申", "统",
   "典", "希", "决", "例", "论", "义", "历", "基", "察", "危", "达", "众", "速", "效",
-  "徒", "欲", "祖", "彼", "协", "质", "均", "央", "诸", "军", "施", "益", "宅"
+  "徒", "欲", "祖", "彼", "协", "质", "均", "央", "诸", "军", "施", "益", "宅",
+  "死", "佛", "恨", "混", "判", "究", "研", "责", "罪", "怒", "赏", "致", "逆", "序",
+  "贝", "害", "杀", "射", "怨",
+  "卖", "酒", "亿", "由", "血", "性", "代", "权", "理", "税", "仰"
 ]);
 
 const CURATED_HANZI_REPLACEMENTS = createCuratedHanziEntries([
@@ -1072,10 +1381,10 @@ const CURATED_HANZI_REPLACEMENTS = createCuratedHanziEntries([
   ["晨", "chén", "morning", [["早晨", "morning"], ["晨光", "morning light"]]],
   ["格", "gé", "grid", [["田字格", "grid square"], ["方格", "square grid"]]],
   ["段", "duàn", "paragraph", [["自然段", "paragraph"], ["段落", "section"]]],
-  ["操", "cāo", "exercise", [["课间操", "exercise break"], ["做操", "do exercise"]]],
+  ["操", "cāo", "exercise", [["操场", "playground"], ["体操", "gymnastics"]]],
   ["值", "zhí", "duty", [["值日", "be on duty"], ["值班", "take duty"]]],
   ["拼", "pīn", "spell", [["拼音", "pinyin"], ["拼读", "spell and read"]]],
-  ["班", "bān", "class", [["班级", "class"], ["上班", "start class"]]],
+  ["班", "bān", "class", [["班级", "class"], ["班长", "class monitor"]]],
   ["跑", "pǎo", "run", [["跑步", "run"], ["跑道", "track"]]],
   ["跳", "tiào", "jump", [["跳绳", "jump rope"], ["跳远", "long jump"]]],
   ["健", "jiàn", "healthy", [["健康", "health"], ["健身", "fitness"]]],
@@ -1132,7 +1441,33 @@ const CURATED_HANZI_REPLACEMENTS = createCuratedHanziEntries([
   ["鼓", "gǔ", "drum", [["鼓声", "drumbeat"], ["打鼓", "beat drum"]]],
   ["棋", "qí", "chess", [["下棋", "play chess"], ["棋盘", "chessboard"]]],
   ["睛", "jīng", "eye", [["眼睛", "eyes"], ["亮晶晶", "sparkling"]]],
-  ["醒", "xǐng", "awake", [["睡醒", "wake up"], ["醒目", "catch the eye"]]]
+  ["醒", "xǐng", "awake", [["睡醒", "wake up"], ["醒目", "catch the eye"]]],
+  ["肚", "dù", "belly", [["肚子", "belly"], ["肚皮", "belly"]]],
+  ["腿", "tuǐ", "leg", [["双腿", "legs"], ["腿脚", "legs and feet"]]],
+  ["滑", "huá", "slide", [["滑梯", "slide"]]],
+  ["梯", "tī", "ladder", [["楼梯", "stairs"], ["梯子", "ladder"]]],
+  ["篮", "lán", "basket", [["篮子", "basket"], ["花篮", "flower basket"]]],
+  ["燕", "yàn", "swallow", [["燕子", "swallow"]]],
+  ["蜂", "fēng", "bee", [["蜜蜂", "bee"]]],
+  ["鸭", "yā", "duck", [["小鸭", "duck"], ["鸭子", "duck"]]],
+  ["珠", "zhū", "bead", [["珠子", "bead"], ["水珠", "water drop"]]],
+  ["泥", "ní", "mud", [["泥土", "mud"], ["泥巴", "mud"]]],
+  ["怕", "pà", "afraid", [["不怕", "not afraid"], ["可怕", "scary"]]],
+  ["肩", "jiān", "shoulder", [["肩上", "on the shoulder"]]],
+  ["膀", "bǎng", "upper arm", [["肩膀", "shoulder"]]],
+  ["梅", "méi", "plum blossom", [["梅花", "plum blossom"]]],
+  ["溪", "xī", "brook", [["小溪", "brook"], ["溪水", "brook water"]]],
+  ["袋", "dài", "bag", [["口袋", "pocket"], ["布袋", "cloth bag"]]],
+  ["碗", "wǎn", "bowl", [["饭碗", "rice bowl"], ["小碗", "small bowl"]]],
+  ["巢", "cháo", "nest", [["鸟巢", "bird nest"], ["蜂巢", "bee hive"]]],
+  ["虾", "xiā", "shrimp", [["小虾", "shrimp"], ["虾米", "dried shrimp"]]],
+  ["熊", "xióng", "bear", [["小熊", "bear"], ["熊猫", "panda"]]],
+  ["狼", "láng", "wolf", [["小狼", "wolf"], ["狼狗", "wolfdog"]]],
+  ["猴", "hóu", "monkey", [["猴子", "monkey"], ["小猴", "little monkey"]]],
+  ["枣", "zǎo", "jujube", [["红枣", "red date"], ["枣子", "jujube"]]],
+  ["橘", "jú", "tangerine", [["橘子", "tangerine"], ["橘色", "orange color"]]],
+  ["蔬", "shū", "vegetable", [["蔬菜", "vegetables"]]],
+  ["锅", "guō", "pot", [["火锅", "hot pot"], ["锅里", "in the pot"]]]
 ]);
 
 kindergartenHanzi = mergeCuratedHanziEntries(kindergartenHanzi, CURATED_HANZI_REPLACEMENTS, UNSUITABLE_KINDER_HANZI);

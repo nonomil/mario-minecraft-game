@@ -1,5 +1,41 @@
 ﻿# Release Notes
 
+## v1.19.48 (2026-03-26)
+
+### 📚 Vocabulary / Learning
+- **汉字 800 字包继续净化**:
+  - 修正仍残留的异常例词，确保例词优先使用包内字符、自然组词和低龄可理解表达
+  - `操` 等条目已改为更稳妥的儿童词例，避免再次出现 `做操` 这类包外字符组合回归
+- **幼小衔接数学更贴近低年级**:
+  - 新增 `十以内加法 / 二十以内加减 / 图形拼搭 / 图形拼图 / 看位置 / 看统计图` 等具体词条
+  - 继续补入 `加一加 / 减一减 / 合起来 / 还剩多少 / 图形摆放 / 统计文具` 等更适合学前到二年级的数学场景词
+- **桥接词库继续去噪**:
+  - 语文继续过滤教师任务口吻和行政化栏目词
+  - 数学继续过滤 `应用题 / 数量关系 / 规律卡片 / 看图题 / 口算题` 等生成感强词条
+  - 英语继续拦截无意义自然拼读串，并确保 `vocab.bridge.english` 加载独立英语补充词库
+
+### 🛠️ UX / Display
+- **词卡提示继续精简**:
+  - 汉字模式与幼小衔接模式默认不再显示多余元信息与提示文案
+  - APK `android-app/web/index.html` 同步词卡/HUD/UI 整理后的展示效果
+- **README 与入口说明更新**:
+  - 仓库首页改为反映当前真实状态：多学习线、Boss/环境、桥接词库、学习报告与档案系统
+
+### 🧪 Verification
+- `node tests/unit/kindergarten-hanzi-regression.test.mjs`
+- `node tests/unit/bridge-vocab-curation.test.mjs`
+- `node tests/unit/bridge-vocab-coverage.test.mjs`
+- `node tests/unit/vocab-pack-switch-regression.test.mjs`
+- `node tests/unit/bridge-language-ui-regression.test.mjs`
+- `npx playwright test tests/e2e/specs/bridge-vocab-expansion.spec.mjs --config tests/e2e/playwright.config.mjs`
+
+### 📦 Technical Changes
+- 统一版本元数据到 `v1.19.48 / build 99`
+- 同步 `package.json`、`android-app/package.json`、`version.json`、`android-app/android/app/build.gradle`
+- 更新 `Game.html`、`service-worker.js`、`android-app/web/index.html`、`build/index.html` 的缓存版本戳
+- 更新 `android-app/web/build-info.json`、`build/build-info.json`
+- 提取本次相关 Git 记录：`ef3be18 feat: finalize child-friendly vocab curation and bridge polish`
+
 ## v1.19.46 (2026-03-20)
 
 ### 📚 Vocabulary / Learning
