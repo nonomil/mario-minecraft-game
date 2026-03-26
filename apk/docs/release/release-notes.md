@@ -1,4 +1,16 @@
-﻿# Release Notes
+# Release Notes
+
+## v1.19.49 (2026-03-26)
+
+### 📚 Bridge Learning / UI
+- **桥接语言 UI 回归测试**: 新增 `tests/unit/bridge-language-ui-regression.test.mjs`，确保桥接模式下词卡与挑战展示逻辑稳定。
+- **挑战 UI 逻辑修复**: 统一 `src/modules/12-challenges.js` 中的展示提取逻辑，解决部分模式下挑战行文字提取不准确的问题。
+- **词库净化**: 继续清理桥接词库噪声，同步 `fix: continue bridge language vocab curation` 提交内容。
+
+### 📦 Technical Changes
+- 升级版本元数据到 `v1.19.49 / build 100`
+- 同步 `package.json`、`version.json`、`android-app/android/app/build.gradle`、`CHANGELOG.md`
+- 生成 `docs/release/RELEASE_NOTES_v1.19.49.md`
 
 ## v1.19.48 (2026-03-26)
 
