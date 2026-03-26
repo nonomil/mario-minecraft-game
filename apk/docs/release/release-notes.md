@@ -1,5 +1,17 @@
 # Release Notes
 
+## v1.19.50 (2026-03-26)
+
+### 🛠️ APK Build / Packaging
+- **修复 APK 资产残留打包**: `android-app/android/app/build.gradle` 中的 `syncWebAssets` 已从 `Copy` 调整为 `Sync`，确保每次构建前对目标目录做镜像同步，清除历史残留文件。
+- **隔离测试审计目录**: 构建资产来源仍固定为 `android-app/web`，不再因旧的 assets 残留把 `tests/audit`、`tests/audit-output` 内容误带进 APK。
+
+### 📦 Technical Changes
+- 统一版本元数据到 `v1.19.50 / build 101`
+- 同步 `package.json`、`android-app/package.json`、`version.json`、`android-app/android/app/build.gradle`
+- 同步 `android-app/web/build-info.json` 与 `build/build-info.json`
+- 提取本次相关 Git 记录：`63ab0ff docs: update release-notes.md for v1.19.49`
+
 ## v1.19.49 (2026-03-26)
 
 ### 📚 Bridge Learning / UI

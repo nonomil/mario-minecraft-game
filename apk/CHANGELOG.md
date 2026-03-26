@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.50] - 2026-03-26
+### Fixed
+- **APK 资源同步残留**: 将 Android `syncWebAssets` 任务从 `Copy` 改为 `Sync`，修复历史残留文件可能继续被打包进 APK 的问题。
+- **测试审计目录误入 APK 风险**: 收口构建链路，仅同步 `android-app/web` 当前真实文件集，避免旧的 `tests/audit`、`tests/audit-output` 相关残留资产被继续带入 `assets/public`。
+
+### Changed
+- **版本发布**: 统一版本元数据到 `v1.19.50 / build 101`，同步 `package.json`、`android-app/package.json`、`version.json`、`android-app/android/app/build.gradle`、`android-app/web/build-info.json` 与 `build/build-info.json`。
+
 ## [1.19.49] - 2026-03-26
 ### Added
 - **Bridge 语言 UI 回归测试**: 新增 `tests/unit/bridge-language-ui-regression.test.mjs`，固化桥接模式下词卡与挑战展示逻辑。

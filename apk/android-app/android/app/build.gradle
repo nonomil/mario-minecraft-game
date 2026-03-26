@@ -3,11 +3,10 @@ apply plugin: 'com.android.application'
 def webSourceDir = file("$rootDir/../web")
 def webTargetDir = file("$projectDir/src/main/assets/public")
 
-tasks.register("syncWebAssets", Copy) {
+tasks.register("syncWebAssets", Sync) {
     from(webSourceDir)
     include("**/*")
     into(webTargetDir)
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 preBuild.dependsOn(tasks.named("syncWebAssets"))
@@ -33,8 +32,8 @@ android {
         applicationId "com.nonomil.mariominecraftgame"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 100
-        versionName "1.19.49"
+        versionCode 101
+        versionName "1.19.50"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
