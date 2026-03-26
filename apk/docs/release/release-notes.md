@@ -1,5 +1,17 @@
 # Release Notes
 
+## v1.19.51 (2026-03-26)
+
+### 🛠️ APK Build / Packaging
+- **恢复 APK 构建入口一致性**: 调整 `build:apk` 与 `build:apk:release`，移除构建前自动执行 `npm run build` 的步骤，避免 `android-app/web/index.html` 在打包前被 `out/Game.offline.html` 覆盖。
+- **保持 Android 打包来源稳定**: 继续通过 `npm run sync` 与 Gradle `syncWebAssets` 从 `android-app/web` 同步到 APK 资产目录，确保首页 UI 与 APK 一致。
+
+### 📦 Technical Changes
+- 统一版本元数据到 `v1.19.51 / build 102`
+- 同步 `package.json`、`android-app/package.json`、`version.json`、`android-app/android/app/build.gradle`
+- 同步 `android-app/web/build-info.json` 与 `build/build-info.json`
+- 提取本次相关 Git 记录：无新增业务提交（基于 `release: v1.19.50` 后工作区变更发布）
+
 ## v1.19.50 (2026-03-26)
 
 ### 🛠️ APK Build / Packaging

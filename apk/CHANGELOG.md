@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.51] - 2026-03-26
+### Fixed
+- **APK 构建入口一致性**: 调整 `build:apk` / `build:apk:release` 构建脚本，移除自动执行 `npm run build` 的覆盖步骤，确保以 `android-app/web/index.html` 作为 APK 打包入口。
+
+### Changed
+- **版本发布**: 统一版本元数据到 `v1.19.51 / build 102`，同步 `package.json`、`android-app/package.json`、`android-app/android/app/build.gradle`、`android-app/web/build-info.json` 与 `build/build-info.json`。
+- **版本元数据校准**: 补齐 `version.json` 的版本对齐，恢复与当前发布版本一致。
+
 ## [1.19.50] - 2026-03-26
 ### Fixed
 - **APK 资源同步残留**: 将 Android `syncWebAssets` 任务从 `Copy` 改为 `Sync`，修复历史残留文件可能继续被打包进 APK 的问题。
