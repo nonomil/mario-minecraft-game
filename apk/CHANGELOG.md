@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.19.49] - 2026-03-26
+### Added
+- **Bridge 语言 UI 回归测试**: 新增 `tests/unit/bridge-language-ui-regression.test.mjs`，固化桥接模式下词卡与挑战展示逻辑。
+
+### Fixed
+- **Bridge 词库净化**: 继续清理桥接词库噪声，同步 `fix: continue bridge language vocab curation` 提交内容。
+- **挑战 UI 逻辑**: 统一 `src/modules/12-challenges.js` 中的展示提取逻辑，解决部分模式下挑战行文字提取不准确的问题。
+
+### Changed
+- **版本同步**: 升级版本元数据到 `v1.19.49 / build 100`，同步 APK 构建版本信息和发布说明。
+
 ## [1.19.48] - 2026-03-26
 ### Added
 - **低年级数学词再补强**: 为幼小衔接数学补回 `十以内加法`、`二十以内加减`、`图形拼搭`、`看位置`、`看统计图` 等更贴近学前到二年级的具体词条。
