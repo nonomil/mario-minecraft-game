@@ -1,0 +1,936 @@
+{
+  "generatedAt": "2026-03-26T04:44:16.253Z",
+  "startUrl": "http://127.0.0.1:4173/index.html",
+  "captures": [
+    {
+      "index": 0,
+      "kind": "page",
+      "name": "initial-view",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/00-initial-view.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "note": "Landing state"
+    },
+    {
+      "index": 1,
+      "kind": "overlay-selection",
+      "name": "overlay-language-gb",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/01-overlay-language-gb.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-language-english",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 2,
+      "kind": "overlay-selection",
+      "name": "overlay-language-cn",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/02-overlay-language-cn.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-language-chinese",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 3,
+      "kind": "overlay-selection",
+      "name": "overlay-language-py",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/03-overlay-language-py.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-language-pinyin",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 4,
+      "kind": "overlay-selection",
+      "name": "overlay-grade-pre",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/04-overlay-grade-pre.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-grade-scope-preschool",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 5,
+      "kind": "overlay-selection",
+      "name": "overlay-grade-g1",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/05-overlay-grade-g1.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-grade-scope-grade1",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 6,
+      "kind": "overlay-selection",
+      "name": "overlay-grade-g2",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/06-overlay-grade-g2.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-grade-scope-grade2",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 7,
+      "kind": "overlay-selection",
+      "name": "overlay-grade-all",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/07-overlay-grade-all.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-grade-scope-full",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 8,
+      "kind": "overlay-page",
+      "name": "overlay-account-setup",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/08-overlay-account-setup.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-pick-account",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 9,
+      "kind": "overlay-account",
+      "name": "overlay-account-input-ready",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/09-overlay-account-input-ready.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "filledSelector": "#overlay-username-input",
+      "filledValue": "AuditKid"
+    },
+    {
+      "index": 10,
+      "kind": "overlay-account",
+      "name": "overlay-account-created",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/10-overlay-account-created.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-create",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 11,
+      "kind": "overlay-exit",
+      "name": "overlay-enter-game",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/11-overlay-enter-game.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-overlay-action",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 12,
+      "kind": "page",
+      "name": "gameplay-main",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/12-gameplay-main.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "note": "Gameplay HUD after exiting overlay"
+    },
+    {
+      "index": 13,
+      "kind": "modal-open",
+      "name": "inventory-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/13-inventory-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "inventory-modal"
+      ],
+      "clickedSelector": "#btn-inventory",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 14,
+      "kind": "dialog-close",
+      "name": "inventory-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/14-inventory-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-inventory-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 15,
+      "kind": "modal-open",
+      "name": "crafting-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/15-crafting-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "crafting-modal"
+      ],
+      "clickedSelector": "#btn-crafting",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 16,
+      "kind": "dialog-close",
+      "name": "crafting-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/16-crafting-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-crafting-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 17,
+      "kind": "modal-open",
+      "name": "settings-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/17-settings-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "settings-modal"
+      ],
+      "clickedSelector": "#btn-settings",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 18,
+      "kind": "modal-open",
+      "name": "advanced-settings-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/18-advanced-settings-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "settings-modal",
+        "advanced-settings-modal"
+      ],
+      "clickedSelector": "#btn-settings-advanced",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 19,
+      "kind": "dialog-close",
+      "name": "advanced-settings-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/19-advanced-settings-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "settings-modal"
+      ],
+      "clickedSelector": "#btn-advanced-settings-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 20,
+      "kind": "dialog-close",
+      "name": "settings-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/20-settings-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-settings-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 21,
+      "kind": "modal-open",
+      "name": "save-progress-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/21-save-progress-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "save-progress-modal"
+      ],
+      "clickedSelector": "#btn-save-progress",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 22,
+      "kind": "dialog-close",
+      "name": "save-progress-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/22-save-progress-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-save-progress-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 23,
+      "kind": "modal-open",
+      "name": "profile-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/23-profile-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "profile-modal"
+      ],
+      "clickedSelector": "#btn-profile",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 24,
+      "kind": "modal-open",
+      "name": "learning-report-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/24-learning-report-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "learning-report-modal"
+      ],
+      "clickedSelector": "#btn-profile-learning-report",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 25,
+      "kind": "dialog-close",
+      "name": "learning-report-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/25-learning-report-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-learning-report-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 26,
+      "kind": "modal-open",
+      "name": "profile-modal-reopen",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/26-profile-modal-reopen.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "profile-modal"
+      ],
+      "clickedSelector": "#btn-profile",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 27,
+      "kind": "modal-open",
+      "name": "leaderboard-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/27-leaderboard-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "leaderboard-modal"
+      ],
+      "clickedSelector": "#btn-profile-save-leaderboard",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 28,
+      "kind": "dialog-close",
+      "name": "leaderboard-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/28-leaderboard-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-leaderboard-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 29,
+      "kind": "control",
+      "name": "control-repeat-pause",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/29-control-repeat-pause.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-repeat-pause",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 30,
+      "kind": "control",
+      "name": "control-left",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/30-control-left.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "button[data-action=\"left\"]",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 31,
+      "kind": "control",
+      "name": "control-right",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/31-control-right.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "button[data-action=\"right\"]",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 32,
+      "kind": "control",
+      "name": "control-jump",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/32-control-jump.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "button[data-action=\"jump\"]",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 33,
+      "kind": "control",
+      "name": "control-attack",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/33-control-attack.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-attack",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 34,
+      "kind": "control",
+      "name": "control-use-diamond",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/34-control-use-diamond.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "button[data-action=\"use-diamond\"]",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 35,
+      "kind": "control",
+      "name": "control-interact",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/35-control-interact.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "button[data-action=\"interact\"]",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 36,
+      "kind": "control",
+      "name": "control-switch",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/36-control-switch.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "button[data-action=\"switch\"]",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 37,
+      "kind": "control",
+      "name": "control-open-crafting",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/37-control-open-crafting.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "crafting-modal"
+      ],
+      "clickedSelector": "button[aria-label=\"打开合成\"]",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 38,
+      "kind": "modal-open",
+      "name": "crafting-modal-from-touch",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/38-crafting-modal-from-touch.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [
+        "crafting-modal"
+      ],
+      "clickedSelector": "button[aria-label=\"打开合成\"]"
+    },
+    {
+      "index": 39,
+      "kind": "dialog-close",
+      "name": "crafting-modal-from-touch-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/39-crafting-modal-from-touch-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-crafting-close",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 40,
+      "kind": "mobile-page",
+      "name": "mobile-initial-view",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/40-mobile-initial-view.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "device": "mobile",
+      "note": "Mobile viewport landing state"
+    },
+    {
+      "index": 41,
+      "kind": "mobile-overlay-page",
+      "name": "mobile-overlay-account-setup",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/41-mobile-overlay-account-setup.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-pick-account",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 42,
+      "kind": "input",
+      "name": "mobile-overlay-account-input",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/42-mobile-overlay-account-input.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "filledSelector": "#overlay-username-input",
+      "filledValue": "AuditKid",
+      "device": "mobile"
+    },
+    {
+      "index": 43,
+      "kind": "mobile-overlay-account",
+      "name": "mobile-overlay-account-created",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/43-mobile-overlay-account-created.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [
+        "screen-overlay"
+      ],
+      "clickedSelector": "#btn-overlay-create",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 44,
+      "kind": "mobile-overlay-exit",
+      "name": "mobile-overlay-enter-game",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/44-mobile-overlay-enter-game.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-overlay-action",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 45,
+      "kind": "mobile-page",
+      "name": "mobile-gameplay-main",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/45-mobile-gameplay-main.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [],
+      "device": "mobile",
+      "note": "Mobile viewport gameplay HUD"
+    },
+    {
+      "index": 46,
+      "kind": "mobile-modal-open",
+      "name": "mobile-settings-modal",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/46-mobile-settings-modal.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [
+        "settings-modal"
+      ],
+      "clickedSelector": "#btn-settings",
+      "note": "",
+      "expect": ""
+    },
+    {
+      "index": 47,
+      "kind": "dialog-close",
+      "name": "mobile-settings-modal-closed",
+      "file": "G:/UserCode/Mario_Minecraft/mario-minecraft-game_APK_V1.19.8/android-app/web/audit-output/screens/47-mobile-settings-modal-closed.png",
+      "url": "http://127.0.0.1:4173/index.html",
+      "dialogCount": 3,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "visibleModalIds": [],
+      "clickedSelector": "#btn-settings-close",
+      "note": "",
+      "expect": ""
+    }
+  ],
+  "consoleEvents": [
+    {
+      "type": "log",
+      "text": "Migrating to bilingual v2.2.0..."
+    },
+    {
+      "type": "log",
+      "text": "Bilingual migration completed"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "warning",
+      "text": "[Config] Failed to load consumables.json, using defaults"
+    },
+    {
+      "type": "log",
+      "text": "[TTS] Initialized Web TTS Provider"
+    },
+    {
+      "type": "log",
+      "text": "[SW] Local dev mode: cleared service workers and mmwg caches"
+    },
+    {
+      "type": "log",
+      "text": "generatePlatform called: {startX: 0, length: 12, groundYValue: 848, blockSize: 80}"
+    },
+    {
+      "type": "log",
+      "text": "Platform config: {groundType: grass, newWidth: 960, biomeId: forest}"
+    },
+    {
+      "type": "log",
+      "text": "Platform created! Total platforms: 1"
+    },
+    {
+      "type": "log",
+      "text": "generatePlatform called: {startX: 960, length: 6, groundYValue: 848, blockSize: 80}"
+    },
+    {
+      "type": "log",
+      "text": "Platform config: {groundType: grass, newWidth: 480, biomeId: forest}"
+    },
+    {
+      "type": "log",
+      "text": "generatePlatform called: {startX: 1440, length: 8, groundYValue: 848, blockSize: 80}"
+    },
+    {
+      "type": "log",
+      "text": "Platform config: {groundType: grass, newWidth: 640, biomeId: forest}"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "warning",
+      "text": "[Config] Failed to load consumables.json, using defaults"
+    },
+    {
+      "type": "log",
+      "text": "[TTS] Initialized Web TTS Provider"
+    },
+    {
+      "type": "log",
+      "text": "[SW] Local dev mode: cleared service workers and mmwg caches"
+    },
+    {
+      "type": "log",
+      "text": "generatePlatform called: {startX: 0, length: 12, groundYValue: 817.6125, blockSize: 24.5625}"
+    },
+    {
+      "type": "log",
+      "text": "Platform config: {groundType: grass, newWidth: 294.75, biomeId: forest}"
+    },
+    {
+      "type": "log",
+      "text": "Platform created! Total platforms: 1"
+    },
+    {
+      "type": "log",
+      "text": "generatePlatform called: {startX: 294.75, length: 4, groundYValue: 817.6125, blockSize: 24.5625}"
+    },
+    {
+      "type": "log",
+      "text": "Platform config: {groundType: grass, newWidth: 98.25, biomeId: forest}"
+    },
+    {
+      "type": "log",
+      "text": "generatePlatform called: {startX: 393, length: 6, groundYValue: 817.6125, blockSize: 24.5625}"
+    },
+    {
+      "type": "log",
+      "text": "Platform config: {groundType: grass, newWidth: 147.375, biomeId: forest}"
+    },
+    {
+      "type": "log",
+      "text": "generatePlatform called: {startX: 540.375, length: 5, groundYValue: 817.6125, blockSize: 24.5625}"
+    },
+    {
+      "type": "log",
+      "text": "Platform config: {groundType: grass, newWidth: 122.8125, biomeId: forest}"
+    }
+  ],
+  "pageErrors": [],
+  "summary": {
+    "totalCaptures": 48,
+    "totalInteractions": 0,
+    "totalErrors": 0,
+    "dialogSelectors": "dialog, [role=\"dialog\"], [aria-modal=\"true\"], .modal, .popup, .dialog, .overlay",
+    "clickableSelectors": "button, [role=\"button\"], a[href], summary, input[type=\"button\"], input[type=\"submit\"], input[type=\"reset\"], [data-action], [onclick]"
+  }
+}

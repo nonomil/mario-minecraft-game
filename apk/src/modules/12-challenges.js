@@ -328,15 +328,12 @@ function showWordCard(wordObj) {
     const meta = document.getElementById("word-card-meta");
     const phrase = document.getElementById("word-card-phrase");
     const displayContent = getWordDisplayContentSafe(wordObj);
+    const displayLines = getChallengeDisplayLines(wordObj, displayContent);
     function getWordCardMetaText(displayContent, wordObj) {
-        const languageMode = getLanguageModeSafe();
-        if (languageMode === "pinyin") {
-            return displayContent?.metaText || "";
-        }
-        return formatWordDisplayPair(displayContent?.metaText, displayContent?.tipText, " · ");
+        return getChallengeMetaText(displayContent, wordObj);
     }
-    if (en) en.innerText = displayContent.primaryText || "";
-    if (zh) zh.innerText = displayContent.secondaryText || "";
+    if (en) en.innerText = displayLines.primary;
+    if (zh) zh.innerText = displayLines.secondary;
     if (meta) {
         const metaText = getWordCardMetaText(displayContent, wordObj);
         if (metaText) {
@@ -466,7 +463,7 @@ function getWordDisplayContentSafe(wordObj) {
     const displayContent = _root.BilingualVocab?.getDisplayContent?.(wordObj);
     if (displayContent) return displayContent;
     const englishText = normalizeSpeechText(wordObj?.english, wordObj?.en, wordObj?.word);
-    const chineseText = normalizeSpeechText(wordObj?.character, wordObj?.zh, wordObj?.chinese);
+    const chineseText = normalizeSpeechText(wordObj?.character, wordObj?.zh, wordObj?.chinese, wordObj?.word);
     const pinyinText = normalizeSpeechText(wordObj?.pinyin, wordObj?.phonetic, wordObj?.romanization);
     const phraseText = String(wordObj?.phrase || "").trim();
     const phraseTranslation = String(wordObj?.phraseZh || wordObj?.phraseTranslation || "").trim();
@@ -474,7 +471,7 @@ function getWordDisplayContentSafe(wordObj) {
     if (languageMode === "chinese") {
         return {
             primaryText: chineseText || englishText,
-            secondaryText: englishText,
+            secondaryText: pinyinText || englishText,
             phrasePrimary: phraseTranslation,
             phraseSecondary: phraseText
         };
@@ -495,6 +492,48 @@ function getWordDisplayContentSafe(wordObj) {
     };
 }
 
+function isChallengeHanziWord(wordObj) {
+    return Boolean(
+        String(wordObj?.character || wordObj?.chinese || wordObj?.zh || "").trim()
+        && Array.isArray(wordObj?.examples)
+        && wordObj.examples.length
+    );
+}
+
+function getChallengeDisplayLines(wordObj, displayContent) {
+    const languageMode = getLanguageModeSafe();
+    const chineseText = normalizeSpeechText(wordObj?.character, wordObj?.chinese, wordObj?.zh, wordObj?.word);
+    const pinyinText = normalizeSpeechText(wordObj?.pinyin, displayContent?.phoneticText, wordObj?.romanization);
+    const primaryText = String(displayContent?.primaryText || "").trim();
+    const secondaryText = String(displayContent?.secondaryText || "").trim();
+
+    if (languageMode === "pinyin" && chineseText && pinyinText) {
+        return {
+            primary: chineseText || secondaryText || primaryText || "Start!",
+            secondary: pinyinText || primaryText || secondaryText || ""
+        };
+    }
+
+    if (languageMode === "chinese" || isChallengeHanziWord(wordObj)) {
+        return {
+            primary: chineseText || primaryText || secondaryText || "Start!",
+            secondary: pinyinText || secondaryText || ""
+        };
+    }
+
+    return {
+        primary: primaryText || "Start!",
+        secondary: secondaryText
+    };
+}
+
+function getChallengeMetaText(displayContent, wordObj) {
+    const languageMode = getLanguageModeSafe();
+    const isHanziWord = isChallengeHanziWord(wordObj);
+    if (languageMode === "chinese" || languageMode === "pinyin" || isHanziWord) return "";
+    return formatWordDisplayPair(displayContent?.metaText, displayContent?.tipText, " · ");
+}
+
 function formatWordDisplayPair(primary, secondary, separator) {
     const first = String(primary || "").trim();
     const second = String(secondary || "").trim();
@@ -510,10 +549,11 @@ function buildSessionWordsSummary() {
             const key = getWordKeySafe(word);
             if (!key) return "";
             const displayContent = getWordDisplayContentSafe(word);
-            const buttonText = String(displayContent.primaryText || key).trim();
+            const displayLines = getChallengeDisplayLines(word, displayContent);
+            const buttonText = String(displayLines.primary || key).trim();
             if (!buttonText) return "";
             const encodedKey = encodeURIComponent(key);
-            const secondaryText = escapeSessionWordAttr(String(displayContent.secondaryText || "").trim());
+            const secondaryText = escapeSessionWordAttr(String(displayLines.secondary || "").trim());
             const primaryText = escapeSessionWordText(buttonText);
             return `<button type="button" class="session-word" onclick="speakSessionWordByText('${encodedKey}')" title="${secondaryText}">${primaryText}</button>`;
         })
@@ -1648,7 +1688,8 @@ function showChallengeCorrection(wordObj) {
     correctionDiv.style.background = "rgba(76,175,80,0.2)";
 
     const displayContent = getWordDisplayContentSafe(wordObj);
-    const answerText = formatWordDisplayPair(displayContent.primaryText, displayContent.secondaryText, " = ");
+    const displayLines = getChallengeDisplayLines(wordObj, displayContent);
+    const answerText = formatWordDisplayPair(displayLines.primary, displayLines.secondary, " = ");
     function getChallengeCorrectionText(displayContent, wordObj) {
         const mode = getLanguageModeSafe();
         if (mode === "pinyin") return "";
@@ -1840,19 +1881,14 @@ function updateWordUI(wordObj) {
     const displayContent = _root.BilingualVocab?.getDisplayContent?.(wordObj);
 
     if (displayContent) {
+        const displayLines = getChallengeDisplayLines(wordObj, displayContent);
         function getHudMetaText(displayContent) {
-            const languageMode = getLanguageModeSafe();
-            if (languageMode === "pinyin") {
-                return displayContent?.metaText || "";
-            }
-            return formatWordDisplayPair(displayContent?.metaText, displayContent?.tipText, " · ");
+            return getChallengeMetaText(displayContent, wordObj);
         }
-        // In Chinese mode: primaryText is Chinese, secondaryText is English
-        // In English mode: primaryText is English, secondaryText is Chinese
-        el.innerText = displayContent.primaryText || "Start!";
+        el.innerText = displayLines.primary;
 
         const zhEl = document.getElementById("word-display-zh");
-        if (zhEl) zhEl.innerText = displayContent.secondaryText || "";
+        if (zhEl) zhEl.innerText = displayLines.secondary;
         const metaEl = document.getElementById("word-display-meta");
         if (metaEl) {
             const metaText = getHudMetaText(displayContent);

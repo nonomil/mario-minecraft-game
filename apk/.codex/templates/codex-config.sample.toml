@@ -1,0 +1,20 @@
+# Codex 主控配置示例（项目建议）
+# 放置位置：%USERPROFILE%/.codex/config.toml
+# 说明：本仓库建议将 CODEX.md 作为 fallback 文档载入，AGENTS.md 继续作为主约束。
+
+model = "gpt-5.3-codex"
+approval_policy = "on-failure"
+sandbox_mode = "danger-full-access"
+
+# 让 Codex 在项目指令聚合时附带读取 CODEX.md
+project_doc_fallback_filenames = ["CODEX.md"]
+
+# 可选：将额外模型指令文件指向项目文档（谨慎使用，避免跨项目污染）
+# model_instructions_file = "D:/Workplace/Claude/Codex_ClaudeCode_Cowork_Example/CODEX.md"
+
+[mcp_servers.claude]
+command = "claude"
+args = ["mcp", "serve"]
+
+# 仅在需要时使用：Claude Code 反向调用 Codex 的兼容路径
+# 对应规范见 .codex/workflows/codex-workflow-constants.md

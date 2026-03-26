@@ -105,9 +105,36 @@ function testPinyinWordCardHidesNoisyTips() {
 
   assert.match(source, /function getWordCardMetaText\(/, "词卡元信息应通过独立函数生成");
   assert.match(source, /languageMode === "pinyin"/, "幼小衔接词卡应支持单独的元信息裁剪");
-  assert.match(source, /return displayContent\?\.metaText \|\| ""/, "幼小衔接词卡应仅保留必要元信息，不再拼接提示口号");
+  assert.match(source, /if \(languageMode === "chinese" \|\| languageMode === "pinyin" \|\| isHanziWord\) return "";/, "幼小衔接词卡第三行应直接隐藏");
   assert.match(source, /function getHudMetaText\(/, "主 HUD 元信息应通过独立函数生成");
-  assert.match(source, /return displayContent\?\.metaText \|\| ""/, "幼小衔接主 HUD 应仅保留必要元信息");
+  assert.match(source, /if \(languageMode === "chinese" \|\| languageMode === "pinyin" \|\| isHanziWord\) return "";/, "幼小衔接主 HUD 第三行也应直接隐藏");
+}
+
+function testPinyinWordCardUsesChineseAndPinyinOnly() {
+  const source = read("src/modules/12-challenges.js");
+
+  assert.match(source, /languageMode === "pinyin" && chineseText && pinyinText/, "幼小衔接模式应在有拼音数据时单独切换到汉字 + 拼音布局");
+  assert.match(source, /primary:\s*chineseText \|\| secondaryText \|\| primaryText \|\| "Start!"/, "幼小衔接词卡第一行应优先显示汉字");
+  assert.match(source, /secondary:\s*pinyinText \|\| primaryText \|\| secondaryText \|\| ""/, "幼小衔接词卡第二行应优先显示拼音");
+}
+
+function testChineseWordCardUsesChineseAndPinyinOnly() {
+  const source = read("src/modules/12-challenges.js");
+
+  assert.match(source, /function getChallengeDisplayLines\(/, "词卡与 HUD 应复用统一的汉字展示行生成器");
+  assert.match(source, /languageMode === "chinese"/, "汉字模式卡片应按中文模式单独处理");
+  assert.match(source, /secondary:\s*pinyinText \|\| secondaryText \|\| ""/, "汉字模式卡片第二行应优先显示拼音");
+  assert.match(source, /if \(languageMode === "chinese" \|\| languageMode === "pinyin" \|\| isHanziWord\) return "";/, "汉字模式卡片与 HUD 应隐藏第三行元说明");
+}
+
+function testChallengeAnswerAndSummaryReuseDisplayLines() {
+  const source = read("src/modules/12-challenges.js");
+
+  assert.match(source, /const displayLines = getChallengeDisplayLines\(word, displayContent\);/, "局内词汇摘要按钮应复用统一展示行");
+  assert.match(source, /const buttonText = String\(displayLines\.primary \|\| key\)\.trim\(\);/, "局内词汇摘要按钮主文案应使用统一主行");
+  assert.match(source, /const secondaryText = escapeSessionWordAttr\(String\(displayLines\.secondary \|\| ""\)\.trim\(\)\);/, "局内词汇摘要提示应使用统一副行");
+  assert.match(source, /const displayLines = getChallengeDisplayLines\(wordObj, displayContent\);/, "挑战纠正区应复用统一展示行");
+  assert.match(source, /const answerText = formatWordDisplayPair\(displayLines\.primary, displayLines\.secondary, " = "\);/, "挑战纠正区答案顺序应与卡片和 HUD 一致");
 }
 
 function testBridgeChallengePromptsAreMoreClassroomLike() {
@@ -203,6 +230,9 @@ testBridgeWorldItemsDoNotDefaultToPinyinOnOrbLabel();
   testBridgeChallengeUiHasContextBadge();
   testBridgeWordCardHasModeThemes();
   testPinyinWordCardHidesNoisyTips();
+  testPinyinWordCardUsesChineseAndPinyinOnly();
+  testChineseWordCardUsesChineseAndPinyinOnly();
+  testChallengeAnswerAndSummaryReuseDisplayLines();
   testBridgeChallengePromptsAreMoreClassroomLike();
   testPinyinChallengeContextIsCompact();
   testPinyinChallengeCorrectionHidesExtraExplanation();

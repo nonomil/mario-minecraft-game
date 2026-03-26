@@ -1,0 +1,4 @@
+interface:
+  display_name: "Largebase Structured Scan"
+  short_description: "为大型代码库和多文档项目生成结构化扫描包与影响矩阵"
+  default_prompt: "先做结构化扫描并产出00-06扫描包，再进入Plan或开发。"

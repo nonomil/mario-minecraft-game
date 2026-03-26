@@ -1,0 +1,100 @@
+## Context
+- 项目根目录：[DEV_DIR]
+- 需求主题：[TOPIC]
+- 扫描范围（可多路径）：[SCOPE_PATHS]
+- 扫描模式：M4（全量深度扫描）
+- 参考文档：
+  - [doc_path_1]：[用途]
+  - [doc_path_2]：[用途]
+  - [doc_path_3]：[用途]
+
+## Task
+只做扫描分析，不修改源码。生成完整扫描包，覆盖架构、数据、API、约束、影响和执行摘要。
+
+## 输出格式（JSON）
+
+```json
+{
+  "scan_meta": {
+    "topic": "[TOPIC]",
+    "mode": "M4",
+    "scope": ["[SCOPE_PATH_1]", "[SCOPE_PATH_2]", "[SCOPE_PATH_3]"],
+    "reference_docs": ["[doc_path_1]", "[doc_path_2]", "[doc_path_3]"],
+    "generated_at": "2026-02-26T12:00:00Z",
+    "stats": {
+      "modules": 0,
+      "entry_points": 0,
+      "public_apis": 0,
+      "core_data_structures": 0
+    }
+  },
+  "module_inventory": [
+    {
+      "path": "src/core",
+      "responsibility": "核心编排与调度",
+      "public_symbols": ["run_pipeline"],
+      "dependencies": ["src/adapters", "src/store"]
+    }
+  ],
+  "entry_points": [
+    {
+      "name": "cli_main",
+      "type": "cli",
+      "trigger": "python -m app.main",
+      "call_chain_top3": ["main", "run_pipeline", "execute_stage"]
+    }
+  ],
+  "data_structures": [
+    {
+      "name": "pipeline_state",
+      "fields": [
+        {"name": "stage", "type": "string", "purpose": "当前阶段"},
+        {"name": "payload", "type": "dict", "purpose": "处理上下文"}
+      ],
+      "source": "src/core/state.py"
+    }
+  ],
+  "data_flows": [
+    {
+      "name": "pipeline_flow",
+      "input": "request_payload",
+      "stages": ["normalize", "enrich", "persist"],
+      "output": "response_payload",
+      "side_effects": ["write db", "emit event"]
+    }
+  ],
+  "api_surface": [
+    {
+      "name": "run_pipeline",
+      "signature": "(payload: dict, options: dict | None = None) -> dict",
+      "file_line": "src/core/pipeline.py:120",
+      "callers": ["cli_main", "http_handler"],
+      "compatibility_strategy": "新增参数必须提供默认值并保留旧调用路径"
+    }
+  ],
+  "reference_constraints": [
+    {
+      "source": "docs/architecture.md",
+      "constraint": "所有外部调用必须经过 adapter 层",
+      "impact": "禁止在 core 直接调用第三方 SDK",
+      "conflict_with": "",
+      "adopt": "docs/architecture.md"
+    }
+  ],
+  "impact_matrix": [
+    {
+      "change_point": "run_pipeline and pipeline_state",
+      "direct_impact": "主流程行为变化",
+      "indirect_impact": "依赖方调用链和监控指标变化",
+      "validation_point": "端到端回归 + 关键接口契约测试",
+      "risk_level": "high"
+    }
+  ]
+}
+```
+
+## Constraints
+- 不执行业务代码
+- 不修改任何源码文件
+- 必须同时产出 `00-06` 扫描文档与 `scan-data.json`
+- 结论需可追溯到文件/函数/行号或参考文档来源

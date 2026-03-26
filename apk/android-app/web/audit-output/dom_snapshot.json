@@ -1,0 +1,2750 @@
+{
+  "initial": {
+    "title": "我的世界：单词大冒险 (宝箱增强版)",
+    "url": "http://127.0.0.1:4173/index.html",
+    "bodyTextColor": "rgb(0, 0, 0)",
+    "bodyBackground": "rgba(0, 0, 0, 0)",
+    "bodyBackgroundImage": "radial-gradient(circle at 50% 0%, rgba(255, 227, 138, 0.24), rgba(0, 0, 0, 0) 32%), linear-gradient(rgb(135, 207, 228) 0%, rgb(139, 203, 127) 44%, rgb(106, 175, 87) 100%)",
+    "baseFontFamily": "\"Trebuchet MS\", \"Microsoft YaHei\", 微软雅黑, sans-serif",
+    "baseFontSize": "16px",
+    "rootBackground": "rgba(0, 0, 0, 0)",
+    "viewport": {
+      "width": 1440,
+      "height": 960
+    },
+    "clickables": [
+      {
+        "tag": "button",
+        "text": "🎒 背包",
+        "ariaLabel": "",
+        "id": "btn-inventory",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 16,
+        "y": 73.5999984741211,
+        "width": 104.57500457763672,
+        "height": 54.400001525878906,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️ 合成",
+        "ariaLabel": "",
+        "id": "btn-crafting",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 128.5749969482422,
+        "y": 73.5999984741211,
+        "width": 104.57501220703125,
+        "height": 54.400001525878906,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "💾 存档",
+        "ariaLabel": "",
+        "id": "btn-save-progress",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 241.15000915527344,
+        "y": 73.5999984741211,
+        "width": 104.57499694824219,
+        "height": 54.400001525878906,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚙️ 设置",
+        "ariaLabel": "",
+        "id": "btn-settings",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 1089.625,
+        "y": 76.80000305175781,
+        "width": 104.5750732421875,
+        "height": 54.399993896484375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "📋 档案",
+        "ariaLabel": "档案，需要先创建或选择档案",
+        "id": "btn-profile",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 1202.2000732421875,
+        "y": 76.80000305175781,
+        "width": 104.574951171875,
+        "height": 54.399993896484375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🔊 重读",
+        "ariaLabel": "",
+        "id": "btn-repeat-pause",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 1314.7750244140625,
+        "y": 76.80000305175781,
+        "width": 109.2249755859375,
+        "height": 54.399993896484375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⬅️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn touch-btn-left",
+        "href": "",
+        "x": 32,
+        "y": 812.7999877929688,
+        "width": 121.60000610351562,
+        "height": 121.60003662109375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "➡️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn touch-btn-right",
+        "href": "",
+        "x": 169.60000610351562,
+        "y": 812.7999877929688,
+        "width": 121.60000610351562,
+        "height": 121.60003662109375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "💎",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 1148.800048828125,
+        "y": 537.6000366210938,
+        "width": 121.5999755859375,
+        "height": 121.5999755859375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🧰",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 1286.4000244140625,
+        "y": 537.6000366210938,
+        "width": 121.5999755859375,
+        "height": 121.5999755859375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🔁",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 1148.800048828125,
+        "y": 675.2000122070312,
+        "width": 121.5999755859375,
+        "height": 121.5999755859375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️",
+        "ariaLabel": "打开合成",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 1286.4000244140625,
+        "y": 675.2000122070312,
+        "width": 121.5999755859375,
+        "height": 121.5999755859375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⤴️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 1148.800048828125,
+        "y": 812.7999877929688,
+        "width": 121.5999755859375,
+        "height": 121.60003662109375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🗡️",
+        "ariaLabel": "",
+        "id": "btn-attack",
+        "className": "touch-btn",
+        "href": "",
+        "x": 1286.4000244140625,
+        "y": 812.7999877929688,
+        "width": 121.5999755859375,
+        "height": 121.60003662109375,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "GB\n英语学习\n英文主显示 · 中文辅助",
+        "ariaLabel": "",
+        "id": "btn-overlay-language-english",
+        "className": "game-btn overlay-mode-btn is-active",
+        "href": "",
+        "x": 400,
+        "y": 430.53125,
+        "width": 315,
+        "height": 56,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "CN\n汉字学习\n中文主显示 · 英文辅助",
+        "ariaLabel": "",
+        "id": "btn-overlay-language-chinese",
+        "className": "game-btn overlay-mode-btn",
+        "href": "",
+        "x": 725,
+        "y": 430.53125,
+        "width": 315,
+        "height": 56,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "PY\n幼小衔接\n拼音主显示 · 汉字辅助",
+        "ariaLabel": "",
+        "id": "btn-overlay-language-pinyin",
+        "className": "game-btn overlay-mode-btn",
+        "href": "",
+        "x": 400,
+        "y": 496.53125,
+        "width": 315,
+        "height": 56,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "PRE\n学前启蒙\n拼音启蒙 · 基础识字",
+        "ariaLabel": "",
+        "id": "btn-overlay-grade-scope-preschool",
+        "className": "game-btn overlay-mode-btn overlay-grade-btn",
+        "href": "",
+        "x": 400,
+        "y": 592.71875,
+        "width": 315,
+        "height": 56,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "G1\n小学一年级\n高频识字 · 词语认读",
+        "ariaLabel": "",
+        "id": "btn-overlay-grade-scope-grade1",
+        "className": "game-btn overlay-mode-btn overlay-grade-btn",
+        "href": "",
+        "x": 725,
+        "y": 592.71875,
+        "width": 315,
+        "height": 56,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "G2\n小学二年级\n拓展词汇 · 表达训练",
+        "ariaLabel": "",
+        "id": "btn-overlay-grade-scope-grade2",
+        "className": "game-btn overlay-mode-btn overlay-grade-btn",
+        "href": "",
+        "x": 400,
+        "y": 658.71875,
+        "width": 315,
+        "height": 56,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "ALL\n全阶段\n学前到二年级综合词库",
+        "ariaLabel": "",
+        "id": "btn-overlay-grade-scope-full",
+        "className": "game-btn overlay-mode-btn overlay-grade-btn is-active",
+        "href": "",
+        "x": 725,
+        "y": 658.71875,
+        "width": 315,
+        "height": 56,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "跳过",
+        "ariaLabel": "",
+        "id": "btn-overlay-skip",
+        "className": "overlay-btn overlay-btn-secondary",
+        "href": "",
+        "x": 400,
+        "y": 728.71875,
+        "width": 316,
+        "height": 40,
+        "display": "block",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "选择档案",
+        "ariaLabel": "",
+        "id": "btn-overlay-pick-account",
+        "className": "overlay-btn overlay-btn-primary",
+        "href": "",
+        "x": 724,
+        "y": 728.71875,
+        "width": 316,
+        "height": 40,
+        "display": "block",
+        "visibility": "visible"
+      }
+    ],
+    "dialogs": [
+      {
+        "tag": "div",
+        "text": "游戏设置\n\n        \n            保存\n            高级设置\n        \n\n        \n            操作提示\n            \n                ⬅️ ➡️ 移动 · ⬆️ 跳(可二段跳) [Space]\n                ⚔️ 攻击 [J] · 🔄 切换武器 [K",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "div",
+        "text": "高级设置\n\n        \n        📖 词库管理\n\n        \n             单词不重复(轮换)\n        \n        \n            词库轮换\n            幼儿园  0/17  (0%)\n            重置轮换\n        \n        \n            词库预览\n ",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "div",
+        "text": "今日学习报告\n                \n            \n            关闭\n        \n        \n        \n            截图分享给家长 ↗",
+        "width": 0,
+        "height": 0
+      }
+    ],
+    "textNodes": [
+      {
+        "tag": "div",
+        "text": "Minecraft 单词游戏\n\n        \n        \n            🌍 选择学习模式\n            \n                🇬🇧 英语学习\n                🇨🇳 汉字学习",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0.9)"
+      },
+      {
+        "tag": "h1",
+        "text": "Minecraft 单词游戏",
+        "fontSize": "32px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🌍 选择学习模式\n            \n                🇬🇧 英语学习\n                🇨🇳 汉字学习\n                🇨🇳 幼小衔接",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🌍 选择学习模式",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(204, 204, 204)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🇬🇧 英语学习\n                🇨🇳 汉字学习\n                🇨🇳 幼小衔接",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇬🇧 英语学习",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇨🇳 汉字学习",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇨🇳 幼小衔接",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级\n                当前：学前到小学二年级",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级",
+        "fontSize": "14px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.92)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "当前：学前到小学二年级",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.72)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "PRE\n                    \n                        学前启蒙\n                        拼音启蒙与基础识字\n                    \n           ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "PRE\n                    \n                        学前启蒙\n                        拼音启蒙与基础识字",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "PRE",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前启蒙\n                        拼音启蒙与基础识字",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前启蒙",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "拼音启蒙与基础识字",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "G1\n                    \n                        小学一年级\n                        高频识字与短句认读",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "G1",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学一年级\n                        高频识字与短句认读",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学一年级",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "高频识字与短句认读",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "G2\n                    \n                        小学二年级\n                        扩展词汇与表达练习",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "G2",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学二年级\n                        扩展词汇与表达练习",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学二年级",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "扩展词汇与表达练习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "ALL\n                    \n                        全阶段\n                        学前到二年级综合内容",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "ALL",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(5, 46, 22)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "全阶段\n                        学前到二年级综合内容",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "全阶段",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前到二年级综合内容",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(233, 255, 239, 0.9)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "请输入用户名\n                \n            \n            连接",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "请输入用户名",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "label",
+        "text": "请输入用户名",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(224, 224, 224)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "连接",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "h3",
+        "text": "已有账号",
+        "fontSize": "18.72px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "暂无账号",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "暂无账号",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgba(255, 255, 255, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "创建新账号",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0\n                \n                \n                    🎒 背包\n                    ⚒️ 合成\n                    💾 存档",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0\n                \n                \n                    🎒 背包\n                    ⚒️ 合成\n                    💾 存档",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0\n                \n                \n                    🎒 背包\n                    ⚒️ 合成\n                    💾 存档",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0\n                \n                \n                    🎒 背包\n                    ⚒️ 合成\n                    💾 存档",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0",
+        "fontSize": "12.672px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "0",
+        "fontSize": "12.672px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🎒 背包\n                    ⚒️ 合成\n                    💾 存档",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🎒 背包",
+        "fontSize": "11.808px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️ 合成",
+        "fontSize": "11.808px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "💾 存档",
+        "fontSize": "11.808px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "Start!",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "Start!",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "Start!",
+        "fontSize": "24px",
+        "fontWeight": "900",
+        "color": "rgb(255, 215, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "⚔️ 石剑\n                    🌲 森林\n                    🛡️ 无\n                \n                \n                \n           ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "⚔️ 石剑\n                    🌲 森林\n                    🛡️ 无",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "⚔️ 石剑",
+        "fontSize": "13.68px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🌲 森林",
+        "fontSize": "13.68px",
+        "fontWeight": "700",
+        "color": "rgb(135, 206, 235)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🛡️ 无",
+        "fontSize": "13.68px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "💣",
+        "fontSize": "18px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "炸药",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "x3",
+        "fontSize": "14px",
+        "fontWeight": "700",
+        "color": "rgb(255, 215, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "⚙️ 设置\n                    📋 档案\n                    🔊 重读",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "⚙️ 设置",
+        "fontSize": "11.808px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "📋 档案",
+        "fontSize": "11.808px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🔊 重读",
+        "fontSize": "13.68px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "💎0\n            🎃0\n            🧱0\n            🥢0\n            ⚔️0\n            ⛏️0\n            🏹0\n            🏹0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "💎0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "💎",
+        "fontSize": "20px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "0",
+        "fontSize": "10px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🎃0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "🎃",
+        "fontSize": "20px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "0",
+        "fontSize": "10px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🧱0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "🧱",
+        "fontSize": "20px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "0",
+        "fontSize": "10px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🥢0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "🥢",
+        "fontSize": "20px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "0",
+        "fontSize": "10px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "⚔️0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    ]
+  },
+  "final": {
+    "title": "我的世界：单词大冒险 (宝箱增强版)",
+    "url": "http://127.0.0.1:4173/index.html",
+    "bodyTextColor": "rgb(0, 0, 0)",
+    "bodyBackground": "rgba(0, 0, 0, 0)",
+    "bodyBackgroundImage": "radial-gradient(circle at 50% 0%, rgba(255, 227, 138, 0.24), rgba(0, 0, 0, 0) 32%), linear-gradient(rgb(135, 207, 228) 0%, rgb(139, 203, 127) 44%, rgb(106, 175, 87) 100%)",
+    "baseFontFamily": "\"Trebuchet MS\", \"Microsoft YaHei\", 微软雅黑, sans-serif",
+    "baseFontSize": "16px",
+    "rootBackground": "rgba(0, 0, 0, 0)",
+    "viewport": {
+      "width": 393,
+      "height": 852
+    },
+    "clickables": [
+      {
+        "tag": "button",
+        "text": "🎒 背包",
+        "ariaLabel": "",
+        "id": "btn-inventory",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 3.6000001430511475,
+        "y": 64.80000305175781,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️ 合成",
+        "ariaLabel": "",
+        "id": "btn-crafting",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 68.10000610351562,
+        "y": 64.80000305175781,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "💾 存档",
+        "ariaLabel": "",
+        "id": "btn-save-progress",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 132.60000610351562,
+        "y": 64.80000305175781,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚙️ 设置",
+        "ariaLabel": "",
+        "id": "btn-settings",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 198.3000030517578,
+        "y": 62.400001525878906,
+        "width": 62.10002136230469,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "📋 档案",
+        "ariaLabel": "查看当前档案",
+        "id": "btn-profile",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 262.8000183105469,
+        "y": 62.400001525878906,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🔊 重读",
+        "ariaLabel": "",
+        "id": "btn-repeat-pause",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 327.3000183105469,
+        "y": 62.400001525878906,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⬅️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn touch-btn-left",
+        "href": "",
+        "x": 4.800000190734863,
+        "y": 807.6000366210938,
+        "width": 38.400001525878906,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "➡️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn touch-btn-right",
+        "href": "",
+        "x": 48,
+        "y": 807.6000366210938,
+        "width": 38.400001525878906,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "💎",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 317.3812561035156,
+        "y": 676.640625,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🧰",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 355.1906433105469,
+        "y": 676.640625,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🔁",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 317.3812561035156,
+        "y": 714.4500122070312,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️",
+        "ariaLabel": "打开合成",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 355.1906433105469,
+        "y": 714.4500122070312,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⤴️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 317.3812561035156,
+        "y": 752.2593994140625,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🗡️",
+        "ariaLabel": "",
+        "id": "btn-attack",
+        "className": "touch-btn",
+        "href": "",
+        "x": 355.1906433105469,
+        "y": 747.4594116210938,
+        "width": 43.20001220703125,
+        "height": 43.20001220703125,
+        "display": "flex",
+        "visibility": "visible"
+      }
+    ],
+    "dialogs": [
+      {
+        "tag": "div",
+        "text": "游戏设置\n\n        \n            保存\n            高级设置\n        \n\n        \n            操作提示\n            \n                ⬅️ ➡️ 移动 · ⬆️ 跳(可二段跳) [Space]\n                ⚔️ 攻击 [J] · 🔄 切换武器 [K",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "div",
+        "text": "高级设置\n\n        \n        📖 词库管理\n\n        \n             单词不重复(轮换)\n        \n        \n            词库轮换\n            幼小衔接-数学  0/280  (0%)\n            重置轮换\n        \n        \n            词",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "div",
+        "text": "今日学习报告\n                \n            \n            关闭\n        \n        \n        \n            截图分享给家长 ↗",
+        "width": 0,
+        "height": 0
+      }
+    ],
+    "textNodes": [
+      {
+        "tag": "div",
+        "text": "Minecraft 单词游戏\n\n        \n        \n            🌍 选择学习模式\n            \n                🇬🇧 英语学习\n                🇨🇳 汉字学习",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0.9)"
+      },
+      {
+        "tag": "h1",
+        "text": "Minecraft 单词游戏",
+        "fontSize": "32px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🌍 选择学习模式",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(204, 204, 204)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🇬🇧 英语学习\n                🇨🇳 汉字学习\n                🇨🇳 幼小衔接",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇬🇧 英语学习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇨🇳 汉字学习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇨🇳 幼小衔接",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级\n                当前：学前到小学二年级\n            \n            \n                \n                    PRE\n                    ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级\n                当前：学前到小学二年级",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级",
+        "fontSize": "14px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.92)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "当前：学前到小学二年级",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.72)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "PRE\n                    \n                        学前启蒙\n                        拼音启蒙与基础识字\n                    \n           ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "PRE\n                    \n                        学前启蒙\n                        拼音启蒙与基础识字",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "PRE",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前启蒙\n                        拼音启蒙与基础识字",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前启蒙",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "拼音启蒙与基础识字",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "G1\n                    \n                        小学一年级\n                        高频识字与短句认读",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "G1",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学一年级\n                        高频识字与短句认读",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学一年级",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "高频识字与短句认读",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "G2\n                    \n                        小学二年级\n                        扩展词汇与表达练习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "G2",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学二年级\n                        扩展词汇与表达练习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学二年级",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "扩展词汇与表达练习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "ALL\n                    \n                        全阶段\n                        学前到二年级综合内容",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "ALL",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(5, 46, 22)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "全阶段\n                        学前到二年级综合内容",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "全阶段",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前到二年级综合内容",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(233, 255, 239, 0.9)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "请输入用户名",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "label",
+        "text": "请输入用户名",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(224, 224, 224)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "连接",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "已有账号\n            \n            A\n            \n                \n                    AuditKid\n                    上次\n      ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "h3",
+        "text": "已有账号",
+        "fontSize": "18.72px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "A\n            \n                \n                    AuditKid\n                    上次\n                \n                \n  ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "A\n            \n                \n                    AuditKid\n                    上次\n                \n                \n  ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(255, 255, 255, 0.05)"
+      },
+      {
+        "tag": "div",
+        "text": "A",
+        "fontSize": "24px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "AuditKid\n                    上次\n                \n                \n                    最高分 0\n                    已学 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "AuditKid\n                    上次",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "AuditKid",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "上次",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "最高分 0\n                    已学 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "最高分 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "strong",
+        "text": "0",
+        "fontSize": "16px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "已学 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "strong",
+        "text": "0",
+        "fontSize": "16px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "继续\n                重玩\n                删除",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "继续",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "重玩",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "删除",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "创建新账号",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "0",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🎒 背包\n                    ⚒️ 合成\n                    💾 存档",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🎒 背包",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️ 合成",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "💾 存档",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "Start!",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "Start!",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    ]
+  },
+  "mobile": {
+    "title": "我的世界：单词大冒险 (宝箱增强版)",
+    "url": "http://127.0.0.1:4173/index.html",
+    "bodyTextColor": "rgb(0, 0, 0)",
+    "bodyBackground": "rgba(0, 0, 0, 0)",
+    "bodyBackgroundImage": "radial-gradient(circle at 50% 0%, rgba(255, 227, 138, 0.24), rgba(0, 0, 0, 0) 32%), linear-gradient(rgb(135, 207, 228) 0%, rgb(139, 203, 127) 44%, rgb(106, 175, 87) 100%)",
+    "baseFontFamily": "\"Trebuchet MS\", \"Microsoft YaHei\", 微软雅黑, sans-serif",
+    "baseFontSize": "16px",
+    "rootBackground": "rgba(0, 0, 0, 0)",
+    "viewport": {
+      "width": 393,
+      "height": 852
+    },
+    "clickables": [
+      {
+        "tag": "button",
+        "text": "🎒 背包",
+        "ariaLabel": "",
+        "id": "btn-inventory",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 3.6000001430511475,
+        "y": 64.80000305175781,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️ 合成",
+        "ariaLabel": "",
+        "id": "btn-crafting",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 68.10000610351562,
+        "y": 64.80000305175781,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "💾 存档",
+        "ariaLabel": "",
+        "id": "btn-save-progress",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 132.60000610351562,
+        "y": 64.80000305175781,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚙️ 设置",
+        "ariaLabel": "",
+        "id": "btn-settings",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 198.3000030517578,
+        "y": 62.400001525878906,
+        "width": 62.10002136230469,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "📋 档案",
+        "ariaLabel": "查看当前档案",
+        "id": "btn-profile",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 262.8000183105469,
+        "y": 62.400001525878906,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🔊 重读",
+        "ariaLabel": "",
+        "id": "btn-repeat-pause",
+        "className": "game-btn hud-btn",
+        "href": "",
+        "x": 327.3000183105469,
+        "y": 62.400001525878906,
+        "width": 62.100006103515625,
+        "height": 16.800003051757812,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⬅️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn touch-btn-left",
+        "href": "",
+        "x": 4.800000190734863,
+        "y": 807.6000366210938,
+        "width": 38.400001525878906,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "➡️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn touch-btn-right",
+        "href": "",
+        "x": 48,
+        "y": 807.6000366210938,
+        "width": 38.400001525878906,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "💎",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 317.3812561035156,
+        "y": 676.640625,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🧰",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 355.1906433105469,
+        "y": 676.640625,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🔁",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 317.3812561035156,
+        "y": 714.4500122070312,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️",
+        "ariaLabel": "打开合成",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 355.1906433105469,
+        "y": 714.4500122070312,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "⤴️",
+        "ariaLabel": "",
+        "id": "",
+        "className": "touch-btn",
+        "href": "",
+        "x": 317.3812561035156,
+        "y": 752.2593994140625,
+        "width": 38.399993896484375,
+        "height": 38.4000244140625,
+        "display": "flex",
+        "visibility": "visible"
+      },
+      {
+        "tag": "button",
+        "text": "🗡️",
+        "ariaLabel": "",
+        "id": "btn-attack",
+        "className": "touch-btn",
+        "href": "",
+        "x": 355.1906433105469,
+        "y": 747.4594116210938,
+        "width": 43.20001220703125,
+        "height": 43.20001220703125,
+        "display": "flex",
+        "visibility": "visible"
+      }
+    ],
+    "dialogs": [
+      {
+        "tag": "div",
+        "text": "游戏设置\n\n        \n            保存\n            高级设置\n        \n\n        \n            操作提示\n            \n                ⬅️ ➡️ 移动 · ⬆️ 跳(可二段跳) [Space]\n                ⚔️ 攻击 [J] · 🔄 切换武器 [K",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "div",
+        "text": "高级设置\n\n        \n        📖 词库管理\n\n        \n             单词不重复(轮换)\n        \n        \n            词库轮换\n            幼小衔接-数学  0/280  (0%)\n            重置轮换\n        \n        \n            词",
+        "width": 0,
+        "height": 0
+      },
+      {
+        "tag": "div",
+        "text": "今日学习报告\n                \n            \n            关闭\n        \n        \n        \n            截图分享给家长 ↗",
+        "width": 0,
+        "height": 0
+      }
+    ],
+    "textNodes": [
+      {
+        "tag": "div",
+        "text": "Minecraft 单词游戏\n\n        \n        \n            🌍 选择学习模式\n            \n                🇬🇧 英语学习\n                🇨🇳 汉字学习",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0.9)"
+      },
+      {
+        "tag": "h1",
+        "text": "Minecraft 单词游戏",
+        "fontSize": "32px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🌍 选择学习模式",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(204, 204, 204)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🇬🇧 英语学习\n                🇨🇳 汉字学习\n                🇨🇳 幼小衔接",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇬🇧 英语学习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇨🇳 汉字学习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🇨🇳 幼小衔接",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级\n                当前：学前到小学二年级\n            \n            \n                \n                    PRE\n                    ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级\n                当前：学前到小学二年级",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "学习层级",
+        "fontSize": "14px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.92)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "当前：学前到小学二年级",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.72)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "PRE\n                    \n                        学前启蒙\n                        拼音启蒙与基础识字\n                    \n           ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "PRE\n                    \n                        学前启蒙\n                        拼音启蒙与基础识字",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "PRE",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前启蒙\n                        拼音启蒙与基础识字",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前启蒙",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "拼音启蒙与基础识字",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "G1\n                    \n                        小学一年级\n                        高频识字与短句认读",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "G1",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学一年级\n                        高频识字与短句认读",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学一年级",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "高频识字与短句认读",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "G2\n                    \n                        小学二年级\n                        扩展词汇与表达练习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "G2",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(35, 24, 12)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学二年级\n                        扩展词汇与表达练习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "小学二年级",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgba(255, 255, 255, 0.96)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "扩展词汇与表达练习",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(220, 227, 238, 0.7)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "ALL\n                    \n                        全阶段\n                        学前到二年级综合内容",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "ALL",
+        "fontSize": "11px",
+        "fontWeight": "900",
+        "color": "rgb(5, 46, 22)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "全阶段\n                        学前到二年级综合内容",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "全阶段",
+        "fontSize": "13px",
+        "fontWeight": "900",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "学前到二年级综合内容",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgba(233, 255, 239, 0.9)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "请输入用户名",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "label",
+        "text": "请输入用户名",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "color": "rgb(224, 224, 224)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "连接",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "已有账号\n            \n            A\n            \n                \n                    AuditKid\n                    上次\n      ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "h3",
+        "text": "已有账号",
+        "fontSize": "18.72px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "A\n            \n                \n                    AuditKid\n                    上次\n                \n                \n  ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "A\n            \n                \n                    AuditKid\n                    上次\n                \n                \n  ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(255, 255, 255, 0.05)"
+      },
+      {
+        "tag": "div",
+        "text": "A",
+        "fontSize": "24px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "AuditKid\n                    上次\n                \n                \n                    最高分 0\n                    已学 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "AuditKid\n                    上次",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "AuditKid",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "上次",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "最高分 0\n                    已学 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "最高分 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "strong",
+        "text": "0",
+        "fontSize": "16px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "已学 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "strong",
+        "text": "0",
+        "fontSize": "16px",
+        "fontWeight": "700",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "继续\n                重玩\n                删除",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "继续",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "重玩",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "删除",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "创建新账号",
+        "fontSize": "11px",
+        "fontWeight": "700",
+        "color": "rgb(255, 255, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0\n                \n                \n                    🎒 背包\n          ",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️\n                    🪙 金币: 0",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "❤️❤️❤️❤️❤️",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "❤️",
+        "fontSize": "13px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🪙 金币: 0",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "span",
+        "text": "0",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(244, 247, 251)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "🎒 背包\n                    ⚒️ 合成\n                    💾 存档",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "🎒 背包",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "⚒️ 合成",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "button",
+        "text": "💾 存档",
+        "fontSize": "9.5px",
+        "fontWeight": "700",
+        "color": "rgb(247, 251, 255)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "Start!",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "tag": "div",
+        "text": "Start!",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "color": "rgb(0, 0, 0)",
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    ]
+  }
+}

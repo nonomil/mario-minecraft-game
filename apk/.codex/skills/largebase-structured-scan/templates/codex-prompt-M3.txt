@@ -1,0 +1,80 @@
+## Context
+- 项目根目录：[DEV_DIR]
+- 需求主题：[TOPIC]
+- 扫描范围（可多路径）：[SCOPE_PATHS]
+- 扫描模式：M3（API 表面扫描）
+- 参考文档：
+  - [doc_path_1]：[用途]
+  - [doc_path_2]：[用途]
+
+## Task
+只做扫描分析，不修改源码。重点输出公共接口、调用关系、兼容策略和影响矩阵。
+
+## 输出格式（JSON）
+
+```json
+{
+  "scan_meta": {
+    "topic": "[TOPIC]",
+    "mode": "M3",
+    "scope": ["[SCOPE_PATH_1]", "[SCOPE_PATH_2]"],
+    "reference_docs": ["[doc_path_1]", "[doc_path_2]"],
+    "generated_at": "2026-02-26T12:00:00Z",
+    "stats": {
+      "modules": 0,
+      "entry_points": 0,
+      "public_apis": 0,
+      "core_data_structures": 0
+    }
+  },
+  "module_inventory": [
+    {
+      "path": "src/api",
+      "responsibility": "提供外部接口",
+      "public_symbols": ["create_item", "get_item"],
+      "dependencies": ["src/service"]
+    }
+  ],
+  "api_surface": [
+    {
+      "name": "create_item",
+      "signature": "(payload: dict) -> dict",
+      "file_line": "src/api/items.py:88",
+      "callers": ["router.post('/items')"],
+      "compatibility_strategy": "新增参数必须有默认值"
+    }
+  ],
+  "entry_points": [
+    {
+      "name": "router_post_items",
+      "type": "http-route",
+      "trigger": "POST /items",
+      "call_chain_top3": ["router_post_items", "create_item", "save_item"]
+    }
+  ],
+  "reference_constraints": [
+    {
+      "source": "docs/api.md",
+      "constraint": "create_item 返回字段必须包含 id",
+      "impact": "影响客户端反序列化",
+      "conflict_with": "",
+      "adopt": "docs/api.md"
+    }
+  ],
+  "impact_matrix": [
+    {
+      "change_point": "create_item signature",
+      "direct_impact": "调用方编译或运行失败风险",
+      "indirect_impact": "SDK 兼容层需要同步",
+      "validation_point": "契约测试 + 冒烟调用",
+      "risk_level": "high"
+    }
+  ]
+}
+```
+
+## Constraints
+- 不执行业务代码
+- 不修改任何源码文件
+- API 项必须包含 `signature` 与 `file_line`
+- 每个高风险影响项必须有可执行验证点

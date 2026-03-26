@@ -1,0 +1,4 @@
+interface:
+  display_name: "V2 Plan Checklist Pack"
+  short_description: "生成 V2.x 总计划、分计划和打钩清单"
+  default_prompt: "Use $v2-plan-checklist-pack to create or refresh a V2.x total plan, sub-plans, and checkbox tracking documents from the latest project discussion."

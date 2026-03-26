@@ -1,0 +1,82 @@
+## Context
+- 项目根目录：[DEV_DIR]
+- 需求主题：[TOPIC]
+- 扫描范围（可多路径）：[SCOPE_PATHS]
+- 扫描模式：M2（数据流扫描）
+- 参考文档：
+  - [doc_path_1]：[用途]
+  - [doc_path_2]：[用途]
+
+## Task
+只做扫描分析，不修改源码。重点覆盖数据结构、数据流、关键约束和影响矩阵。
+
+## 输出格式（JSON）
+
+```json
+{
+  "scan_meta": {
+    "topic": "[TOPIC]",
+    "mode": "M2",
+    "scope": ["[SCOPE_PATH_1]", "[SCOPE_PATH_2]"],
+    "reference_docs": ["[doc_path_1]", "[doc_path_2]"],
+    "generated_at": "2026-02-26T12:00:00Z",
+    "stats": {
+      "modules": 0,
+      "entry_points": 0,
+      "public_apis": 0,
+      "core_data_structures": 0
+    }
+  },
+  "module_inventory": [
+    {
+      "path": "src/module_a",
+      "responsibility": "模块职责一句话",
+      "public_symbols": ["symbol_a"],
+      "dependencies": ["module_b"]
+    }
+  ],
+  "data_structures": [
+    {
+      "name": "state_store",
+      "fields": [
+        {"name": "id", "type": "string", "purpose": "主键"},
+        {"name": "updated_at", "type": "datetime", "purpose": "更新时间"}
+      ],
+      "source": "src/store.py"
+    }
+  ],
+  "data_flows": [
+    {
+      "name": "ingest_flow",
+      "input": "raw_event",
+      "stages": ["parse", "validate", "persist"],
+      "output": "normalized_record",
+      "side_effects": ["write db", "emit log"]
+    }
+  ],
+  "reference_constraints": [
+    {
+      "source": "docs/config.md",
+      "constraint": "BATCH_SIZE <= 500",
+      "impact": "超限会导致写入失败",
+      "conflict_with": "",
+      "adopt": "docs/config.md"
+    }
+  ],
+  "impact_matrix": [
+    {
+      "change_point": "normalize_event",
+      "direct_impact": "字段映射变化",
+      "indirect_impact": "查询聚合结果可能变化",
+      "validation_point": "回放样本数据并比对聚合结果",
+      "risk_level": "high"
+    }
+  ]
+}
+```
+
+## Constraints
+- 不执行业务代码
+- 不修改任何源码文件
+- 必须标注来源文件或文档（文件:行号优先）
+- 信息不足时写明缺口，不得猜测

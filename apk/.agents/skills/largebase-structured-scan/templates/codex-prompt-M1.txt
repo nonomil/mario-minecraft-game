@@ -1,0 +1,54 @@
+## Context
+- 项目根目录：[DEV_DIR]
+- 需求主题：[TOPIC]
+- 扫描范围（可多路径）：[SCOPE_PATHS]
+- 扫描模式：M1（快速架构扫描）
+
+## Task
+扫描代码库架构，输出结构化 JSON 数据供后续处理。
+
+## 输出格式（JSON）
+
+```json
+{
+  "modules": [
+    {
+      "id": "module_id",
+      "path": "src/module/",
+      "name": "module_name",
+      "responsibility": "一句话职责",
+      "exported_symbols": ["func1", "Class1"],
+      "dependencies": ["module_b", "module_c"],
+      "file_count": 5,
+      "loc": 1200
+    }
+  ],
+  "entry_points": [
+    {
+      "name": "main",
+      "type": "function",
+      "file_path": "src/main.py",
+      "line_number": 42,
+      "call_chain": ["main", "init", "run"]
+    }
+  ],
+  "related_files": [
+    {
+      "path": "src/xxx.py",
+      "reason": "包含目标函数",
+      "key_points": ["使用 SHA256 哈希", "增量更新"]
+    }
+  ],
+  "conventions": {
+    "naming": "snake_case for functions, PascalCase for classes",
+    "error_handling": "try-except with logging",
+    "data_structures": "dataclass for config, dict for state"
+  }
+}
+```
+
+## Constraints
+- 不执行任何代码
+- 不修改任何文件
+- 输出总长度 ≤ 300 行
+- 必须包含所有必填字段
