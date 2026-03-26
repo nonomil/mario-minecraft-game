@@ -81,7 +81,13 @@ function testBridgeLanguageFiltersTeacherStylePhrases() {
     "请你跟读",
     "先想再回答",
     "请说完整句",
-    "请补充一句"
+    "请补充一句",
+    "听写本",
+    "默写本",
+    "阅读课",
+    "我喜欢上课",
+    "在公园上课",
+    "请给我课本"
   ].forEach((word) => {
     assert.ok(!words.has(word), `幼小衔接语文不应再保留教师/任务视角词条：${word}`);
   });

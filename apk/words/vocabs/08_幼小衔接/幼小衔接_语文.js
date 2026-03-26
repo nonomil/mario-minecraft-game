@@ -572,7 +572,8 @@
     "任务卡", "评价表", "打卡表", "讲评卡", "讲评课", "点名册", "阅读表",
     "课堂笔记", "阅读笔记", "读书笔记", "练习题", "默写练习", "短文练习",
     "组词练习", "词语练习", "写话练习", "拼音练习", "写字练习", "听写练习",
-    "句子练习", "朗读课文", "审题", "圈词", "抄词", "摘句", "写段"
+    "句子练习", "朗读课文", "审题", "圈词", "抄词", "摘句", "写段",
+    "听写本", "默写本", "阅读课"
   ]);
 
   const BLOCKED_LANGUAGE_FRAGMENTS = [
@@ -589,6 +590,13 @@
     "请你跟读", "先想再回答", "请说完整句", "请补充一句", "说说你发现",
     "请说说想法", "先读再回答", "请听我补充", "请把话说完"
   ]);
+
+  function isBlockedLanguageExpression(word) {
+    const normalized = String(word || "").trim();
+    if (!normalized) return true;
+    if (BLOCKED_LANGUAGE_EXPRESSIONS.has(normalized)) return true;
+    return /(上课|下课|课本|听写|默写)/.test(normalized);
+  }
 
   function isBlockedLanguageWord(word) {
     const normalized = String(word || "").trim();
@@ -612,7 +620,7 @@
     const word = String(item?.word || item?.chinese || "").trim();
     if (!word) return false;
     if (moduleName === "识字" || moduleName === "拼音" || [...word].length <= 1) return true;
-    if (moduleName === "表达") return !BLOCKED_LANGUAGE_EXPRESSIONS.has(word);
+    if (moduleName === "表达") return !isBlockedLanguageExpression(word);
     return !isBlockedLanguageWord(word);
   }
 
@@ -852,6 +860,7 @@
     "拼音本", "生字本", "写字本", "听写本", "默写本", "组词本", "自然段", "段落", "看拼音", "读拼音",
     "写句子", "看图写话", "读题", "审题", "圈词", "抄词", "摘句", "短句", "写段", "课外书",
     "课后题", "阅读课", "朗读课文", "课文插图", "词语表", "生字卡", "词语卡", "句子卡", "拼音卡",
+    "图画本",
     "读书笔记"
   ]).filter((word) => isConcreteExtensionWord(word));
 

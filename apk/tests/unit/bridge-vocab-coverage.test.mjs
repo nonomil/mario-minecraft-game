@@ -114,7 +114,7 @@ for (const bannedFragment of ["传送", "附魔", "出生点", "采集木头"]) 
 for (const required of [
   "田字格", "拼音本", "生字本", "自然段", "看拼音", "写句子", "课间操",
   "口琴", "短笛", "花盆", "镜子", "土堆", "水洼", "风扇", "鸟笼", "剪纸", "发夹", "书柜", "小勺", "门铃",
-  "看图写话", "听写本", "练习册", "值日生", "红领巾", "课文", "段落", "课后题"
+  "看图写话", "图画本", "练习册", "值日生", "红领巾", "课文", "段落", "课后题"
 ]) {
   assert.equal(languageWords.has(required), true, `language pack should keep useful low-grade words: ${required}`);
 }
